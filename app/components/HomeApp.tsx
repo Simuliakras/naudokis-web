@@ -1,17 +1,12 @@
 "use client";
-// Naudokis marketing homepage — client root (state, scroll-reveal, nav scroll state).
-import { useCallback, useEffect, useState } from "react";
+// Naudokis marketing homepage — client root (scroll-reveal, nav scroll state).
+import { useEffect } from "react";
 import {
-  Nav, Hero, Categories, Offers, Features, Testimonials, CtaBanner, Faq, Footer, Listing,
+  Nav, Hero, Categories, Offers, Features, Testimonials, CtaBanner, Faq, Footer,
 } from "./sections";
-import { ListingSheet } from "./ListingSheet";
+import { Chrome } from "./Chrome";
 
 export function HomeApp() {
-  const [query, setQuery] = useState("");
-  const [active, setActive] = useState<Listing | null>(null);
-  const closeSheet = useCallback(() => setActive(null), []);
-  const resetQuery = useCallback(() => setQuery(""), []);
-
   useEffect(() => {
     // scroll-reveal
     const io = new IntersectionObserver((entries) => {
@@ -27,17 +22,18 @@ export function HomeApp() {
   }, []);
 
   return (
-    <div className="nk-page">
-      <Nav onSearch={() => document.getElementById("kategorijos")?.scrollIntoView({ behavior: "smooth" })} />
-      <Hero query={query} setQuery={setQuery} />
-      <Categories query={query} onOpen={setActive} onReset={resetQuery} />
-      <Offers query={query} onOpen={setActive} onReset={resetQuery} />
-      <Features />
-      <Testimonials />
-      <CtaBanner />
-      <Faq />
-      <Footer />
-      <ListingSheet item={active} onClose={closeSheet} />
-    </div>
+    <Chrome>
+      <div className="nk-page">
+        <Nav onSearch={() => document.getElementById("kategorijos")?.scrollIntoView({ behavior: "smooth" })} />
+        <Hero />
+        <Categories />
+        <Offers />
+        <Features />
+        <Testimonials />
+        <CtaBanner />
+        <Faq />
+        <Footer />
+      </div>
+    </Chrome>
   );
 }

@@ -7,10 +7,15 @@
 
 :root {
   /* ---- Brand accents ---------------------------------------------------- */
-  --nk-purple:        #9263FF;   /* primary action — buttons, links, accents  */
-  --nk-purple-deep:   #8456EF;   /* purple border / pressed                   */
-  --nk-purple-hover:  #a079ff;   /* primary button / round-arrow hover        */
-  --nk-purple-soft:   rgba(146,99,255,.12);  /* outline button hover wash     */
+  /* Primary indigo is the authoritative spec value (#807FFE) — not the early
+     #9263FF Figma purple. See the Naudokis UI/UX requirements. */
+  --nk-purple:        #807FFE;   /* primary action — buttons, links, accents  */
+  --nk-purple-deep:   #6F6EF5;   /* purple border / pressed                   */
+  --nk-purple-hover:  #9B9AFF;   /* primary button / round-arrow hover        */
+  --nk-purple-soft:   rgba(128,127,254,.12);  /* outline button hover wash    */
+  --nk-accent-bg:     rgba(128,127,254,.16);  /* active/selected control fill  */
+  --nk-accent-text:   #A6A5FF;   /* active/selected control text              */
+  --nk-accent-border: rgba(128,127,254,.5);   /* active/selected control border*/
   --nk-yellow:        #F9F367;   /* eyebrows, stars, highlights, logo left    */
   --nk-green:         #00CD87;   /* download banner, success badge            */
   --nk-orange:        #E07A4A;   /* pattern accent (4th brand color)          */
@@ -36,6 +41,7 @@
   /* ---- Borders / lines -------------------------------------------------- */
   --nk-border:        #455759;   /* divider / outline on dark                */
   --nk-border-soft:   #D1D1D1;   /* FAQ pill hairline                        */
+  --nk-border-faint:  color-mix(in srgb, var(--nk-border) 40%, transparent); /* subtle hairline dividers */
 
   /* ---- Light theme (marketing wireframe / app-light surfaces) ----------- */
   --nk-light-bg:      #FFFFFF;
@@ -232,8 +238,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-link::after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:2px;background:var(--nk-yellow);transition:right .25s ease}
 .nk-link:hover::after,.nk-link:focus-visible::after{right:0}
 
+/* stretched link — covers a card so the whole surface navigates while inner
+   controls (favorite) stay clickable via a higher z-index */
+.nk-stretch{position:absolute;inset:0;z-index:1}
+
 /* ---- offer card hover ---- */
-.nk-offer{transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease}
+.nk-offer{transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease;border:1px solid transparent}
+.nk-offer:hover{border-color:var(--nk-accent-border)}
 .nk-offer:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.45)}
 .nk-offer__media{overflow:hidden}
 .nk-offer__media .nk-zoom{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
@@ -263,7 +274,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 
 /* ---- search bar focus ---- */
 .nk-search{transition:box-shadow .2s ease,border-color .2s ease}
-.nk-search:focus-within{border-color:var(--nk-purple);box-shadow:0 6px 24px rgba(146,99,255,.28)}
+.nk-search:focus-within{border-color:var(--nk-purple);box-shadow:0 6px 24px rgba(128,127,254,.28)}
 
 /* ---- FAQ hover ---- */
 .nk-faq{transition:border-color .2s ease,background .2s ease,border-radius .2s ease}
@@ -291,6 +302,106 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-sheet{width:100%;max-width:1180px;max-height:92vh;overflow:auto;background:var(--nk-bg);border-radius:24px 24px 0 0;
   transform:translateY(40px);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
 .nk-modal-scrim.open .nk-sheet{transform:none}
+
+/* ============================================================
+   Locked-mode app-redirect modal (desktop dialog / mobile sheet)
+   ============================================================ */
+.nk-redirect-scrim{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  background:rgba(15,17,18,.72);backdrop-filter:blur(6px)}
+.nk-redirect-panel{position:relative;width:min(480px,calc(100vw - 40px));background:var(--nk-bg);
+  border:1px solid color-mix(in srgb,var(--nk-border) 50%,transparent);border-radius:24px;padding:36px;
+  display:flex;flex-direction:column;gap:24px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.nk-redirect-close{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:20px;
+  display:flex;align-items:center;justify-content:center;background:var(--nk-surface)}
+.nk-redirect-mark{width:56px;height:56px;border-radius:16px;background:var(--nk-accent-bg);
+  display:flex;align-items:center;justify-content:center}
+.nk-redirect-qr{display:flex;align-items:center;gap:16px;padding-top:4px}
+@media(max-width:560px){
+  .nk-redirect-scrim{align-items:flex-end}
+  .nk-redirect-panel{width:100%;border-radius:24px 24px 0 0;max-height:92vh;overflow:auto;
+    padding-bottom:calc(36px + env(safe-area-inset-bottom))}
+}
+
+/* ============================================================
+   Sticky mobile app banner (mobile only)
+   ============================================================ */
+.nk-appbanner{position:fixed;left:16px;right:16px;bottom:16px;z-index:60;display:none;align-items:center;gap:12px;
+  background:var(--nk-surface);border:1px solid var(--nk-border);border-radius:16px;padding:12px 14px;
+  box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.nk-appbanner__x{width:28px;height:28px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--nk-bg)}
+@media(max-width:900px){.nk-appbanner{display:flex}}
+
+/* ============================================================
+   Breadcrumb
+   ============================================================ */
+.nk-crumb{transition:color .15s ease,background .15s ease}
+.nk-crumb:hover{color:var(--nk-text);background:var(--nk-surface)}
+
+/* ============================================================
+   Rounded search field (categories + feed)
+   ============================================================ */
+.nk-searchfield{display:flex;align-items:center;gap:10px;background:var(--nk-surface);
+  border:1px solid var(--nk-border);border-radius:999px;padding:13px 20px;
+  transition:border-color .15s ease,box-shadow .15s ease}
+.nk-searchfield:focus-within{border-color:var(--nk-purple);box-shadow:0 4px 18px rgba(128,127,254,.22)}
+
+/* category tile grid (all-categories page) */
+.nk-grid-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media(max-width:1100px){.nk-grid-cats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.nk-grid-cats{grid-template-columns:1fr}}
+
+/* ============================================================
+   Listings feed
+   ============================================================ */
+/* sticky filter bar — solid (not blurred) bg so popovers layer above cards */
+.nk-filterbar{position:sticky;top:92px;z-index:40;margin-bottom:36px;scroll-margin-top:100px;
+  padding-block:16px;background:var(--nk-bg);border-bottom:1px solid var(--nk-border-faint)}
+.nk-grid-feed{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+@media(max-width:1100px){.nk-grid-feed{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:680px){.nk-grid-feed{grid-template-columns:1fr}}
+.nk-clear{transition:color .15s ease}
+.nk-clear:hover{color:var(--nk-text)}
+.nk-tagchip{transition:background .15s ease,border-color .15s ease}
+.nk-tagchip:hover{background:var(--nk-surface-2);border-color:var(--nk-accent-border)}
+
+/* feed interruption banner */
+.nk-interrupt{position:relative;overflow:hidden;display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  background:var(--nk-bg-deep);border:1px solid var(--nk-border);border-radius:16px;padding:28px 32px}
+
+/* ============================================================
+   Listing detail page
+   ============================================================ */
+.nk-detail-h{margin:0 0 22px;font-family:var(--nk-font-display);font-weight:700;font-size:26px;line-height:30px;color:var(--nk-text)}
+.nk-bento{display:grid;grid-template-columns:1.55fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;height:520px}
+.nk-bento > :first-child{grid-row:1 / 3}
+.nk-detail-grid{display:grid;grid-template-columns:1fr 396px;gap:64px;margin-top:48px;align-items:start}
+.nk-spec-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:56px;row-gap:0}
+.nk-tworow{display:grid;grid-template-columns:1fr 1fr;column-gap:56px}
+.nk-reserve{position:sticky;top:112px;background:var(--nk-surface);border-radius:22px;padding:28px;
+  display:flex;flex-direction:column;gap:20px;border:1px solid color-mix(in srgb,var(--nk-border) 45%,transparent);
+  box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.nk-mbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--nk-purple);
+  align-items:center;justify-content:space-between;gap:16px;padding:16px 20px}
+@media(max-width:980px){
+  .nk-bento{grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,160px);height:auto}
+  .nk-bento > :first-child{grid-row:1 / 2;grid-column:1 / -1}
+  .nk-detail-grid{grid-template-columns:1fr;gap:40px}
+  .nk-reserve{display:none}
+  .nk-spec-grid,.nk-tworow{grid-template-columns:1fr;column-gap:0}
+  .nk-mbar{display:flex}
+}
+
+/* ============================================================
+   Legal pages
+   ============================================================ */
+.nk-legal-grid{display:grid;grid-template-columns:240px 1fr;gap:64px;margin-top:56px;align-items:start}
+.nk-legal-toc{position:sticky;top:112px;display:flex;flex-direction:column;gap:4px}
+.nk-toc-link{transition:color .15s ease}
+.nk-toc-link:hover{color:var(--nk-text)}
+@media(max-width:900px){
+  .nk-legal-grid{grid-template-columns:1fr;gap:32px}
+  .nk-legal-toc{display:none}
+}
 
 /* ============================================================
    Responsive

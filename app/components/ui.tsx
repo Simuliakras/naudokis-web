@@ -1,6 +1,7 @@
 "use client";
 // Naudokis UI kit — primitives.
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 
 /* ---------------- Icon ----------------
    Self-contained icon set (Lucide-style geometry). `s` = stroke outline children,
@@ -33,6 +34,19 @@ const NK_ICONS: Record<string, IconDef> = {
   SearchX:     { s: <><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="m8.5 8.5 5 5"/><path d="m13.5 8.5-5 5"/></> },
   Inbox:       { s: <><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"/></> },
   LayoutGrid:  { s: <><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></> },
+  ArrowUpDown: { s: <><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></> },
+  SlidersHorizontal: { s: <><line x1="21" y1="8" x2="10" y2="8"/><line x1="6" y1="8" x2="3" y2="8"/><line x1="21" y1="16" x2="14" y2="16"/><line x1="10" y1="16" x2="3" y2="16"/><line x1="10" y1="5" x2="10" y2="11"/><line x1="14" y1="13" x2="14" y2="19"/></> },
+  Home:        { s: <><path d="M3 10.2 12 3l9 7.2"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/><path d="M9.5 21v-6h5v6"/></> },
+  Car:         { s: <><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13"/><path d="M4 17v-4h16v4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H7v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><circle cx="7.5" cy="14.5" r="1"/><circle cx="16.5" cy="14.5" r="1"/></> },
+  Tag:         { s: <><path d="M12.6 2.6 21 11a2 2 0 0 1 0 2.8l-7.2 7.2a2 2 0 0 1-2.8 0L2.6 12.6A2 2 0 0 1 2 11.2V4a2 2 0 0 1 2-2h7.2a2 2 0 0 1 1.4.6z"/><circle cx="7.5" cy="7.5" r="1.3"/></> },
+  Calendar:    { s: <><rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></> },
+  MessageCircle:{ s: <path d="M21 11.5a8.4 8.4 0 0 1-12 7.6L3 21l1.9-5.6A8.4 8.4 0 1 1 21 11.5z"/> },
+  Info:        { s: <><circle cx="12" cy="12" r="9.5"/><path d="M12 16v-4.5M12 8h.01"/></> },
+  BadgeCheck:  { s: <><path d="m3.9 8.6.9-2.7 2.7-.9L9.4 2.6h5.2l1.9 2.4 2.7.9.9 2.7L21.4 11v2l-1.4 1.8.9 2.7-2.7.9-1.9 2.4H9.4l-1.9-2.4-2.7-.9.9-2.7L4.3 13v-2z"/><path d="m9 12 2 2 4-4"/></> },
+  RefreshCcw:  { s: <><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></> },
+  MoreHorizontal:{ s: <><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></> },
+  ChevronRight:{ s: <path d="m9 6 6 6-6 6"/> },
+  Sparkles:    { s: <><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z"/></> },
 };
 
 export type IconName = keyof typeof NK_ICONS;
@@ -260,5 +274,154 @@ export function QR({ size = 152, light = false }: { size?: number; light?: boole
         <QrFinder x={0} y={cell * (QR_N - 7)} cell={cell} light={light} />
       </svg>
     </span>
+  );
+}
+
+/* ============================================================
+   Locked-mode trigger — any component can call openRedirect(...)
+   to open the shared <AppRedirect/> modal (mounted via <Chrome/>).
+   ============================================================ */
+export type RedirectPayload = { title: string; body: string };
+export const NK_REDIRECT_EVENT = "nk:redirect";
+
+export function openRedirect(payload: RedirectPayload) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent<RedirectPayload>(NK_REDIRECT_EVENT, { detail: payload }));
+}
+
+/* ---------------- Pill (active/selected accent) ---------------- */
+export function Pill({
+  children, tone = "accent", icon,
+}: {
+  children: React.ReactNode;
+  tone?: "accent" | "yellow" | "green" | "purple";
+  icon?: IconName;
+}) {
+  const tones: Record<string, { bg: string; fg: string }> = {
+    accent: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
+    purple: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
+    yellow: { bg: "rgba(249,243,103,.16)", fg: "var(--nk-yellow)" },
+    green: { bg: "rgba(0,205,135,.16)", fg: "var(--nk-green)" },
+  };
+  const c = tones[tone] ?? tones.accent;
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: c.bg, color: c.fg, borderRadius: 999, padding: "7px 14px", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15, lineHeight: 1, whiteSpace: "nowrap" }}>
+      {icon && <Icon name={icon} size={15} color={c.fg} stroke={2} />}
+      {children}
+    </span>
+  );
+}
+
+/* ---------------- Breadcrumb (home icon + active pill) ---------------- */
+export type Crumb = { label: string; href?: string };
+export function Breadcrumb({ items, homeLabel, label }: { items: Crumb[]; homeLabel: string; label: string }) {
+  const all: Crumb[] = [{ label: homeLabel, href: "/" }, ...items];
+  return (
+    <nav aria-label={label} className="nk-crumbs" style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap", marginBottom: 22 }}>
+      {all.map((c, i) => {
+        const last = i === all.length - 1;
+        const home = i === 0;
+        if (last) {
+          return (
+            <span key={i} aria-current="page" style={{ padding: "6px 10px", borderRadius: 9, fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text)", background: "var(--nk-surface)" }}>{c.label}</span>
+          );
+        }
+        return (
+          <React.Fragment key={i}>
+            <Link href={c.href ?? "/"} className="nk-crumb" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "6px 10px", borderRadius: 9, fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", textDecoration: "none" }}>
+              {home && <Icon name="Home" size={16} stroke={2} color="currentColor" />} {c.label}
+            </Link>
+            <Icon name="ChevronRight" size={14} stroke={2.4} color="#5b6669" />
+          </React.Fragment>
+        );
+      })}
+    </nav>
+  );
+}
+
+/* ---------------- FilterSelect (custom popover dropdown) ----------------
+   Dark pill trigger + option list. Replaces native <select> on the feed.
+   `direction="up"` opens above the trigger (used by the hero city picker). */
+export type SelectOption = { value: string; label: string };
+export function FilterSelect({
+  icon, label, value, defaultValue = "", options, onChange,
+  align = "left", direction = "down", heading,
+}: {
+  icon?: IconName;
+  label: string;
+  value: string;
+  defaultValue?: string;
+  options: SelectOption[];
+  onChange: (value: string) => void;
+  align?: "left" | "right";
+  direction?: "down" | "up";
+  heading?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => { if (ref.current && e.target instanceof Node && !ref.current.contains(e.target)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
+  }, []);
+  const active = value !== defaultValue;
+  const selected = options.find((o) => o.value === value);
+  const panelPos: React.CSSProperties = direction === "up"
+    ? { bottom: "calc(100% + 10px)" }
+    : { top: "calc(100% + 10px)" };
+  return (
+    <span ref={ref} style={{ position: "relative", display: "inline-flex" }}>
+      <button type="button" onClick={() => setOpen((v) => !v)} aria-haspopup="listbox" aria-expanded={open} style={{
+        display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", cursor: "pointer", whiteSpace: "nowrap",
+        fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, transition: "background .15s ease, border-color .15s ease",
+        background: active ? "var(--nk-accent-bg)" : "var(--nk-surface)", color: active ? "var(--nk-accent-text)" : "var(--nk-text)",
+        border: "1px solid " + (active || open ? "var(--nk-accent-border)" : "var(--nk-border)"),
+      }}>
+        {icon && <Icon name={icon} size={16} stroke={2} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />}
+        <span>{active && selected ? selected.label : label}</span>
+        <Icon name="ChevronDown" size={15} stroke={2.4} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
+      </button>
+      {open && (
+        <span role="listbox" style={{ position: "absolute", ...panelPos, [align]: 0, minWidth: 230, background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 16, padding: 7, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 20px 50px rgba(0,0,0,.45)", zIndex: 50 }}>
+          {heading && <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--nk-text-muted)", padding: "8px 12px 6px" }}>{heading}</span>}
+          {options.map((o) => {
+            const sel = o.value === value;
+            return (
+              <button key={o.value} type="button" role="option" aria-selected={sel} onClick={() => { onChange(o.value); setOpen(false); }}
+                onMouseEnter={(e) => { if (!sel) e.currentTarget.style.background = "var(--nk-surface-2)"; }}
+                onMouseLeave={(e) => { if (!sel) e.currentTarget.style.background = "transparent"; }}
+                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, padding: "11px 13px", borderRadius: 10, cursor: "pointer", textAlign: "left",
+                  background: sel ? "var(--nk-accent-bg)" : "transparent", color: sel ? "var(--nk-accent-text)" : "var(--nk-text)",
+                  fontFamily: "var(--nk-font-body)", fontSize: 16 }}>
+                {o.label}{sel && <Icon name="BadgeCheck" size={17} color="var(--nk-accent-text)" stroke={2} />}
+              </button>
+            );
+          })}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/* ---------------- Toggle (pill, for "Su pristatymu") ---------------- */
+export function Toggle({
+  icon, children, on, onChange,
+}: {
+  icon?: IconName;
+  children: React.ReactNode;
+  on: boolean;
+  onChange: (on: boolean) => void;
+}) {
+  return (
+    <button type="button" onClick={() => onChange(!on)} aria-pressed={on} style={{
+      display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", cursor: "pointer",
+      fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, whiteSpace: "nowrap", transition: "background .15s ease, border-color .15s ease",
+      background: on ? "var(--nk-accent-bg)" : "var(--nk-surface)", color: on ? "var(--nk-accent-text)" : "var(--nk-text)",
+      border: "1px solid " + (on ? "var(--nk-accent-border)" : "var(--nk-border)"),
+    }}>
+      {icon && <Icon name={icon} size={16} stroke={2} color={on ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />} {children}
+    </button>
   );
 }

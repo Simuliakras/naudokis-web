@@ -1,12 +1,14 @@
 "use client";
 // Naudokis UI kit — card components.
-import { useState } from "react";
-import { Icon, IconName, LocationChip, Rating, Dots, RoundArrow } from "./ui";
+import Link from "next/link";
+import { Icon, IconName, LocationChip, Rating, Dots, openRedirect } from "./ui";
 import { useI18n } from "./I18nProvider";
 
-/* ---------------- Offer / listing card ---------------- */
+/* ---------------- Offer / listing card ----------------
+   Final design: price hierarchy + hairline divider, locked favorite (opens the
+   app modal), and a stretched <Link> covering the card for real navigation. */
 export function OfferCard({
-  title = "Dodge RAM 2016", city, price, unit, rating, count, img, onOpen,
+  title = "Dodge RAM 2016", city, price, unit, rating, count, img, href,
 }: {
   title?: string;
   city?: string;
@@ -15,36 +17,75 @@ export function OfferCard({
   rating?: string;
   count?: string;
   img?: string;
-  onOpen?: () => void;
+  href?: string;
 }) {
   const { dict } = useI18n();
   const c = dict.common;
-  const [fav, setFav] = useState(false);
+  const lockFav = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody });
+  };
   return (
-    <article className="nk-offer" style={{ background: "var(--nk-surface)", borderRadius: 8, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+    <article className="nk-offer" style={{ position: "relative", background: "var(--nk-surface)", borderRadius: 8, overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
+      {href && <Link href={href} className="nk-stretch" aria-label={title} />}
       <div className="nk-offer__media nk-imgph" data-img={img ? "" : undefined}
         style={{ height: 330, borderRadius: "8px 8px 0 0", backgroundImage: img ? `url("${img}")` : undefined }}>
         {img && <div className="nk-zoom" style={{ position: "absolute", inset: 0, backgroundImage: `url("${img}")`, backgroundSize: "cover", backgroundPosition: "center" }} />}
         <div style={{ position: "absolute", top: 20, left: 20, zIndex: 2 }}><LocationChip city={city ?? c.sampleCity} /></div>
-        <button className={"nk-fav" + (fav ? " nk-on" : "")} onClick={() => setFav((v) => !v)} aria-label={c.favorite} aria-pressed={fav}>
-          <Icon name="Heart" size={20} color={fav ? "var(--nk-yellow)" : "var(--nk-text)"} fill={fav ? "var(--nk-yellow)" : "none"} stroke={2} />
+        <button className="nk-fav" onClick={lockFav} aria-label={c.favorite}>
+          <Icon name="Heart" size={20} color="var(--nk-text)" fill="none" stroke={2} />
         </button>
         {!img && <Icon name="Image" size={64} stroke={1.5} className="nk-imgicon" />}
-        <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center", zIndex: 2 }}>
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center", zIndex: 2, pointerEvents: "none" }}>
           <span style={{ background: "rgba(40,44,45,.6)", borderRadius: 23, padding: "8px 14px", backdropFilter: "blur(4px)" }}>
             <Dots n={4} active={0} />
           </span>
         </div>
       </div>
-      <div style={{ flex: 1, padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
-        <h3 className="nk-h-card" style={{ margin: 0 }}>{title}</h3>
+      <div style={{ flex: 1, padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
+        <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--nk-text)" }}>{title}</h3>
         {rating && <Rating value={rating} count={count} />}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto", paddingTop: 8 }}>
-          <span className="nk-price">{price ?? c.samplePrice}&nbsp; {unit ?? c.perDay}</span>
-          <RoundArrow variant="solid" onClick={onOpen} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto", paddingTop: 16, borderTop: "1px solid color-mix(in srgb, var(--nk-border) 32%, transparent)" }}>
+          <span style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+            <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price ?? c.samplePrice}</span>
+            <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
+          </span>
+          <span className="nk-round nk-round--solid" aria-hidden="true">
+            <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
+          </span>
         </div>
       </div>
     </article>
+  );
+}
+
+/* ---------------- Category tile (all-categories page) ---------------- */
+export function CategoryTile({
+  title, tint = "#3a3450", count, href,
+}: {
+  title: string;
+  tint?: string;
+  count: string;
+  href: string;
+}) {
+  return (
+    <div className="nk-cat" style={{ position: "relative", height: 300, borderRadius: 8, overflow: "hidden" }}>
+      <Link href={href} className="nk-stretch" aria-label={title} />
+      <div className="nk-cat__img" style={{ position: "absolute", inset: 0, background: `linear-gradient(160deg, ${tint}, #232728)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Icon name="Image" size={52} stroke={1.5} className="nk-imgicon" />
+      </div>
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(27,27,27,.35), rgba(27,27,27,.05) 38%, rgba(27,27,27,.65))" }} />
+      <div style={{ position: "absolute", left: 20, right: 20, bottom: 20, display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 12 }}>
+        <span style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "28px", color: "var(--nk-text)" }}>{title}</span>
+          <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{count}</span>
+        </span>
+        <span className="nk-cat__arrow nk-round nk-round--outline" style={{ flex: "none" }} aria-hidden="true">
+          <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -68,6 +109,30 @@ export function CategoryCard({
       <span className="nk-cat__arrow nk-round nk-round--outline" style={{ position: "absolute", right: 20, bottom: 20 }}>
         <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
       </span>
+    </div>
+  );
+}
+
+/* ---------------- Feed interruption banner (app-redirect CTA) ---------------- */
+export function InterruptionBanner() {
+  const { dict } = useI18n();
+  const t = dict.feed;
+  return (
+    <div className="nk-interrupt" style={{ gridColumn: "1 / -1" }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/naudokis/section-pattern.png" alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
+      <span style={{ position: "relative", width: 64, height: 64, borderRadius: 18, flex: "none", background: "var(--nk-accent-bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/naudokis/logo-mark.svg" alt="" style={{ width: 40, height: 40 }} />
+      </span>
+      <div style={{ position: "relative", flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: 8 }}>
+        <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{t.interruptTitle}</h3>
+        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "26px", color: "var(--nk-text-2)", maxWidth: 520 }}>{t.interruptBody}</p>
+      </div>
+      <button className="nk-btn nk-btn--primary" style={{ position: "relative", padding: "16px 28px" }}
+        onClick={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}>
+        {t.interruptCta}
+      </button>
     </div>
   );
 }

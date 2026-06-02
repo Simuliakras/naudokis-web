@@ -17,6 +17,7 @@ type ApiListing = {
   rating_count: number;
   status: string;
   images: ApiImage[];
+  delivery_types_available?: string[];
 };
 
 type ListingsResponse = {
@@ -65,6 +66,28 @@ export type Offer = {
   img?: string;
   rating?: string; // formatted value, present only when ratingCount > 0
   ratingCount: number; // raw count, for building the localized review label
+  hasDelivery: boolean; // derived client-side from delivery_types_available — see note in fetchListings
+};
+
+/* ---------------- Filters ---------------- */
+// Backend `/listings` accepts q, city, category_id and a sort key. "delivery" is
+// NOT a backend param, so the "Su pristatymu" toggle is applied client-side.
+export type SortKey = "recommended" | "price_asc" | "price_desc" | "rating_desc";
+
+// Narrow an untrusted value (e.g. a `?sort=` query param) to a valid SortKey,
+// falling back to the backend default. Type-safe — no `as` cast needed.
+export function parseSortKey(value: string | null | undefined): SortKey {
+  if (value === "price_asc" || value === "price_desc" || value === "rating_desc") {
+    return value;
+  }
+  return "recommended";
+}
+
+export type ListingFilters = {
+  q?: string;
+  city?: string;
+  category?: string; // category id == backend category_id (also the URL slug)
+  sort?: SortKey;
 };
 
 export type ListingAttribute = { id: string; label: string; value: string };
@@ -95,7 +118,7 @@ export type ListingDetail = {
 
 /* ---------------- Formatting ---------------- */
 // Cents → localized price string, matching the sample format ("15 €" / "€15").
-function formatPrice(cents: number, locale: Locale): string {
+export function formatPrice(cents: number, locale: Locale): string {
   const euros = cents / 100;
   const n =
     cents % 100 === 0
@@ -116,10 +139,20 @@ function ratingLabel(average: number | null, count: number, locale: Locale): str
 }
 
 /* ---------------- Fetchers + hooks ---------------- */
-async function fetchListings(locale: Locale, q: string): Promise<Offer[]> {
+async function fetchListings(locale: Locale, filters: ListingFilters): Promise<Offer[]> {
   const url = new URL(`${API_BASE}/listings`);
-  if (q) {
-    url.searchParams.set("q", q);
+  if (filters.q) {
+    url.searchParams.set("q", filters.q);
+  }
+  if (filters.city) {
+    url.searchParams.set("city", filters.city);
+  }
+  if (filters.category) {
+    url.searchParams.set("category_id", filters.category);
+  }
+  // "recommended" is the backend default — only send sort for the explicit keys.
+  if (filters.sort && filters.sort !== "recommended") {
+    url.searchParams.set("sort", filters.sort);
   }
   const res = await fetch(url);
   if (!res.ok) {
@@ -136,13 +169,17 @@ async function fetchListings(locale: Locale, q: string): Promise<Offer[]> {
       img: l.images?.[0]?.url,
       rating: ratingLabel(l.rating_average, l.rating_count, locale),
       ratingCount: l.rating_count,
+      // Backend has no `delivery=` filter; it exposes the per-item delivery types
+      // instead, so the "Su pristatymu" toggle filters the fetched page client-side.
+      hasDelivery: (l.delivery_types_available ?? []).includes("user_delivery"),
     }));
 }
 
-export function useListings(locale: Locale, q: string = "") {
+export function useListings(locale: Locale, filters: ListingFilters = {}) {
+  const { q = "", city = "", category = "", sort = "recommended" } = filters;
   return useQuery({
-    queryKey: ["listings", locale, q],
-    queryFn: () => fetchListings(locale, q),
+    queryKey: ["listings", locale, q, city, category, sort],
+    queryFn: () => fetchListings(locale, { q, city, category, sort }),
     placeholderData: keepPreviousData,
   });
 }
