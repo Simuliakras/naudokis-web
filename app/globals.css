@@ -1,26 +1,319 @@
-@import "tailwindcss";
+/* ============================================================================
+   Naudokis.lt — Colors & Type tokens
+   Ported from the Naudokis design bundle ("design-naudokis.fig").
+   Fonts: Archivo + Sora are loaded via next/font/google (see app/[lang]/layout.tsx),
+   exposed as --font-archivo / --font-sora.
+   ========================================================================== */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ---- Brand accents ---------------------------------------------------- */
+  --nk-purple:        #9263FF;   /* primary action — buttons, links, accents  */
+  --nk-purple-deep:   #8456EF;   /* purple border / pressed                   */
+  --nk-purple-hover:  #a079ff;   /* primary button / round-arrow hover        */
+  --nk-purple-soft:   rgba(146,99,255,.12);  /* outline button hover wash     */
+  --nk-yellow:        #F9F367;   /* eyebrows, stars, highlights, logo left    */
+  --nk-green:         #00CD87;   /* download banner, success badge            */
+  --nk-orange:        #E07A4A;   /* pattern accent (4th brand color)          */
+
+  /* ---- Dark surfaces (primary identity) --------------------------------- */
+  --nk-bg:            #282C2D;   /* charcoal — primary page background        */
+  --nk-bg-deep:       #1B1B1B;   /* near-black — pattern / alt sections       */
+  --nk-surface:       #303536;   /* card surface (offers, testimonials, FAQ)  */
+  --nk-surface-2:     #373F40;   /* raised surface                            */
+  --nk-surface-hover: #414a4b;   /* ghost button hover                        */
+  --nk-faq-hover:     #343a3b;   /* FAQ row hover                             */
+  --nk-glass:         rgba(55,63,64,0.40);  /* hero glass panel (blur 40)     */
+  --nk-glass-strong:  rgba(55,63,64,0.82);  /* feature card glass             */
+  --nk-glass-nav:     rgba(55,63,64,0.75);  /* nav over content               */
+  --nk-ink:           #121212;   /* app-store badge / deepest ink             */
+
+  /* ---- Text on dark ----------------------------------------------------- */
+  --nk-text:          #F9F9F9;   /* primary text                             */
+  --nk-text-2:        #D3D3D3;   /* secondary / body                         */
+  --nk-text-muted:    #A1AAA8;   /* meta, review counts                      */
+  --nk-text-slate:    #455759;   /* placeholder text in light search field   */
+
+  /* ---- Borders / lines -------------------------------------------------- */
+  --nk-border:        #455759;   /* divider / outline on dark                */
+  --nk-border-soft:   #D1D1D1;   /* FAQ pill hairline                        */
+
+  /* ---- Light theme (marketing wireframe / app-light surfaces) ----------- */
+  --nk-light-bg:      #FFFFFF;
+  --nk-light-text:    #000000;
+  --nk-light-meta:    #6A6A6A;   /* meta text                                */
+  --nk-light-meta-2:  #757575;
+  --nk-light-line:    #A3A2A2;   /* outlined button / input border           */
+  --nk-light-btn:     #F1F1F1;   /* secondary button fill                    */
+  --nk-light-btn-2:   #E4E4E4;   /* reserve button fill                      */
+  --nk-chip:          #E2E2E2;   /* filter chip fill                         */
+  --nk-tag:           #E8E8E8;   /* category tag fill                        */
+  --nk-placeholder:   #D9D9D9;   /* image placeholder fill                   */
+
+  /* ---- Type families (wired to next/font) ------------------------------- */
+  --nk-font-display:  var(--font-archivo), system-ui, sans-serif;  /* headings, UI labels, buttons */
+  --nk-font-body:     var(--font-sora), system-ui, sans-serif;     /* body, eyebrows, prices, meta */
+
+  /* ---- Radii ------------------------------------------------------------ */
+  --nk-r-card:    8px;    /* offer / testimonial / FAQ-row / category cards  */
+  --nk-r-lg:      20px;   /* hero panel, CTA banner, large feature blocks    */
+  --nk-r-chip:    18px;   /* location & filter chips                         */
+  --nk-r-pill:    25px;   /* pill buttons (search, primary)                  */
+  --nk-r-pill-lg: 34px;   /* hero search bar                                 */
+  --nk-r-faq:     46px;   /* FAQ accordion row                               */
+  --nk-r-icon:    22px;   /* round icon button (44px circle)                 */
+
+  /* ---- Elevation -------------------------------------------------------- */
+  --nk-shadow-hero:   10px 15px 42px 0 rgba(22,22,22,0.50);  /* hero device  */
+  --nk-shadow-input:  0 4px 4px 0 rgba(0,0,0,0.25);          /* search bar   */
+  --nk-blur:          blur(40px);                            /* glass        */
+
+  /* ---- Spacing scale (px) ----------------------------------------------- */
+  --nk-s-1:4px; --nk-s-2:8px; --nk-s-3:12px; --nk-s-4:16px; --nk-s-5:20px;
+  --nk-s-6:24px; --nk-s-8:32px; --nk-s-10:40px; --nk-s-12:48px; --nk-s-15:60px;
+  --nk-s-20:80px; --nk-s-30:120px; --nk-s-35:140px; --nk-s-50:200px;
+  --nk-gutter: 82px;   /* desktop container side padding                     */
+  --nk-gap:    20px;   /* default gap between cards in a row                 */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ============================================================================
+   Semantic type ramp — apply directly or copy the rules.
+   ========================================================================== */
+.nk-eyebrow {                       /* yellow label above section titles     */
+  font-family: var(--nk-font-body);
+  font-weight: 400; font-size: 18px; line-height: 20px;
+  color: var(--nk-yellow);
+}
+.nk-h-hero {                        /* hero headline (fluid)                 */
+  font-family: var(--nk-font-display);
+  font-weight: 700; font-size: clamp(44px, 7.2vw, 92px); line-height: 1.08;
+  color: var(--nk-text); letter-spacing: -0.01em;
+}
+.nk-h-cta {                         /* CTA banner headline (fluid)           */
+  font-family: var(--nk-font-display);
+  font-weight: 700; font-size: clamp(36px, 5.6vw, 80px); line-height: 1.1;
+  color: var(--nk-bg-deep); letter-spacing: -0.01em; margin: 0;
+}
+.nk-h-section {                     /* section heading (fluid)               */
+  font-family: var(--nk-font-display);
+  font-weight: 700; font-size: clamp(30px, 3.4vw, 40px); line-height: 1.1; color: var(--nk-text);
+}
+.nk-h-card {                        /* card / offer title                    */
+  font-family: var(--nk-font-display);
+  font-weight: 700; font-size: 28px; line-height: 32px; color: var(--nk-text);
+}
+.nk-h-row {                         /* FAQ / testimonial name / row title    */
+  font-family: var(--nk-font-display);
+  font-weight: 700; font-size: 24px; line-height: 28px; color: var(--nk-text);
+}
+.nk-body {                          /* body copy                             */
+  font-family: var(--nk-font-body);
+  font-weight: 400; font-size: 20px; line-height: 32px; color: var(--nk-text-2);
+}
+.nk-body-sm {                       /* small body / chip text                */
+  font-family: var(--nk-font-body);
+  font-weight: 400; font-size: 18px; line-height: 24px; color: var(--nk-text-2);
+}
+.nk-meta {                          /* review counts, secondary meta         */
+  font-family: var(--nk-font-body);
+  font-weight: 400; font-size: 18px; line-height: 24px; color: var(--nk-text-muted);
+}
+.nk-price {                         /* price line                            */
+  font-family: var(--nk-font-body);
+  font-weight: 400; font-size: 20px; line-height: 24px; color: var(--nk-text);
+}
+.nk-nav {                           /* nav items / utility labels            */
+  font-family: var(--nk-font-display);
+  font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: 0.04em;
+  color: var(--nk-text);
+}
+.nk-btn-label {                     /* button text                           */
+  font-family: var(--nk-font-display);
+  font-weight: 700; font-size: 18px; line-height: 1; color: var(--nk-text);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================================================
+   Naudokis marketplace UI kit — component styles
+   ========================================================================== */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--nk-bg);color:var(--nk-text);
+  font-family:var(--nk-font-body);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+img{display:block;max-width:100%}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+::selection{background:var(--nk-purple);color:#fff}
+
+.nk-page{width:100%;overflow-x:hidden}
+.nk-container{max-width:1920px;margin:0 auto;padding-inline:var(--nk-gutter)}
+
+/* ---- Logo ---- */
+.nk-logo{display:flex;align-items:center;gap:14px;text-decoration:none}
+.nk-logo img{width:40px;height:40px}
+.nk-logo span{font-family:var(--nk-font-display);font-weight:700;font-size:26px;color:var(--nk-text);letter-spacing:-0.01em}
+
+/* ---- Icon helper ---- */
+.nk-ico{display:inline-flex;align-items:center;justify-content:center;flex:none}
+
+/* ---- Buttons ---- */
+.nk-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:var(--nk-font-display);font-weight:700;font-size:18px;line-height:1;
+  border-radius:var(--nk-r-pill);padding:16px 28px;transition:transform .15s ease,background .18s ease,border-color .18s ease,opacity .18s ease;white-space:nowrap}
+.nk-btn:active{transform:scale(.97)}
+.nk-btn--primary{background:var(--nk-purple);border:1px solid var(--nk-purple-deep);color:#fff}
+.nk-btn--primary:hover{background:var(--nk-purple-hover)}
+.nk-btn--outline{background:transparent;border:1px solid var(--nk-purple);color:var(--nk-text)}
+.nk-btn--outline:hover{background:var(--nk-purple-soft)}
+.nk-btn--ghost{background:var(--nk-surface-2);border:1px solid var(--nk-border);color:var(--nk-text);
+  font-weight:500;font-size:18px;letter-spacing:.04em;padding:10px 20px;border-radius:20px}
+.nk-btn--ghost:hover{background:var(--nk-surface-hover)}
+
+/* round arrow button */
+.nk-round{width:44px;height:44px;border-radius:var(--nk-r-icon);display:inline-flex;align-items:center;justify-content:center;
+  transition:transform .15s ease,background .18s ease;flex:none}
+.nk-round--solid{background:var(--nk-purple)}
+.nk-round--solid:hover{background:var(--nk-purple-hover);transform:translateX(3px)}
+.nk-round--outline{border:1px solid var(--nk-text)}
+.nk-round--outline:hover{background:rgba(249,249,249,.14);transform:translateX(3px)}
+
+/* ---- Chips / tags ---- */
+.nk-chip{display:inline-flex;align-items:center;gap:8px;border-radius:var(--nk-r-chip);
+  background:rgba(40,44,45,.5);padding:6px 16px 6px 12px;font-family:var(--nk-font-body);font-size:18px;line-height:20px;color:var(--nk-text);backdrop-filter:blur(4px)}
+.nk-tag{display:inline-flex;align-items:center;background:var(--nk-tag);padding:6px 8px;
+  font-family:var(--nk-font-body);font-size:16px;line-height:1;color:var(--nk-light-meta);border-radius:2px}
+
+/* ---- Heading block (eyebrow defined in the type ramp above) ---- */
+.nk-head{display:flex;flex-direction:column;gap:20px}
+.nk-head h2{font-family:var(--nk-font-display);font-weight:700;font-size:clamp(30px,3.4vw,40px);line-height:1.1;color:var(--nk-text);margin:0}
+
+/* ---- Section scaffolding ---- */
+.nk-section{padding-block:120px}
+.nk-section__top{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:60px}
+
+/* ---- image placeholder ---- */
+.nk-imgph{position:relative;background:#2c3133;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.nk-imgph[data-img]{background-size:cover;background-position:center}
+.nk-imgph .nk-imgicon{opacity:.28;color:#8a9694}
+.nk-dots{display:flex;gap:8px}
+.nk-dot{width:8px;height:8px;border-radius:50%;background:rgba(249,249,249,.55)}
+.nk-dot--on{background:var(--nk-text);width:9px;height:9px}
+
+@media(max-width:900px){
+  :root{--nk-gutter:20px}
+  .nk-logo span{font-size:22px}
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================================
+   2026 marketplace polish — motion, hover, focus, depth
+   ============================================================ */
+
+/* respect reduced-motion */
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+
+/* ---- scroll reveal ---- */
+.nk-reveal{opacity:0;transform:translateY(28px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+.nk-reveal.nk-in{opacity:1;transform:none}
+.nk-reveal[data-delay="1"]{transition-delay:.06s}
+.nk-reveal[data-delay="2"]{transition-delay:.12s}
+.nk-reveal[data-delay="3"]{transition-delay:.18s}
+
+/* ---- accessibility focus ring ---- */
+a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-visible{
+  outline:2px solid var(--nk-purple);outline-offset:3px;border-radius:6px}
+
+/* ---- nav scroll state ---- */
+.nk-nav-bar{transition:background .25s ease,box-shadow .25s ease,border-color .25s ease,height .25s ease}
+.nk-nav-bar.nk-scrolled{background:rgba(27,30,31,.92);box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.nk-link{position:relative;text-decoration:none;transition:color .15s ease}
+.nk-link:hover{color:var(--nk-yellow)}
+.nk-link::after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:2px;background:var(--nk-yellow);transition:right .25s ease}
+.nk-link:hover::after,.nk-link:focus-visible::after{right:0}
+
+/* ---- offer card hover ---- */
+.nk-offer{transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease}
+.nk-offer:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.45)}
+.nk-offer__media{overflow:hidden}
+.nk-offer__media .nk-zoom{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.nk-offer:hover .nk-zoom{transform:scale(1.06)}
+.nk-offer:hover .nk-round--solid{background:var(--nk-purple-hover)}
+
+/* ---- favorite heart ---- */
+.nk-fav{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:20px;
+  background:rgba(27,27,27,.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;
+  transition:transform .18s ease,background .18s ease;z-index:2}
+.nk-fav:hover{background:rgba(27,27,27,.7);transform:scale(1.08)}
+.nk-fav:active{transform:scale(.9)}
+.nk-fav.nk-on svg{animation:nk-pop .32s ease}
+@keyframes nk-pop{0%{transform:scale(.6)}55%{transform:scale(1.25)}100%{transform:scale(1)}}
+
+/* ---- category card hover ---- */
+.nk-cat{transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease}
+.nk-cat:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.4)}
+.nk-cat__img{transition:transform .55s cubic-bezier(.2,.7,.2,1)}
+.nk-cat:hover .nk-cat__img{transform:scale(1.07)}
+.nk-cat__arrow{transition:background .2s ease,border-color .2s ease,transform .2s ease}
+.nk-cat:hover .nk-cat__arrow{background:var(--nk-purple);border-color:var(--nk-purple);transform:translateX(3px)}
+
+/* ---- feature card hover ---- */
+.nk-feature{transition:transform .28s ease,background .28s ease}
+.nk-feature:hover{transform:translateY(-4px);background:rgba(55,63,64,.92)}
+
+/* ---- search bar focus ---- */
+.nk-search{transition:box-shadow .2s ease,border-color .2s ease}
+.nk-search:focus-within{border-color:var(--nk-purple);box-shadow:0 6px 24px rgba(146,99,255,.28)}
+
+/* ---- FAQ hover ---- */
+.nk-faq{transition:border-color .2s ease,background .2s ease,border-radius .2s ease}
+.nk-faq:hover{background:var(--nk-faq-hover)}
+
+/* ---- skeleton / shimmer ---- */
+.nk-skel{position:relative;overflow:hidden;background:#2c3133;border-radius:6px}
+.nk-skel::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);
+  animation:nk-shimmer 1.3s infinite}
+@keyframes nk-shimmer{100%{transform:translateX(100%)}}
+
+/* ---- empty state ---- */
+.nk-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;
+  padding:72px 32px;border:1px dashed var(--nk-border);border-radius:16px;background:rgba(48,53,54,.4)}
+.nk-empty__icon{width:88px;height:88px;border-radius:44px;background:var(--nk-surface);
+  display:flex;align-items:center;justify-content:center}
+
+/* ============================================================
+   Listing bottom-sheet modal
+   ============================================================ */
+.nk-modal-scrim{position:fixed;inset:0;background:rgba(15,17,18,.7);backdrop-filter:blur(6px);z-index:100;
+  display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.nk-modal-scrim.open{opacity:1;pointer-events:auto}
+.nk-sheet{width:100%;max-width:1180px;max-height:92vh;overflow:auto;background:var(--nk-bg);border-radius:24px 24px 0 0;
+  transform:translateY(40px);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.nk-modal-scrim.open .nk-sheet{transform:none}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+/* horizontal card rows (features / testimonials) stack on narrow screens */
+.nk-row{display:flex;gap:20px}
+
+@media(max-width:1100px){
+  .nk-grid-6{grid-template-columns:repeat(2,1fr)!important}
+  .nk-grid-4{grid-template-columns:repeat(2,1fr)!important}
+}
+@media(max-width:980px){
+  .nk-hero-panel{grid-template-columns:1fr!important;padding:36px!important;min-height:0!important;gap:32px!important}
+  .nk-hero-media{min-height:420px!important;order:-1}
+  .nk-detail{grid-template-columns:1fr!important;gap:32px!important}
+  .nk-row{flex-direction:column}
+  /* CTA banner: drop the absolute phone/QR, switch to a single readable column */
+  .nk-cta{min-height:0!important}
+  .nk-cta__media{display:none!important}
+  .nk-cta__body{position:static!important;max-width:none!important;padding:48px 32px!important}
+  .nk-cta__badges{position:static!important;padding:32px 32px 0!important}
+}
+@media(max-width:680px){
+  .nk-grid-6,.nk-grid-4{grid-template-columns:1fr!important}
+  .nk-sheet{padding-bottom:env(safe-area-inset-bottom)}
 }
