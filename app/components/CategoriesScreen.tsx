@@ -7,6 +7,7 @@ import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb } from "./ui";
 import { CategoryTile, CategoryCardSkeleton, EmptyState } from "./cards";
 import { useCategories } from "@/app/lib/categories";
+import { listingSearchHref } from "@/app/lib/search";
 import { mockCategoryCount } from "@/app/lib/mock";
 import { useI18n } from "./I18nProvider";
 
@@ -20,7 +21,7 @@ export function CategoriesScreen() {
   const focusSearch = () => document.getElementById("nk-cats-search-input")?.focus();
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (q.trim()) router.push(`/skelbimai?q=${encodeURIComponent(q.trim())}`);
+    if (q.trim()) router.push(listingSearchHref({ q }));
   };
   const term = q.trim().toLowerCase();
   const all = data ?? [];
@@ -58,7 +59,7 @@ export function CategoriesScreen() {
           ) : list.length ? (
             <div className="nk-grid-cats">
               {list.map((c) => (
-                <CategoryTile key={c.id} title={c.title} count={t.tileCount(mockCategoryCount(c.id))} href={`/skelbimai?cat=${encodeURIComponent(c.id)}`} />
+                <CategoryTile key={c.id} title={c.title} count={t.tileCount(mockCategoryCount(c.id))} href={listingSearchHref({ cat: c.id })} />
               ))}
             </div>
           ) : (

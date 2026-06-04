@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "title": "Naudokis AI and Automated Checks Privacy Appendix",
+    "version": "2026-06-01",
+    "effective_date": "2026-06-01",
+    "last_updated": "2026-06-01",
+    "document_id": "NAUDOKIS-PRIVACY-AI-AUTOMATION-EN-2026-06-01",
+    "document_type": "privacy_appendix"
+  },
+  "toc": [
+    {
+      "id": "13-automated-checks-ai-and-human-review",
+      "label": "Automated checks, AI, and human review",
+      "num": "13"
+    }
+  ],
+  "blocks": [
+    {
+      "t": "p",
+      "md": "This appendix forms part of the Naudokis Privacy Policy and must be interpreted together with the main Policy."
+    },
+    {
+      "t": "h2",
+      "id": "13-automated-checks-ai-and-human-review",
+      "text": "13. Automated checks, AI, and human review"
+    },
+    {
+      "t": "callout",
+      "md": "AI and automated tools may help prepare text, detect risks, or prioritize review, but significant account, payment, Deposit, or moderation decisions are not based solely on an unreviewed AI result where human review is required by law or by this Policy."
+    },
+    {
+      "t": "p",
+      "md": "Naudokis has the right to use rule-based, automated, or semi-automated tools for Platform operation, security, fraud prevention, identity verification, payment and payout readiness, Listing quality, prohibited-item filtering, Content moderation, support, Dispute administration, and product stability."
+    },
+    {
+      "t": "p",
+      "md": "During the launch period, Naudokis does not use a general User fraud score, fully automated account suspensions, or fully automated account terminations."
+    },
+    {
+      "t": "p",
+      "md": "Automated or semi-automated payout holds may be applied for predefined operational reasons, for example:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "an open Dispute;",
+        "a compliance, DAC7, or tax hold;",
+        "disabled Lessor payouts;",
+        "self-billing consent that has not been accepted;",
+        "an escalated late return;",
+        "a condition mismatch or unconfirmed handover."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Such holds may be reviewed by a human where the User submits a substantiated request or where required by law."
+    },
+    {
+      "t": "p",
+      "md": "AI tools may be used for the following limited purposes:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "a User-initiated proposed draft of a Listing description;",
+        "detecting narrow message or Content moderation signals, such as possible prohibited contact details, attempts to complete a transaction outside the Platform, or prohibited-item signals;",
+        "first-line support chats, where an AI assistant may respond directly to a support request and handover to a human is rule-based when a chat threshold is reached or certain signals are detected, as well as response drafts or facilitation of administrator work where such functions are enabled;",
+        "rule-based prohibited-item, review, or security signals."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "When using AI functions, we process only the information required for the specific AI function. For example, the AI Listing description function may use the item title, category, characteristics, condition, and description input you provide. Support or moderation AI functions may use the relevant content of the notice, message, Listing, review, or support request."
+    },
+    {
+      "t": "p",
+      "md": "During the launch period, Naudokis does not use AI tools for broad marketing profiling, identification of sensitive characteristics, or a general User fraud score. Text, photographs, support requests, or other Personal Data submitted by Users are not used to train third-party general models unless Naudokis clearly states otherwise, has an appropriate legal basis, has contractual safeguards, and, where necessary, obtains the User's consent."
+    },
+    {
+      "t": "p",
+      "md": "Where the AI Act or other applicable law requires a transparency notice, Naudokis informs the User that the User is interacting with an AI system or that specific Content was generated or materially altered by an AI tool."
+    },
+    {
+      "t": "p",
+      "md": "During the launch period, Naudokis does not use AI for emotion recognition, biometric categorization, social scoring, or identification of sensitive characteristics. If such or other higher-risk AI functions were considered in the future, they must not be enabled without a separate assessment of lawfulness, necessity, proportionality, security, and, where necessary, impact, as well as clear information to Users."
+    },
+    {
+      "t": "p",
+      "md": "An AI-generated draft Listing description is presented to the User as an auxiliary suggestion. The User must review it, correct it, supplement it, reject it, or replace it with the User's own text, and is responsible for the accuracy, completeness, and lawfulness of the final Listing. Where applicable law requires disclosure of AI use, Naudokis will provide the relevant clear notice in the App or another appropriate interface."
+    },
+    {
+      "t": "p",
+      "md": "AI outputs, risk signals, or automated rules must not be used as the sole basis for a final significant adverse decision concerning account termination, final non-payment of a payout, final non-refund of a Deposit, or a similar legally significant effect, unless this is expressly permitted by applicable law and mandatory safeguards are provided."
+    },
+    {
+      "t": "p",
+      "md": "If you believe that an automated or semi-automated check was incorrect or materially affected your ability to use the Platform, you may contact **info@naudokis.lt** or use the App's support functions to request human review, express your position, and contest the decision."
+    },
+    {
+      "t": "h3",
+      "text": "22.5 Appendix E: AI, automated checks, and human review"
+    },
+    {
+      "t": "p",
+      "md": "Naudokis uses AI or automated tools only for specifically described purposes: suggestions for Listing texts or categories, support response drafts, Content classification, prohibited-item or risk signals, security prioritization, diagnostics, or similar auxiliary functions."
+    },
+    {
+      "t": "p",
+      "md": "During the launch period, such tools are not used for broad marketing profiling, identification of sensitive characteristics, or a general User fraud score."
+    },
+    {
+      "t": "p",
+      "md": "If AI or automated tools are used for a decision that materially affects a User's account, Listing, Reservation, payment, Deposit, or payout, the User is provided with information about such use to the extent required by law and to the extent this does not undermine security or fraud prevention. Where required by law or where the User submits a substantiated complaint, human review must be ensured."
+    },
+    {
+      "t": "p",
+      "md": "Text, photographs, support requests, or other Personal Data submitted by the User are not used to train third-party general models unless Naudokis clearly states otherwise, has an appropriate legal basis, has contractual safeguards, and, where necessary, obtains the User's consent."
+    }
+  ]
+}

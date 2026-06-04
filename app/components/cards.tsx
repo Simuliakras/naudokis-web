@@ -69,13 +69,13 @@ export function CategoryTile({
   href: string;
 }) {
   return (
-    <div className="nk-cat" style={{ position: "relative", height: 300, borderRadius: 16, overflow: "hidden" }}>
+    <div className="nk-cat">
       <Link href={href} className="nk-stretch" aria-label={title} />
-      <div className="nk-cat__img" style={{ position: "absolute", inset: 0, background: "linear-gradient(155deg, var(--nk-card-grad-1), var(--nk-card-grad-2))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div className="nk-cat__img">
         <Icon name="Image" size={52} stroke={1.5} className="nk-imgicon" />
       </div>
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(27,27,27,.35), rgba(27,27,27,.05) 38%, rgba(27,27,27,.65))" }} />
-      <div style={{ position: "absolute", left: 20, right: 20, bottom: 20, display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 12 }}>
+      <div className="nk-cat__overlay" />
+      <div className="nk-cat__content">
         <span style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "28px", color: "var(--nk-text)" }}>{title}</span>
           <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{count}</span>
@@ -90,23 +90,24 @@ export function CategoryTile({
 
 /* ---------------- Category card ---------------- */
 export function CategoryCard({
-  title, onOpen,
+  title, href,
 }: {
   title: string;
-  onOpen?: () => void;
+  href: string;
 }) {
   return (
-    <div className="nk-cat" onClick={onOpen} role="button" tabIndex={0}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onOpen?.(); }}
-      style={{ position: "relative", height: 348, borderRadius: 16, overflow: "hidden", textAlign: "left", cursor: "pointer", width: "100%" }}>
-      <div className="nk-cat__img" style={{ position: "absolute", inset: 0, background: "linear-gradient(155deg, var(--nk-card-grad-1), var(--nk-card-grad-2))", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Icon name="Image" size={56} stroke={1.5} className="nk-imgicon" />
+    <div className="nk-cat">
+      <Link href={href} className="nk-stretch" aria-label={title} />
+      <div className="nk-cat__img">
+        <Icon name="Image" size={52} stroke={1.5} className="nk-imgicon" />
       </div>
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(27,27,27,.45), rgba(27,27,27,.05) 40%, rgba(27,27,27,.55))" }} />
-      <h3 className="nk-h-card" style={{ position: "absolute", left: 20, top: 16, margin: 0, maxWidth: 180 }}>{title}</h3>
-      <span className="nk-cat__arrow nk-round nk-round--outline" style={{ position: "absolute", right: 20, bottom: 20 }}>
-        <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
-      </span>
+      <div className="nk-cat__overlay" />
+      <div className="nk-cat__content">
+        <h3 className="nk-h-row" style={{ margin: 0 }}>{title}</h3>
+        <span className="nk-cat__arrow nk-round nk-round--outline" style={{ flex: "none" }} aria-hidden="true">
+          <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
+        </span>
+      </div>
     </div>
   );
 }
@@ -240,7 +241,7 @@ export function OfferCardSkeleton() {
 /* ---------------- Skeleton category card ---------------- */
 export function CategoryCardSkeleton() {
   return (
-    <div aria-hidden="true" className="nk-skel" style={{ height: 348, borderRadius: 16, position: "relative" }}>
+    <div aria-hidden="true" className="nk-skel" style={{ height: 300, borderRadius: "var(--nk-r-card)", position: "relative" }}>
       <div className="nk-skel" style={{ position: "absolute", top: 16, left: 20, width: "55%", height: 26, background: "rgba(27,27,27,.3)" }} />
       <div className="nk-skel" style={{ position: "absolute", right: 20, bottom: 20, width: 44, height: 44, borderRadius: 22, background: "rgba(27,27,27,.3)" }} />
     </div>

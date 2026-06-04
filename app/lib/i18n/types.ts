@@ -6,17 +6,54 @@ export type FaqItem = { q: string; a: string };
 export type FeatureItem = { icon: IconName; title: string; body: string };
 export type HowItWorksStep = { icon: IconName; title: string; body: string };
 export type FooterLink = { label: string; href: string };
+// A footer category link: localized display `label` + a stable Lithuanian
+// search `q` (shared across locales, since listings are predominantly LT).
+export type FooterCategory = { label: string; q: string };
 export type TestimonialItem = { name: string; role: string; quote: string; avatarTint: string };
 
-export type LegalSubsection = { heading: string; body: string[] };
-export type LegalSection = { id: string; heading: string; body: string[]; subsections?: LegalSubsection[] };
-export type LegalDoc = {
-  metaTitle: string;
-  metaDescription: string;
-  title: string;
-  updated: string; // full label, e.g. "Atnaujinta 2026 m. kovo 1 d."
-  intro: string;
-  sections: LegalSection[];
+// Legal Policy Center — UI chrome strings only. The document content itself
+// comes from app/lib/legal/data/*.json, not the dictionaries.
+export type LegalDict = {
+  // doc-page chrome
+  brandSub: string;        // topbar small label
+  langSwitchLabel: string; // LT/EN toggle group label + aria
+  breadcrumb: string;      // breadcrumb <nav> aria-label
+  policyCenter: string;    // hub name / breadcrumb root
+  inThisDoc: string;       // sidebar TOC heading
+  contents: string;        // drawer heading
+  related: string;         // related-docs heading
+  backTop: string;         // back-to-top aria/title
+  openMenu: string;        // mobile FAB label
+  readingProgress: string; // progress-bar aria
+  effective: string;
+  version: string;
+  updated: string;
+  onlyLt: string;          // LT-only fallback notice
+  briefLabel: string;      // callout label ("Trumpai" / "In brief")
+  company: string;         // footer company line
+  footHelp: string;
+  footWrite: string;
+  termsLabel: string;      // footer link label
+  privacyLabel: string;    // footer link label
+  // hub
+  hubEyebrow: string;
+  hubTitle: string;
+  hubIntro: string;
+  hubMetaDescription: string;
+  featured: string;        // "Start here"
+  read: string;            // "Read"
+  docsWord: string;        // "documents"
+  contacts: string;
+  fullHierarchy: string;   // "Read the full Policy Center document"
+  cGeneral: string;
+  cPrivacy: string;
+  cDsa: string;
+  cSafety: string;
+  appOrEmail: string;
+  ltOnlyBadge: string;     // doc-card badge for LT-only docs
+  searchPlaceholder: string;
+  searchNoResults: string;
+  metaDescriptionFallback: string;
 };
 
 export type Dict = {
@@ -31,6 +68,9 @@ export type Dict = {
     search: string;
     category: string;
     contacts: string;
+    primary: string; // aria-label for the primary <nav> landmark
+    openMenu: string; // aria-label for the mobile burger (closed state)
+    closeMenu: string; // aria-label for the mobile burger (open state)
   };
   hero: {
     badge: string;
@@ -92,7 +132,15 @@ export type Dict = {
     items: FaqItem[];
   };
   footer: {
-    links: FooterLink[];
+    tagline: string;
+    browseHeading: string;
+    allCategories: string;
+    categories: FooterCategory[]; // curated category links (label + stable LT search query)
+    citiesHeading: string;
+    helpHeading: string;
+    help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
+    copyright: string;
+    secure: string; // "Saugūs atsiskaitymai" badge by the payment marks
   };
   detail: {
     metaFallbackTitle: string;
@@ -231,11 +279,5 @@ export type Dict = {
     heading: string; // dropdown header, e.g. "Pasirinkite miestą"
     all: string; // "Visi miestai" / "All cities"
   };
-  legal: {
-    tocHeading: string;
-    crossToTerms: string;
-    crossToPrivacy: string;
-    privacy: LegalDoc;
-    terms: LegalDoc;
-  };
+  legal: LegalDict;
 };

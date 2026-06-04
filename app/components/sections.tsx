@@ -1,37 +1,214 @@
 "use client";
 // Naudokis UI kit — page sections.
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Icon, Logo, Button, AppBadges, SectionHead, Dots, RoundArrow, QR,
+  Icon, type IconName, Logo, Button, AppBadges, SectionHead, Dots, RoundArrow, QR,
 } from "./ui";
 import {
   OfferCard, CategoryCard, FeatureCard, Testimonial, FaqRow, OfferCardSkeleton, CategoryCardSkeleton, EmptyState,
 } from "./cards";
 import { useCategories } from "@/app/lib/categories";
 import { useListings } from "@/app/lib/listings";
-import { LT_CITIES } from "@/app/lib/cities";
+import { LT_CITIES, citySlug } from "@/app/lib/cities";
+import { listingSearchHref } from "@/app/lib/search";
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL } from "@/app/lib/contact";
 import { useI18n } from "./I18nProvider";
-import { locales, defaultLocale, type Locale } from "@/app/lib/i18n/config";
+import { locales, defaultLocale, barePath, type Locale } from "@/app/lib/i18n/config";
 
-/* ---------------- Nav ---------------- */
+/* ---------------- Nav ----------------
+   Translucent sticky bar that condenses on scroll (.nk-scrolled toggled in
+   HomeApp). The "Paieška" ghost button swaps for an inline search once the hero
+   search bar scrolls out of view; on mobile (≤820px) the links collapse into a
+   hamburger drawer. */
 export function Nav({ onSearch }: { onSearch: () => void }) {
   const { dict } = useI18n();
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const burgerRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  // Active-route flag for aria-current — strip any locale prefix to the bare
+  // path (the default locale is unprefixed) before matching.
+  const isCategories = barePath(pathname) === "/kategorijos";
+
+  // Condense the bar once the page scrolls — wired here (not per-page) so it
+  // works on every screen that renders the Nav.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Expand the inline nav search once the hero search bar leaves the viewport.
+  // On pages without a hero search (#nk-hero-search) the observer never fires,
+  // so the ghost button stays.
+  useEffect(() => {
+    const hero = document.getElementById("nk-hero-search");
+    if (!hero || !("IntersectionObserver" in window)) {
+      return;
+    }
+    const io = new IntersectionObserver(([e]) => setSearchExpanded(!e.isIntersecting),
+      { rootMargin: "-80px 0px 0px 0px", threshold: 0 });
+    io.observe(hero);
+    return () => io.disconnect();
+  }, []);
+
+  // Close the drawer when the viewport grows past the mobile breakpoint.
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth > 820) setMenuOpen(false); };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Close the drawer on navigation (the route — not just the hash — changed).
+  // Tracking the previous path in state and adjusting during render is React's
+  // recommended alternative to a setState-in-effect here.
+  const [prevPath, setPrevPath] = useState(pathname);
+  if (prevPath !== pathname) {
+    setPrevPath(pathname);
+    if (menuOpen) {
+      setMenuOpen(false);
+    }
+  }
+
+  // While the drawer is open: move focus to its first item, close on Escape and
+  // return focus to the burger (matching the modal a11y in AppRedirect).
+  useEffect(() => {
+    if (!menuOpen) {
+      return;
+    }
+    drawerRef.current?.querySelector<HTMLElement>("a, button")?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        burgerRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
+  const doSearch = () => { setMenuOpen(false); onSearch(); };
+
   return (
-    <header className="nk-nav-bar" style={{ position: "sticky", top: 0, zIndex: 50, background: "var(--nk-glass-nav)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--nk-border)" }}>
-      <div className="nk-container" style={{ height: 92, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+    <header className={"nk-nav-bar" + (scrolled ? " nk-scrolled" : "")}>
+      <div className="nk-nav-inner nk-container">
         <Logo />
-        <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
-          <button className="nk-btn nk-btn--ghost" onClick={onSearch} style={{ borderColor: "var(--nk-border)" }}>
-            <Icon name="Search" size={17} stroke={2.2} color="var(--nk-text)" /> {dict.nav.search}
-          </button>
-          <Link className="nk-nav nk-link" href="/kategorijos">{dict.nav.category}</Link>
+        <nav className="nk-nav-links" aria-label={dict.nav.primary}>
+          {searchExpanded
+            ? <NavSearch key="navsearch" />
+            : (
+              <button key="navbtn" className="nk-btn nk-btn--ghost nk-fadein" onClick={doSearch} style={{ borderColor: "var(--nk-border)" }}>
+                <Icon name="Search" size={17} stroke={2.2} color="var(--nk-text)" /> {dict.nav.search}
+              </button>
+            )}
+          <Link className="nk-nav nk-link" href="/kategorijos" aria-current={isCategories ? "page" : undefined}>{dict.nav.category}</Link>
           <a className="nk-nav nk-link" href="#kontaktai">{dict.nav.contacts}</a>
           <LocaleSwitcher />
         </nav>
+        <button ref={burgerRef} className="nk-nav-burger" aria-label={menuOpen ? dict.nav.closeMenu : dict.nav.openMenu}
+          aria-expanded={menuOpen} aria-controls="nk-mobile-nav" onClick={() => setMenuOpen((v) => !v)}>
+          <Icon name={menuOpen ? "X" : "Menu"} size={22} stroke={2.2} color="var(--nk-text)" />
+        </button>
+      </div>
+      <div ref={drawerRef} id="nk-mobile-nav" className={"nk-nav-drawer" + (menuOpen ? " open" : "")}>
+        <div className="nk-nav-drawer-inner">
+          <button className="nk-drawer-item" onClick={doSearch}>
+            <Icon name="Search" size={20} stroke={2.2} color="var(--nk-text)" /> {dict.nav.search}
+          </button>
+          <Link className="nk-drawer-item" href="/kategorijos" aria-current={isCategories ? "page" : undefined} onClick={() => setMenuOpen(false)}>
+            <Icon name="LayoutGrid" size={20} stroke={2} color="var(--nk-text)" /> {dict.nav.category}
+          </Link>
+          <a className="nk-drawer-item" href="#kontaktai" onClick={() => setMenuOpen(false)}>
+            <Icon name="MessageCircle" size={20} stroke={2} color="var(--nk-text)" /> {dict.nav.contacts}
+          </a>
+          <div className="nk-drawer-locale"><LocaleSwitcher /></div>
+        </div>
       </div>
     </header>
+  );
+}
+
+/* Inline nav search — compact echo of the hero SearchBar; routes to the feed. */
+function NavSearch() {
+  const { dict } = useI18n();
+  const router = useRouter();
+  const [q, setQ] = useState("");
+  const [city, setCity] = useState("");
+  const go = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push(listingSearchHref({ q, city }));
+  };
+  return (
+    <form className="nk-navsearch nk-fadein" onSubmit={go} role="search">
+      <Icon name="Search" size={17} stroke={2.2} color="var(--nk-text-muted)" />
+      <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={dict.search.placeholder} aria-label={dict.search.inputLabel} />
+      <span className="nk-navsearch__div" />
+      <CityPicker variant="nav" value={city} onChange={setCity} />
+      <button type="submit" className="nk-navsearch__go" aria-label={dict.search.submit}>
+        <Icon name="ArrowRight" size={19} stroke={2.2} color="#fff" />
+      </button>
+    </form>
+  );
+}
+
+/* Shared city dropdown — used by the hero SearchBar and the inline NavSearch.
+   Owns its open state, outside-click + Escape close, and the listbox markup;
+   `variant` switches the light (hero, opens up) / dark (nav, opens down) theme.
+   Icon tints are passed inline because <Icon> always sets style.color, so a CSS
+   class can't override it — layout/text colors live in the .nk-citypick rules. */
+function CityPicker({ value, onChange, variant }: {
+  value: string;
+  onChange: (city: string) => void;
+  variant: "hero" | "nav";
+}) {
+  const { dict } = useI18n();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => { if (ref.current && e.target instanceof Node && !ref.current.contains(e.target)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
+  }, []);
+  const options = useMemo<[string, string][]>(
+    () => [["", dict.cityPicker.all], ...LT_CITIES.map((c) => [c, c] as [string, string])],
+    [dict.cityPicker.all],
+  );
+  const hero = variant === "hero";
+  return (
+    <span ref={ref} className={"nk-citypick nk-citypick--" + variant}>
+      <button type="button" className="nk-citypick__trigger" onClick={() => setOpen((v) => !v)} aria-haspopup="listbox" aria-expanded={open}>
+        <Icon name="MapPin" size={hero ? 20 : 16} stroke={2} color={hero ? "var(--nk-bg)" : "var(--nk-text-muted)"} />
+        <span className={"nk-citypick__val" + (value ? " is-set" : "")}>{value || dict.search.where}</span>
+        <Icon name="ChevronDown" size={hero ? 16 : 14} stroke={2.2} color={hero ? "var(--nk-light-meta)" : "var(--nk-text-muted)"}
+          style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
+      </button>
+      {open && (
+        <span role="listbox" className="nk-citypick__panel">
+          {hero && <span className="nk-citypick__heading">{dict.cityPicker.heading}</span>}
+          {options.map(([val, label]) => {
+            const active = value === val;
+            return (
+              <button key={label} type="button" role="option" aria-selected={active}
+                onClick={() => { onChange(val); setOpen(false); }}
+                className={"nk-citypick__opt" + (active ? " is-active" : "")}>
+                <span className="nk-citypick__opt-l">
+                  <Icon name="MapPin" size={hero ? 17 : 15} stroke={2} color={active ? (hero ? "var(--nk-purple-deep)" : "#fff") : "var(--nk-light-icon)"} /> {label}
+                </span>
+                {active && <Icon name="BadgeCheck" size={hero ? 18 : 16} stroke={2} color={hero ? "var(--nk-purple-deep)" : "#fff"} />}
+              </button>
+            );
+          })}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -40,7 +217,7 @@ function LocaleSwitcher() {
   const pathname = usePathname();
   // Strip a leading locale prefix to get the bare path, then re-prefix for the
   // target locale (default locale is unprefixed). Keeps you on the same page.
-  const bare = pathname.replace(/^\/(lt|en)(?=\/|$)/, "") || "/";
+  const bare = barePath(pathname);
   const href = (l: Locale) => (l === defaultLocale ? bare : `/${l}${bare === "/" ? "" : bare}`);
   return (
     <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -69,9 +246,9 @@ export function Hero() {
     <section id="top" style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/naudokis/hero-pattern.png" alt="" aria-hidden="true"
-        style={{ position: "absolute", right: -80, top: -120, width: 1000, opacity: 0.30, pointerEvents: "none" }} />
+        style={{ position: "absolute", right: -80, top: 0, bottom: 0, height: "100%", width: 1000, objectFit: "cover", objectPosition: "right top", opacity: 0.30, pointerEvents: "none" }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "40px 90px" }}>
-        <div className="nk-hero-panel" style={{ position: "relative", borderRadius: 20, background: "var(--nk-glass)", backdropFilter: "blur(40px)",
+        <div className="nk-hero-panel" style={{ position: "relative", borderRadius: 20, background: "var(--nk-glass)", backdropFilter: "blur(40px)", border: "1px solid var(--nk-hairline)",
           display: "grid", gridTemplateColumns: "1.1fr .9fr", gap: 40, padding: 60, minHeight: 700 }}>
           {/* left column */}
           <div style={{ display: "flex", flexDirection: "column", gap: 36, justifyContent: "center", maxWidth: 680 }}>
@@ -103,24 +280,12 @@ function SearchBar() {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [city, setCity] = useState("");
-  const [openCity, setOpenCity] = useState(false);
-  const cityRef = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const onDoc = (e: MouseEvent) => { if (cityRef.current && e.target instanceof Node && !cityRef.current.contains(e.target)) setOpenCity(false); };
-    document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
-  }, []);
   const go = (e: React.FormEvent) => {
     e.preventDefault();
-    const p = new URLSearchParams();
-    if (q.trim()) p.set("q", q.trim());
-    if (city) p.set("city", city);
-    const qs = p.toString();
-    router.push(`/skelbimai${qs ? `?${qs}` : ""}`);
+    router.push(listingSearchHref({ q, city }));
   };
-  const cityOptions: [string, string][] = [["", dict.cityPicker.all], ...LT_CITIES.map((c) => [c, c] as [string, string])];
   return (
-    <form className="nk-search" onSubmit={go} style={{
+    <form id="nk-hero-search" className="nk-search" onSubmit={go} style={{
       display: "flex", alignItems: "center", gap: 8, background: "var(--nk-light-field)", border: "1px solid var(--nk-light-line)",
       borderRadius: 34, boxShadow: "var(--nk-shadow-input)", padding: "8px 8px 8px 24px", maxWidth: 662,
     }}>
@@ -131,32 +296,7 @@ function SearchBar() {
           style={{ border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 18, color: "var(--nk-bg)", width: 150 }} />
       </span>
       <span style={{ width: 1, height: 36, background: "var(--nk-light-line)" }} />
-      <span ref={cityRef} style={{ position: "relative" }}>
-        <button type="button" onClick={() => setOpenCity((v) => !v)} aria-haspopup="listbox" aria-expanded={openCity}
-          style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: 22, cursor: "pointer", background: openCity ? "var(--nk-light-field-active)" : "transparent", transition: "background .15s ease" }}>
-          <Icon name="MapPin" size={20} color="var(--nk-bg)" stroke={2} />
-          <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 18, color: city ? "var(--nk-bg)" : "var(--nk-text-slate)", whiteSpace: "nowrap" }}>{city || dict.search.where}</span>
-          <Icon name="ChevronDown" size={16} stroke={2.2} color="var(--nk-light-meta)" style={{ transform: openCity ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
-        </button>
-        {openCity && (
-          <span role="listbox" style={{ position: "absolute", bottom: "calc(100% + 12px)", right: 0, minWidth: 200, background: "var(--nk-light-bg)", border: "1px solid var(--nk-light-line)", borderRadius: 16, padding: 8, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 20px 50px rgba(0,0,0,.28)", zIndex: 40 }}>
-            <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--nk-light-meta)", padding: "8px 12px 6px" }}>{dict.cityPicker.heading}</span>
-            {cityOptions.map(([val, label]) => {
-              const active = city === val;
-              return (
-                <button key={label} type="button" role="option" aria-selected={active}
-                  onClick={() => { setCity(val); setOpenCity(false); }}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "11px 12px", borderRadius: 10, cursor: "pointer", textAlign: "left",
-                    background: active ? "var(--nk-purple-soft)" : "transparent", color: active ? "var(--nk-purple-deep)" : "var(--nk-bg)",
-                    fontFamily: "var(--nk-font-body)", fontSize: 17 }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 10 }}><Icon name="MapPin" size={17} color={active ? "var(--nk-purple-deep)" : "var(--nk-light-icon)"} stroke={2} /> {label}</span>
-                  {active && <Icon name="BadgeCheck" size={18} color="var(--nk-purple-deep)" stroke={2} />}
-                </button>
-              );
-            })}
-          </span>
-        )}
-      </span>
+      <CityPicker variant="hero" value={city} onChange={setCity} />
       <button type="submit" className="nk-btn nk-btn--primary" style={{ padding: "16px 36px" }}>{dict.search.submit}</button>
     </form>
   );
@@ -168,14 +308,14 @@ export function Categories() {
   const router = useRouter();
   const t = dict.categories;
   const { data, isLoading, isError, refetch } = useCategories(locale);
-  const list = (data ?? []).slice(0, 6);
+  const list = (data ?? []).slice(0, 8);
   return (
     <section id="kategorijos" className="nk-container" style={{ paddingBlock: "clamp(72px, 10vw, 120px)" }}>
       <SectionHead eyebrow={t.eyebrow} title={t.title}
         action={<Button variant="outline" onClick={() => router.push("/kategorijos")}>{t.all}</Button>} />
       {isLoading ? (
-        <div className="nk-grid-6" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 20 }}>
-          {Array.from({ length: 6 }).map((_, i) => <CategoryCardSkeleton key={i} />)}
+        <div className="nk-grid-cats">
+          {Array.from({ length: 8 }).map((_, i) => <CategoryCardSkeleton key={i} />)}
         </div>
       ) : isError ? (
         <EmptyState icon="LayoutGrid"
@@ -183,8 +323,8 @@ export function Categories() {
           subtitle={t.errorSubtitle}
           actionLabel={t.errorAction} onAction={() => refetch()} />
       ) : (
-        <div className="nk-grid-6 nk-reveal" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 20 }}>
-          {list.map((c) => <CategoryCard key={c.id} title={c.title} onOpen={() => router.push(`/skelbimai?cat=${encodeURIComponent(c.id)}`)} />)}
+        <div className="nk-grid-cats nk-reveal">
+          {list.map((c) => <CategoryCard key={c.id} title={c.title} href={listingSearchHref({ cat: c.id })} />)}
         </div>
       )}
     </section>
@@ -201,7 +341,7 @@ export function Offers() {
     <section id="skelbimai" className="nk-container" style={{ paddingBlock: "clamp(72px, 10vw, 120px)" }}>
       <SectionHead eyebrow={t.eyebrow} title={t.title} />
       {isLoading ? (
-        <div className="nk-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+        <div className="nk-grid-4">
           {Array.from({ length: 4 }).map((_, i) => <OfferCardSkeleton key={i} />)}
         </div>
       ) : isError ? (
@@ -210,7 +350,7 @@ export function Offers() {
           subtitle={t.errorSubtitle}
           actionLabel={t.errorAction} onAction={() => refetch()} />
       ) : (
-        <div className="nk-grid-4 nk-reveal" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+        <div className="nk-grid-4 nk-reveal">
           {list.map((o) => (
             <OfferCard key={o.id} title={o.title} city={o.city} price={o.price} img={o.img}
               unit={dict.common.perDay}
@@ -404,7 +544,7 @@ export function Faq() {
     <section style={{ background: "var(--nk-bg)" }}>
       <div className="nk-container" style={{ paddingBlock: "clamp(80px, 11vw, 140px)", maxWidth: 1320 }}>
         <div className="nk-reveal" style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 40, alignItems: "center", marginBottom: 60 }}>
-          <h2 className="nk-h-card" style={{ margin: 0 }}>{dict.faq.heading}</h2>
+          <h2 className="nk-h-section" style={{ margin: 0 }}>{dict.faq.heading}</h2>
           <p className="nk-body" style={{ margin: 0, maxWidth: 866, color: "var(--nk-yellow)" }}>{dict.faq.subheading}</p>
         </div>
         <div className="nk-reveal" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -415,40 +555,70 @@ export function Faq() {
   );
 }
 
-/* ---------------- Footer ---------------- */
+/* ---------------- Footer ----------------
+   Multi-column marketplace sitemap: brand + Browse / Cities / Help columns, then
+   a bottom bar with copyright, a "secure payments" badge and the payment marks. */
+const FOOTER_SOCIAL: IconName[] = ["Facebook", "Instagram", "Linkedin"];
+const FOOTER_PAY: [string, string][] = [
+  ["pay-visa", "Visa"], ["pay-apple", "Apple Pay"], ["pay-google", "Google Pay"], ["pay-mastercard", "Mastercard"],
+];
+
 export function Footer() {
   const { dict } = useI18n();
+  const t = dict.footer;
   return (
-    <footer id="kontaktai" style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
+    <footer id="kontaktai" className="nk-footer">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/naudokis/footer-pattern.png" alt="" aria-hidden="true" style={{ position: "absolute", right: 0, top: 0, width: 1053, height: "100%", objectFit: "cover", objectPosition: "right", opacity: 0.34 }} />
-      <div className="nk-container" style={{ position: "relative", paddingBlock: 80 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 40, flexWrap: "wrap" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <img className="nk-footer__pattern" src="/naudokis/footer-pattern.png" alt="" aria-hidden="true" />
+      <div className="nk-container">
+        <div className="nk-footer__top">
+          <div className="nk-footer__brand">
             <Logo />
-            <div style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "nowrap" }}>
-              <span className="nk-nav" style={{ whiteSpace: "nowrap" }}>+370 643 49559</span>
-              <span className="nk-nav" style={{ color: "var(--nk-text-2)", whiteSpace: "nowrap" }}>info@naudokis.lt</span>
+            <p className="nk-footer__tagline">{t.tagline}</p>
+            <div className="nk-footer__contact">
+              <a href={CONTACT_PHONE_TEL}><Icon name="Phone" size={17} stroke={2} color="var(--nk-text-muted)" /> {CONTACT_PHONE}</a>
+              <a href={"mailto:" + CONTACT_EMAIL}><Icon name="Mail" size={17} stroke={2} color="var(--nk-text-muted)" /> {CONTACT_EMAIL}</a>
             </div>
-            <div style={{ display: "flex", gap: 16 }}>
-              {(["Facebook", "Instagram", "Linkedin"] as const).map((n) => (
-                <a key={n} className="nk-link" href="#" aria-label={n} aria-disabled="true" onClick={(e) => e.preventDefault()}
-                  style={{ width: 24, height: 24, display: "flex" }}><Icon name={n} size={22} color="var(--nk-text)" stroke={1.8} /></a>
+            <div className="nk-footer__social">
+              {FOOTER_SOCIAL.map((n) => (
+                <a key={n} href="#" aria-label={n} aria-disabled="true" onClick={(e) => e.preventDefault()}>
+                  <Icon name={n} size={20} color="var(--nk-text)" stroke={1.8} />
+                </a>
               ))}
             </div>
+            <AppBadges footer={true} height={46} />
           </div>
-          <AppBadges footer={true} height={48} />
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 24, marginTop: 64, flexWrap: "wrap" }}>
-          <nav style={{ display: "flex", gap: 34, flexWrap: "wrap" }}>
-            {dict.footer.links.map((link) => (
-              <Link key={link.href} className="nk-nav nk-link" href={link.href} style={{ color: "var(--nk-text-2)", whiteSpace: "nowrap" }}>{link.label}</Link>
+
+          <nav className="nk-footer__col" aria-label={t.browseHeading}>
+            <h4>{t.browseHeading}</h4>
+            <Link href="/kategorijos">{t.allCategories}</Link>
+            {t.categories.map((c) => (
+              <Link key={c.q} href={listingSearchHref({ q: c.q })}>{c.label}</Link>
             ))}
           </nav>
-          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-            {([["pay-visa", "Visa"], ["pay-apple", "Apple Pay"], ["pay-google", "Google Pay"], ["pay-mastercard", "Mastercard"]] as const).map(([f, a]) => (
+
+          <nav className="nk-footer__col" aria-label={t.citiesHeading}>
+            <h4>{t.citiesHeading}</h4>
+            {LT_CITIES.map((c) => (
+              <Link key={c} href={`/miestai/${citySlug(c)}`}>{c}</Link>
+            ))}
+          </nav>
+
+          <nav className="nk-footer__col" aria-label={t.helpHeading}>
+            <h4>{t.helpHeading}</h4>
+            {t.help.map((link) => (
+              <Link key={link.href} href={link.href}>{link.label}</Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="nk-footer__bottom">
+          <span className="nk-footer__legal">{t.copyright}</span>
+          <div className="nk-footer__pay">
+            <span className="nk-footer__secure"><Icon name="ShieldCheck" size={17} color="var(--nk-green)" stroke={2} /> {t.secure}</span>
+            {FOOTER_PAY.map(([f, a]) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={f} src={`/naudokis/${f}.png`} alt={a} style={{ height: 36, width: "auto" }} />
+              <img key={f} src={`/naudokis/${f}.png`} alt={a} style={{ height: 30, width: "auto" }} />
             ))}
           </div>
         </div>

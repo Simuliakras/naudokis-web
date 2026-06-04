@@ -1,0 +1,229 @@
+{
+  "meta": {
+    "title": "„Naudokis“ atsiliepimų, paieškos ir reitingavimo taisyklės",
+    "version": "2026-06-01",
+    "effective_date": "2026-06-01",
+    "last_updated": "2026-06-01",
+    "document_id": "NAUDOKIS-REVIEWS-RANKING-LT-2026-06-01",
+    "document_type": "reviews_search_ranking_policy"
+  },
+  "toc": [
+    {
+      "id": "1-pagrindinis-principas",
+      "label": "Pagrindinis principas",
+      "num": "1"
+    },
+    {
+      "id": "2-kas-gali-palikti-atsiliepima",
+      "label": "Kas gali palikti atsiliepimą",
+      "num": "2"
+    },
+    {
+      "id": "3-kas-leidziama-atsiliepimuose",
+      "label": "Kas leidžiama atsiliepimuose",
+      "num": "3"
+    },
+    {
+      "id": "4-kas-draudziama-atsiliepimuose",
+      "label": "Kas draudžiama atsiliepimuose",
+      "num": "4"
+    },
+    {
+      "id": "5-atsiliepimu-moderavimas",
+      "label": "Atsiliepimų moderavimas",
+      "num": "5"
+    },
+    {
+      "id": "6-atsiliepimu-skundimas",
+      "label": "Atsiliepimų skundimas",
+      "num": "6"
+    },
+    {
+      "id": "7-paieskos-ir-matomumo-signalai",
+      "label": "Paieškos ir matomumo signalai",
+      "num": "7"
+    },
+    { "id": "8-mokamas-matomumas", "label": "Mokamas matomumas", "num": "8" },
+    {
+      "id": "9-draudziamas-manipuliavimas",
+      "label": "Draudžiamas manipuliavimas",
+      "num": "9"
+    },
+    {
+      "id": "10-verslo-naudotoju-skaidrumas",
+      "label": "Verslo naudotojų skaidrumas",
+      "num": "10"
+    }
+  ],
+  "blocks": [
+    {
+      "t": "p",
+      "md": "Šios taisyklės paaiškina, kaip „Naudokis“ tvarko atsiliepimus, reitingus, skelbimų matomumą, paiešką ir rekomendacijas."
+    },
+    {
+      "t": "h2",
+      "id": "1-pagrindinis-principas",
+      "text": "1. Pagrindinis principas"
+    },
+    {
+      "t": "p",
+      "md": "Atsiliepimai turi atspindėti realią nuomos patirtį. Skelbimų matomumas turi būti grindžiamas naudotojui aktualiais, saugumo ir paslaugos kokybės požiūriu pagrįstais signalais, o ne paslėptais susitarimais ar manipuliacijomis."
+    },
+    {
+      "t": "h2",
+      "id": "2-kas-gali-palikti-atsiliepima",
+      "text": "2. Kas gali palikti atsiliepimą"
+    },
+    {
+      "t": "p",
+      "md": "Atsiliepimą gali palikti tik rezervacijos šalys, kurios realiai dalyvavo per Platformą patvirtintoje rezervacijoje. „Naudokis“ gali neleisti palikti atsiliepimo arba jį pašalinti, jei:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "Rezervacija nebuvo realiai patvirtinta ar įvykdyta;",
+        "atsiliepimas paliktas ne tos rezervacijos šalies;",
+        "atsiliepimas susijęs ne su konkrečia nuomos patirtimi;",
+        "atsiliepimu siekiama šantažuoti, spausti ar keršyti;",
+        "už atsiliepimą buvo siūlytas atlygis, nuolaida ar kita paskata;",
+        "atsiliepime yra neteisėtas, įžeidus, diskriminacinis, klaidinantis ar asmens duomenis nepagrįstai atskleidžiantis turinys."
+      ]
+    },
+    {
+      "t": "h2",
+      "id": "3-kas-leidziama-atsiliepimuose",
+      "text": "3. Kas leidžiama atsiliepimuose"
+    },
+    { "t": "p", "md": "Leidžiama sąžiningai aprašyti:" },
+    {
+      "t": "ul",
+      "items": [
+        "daikto būklę ir atitikimą skelbimui;",
+        "perdavimo ir grąžinimo aiškumą;",
+        "komunikaciją;",
+        "punktualumą;",
+        "instrukcijų laikymąsi;",
+        "žalos, vėlavimo ar ginčo patirtį, jei ji aprašoma faktiškai ir nepiktnaudžiaujant."
+      ]
+    },
+    {
+      "t": "h2",
+      "id": "4-kas-draudziama-atsiliepimuose",
+      "text": "4. Kas draudžiama atsiliepimuose"
+    },
+    { "t": "p", "md": "Draudžiama skelbti:" },
+    {
+      "t": "ul",
+      "items": [
+        "grasinimus, priekabiavimą, neapykantą ar diskriminaciją;",
+        "nepagrįstus kaltinimus nusikaltimu;",
+        "trečiųjų asmenų asmens duomenis, adresus, dokumentų duomenis ar kitą jautrią informaciją;",
+        "melagingą informaciją, kurios tikslas pakenkti reputacijai;",
+        "reklamą, nuorodas, kvietimus mokėti ar bendrauti ne per Platformą;",
+        "turinį, kuris pažeidžia Naudojimosi sąlygas ar teisės aktus."
+      ]
+    },
+    {
+      "t": "h2",
+      "id": "5-atsiliepimu-moderavimas",
+      "text": "5. Atsiliepimų moderavimas"
+    },
+    {
+      "t": "p",
+      "md": "„Naudokis“ gali automatiškai arba rankiniu būdu peržiūrėti atsiliepimus. Peržiūra gali būti pradėta prieš paskelbimą arba po paskelbimo, ypač jei gaunamas skundas, atsiliepimas susijęs su aktyviu ginču arba jame yra galimai neteisėtas turinys."
+    },
+    { "t": "p", "md": "Galimi sprendimai:" },
+    {
+      "t": "ul",
+      "items": [
+        "atsiliepimą paskelbti;",
+        "atmesti;",
+        "paslėpti iki peržiūros pabaigos;",
+        "pašalinti dalį, kuri pažeidžia taisykles;",
+        "pašalinti visą atsiliepimą;",
+        "apriboti naudotojo teisę palikti atsiliepimus;",
+        "taikyti paskyros ar skelbimo apribojimus, jei atsiliepimų sistema naudojama piktnaudžiavimui."
+      ]
+    },
+    {
+      "t": "h2",
+      "id": "6-atsiliepimu-skundimas",
+      "text": "6. Atsiliepimų skundimas"
+    },
+    {
+      "t": "p",
+      "md": "Naudotojas gali skųsti atsiliepimą per Programėlę arba el. paštu **info@naudokis.lt**. Skunde reikia nurodyti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "kurį atsiliepimą skundžiate;",
+        "kodėl manote, kad jis pažeidžia taisykles;",
+        "kokius įrodymus turite;",
+        "ar atsiliepimas susijęs su aktyviu ginču dėl žalos, Užstato, atšaukimo ar mokėjimo."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Vien tai, kad atsiliepimas yra neigiamas, nėra pagrindas jį pašalinti. „Naudokis“ šalina arba riboja atsiliepimus, kai yra taisyklių pažeidimas, neteisėtas turinys, piktnaudžiavimas arba būtinybė apsaugoti kitos šalies teises."
+    },
+    {
+      "t": "h2",
+      "id": "7-paieskos-ir-matomumo-signalai",
+      "text": "7. Paieškos ir matomumo signalai"
+    },
+    {
+      "t": "p",
+      "md": "Skelbimų paieška, filtrai, rekomendacijos ir matomumas gali būti grindžiami tokiais signalais:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "naudotojo paieškos užklausa, vieta, datos, kategorija ir filtrai;",
+        "daikto prieinamumas konkrečiu laikotarpiu;",
+        "kaina, Užstatas, pristatymo ar atsiėmimo būdas;",
+        "skelbimo išsamumas, nuotraukų kokybė ir aktualumas;",
+        "Nuomotojo atsakymo greitis, atšaukimo istorija, užbaigtų rezervacijų rodikliai;",
+        "atsiliepimai, reitingai ir pasitikėjimo signalai;",
+        "saugumo, moderavimo, draudžiamų daiktų ar rizikos apribojimai;",
+        "naujumas, populiarumas, naudotojo sąveikos ir Platformos techninis veikimas;",
+        "verslo naudotojo statusas, kai jis turi būti aiškiai parodytas vartotojui."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "„Naudokis“ gali koreguoti matomumą, jei Skelbimas yra neišsamus, klaidinantis, rizikingas, pažeidžia taisykles, turi aktyvių ginčų arba Nuomotojo paskyrai taikomi apribojimai."
+    },
+    { "t": "h2", "id": "8-mokamas-matomumas", "text": "8. Mokamas matomumas" },
+    {
+      "t": "p",
+      "md": "Jei Platformoje būtų įjungtas mokamas skelbimo paryškinimas, reklaminis iškėlimas ar kitas mokamas matomumo didinimas, tai turi būti aiškiai pažymėta Programėlėje. Kol tokia funkcija nepažymėta, skelbimų matomumas grindžiamas Platformos paieškos, kokybės, prieinamumo, saugumo ir aktualumo signalais."
+    },
+    {
+      "t": "h2",
+      "id": "9-draudziamas-manipuliavimas",
+      "text": "9. Draudžiamas manipuliavimas"
+    },
+    { "t": "p", "md": "Naudotojams draudžiama:" },
+    {
+      "t": "ul",
+      "items": [
+        "kurti netikras rezervacijas ar atsiliepimus;",
+        "naudoti kelias paskyras reitingui kelti ar bloginti;",
+        "siūlyti atlygį už teigiamą atsiliepimą arba už neigiamo atsiliepimo nepalikimą;",
+        "grasinti neigiamu atsiliepimu norint gauti nepagrįstos naudos;",
+        "sistemingai nukreipti sandorius ne per Platformą, kad būtų apeiti reitingai, mokėjimai ar saugumo procesai;",
+        "naudoti automatizuotas priemones skelbimų matomumui manipuliuoti."
+      ]
+    },
+    {
+      "t": "h2",
+      "id": "10-verslo-naudotoju-skaidrumas",
+      "text": "10. Verslo naudotojų skaidrumas"
+    },
+    {
+      "t": "p",
+      "md": "Kai Nuomotojas veikia kaip Verslo naudotojas ar Prekiautojas, Platforma gali rodyti papildomus verslo statuso, atstovavimo, atsiskaitymo ar vartotojų informavimo duomenis. Šie duomenys gali turėti įtakos vartotojo pasitikėjimui ir Skelbimo matomumui, bet negali būti naudojami klaidinančiai."
+    }
+  ]
+}

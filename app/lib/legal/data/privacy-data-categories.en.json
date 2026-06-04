@@ -1,0 +1,429 @@
+{
+  "meta": {
+    "title": "Naudokis Data Categories Privacy Appendix",
+    "version": "2026-06-01",
+    "effective_date": "2026-06-01",
+    "last_updated": "2026-06-01",
+    "document_id": "NAUDOKIS-PRIVACY-DATA-CATEGORIES-EN-2026-06-01",
+    "document_type": "privacy_appendix"
+  },
+  "toc": [
+    {
+      "id": "6-what-personal-data-we-process",
+      "label": "What Personal Data we process",
+      "num": "6"
+    }
+  ],
+  "blocks": [
+    {
+      "t": "p",
+      "md": "This appendix forms part of the Naudokis Privacy Policy and must be interpreted together with the main Policy."
+    },
+    {
+      "t": "h2",
+      "id": "6-what-personal-data-we-process",
+      "text": "6. What Personal Data we process"
+    },
+    {
+      "t": "callout",
+      "md": "The scope of data processed depends on whether you only browse, have an account, list items, reserve, use payments, identity verification, business functions, or support or Dispute processes."
+    },
+    {
+      "t": "p",
+      "md": "The scope of data processed depends on how you use the Platform."
+    },
+    { "t": "h3", "text": "6.1 Account, authentication, and profile data" },
+    {
+      "t": "p",
+      "md": "We process first name, last name or initial, email address, telephone number, authentication records, social login identifiers if you choose such login method, language, profile photograph, profile text, account type, public display name, membership start date, account status, settings status, User choices, and account security information."
+    },
+    {
+      "t": "p",
+      "md": "We retain records of acceptance of the applicable Terms of Use, Privacy Policy, and other mandatory legal documents, including timestamp, source, IP address, user agent, App version, locale, and related audit metadata."
+    },
+    {
+      "t": "p",
+      "md": "A public profile may display limited identity and reputation information, for example first name and last-name initial, profile photograph, description, verification badge, active Listings, Lessor statistics, ratings, and reviews."
+    },
+    {
+      "t": "p",
+      "md": "Business User profiles may display business or Trader information, for example public business name, legal name, registration number, country, VAT status indicator, and Consumer rights information where required by legislation or Platform functions."
+    },
+    {
+      "t": "h3",
+      "text": "6.2 Identity, email, and telephone verification data"
+    },
+    {
+      "t": "callout",
+      "md": "Identity and contact verification is used for trust, security, payments, payouts, fraud prevention, and compliance requirements. Naudokis usually does not retain a permanent archive of raw documents unless this is needed for a clearly stated purpose."
+    },
+    {
+      "t": "p",
+      "md": "Naudokis requires verification for certain actions important for trust, security, payments, or compliance requirements, including publication of Listings, reservation of items, payout setup, Dispute resolution, and fraud prevention."
+    },
+    {
+      "t": "p",
+      "md": "We may process only information necessary for the specific verification, security, or compliance purpose, including:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "verification status, session identifiers, and timestamps;",
+        "rejection reasons, retry information, and expiry dates;",
+        "provider results and selected identity attributes;",
+        "duplication or fraud signals;",
+        "document expiry, legal name, date of birth, and other information provided by the verification provider."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Identity verification is provided by **Didit**. Didit may process identity document images, document verification data, face or liveness check data, technical verification signals, and related information under its contract with Naudokis and according to the legal requirements applicable to Didit."
+    },
+    {
+      "t": "p",
+      "md": "Where Didit acts on Naudokis instructions, Didit acts as a Processor. Where Didit must independently perform legal, security, or regulatory obligations, it may act as an independent Controller under its own privacy notices and contracts."
+    },
+    {
+      "t": "p",
+      "md": "Face or liveness check data is used only for identity document, liveness, age, fraud-prevention, and verification purposes. Naudokis does not use it for general biometric categorization, emotion recognition, identification of sensitive characteristics, marketing profiling, or a general User reputation score."
+    },
+    {
+      "t": "p",
+      "md": "Where special rules for categories of Personal Data apply by law to a specific aspect of such Processing, it must be based on an appropriate legal basis, an assessment of necessity and proportionality, and appropriate safeguards."
+    },
+    {
+      "t": "p",
+      "md": "Naudokis usually retains verification status, audit information, verification-validity information, and selected verification results, not a permanent archive of raw identity documents. Raw identity document images are retained in Naudokis systems only where and only to the extent necessary for a specific verification, Stripe Connect, Dispute, security, fraud, payment, tax, or legal-claim purpose."
+    },
+    {
+      "t": "p",
+      "md": "For fraud-prevention purposes, Naudokis has the right to retain a cryptographically protected technical security tag. It helps determine whether the same identity document or personal identification code is used to create multiple accounts."
+    },
+    {
+      "t": "p",
+      "md": "This tag is not the raw document number or personal identification code and must be created and retained so that Naudokis does not use it to reconstruct the original document number or personal identification code. The technical security tag is used only to detect multiple accounts, abuse, and fraud, is not used for marketing, general User profiling, or a general reputation score, and is periodically reviewed according to retention necessity."
+    },
+    {
+      "t": "p",
+      "md": "During the launch period, this technical security tag is retained as part of the identity verification record while the account is active and to the extent necessary to manage risks relating to multiple accounts, bypassing an account block or other restrictions, payment fraud, or security."
+    },
+    {
+      "t": "p",
+      "md": "Upon final account deletion, this record is usually deleted together with the identity verification record, unless the specific record must be temporarily retained on a limited basis because of an active investigation, Dispute, payment Dispute, legal obligation, or legal defence."
+    },
+    {
+      "t": "p",
+      "md": "If a Lessor completes the Stripe Connect registration or onboarding process, Naudokis has the right to transfer to Stripe verified identity attributes received from Didit and, where necessary, identity document images. Such data may also be transferred where required for payment, anti-money laundering, sanctions, tax, or payout compliance purposes."
+    },
+    {
+      "t": "p",
+      "md": "Transferred attributes may include, for example, first name, last name, date of birth, address, or document information."
+    },
+    {
+      "t": "p",
+      "md": "Stripe processes this data as an independent Controller for its regulated payment, KYC, sanctions, fraud-prevention, tax, and Dispute-handling purposes under the Stripe privacy notice. For certain technical operations, Stripe may also act as a Naudokis service provider or Processor."
+    },
+    {
+      "t": "p",
+      "md": "Identity status verified in the Naudokis system may be considered valid for up to **730 days** (24 months), unless the identity document expires earlier, a security or fraud risk arises, legal requirements change, the payment provider requires re-check, or re-verification is necessary because of Platform functions."
+    },
+    { "t": "h3", "text": "6.3 Business and tax data" },
+    {
+      "t": "p",
+      "md": "**This section is most important for Business Users, Traders, and their representatives.**"
+    },
+    {
+      "t": "p",
+      "md": "If you use a business account, act as a Trader, Business Lessor, or Business Renter, or represent a Business User, we process business, representation, payment, and tax information, including:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "the legal business name, public business name, registration number, country, and registered office address;",
+        "billing email address, billing telephone number, VAT status, and VAT identification number, where applicable;",
+        "confirmation of business representation, business verification status, and Stripe business profile status;",
+        "self-billing consent;",
+        "the tax status of the seller, buyer, Lessor, Renter, or Trader;",
+        "tax identifiers, DAC7 declarations, and seller, buyer, or Business User reports;",
+        "invoice data and compliance status."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "If you provide an EU VAT identification number in a business function for B2B settlement, invoicing, or tax compliance purposes, Naudokis has the right to perform a **VAT number format check and a VIES check through the European Commission system**."
+    },
+    {
+      "t": "p",
+      "md": "Such a check is carried out only where it is required for an actual Platform function or legal obligation. The check result (valid or invalid), the European Commission VIES request identifier, and the time of the check may be retained for Reservation, invoice, and tax audit purposes."
+    },
+    {
+      "t": "p",
+      "md": "DAC7 or similar platform-reporting data is collected and used only to the extent necessary to determine or perform applicable tax obligations. Because the scope of DAC7 depends on the activity category and legislation, Naudokis has the right to request information to determine status, but reports to tax authorities only those Users, transactions, or activities that must be reported under applicable law."
+    },
+    { "t": "h3", "text": "6.4 Listing and rented-item data" },
+    {
+      "t": "p",
+      "md": "We process Listing titles, descriptions, categories, attributes, condition, replacement value, daily price, Deposit amount, discounts, availability, cancellation policy, delivery or pickup methods, approximate or precise location information, photographs, images, moderation status, notices about Listings, deletion, suspension, or restriction records, and inputs and outputs of AI-generated Listing descriptions if you use this function."
+    },
+    {
+      "t": "p",
+      "md": "In public Listings, we do not display the owner's email address, precise private pickup coordinates, detailed delivery data, or other sensitive information until such information is necessary for a confirmed Reservation, handover, return, security, Dispute, or legal purpose."
+    },
+    { "t": "h3", "text": "6.5 Reservations and payments" },
+    {
+      "t": "p",
+      "md": "We process Reservation request IDs, Listing IDs, Lessor and Renter IDs, rental dates, Reservation status, delivery or pickup method, delivery or handover address information, rental duration, price breakdown, platform fees, delivery fees, discounts, credits, Deposits, fixed records of cancellation policies, and payment, refund, payout, payout hold, and repeat payment attempt statuses."
+    },
+    {
+      "t": "p",
+      "md": "We also process Stripe payment, customer, connected-account, transfer, and payout identifiers, Stripe Transfers records, transfer reversal or adjustment records, payment Dispute and chargeback events, reconciliation records, and payment accounting events."
+    },
+    {
+      "t": "p",
+      "md": "Where required for a specific transaction, we also process B2B settlement data, self-billing data, VAT data, i.SAF and other tax records, and business-party identifiers."
+    },
+    {
+      "t": "p",
+      "md": "During the launch period, if a Deposit applies to a Reservation, it is usually recorded as included in the Stripe payment authorization together with the Reservation payment. It is recorded as charged after the Lessor's acceptance and successful payment completion, unless the specific payment interface clearly states otherwise."
+    },
+    {
+      "t": "p",
+      "md": "Naudokis does not retain all payment card numbers. Card data, payment methods, and part of payment compliance information are processed by **Stripe**. Stripe may act as an independent Controller where it processes data according to payment, financial services, fraud prevention, anti-money laundering, sanctions, payment Dispute, tax, or other legislative requirements."
+    },
+    { "t": "h3", "text": "6.6 Handover, return, and Disputes" },
+    {
+      "t": "p",
+      "md": "We process information required to assess item condition, safety, damage, loss, delay, improper use, or a Dispute. This may include:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "pickup and return confirmations, condition status, notes, and timestamps;",
+        "uploaded photographic, video, or document evidence and evidence metadata;",
+        "problem reports and product safety notices;",
+        "Dispute reasons, requested outcomes, and counter-evidence information;",
+        "administrator or support-team notes, Dispute deadlines, and Dispute decisions;",
+        "Deposit allocation records and payout hold reasons."
+      ]
+    },
+    { "t": "h3", "text": "6.7 Location, address, and delivery data" },
+    {
+      "t": "p",
+      "md": "Depending on the function used, we process address search terms, location identifiers, normalized address data, city, administrative unit, postal code, country, coordinates, distance calculations, pickup area, parcel-terminal information, courier delivery data, and User delivery data."
+    },
+    {
+      "t": "p",
+      "md": "During the launch period, the address scope of Listings and Reservations is usually limited to Lithuania, but the technical address autocomplete request may use the country code provided in the App or API."
+    },
+    {
+      "t": "p",
+      "md": "An external open-source reverse geocoding provider (OpenStreetMap Nominatim) may be used to determine the administrative unit or district of a Listing location, and only coordinates, without direct identifiers, are transferred to it."
+    },
+    {
+      "t": "p",
+      "md": "We process location and address data for Listings, search, price estimates, delivery, handover, return, security, fraud prevention, and Dispute resolution. Currently Naudokis does not collect continuous background location data. If such a function were implemented, this Policy and mobile App permission notices would be updated before collecting such data."
+    },
+    {
+      "t": "h3",
+      "text": "6.8 Messages, support, notifications, and moderation data"
+    },
+    {
+      "t": "p",
+      "md": "We process Platform messages, support requests, Reservation or Listing context, message attachments, image metadata, reactions, read status, support categories, priorities, AI support metadata, escalation reasons, User notices, Listing notices, review notices, block and mute records, moderation violations, Content moderation decisions, and related audit records."
+    },
+    {
+      "t": "p",
+      "md": "Messages are linked to Listings, Reservations, and support processes. Naudokis is not an open User directory."
+    },
+    {
+      "t": "h3",
+      "text": "6.9 Reviews, ratings, favorite Listings, and referrals"
+    },
+    {
+      "t": "p",
+      "md": "We process ratings, reviews, the right to leave a review, notices about reviews, double-blind review status, moderation actions, favorite Listings, referral codes, referral applications, reward amounts, reward status, reward credits, device or installation signals, pseudonymized IP signals, fraud risk assessment signals, and administrator review results."
+    },
+    { "t": "h3", "text": "6.10 Device, notification, and diagnostic data" },
+    {
+      "t": "p",
+      "md": "We process device, notification, and diagnostic data, including:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "device type, operating system, platform, and App version;",
+        "installation identifier, device identifier where provided, and Expo push-notification token;",
+        "notification settings, language, delivery logs, and internal notification inbox status;",
+        "IP address, user agent, request identifiers, and correlation identifiers;",
+        "diagnostic data, error or crash logs, infrastructure and diagnostic logs, and App usage events."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Necessary technical, security, and diagnostic data is processed separately to ensure Platform operation, security, and stability."
+    },
+    {
+      "t": "p",
+      "md": "During the launch period, Naudokis has the right to use Amplitude as a client-side product analytics technology, but non-essential product analytics is not enabled before obtaining applicable consent where required by law."
+    },
+    {
+      "t": "p",
+      "md": "Third-party diagnostic and monitoring tools, for example AWS CloudWatch on the server side and Sentry on the client side, are used during the launch period for error monitoring, service stability, and security. The list of these providers and technologies is provided in Section 6.12. We will provide advance information in this Policy about the inclusion of new product analytics or diagnostic providers and, where required by legislation, obtain consent."
+    },
+    {
+      "t": "p",
+      "md": "The mobile App may use Expo or other mobile-app technical modules required for App operation, push notifications, session security, permission management, and technical stability. The following indicates which main SDKs, Cookies, and similar technologies are necessary and which require consent:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "**Necessary (strictly necessary) technologies** - Expo and related technical modules, session and security tokens, local storage for authentication and saving settings, Expo Push notification tokens, as well as client-side error and diagnostic tools necessary for service stability and security, for example Sentry. Unnecessary Personal Data is removed from these tools where possible. These technologies are required for the Platform to work, be secure, and provide the functions you request, and therefore are used without separate consent on the basis of legitimate interest or contract performance.",
+        "**Consent-required or optional technologies** - client-side product analytics (Amplitude). Non-essential analytics, advertising, attribution, or remarketing technologies are not enabled before obtaining applicable consent where required by law."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "The current list of main providers and technologies, including which are necessary and which require consent, is provided in Section 6.12 of this Policy. You may manage your choices in the App or device privacy settings where such option is available."
+    },
+    {
+      "t": "p",
+      "md": "Naudokis also processes an **email delivery rejection and complaint list** (suppression list) to avoid further sending to addresses that rejected delivery or submitted a spam complaint. This list is processed on the basis of legitimate interest in order to improve delivery and reduce operator load."
+    },
+    {
+      "t": "p",
+      "md": "Where a User registers multiple devices or languages, **push notifications may be delivered separately to each registered device and language**. This may mean that you receive more than one notification about the same event."
+    },
+    {
+      "t": "p",
+      "md": "For security and abuse-prevention purposes, Naudokis briefly processes information about failed login attempts, registration attempts, and payment requests linked to an email address, IP address, or account. This data is used for rate limiting and account security and is retained only for as long as necessary to apply the relevant security measures."
+    },
+    { "t": "h3", "text": "6.11 Cookies and similar technologies" },
+    {
+      "t": "p",
+      "md": "Naudokis is primarily a mobile App. The App and related web or administration interfaces may use local storage, SDK identifiers, session tokens, push-notification tokens, Cookies, or similar technologies for authentication, security, fraud prevention, settings, service operation, analytics where activated, and diagnostics."
+    },
+    {
+      "t": "p",
+      "md": "Strictly necessary technologies are used so that the Platform works, is secure, remembers your choices, and can provide the functions you request. Non-essential analytics, marketing, or similar technologies are used only where we have an appropriate legal basis, including consent where required by law. You may manage your choices in the App or device settings where such options are available."
+    },
+    { "t": "h3", "text": "6.12 Launch vendors, SDKs, and technology data" },
+    {
+      "t": "p",
+      "md": "During the launch period, Naudokis has the right to use the following main vendors and technologies where the relevant function is enabled or where vendor keys or configuration are active in the production environment:"
+    },
+    {
+      "t": "table",
+      "head": [
+        "Category",
+        "Vendor or technology",
+        "Typical data",
+        "Main purpose",
+        "Notes"
+      ],
+      "rows": [
+        [
+          "Payments",
+          "Stripe, Stripe Connect",
+          "payment identifiers, customer and connected-account identifiers, payment, transfer, refund, Dispute, and compliance records",
+          "payments, payouts, refunds, payment Disputes, financial and regulatory compliance",
+          "Stripe acts in certain cases as an independent Controller"
+        ],
+        [
+          "Identity verification",
+          "Didit and Stripe Connect KYC",
+          "verification status, document and identity attributes, date of birth, compliance results, audit records",
+          "identity, age, Lessor readiness, payment, and fraud-prevention checks",
+          "Naudokis has the right to transfer verified attributes and document images received from Didit to the Stripe Connect KYC process"
+        ],
+        [
+          "Email",
+          "AWS SES",
+          "email address, delivery logs, rejection and complaint records",
+          "delivery of account, security, Reservation, legal, and marketing notices",
+          "suppression list used for delivery safety"
+        ],
+        [
+          "SMS or telephone",
+          "AWS SNS",
+          "telephone number, SMS delivery metadata",
+          "telephone verification, security, or service-related notices",
+          "used only where the function applies"
+        ],
+        [
+          "Push notifications",
+          "Expo Push",
+          "Expo push-notification tokens, device and language metadata, delivery records",
+          "service-related notices and User-selected notifications",
+          "multiple devices may receive separate notifications"
+        ],
+        [
+          "AI",
+          "OpenAI",
+          "Listing text inputs and outputs, message Content signals, support chat content where the function is used",
+          "Listing description drafts, narrow message moderation signal detection, first-line support chat responses",
+          "not used for marketing profiling or a general fraud score; the AI support assistant may respond directly to the User in a support chat, but the support request category may be selected by the User, and handover to a human is rule-based, not AI-based"
+        ],
+        [
+          "Addresses and geocoding",
+          "Postit (api.postit.lt)",
+          "address search queries, normalized Lithuanian addresses, coordinates or location identifiers",
+          "Lithuanian address search, distance, delivery, and Listing location functions",
+          "active server geocoding provider; coordinates of earlier records may be marked as legacy; precise private locations are not publicly displayed until the necessary transaction stage"
+        ],
+        [
+          "Reverse geocoding",
+          "OpenStreetMap Nominatim (OpenStreetMap Foundation)",
+          "coordinates (latitude, longitude), reverse geocoding request",
+          "converting coordinates into an administrative unit or district for determining Listing location",
+          "open-source service operated by the OpenStreetMap Foundation; only coordinates are transferred, without direct identifiers"
+        ],
+        [
+          "Address autocomplete",
+          "Google Places API (Google)",
+          "address search text query, session token, language code, country code, selected address (place) identifier",
+          "address autocomplete suggestions and selected address details when entering an address",
+          "**active server-side function** - requests from the Naudokis server are transferred to Google; only input text, session token, language code, and country code are transferred (not IP or user agent); in the first launch, the App is usually used for Lithuanian address completion"
+        ],
+        [
+          "Map display",
+          "Google Maps, Apple Maps",
+          "map request, device, IP, and usage metadata to the extent received by the relevant service provider",
+          "map display, location selection, distance and navigation functions",
+          "client-side (mobile App) map display, separate from the server-side address completion function above; Google Maps may be used in Android environments, Apple Maps in iOS environments"
+        ],
+        [
+          "VAT check",
+          "European Commission VIES",
+          "VAT number, check result, request time and identifier",
+          "B2B VAT, invoicing, or tax-compliance check where such function is used",
+          "applies only to the extent required for Platform business functions or legal obligations"
+        ],
+        [
+          "Analytics",
+          "Amplitude",
+          "App usage events, User or device identifiers, event metadata",
+          "product analytics and service improvement",
+          "client-side (mobile App) technology; during the launch period, the Naudokis server does not use it; not enabled without consent where required by law; the User may opt out"
+        ],
+        [
+          "Error monitoring or APM",
+          "Sentry, AWS CloudWatch",
+          "error logs, performance records, device, session, request, and technical metadata; in some cases breadcrumbs",
+          "service stability, security, error diagnostics",
+          "AWS CloudWatch is used on the server side; Sentry, if used, operates on the client side (Expo App); Sentry breadcrumbs must be cleared of unnecessary Personal Data as far as possible"
+        ],
+        [
+          "Social login",
+          "Apple, Google, Facebook",
+          "social login identifier, name, email, and other data selected by the User or provided by the provider",
+          "login and account authentication",
+          "the privacy terms of the relevant providers also apply"
+        ]
+      ]
+    },
+    {
+      "t": "p",
+      "md": "During the launch period, Naudokis does not use AppsFlyer, Meta Pixel, TikTok Pixel, Firebase Analytics, Google Analytics, Mixpanel, or other separate advertising, remarketing, or attribution vendors unless such vendors are later clearly implemented and disclosed. Non-essential analytics, advertising, attribution, or remarketing SDKs or similar technologies must not be activated before obtaining applicable consent where required by law."
+    }
+  ]
+}

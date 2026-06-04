@@ -30,7 +30,7 @@ function canonicalFor(locale: Locale, path: string) {
 }
 
 export function pageMetadata({
-  locale, path, title, description, ogLocale, ogImageAlt, keywords, image,
+  locale, path, title, description, ogLocale, ogImageAlt, keywords, image, ltOnly,
 }: {
   locale: Locale;
   path: string;
@@ -40,8 +40,13 @@ export function pageMetadata({
   ogImageAlt: string;
   keywords?: string[];
   image?: string; // absolute URL for a per-page share image (e.g. a listing photo)
+  // Set for content that exists only in Lithuanian (e.g. the policy-center doc):
+  // the LT URL is canonical for both locales, the EN hreflang is dropped, and the
+  // EN render is marked noindex so the duplicate LT-under-EN URL stays out of the index.
+  ltOnly?: boolean;
 }): Metadata {
-  const canonical = canonicalFor(locale, path);
+  // For LT-only content the canonical is always the LT URL, regardless of locale.
+  const canonical = ltOnly ? ltPath(path) : canonicalFor(locale, path);
   const openGraph: NonNullable<Metadata["openGraph"]> = {
     type: "website",
     siteName: "Naudokis.lt",
@@ -61,15 +66,20 @@ export function pageMetadata({
     openGraph.images = [{ url: image, alt: ogImageAlt }];
     twitter.images = [image];
   }
+  const languages = ltOnly
+    ? { lt: ltPath(path), "x-default": ltPath(path) }
+    : { lt: ltPath(path), en: enPath(path), "x-default": ltPath(path) };
   return {
     metadataBase: new URL(SITE_URL),
     title,
     description,
     applicationName: "Naudokis",
     keywords,
+    // Keep the duplicate LT-content-under-/en URL out of the index.
+    robots: ltOnly && locale !== defaultLocale ? { index: false, follow: true } : undefined,
     alternates: {
       canonical,
-      languages: { lt: ltPath(path), en: enPath(path), "x-default": ltPath(path) },
+      languages,
     },
     openGraph,
     twitter,

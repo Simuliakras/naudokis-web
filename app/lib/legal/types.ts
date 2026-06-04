@@ -1,0 +1,47 @@
+// Legal Policy Center — data shapes for the manifest and parsed documents.
+// The block union mirrors every `t` present across the data/*.json files; the
+// loader casts the imported JSON to these types (JSON inference is too loose for
+// the discriminated union).
+
+export type Lang = "en" | "lt";
+
+export type LegalGroup = { id: string; label: Record<Lang, string> };
+
+export type LegalDocMeta = {
+  id: string;
+  grp: string;
+  label: Record<Lang, string>;
+  langs: Lang[];
+  hasEn: boolean;
+  blurb: Record<Lang, string>;
+};
+
+export type LegalManifest = { updated: string; groups: LegalGroup[]; docs: LegalDocMeta[] };
+
+export type TocItem = { id: string; label: string; num: string | null };
+
+export type DocMeta = {
+  title: string;
+  version?: string;
+  effective_date?: string;
+  last_updated?: string;
+  document_id?: string;
+  document_type?: string;
+};
+
+// A list item is either a plain markdown string or an object with nested `sub`.
+export type ListItem = string | { md: string; sub?: string[] };
+
+export type Block =
+  | { t: "p"; md: string }
+  | { t: "h2"; text: string; id: string }
+  | { t: "h3"; text: string }
+  | { t: "h4"; text: string }
+  | { t: "callout"; md: string }
+  | { t: "quote"; md: string }
+  | { t: "hr" }
+  | { t: "ul"; items: ListItem[] }
+  | { t: "ol"; items: ListItem[] }
+  | { t: "table"; head: string[]; rows: string[][] };
+
+export type LegalDocument = { meta: DocMeta; toc: TocItem[]; blocks: Block[] };

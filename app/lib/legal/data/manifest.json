@@ -1,0 +1,273 @@
+{
+  "updated": "2026-06-01",
+  "groups": [
+    {
+      "id": "core",
+      "label": { "en": "Core agreements", "lt": "Pagrindiniai dokumentai" }
+    },
+    {
+      "id": "transactions",
+      "label": { "en": "Renting & payments", "lt": "Nuoma ir mokėjimai" }
+    },
+    {
+      "id": "safety",
+      "label": {
+        "en": "Listings, trust & safety",
+        "lt": "Skelbimai, pasitikėjimas ir sauga"
+      }
+    },
+    {
+      "id": "business",
+      "label": { "en": "Business & tax", "lt": "Verslas ir mokesčiai" }
+    },
+    {
+      "id": "privacy",
+      "label": { "en": "Privacy appendices", "lt": "Privatumo priedai" }
+    }
+  ],
+  "docs": [
+    {
+      "id": "terms-of-use",
+      "grp": "core",
+      "label": { "en": "Terms of Use", "lt": "Naudojimosi sąlygos" },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "These Naudokis Terms of Use (\"Terms\") govern your access to and use of the Naudokis Platform.",
+        "lt": "Šios „Naudokis“ naudojimosi sąlygos („Sąlygos“) reglamentuoja jūsų prieigą prie „Naudokis“ Platformos ir naudojimąsi ja."
+      }
+    },
+    {
+      "id": "privacy-policy",
+      "grp": "core",
+      "label": { "en": "Privacy Policy", "lt": "Privatumo politika" },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "This Privacy Policy explains how MB Naudokis (\"Naudokis\", \"we\", \"us\", \"our\") collects, uses, stores, discloses, and otherwise processes Personal Data.",
+        "lt": "Šioje Privatumo politikoje paaiškinama, kaip MB „Naudokis“ („Naudokis“, „mes“, „mus“, „mūsų“) renka, naudoja, saugo, atskleidžia ir kitaip tvarko asmens duomenis."
+      }
+    },
+    {
+      "id": "policy-center",
+      "grp": "core",
+      "label": { "en": "Policy Center", "lt": "Politikų centras" },
+      "langs": ["lt"],
+      "hasEn": false,
+      "blurb": {
+        "en": "",
+        "lt": "Šis Politikų centras paaiškina, kaip susiję „Naudokis“ teisiniai dokumentai ir kurią taisyklę skaityti konkrečioje situacijoje. Jis skirtas naudotojams, kurie nori greitai rasti praktinį atsakymą prieš pateikdami skelbimą, rezervuodami daiktą, mokėdami, spręsdami ginčą ar pateikdami privatumo prašymą."
+      }
+    },
+    {
+      "id": "payments-fees-stripe",
+      "grp": "transactions",
+      "label": {
+        "en": "Payments, Fees & Stripe",
+        "lt": "Mokėjimai, mokesčiai ir Stripe"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "These Rules form part of the Naudokis Terms of Use and must be read together with the main document. If a special term is provided in the App for a specific Reservation, Listing, User role, or Platform function, it applies to the extent it does not conflict with mandatory law.",
+        "lt": "Šios taisyklės yra „Naudokis“ naudojimosi sąlygų dalis ir turi būti skaitomos kartu su pagrindiniu dokumentu. Jeigu konkrečiai Rezervacijai, Skelbimui, Naudotojo vaidmeniui ar Platformos funkcijai Programėlėje pateikiama speciali sąlyga, ji taikoma tiek, kiek neprieštarauja privalomai teisei."
+      }
+    },
+    {
+      "id": "deposits-damage-disputes",
+      "grp": "transactions",
+      "label": {
+        "en": "Deposits, Damage & Disputes",
+        "lt": "Užstatai, žala ir ginčai"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "In the Naudokis Dispute process, Naudokis assesses not only a party's statement, but the totality of evidence. The most important evidence is evidence submitted on time, linked to the specific Reservation, and allowing comparison of the item's condition before handover and after return.",
+        "lt": "„Naudokis“ ginčų procese vertina ne vien šalies teiginį, bet įrodymų visumą. Svarbiausi įrodymai yra tie, kurie pateikti laiku, susieti su konkrečia Rezervacija ir leidžia palyginti daikto būklę prieš perdavimą ir po grąžinimo."
+      }
+    },
+    {
+      "id": "cancellations-refunds",
+      "grp": "transactions",
+      "label": {
+        "en": "Cancellations & Refunds",
+        "lt": "Atšaukimai ir grąžinimai"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "This matrix explains the general logic. The cancellation term shown in the App before payment applies to the specific Reservation, provided it does not conflict with mandatory consumer protection.",
+        "lt": "Ši matrica paaiškina bendrą logiką. Konkrečiai Rezervacijai taikoma Programėlėje prieš mokėjimą parodyta atšaukimo sąlyga, jei ji neprieštarauja privalomai vartotojų apsaugai."
+      }
+    },
+    {
+      "id": "reservation-handover-completion",
+      "grp": "transactions",
+      "label": {
+        "en": "Reservation, Handover & Completion",
+        "lt": "Rezervacija, perdavimas ir užbaigimas"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "These Rules explain the practical Naudokis Reservation flow. They help clarify when a Reservation is considered confirmed, when a payment is considered completed, how handover is recorded, and when a rental is considered completed.",
+        "lt": "Šios taisyklės paaiškina praktinę „Naudokis“ Rezervacijos eigą. Jos padeda suprasti, kada Rezervacija laikoma patvirtinta, kada mokėjimas laikomas įvykusiu, kaip fiksuojamas perdavimas ir kada nuoma laikoma užbaigta."
+      }
+    },
+    {
+      "id": "prohibited-restricted-items",
+      "grp": "safety",
+      "label": {
+        "en": "Prohibited & Restricted Items",
+        "lt": "Draudžiami ir ribojami daiktai"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "The Lessor must ensure that the item is safe to use for its intended purpose, has not been recalled from the market, is not stolen, counterfeit, illegal, or misleadingly described.",
+        "lt": "Nuomotojas turi užtikrinti, kad daiktas būtų saugus naudoti pagal paskirtį, nebūtų atšauktas iš rinkos, pavogtas, padirbtas, neteisėtas ar klaidinančiai aprašytas."
+      }
+    },
+    {
+      "id": "trust-checks-safeguards",
+      "grp": "safety",
+      "label": {
+        "en": "Trust, Checks & Safeguards",
+        "lt": "Pasitikėjimas, patikros ir apsauga"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "This Standard explains the practical safeguards that Naudokis applies so that item rental through the Platform is clearer, safer, and more trusted. It applies together with the Terms of Use, Payments Rules, Deposit and Damage Rules, Moderation Rules, and Privacy Policy.",
+        "lt": "Šis standartas paaiškina, kokias praktines apsaugos priemones „Naudokis“ taiko, kad daiktų nuoma per Platformą būtų aiškesnė, saugesnė ir labiau pasitikėjimą kelianti. Jis taikomas kartu su Naudojimosi sąlygomis, Mokėjimų taisyklėmis, Užstatų ir žalos taisyklėmis, Moderavimo taisyklėmis ir Privatumo politika."
+      }
+    },
+    {
+      "id": "moderation-dsa",
+      "grp": "safety",
+      "label": {
+        "en": "Moderation, Complaints & DSA",
+        "lt": "Moderavimas, skundai ir DSA"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "The Naudokis moderation process is based on proportionality, explainability, and the ability to appeal a decision. This means:",
+        "lt": "„Naudokis“ moderavimo procesas grindžiamas proporcingumu, paaiškinamumu ir galimybe apskųsti sprendimą. Tai reiškia:"
+      }
+    },
+    {
+      "id": "reviews-search-ranking",
+      "grp": "safety",
+      "label": {
+        "en": "Reviews, Search & Ranking",
+        "lt": "Atsiliepimai, paieška ir reitingavimas"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "These Rules explain how Naudokis handles reviews, ratings, Listing visibility, search, and recommendations.",
+        "lt": "Šios taisyklės paaiškina, kaip „Naudokis“ tvarko atsiliepimus, reitingus, skelbimų matomumą, paiešką ir rekomendacijas."
+      }
+    },
+    {
+      "id": "business-users",
+      "grp": "business",
+      "label": {
+        "en": "Business Users, Traders & B2B",
+        "lt": "Verslo naudotojai, prekiautojai ir B2B"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "These Rules form part of the Naudokis Terms of Use and must be read together with the main document. If a special term is provided in the App for a specific Reservation, Listing, User role, or Platform function, it applies to the extent it does not conflict with mandatory law.",
+        "lt": "Šios taisyklės yra „Naudokis“ naudojimosi sąlygų dalis ir turi būti skaitomos kartu su pagrindiniu dokumentu. Jeigu konkrečiai Rezervacijai, Skelbimui, Naudotojo vaidmeniui ar Platformos funkcijai Programėlėje pateikiama speciali sąlyga, ji taikoma tiek, kiek neprieštarauja privalomai teisei."
+      }
+    },
+    {
+      "id": "privacy-data-categories",
+      "grp": "privacy",
+      "label": {
+        "en": "Data Categories Appendix",
+        "lt": "Duomenų kategorijų priedas"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "This appendix forms part of the Naudokis Privacy Policy and must be interpreted together with the main Policy.",
+        "lt": "Šis priedas yra „Naudokis“ privatumo politikos dalis ir turi būti aiškinamas kartu su pagrindine Politika."
+      }
+    },
+    {
+      "id": "privacy-vendors-sdk",
+      "grp": "privacy",
+      "label": {
+        "en": "Vendors, Cookies & SDK Appendix",
+        "lt": "Tiekėjai, slapukai ir SDK priedas"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "This appendix forms part of the Naudokis Privacy Policy and must be interpreted together with the main Policy.",
+        "lt": "Šis priedas yra „Naudokis“ privatumo politikos dalis ir turi būti aiškinamas kartu su pagrindine Politika."
+      }
+    },
+    {
+      "id": "privacy-retention-deletion",
+      "grp": "privacy",
+      "label": {
+        "en": "Retention & Deletion Appendix",
+        "lt": "Saugojimo ir ištrynimo priedas"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "This appendix forms part of the Naudokis Privacy Policy and must be interpreted together with the main Policy.",
+        "lt": "Šis priedas yra „Naudokis“ privatumo politikos dalis ir turi būti aiškinamas kartu su pagrindine Politika."
+      }
+    },
+    {
+      "id": "privacy-identity-fraud",
+      "grp": "privacy",
+      "label": {
+        "en": "Identity & Fraud Prevention Appendix",
+        "lt": "Tapatybės ir sukčiavimo prevencijos priedas"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "This appendix forms part of the Naudokis Privacy Policy and must be interpreted together with the main Policy.",
+        "lt": "Šis priedas yra „Naudokis“ privatumo politikos dalis ir turi būti aiškinamas kartu su pagrindine Politika."
+      }
+    },
+    {
+      "id": "privacy-ai-automated-checks",
+      "grp": "privacy",
+      "label": {
+        "en": "AI & Automated Checks Appendix",
+        "lt": "DI ir automatizuotų patikrų priedas"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "This appendix forms part of the Naudokis Privacy Policy and must be interpreted together with the main Policy.",
+        "lt": "Šis priedas yra „Naudokis“ privatumo politikos dalis ir turi būti aiškinamas kartu su pagrindine Politika."
+      }
+    },
+    {
+      "id": "privacy-business-users-dac7",
+      "grp": "privacy",
+      "label": {
+        "en": "Business Users & DAC7 Privacy Appendix",
+        "lt": "Verslo naudotojai ir DAC7 privatumo priedas"
+      },
+      "langs": ["en", "lt"],
+      "hasEn": true,
+      "blurb": {
+        "en": "This appendix forms part of the Naudokis Privacy Policy and must be interpreted together with the main Policy.",
+        "lt": "Šis priedas yra „Naudokis“ privatumo politikos dalis ir turi būti aiškinamas kartu su pagrindine Politika."
+      }
+    }
+  ]
+}
