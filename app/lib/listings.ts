@@ -138,7 +138,26 @@ function ratingLabel(average: number | null, count: number, locale: Locale): str
 }
 
 /* ---------------- Fetchers + hooks ---------------- */
-async function fetchListings(locale: Locale, filters: ListingFilters): Promise<Offer[]> {
+// How long server-side `fetch`es of a single listing stay fresh. Shared so the
+// detail page's prefetch and its raw-metadata fetch use identical options and
+// Next collapses them into one request (see fetchListing + the detail page).
+export const LISTING_REVALIDATE = 300;
+
+// Single source of truth for the query keys — used by the hooks below and by
+// server components prefetching into the same cache slot, so they can't diverge.
+// listingsKey applies the same empty-filter defaults the hook does.
+export function listingsKey(locale: Locale, filters: ListingFilters = {}) {
+  const { q = "", city = "", category = "", sort = "recommended" } = filters;
+  return ["listings", locale, q, city, category, sort] as const;
+}
+
+export function listingKey(id: string | undefined, locale: Locale) {
+  return ["listing", id, locale] as const;
+}
+
+// Exported so server components can prefetch the same data the hooks consume
+// (identical queryKey + queryFn → the cache hydrates without a client refetch).
+export async function fetchListings(locale: Locale, filters: ListingFilters): Promise<Offer[]> {
   const url = new URL(`${API_BASE}/listings`);
   if (filters.q) {
     url.searchParams.set("q", filters.q);
@@ -177,14 +196,16 @@ async function fetchListings(locale: Locale, filters: ListingFilters): Promise<O
 export function useListings(locale: Locale, filters: ListingFilters = {}) {
   const { q = "", city = "", category = "", sort = "recommended" } = filters;
   return useQuery({
-    queryKey: ["listings", locale, q, city, category, sort],
+    queryKey: listingsKey(locale, { q, city, category, sort }),
     queryFn: () => fetchListings(locale, { q, city, category, sort }),
     placeholderData: keepPreviousData,
   });
 }
 
-async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> {
-  const res = await fetch(`${API_BASE}/listings/${id}`);
+export async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> {
+  // Same `next` options as the detail page's raw-metadata fetch so Next memoizes
+  // the two same-URL server requests into one (ignored by the browser fetch).
+  const res = await fetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } });
   if (!res.ok) {
     throw new Error(`Failed to load listing ${id}: ${res.status}`);
   }
@@ -222,7 +243,7 @@ async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> 
 
 export function useListing(id: string | undefined, locale: Locale) {
   return useQuery({
-    queryKey: ["listing", id, locale],
+    queryKey: listingKey(id, locale),
     // skipToken keeps the query idle until an id exists — no `as` cast, no `enabled` flag.
     queryFn: id ? () => fetchListing(id, locale) : skipToken,
   });

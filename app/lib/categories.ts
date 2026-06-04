@@ -28,7 +28,14 @@ export type Category = {
   title: string;
 };
 
-async function fetchCategories(locale: Locale): Promise<Category[]> {
+// Single source of truth for the query key — used by useCategories() and by
+// server components prefetching into the same cache slot, so they can't diverge.
+export function categoriesKey(locale: Locale) {
+  return ["categories", locale] as const;
+}
+
+// Exported so server components can prefetch the same data useCategories reads.
+export async function fetchCategories(locale: Locale): Promise<Category[]> {
   const res = await fetch(`${API_BASE}/listings/categories`);
   if (!res.ok) {
     throw new Error(`Failed to load categories: ${res.status}`);
@@ -41,5 +48,5 @@ async function fetchCategories(locale: Locale): Promise<Category[]> {
 }
 
 export function useCategories(locale: Locale) {
-  return useQuery({ queryKey: ["categories", locale], queryFn: () => fetchCategories(locale) });
+  return useQuery({ queryKey: categoriesKey(locale), queryFn: () => fetchCategories(locale) });
 }

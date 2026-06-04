@@ -39,7 +39,7 @@ function InfoRow({ icon, label, value, badge, badgeTone, last }: {
   );
 }
 
-export function ListingDetail({ id }: { id: string }) {
+export function ListingScreen({ id }: { id: string }) {
   const { locale, dict } = useI18n();
   const t = dict.detail;
   const router = useRouter();

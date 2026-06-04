@@ -190,6 +190,22 @@ export type Dict = {
     interruptBody: string;
     interruptCta: string;
   };
+  // City landing pages (/miestai/[city]) — copy is parameterized by city name.
+  cityPage: {
+    metaTitle: (city: string) => string;
+    metaDescription: (city: string) => string;
+    crumb: string; // "Miestai" breadcrumb label
+    eyebrow: (city: string) => string;
+    title: (city: string) => string;
+    body: (city: string) => string;
+    resultCount: (count: number) => string;
+    emptyTitle: (city: string) => string;
+    emptyBody: (city: string) => string;
+    otherCitiesHeading: string;
+    browseAll: string; // CTA linking to the full /skelbimai feed
+    seoHeading: (city: string) => string;
+    seoBody: (city: string) => string;
+  };
   // Locked-mode "Bridge": transactional actions open the app-redirect modal.
   bridge: {
     defaultTitle: string;

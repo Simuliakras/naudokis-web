@@ -75,3 +75,122 @@ export function pageMetadata({
     twitter,
   };
 }
+
+/* ---------------- JSON-LD builders ---------------- */
+// Structural type for a schema.org node — typed enough to avoid `any` while
+// staying flexible across the varied shapes below. Rendered by <JsonLd/>.
+export type JsonLdNode = Record<string, unknown>;
+
+// Absolute, locale-correct URL for a bare path ("" → home). Mirrors the
+// canonical logic so JSON-LD URLs match the page's own canonical/hreflang.
+export function absoluteUrl(locale: Locale, path: string): string {
+  return `${SITE_URL}${canonicalFor(locale, path)}`;
+}
+
+const inLanguage = (locale: Locale) => (locale === "lt" ? "lt-LT" : "en-US");
+
+export function organizationJsonLd(): JsonLdNode {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Naudokis",
+    url: SITE_URL,
+    logo: `${SITE_URL}/naudokis/naudokis-logo.png`,
+  };
+}
+
+export function webSiteJsonLd(locale: Locale): JsonLdNode {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Naudokis.lt",
+    url: absoluteUrl(locale, ""),
+    inLanguage: inLanguage(locale),
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${absoluteUrl(locale, "/skelbimai")}?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+export function breadcrumbJsonLd(locale: Locale, items: { name: string; path: string }[]): JsonLdNode {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      item: absoluteUrl(locale, item.path),
+    })),
+  };
+}
+
+// Listings → an ItemList of links to each detail page (category/search/city pages).
+export function itemListJsonLd(locale: Locale, items: { id: string; name: string }[]): JsonLdNode {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    numberOfItems: items.length,
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      url: absoluteUrl(locale, `/skelbimai/${item.id}`),
+    })),
+  };
+}
+
+// A rental listing as a Product with a per-day Offer (UnitPriceSpecification
+// keeps the daily rate honest — schema.org Offer has no native rental unit).
+export function listingJsonLd({
+  locale, id, name, description, image, priceCents, ratingAverage, ratingCount,
+}: {
+  locale: Locale;
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+  priceCents: number;
+  ratingAverage: number | null;
+  ratingCount: number;
+}): JsonLdNode {
+  const price = (priceCents / 100).toFixed(2);
+  const url = absoluteUrl(locale, `/skelbimai/${id}`);
+  const node: JsonLdNode = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name,
+    description,
+    url,
+    offers: {
+      "@type": "Offer",
+      price,
+      priceCurrency: "EUR",
+      availability: "https://schema.org/InStock",
+      url,
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price,
+        priceCurrency: "EUR",
+        unitText: locale === "lt" ? "para" : "day",
+        referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitCode: "DAY" },
+      },
+    },
+  };
+  if (image) {
+    node.image = image;
+  }
+  if (ratingAverage != null && ratingCount > 0) {
+    node.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: ratingAverage.toFixed(1),
+      reviewCount: ratingCount,
+    };
+  }
+  return node;
+}

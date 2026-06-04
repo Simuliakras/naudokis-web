@@ -8,7 +8,7 @@ import { Nav, Footer } from "./sections";
 import { Icon } from "./ui";
 import { useI18n } from "./I18nProvider";
 
-export function LegalPage({ doc: docKey }: { doc: "privacy" | "terms" }) {
+export function LegalScreen({ doc: docKey }: { doc: "privacy" | "terms" }) {
   const { dict } = useI18n();
   const t = dict.legal;
   const doc = t[docKey];

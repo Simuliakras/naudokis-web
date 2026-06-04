@@ -203,6 +203,24 @@ export const en: Dict = {
     interruptBody: "All listings, chats with owners and secure payments — in one place.",
     interruptCta: "Download the app",
   },
+  cityPage: {
+    metaTitle: (city) => `Item rental in ${city} | Naudokis.lt`,
+    metaDescription: (city) =>
+      `Rent tools, electronics, sports and leisure gear from trusted neighbours in ${city}. Browse listings in your browser and finish the reservation in the Naudokis app.`,
+    crumb: "Cities",
+    eyebrow: (city) => `Rentals · ${city}`,
+    title: (city) => `Item rental in ${city}`,
+    body: (city) =>
+      `Tools, electronics, sports and leisure gear from trusted neighbours in ${city} — all in one place.`,
+    resultCount: (n) => `${n} ${n === 1 ? "listing" : "listings"}`,
+    emptyTitle: (city) => `No listings in ${city} yet`,
+    emptyBody: (city) => `We couldn't find active listings in ${city} right now. Browse rentals across Lithuania instead.`,
+    otherCitiesHeading: "Other cities",
+    browseAll: "All listings",
+    seoHeading: (city) => `Item rental in ${city}`,
+    seoBody: (city) =>
+      `Naudokis.lt connects people looking to rent items with trusted owners in ${city} and across Lithuania. Browse listings in your browser, then finish the reservation and secure payment in the Naudokis app.`,
+  },
   bridge: {
     defaultTitle: "Continue in the app",
     defaultBody: "This action happens in the Naudokis app for now. Download it and finish in a few seconds.",

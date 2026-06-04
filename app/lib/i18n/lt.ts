@@ -224,6 +224,29 @@ export const lt: Dict = {
     interruptBody: "Visi skelbimai, pokalbiai su savininkais ir saugūs atsiskaitymai — vienoje vietoje.",
     interruptCta: "Atsisiųsti programėlę",
   },
+  cityPage: {
+    metaTitle: (city) => `Daiktų nuoma ${city} mieste | Naudokis.lt`,
+    metaDescription: (city) =>
+      `Nuomokis įrankius, techniką, sporto ir laisvalaikio inventorių iš patikimų kaimynų ${city} mieste. Naršyk skelbimus naršyklėje, rezervaciją užbaik Naudokis programėlėje.`,
+    crumb: "Miestai",
+    eyebrow: (city) => `Nuoma · ${city}`,
+    title: (city) => `Daiktų nuoma ${city} mieste`,
+    body: (city) =>
+      `Įrankiai, technika, sporto ir laisvalaikio daiktai iš patikimų kaimynų ${city} mieste — vienoje vietoje.`,
+    resultCount: (n) => {
+      const d = n % 10;
+      const dd = n % 100;
+      const word = (dd >= 11 && dd <= 19) || d === 0 ? "skelbimų" : d === 1 ? "skelbimas" : "skelbimai";
+      return `${n} ${word}`;
+    },
+    emptyTitle: (city) => `${city} mieste skelbimų dar nėra`,
+    emptyBody: (city) => `Šiuo metu ${city} mieste aktyvių skelbimų neradome. Peržiūrėk nuomą visoje Lietuvoje.`,
+    otherCitiesHeading: "Kiti miestai",
+    browseAll: "Visi skelbimai",
+    seoHeading: (city) => `Daiktų nuoma ${city} mieste`,
+    seoBody: (city) =>
+      `Naudokis.lt jungia žmones, norinčius išsinuomoti daiktus, su patikimais savininkais ${city} mieste ir visoje Lietuvoje. Naršyk skelbimus naršyklėje, o rezervaciją ir saugius atsiskaitymus užbaik Naudokis programėlėje.`,
+  },
   bridge: {
     defaultTitle: "Tęskite programėlėje",
     defaultBody: "Šis veiksmas kol kas atliekamas Naudokis programėlėje. Atsisiųskite ją ir užbaikite per kelias sekundes.",

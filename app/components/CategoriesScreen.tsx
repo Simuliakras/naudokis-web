@@ -10,7 +10,7 @@ import { useCategories } from "@/app/lib/categories";
 import { mockCategoryCount } from "@/app/lib/mock";
 import { useI18n } from "./I18nProvider";
 
-export function CategoriesPage() {
+export function CategoriesScreen() {
   const { locale, dict } = useI18n();
   const t = dict.categoriesPage;
   const router = useRouter();
