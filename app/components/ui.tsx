@@ -50,6 +50,11 @@ const NK_ICONS: Record<string, IconDef> = {
   MoreHorizontal:{ s: <><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></> },
   ChevronRight:{ s: <path d="m9 6 6 6-6 6"/> },
   Sparkles:    { s: <><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z"/></> },
+  Download:    { s: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></> },
+  Camera:      { s: <><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2L8 4.8a1 1 0 0 1 .8-.4h6.4a1 1 0 0 1 .8.4L17.5 7h2A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.5" r="3.4"/></> },
+  Handshake:   { s: <><path d="m11 17 2 2a1.4 1.4 0 0 0 2-2"/><path d="m13 15 2.2 2.2a1.4 1.4 0 0 0 2-2L14 11.8"/><path d="M3 11.5 7 7.6a2 2 0 0 1 2.3-.4l2.2 1.1a1.4 1.4 0 0 1 .3 2.3l-1.6 1.4a1.4 1.4 0 0 1-1.9 0L8 11"/><path d="m14 9 3.2-3.1a2 2 0 0 1 2.3-.3L21 6.4"/><path d="M3 11.5 5 13.5M19.5 5.5 21 6.4"/></> },
+  Coins:       { s: <><circle cx="8" cy="8" r="6"/><path d="M18.1 6.5a6 6 0 0 1 0 11M8.7 6h.5a1.8 1.8 0 0 1 0 3.6h-1a1.8 1.8 0 0 0 0 3.6h.5M8 5.2v.8M8 13v.8"/></> },
+  Snowflake:   { s: <><path d="M12 2v20M4.2 7l15.6 10M19.8 7 4.2 17"/><path d="m9 4 3 2 3-2M9 20l3-2 3 2M4 9.5l.5 3.3-2.6 1.9M20 9.5l-.5 3.3 2.6 1.9M4 14.5l-2.1-1.7M20 14.5l2.1-1.7"/></> },
 };
 
 export type IconName = keyof typeof NK_ICONS;
@@ -295,6 +300,111 @@ export function QR({ size = 152, light = false }: { size?: number; light?: boole
         <QrFinder x={0} y={cell * (QR_N - 7)} cell={cell} light={light} />
       </svg>
     </span>
+  );
+}
+
+/* ---------------- Illustration (screen-level empty states) ----------------
+   Ported from the mobile app's illustration system (200×200 canvas, purple
+   #6665E0 backdrop, accent #F9F367 outline, floating dots + sparkles). Used by
+   the full-screen EmptyState — section-level empties keep the compact Icon.
+   Colors are literal brand hex by design: these are multi-tone raw-SVG
+   presentation attributes, where --nk-* custom properties don't resolve (same
+   constraint as NK_ICONS — see the Icon note above). #6665E0 == --nk-purple,
+   #F9F367 == --nk-yellow. */
+export type IllusName = "search" | "listings" | "filter" | "error";
+
+const NK_ILLUS: Record<IllusName, React.ReactNode> = {
+  search: (
+    <>
+      <circle cx="100" cy="100" r="85" fill="#6665E0" opacity=".08"/>
+      <circle cx="88" cy="85" r="42" fill="#6665E0" opacity=".15"/>
+      <circle cx="88" cy="85" r="35" fill="none" stroke="#F9F367" strokeWidth="4"/>
+      <line x1="113" y1="110" x2="145" y2="142" stroke="#F9F367" strokeWidth="6" strokeLinecap="round"/>
+      <rect x="135" y="130" width="18" height="22" rx="4" fill="#F9F367" opacity=".3" transform="rotate(45 144 141)"/>
+      <path d="M78 78Q88 68 98 78" fill="none" stroke="#F9F367" strokeWidth="3" strokeLinecap="round" opacity=".6"/>
+      <path d="M78 88Q88 98 98 88" fill="none" stroke="#F9F367" strokeWidth="3" strokeLinecap="round" opacity=".6"/>
+      <circle cx="35" cy="55" r="4" fill="#F9F367" opacity=".5"/>
+      <circle cx="170" cy="130" r="5" fill="#F9F367" opacity=".4"/>
+      <circle cx="30" cy="140" r="3" fill="#6665E0" opacity=".3"/>
+      <circle cx="175" cy="65" r="4" fill="#F9F367" opacity=".5"/>
+      <path d="M40 90L45 85M45 90L40 85" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+      <path d="M160 165L165 160M165 165L160 160" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+    </>
+  ),
+  listings: (
+    <>
+      <circle cx="100" cy="100" r="85" fill="#6665E0" opacity=".08"/>
+      <rect x="45" y="40" width="110" height="130" rx="12" fill="#6665E0" opacity=".15"/>
+      <rect x="50" y="45" width="100" height="120" rx="10" fill="none" stroke="#F9F367" strokeWidth="4"/>
+      <rect x="60" y="58" width="80" height="45" rx="6" fill="#F9F367" opacity=".2"/>
+      <path d="M65 98L80 63M80 98L95 63M95 98L110 63M110 98L125 63M125 98L135 73" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".3"/>
+      <rect x="60" y="115" width="70" height="8" rx="4" fill="#F9F367" opacity=".4"/>
+      <rect x="60" y="130" width="50" height="8" rx="4" fill="#F9F367" opacity=".3"/>
+      <rect x="60" y="145" width="60" height="8" rx="4" fill="#F9F367" opacity=".2"/>
+      <path d="M155 35L165 45L155 55" fill="none" stroke="#F9F367" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+      <rect x="148" y="38" width="22" height="14" rx="3" fill="#F9F367" opacity=".3"/>
+      <circle cx="35" cy="55" r="4" fill="#F9F367" opacity=".5"/>
+      <circle cx="170" cy="130" r="5" fill="#F9F367" opacity=".4"/>
+      <circle cx="30" cy="140" r="3" fill="#6665E0" opacity=".3"/>
+      <circle cx="175" cy="65" r="4" fill="#F9F367" opacity=".5"/>
+      <path d="M40 90L45 85M45 90L40 85" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+      <path d="M160 165L165 160M165 165L160 160" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+    </>
+  ),
+  filter: (
+    <>
+      <circle cx="100" cy="100" r="85" fill="#6665E0" opacity=".08"/>
+      <circle cx="100" cy="100" r="58" fill="#6665E0" opacity=".13"/>
+      <rect x="50" y="63" width="100" height="9" rx="4.5" fill="#F9F367" opacity=".22"/>
+      <rect x="50" y="95" width="100" height="9" rx="4.5" fill="#F9F367" opacity=".3"/>
+      <rect x="50" y="127" width="100" height="9" rx="4.5" fill="#F9F367" opacity=".22"/>
+      <circle cx="120" cy="67.5" r="12" fill="#2B2F30" stroke="#F9F367" strokeWidth="4"/>
+      <circle cx="120" cy="67.5" r="3.5" fill="#6665E0"/>
+      <circle cx="76" cy="99.5" r="12" fill="#2B2F30" stroke="#F9F367" strokeWidth="4"/>
+      <circle cx="76" cy="99.5" r="3.5" fill="#6665E0"/>
+      <circle cx="132" cy="131.5" r="12" fill="#2B2F30" stroke="#F9F367" strokeWidth="4"/>
+      <circle cx="132" cy="131.5" r="3.5" fill="#6665E0"/>
+      <circle cx="35" cy="55" r="4" fill="#F9F367" opacity=".5"/>
+      <circle cx="170" cy="130" r="5" fill="#F9F367" opacity=".4"/>
+      <circle cx="30" cy="140" r="3" fill="#6665E0" opacity=".3"/>
+      <circle cx="175" cy="65" r="4" fill="#F9F367" opacity=".5"/>
+      <path d="M40 90L45 85M45 90L40 85" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+      <path d="M160 165L165 160M165 165L160 160" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+    </>
+  ),
+  error: (
+    <>
+      <circle cx="100" cy="100" r="85" fill="#6665E0" opacity=".08"/>
+      <circle cx="100" cy="92" r="58" fill="#6665E0" opacity=".12"/>
+      <path d="M60 50 L140 50 Q160 50 160 70 L160 115 Q160 135 140 135 L92 135 L70 158 L75 135 L60 135 Q40 135 40 115 L40 70 Q40 50 60 50 Z" fill="#6665E0" opacity=".15"/>
+      <path d="M60 50 L140 50 Q160 50 160 70 L160 115 Q160 135 140 135 L92 135 L70 158 L75 135 L60 135 Q40 135 40 115 L40 70 Q40 50 60 50 Z" fill="none" stroke="#F9F367" strokeWidth="4" strokeLinejoin="round" strokeLinecap="round"/>
+      <rect x="95" y="70" width="10" height="28" rx="5" fill="#6665E0"/>
+      <circle cx="100" cy="110" r="4.5" fill="#6665E0"/>
+      <path d="M50 38 Q100 22 150 38" stroke="#F9F367" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="5 6" opacity=".45"/>
+      <path d="M65 26 Q100 14 135 26" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" strokeDasharray="4 6" opacity=".3"/>
+      <circle cx="32" cy="60" r="4" fill="#F9F367" opacity=".5"/>
+      <circle cx="172" cy="55" r="5" fill="#F9F367" opacity=".4"/>
+      <circle cx="28" cy="170" r="3" fill="#6665E0" opacity=".5"/>
+      <circle cx="175" cy="172" r="4" fill="#F9F367" opacity=".5"/>
+      <path d="M30 110L35 105M35 110L30 105" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+      <path d="M165 100L170 95M170 100L165 95" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+    </>
+  ),
+};
+
+export function Illustration({
+  name = "search", size = 148, className = "", style,
+}: {
+  name?: IllusName;
+  size?: number;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <svg className={"nk-empty__ill " + className} width={size} height={size} viewBox="0 0 200 200"
+      aria-hidden="true" focusable="false" style={style}>
+      {NK_ILLUS[name] ?? NK_ILLUS.search}
+    </svg>
   );
 }
 

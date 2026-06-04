@@ -54,7 +54,7 @@ export function CategoriesScreen() {
               {Array.from({ length: 8 }).map((_, i) => <CategoryCardSkeleton key={i} />)}
             </div>
           ) : isError ? (
-            <EmptyState icon="LayoutGrid" title={dict.categories.errorTitle} subtitle={dict.categories.errorSubtitle}
+            <EmptyState illustration="error" title={dict.categories.errorTitle} subtitle={dict.categories.errorSubtitle}
               actionLabel={dict.categories.errorAction} onAction={() => refetch()} />
           ) : list.length ? (
             <div className="nk-grid-cats">
@@ -63,7 +63,7 @@ export function CategoriesScreen() {
               ))}
             </div>
           ) : (
-            <EmptyState icon="SearchX" title={t.emptyTitle} subtitle={t.emptySubtitle(q.trim())} actionLabel={t.emptyAction} onAction={() => setQ("")} />
+            <EmptyState illustration="search" title={t.emptyTitle} subtitle={t.emptySubtitle(q.trim())} actionLabel={t.emptyAction} onAction={() => setQ("")} />
           )}
 
           <section style={{ paddingBlock: "80px 40px" }}>

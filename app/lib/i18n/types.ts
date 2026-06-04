@@ -4,7 +4,19 @@ import type { IconName } from "@/app/components/ui";
 
 export type FaqItem = { q: string; a: string };
 export type FeatureItem = { icon: IconName; title: string; body: string };
-export type HowItWorksStep = { icon: IconName; title: string; body: string };
+
+// "Kaip tai veikia" (How it works) standalone page.
+export type HtwTone = "yellow" | "green" | "purple";
+export type HtwScreen = "search" | "reserve" | "pickup" | "review" | "list" | "accept" | "handover" | "payout";
+export type HtwStep = { icon: IconName; title: string; tag: string; tone: HtwTone; body: string; screen: HtwScreen };
+export type HtwRole = {
+  label: string; // role-toggle label (e.g. "Nuomininkas" / "Nuomotojas")
+  lead: string;
+  ctaTitle: string;
+  ctaBody: string;
+  steps: [HtwStep, HtwStep, HtwStep, HtwStep];
+};
+export type HtwTrust = { icon: IconName; title: string; body: string };
 export type FooterLink = { label: string; href: string };
 // A footer category link: localized display `label` + a stable Lithuanian
 // search `q` (shared across locales, since listings are predominantly LT).
@@ -68,6 +80,8 @@ export type Dict = {
     search: string;
     category: string;
     contacts: string;
+    howItWorks: string; // "Kaip tai veikia" link
+    getApp: string; // primary "Get the app" button
     primary: string; // aria-label for the primary <nav> landmark
     openMenu: string; // aria-label for the mobile burger (closed state)
     closeMenu: string; // aria-label for the mobile burger (open state)
@@ -106,10 +120,37 @@ export type Dict = {
     emptyAction: string;
   };
   features: [FeatureItem, FeatureItem, FeatureItem];
+  // Standalone "Kaip tai veikia" page (/kaip-tai-veikia).
   howItWorks: {
+    meta: { title: string; description: string };
     eyebrow: string;
     title: string;
-    steps: [HowItWorksStep, HowItWorksStep, HowItWorksStep];
+    lead: string;
+    renter: HtwRole;
+    owner: HtwRole;
+    trustEyebrow: string;
+    trustTitle: string;
+    trust: [HtwTrust, HtwTrust, HtwTrust];
+    faqEyebrow: string;
+    faqTitle: string;
+    faq: FaqItem[];
+    ctaPhoneAlt: string;
+    // micro-labels rendered inside the synced phone mock-ups
+    screen: {
+      searchPlaceholder: string;
+      reserveCta: string;
+      frozenPill: string;
+      pickupCta: string;
+      reviewCta: string;
+      listUpload: string;
+      listPrice: string;
+      listCta: string;
+      acceptCta: string;
+      handoverCta: string;
+      payoutAmount: string;
+      payoutLabel: string;
+      completedPill: string;
+    };
   };
   home: {
     seoHeading: string;
@@ -136,7 +177,6 @@ export type Dict = {
     browseHeading: string;
     allCategories: string;
     categories: FooterCategory[]; // curated category links (label + stable LT search query)
-    citiesHeading: string;
     helpHeading: string;
     help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
     copyright: string;
@@ -237,22 +277,6 @@ export type Dict = {
     interruptTitle: string;
     interruptBody: string;
     interruptCta: string;
-  };
-  // City landing pages (/miestai/[city]) — copy is parameterized by city name.
-  cityPage: {
-    metaTitle: (city: string) => string;
-    metaDescription: (city: string) => string;
-    crumb: string; // "Miestai" breadcrumb label
-    eyebrow: (city: string) => string;
-    title: (city: string) => string;
-    body: (city: string) => string;
-    resultCount: (count: number) => string;
-    emptyTitle: (city: string) => string;
-    emptyBody: (city: string) => string;
-    otherCitiesHeading: string;
-    browseAll: string; // CTA linking to the full /skelbimai feed
-    seoHeading: (city: string) => string;
-    seoBody: (city: string) => string;
   };
   // Locked-mode "Bridge": transactional actions open the app-redirect modal.
   bridge: {

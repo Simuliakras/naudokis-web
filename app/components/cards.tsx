@@ -1,7 +1,7 @@
 "use client";
 // Naudokis UI kit — card components.
 import Link from "next/link";
-import { Icon, IconName, LocationChip, Rating, Dots, openRedirect } from "./ui";
+import { Icon, IconName, IllusName, Illustration, LocationChip, Rating, Dots, openRedirect } from "./ui";
 import { useI18n } from "./I18nProvider";
 
 /* ---------------- Offer / listing card ----------------
@@ -248,10 +248,13 @@ export function CategoryCardSkeleton() {
   );
 }
 
-/* ---------------- Empty state ---------------- */
+/* ---------------- Empty state ----------------
+   Screen-level empties show the floating brand illustration (pass `illustration`);
+   if only an `icon` is given, the compact badge is used instead. */
 export function EmptyState({
-  icon = "SearchX", title, subtitle, actionLabel, onAction,
+  illustration, icon = "SearchX", title, subtitle, actionLabel, onAction,
 }: {
+  illustration?: IllusName;
   icon?: IconName;
   title: string;
   subtitle: string;
@@ -260,7 +263,9 @@ export function EmptyState({
 }) {
   return (
     <div className="nk-empty">
-      <span className="nk-empty__icon"><Icon name={icon} size={40} stroke={1.8} color="var(--nk-text-muted)" /></span>
+      {illustration
+        ? <Illustration name={illustration} />
+        : <span className="nk-empty__icon"><Icon name={icon} size={40} stroke={1.8} color="var(--nk-text-muted)" /></span>}
       <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 460 }}>
         <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", color: "var(--nk-text)" }}>{title}</h3>
         <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "28px", color: "var(--nk-text-2)" }}>{subtitle}</p>

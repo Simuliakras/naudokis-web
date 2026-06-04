@@ -66,7 +66,7 @@ export function ListingScreen({ id }: { id: string }) {
     );
   }
   if (isError || !listing) {
-    return shell(<EmptyState icon="SearchX" title={t.loadErrorTitle} subtitle={t.loadErrorBody} actionLabel={dict.offers.errorAction} onAction={() => refetch()} />);
+    return shell(<EmptyState illustration="error" title={t.loadErrorTitle} subtitle={t.loadErrorBody} actionLabel={dict.offers.errorAction} onAction={() => refetch()} />);
   }
 
   const category = listing.tags[0];

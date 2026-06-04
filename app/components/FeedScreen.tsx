@@ -138,7 +138,7 @@ export function FeedScreen() {
               {Array.from({ length: 6 }).map((_, i) => <OfferCardSkeleton key={i} />)}
             </div>
           ) : isError ? (
-            <EmptyState icon="SearchX" title={dict.offers.errorTitle} subtitle={dict.offers.errorSubtitle} actionLabel={dict.offers.errorAction} onAction={() => refetch()} />
+            <EmptyState illustration="error" title={dict.offers.errorTitle} subtitle={dict.offers.errorSubtitle} actionLabel={dict.offers.errorAction} onAction={() => refetch()} />
           ) : list.length ? (
             <div className="nk-grid-feed">
               {head.map(card)}
@@ -146,7 +146,7 @@ export function FeedScreen() {
               {tail.map(card)}
             </div>
           ) : (
-            <EmptyState icon="SearchX" title={t.emptyTitle} subtitle={t.emptySubtitle} actionLabel={t.emptyAction} onAction={reset} />
+            <EmptyState illustration={anyActive ? "filter" : "listings"} title={t.emptyTitle} subtitle={t.emptySubtitle} actionLabel={t.emptyAction} onAction={reset} />
           )}
 
           <div style={{ marginTop: 64, display: "flex", flexDirection: "column", gap: 18 }}>

@@ -4,14 +4,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Icon, type IconName, Logo, Button, AppBadges, SectionHead, Dots, RoundArrow, QR,
+  Icon, type IconName, Logo, Button, AppBadges, SectionHead, Dots, RoundArrow, QR, openRedirect,
 } from "./ui";
 import {
   OfferCard, CategoryCard, FeatureCard, Testimonial, FaqRow, OfferCardSkeleton, CategoryCardSkeleton, EmptyState,
 } from "./cards";
 import { useCategories } from "@/app/lib/categories";
 import { useListings } from "@/app/lib/listings";
-import { LT_CITIES, citySlug } from "@/app/lib/cities";
+import { LT_CITIES } from "@/app/lib/cities";
 import { listingSearchHref } from "@/app/lib/search";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL } from "@/app/lib/contact";
 import { useI18n } from "./I18nProvider";
@@ -34,6 +34,7 @@ export function Nav({ onSearch }: { onSearch: () => void }) {
   // Active-route flag for aria-current — strip any locale prefix to the bare
   // path (the default locale is unprefixed) before matching.
   const isCategories = barePath(pathname) === "/kategorijos";
+  const isHowItWorks = barePath(pathname) === "/kaip-tai-veikia";
 
   // Condense the bar once the page scrolls — wired here (not per-page) so it
   // works on every screen that renders the Nav.
@@ -107,9 +108,14 @@ export function Nav({ onSearch }: { onSearch: () => void }) {
                 <Icon name="Search" size={17} stroke={2.2} color="var(--nk-text)" /> {dict.nav.search}
               </button>
             )}
+          <Link className="nk-nav nk-link" href="/kaip-tai-veikia" aria-current={isHowItWorks ? "page" : undefined}>{dict.nav.howItWorks}</Link>
           <Link className="nk-nav nk-link" href="/kategorijos" aria-current={isCategories ? "page" : undefined}>{dict.nav.category}</Link>
           <a className="nk-nav nk-link" href="#kontaktai">{dict.nav.contacts}</a>
           <LocaleSwitcher />
+          <button className="nk-btn nk-btn--primary" style={{ padding: "10px 20px", fontSize: 15 }}
+            onClick={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}>
+            <Icon name="Download" size={17} stroke={2.2} color="var(--nk-text)" /> {dict.nav.getApp}
+          </button>
         </nav>
         <button ref={burgerRef} className="nk-nav-burger" aria-label={menuOpen ? dict.nav.closeMenu : dict.nav.openMenu}
           aria-expanded={menuOpen} aria-controls="nk-mobile-nav" onClick={() => setMenuOpen((v) => !v)}>
@@ -121,6 +127,9 @@ export function Nav({ onSearch }: { onSearch: () => void }) {
           <button className="nk-drawer-item" onClick={doSearch}>
             <Icon name="Search" size={20} stroke={2.2} color="var(--nk-text)" /> {dict.nav.search}
           </button>
+          <Link className="nk-drawer-item" href="/kaip-tai-veikia" aria-current={isHowItWorks ? "page" : undefined} onClick={() => setMenuOpen(false)}>
+            <Icon name="Sparkles" size={20} stroke={2} color="var(--nk-text)" /> {dict.nav.howItWorks}
+          </Link>
           <Link className="nk-drawer-item" href="/kategorijos" aria-current={isCategories ? "page" : undefined} onClick={() => setMenuOpen(false)}>
             <Icon name="LayoutGrid" size={20} stroke={2} color="var(--nk-text)" /> {dict.nav.category}
           </Link>
@@ -128,6 +137,10 @@ export function Nav({ onSearch }: { onSearch: () => void }) {
             <Icon name="MessageCircle" size={20} stroke={2} color="var(--nk-text)" /> {dict.nav.contacts}
           </a>
           <div className="nk-drawer-locale"><LocaleSwitcher /></div>
+          <button className="nk-btn nk-btn--primary" style={{ margin: "4px 12px 0", justifyContent: "center" }}
+            onClick={() => { setMenuOpen(false); openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody }); }}>
+            <Icon name="Download" size={18} stroke={2.2} color="var(--nk-text)" /> {dict.nav.getApp}
+          </button>
         </div>
       </div>
     </header>
@@ -380,32 +393,6 @@ export function Features() {
   );
 }
 
-/* ---------------- How it works ---------------- */
-export function HowItWorks() {
-  const { dict } = useI18n();
-  const t = dict.howItWorks;
-  return (
-    <section className="nk-container" style={{ paddingBlock: "clamp(72px, 10vw, 120px)" }}>
-      <SectionHead eyebrow={t.eyebrow} title={t.title} />
-      <div className="nk-reveal nk-row">
-        {t.steps.map((s, i) => (
-          <div key={s.title} className="nk-reveal" data-delay={(i % 3) + 1}
-            style={{ flex: 1, position: "relative", background: "var(--nk-surface)", border: "1px solid var(--nk-hairline)", borderRadius: 16, padding: "40px 36px 44px", display: "flex", flexDirection: "column", gap: 20 }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <span style={{ width: 48, height: 48, borderRadius: 14, flex: "none", background: "var(--nk-purple-tint)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, color: "var(--nk-purple-hover)" }}>{i + 1}</span>
-              <Icon name={s.icon} size={26} color="var(--nk-yellow)" stroke={2} />
-            </span>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <h3 className="nk-h-card" style={{ margin: 0 }}>{s.title}</h3>
-              <p className="nk-body" style={{ margin: 0 }}>{s.body}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 /* ---------------- Bottom SEO text block ---------------- */
 export function HomeSeo() {
   const { dict } = useI18n();
@@ -591,17 +578,12 @@ export function Footer() {
 
           <nav className="nk-footer__col" aria-label={t.browseHeading}>
             <h4>{t.browseHeading}</h4>
-            <Link href="/kategorijos">{t.allCategories}</Link>
-            {t.categories.map((c) => (
-              <Link key={c.q} href={listingSearchHref({ q: c.q })}>{c.label}</Link>
-            ))}
-          </nav>
-
-          <nav className="nk-footer__col" aria-label={t.citiesHeading}>
-            <h4>{t.citiesHeading}</h4>
-            {LT_CITIES.map((c) => (
-              <Link key={c} href={`/miestai/${citySlug(c)}`}>{c}</Link>
-            ))}
+            <div className="nk-footer__catgrid">
+              <Link href="/kategorijos">{t.allCategories}</Link>
+              {t.categories.map((c) => (
+                <Link key={c.q} href={listingSearchHref({ q: c.q })}>{c.label}</Link>
+              ))}
+            </div>
           </nav>
 
           <nav className="nk-footer__col" aria-label={t.helpHeading}>

@@ -17,6 +17,8 @@ export const lt: Dict = {
     search: "Paieška",
     category: "Kategorija",
     contacts: "Kontaktai",
+    howItWorks: "Kaip tai veikia",
+    getApp: "Atsisiųsti programėlę",
     primary: "Pagrindinė navigacija",
     openMenu: "Atidaryti meniu",
     closeMenu: "Uždaryti meniu",
@@ -60,13 +62,76 @@ export const lt: Dict = {
     { icon: "MapPin", title: "Kaimynystėje", body: "Atraskite naudingus daiktus tiesiog kitoje gatvės pusėje. Stiprinkime vietos bendruomenę kartu." },
   ],
   howItWorks: {
+    meta: {
+      title: "Kaip tai veikia — Naudokis.lt",
+      description: "Sužinok, kaip Naudokis veikia — nuo paieškos iki grąžinimo nuomininkams ir nuo skelbimo iki išmokos nuomotojams. Keturi paprasti žingsniai.",
+    },
     eyebrow: "Kaip tai veikia",
-    title: "Trys žingsniai iki nuomos",
-    steps: [
-      { icon: "Search", title: "Rask", body: "Naršyk tūkstančius daiktų iš kaimynų visoje Lietuvoje ir išsirink tai, ko reikia šiandien." },
-      { icon: "Calendar", title: "Rezervuok", body: "Pasirink datas ir rezervuok programėlėje. Pinigai užšaldomi saugiai iki nuomos pabaigos." },
-      { icon: "ShieldCheck", title: "Naudokis", body: "Pasiimk daiktą iš kaimyno, naudokis ramiai ir grąžink laiku. Užstatas grįžta automatiškai." },
+    title: "Nuomokis arba uždirbk — viskas keturiais žingsniais",
+    lead: "Naudokis jungia kaimynus, kurie nori pasiskolinti, su tais, kurie nori uždirbti iš nenaudojamų daiktų. Pasirink savo pusę ir pažiūrėk, kaip tai veikia.",
+    renter: {
+      label: "Nuomininkas",
+      lead: "Nuo paieškos iki grąžinimo — keturi žingsniai, kad pasiimtum tai, ko reikia šiandien.",
+      ctaTitle: "Pasiruošęs pradėti? Rezervuok programėlėje",
+      ctaBody: "Atsisiųsk Naudokis ir užbaik nuomą per kelias sekundes — saugūs mokėjimai, žinutės ir rezervacijos vienoje vietoje.",
+      steps: [
+        { icon: "Search", title: "Surask, ko reikia", tag: "Greita", tone: "yellow", screen: "search",
+          body: "Naršyk patikrintus skelbimus šalia tavęs ir filtruok pagal miestą, datą ar kainą. Naršyti — visada nemokama." },
+        { icon: "Calendar", title: "Rezervuok programėlėje", tag: "Saugu", tone: "green", screen: "reserve",
+          body: "Pasirink datas ir rezervuok per kelias sekundes. Nuomos suma saugiai užšaldoma ir nuomotojui pervedama tik po sėkmingos nuomos." },
+        { icon: "Handshake", title: "Pasiimk ir naudokis", tag: "Kaimynystėje", tone: "yellow", screen: "pickup",
+          body: "Susitik su kaimynu sutartoje vietoje, pasiimk daiktą ir naudokis juo tiek, kiek reikia." },
+        { icon: "Star", title: "Grąžink ir įvertink", tag: "Be rūpesčių", tone: "purple", screen: "review",
+          body: "Grąžinus daiktą sandoris užbaigiamas, o tu palieki atsiliepimą. Sumoki tik už tai, ką iš tikrųjų naudojai." },
+      ],
+    },
+    owner: {
+      label: "Nuomotojas",
+      lead: "Paversk nenaudojamus daiktus pajamomis — keturi žingsniai nuo skelbimo iki išmokos.",
+      ctaTitle: "Pasiruošęs uždirbti? Įkelk skelbimą programėlėje",
+      ctaBody: "Atsisiųsk Naudokis ir paversk nenaudojamus daiktus pajamomis — saugūs mokėjimai, žinutės ir išmokos vienoje vietoje.",
+      steps: [
+        { icon: "Camera", title: "Įkelk skelbimą", tag: "Lengva", tone: "purple", screen: "list",
+          body: "Nufotografuok daiktą, trumpai aprašyk ir nustatyk kainą — platforma pasiūlys rekomenduojamą. Skelbimai nemokami." },
+        { icon: "BadgeCheck", title: "Priimk rezervaciją", tag: "Saugu", tone: "green", screen: "accept",
+          body: "Gavęs užklausą, patvirtink nuomą. Nuomininko mokėjimas iškart saugiai užšaldomas, kol sandoris nebaigtas." },
+        { icon: "Handshake", title: "Perduok daiktą", tag: "Apsaugota", tone: "green", screen: "handover",
+          body: "Susitik sutartu laiku ir perduok daiktą. Užstatas padengia galimą žalą, o tu lieki ramus." },
+        { icon: "Coins", title: "Gauk išmoką", tag: "Uždirbk", tone: "purple", screen: "payout",
+          body: "Sėkmingai užbaigus nuomą pinigai pervedami tau. Taikomas tik nedidelis, skaidrus komisinis mokestis." },
+      ],
+    },
+    trustEyebrow: "Saugu iš abiejų pusių",
+    trustTitle: "Pasitikėjimas įaustas į kiekvieną žingsnį",
+    trust: [
+      { icon: "Snowflake", title: "Pinigai užšaldomi", body: "Nuomos suma laikoma saugiai ir pervedama tik po sėkmingo sandorio." },
+      { icon: "Users", title: "Patikrinta bendruomenė", body: "Kiekvienas naudotojas verifikuojamas — nuomojiesi iš tikrų kaimynų." },
+      { icon: "ShieldCheck", title: "Užstatas nuo žalos", body: "Užstatas ir ginčų sprendimas saugo abi puses kiekvienos nuomos metu." },
     ],
+    faqEyebrow: "Dar klausimų?",
+    faqTitle: "Kaip tai veikia — dažniausi klausimai",
+    faq: [
+      { q: "Ar naršyti ir ieškoti daiktų kainuoja?", a: "Ne. Naršyti, ieškoti ir peržiūrėti skelbimus visada nemokama. Nuomotojai moka tik nedidelį, skaidrų komisinį po sėkmingos nuomos." },
+      { q: "Kaip apsaugomi mano pinigai nuomojantis?", a: "Nuomos suma „užšaldoma“ rezervacijos metu ir nuomotojui pervedama tik tada, kai sėkmingai užbaigi nuomą. Tol pinigai lieka saugūs." },
+      { q: "Kas atsako už galimą žalą daiktui?", a: "Prieš nuomą gali būti imamas užstatas, kuris padengia galimą žalą. Kilus nesutarimui, ginčą padeda spręsti Naudokis komanda." },
+      { q: "Kodėl rezervuoti reikia programėlėje?", a: "Saugūs mokėjimai, žinutės su kaimynais ir rezervacijų valdymas veikia Naudokis programėlėje. Svetainėje gali laisvai naršyti ir atrasti." },
+    ],
+    ctaPhoneAlt: "Naudokis programėlė",
+    screen: {
+      searchPlaceholder: "Ką nuomositės?",
+      reserveCta: "Rezervuoti",
+      frozenPill: "Užšaldyta",
+      pickupCta: "Susitikti su kaimynu",
+      reviewCta: "Palikti atsiliepimą",
+      listUpload: "Įkelk nuotraukas",
+      listPrice: "50 € / d.",
+      listCta: "Skelbti",
+      acceptCta: "Patvirtinti rezervaciją",
+      handoverCta: "Perduoti daiktą",
+      payoutAmount: "+ 50 €",
+      payoutLabel: "Išmoka pervesta",
+      completedPill: "Užbaigta",
+    },
   },
   home: {
     seoHeading: "Daiktų nuoma iš kaimynų visoje Lietuvoje",
@@ -111,8 +176,9 @@ export const lt: Dict = {
       { label: "Foto ir vaizdo technika", q: "foto" },
       { label: "Įrankiai ir statyba", q: "įrankiai" },
       { label: "Laisvalaikis ir sportas", q: "sportas" },
+      { label: "Buitinė technika", q: "buitinė technika" },
+      { label: "Elektronika", q: "elektronika" },
     ],
-    citiesHeading: "Populiarūs miestai",
     helpHeading: "Pagalba",
     help: [
       { label: "DUK", href: "#duk" },
@@ -240,29 +306,6 @@ export const lt: Dict = {
     interruptTitle: "Rezervuok sekundėmis programėlėje",
     interruptBody: "Visi skelbimai, pokalbiai su savininkais ir saugūs atsiskaitymai — vienoje vietoje.",
     interruptCta: "Atsisiųsti programėlę",
-  },
-  cityPage: {
-    metaTitle: (city) => `Daiktų nuoma ${city} mieste | Naudokis.lt`,
-    metaDescription: (city) =>
-      `Nuomokis įrankius, techniką, sporto ir laisvalaikio inventorių iš patikimų kaimynų ${city} mieste. Naršyk skelbimus naršyklėje, rezervaciją užbaik Naudokis programėlėje.`,
-    crumb: "Miestai",
-    eyebrow: (city) => `Nuoma · ${city}`,
-    title: (city) => `Daiktų nuoma ${city} mieste`,
-    body: (city) =>
-      `Įrankiai, technika, sporto ir laisvalaikio daiktai iš patikimų kaimynų ${city} mieste — vienoje vietoje.`,
-    resultCount: (n) => {
-      const d = n % 10;
-      const dd = n % 100;
-      const word = (dd >= 11 && dd <= 19) || d === 0 ? "skelbimų" : d === 1 ? "skelbimas" : "skelbimai";
-      return `${n} ${word}`;
-    },
-    emptyTitle: (city) => `${city} mieste skelbimų dar nėra`,
-    emptyBody: (city) => `Šiuo metu ${city} mieste aktyvių skelbimų neradome. Peržiūrėk nuomą visoje Lietuvoje.`,
-    otherCitiesHeading: "Kiti miestai",
-    browseAll: "Visi skelbimai",
-    seoHeading: (city) => `Daiktų nuoma ${city} mieste`,
-    seoBody: (city) =>
-      `Naudokis.lt jungia žmones, norinčius išsinuomoti daiktus, su patikimais savininkais ${city} mieste ir visoje Lietuvoje. Naršyk skelbimus naršyklėje, o rezervaciją ir saugius atsiskaitymus užbaik Naudokis programėlėje.`,
   },
   bridge: {
     defaultTitle: "Tęskite programėlėje",

@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
 import { locales, defaultLocale } from "@/app/lib/i18n/config";
-import { LT_CITIES, citySlug } from "@/app/lib/cities";
 import { getLegalManifest, CANONICAL_IDS } from "@/app/lib/legal/manifest";
 import { API_BASE } from "@/app/lib/api";
 
@@ -28,6 +27,7 @@ function localized(path: string, priority: number): MetadataRoute.Sitemap {
 // enumerated from the manifest in legalEntries().
 const STATIC_PATHS: [path: string, priority: number][] = [
   ["", 1],
+  ["/kaip-tai-veikia", 0.7],
   ["/kategorijos", 0.8],
   ["/skelbimai", 0.8],
   ["/teisine", 0.4],
@@ -96,7 +96,6 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries = STATIC_PATHS.flatMap(([path, priority]) => localized(path, priority));
   const legal = legalEntries();
-  const cityEntries = LT_CITIES.flatMap((c) => localized(`/miestai/${citySlug(c)}`, 0.6));
   const listingEntries = (await fetchListingIds()).flatMap((id) => localized(`/skelbimai/${id}`, 0.5));
-  return [...staticEntries, ...legal, ...cityEntries, ...listingEntries];
+  return [...staticEntries, ...legal, ...listingEntries];
 }
