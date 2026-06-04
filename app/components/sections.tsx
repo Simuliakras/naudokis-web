@@ -1,10 +1,10 @@
 "use client";
 // Naudokis UI kit — page sections.
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Icon, Logo, Button, AppBadges, SectionHead, Dots, QR,
+  Icon, Logo, Button, AppBadges, SectionHead, Dots, RoundArrow, QR,
 } from "./ui";
 import {
   OfferCard, CategoryCard, FeatureCard, Testimonial, FaqRow, OfferCardSkeleton, CategoryCardSkeleton, EmptyState,
@@ -19,7 +19,7 @@ import { locales, defaultLocale, type Locale } from "@/app/lib/i18n/config";
 export function Nav({ onSearch }: { onSearch: () => void }) {
   const { dict } = useI18n();
   return (
-    <header className="nk-nav-bar" style={{ position: "sticky", top: 0, zIndex: 50, background: "var(--nk-glass-nav)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--nk-border-faint)" }}>
+    <header className="nk-nav-bar" style={{ position: "sticky", top: 0, zIndex: 50, background: "var(--nk-glass-nav)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--nk-border)" }}>
       <div className="nk-container" style={{ height: 92, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <Logo />
         <nav style={{ display: "flex", alignItems: "center", gap: 32 }}>
@@ -121,24 +121,25 @@ function SearchBar() {
   const cityOptions: [string, string][] = [["", dict.cityPicker.all], ...LT_CITIES.map((c) => [c, c] as [string, string])];
   return (
     <form className="nk-search" onSubmit={go} style={{
-      display: "flex", alignItems: "center", gap: 8, background: "#F9F9F9", border: "1px solid var(--nk-border-soft)",
+      display: "flex", alignItems: "center", gap: 8, background: "var(--nk-light-field)", border: "1px solid var(--nk-light-line)",
       borderRadius: 34, boxShadow: "var(--nk-shadow-input)", padding: "8px 8px 8px 24px", maxWidth: 662,
     }}>
       <span style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
         <Icon name="Search" size={20} color="var(--nk-bg)" stroke={2} />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={dict.search.placeholder}
+          aria-label={dict.search.inputLabel}
           style={{ border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 18, color: "var(--nk-bg)", width: 150 }} />
       </span>
-      <span style={{ width: 1, height: 36, background: "var(--nk-border-soft)" }} />
+      <span style={{ width: 1, height: 36, background: "var(--nk-light-line)" }} />
       <span ref={cityRef} style={{ position: "relative" }}>
         <button type="button" onClick={() => setOpenCity((v) => !v)} aria-haspopup="listbox" aria-expanded={openCity}
-          style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: 22, cursor: "pointer", background: openCity ? "#ECECEC" : "transparent", transition: "background .15s ease" }}>
+          style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: 22, cursor: "pointer", background: openCity ? "var(--nk-light-field-active)" : "transparent", transition: "background .15s ease" }}>
           <Icon name="MapPin" size={20} color="var(--nk-bg)" stroke={2} />
           <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 18, color: city ? "var(--nk-bg)" : "var(--nk-text-slate)", whiteSpace: "nowrap" }}>{city || dict.search.where}</span>
           <Icon name="ChevronDown" size={16} stroke={2.2} color="var(--nk-light-meta)" style={{ transform: openCity ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
         </button>
         {openCity && (
-          <span role="listbox" style={{ position: "absolute", bottom: "calc(100% + 12px)", right: 0, minWidth: 200, background: "#FFFFFF", border: "1px solid var(--nk-border-soft)", borderRadius: 16, padding: 8, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 20px 50px rgba(0,0,0,.28)", zIndex: 40 }}>
+          <span role="listbox" style={{ position: "absolute", bottom: "calc(100% + 12px)", right: 0, minWidth: 200, background: "var(--nk-light-bg)", border: "1px solid var(--nk-light-line)", borderRadius: 16, padding: 8, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 20px 50px rgba(0,0,0,.28)", zIndex: 40 }}>
             <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--nk-light-meta)", padding: "8px 12px 6px" }}>{dict.cityPicker.heading}</span>
             {cityOptions.map(([val, label]) => {
               const active = city === val;
@@ -148,7 +149,7 @@ function SearchBar() {
                   style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "11px 12px", borderRadius: 10, cursor: "pointer", textAlign: "left",
                     background: active ? "var(--nk-purple-soft)" : "transparent", color: active ? "var(--nk-purple-deep)" : "var(--nk-bg)",
                     fontFamily: "var(--nk-font-body)", fontSize: 17 }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 10 }}><Icon name="MapPin" size={17} color={active ? "var(--nk-purple-deep)" : "#9A9A9A"} stroke={2} /> {label}</span>
+                  <span style={{ display: "flex", alignItems: "center", gap: 10 }}><Icon name="MapPin" size={17} color={active ? "var(--nk-purple-deep)" : "var(--nk-light-icon)"} stroke={2} /> {label}</span>
                   {active && <Icon name="BadgeCheck" size={18} color="var(--nk-purple-deep)" stroke={2} />}
                 </button>
               );
@@ -183,7 +184,7 @@ export function Categories() {
           actionLabel={t.errorAction} onAction={() => refetch()} />
       ) : (
         <div className="nk-grid-6 nk-reveal" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 20 }}>
-          {list.map((c) => <CategoryCard key={c.id} title={c.title} tint={c.tint} onOpen={() => router.push(`/skelbimai?cat=${encodeURIComponent(c.id)}`)} />)}
+          {list.map((c) => <CategoryCard key={c.id} title={c.title} onOpen={() => router.push(`/skelbimai?cat=${encodeURIComponent(c.id)}`)} />)}
         </div>
       )}
     </section>
@@ -239,18 +240,115 @@ export function Features() {
   );
 }
 
+/* ---------------- How it works ---------------- */
+export function HowItWorks() {
+  const { dict } = useI18n();
+  const t = dict.howItWorks;
+  return (
+    <section className="nk-container" style={{ paddingBlock: "clamp(72px, 10vw, 120px)" }}>
+      <SectionHead eyebrow={t.eyebrow} title={t.title} />
+      <div className="nk-reveal nk-row">
+        {t.steps.map((s, i) => (
+          <div key={s.title} className="nk-reveal" data-delay={(i % 3) + 1}
+            style={{ flex: 1, position: "relative", background: "var(--nk-surface)", border: "1px solid var(--nk-hairline)", borderRadius: 16, padding: "40px 36px 44px", display: "flex", flexDirection: "column", gap: 20 }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <span style={{ width: 48, height: 48, borderRadius: 14, flex: "none", background: "var(--nk-purple-tint)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, color: "var(--nk-purple-hover)" }}>{i + 1}</span>
+              <Icon name={s.icon} size={26} color="var(--nk-yellow)" stroke={2} />
+            </span>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <h3 className="nk-h-card" style={{ margin: 0 }}>{s.title}</h3>
+              <p className="nk-body" style={{ margin: 0 }}>{s.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- Bottom SEO text block ---------------- */
+export function HomeSeo() {
+  const { dict } = useI18n();
+  const t = dict.home;
+  return (
+    <section className="nk-container" style={{ paddingBlock: "0 80px" }}>
+      <div className="nk-reveal" style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: 16 }}>
+        <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{t.seoHeading}</h2>
+        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{t.seoBody}</p>
+      </div>
+    </section>
+  );
+}
+
 /* ---------------- Testimonials ---------------- */
+// A featured-quote carousel: one review at a time, navigable by dots, arrows,
+// keyboard (←/→), and swipe. Autoplays unless hovered/focused or the user
+// prefers reduced motion.
 export function Testimonials() {
   const { dict } = useI18n();
-  const q = dict.testimonials.quote;
+  const t = dict.testimonials;
+  const items = t.items;
+  const count = items.length;
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const dragStart = useRef<number | null>(null);
+
+  const next = useCallback(() => setActive((p) => (p + 1) % count), [count]);
+  const prev = useCallback(() => setActive((p) => (p - 1 + count) % count), [count]);
+
+  useEffect(() => {
+    if (count <= 1 || paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    const id = window.setInterval(next, 6500);
+    return () => window.clearInterval(id);
+  }, [count, paused, next]);
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") {
+      prev();
+    } else if (e.key === "ArrowRight") {
+      next();
+    }
+  };
+  const onPointerUp = (e: React.PointerEvent) => {
+    const start = dragStart.current;
+    dragStart.current = null;
+    if (start === null || Math.abs(e.clientX - start) < 40) {
+      return;
+    }
+    if (e.clientX < start) {
+      next();
+    } else {
+      prev();
+    }
+  };
+
   return (
     <section className="nk-container" style={{ paddingBlock: "clamp(96px, 14vw, 200px)" }}>
-      <SectionHead eyebrow={dict.testimonials.eyebrow} title={dict.testimonials.title} />
-      <div className="nk-reveal nk-row">
-        <Testimonial name="Eglė J." quote={q} avatarTint="#C1C1C1" />
-        <Testimonial name="Marius V." quote={q} avatarTint="#A7B0AE" />
+      <SectionHead eyebrow={t.eyebrow} title={t.title} />
+      <div role="region" aria-roledescription="carousel" aria-label={t.title} onKeyDown={onKeyDown}
+        onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}
+        onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
+        <div className="nk-tm-viewport nk-reveal"
+          onPointerDown={(e) => { dragStart.current = e.clientX; }} onPointerUp={onPointerUp}>
+          <div className="nk-tm-track" style={{ transform: `translateX(-${active * 100}%)` }}>
+            {items.map((item, i) => (
+              <div key={item.name} className="nk-tm-slide" role="group" aria-roledescription="slide"
+                aria-label={`${i + 1} / ${count}`} aria-hidden={i !== active}>
+                <Testimonial name={item.name} role={item.role} quote={item.quote} avatarTint={item.avatarTint} />
+              </div>
+            ))}
+          </div>
+        </div>
+        {count > 1 && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 24, marginTop: 48 }}>
+            <RoundArrow variant="outline" dir="left" onClick={prev} />
+            <Dots n={count} active={active} onSelect={setActive} label={t.goToReview} />
+            <RoundArrow variant="outline" dir="right" onClick={next} />
+          </div>
+        )}
       </div>
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 60 }}><Dots n={4} active={0} /></div>
     </section>
   );
 }

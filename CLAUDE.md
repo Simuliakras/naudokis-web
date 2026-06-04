@@ -116,7 +116,7 @@ Hand-rolled, no library. Two locales: `lt` (default) and `en`.
 The marketing site reads live data from the **Naudokis backend REST API** (separate repo, eu-north-1) via TanStack Query.
 
 - **Provider**: `app/providers.tsx` (`"use client"`) creates the `QueryClient` once (in `useState`) and is mounted in `app/[lang]/layout.tsx`. The layout stays a server component.
-- **Base URL**: `process.env.NEXT_PUBLIC_API_BASE_URL`, defaulting to `https://api-dev.naudokis.lt` (prod is `https://api.naudokis.lt`). Override locally via `.env.local`.
+- **Base URL**: a single source of truth in `app/lib/api.ts` (`API_BASE`), read from `process.env.NEXT_PUBLIC_API_BASE_URL` and **defaulting to prod `https://api.naudokis.lt`** so a misconfigured build never silently hits dev. Point at dev (`https://api-dev.naudokis.lt`) locally via `.env.local`.
 - **Hooks** live in `app/lib/`, one file per domain, each owning its backend types, a fetcher, locale-aware formatting, and a `useQuery` hook:
   - `categories.ts` → `useCategories(locale)` — `GET /listings/categories` (top-level categories; filtered client-side).
   - `listings.ts` → `useListings(locale, q)` — `GET /listings?q=` (browse/search; `q` debounced via `use-debounced-value.ts`, `keepPreviousData` to avoid flicker) and `useListing(id, locale)` — `GET /listings/{id}` (detail; `enabled: !!id`).

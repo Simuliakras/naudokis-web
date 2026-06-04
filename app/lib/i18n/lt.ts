@@ -26,6 +26,7 @@ export const lt: Dict = {
   },
   search: {
     placeholder: "Ką nuomositės?",
+    inputLabel: "Ieškoti daiktų nuomai",
     where: "Kur?",
     submit: "Ieškoti",
   },
@@ -55,10 +56,31 @@ export const lt: Dict = {
     { icon: "ShieldCheck", title: "Saugūs atsiskaitymai", body: "Mūsų platforma užtikrina saugią pinigų rezervaciją ir išmokėjimą tik tada, kai sandoris sėkmingai užbaigiamas." },
     { icon: "MapPin", title: "Kaimynystėje", body: "Atraskite naudingus daiktus tiesiog kitoje gatvės pusėje. Stiprinkime vietos bendruomenę kartu." },
   ],
+  howItWorks: {
+    eyebrow: "Kaip tai veikia",
+    title: "Trys žingsniai iki nuomos",
+    steps: [
+      { icon: "Search", title: "Rask", body: "Naršyk tūkstančius daiktų iš kaimynų visoje Lietuvoje ir išsirink tai, ko reikia šiandien." },
+      { icon: "Calendar", title: "Rezervuok", body: "Pasirink datas ir rezervuok programėlėje. Pinigai užšaldomi saugiai iki nuomos pabaigos." },
+      { icon: "ShieldCheck", title: "Naudokis", body: "Pasiimk daiktą iš kaimyno, naudokis ramiai ir grąžink laiku. Užstatas grįžta automatiškai." },
+    ],
+  },
+  home: {
+    seoHeading: "Daiktų nuoma iš kaimynų visoje Lietuvoje",
+    seoBody: "Naudokis – tai bendruomenės nuomos platforma, jungianti daiktų savininkus ir nuomininkus visoje Lietuvoje. Nuomok įrankius, transporto priemones, elektroniką, sporto bei laisvalaikio įrangą iš patikimų kaimynų Vilniuje, Kaune, Klaipėdoje ir kituose miestuose. Naršyti gali nemokamai, o atsiskaitymai apsaugoti – pinigai užšaldomi ir savininkui pervedami tik sėkmingai užbaigus nuomą. Kam pirkti, jei gali išsinuomoti?",
+  },
   testimonials: {
     eyebrow: "Atsiliepimai",
     title: "Ką sako mūsų bendruomenė",
-    quote: "“Nuostabi patirtis! Išsinuomojau Sony fotoaparatą savaitgaliui – viskas vyko sklandžiai, savininkas buvo labai paslaugus. Sutaupiau šimtus eurų.”",
+    items: [
+      { name: "Eglė J.", role: "Nuomininkė, Vilnius", avatarTint: "#C1C1C1",
+        quote: "“Nuostabi patirtis! Išsinuomojau Sony fotoaparatą savaitgaliui – viskas vyko sklandžiai, savininkas buvo labai paslaugus. Sutaupiau šimtus eurų.”" },
+      { name: "Marius V.", role: "Savininkas, Kaunas", avatarTint: "#A7B0AE",
+        quote: "“Savo įrankius išnuomoju, kai jų nenaudoju – papildomos pajamos atsiranda savaime, o atsiskaitymai visada saugūs ir laiku.”" },
+      { name: "Rūta P.", role: "Nuomininkė, Klaipėda", avatarTint: "#B8C0A7",
+        quote: "“Reikėjo aukšto slėgio plovyklės vienai dienai. Radau ją per kelias minutes vos už kelis eurus – kaimynas gyveno tame pačiame kvartale.”" },
+    ],
+    goToReview: (i) => `Rodyti ${i + 1}-ą atsiliepimą`,
   },
   cta: {
     title: "Atsisiųskite ir išbandykite šiandien",

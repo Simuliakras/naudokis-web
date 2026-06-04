@@ -4,7 +4,9 @@ import type { IconName } from "@/app/components/ui";
 
 export type FaqItem = { q: string; a: string };
 export type FeatureItem = { icon: IconName; title: string; body: string };
+export type HowItWorksStep = { icon: IconName; title: string; body: string };
 export type FooterLink = { label: string; href: string };
+export type TestimonialItem = { name: string; role: string; quote: string; avatarTint: string };
 
 export type LegalSubsection = { heading: string; body: string[] };
 export type LegalSection = { id: string; heading: string; body: string[]; subsections?: LegalSubsection[] };
@@ -38,6 +40,7 @@ export type Dict = {
   };
   search: {
     placeholder: string;
+    inputLabel: string; // accessible name for the hero search <input>
     where: string;
     submit: string;
   };
@@ -63,10 +66,20 @@ export type Dict = {
     emptyAction: string;
   };
   features: [FeatureItem, FeatureItem, FeatureItem];
+  howItWorks: {
+    eyebrow: string;
+    title: string;
+    steps: [HowItWorksStep, HowItWorksStep, HowItWorksStep];
+  };
+  home: {
+    seoHeading: string;
+    seoBody: string;
+  };
   testimonials: {
     eyebrow: string;
     title: string;
-    quote: string;
+    items: TestimonialItem[];
+    goToReview: (index: number) => string; // aria-label for carousel dot (0-based index)
   };
   cta: {
     title: string;

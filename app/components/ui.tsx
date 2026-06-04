@@ -196,7 +196,25 @@ export function Rating({ value = "4,8", count = "52 atsiliepimai" }: { value?: s
 }
 
 /* ---------------- Dots ---------------- */
-export function Dots({ n = 4, active = 0 }: { n?: number; active?: number }) {
+// Decorative by default; pass `onSelect` to make each dot a focusable nav button.
+export function Dots({
+  n = 4, active = 0, onSelect, label,
+}: {
+  n?: number;
+  active?: number;
+  onSelect?: (i: number) => void;
+  label?: (i: number) => string;
+}) {
+  if (onSelect) {
+    return (
+      <div className="nk-dots">
+        {Array.from({ length: n }).map((_, i) => (
+          <button key={i} type="button" onClick={() => onSelect(i)} aria-label={label?.(i)}
+            aria-current={i === active} className={"nk-dot nk-dot--btn" + (i === active ? " nk-dot--on" : "")} />
+        ))}
+      </div>
+    );
+  }
   return (
     <div className="nk-dots">
       {Array.from({ length: n }).map((_, i) => (
@@ -301,7 +319,7 @@ export function Pill({
     accent: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
     purple: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
     yellow: { bg: "rgba(249,243,103,.16)", fg: "var(--nk-yellow)" },
-    green: { bg: "rgba(0,205,135,.16)", fg: "var(--nk-green)" },
+    green: { bg: "rgba(16,185,129,.16)", fg: "var(--nk-green)" },
   };
   const c = tones[tone] ?? tones.accent;
   return (

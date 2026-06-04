@@ -1,8 +1,7 @@
 // Listing data layer — browse listings + single-listing detail from the Naudokis backend.
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery, keepPreviousData, skipToken } from "@tanstack/react-query";
 import type { Locale } from "./i18n/config";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api-dev.naudokis.lt";
+import { API_BASE } from "./api";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiImage = { url: string; blurhash?: string };
@@ -224,7 +223,7 @@ async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> 
 export function useListing(id: string | undefined, locale: Locale) {
   return useQuery({
     queryKey: ["listing", id, locale],
-    queryFn: () => fetchListing(id as string, locale),
-    enabled: !!id,
+    // skipToken keeps the query idle until an id exists — no `as` cast, no `enabled` flag.
+    queryFn: id ? () => fetchListing(id, locale) : skipToken,
   });
 }

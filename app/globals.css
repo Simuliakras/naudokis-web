@@ -6,42 +6,47 @@
    ========================================================================== */
 
 :root {
-  /* ---- Brand accents ---------------------------------------------------- */
-  /* Primary indigo is the authoritative spec value (#807FFE) — not the early
-     #9263FF Figma purple. See the Naudokis UI/UX requirements. */
-  --nk-purple:        #807FFE;   /* primary action — buttons, links, accents  */
-  --nk-purple-deep:   #6F6EF5;   /* purple border / pressed                   */
-  --nk-purple-hover:  #9B9AFF;   /* primary button / round-arrow hover        */
-  --nk-purple-soft:   rgba(128,127,254,.12);  /* outline button hover wash    */
-  --nk-accent-bg:     rgba(128,127,254,.16);  /* active/selected control fill  */
-  --nk-accent-text:   #A6A5FF;   /* active/selected control text              */
-  --nk-accent-border: rgba(128,127,254,.5);   /* active/selected control border*/
+  /* ---- Brand accents (from mobile app palettes.ts · darkColors) --------- */
+  /* Primary indigo #6665E0 is the authoritative value, pulled from the mobile
+     app source — it overrides the earlier #807FFE / #9263FF guesses. */
+  --nk-purple:        #6665E0;   /* PRIMARY — buttons, links, accents (app)   */
+  --nk-purple-deep:   #5756C6;   /* primaryDark — border / pressed            */
+  --nk-purple-hover:  #8A89FF;   /* primaryText — hover / on-dark links       */
+  --nk-purple-tint:   rgba(102,101,224,.20);  /* faint decorative tint        */
+  --nk-purple-soft:   rgba(102,101,224,.12);  /* outline button hover wash    */
+  --nk-accent-bg:     #5756C6;   /* active/selected control fill — SOLID      */
+  --nk-accent-text:   #FFFFFF;   /* active/selected control text              */
+  --nk-accent-border: rgba(102,101,224,.45);  /* active control / card hover  */
+  --nk-card-grad-1:   #3F3E94;   /* cardGradientDark — category card          */
+  --nk-card-grad-2:   #2A2849;   /* cardGradientDarkSecondary                 */
   --nk-yellow:        #F9F367;   /* eyebrows, stars, highlights, logo left    */
-  --nk-green:         #00CD87;   /* download banner, success badge            */
+  --nk-green:         #10B981;   /* download banner, success badge            */
   --nk-orange:        #E07A4A;   /* pattern accent (4th brand color)          */
 
   /* ---- Dark surfaces (primary identity) --------------------------------- */
   --nk-bg:            #282C2D;   /* charcoal — primary page background        */
   --nk-bg-deep:       #1B1B1B;   /* near-black — pattern / alt sections       */
-  --nk-surface:       #303536;   /* card surface (offers, testimonials, FAQ)  */
+  --nk-surface:       #2F3436;   /* backgroundTertiary — card surface (app)   */
   --nk-surface-2:     #373F40;   /* raised surface                            */
   --nk-surface-hover: #414a4b;   /* ghost button hover                        */
   --nk-faq-hover:     #343a3b;   /* FAQ row hover                             */
-  --nk-glass:         rgba(55,63,64,0.40);  /* hero glass panel (blur 40)     */
-  --nk-glass-strong:  rgba(55,63,64,0.82);  /* feature card glass             */
-  --nk-glass-nav:     rgba(55,63,64,0.75);  /* nav over content               */
+  --nk-glass:         rgba(255,255,255,0.04);  /* hero glass panel (blur 40)  */
+  --nk-glass-strong:  rgba(255,255,255,0.06);  /* feature card glass          */
+  --nk-glass-nav:     rgba(26,26,26,0.72);     /* glassBackdrop — nav over page */
+  --nk-surface-glass: rgba(255,255,255,0.03);  /* surfaceElevated             */
   --nk-ink:           #121212;   /* app-store badge / deepest ink             */
 
-  /* ---- Text on dark ----------------------------------------------------- */
-  --nk-text:          #F9F9F9;   /* primary text                             */
-  --nk-text-2:        #D3D3D3;   /* secondary / body                         */
-  --nk-text-muted:    #A1AAA8;   /* meta, review counts                      */
+  /* ---- Text on dark (app: white-at-opacity) ----------------------------- */
+  --nk-text:          #FFFFFF;            /* textPrimary                      */
+  --nk-text-2:        rgba(255,255,255,0.85);  /* textSecondary             */
+  --nk-text-muted:    rgba(255,255,255,0.70);  /* textMuted                 */
   --nk-text-slate:    #455759;   /* placeholder text in light search field   */
 
-  /* ---- Borders / lines -------------------------------------------------- */
-  --nk-border:        #455759;   /* divider / outline on dark                */
-  --nk-border-soft:   #D1D1D1;   /* FAQ pill hairline                        */
-  --nk-border-faint:  color-mix(in srgb, var(--nk-border) 40%, transparent); /* subtle hairline dividers */
+  /* ---- Borders / lines (app: translucent white hairlines) --------------- */
+  --nk-border:        rgba(255,255,255,0.10);  /* glassBorder — default     */
+  --nk-hairline:      rgba(255,255,255,0.07);  /* surfaceElevatedBorder     */
+  --nk-border-soft:   rgba(255,255,255,0.12);  /* FAQ / row hairline (dark) */
+  --nk-border-faint:  var(--nk-hairline);      /* subtle hairline dividers  */
 
   /* ---- Light theme (marketing wireframe / app-light surfaces) ----------- */
   --nk-light-bg:      #FFFFFF;
@@ -54,6 +59,9 @@
   --nk-chip:          #E2E2E2;   /* filter chip fill                         */
   --nk-tag:           #E8E8E8;   /* category tag fill                        */
   --nk-placeholder:   #D9D9D9;   /* image placeholder fill                   */
+  --nk-light-field:        #F9F9F9;   /* hero search field fill              */
+  --nk-light-field-active: #ECECEC;   /* city-picker button active fill      */
+  --nk-light-icon:         #9A9A9A;   /* inactive city-option icon           */
 
   /* ---- Type families (wired to next/font) ------------------------------- */
   --nk-font-display:  var(--font-archivo), system-ui, sans-serif;  /* headings, UI labels, buttons */
@@ -201,9 +209,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .nk-imgph{position:relative;background:#2c3133;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .nk-imgph[data-img]{background-size:cover;background-position:center}
 .nk-imgph .nk-imgicon{opacity:.28;color:#8a9694}
-.nk-dots{display:flex;gap:8px}
+.nk-dots{display:flex;align-items:center;gap:8px}
 .nk-dot{width:8px;height:8px;border-radius:50%;background:rgba(249,249,249,.55)}
 .nk-dot--on{background:var(--nk-text);width:9px;height:9px}
+.nk-dot--btn{padding:0;border:none;cursor:pointer;appearance:none;-webkit-appearance:none;transition:transform .18s ease,background .18s ease}
+.nk-dot--btn:hover{transform:scale(1.3);background:var(--nk-text)}
+
+/* testimonials carousel */
+.nk-tm-viewport{overflow:hidden;border-radius:16px;touch-action:pan-y}
+.nk-tm-track{display:flex;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.nk-tm-slide{flex:0 0 100%;min-width:0}
 
 @media(max-width:900px){
   :root{--nk-gutter:20px}
@@ -232,7 +247,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 
 /* ---- nav scroll state ---- */
 .nk-nav-bar{transition:background .25s ease,box-shadow .25s ease,border-color .25s ease,height .25s ease}
-.nk-nav-bar.nk-scrolled{background:rgba(27,30,31,.92);box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.nk-nav-bar.nk-scrolled{background:rgba(26,26,26,.92);box-shadow:0 8px 30px rgba(0,0,0,.35)}
 .nk-link{position:relative;text-decoration:none;transition:color .15s ease}
 .nk-link:hover{color:var(--nk-yellow)}
 .nk-link::after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:2px;background:var(--nk-yellow);transition:right .25s ease}
@@ -243,7 +258,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-stretch{position:absolute;inset:0;z-index:1}
 
 /* ---- offer card hover ---- */
-.nk-offer{transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease;border:1px solid transparent}
+.nk-offer{transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease,border-color .28s ease;border:1px solid rgba(255,255,255,0.08)}
 .nk-offer:hover{border-color:var(--nk-accent-border)}
 .nk-offer:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.45)}
 .nk-offer__media{overflow:hidden}
@@ -257,8 +272,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
   transition:transform .18s ease,background .18s ease;z-index:2}
 .nk-fav:hover{background:rgba(27,27,27,.7);transform:scale(1.08)}
 .nk-fav:active{transform:scale(.9)}
-.nk-fav.nk-on svg{animation:nk-pop .32s ease}
-@keyframes nk-pop{0%{transform:scale(.6)}55%{transform:scale(1.25)}100%{transform:scale(1)}}
 
 /* ---- category card hover ---- */
 .nk-cat{transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease}
@@ -270,11 +283,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 
 /* ---- feature card hover ---- */
 .nk-feature{transition:transform .28s ease,background .28s ease}
-.nk-feature:hover{transform:translateY(-4px);background:rgba(55,63,64,.92)}
+.nk-feature:hover{transform:translateY(-4px);background:rgba(255,255,255,0.08)}
 
 /* ---- search bar focus ---- */
 .nk-search{transition:box-shadow .2s ease,border-color .2s ease}
-.nk-search:focus-within{border-color:var(--nk-purple);box-shadow:0 6px 24px rgba(128,127,254,.28)}
+.nk-search:focus-within{border-color:var(--nk-purple);box-shadow:0 6px 24px rgba(102,101,224,.28)}
 
 /* ---- FAQ hover ---- */
 .nk-faq{transition:border-color .2s ease,background .2s ease,border-radius .2s ease}
@@ -289,7 +302,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 
 /* ---- empty state ---- */
 .nk-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;
-  padding:72px 32px;border:1px dashed var(--nk-border);border-radius:16px;background:rgba(48,53,54,.4)}
+  padding:72px 32px;border:1px dashed var(--nk-border);border-radius:16px;background:var(--nk-surface-glass)}
 .nk-empty__icon{width:88px;height:88px;border-radius:44px;background:var(--nk-surface);
   display:flex;align-items:center;justify-content:center}
 
@@ -313,7 +326,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
   display:flex;flex-direction:column;gap:24px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
 .nk-redirect-close{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:20px;
   display:flex;align-items:center;justify-content:center;background:var(--nk-surface)}
-.nk-redirect-mark{width:56px;height:56px;border-radius:16px;background:var(--nk-accent-bg);
+.nk-redirect-mark{width:56px;height:56px;border-radius:16px;background:var(--nk-purple-tint);
   display:flex;align-items:center;justify-content:center}
 .nk-redirect-qr{display:flex;align-items:center;gap:16px;padding-top:4px}
 @media(max-width:560px){
@@ -343,7 +356,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-searchfield{display:flex;align-items:center;gap:10px;background:var(--nk-surface);
   border:1px solid var(--nk-border);border-radius:999px;padding:13px 20px;
   transition:border-color .15s ease,box-shadow .15s ease}
-.nk-searchfield:focus-within{border-color:var(--nk-purple);box-shadow:0 4px 18px rgba(128,127,254,.22)}
+.nk-searchfield:focus-within{border-color:var(--nk-purple);box-shadow:0 4px 18px rgba(102,101,224,.22)}
 
 /* category tile grid (all-categories page) */
 .nk-grid-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
@@ -366,7 +379,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 
 /* feed interruption banner */
 .nk-interrupt{position:relative;overflow:hidden;display:flex;align-items:center;gap:24px;flex-wrap:wrap;
-  background:var(--nk-bg-deep);border:1px solid var(--nk-border);border-radius:16px;padding:28px 32px}
+  background:linear-gradient(135deg,var(--nk-card-grad-1),var(--nk-card-grad-2));
+  border:1px solid var(--nk-accent-border);border-radius:16px;padding:28px 32px}
 
 /* ============================================================
    Listing detail page

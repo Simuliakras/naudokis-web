@@ -26,6 +26,7 @@ export const en: Dict = {
   },
   search: {
     placeholder: "What do you need?",
+    inputLabel: "Search items to rent",
     where: "Where?",
     submit: "Search",
   },
@@ -55,10 +56,31 @@ export const en: Dict = {
     { icon: "ShieldCheck", title: "Secure payments", body: "Our platform holds the payment securely and releases it to the owner only once the deal is successfully completed." },
     { icon: "MapPin", title: "In your neighbourhood", body: "Discover useful items just across the street. Let’s strengthen the local community together." },
   ],
+  howItWorks: {
+    eyebrow: "How it works",
+    title: "Three steps to renting",
+    steps: [
+      { icon: "Search", title: "Find", body: "Browse thousands of items from neighbours across Lithuania and pick exactly what you need today." },
+      { icon: "Calendar", title: "Reserve", body: "Choose your dates and reserve in the app. The payment is held securely until the rental ends." },
+      { icon: "ShieldCheck", title: "Use it", body: "Pick the item up from your neighbour, use it with peace of mind and return it on time. Your deposit comes back automatically." },
+    ],
+  },
+  home: {
+    seoHeading: "Rent items from neighbours across Lithuania",
+    seoBody: "Naudokis is a community rental platform connecting item owners and renters across Lithuania. Rent tools, vehicles, electronics, sports and leisure gear from trusted neighbours in Vilnius, Kaunas, Klaipėda and beyond. Browsing is free, and payments are protected — money is held in escrow and released to the owner only after a successful rental. Why buy, when you can rent?",
+  },
   testimonials: {
     eyebrow: "Reviews",
     title: "What our community says",
-    quote: "“Amazing experience! I rented a Sony camera for the weekend — everything went smoothly and the owner was super helpful. I saved hundreds of euros.”",
+    items: [
+      { name: "Eglė J.", role: "Renter, Vilnius", avatarTint: "#C1C1C1",
+        quote: "“Amazing experience! I rented a Sony camera for the weekend — everything went smoothly and the owner was super helpful. I saved hundreds of euros.”" },
+      { name: "Marius V.", role: "Owner, Kaunas", avatarTint: "#A7B0AE",
+        quote: "“I rent out my tools when I’m not using them — the extra income just adds up, and payments are always secure and on time.”" },
+      { name: "Rūta P.", role: "Renter, Klaipėda", avatarTint: "#B8C0A7",
+        quote: "“I needed a pressure washer for a single day. Found one in minutes for just a few euros — the neighbour lived in the very same block.”" },
+    ],
+    goToReview: (i) => `Show review ${i + 1}`,
   },
   cta: {
     title: "Download and try it today",

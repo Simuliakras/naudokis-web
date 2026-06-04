@@ -27,8 +27,8 @@ function InfoRow({ icon, label, value, badge, badgeTone, last }: {
 }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "18px 0", borderBottom: last ? "none" : "1px solid var(--nk-border-faint)" }}>
-      <span style={{ width: 44, height: 44, borderRadius: 12, flex: "none", background: "var(--nk-accent-bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Icon name={icon} size={21} stroke={2} color="var(--nk-accent-text)" />
+      <span style={{ width: 44, height: 44, borderRadius: 12, flex: "none", background: "var(--nk-purple-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Icon name={icon} size={21} stroke={2} color="var(--nk-purple)" />
       </span>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 3, minWidth: 0 }}>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-muted)" }}>{label}</span>
@@ -202,8 +202,8 @@ export function ListingDetail({ id }: { id: string }) {
           <section>
             <h2 className="nk-detail-h">{t.reviewsHeading}</h2>
             <div style={{ background: "var(--nk-surface)", borderRadius: 18, padding: "30px 28px", display: "flex", alignItems: "center", gap: 20 }}>
-              <span style={{ width: 56, height: 56, borderRadius: 28, flex: "none", background: "var(--nk-accent-bg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Icon name="MessageCircle" size={26} color="var(--nk-accent-text)" stroke={2} />
+              <span style={{ width: 56, height: 56, borderRadius: 28, flex: "none", background: "var(--nk-purple-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Icon name="MessageCircle" size={26} color="var(--nk-purple)" stroke={2} />
               </span>
               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                 <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, color: "var(--nk-text)" }}>{t.reviewsEmptyTitle}</span>

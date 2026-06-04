@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { pageMetadata, requireLocale } from "@/app/lib/seo";
 import { ListingDetail } from "@/app/components/ListingDetail";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api-dev.naudokis.lt";
+import { API_BASE } from "@/app/lib/api";
 
 // Minimal server-side fetch for per-listing metadata (title/description/image).
 async function fetchListingMeta(id: string): Promise<{ title: string; description: string; image?: string } | null> {

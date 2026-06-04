@@ -58,7 +58,7 @@ export function CategoriesPage() {
           ) : list.length ? (
             <div className="nk-grid-cats">
               {list.map((c) => (
-                <CategoryTile key={c.id} title={c.title} tint={c.tint} count={t.tileCount(mockCategoryCount(c.id))} href={`/skelbimai?cat=${encodeURIComponent(c.id)}`} />
+                <CategoryTile key={c.id} title={c.title} count={t.tileCount(mockCategoryCount(c.id))} href={`/skelbimai?cat=${encodeURIComponent(c.id)}`} />
               ))}
             </div>
           ) : (

@@ -55,14 +55,13 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
       url: `${SITE_URL}${localePath(lang)}`,
       title: meta.title,
       description: meta.description,
-      // TODO: swap for a dedicated 1200×630 share card; using the brand pattern for now.
-      images: [{ url: "/naudokis/section-pattern.png", width: 1920, height: 724, alt: meta.ogImageAlt }],
+      // Image comes from app/[lang]/opengraph-image.tsx (generated 1200×630 card).
     },
     twitter: {
       card: "summary_large_image",
       title: meta.title,
       description: meta.description,
-      images: ["/naudokis/section-pattern.png"],
+      // Image comes from app/[lang]/opengraph-image.tsx.
     },
   };
 }
@@ -79,7 +78,10 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   }
   return (
     <html lang={lang} className={`${archivo.variable} ${sora.variable}`}>
-      <body>
+      {/* suppressHydrationWarning: browser extensions (Grammarly, dark-reader, …)
+          inject attributes onto <body> before React hydrates; this silences the
+          resulting one-level attribute mismatch without hiding it for children. */}
+      <body suppressHydrationWarning>
         <Providers>
           <I18nProvider locale={lang}>{children}</I18nProvider>
         </Providers>

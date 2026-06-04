@@ -2,7 +2,7 @@
 // Naudokis marketing homepage — client root (scroll-reveal, nav scroll state).
 import { useEffect } from "react";
 import {
-  Nav, Hero, Categories, Offers, Features, Testimonials, CtaBanner, Faq, Footer,
+  Nav, Hero, Categories, Offers, HowItWorks, Features, Testimonials, CtaBanner, Faq, HomeSeo, Footer,
 } from "./sections";
 import { Chrome } from "./Chrome";
 
@@ -28,10 +28,12 @@ export function HomeApp() {
         <Hero />
         <Categories />
         <Offers />
+        <HowItWorks />
         <Features />
         <Testimonials />
         <CtaBanner />
         <Faq />
+        <HomeSeo />
         <Footer />
       </div>
     </Chrome>

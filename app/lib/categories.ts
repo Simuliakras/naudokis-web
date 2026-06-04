@@ -1,8 +1,7 @@
 // Category data layer — fetch top-level categories from the Naudokis backend.
 import { useQuery } from "@tanstack/react-query";
 import type { Locale } from "./i18n/config";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api-dev.naudokis.lt";
+import { API_BASE } from "./api";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiCategory = {
@@ -27,11 +26,7 @@ type CategoriesResponse = {
 export type Category = {
   id: string;
   title: string;
-  tint: string;
 };
-
-// Tint palette ported from the original hardcoded categories — cycled by position.
-const TINTS = ["#3a3450", "#23404a", "#4a3a23", "#234a37", "#3f2c44", "#2c3550"];
 
 async function fetchCategories(locale: Locale): Promise<Category[]> {
   const res = await fetch(`${API_BASE}/listings/categories`);
@@ -42,7 +37,7 @@ async function fetchCategories(locale: Locale): Promise<Category[]> {
   return body.data.categories
     .filter((c) => c.level === 0 && c.visibility === "public")
     .sort((a, b) => a.display_order - b.display_order)
-    .map((c, i) => ({ id: c.id, title: locale === "en" ? c.name_en : c.name_lt, tint: TINTS[i % TINTS.length] }));
+    .map((c) => ({ id: c.id, title: locale === "en" ? c.name_en : c.name_lt }));
 }
 
 export function useCategories(locale: Locale) {

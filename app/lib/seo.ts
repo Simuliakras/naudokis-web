@@ -42,7 +42,25 @@ export function pageMetadata({
   image?: string; // absolute URL for a per-page share image (e.g. a listing photo)
 }): Metadata {
   const canonical = canonicalFor(locale, path);
-  const ogImage = image ?? "/naudokis/section-pattern.png";
+  const openGraph: NonNullable<Metadata["openGraph"]> = {
+    type: "website",
+    siteName: "Naudokis.lt",
+    locale: ogLocale,
+    url: `${SITE_URL}${canonical}`,
+    title,
+    description,
+  };
+  const twitter: NonNullable<Metadata["twitter"]> = {
+    card: "summary_large_image",
+    title,
+    description,
+  };
+  // A per-page image (e.g. a listing photo) overrides the generated OG card from
+  // app/[lang]/opengraph-image.tsx; without one, that card is used automatically.
+  if (image) {
+    openGraph.images = [{ url: image, alt: ogImageAlt }];
+    twitter.images = [image];
+  }
   return {
     metadataBase: new URL(SITE_URL),
     title,
@@ -53,20 +71,7 @@ export function pageMetadata({
       canonical,
       languages: { lt: ltPath(path), en: enPath(path), "x-default": ltPath(path) },
     },
-    openGraph: {
-      type: "website",
-      siteName: "Naudokis.lt",
-      locale: ogLocale,
-      url: `${SITE_URL}${canonical}`,
-      title,
-      description,
-      images: [image ? { url: image, alt: ogImageAlt } : { url: ogImage, width: 1920, height: 724, alt: ogImageAlt }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [ogImage],
-    },
+    openGraph,
+    twitter,
   };
 }
