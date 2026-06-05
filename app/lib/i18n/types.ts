@@ -82,6 +82,8 @@ export type Dict = {
     contacts: string;
     howItWorks: string; // "Kaip tai veikia" link
     getApp: string; // primary "Get the app" button
+    language: string; // language-picker trigger label ("Kalba" / "Language")
+    languageNames: { lt: string; en: string }; // endonyms shown in the picker
     primary: string; // aria-label for the primary <nav> landmark
     openMenu: string; // aria-label for the mobile burger (closed state)
     closeMenu: string; // aria-label for the mobile burger (open state)
@@ -108,16 +110,25 @@ export type Dict = {
     emptyTitle: string;
     emptySubtitle: (query: string) => string;
     emptyAction: string;
+    // Section-level empty band on the home page (S1 — no data, not a search).
+    bandEmptyTitle: string;
+    bandEmptyBody: string;
+    bandEmptyAction: string;
   };
   offers: {
     eyebrow: string;
     title: string;
+    all: string;
     errorTitle: string;
     errorSubtitle: string;
     errorAction: string;
     emptyTitle: string;
     emptySubtitle: (query: string) => string;
     emptyAction: string;
+    // Section-level empty band on the home page (S2 — no data, not a search).
+    bandEmptyTitle: string;
+    bandEmptyBody: string;
+    bandEmptyAction: string;
   };
   features: [FeatureItem, FeatureItem, FeatureItem];
   // Standalone "Kaip tai veikia" page (/kaip-tai-veikia).
@@ -163,6 +174,7 @@ export type Dict = {
     goToReview: (index: number) => string; // aria-label for carousel dot (0-based index)
   };
   cta: {
+    badge: string;
     title: string;
     body: string;
     phoneAlt: string;
@@ -213,6 +225,7 @@ export type Dict = {
     reviewsHeading: string;
     reviewsEmptyTitle: string;
     reviewsEmptyBody: string;
+    reviewsShowAll: (count: number) => string;
     perDay: string;
     depositReturnable: string;
     reserve: string;
@@ -221,6 +234,49 @@ export type Dict = {
     loadErrorTitle: string;
     loadErrorBody: string;
     backToListings: string;
+    // header actions + meta
+    save: string; // "Įsiminti" header action
+    newListingPill: string; // gallery "Naujas skelbimas" badge
+    galleryAll: (count: number) => string; // "Visos N nuotr."
+    // sticky in-page sub-nav (short labels)
+    subnav: { description: string; specs: string; handover: string; terms: string; reviews: string };
+    subnavReserve: string; // CTA verb in the sub-nav ("Rezervuoti")
+    perDayShort: string; // "/ d."
+    // booking panel
+    dateFrom: string;
+    dateTo: string;
+    sampleDateFrom: string;
+    sampleDateTo: string;
+    lineItem: (price: string, days: number) => string; // "20,00 € × 3 d."
+    serviceFee: string;
+    serviceFeeFree: string; // "Nemokama"
+    totalToday: string;
+    freeCancellation: string;
+    // host card
+    hostStatRating: string;
+    hostStatReviews: string;
+    hostStatResponse: string;
+    hostStatMember: string;
+    hostResponseTime: string; // "~1 val."
+    hostMemberSince: string; // "2024"
+    hostMessage: string; // "Rašyti žinutę"
+    hostVerifiedNote: string;
+    // delivery block
+    deliverySub: (city: string) => string;
+    deliveryZone: string; // "≈20 km zona"
+    // terms fact cards
+    depositNoun: string; // "užstatas"
+    termRentSub: string;
+    termDepositSub: string;
+    termDuration: string;
+    termDurationSub: string;
+    termCancel: string;
+    termCancelSub: string;
+    depositSafeTitle: string;
+    depositSafeBody: string;
+    // safety band
+    safetyHeading: string;
+    safetyItems: { icon: IconName; title: string; body: string }[];
   };
   common: {
     favorite: string; // aria-label on the heart button
@@ -271,12 +327,28 @@ export type Dict = {
     relatedTags: string[];
     seoHeading: string;
     seoBody: string;
-    emptyTitle: string;
-    emptySubtitle: string;
-    emptyAction: string;
+    // Zero-result empty states, split by reason (mirrors the design's L2/L3/L4).
+    empty: {
+      searchTitle: (query: string) => string; // L2 — keyword found nothing
+      searchBody: string;
+      searchAction: string;
+      filterTitle: string; // L3 — active filters exclude everything
+      filterBody: string;
+      filterAction: string;
+      categoryTitle: string; // L4 — valid but empty category
+      categoryBody: string;
+      categoryActionPrimary: string;
+      categoryActionSecondary: string;
+    };
     interruptTitle: string;
     interruptBody: string;
     interruptCta: string;
+  };
+  // Offline / no-connection empty state (L6) — shared by the feed and categories.
+  offline: {
+    title: string;
+    body: string;
+    retry: string;
   };
   // Locked-mode "Bridge": transactional actions open the app-redirect modal.
   bridge: {

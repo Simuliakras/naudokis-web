@@ -1,7 +1,7 @@
 "use client";
 // Naudokis UI kit — card components.
 import Link from "next/link";
-import { Icon, IconName, IllusName, Illustration, LocationChip, Rating, Dots, openRedirect } from "./ui";
+import { Icon, IconName, IllusName, Illustration, Dots, openRedirect } from "./ui";
 import { useI18n } from "./I18nProvider";
 
 /* ---------------- Offer / listing card ----------------
@@ -27,12 +27,11 @@ export function OfferCard({
     openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody });
   };
   return (
-    <article className="nk-offer" style={{ position: "relative", background: "var(--nk-surface)", borderRadius: 16, overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
+    <article className="nk-offer" style={{ position: "relative", background: "var(--nk-surface)", borderRadius: 24, overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
       {href && <Link href={href} className="nk-stretch" aria-label={title} />}
       <div className="nk-offer__media nk-imgph" data-img={img ? "" : undefined}
-        style={{ height: 330, borderRadius: "16px 16px 0 0", backgroundImage: img ? `url("${img}")` : undefined }}>
+        style={{ height: 330, borderRadius: "24px 24px 0 0", backgroundImage: img ? `url("${img}")` : undefined }}>
         {img && <div className="nk-zoom" style={{ position: "absolute", inset: 0, backgroundImage: `url("${img}")`, backgroundSize: "cover", backgroundPosition: "center" }} />}
-        <div style={{ position: "absolute", top: 20, left: 20, zIndex: 2 }}><LocationChip city={city ?? c.sampleCity} /></div>
         <button className="nk-fav" onClick={lockFav} aria-label={c.favorite}>
           <Icon name="Heart" size={20} color="var(--nk-text)" fill="none" stroke={2} />
         </button>
@@ -45,7 +44,21 @@ export function OfferCard({
       </div>
       <div style={{ flex: 1, padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
         <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--nk-text)" }}>{title}</h3>
-        {rating && <Rating value={rating} count={count} />}
+        {/* meta row: rating + count on the left, location pin + city on the right */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", minHeight: 24 }}>
+          {rating ? (
+            <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 18, color: "var(--nk-text-2)" }}>{rating}</b>
+                <Icon name="Star" size={18} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
+              </span>
+              {count && <span className="nk-meta" style={{ color: "var(--nk-text-muted)" }}>({count})</span>}
+            </span>
+          ) : <span />}
+          <span style={{ display: "flex", alignItems: "center", gap: 5, fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 18, color: "var(--nk-text-2)" }}>
+            <Icon name="MapPin" size={18} color="var(--nk-text)" fill="var(--nk-text)" stroke={2} /> {city ?? c.sampleCity}
+          </span>
+        </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto", paddingTop: 16, borderTop: "1px solid var(--nk-border)" }}>
           <span style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
             <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price ?? c.samplePrice}</span>
@@ -146,10 +159,10 @@ export function FeatureCard({
 }) {
   return (
     <div className="nk-feature" style={{
-      flex: 1, borderRadius: 16, background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-hairline)",
+      flex: 1, borderRadius: 24, background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-hairline)",
       padding: "56px 56px 60px", display: "flex", flexDirection: "column", alignItems: "center", gap: 36, textAlign: "center",
     }}>
-      <span style={{ width: 72, height: 72, borderRadius: 36, background: "var(--nk-surface)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <span style={{ width: 72, height: 72, borderRadius: 36, background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Icon name={icon} size={36} color="var(--nk-yellow)" stroke={2} />
       </span>
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -200,19 +213,19 @@ export function FaqRow({
   return (
     <div className="nk-faq" style={{
       border: "1px solid " + (open ? "var(--nk-purple)" : "var(--nk-border-soft)"),
-      borderRadius: open ? 24 : 46, background: "var(--nk-surface)", transition: "border-radius .2s ease, border-color .2s ease, background .2s ease",
+      borderRadius: open ? 24 : 20, background: "var(--nk-surface)", transition: "border-radius .2s ease, border-color .2s ease, background .2s ease",
       overflow: "hidden",
     }}>
       <button onClick={onToggle} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 24, padding: "20px 20px 20px 40px", textAlign: "left" }}>
         <span className="nk-h-row">{q}</span>
         <span style={{ width: 44, height: 44, borderRadius: 22, flex: "none", display: "flex", alignItems: "center", justifyContent: "center",
           transition: "transform .2s ease", transform: open ? "rotate(180deg)" : "none" }}>
-          <Icon name="ChevronDown" size={22} color="var(--nk-purple)" stroke={2.2} />
+          <Icon name="ChevronDown" size={22} color={open ? "var(--nk-purple)" : "var(--nk-text)"} stroke={2.2} />
         </span>
       </button>
       <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows .25s ease" }}>
         <div style={{ overflow: "hidden" }}>
-          <p style={{ margin: 0, padding: "0 64px 24px 40px", fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "30px", color: "var(--nk-text-2)" }}>{a}</p>
+          <p style={{ margin: 0, padding: "0 40px 24px 40px", fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "30px", color: "var(--nk-text-2)" }}>{a}</p>
         </div>
       </div>
     </div>
@@ -222,8 +235,8 @@ export function FaqRow({
 /* ---------------- Skeleton listing card ---------------- */
 export function OfferCardSkeleton() {
   return (
-    <article aria-hidden="true" style={{ background: "var(--nk-surface)", borderRadius: 16, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-      <div className="nk-skel" style={{ height: 330, borderRadius: "16px 16px 0 0" }}>
+    <article aria-hidden="true" style={{ background: "var(--nk-surface)", borderRadius: 24, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <div className="nk-skel" style={{ height: 330, borderRadius: "24px 24px 0 0" }}>
         <div className="nk-skel" style={{ position: "absolute", top: 20, left: 20, width: 96, height: 33, borderRadius: 18, background: "rgba(27,27,27,.35)" }} />
       </div>
       <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -250,9 +263,14 @@ export function CategoryCardSkeleton() {
 
 /* ---------------- Empty state ----------------
    Screen-level empties show the floating brand illustration (pass `illustration`);
-   if only an `icon` is given, the compact badge is used instead. */
+   if only an `icon` is given, the compact badge is used instead. The primary
+   action can be styled solid (`actionPrimary`, e.g. "Bandyti dar kartą") and an
+   optional outline `secondaryLabel` sits beside it (e.g. the empty-category L4
+   "Išnuomoti daiktą" + "Visos kategorijos" pairing). */
 export function EmptyState({
-  illustration, icon = "SearchX", title, subtitle, actionLabel, onAction,
+  illustration, icon = "SearchX", title, subtitle,
+  actionLabel, onAction, actionPrimary = false, actionIcon,
+  secondaryLabel, onSecondaryAction,
 }: {
   illustration?: IllusName;
   icon?: IconName;
@@ -260,6 +278,10 @@ export function EmptyState({
   subtitle: string;
   actionLabel?: string;
   onAction?: () => void;
+  actionPrimary?: boolean;
+  actionIcon?: IconName;
+  secondaryLabel?: string;
+  onSecondaryAction?: () => void;
 }) {
   return (
     <div className="nk-empty">
@@ -270,7 +292,53 @@ export function EmptyState({
         <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", color: "var(--nk-text)" }}>{title}</h3>
         <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "28px", color: "var(--nk-text-2)" }}>{subtitle}</p>
       </div>
-      {actionLabel && <button className="nk-btn nk-btn--outline" onClick={onAction}>{actionLabel}</button>}
+      {(actionLabel || secondaryLabel) && (
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+          {actionLabel && (
+            <button className={"nk-btn " + (actionPrimary ? "nk-btn--primary" : "nk-btn--outline")} onClick={onAction}>
+              {actionIcon && <Icon name={actionIcon} size={18} stroke={2.2} color="var(--nk-text)" />}
+              {actionLabel}
+            </button>
+          )}
+          {secondaryLabel && <button className="nk-btn nk-btn--outline" onClick={onSecondaryAction}>{secondaryLabel}</button>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------------- Section-level empty ----------------
+   Compact horizontal surface card for an empty BAND inside a longer page (home
+   Categories/Offers, listing reviews). No big dashed box / floating illustration
+   — a small tinted icon disk carries it. Mirrors the app's EmptyState
+   variant="section". */
+const SECTION_EMPTY_TONES: Record<"purple" | "yellow" | "green", { bg: string; fg: string }> = {
+  purple: { bg: "var(--nk-purple-tag)", fg: "var(--nk-purple-hover)" },
+  yellow: { bg: "var(--nk-yellow-tint)", fg: "var(--nk-yellow)" },
+  green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green)" },
+};
+
+export function SectionEmpty({
+  icon = "Inbox", title, subtitle, actionLabel, onAction, tone = "purple",
+}: {
+  icon?: IconName;
+  title: string;
+  subtitle?: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  tone?: "purple" | "yellow" | "green";
+}) {
+  const c = SECTION_EMPTY_TONES[tone];
+  return (
+    <div style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 24, padding: "26px 28px", display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
+      <span style={{ width: 60, height: 60, borderRadius: 30, flex: "none", background: c.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Icon name={icon} size={27} color={c.fg} stroke={2} />
+      </span>
+      <div style={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column", gap: 5 }}>
+        <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", color: "var(--nk-text)" }}>{title}</span>
+        {subtitle && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "25px", color: "var(--nk-text-2)" }}>{subtitle}</span>}
+      </div>
+      {actionLabel && <button className="nk-btn nk-btn--outline" onClick={onAction} style={{ flex: "none" }}>{actionLabel}</button>}
     </div>
   );
 }

@@ -1,0 +1,105 @@
+// ============================================================================
+// MOCK FIXTURES — local-only sample data for design/screenshot work.
+// Used ONLY when NEXT_PUBLIC_USE_MOCK=1 (see api.ts USE_MOCK); production hits
+// the real backend. Content mirrors the design bundle's sample data so rendered
+// pages line up with the design screenshots. Do NOT present as authoritative.
+// ============================================================================
+
+export type MockCategory = { id: string; name_lt: string; name_en: string };
+
+// Order matches the design's all-categories grid (categories.jsx ALL_CATEGORIES).
+export const MOCK_CATEGORIES: MockCategory[] = [
+  { id: "transporto-priemones", name_lt: "Transporto priemonės", name_en: "Vehicles" },
+  { id: "foto-vaizdo-technika", name_lt: "Foto ir vaizdo technika", name_en: "Photo & video gear" },
+  { id: "irankiai-statyba", name_lt: "Įrankiai ir statyba", name_en: "Tools & construction" },
+  { id: "laisvalaikis-sportas", name_lt: "Laisvalaikis ir sportas", name_en: "Leisure & sports" },
+  { id: "buitine-technika", name_lt: "Buitinė technika", name_en: "Home appliances" },
+  { id: "renginiai-sventes", name_lt: "Renginiai ir šventės", name_en: "Events & parties" },
+  { id: "elektronika", name_lt: "Elektronika", name_en: "Electronics" },
+  { id: "drabuziai-aksesuarai", name_lt: "Drabužiai ir aksesuarai", name_en: "Clothing & accessories" },
+  { id: "vaikams", name_lt: "Vaikams", name_en: "For kids" },
+  { id: "muzikos-instrumentai", name_lt: "Muzikos instrumentai", name_en: "Musical instruments" },
+  { id: "sodas-kiemas", name_lt: "Sodas ir kiemas", name_en: "Garden & yard" },
+  { id: "kita", name_lt: "Kita", name_en: "Other" },
+];
+
+export type MockListing = {
+  id: string;
+  title_lt: string;
+  title_en: string;
+  city: string;
+  price_per_day_cents: number;
+  rating_average: number;
+  rating_count: number;
+  category: string; // category id
+  hasDelivery: boolean;
+};
+
+// First four match the home "Geriausi pasiūlymai" row (sections.jsx OFFERS).
+export const MOCK_LISTINGS: MockListing[] = [
+  { id: "dodge-ram-2016", title_lt: "Dodge RAM 2016", title_en: "Dodge RAM 2016", city: "Vilnius", price_per_day_cents: 5000, rating_average: 4.8, rating_count: 52, category: "transporto-priemones", hasDelivery: false },
+  { id: "sony-a7-iii", title_lt: "Sony A7 III", title_en: "Sony A7 III", city: "Kaunas", price_per_day_cents: 2500, rating_average: 4.9, rating_count: 38, category: "foto-vaizdo-technika", hasDelivery: true },
+  { id: "bosch-perforatorius", title_lt: "Bosch perforatorius", title_en: "Bosch rotary hammer", city: "Klaipėda", price_per_day_cents: 1200, rating_average: 4.7, rating_count: 21, category: "irankiai-statyba", hasDelivery: true },
+  { id: "sup-irklente", title_lt: "SUP irklentė", title_en: "SUP paddleboard", city: "Palanga", price_per_day_cents: 1800, rating_average: 5.0, rating_count: 64, category: "laisvalaikis-sportas", hasDelivery: false },
+  { id: "dji-mavic-3", title_lt: "DJI Mavic 3 dronas", title_en: "DJI Mavic 3 drone", city: "Vilnius", price_per_day_cents: 3500, rating_average: 4.9, rating_count: 27, category: "foto-vaizdo-technika", hasDelivery: true },
+  { id: "karcher-plovykla", title_lt: "Kärcher aukšto slėgio plovykla", title_en: "Kärcher pressure washer", city: "Kaunas", price_per_day_cents: 1500, rating_average: 4.6, rating_count: 19, category: "irankiai-statyba", hasDelivery: true },
+  { id: "stalo-tenisas", title_lt: "Stalo teniso stalas", title_en: "Table tennis table", city: "Šiauliai", price_per_day_cents: 1000, rating_average: 4.8, rating_count: 12, category: "laisvalaikis-sportas", hasDelivery: false },
+  { id: "epson-projektorius", title_lt: "Projektorius Epson", title_en: "Epson projector", city: "Vilnius", price_per_day_cents: 2000, rating_average: 4.7, rating_count: 33, category: "elektronika", hasDelivery: true },
+  { id: "iskylos-palapine", title_lt: "Iškylos palapinė 4 vietų", title_en: "4-person camping tent", city: "Klaipėda", price_per_day_cents: 800, rating_average: 4.9, rating_count: 41, category: "laisvalaikis-sportas", hasDelivery: false },
+];
+
+export type MockAttribute = { id: string; name_lt: string; name_en: string; value_lt: string; value_en: string };
+
+export type MockOwner = {
+  name: string;
+  is_business: boolean;
+  verified: boolean;
+  completed_rentals: number;
+  rating_average: number;
+  rating_count: number;
+};
+
+export type MockReview = {
+  name: string;
+  date_lt: string;
+  date_en: string;
+  stars: number;
+  text_lt: string;
+  text_en: string;
+};
+
+export type MockDetailExtra = {
+  description_lt: string;
+  description_en: string;
+  attributes: MockAttribute[];
+  owner: MockOwner;
+  reviews: MockReview[];
+};
+
+// Shared description + spec set applied to every mock listing detail. Enough to
+// populate the listing-detail spec grid, tags and owner panel for the design pass.
+export const MOCK_DETAIL_EXTRA: MockDetailExtra = {
+  description_lt:
+    "Puikios būklės daiktas, prižiūrimas ir paruoštas nuomai. Tinka tiek profesionaliam, tiek mėgėjiškam naudojimui. Atsiimti galima Vilniuje arba susitarus dėl pristatymo. Visada laikomės sutartų terminų ir padedame, jei kyla klausimų.",
+  description_en:
+    "Item in excellent condition, well maintained and ready to rent. Suitable for both professional and amateur use. Pickup in Vilnius or delivery by arrangement. We always keep to agreed timelines and help if any questions come up.",
+  attributes: [
+    { id: "condition", name_lt: "Būklė", name_en: "Condition", value_lt: "Puiki", value_en: "Excellent" },
+    { id: "deposit", name_lt: "Užstatas", name_en: "Deposit", value_lt: "100 €", value_en: "€100" },
+    { id: "min-days", name_lt: "Min. nuoma", name_en: "Min. rental", value_lt: "1 diena", value_en: "1 day" },
+    { id: "delivery", name_lt: "Pristatymas", name_en: "Delivery", value_lt: "Galimas", value_en: "Available" },
+  ],
+  owner: {
+    name: "Eglė J.",
+    is_business: false,
+    verified: true,
+    completed_rentals: 48,
+    rating_average: 4.9,
+    rating_count: 52,
+  },
+  reviews: [
+    { name: "Greta M.", date_lt: "prieš 2 sav.", date_en: "2 weeks ago", stars: 5, text_lt: "Puikus daiktas, viskas veikė be priekaištų. Savininkė labai paslaugi, perdavimas sklandus ir greitas.", text_en: "Great item, everything worked flawlessly. The owner was very helpful and the handover was smooth and fast." },
+    { name: "Tomas K.", date_lt: "prieš mėnesį", date_en: "a month ago", stars: 5, text_lt: "Kaip naujas, pilnas komplektas. Tikrai rekomenduoju — išsinuomosiu dar.", text_en: "Like new, full kit included. Highly recommend — I'll rent again." },
+    { name: "Ieva P.", date_lt: "prieš 2 mėn.", date_en: "2 months ago", stars: 4, text_lt: "Greitas atsakymas, patogus atsiėmimas. Ačiū už sklandų bendradarbiavimą!", text_en: "Quick to reply, easy pickup. Thanks for the smooth experience!" },
+  ],
+};

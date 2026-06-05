@@ -9,14 +9,18 @@ import { CategoryTile, CategoryCardSkeleton, EmptyState } from "./cards";
 import { useCategories } from "@/app/lib/categories";
 import { listingSearchHref } from "@/app/lib/search";
 import { mockCategoryCount } from "@/app/lib/mock";
+import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { useI18n } from "./I18nProvider";
 
 export function CategoriesScreen() {
   const { locale, dict } = useI18n();
   const t = dict.categoriesPage;
   const router = useRouter();
+  const online = useOnlineStatus();
   const [q, setQ] = useState("");
   const { data, isLoading, isError, refetch } = useCategories(locale);
+
+  useReloadOnReconnect({ online, isError, refetch });
 
   const focusSearch = () => document.getElementById("nk-cats-search-input")?.focus();
   const submit = (e: React.FormEvent) => {
@@ -31,7 +35,7 @@ export function CategoriesScreen() {
     <Chrome>
       <div className="nk-page">
         <Nav onSearch={focusSearch} />
-        <main className="nk-container" style={{ paddingBlock: "28px 40px" }}>
+        <main className="nk-container" style={{ paddingBlock: "32px 40px" }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={[{ label: t.crumb }]} />
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
             <span className="nk-eyebrow">{t.eyebrow}</span>
@@ -53,9 +57,12 @@ export function CategoriesScreen() {
             <div className="nk-grid-cats">
               {Array.from({ length: 8 }).map((_, i) => <CategoryCardSkeleton key={i} />)}
             </div>
+          ) : !online && (isError || all.length === 0) ? (
+            <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body}
+              actionLabel={dict.offline.retry} onAction={() => refetch()} />
           ) : isError ? (
             <EmptyState illustration="error" title={dict.categories.errorTitle} subtitle={dict.categories.errorSubtitle}
-              actionLabel={dict.categories.errorAction} onAction={() => refetch()} />
+              actionLabel={dict.categories.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
           ) : list.length ? (
             <div className="nk-grid-cats">
               {list.map((c) => (

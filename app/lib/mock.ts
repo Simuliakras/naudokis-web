@@ -25,3 +25,7 @@ export const MOCK_BOOKING = {
   durationMinDays: 1,
   durationMaxDays: 60,
 } as const;
+
+// MOCK: sample rental length the booking-panel breakdown is computed against
+// (matches the static sampleDateFrom→sampleDateTo span shown in the dict).
+export const SAMPLE_RENTAL_DAYS = 3;

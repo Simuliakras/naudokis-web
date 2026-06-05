@@ -1,7 +1,8 @@
 // Category data layer — fetch top-level categories from the Naudokis backend.
 import { useQuery } from "@tanstack/react-query";
 import type { Locale } from "./i18n/config";
-import { API_BASE } from "./api";
+import { API_BASE, USE_MOCK } from "./api";
+import { MOCK_CATEGORIES } from "./mock-data";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiCategory = {
@@ -36,6 +37,9 @@ export function categoriesKey(locale: Locale) {
 
 // Exported so server components can prefetch the same data useCategories reads.
 export async function fetchCategories(locale: Locale): Promise<Category[]> {
+  if (USE_MOCK) {
+    return MOCK_CATEGORIES.map((c) => ({ id: c.id, title: locale === "en" ? c.name_en : c.name_lt }));
+  }
   const res = await fetch(`${API_BASE}/listings/categories`);
   if (!res.ok) {
     throw new Error(`Failed to load categories: ${res.status}`);

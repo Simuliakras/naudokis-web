@@ -3,14 +3,15 @@
 // Search / filter / sort are functional on the web; only transactional actions
 // (favorite/reserve/contact) are locked to the app.
 import { useEffect, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Nav, Footer } from "./sections";
 import { Chrome } from "./Chrome";
-import { Icon, Breadcrumb, FilterSelect, Toggle, type SelectOption } from "./ui";
+import { Icon, Breadcrumb, FilterSelect, Toggle, openRedirect, type SelectOption } from "./ui";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { useCategories } from "@/app/lib/categories";
 import { useListings, parseSortKey } from "@/app/lib/listings";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
+import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { LT_CITIES } from "@/app/lib/cities";
 import { useI18n } from "./I18nProvider";
 
@@ -19,6 +20,8 @@ export function FeedScreen() {
   const t = dict.feed;
   const sp = useSearchParams();
   const pathname = usePathname();
+  const router = useRouter();
+  const online = useOnlineStatus();
 
   const params = {
     q: sp.get("q") ?? "",
@@ -61,6 +64,8 @@ export function FeedScreen() {
     q: params.q, city: params.city, category: params.cat, sort: params.sort,
   });
 
+  useReloadOnReconnect({ online, isError, refetch });
+
   let list = data ?? [];
   if (params.delivery) list = list.filter((o) => o.hasDelivery);
 
@@ -95,11 +100,29 @@ export function FeedScreen() {
       img={o.img} href={`/skelbimai/${o.id}`} />
   );
 
+  // Zero-result empty, split by reason (L2 search / L4 empty category / L3 filters).
+  const filtersActive = !!params.city || params.delivery || params.sort !== "recommended";
+  const empty = t.empty;
+  const renderEmpty = () => {
+    if (params.q) {
+      return <EmptyState illustration="search" title={empty.searchTitle(params.q)} subtitle={empty.searchBody}
+        actionLabel={empty.searchAction} onAction={reset} />;
+    }
+    if (isCat && !filtersActive) {
+      return <EmptyState illustration="listings" title={empty.categoryTitle} subtitle={empty.categoryBody}
+        actionLabel={empty.categoryActionPrimary} actionPrimary
+        onAction={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}
+        secondaryLabel={empty.categoryActionSecondary} onSecondaryAction={() => router.push("/kategorijos")} />;
+    }
+    return <EmptyState illustration="filter" title={empty.filterTitle} subtitle={empty.filterBody}
+      actionLabel={empty.filterAction} onAction={reset} />;
+  };
+
   return (
     <Chrome>
       <div className="nk-page">
         <Nav onSearch={() => document.getElementById("nk-feed-search-input")?.focus()} />
-        <main className="nk-container" style={{ paddingBlock: "28px 40px" }}>
+        <main className="nk-container" style={{ paddingBlock: "32px 40px" }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={crumbs} />
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
             <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 5vw, 52px)", lineHeight: 1.05, letterSpacing: "-0.01em", color: "var(--nk-text)" }}>{heading}</h1>
@@ -137,8 +160,12 @@ export function FeedScreen() {
             <div className="nk-grid-feed">
               {Array.from({ length: 6 }).map((_, i) => <OfferCardSkeleton key={i} />)}
             </div>
+          ) : !online && (isError || (data ?? []).length === 0) ? (
+            <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body}
+              actionLabel={dict.offline.retry} onAction={() => refetch()} />
           ) : isError ? (
-            <EmptyState illustration="error" title={dict.offers.errorTitle} subtitle={dict.offers.errorSubtitle} actionLabel={dict.offers.errorAction} onAction={() => refetch()} />
+            <EmptyState illustration="error" title={dict.offers.errorTitle} subtitle={dict.offers.errorSubtitle}
+              actionLabel={dict.offers.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
           ) : list.length ? (
             <div className="nk-grid-feed">
               {head.map(card)}
@@ -146,7 +173,7 @@ export function FeedScreen() {
               {tail.map(card)}
             </div>
           ) : (
-            <EmptyState illustration={anyActive ? "filter" : "listings"} title={t.emptyTitle} subtitle={t.emptySubtitle} actionLabel={t.emptyAction} onAction={reset} />
+            renderEmpty()
           )}
 
           <div style={{ marginTop: 64, display: "flex", flexDirection: "column", gap: 18 }}>

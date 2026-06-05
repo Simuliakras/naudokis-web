@@ -1,7 +1,8 @@
 // Listing data layer — browse listings + single-listing detail from the Naudokis backend.
 import { useQuery, keepPreviousData, skipToken } from "@tanstack/react-query";
 import type { Locale } from "./i18n/config";
-import { API_BASE } from "./api";
+import { API_BASE, USE_MOCK } from "./api";
+import { MOCK_LISTINGS, MOCK_CATEGORIES, MOCK_DETAIL_EXTRA, type MockListing } from "./mock-data";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiImage = { url: string; blurhash?: string };
@@ -91,6 +92,9 @@ export type ListingFilters = {
 
 export type ListingAttribute = { id: string; label: string; value: string };
 
+export type ListingReview = { name: string; date: string; stars: number; text: string };
+export type RatingBucket = { stars: number; count: number };
+
 export type ListingOwner = {
   name: string;
   isBusiness: boolean;
@@ -106,14 +110,32 @@ export type ListingDetail = {
   title: string;
   city: string;
   price: string;
+  priceCents: number; // raw per-day price, for the booking-panel breakdown math
   description: string;
-  rating?: string;
+  rating?: string; // localized display string ("4,9" / "4.9")
+  ratingValue: number; // raw numeric average, for star rendering / math
   ratingCount: number;
   images: string[];
   tags: string[];
   attributes: ListingAttribute[];
   owner: ListingOwner;
+  reviews: ListingReview[];
+  ratingBreakdown: RatingBucket[]; // [5★…1★] counts; empty when no reviews
 };
+
+// Plausible, deterministic star distribution for a given total review count
+// (used only for the mock detail; the real backend doesn't expose this yet).
+function mockRatingBreakdown(n: number): RatingBucket[] {
+  const five = Math.round(n * 0.8);
+  const four = Math.round(n * 0.13);
+  const three = Math.round(n * 0.05);
+  const two = Math.round(n * 0.01);
+  const one = Math.max(0, n - five - four - three - two);
+  return [
+    { stars: 5, count: five }, { stars: 4, count: four }, { stars: 3, count: three },
+    { stars: 2, count: two }, { stars: 1, count: one },
+  ];
+}
 
 /* ---------------- Formatting ---------------- */
 // Cents → localized price string, matching the sample format ("15 €" / "€15").
@@ -157,7 +179,43 @@ export function listingKey(id: string | undefined, locale: Locale) {
 
 // Exported so server components can prefetch the same data the hooks consume
 // (identical queryKey + queryFn → the cache hydrates without a client refetch).
+// Map a mock fixture to the Offer view model (mirrors the real fetcher's shape).
+function mockToOffer(l: MockListing, locale: Locale): Offer {
+  return {
+    id: l.id,
+    title: locale === "en" ? l.title_en : l.title_lt,
+    city: l.city,
+    price: formatPrice(l.price_per_day_cents, locale),
+    img: undefined, // mirror the design's gray image placeholders
+    rating: ratingLabel(l.rating_average, l.rating_count, locale),
+    ratingCount: l.rating_count,
+    hasDelivery: l.hasDelivery,
+  };
+}
+
 export async function fetchListings(locale: Locale, filters: ListingFilters): Promise<Offer[]> {
+  if (USE_MOCK) {
+    let items = MOCK_LISTINGS.slice();
+    const q = filters.q?.trim().toLowerCase();
+    if (q) {
+      items = items.filter((l) =>
+        (locale === "en" ? l.title_en : l.title_lt).toLowerCase().includes(q) || l.city.toLowerCase().includes(q));
+    }
+    if (filters.city) {
+      items = items.filter((l) => l.city === filters.city);
+    }
+    if (filters.category) {
+      items = items.filter((l) => l.category === filters.category);
+    }
+    if (filters.sort === "price_asc") {
+      items.sort((a, b) => a.price_per_day_cents - b.price_per_day_cents);
+    } else if (filters.sort === "price_desc") {
+      items.sort((a, b) => b.price_per_day_cents - a.price_per_day_cents);
+    } else if (filters.sort === "rating_desc") {
+      items.sort((a, b) => b.rating_average - a.rating_average);
+    }
+    return items.map((l) => mockToOffer(l, locale));
+  }
   const url = new URL(`${API_BASE}/listings`);
   if (filters.q) {
     url.searchParams.set("q", filters.q);
@@ -203,6 +261,45 @@ export function useListings(locale: Locale, filters: ListingFilters = {}) {
 }
 
 export async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> {
+  if (USE_MOCK) {
+    const l = MOCK_LISTINGS.find((x) => x.id === id) ?? MOCK_LISTINGS[0];
+    const e = MOCK_DETAIL_EXTRA;
+    const cat = MOCK_CATEGORIES.find((c) => c.id === l.category);
+    return {
+      id: l.id,
+      title: locale === "en" ? l.title_en : l.title_lt,
+      city: l.city,
+      price: formatPrice(l.price_per_day_cents, locale),
+      priceCents: l.price_per_day_cents,
+      description: locale === "en" ? e.description_en : e.description_lt,
+      rating: ratingLabel(l.rating_average, l.rating_count, locale),
+      ratingValue: l.rating_average,
+      ratingCount: l.rating_count,
+      images: [],
+      tags: cat ? [locale === "en" ? cat.name_en : cat.name_lt] : [],
+      attributes: e.attributes.map((a) => ({
+        id: a.id,
+        label: locale === "en" ? a.name_en : a.name_lt,
+        value: locale === "en" ? a.value_en : a.value_lt,
+      })),
+      owner: {
+        name: e.owner.name,
+        isBusiness: e.owner.is_business,
+        verified: e.owner.verified,
+        completedRentals: e.owner.completed_rentals,
+        rating: ratingLabel(e.owner.rating_average, e.owner.rating_count, locale),
+        ratingCount: e.owner.rating_count,
+        avatar: null,
+      },
+      reviews: e.reviews.map((r) => ({
+        name: r.name,
+        date: locale === "en" ? r.date_en : r.date_lt,
+        stars: r.stars,
+        text: locale === "en" ? r.text_en : r.text_lt,
+      })),
+      ratingBreakdown: l.rating_count > 0 ? mockRatingBreakdown(l.rating_count) : [],
+    };
+  }
   // Same `next` options as the detail page's raw-metadata fetch so Next memoizes
   // the two same-URL server requests into one (ignored by the browser fetch).
   const res = await fetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } });
@@ -216,8 +313,10 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
     title: l.title,
     city: l.city ?? "",
     price: formatPrice(l.price_per_day_cents, locale),
+    priceCents: l.price_per_day_cents,
     description: l.description,
     rating: ratingLabel(l.rating_average, l.rating_count, locale),
+    ratingValue: l.rating_average ?? 0,
     ratingCount: l.rating_count,
     images: l.images.map((im) => im.url),
     tags: l.category_names.map((c) => (locale === "en" ? c.en : c.lt)),
@@ -238,6 +337,9 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
       ratingCount: l.owner.rating_count,
       avatar: l.owner.avatar,
     },
+    // The public backend doesn't expose individual reviews on the web yet.
+    reviews: [],
+    ratingBreakdown: [],
   };
 }
 

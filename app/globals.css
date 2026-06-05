@@ -20,6 +20,7 @@
   --nk-card-grad-1:   #3F3E94;   /* cardGradientDark — category card          */
   --nk-card-grad-2:   #2A2849;   /* cardGradientDarkSecondary                 */
   --nk-yellow:        #F9F367;   /* eyebrows, stars, highlights, logo left    */
+  --nk-yellow-deep:   #e6df4e;   /* deep stop for yellow gradients (rating bar) */
   --nk-green:         #10B981;   /* download banner, success badge            */
   --nk-orange:        #E07A4A;   /* pattern accent (4th brand color)          */
 
@@ -47,7 +48,9 @@
   --nk-glass-strong:  rgba(255,255,255,0.06);  /* feature card glass          */
   --nk-glass-nav:     rgba(26,26,26,0.72);     /* glassBackdrop — nav over page */
   --nk-surface-glass: rgba(255,255,255,0.03);  /* surfaceElevated             */
+  --nk-input-bg:      rgba(255,255,255,0.04);  /* inputBackground — ghost btn / listing fields */
   --nk-surface-wash:  rgba(48,53,54,0.40);     /* screen-level empty-state bg */
+  --nk-overlay:       rgba(20,22,23,0.62);     /* dark glass scrim — gallery / map chips */
   --nk-ink:           #121212;   /* app-store badge / deepest ink             */
 
   /* ---- Text on dark (app: white-at-opacity) ----------------------------- */
@@ -62,6 +65,7 @@
   --nk-border-soft:   rgba(255,255,255,0.12);  /* FAQ / row hairline (dark) */
   --nk-border-strong: rgba(255,255,255,0.18);  /* burger / control hover edge */
   --nk-border-faint:  var(--nk-hairline);      /* subtle hairline dividers  */
+  --nk-divider:       rgba(255,255,255,0.08);  /* listing-detail row dividers / rating track */
 
   /* ---- Light theme (marketing wireframe / app-light surfaces) ----------- */
   --nk-light-bg:      #FFFFFF;
@@ -95,7 +99,7 @@
   --nk-font-body:     var(--font-sora), system-ui, sans-serif;     /* body, eyebrows, prices, meta */
 
   /* ---- Radii ------------------------------------------------------------ */
-  --nk-r-card:    16px;   /* offer / category / feature / testimonial cards (authoritative app card radius) */
+  --nk-r-card:    24px;   /* offer / category / feature cards (matches the design prototypes' rendered radius) */
   --nk-r-lg:      20px;   /* hero panel, CTA banner, large feature blocks    */
   --nk-r-chip:    18px;   /* location & filter chips                         */
   --nk-r-pill:    25px;   /* pill buttons (search, primary)                  */
@@ -207,9 +211,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .nk-btn--primary:hover{background:var(--nk-purple-hover)}
 .nk-btn--outline{background:transparent;border:1px solid var(--nk-purple);color:var(--nk-text)}
 .nk-btn--outline:hover{background:var(--nk-purple-soft)}
-.nk-btn--ghost{background:var(--nk-surface-2);border:1px solid var(--nk-border);color:var(--nk-text);
-  font-weight:500;font-size:18px;letter-spacing:.04em;padding:10px 20px;border-radius:20px}
-.nk-btn--ghost:hover{background:var(--nk-surface-hover)}
+.nk-btn--ghost{background:var(--nk-input-bg);border:1px solid var(--nk-border);color:var(--nk-text);
+  font-weight:500;font-size:18px;letter-spacing:.04em;padding:10px 20px;border-radius:20px;backdrop-filter:blur(8px)}
+.nk-btn--ghost:hover{background:rgba(255,255,255,.08);border-color:var(--nk-border-strong)}
 
 /* round arrow button */
 .nk-round{width:44px;height:44px;border-radius:var(--nk-r-icon);display:inline-flex;align-items:center;justify-content:center;
@@ -281,7 +285,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
   transition:background .25s ease,box-shadow .25s ease,border-color .25s ease}
 .nk-nav-bar.nk-scrolled{background:rgba(26,26,26,.92);box-shadow:0 8px 30px rgba(0,0,0,.35)}
 .nk-nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;
-  height:92px;transition:height .3s cubic-bezier(.2,.7,.2,1)}
+  height:76px;transition:height .3s cubic-bezier(.2,.7,.2,1)}
 .nk-nav-bar.nk-scrolled .nk-nav-inner{height:68px}
 .nk-nav-links{display:flex;align-items:center;gap:32px}
 .nk-nav-burger{display:none;width:46px;height:46px;border-radius:14px;align-items:center;justify-content:center;
@@ -539,9 +543,9 @@ footer .nk-link:hover{color:var(--nk-purple)}
    Listings feed
    ============================================================ */
 /* sticky filter bar — solid (not blurred) bg so popovers layer above cards */
-.nk-filterbar{position:sticky;top:92px;z-index:40;margin-bottom:36px;scroll-margin-top:100px;
+.nk-filterbar{position:sticky;top:76px;z-index:40;margin-bottom:36px;scroll-margin-top:100px;
   padding-block:16px;background:var(--nk-bg);border-bottom:1px solid var(--nk-border-faint)}
-.nk-grid-feed{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.nk-grid-feed{display:grid;grid-template-columns:repeat(3,1fr);gap:48px 24px}
 @media(max-width:1100px){.nk-grid-feed{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:680px){.nk-grid-feed{grid-template-columns:1fr}}
 .nk-clear{transition:color .15s ease}
@@ -552,29 +556,66 @@ footer .nk-link:hover{color:var(--nk-purple)}
 /* feed interruption banner */
 .nk-interrupt{position:relative;overflow:hidden;display:flex;align-items:center;gap:24px;flex-wrap:wrap;
   background:linear-gradient(135deg,var(--nk-card-grad-1),var(--nk-card-grad-2));
-  border:1px solid var(--nk-accent-border);border-radius:16px;padding:28px 32px}
+  border:1px solid var(--nk-accent-border);border-radius:20px;padding:28px 32px}
 
 /* ============================================================
    Listing detail page
    ============================================================ */
-.nk-detail-h{margin:0 0 22px;font-family:var(--nk-font-display);font-weight:700;font-size:26px;line-height:30px;color:var(--nk-text)}
-.nk-bento{display:grid;grid-template-columns:1.55fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;height:520px}
+.nk-detail{max-width:1340px;margin:0 auto}
+.nk-detail-h{margin:0 0 22px;font-family:var(--nk-font-display);font-weight:700;font-size:25px;line-height:30px;color:var(--nk-text)}
+.nk-bento{display:grid;grid-template-columns:1.55fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;height:512px}
 .nk-bento > :first-child{grid-row:1 / 3}
-.nk-detail-grid{display:grid;grid-template-columns:1fr 396px;gap:64px;margin-top:48px;align-items:start}
-.nk-spec-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:56px;row-gap:0}
-.nk-tworow{display:grid;grid-template-columns:1fr 1fr;column-gap:56px}
-.nk-reserve{position:sticky;top:112px;background:var(--nk-surface);border-radius:22px;padding:28px;
-  display:flex;flex-direction:column;gap:20px;border:1px solid color-mix(in srgb,var(--nk-border) 45%,transparent);
-  box-shadow:0 24px 60px rgba(0,0,0,.35)}
-.nk-mbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--nk-purple);
-  align-items:center;justify-content:space-between;gap:16px;padding:16px 20px}
-@media(max-width:980px){
-  .nk-bento{grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,160px);height:auto}
-  .nk-bento > :first-child{grid-row:1 / 2;grid-column:1 / -1}
+.nk-detail-grid{display:grid;grid-template-columns:1fr 372px;gap:56px;margin-top:40px;align-items:start}
+.nk-spec-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:48px;row-gap:0}
+.nk-tworow{display:grid;grid-template-columns:1.1fr 1fr;column-gap:48px}
+.nk-hl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.nk-safety-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.nk-reserve{position:sticky;top:96px;display:flex;flex-direction:column;gap:18px;align-self:start}
+.nk-sec{scroll-margin-top:96px}
+/* gallery tile hover scrim */
+.nk-gtile__hint{opacity:0;transition:opacity .2s ease;pointer-events:none}
+.nk-gtile:hover .nk-gtile__hint{opacity:1}
+/* content reveal after skeleton — opacity only, so the wrapper never becomes a
+   containing block for the position:fixed .nk-mbar (which is a sibling anyway) */
+.nk-fadecontent{animation:nk-contentfade .4s ease both}
+@keyframes nk-contentfade{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.nk-fadecontent{animation:none}}
+/* in-page sticky sub-nav (scrollspy) */
+.nk-subnav{position:sticky;top:68px;z-index:30;margin-top:32px;
+  background:rgba(35,40,41,.78);-webkit-backdrop-filter:blur(20px) saturate(150%);backdrop-filter:blur(20px) saturate(150%);
+  border-bottom:1px solid var(--nk-hairline)}
+.nk-subnav__inner{display:flex;align-items:center;gap:4px;height:56px;overflow-x:auto;scrollbar-width:none}
+.nk-subnav__inner::-webkit-scrollbar{display:none}
+.nk-subnav__a{position:relative;flex:none;padding:8px 14px;border-radius:10px;text-decoration:none;
+  font-family:var(--nk-font-display);font-weight:600;font-size:14.5px;color:var(--nk-text-muted);
+  transition:color .15s ease,background .15s ease;white-space:nowrap}
+.nk-subnav__a:hover{color:var(--nk-text);background:rgba(255,255,255,.05)}
+.nk-subnav__a.is-active{color:var(--nk-text)}
+.nk-subnav__a.is-active::after{content:"";position:absolute;left:14px;right:14px;bottom:-9px;height:2px;border-radius:2px;background:var(--nk-purple-hover)}
+.nk-subnav__cta{margin-left:auto;flex:none;padding:9px 18px!important;font-size:14.5px!important}
+.nk-mbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:rgba(27,30,31,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--nk-border);
+  align-items:center;justify-content:space-between;gap:16px;padding:14px 20px calc(14px + env(safe-area-inset-bottom))}
+@media(max-width:1080px){
   .nk-detail-grid{grid-template-columns:1fr;gap:40px}
   .nk-reserve{display:none}
-  .nk-spec-grid,.nk-tworow{grid-template-columns:1fr;column-gap:0}
+  .nk-subnav__cta{display:none!important}
   .nk-mbar{display:flex}
+}
+@media(max-width:900px){
+  .nk-bento{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:170px}
+  .nk-bento > :first-child{grid-column:1 / -1;grid-row:auto;height:300px}
+  .nk-tworow{grid-template-columns:1fr}
+  .nk-safety-grid{grid-template-columns:1fr;gap:24px}
+  .nk-rev-grid{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .nk-subnav{display:none}
+}
+@media(max-width:560px){
+  .nk-bento{grid-template-columns:1fr}
+  .nk-spec-grid{grid-template-columns:1fr;column-gap:0}
+  .nk-hl-grid{grid-template-columns:1fr}
 }
 
 /* ============================================================

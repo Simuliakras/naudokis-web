@@ -311,7 +311,7 @@ export function QR({ size = 152, light = false }: { size?: number; light?: boole
    presentation attributes, where --nk-* custom properties don't resolve (same
    constraint as NK_ICONS — see the Icon note above). #6665E0 == --nk-purple,
    #F9F367 == --nk-yellow. */
-export type IllusName = "search" | "listings" | "filter" | "error";
+export type IllusName = "search" | "listings" | "filter" | "error" | "offline";
 
 const NK_ILLUS: Record<IllusName, React.ReactNode> = {
   search: (
@@ -388,6 +388,24 @@ const NK_ILLUS: Record<IllusName, React.ReactNode> = {
       <circle cx="175" cy="172" r="4" fill="#F9F367" opacity=".5"/>
       <path d="M30 110L35 105M35 110L30 105" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
       <path d="M165 100L170 95M170 100L165 95" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+    </>
+  ),
+  offline: (
+    <>
+      <circle cx="100" cy="100" r="85" fill="#6665E0" opacity=".08"/>
+      <circle cx="100" cy="104" r="58" fill="#6665E0" opacity=".12"/>
+      <path d="M44 96 Q100 32 156 96" fill="none" stroke="#F9F367" strokeWidth="5" strokeLinecap="round"/>
+      <path d="M62 114 Q100 68 138 114" fill="none" stroke="#F9F367" strokeWidth="5" strokeLinecap="round" opacity=".75"/>
+      <path d="M80 132 Q100 108 120 132" fill="none" stroke="#F9F367" strokeWidth="5" strokeLinecap="round" opacity=".55"/>
+      <circle cx="100" cy="150" r="7" fill="#F9F367"/>
+      <line x1="52" y1="48" x2="150" y2="160" stroke="#2B2F30" strokeWidth="13" strokeLinecap="round"/>
+      <line x1="52" y1="48" x2="150" y2="160" stroke="#F9F367" strokeWidth="6" strokeLinecap="round"/>
+      <circle cx="35" cy="55" r="4" fill="#F9F367" opacity=".5"/>
+      <circle cx="170" cy="130" r="5" fill="#F9F367" opacity=".4"/>
+      <circle cx="30" cy="140" r="3" fill="#6665E0" opacity=".3"/>
+      <circle cx="175" cy="65" r="4" fill="#F9F367" opacity=".5"/>
+      <path d="M40 88L45 83M45 88L40 83" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+      <path d="M162 170L167 165M167 170L162 165" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
     </>
   ),
 };
