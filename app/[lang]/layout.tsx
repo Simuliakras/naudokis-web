@@ -1,16 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Archivo, Sora } from "next/font/google";
 import { notFound } from "next/navigation";
 import "../globals.css";
 import { Providers } from "../providers";
 import { I18nProvider } from "../components/I18nProvider";
-import { locales, defaultLocale, isLocale } from "@/app/lib/i18n/config";
+import { locales, isLocale, localeHome } from "@/app/lib/i18n/config";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 
 const SITE_URL = "https://naudokis.lt";
-
-// Lithuanian is served unprefixed at "/"; English lives at "/en".
-const localePath = (locale: string) => (locale === defaultLocale ? "/" : `/${locale}`);
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -41,7 +39,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
     applicationName: "Naudokis",
     keywords: meta.keywords,
     alternates: {
-      canonical: localePath(lang),
+      canonical: localeHome(lang),
       languages: {
         lt: "/",
         en: "/en",
@@ -52,7 +50,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
       type: "website",
       siteName: "Naudokis.lt",
       locale: meta.ogLocale,
-      url: `${SITE_URL}${localePath(lang)}`,
+      url: `${SITE_URL}${localeHome(lang)}`,
       title: meta.title,
       description: meta.description,
       // Image comes from app/[lang]/opengraph-image.tsx (generated 1200×630 card).
@@ -71,6 +69,11 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
+// Cookieless analytics (Plausible). Only loaded when a domain is configured, so
+// dev and unconfigured builds ship no third-party script and write no cookies.
+const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
+const plausibleSrc = process.env.NEXT_PUBLIC_PLAUSIBLE_SRC ?? "https://plausible.io/js/script.js";
+
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   if (!isLocale(lang)) {
@@ -85,6 +88,9 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
         <Providers>
           <I18nProvider locale={lang}>{children}</I18nProvider>
         </Providers>
+        {plausibleDomain && (
+          <Script defer data-domain={plausibleDomain} src={plausibleSrc} strategy="afterInteractive" />
+        )}
       </body>
     </html>
   );

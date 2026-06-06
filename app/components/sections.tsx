@@ -15,7 +15,7 @@ import { LT_CITIES } from "@/app/lib/cities";
 import { listingSearchHref } from "@/app/lib/search";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL } from "@/app/lib/contact";
 import { useI18n } from "./I18nProvider";
-import { locales, defaultLocale, barePath, type Locale } from "@/app/lib/i18n/config";
+import { locales, barePath, localePrefix, type Locale } from "@/app/lib/i18n/config";
 
 /* ---------------- Nav ----------------
    Translucent sticky bar that condenses on scroll (.nk-scrolled toggled in
@@ -264,7 +264,7 @@ function LocaleSwitcher() {
   // Strip a leading locale prefix to get the bare path, then re-prefix for the
   // target locale (default locale is unprefixed). Keeps you on the same page.
   const bare = barePath(pathname);
-  const href = (l: Locale) => (l === defaultLocale ? bare : `/${l}${bare === "/" ? "" : bare}`);
+  const href = (l: Locale) => (localePrefix(l) + (bare === "/" ? "" : bare)) || "/";
   return (
     <span ref={ref} style={{ position: "relative", display: "inline-flex", marginInline: -10 }}>
       <button type="button" onClick={() => setOpen((v) => !v)} aria-haspopup="listbox" aria-expanded={open}
@@ -320,7 +320,7 @@ export function Hero() {
           {/* right column — real app device + QR */}
           <div className="nk-hero-media" style={{ position: "relative", minHeight: 560 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} style={{ position: "absolute", top: -40, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "drop-shadow(10px 18px 42px rgba(22,22,22,.55))" }} />
+            <img src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} fetchPriority="high" decoding="async" style={{ position: "absolute", top: -40, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "drop-shadow(10px 18px 42px rgba(22,22,22,.55))" }} />
             <div style={{ position: "absolute", right: 32, bottom: 0 }}><QR size={132} /></div>
           </div>
         </div>
@@ -432,7 +432,7 @@ export function Features() {
   return (
     <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/naudokis/section-pattern.png" alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.40 }} />
+      <img src="/naudokis/section-pattern.png" alt="" aria-hidden="true" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.40 }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(80px, 11vw, 140px)" }}>
         <div className="nk-reveal nk-row">
           {dict.features.map((f, i) => <div key={f.title} className="nk-reveal" data-delay={(i % 3) + 1} style={{ display: "flex", flex: 1 }}><FeatureCard {...f} /></div>)}
@@ -541,7 +541,7 @@ export function CtaBanner() {
         <AmbientGlow />
         {/* phone bleeding from the top, filling the right half down to the bottom edge */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "drop-shadow(0 26px 50px rgba(0,0,0,.5))" }} />
+        <img className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} loading="lazy" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "drop-shadow(0 26px 50px rgba(0,0,0,.5))" }} />
         <div className="nk-cta__badges" style={{ position: "absolute", left: 60, top: 60 }}><AppBadges /></div>
         <div className="nk-cta__body" style={{ position: "absolute", left: 60, bottom: 60, maxWidth: 808, display: "flex", flexDirection: "column", gap: 20 }}>
           <span style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px 8px 12px", borderRadius: "var(--nk-r-pill)", background: "var(--nk-glass-strong)", border: "1px solid var(--nk-border)", backdropFilter: "blur(12px)" }}>
@@ -604,7 +604,7 @@ export function Footer() {
   return (
     <footer id="kontaktai" className="nk-footer">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="nk-footer__pattern" src="/naudokis/footer-pattern.png" alt="" aria-hidden="true" />
+      <img className="nk-footer__pattern" src="/naudokis/footer-pattern.png" alt="" aria-hidden="true" loading="lazy" />
       <div className="nk-container">
         <div className="nk-footer__top">
           <div className="nk-footer__brand">
@@ -648,7 +648,7 @@ export function Footer() {
             <span className="nk-footer__secure"><Icon name="ShieldCheck" size={17} color="var(--nk-green)" stroke={2} /> {t.secure}</span>
             {FOOTER_PAY.map(([f, a]) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={f} src={`/naudokis/${f}.png`} alt={a} style={{ height: 30, width: "auto" }} />
+              <img key={f} src={`/naudokis/${f}.png`} alt={a} loading="lazy" style={{ height: 30, width: "auto" }} />
             ))}
           </div>
         </div>

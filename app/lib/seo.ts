@@ -3,7 +3,7 @@
 // from one place. Lithuanian is unprefixed at "/"; English lives at "/en".
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { defaultLocale, isLocale, type Locale } from "@/app/lib/i18n/config";
+import { defaultLocale, isLocale, localePrefix, type Locale } from "@/app/lib/i18n/config";
 
 const SITE_URL = "https://naudokis.lt";
 
@@ -26,7 +26,8 @@ function enPath(path: string) {
   return `/en${path}`;
 }
 function canonicalFor(locale: Locale, path: string) {
-  return locale === defaultLocale ? ltPath(path) : enPath(path);
+  const prefix = localePrefix(locale);
+  return prefix ? `${prefix}${path}` : ltPath(path);
 }
 
 export function pageMetadata({

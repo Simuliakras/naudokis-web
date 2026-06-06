@@ -4,6 +4,7 @@
 // strings) never have to cross the server→client serialization boundary.
 import { createContext, useContext, useMemo } from "react";
 import type { Locale } from "@/app/lib/i18n/config";
+import { defaultLocale } from "@/app/lib/i18n/config";
 import type { Dict } from "@/app/lib/i18n/types";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 
@@ -22,4 +23,17 @@ export function useI18n(): I18n {
     throw new Error("useI18n must be used within an I18nProvider");
   }
   return ctx;
+}
+
+// Non-throwing reader for route-level boundaries (not-found / error). When the
+// layout calls notFound() for an invalid locale, it returns before mounting
+// I18nProvider, so these boundaries can render provider-less — falling back to
+// the default-locale dictionary keeps them working instead of cascading into
+// the bare global-error.
+export function useI18nOptional(): I18n {
+  const ctx = useContext(I18nContext);
+  if (ctx) {
+    return ctx;
+  }
+  return { locale: defaultLocale, dict: getDictionary(defaultLocale) };
 }

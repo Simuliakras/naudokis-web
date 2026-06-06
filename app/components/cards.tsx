@@ -132,7 +132,7 @@ export function InterruptionBanner() {
   return (
     <div className="nk-interrupt" style={{ gridColumn: "1 / -1" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/naudokis/section-pattern.png" alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
+      <img src="/naudokis/section-pattern.png" alt="" aria-hidden="true" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
       <span style={{ position: "relative", width: 64, height: 64, borderRadius: 18, flex: "none", background: "var(--nk-purple-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/naudokis/logo-mark.svg" alt="" style={{ width: 40, height: 40 }} />

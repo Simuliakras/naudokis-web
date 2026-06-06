@@ -375,6 +375,14 @@ export const en: Dict = {
     heading: "Choose a city",
     all: "All cities",
   },
+  errors: {
+    notFoundTitle: "Page not found",
+    notFoundBody: "This page doesn’t exist or has moved. Head back home and keep browsing.",
+    notFoundAction: "Back to home",
+    errorTitle: "Something went wrong",
+    errorBody: "An unexpected error occurred. Please try again — if it keeps happening, come back a little later.",
+    errorAction: "Try again",
+  },
   legal: {
     brandSub: "Legal & Policies",
     langSwitchLabel: "Language",

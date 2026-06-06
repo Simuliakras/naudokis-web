@@ -375,5 +375,14 @@ export type Dict = {
     heading: string; // dropdown header, e.g. "Pasirinkite miestą"
     all: string; // "Visi miestai" / "All cities"
   };
+  // Route-level fallbacks: 404 (not-found.tsx) and the error boundary (error.tsx).
+  errors: {
+    notFoundTitle: string;
+    notFoundBody: string;
+    notFoundAction: string; // back-home CTA
+    errorTitle: string;
+    errorBody: string;
+    errorAction: string; // retry CTA (calls reset())
+  };
   legal: LegalDict;
 };

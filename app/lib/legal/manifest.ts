@@ -1,7 +1,7 @@
 // Legal manifest access + URL mapping. Small + pure, so safe to import from both
 // server and client modules (it never pulls in the heavy per-document JSON).
 import type { Locale } from "@/app/lib/i18n/config";
-import { defaultLocale } from "@/app/lib/i18n/config";
+import { localePrefix } from "@/app/lib/i18n/config";
 import manifestData from "./data/manifest.json";
 import { truncate } from "./format";
 import type { LegalManifest, LegalDocMeta } from "./types";
@@ -26,8 +26,6 @@ export const CANONICAL_PATHS: Record<string, string> = {
 // Documents that are NOT reachable under /teisine/[slug] (they have their own
 // dedicated routes) — used to exclude them from generateStaticParams.
 export const CANONICAL_IDS = Object.keys(CANONICAL_PATHS);
-
-const localePrefix = (locale: Locale) => (locale === defaultLocale ? "" : `/${locale}`);
 
 // In-app, locale-correct path for a document id. Canonical docs resolve to their
 // pretty route; all others to /teisine/<id>.

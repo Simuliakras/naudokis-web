@@ -88,7 +88,7 @@ export function HowItWorksScreen() {
         {/* TRUST STRIP */}
         <section className="htw-trust">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="htw-trust__pattern" src="/naudokis/section-pattern.png" alt="" aria-hidden="true" />
+          <img className="htw-trust__pattern" src="/naudokis/section-pattern.png" alt="" aria-hidden="true" loading="lazy" />
           <div className="nk-container htw-trust__inner">
             <div className="htw-trust__head nk-reveal">
               <span className="nk-eyebrow">{t.trustEyebrow}</span>
@@ -112,7 +112,7 @@ export function HowItWorksScreen() {
         <section className="nk-container htw-cta-wrap">
           <div className="htw-cta nk-reveal">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="htw-cta__phone" src="/naudokis/download-phone.png" alt={t.ctaPhoneAlt} />
+            <img className="htw-cta__phone" src="/naudokis/download-phone.png" alt={t.ctaPhoneAlt} loading="lazy" />
             <div className="htw-cta__spark" aria-hidden="true">
               <span style={{ left: "46%", top: "18%" }} /><span style={{ left: "58%", top: "30%" }} /><span style={{ left: "40%", top: "40%" }} />
             </div>

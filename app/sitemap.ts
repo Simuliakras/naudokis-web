@@ -1,12 +1,9 @@
 import type { MetadataRoute } from "next";
-import { locales, defaultLocale } from "@/app/lib/i18n/config";
+import { locales, defaultLocale, localePrefix } from "@/app/lib/i18n/config";
 import { getLegalManifest, CANONICAL_IDS } from "@/app/lib/legal/manifest";
 import { API_BASE } from "@/app/lib/api";
 
 const SITE_URL = "https://naudokis.lt";
-
-// Lithuanian is served unprefixed at "/"; English lives at "/en".
-const localePrefix = (locale: string) => (locale === defaultLocale ? "" : `/${locale}`);
 
 // Per-locale entries for a bare path ("" → home), with hreflang alternates.
 function localized(path: string, priority: number): MetadataRoute.Sitemap {

@@ -16,3 +16,13 @@ const LOCALE_PREFIX = new RegExp(`^/(${locales.join("|")})(?=/|$)`);
 export function barePath(pathname: string): string {
   return pathname.replace(LOCALE_PREFIX, "") || "/";
 }
+
+// Single source of truth for locale URL construction. The default locale is
+// served unprefixed, so its prefix is "" and its home is "/"; other locales are
+// prefixed (`localePrefix("en") === "/en"`, `localeHome("en") === "/en"`).
+export function localePrefix(locale: Locale): string {
+  return locale === defaultLocale ? "" : `/${locale}`;
+}
+export function localeHome(locale: Locale): string {
+  return localePrefix(locale) || "/";
+}

@@ -396,6 +396,14 @@ export const lt: Dict = {
     heading: "Pasirinkite miestą",
     all: "Visi miestai",
   },
+  errors: {
+    notFoundTitle: "Puslapis nerastas",
+    notFoundBody: "Tokio puslapio nėra arba jis buvo perkeltas. Grįžkite į pradžią ir naršykite toliau.",
+    notFoundAction: "Į pradžią",
+    errorTitle: "Kažkas nepavyko",
+    errorBody: "Įvyko netikėta klaida. Pabandykite dar kartą — jei kartosis, grįžkite kiek vėliau.",
+    errorAction: "Bandyti dar kartą",
+  },
   legal: {
     brandSub: "Teisė ir politikos",
     langSwitchLabel: "Kalba",
