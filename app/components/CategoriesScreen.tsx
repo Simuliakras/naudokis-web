@@ -43,7 +43,7 @@ export function CategoriesScreen() {
             <p className="nk-body" style={{ margin: 0, maxWidth: 620 }}>{t.body}</p>
           </div>
 
-          <form onSubmit={submit} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 36, flexWrap: "wrap" }}>
+          <form onSubmit={submit} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32, flexWrap: "wrap" }}>
             <span className="nk-searchfield" style={{ flex: "1 1 320px", minWidth: 240, maxWidth: 560 }}>
               <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
               <input id="nk-cats-search-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.searchPlaceholder}
@@ -73,7 +73,7 @@ export function CategoriesScreen() {
             <EmptyState illustration="search" title={t.emptyTitle} subtitle={t.emptySubtitle(q.trim())} actionLabel={t.emptyAction} onAction={() => setQ("")} />
           )}
 
-          <section style={{ paddingBlock: "80px 40px" }}>
+          <section style={{ paddingTop: "calc(var(--nk-section-y) * 0.55)", paddingBottom: "var(--nk-section-y)" }}>
             <div style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: 16 }}>
               <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{t.seoHeading}</h2>
               <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{t.seoBody}</p>

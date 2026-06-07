@@ -33,7 +33,7 @@ export function OfferCard({
         style={{ height: 330, borderRadius: "24px 24px 0 0", backgroundImage: img ? `url("${img}")` : undefined }}>
         {img && <div className="nk-zoom" style={{ position: "absolute", inset: 0, backgroundImage: `url("${img}")`, backgroundSize: "cover", backgroundPosition: "center" }} />}
         <button className="nk-fav" onClick={lockFav} aria-label={c.favorite}>
-          <Icon name="Heart" size={20} color="var(--nk-text)" fill="none" stroke={2} />
+          <Icon name="Heart" size={22} color="var(--nk-text)" fill="none" stroke={2} />
         </button>
         {!img && <Icon name="Image" size={64} stroke={1.5} className="nk-imgicon" />}
         <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center", zIndex: 2, pointerEvents: "none" }}>
@@ -42,10 +42,10 @@ export function OfferCard({
           </span>
         </div>
       </div>
-      <div style={{ flex: 1, padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: 10 }}>
         <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--nk-text)" }}>{title}</h3>
         {/* meta row: rating + count on the left, location pin + city on the right */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", minHeight: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
           {rating ? (
             <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -103,9 +103,10 @@ export function CategoryTile({
 
 /* ---------------- Category card ---------------- */
 export function CategoryCard({
-  title, href,
+  title, count, href,
 }: {
   title: string;
+  count?: string;
   href: string;
 }) {
   return (
@@ -116,7 +117,10 @@ export function CategoryCard({
       </div>
       <div className="nk-cat__overlay" />
       <div className="nk-cat__content">
-        <h3 className="nk-h-row" style={{ margin: 0 }}>{title}</h3>
+        <span style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <h3 className="nk-h-row" style={{ margin: 0 }}>{title}</h3>
+          {count && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{count}</span>}
+        </span>
         <span className="nk-cat__arrow nk-round nk-round--outline" style={{ flex: "none" }} aria-hidden="true">
           <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
         </span>
@@ -133,10 +137,8 @@ export function InterruptionBanner() {
     <div className="nk-interrupt" style={{ gridColumn: "1 / -1" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/naudokis/section-pattern.png" alt="" aria-hidden="true" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
-      <span style={{ position: "relative", width: 64, height: 64, borderRadius: 18, flex: "none", background: "var(--nk-purple-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/naudokis/logo-mark.svg" alt="" style={{ width: 40, height: 40 }} />
-      </span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/naudokis/logo-mark.svg" alt="" style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
       <div style={{ position: "relative", flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: 8 }}>
         <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{t.interruptTitle}</h3>
         <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "26px", color: "var(--nk-text-2)", maxWidth: 520 }}>{t.interruptBody}</p>
@@ -183,7 +185,7 @@ export function Testimonial({
   avatarTint: string;
 }) {
   return (
-    <div style={{ flex: 1, background: "var(--nk-surface)", borderRadius: 16, padding: "var(--nk-block-pad)" }}>
+    <div style={{ flex: 1, background: "var(--nk-surface)", borderRadius: 16, padding: "var(--nk-block-pad)", border: "1px solid var(--nk-hairline)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 40 }}>
         <span className="nk-imgph" style={{ width: 60, height: 60, borderRadius: "50%", background: avatarTint }}>
           <Icon name="User" size={26} stroke={1.6} color="#5b6163" />
@@ -236,10 +238,8 @@ export function FaqRow({
 export function OfferCardSkeleton() {
   return (
     <article aria-hidden="true" style={{ background: "var(--nk-surface)", borderRadius: 24, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-      <div className="nk-skel" style={{ height: 330, borderRadius: "24px 24px 0 0" }}>
-        <div className="nk-skel" style={{ position: "absolute", top: 20, left: 20, width: 96, height: 33, borderRadius: 18, background: "rgba(27,27,27,.35)" }} />
-      </div>
-      <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+      <div className="nk-skel" style={{ height: 330, borderRadius: "24px 24px 0 0" }} />
+      <div style={{ padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: 12 }}>
         <div className="nk-skel" style={{ width: "70%", height: 26 }} />
         <div className="nk-skel" style={{ width: "48%", height: 18 }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>

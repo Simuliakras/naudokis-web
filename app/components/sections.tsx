@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Icon, type IconName, Logo, Button, AppBadges, SectionHead, QR, openRedirect,
+  Icon, type IconName, Logo, AppBadges, SectionHead, QR, openRedirect,
 } from "./ui";
 import {
   OfferCard, CategoryCard, FeatureCard, Testimonial, FaqRow, OfferCardSkeleton, CategoryCardSkeleton, EmptyState, SectionEmpty,
@@ -13,6 +13,7 @@ import { useCategories } from "@/app/lib/categories";
 import { useListings } from "@/app/lib/listings";
 import { LT_CITIES } from "@/app/lib/cities";
 import { listingSearchHref } from "@/app/lib/search";
+import { mockCategoryCount } from "@/app/lib/mock";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL } from "@/app/lib/contact";
 import { useI18n } from "./I18nProvider";
 import { locales, barePath, localePrefix, type Locale } from "@/app/lib/i18n/config";
@@ -359,14 +360,13 @@ function SearchBar() {
 /* ---------------- Categories ---------------- */
 export function Categories() {
   const { locale, dict } = useI18n();
-  const router = useRouter();
   const t = dict.categories;
   const { data, isLoading, isError, refetch } = useCategories(locale);
   const list = (data ?? []).slice(0, 8);
   return (
     <section id="kategorijos" className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
       <SectionHead eyebrow={t.eyebrow} title={t.title}
-        action={<Button variant="outline" onClick={() => router.push("/kategorijos")}>{t.all}</Button>} />
+        action={<Link className="nk-cats-all" href="/kategorijos">{t.all} <Icon name="ArrowRight" size={24} stroke={2.4} color="var(--nk-purple)" /></Link>} />
       {isLoading ? (
         <div className="nk-grid-cats">
           {Array.from({ length: 8 }).map((_, i) => <CategoryCardSkeleton key={i} />)}
@@ -378,7 +378,7 @@ export function Categories() {
           actionLabel={t.errorAction} onAction={() => refetch()} />
       ) : list.length ? (
         <div className="nk-grid-cats nk-reveal">
-          {list.map((c) => <CategoryCard key={c.id} title={c.title} href={listingSearchHref({ cat: c.id })} />)}
+          {list.map((c) => <CategoryCard key={c.id} title={c.title} count={dict.categoriesPage.tileCount(mockCategoryCount(c.id))} href={listingSearchHref({ cat: c.id })} />)}
         </div>
       ) : (
         <SectionEmpty icon="LayoutGrid" title={t.bandEmptyTitle} subtitle={t.bandEmptyBody}
@@ -398,7 +398,7 @@ export function Offers() {
   return (
     <section id="skelbimai" className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
       <SectionHead eyebrow={t.eyebrow} title={t.title}
-        action={<Button variant="outline" onClick={() => router.push("/skelbimai")}>{t.all}</Button>} />
+        action={<Link className="nk-cats-all" href="/skelbimai">{t.all} <Icon name="ArrowRight" size={24} stroke={2.4} color="var(--nk-purple)" /></Link>} />
       {isLoading ? (
         <div className="nk-grid-4">
           {Array.from({ length: 4 }).map((_, i) => <OfferCardSkeleton key={i} />)}
@@ -463,7 +463,7 @@ export function Testimonials() {
   const t = dict.testimonials;
   const items = t.items.slice(0, 2);
   return (
-    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y-lg)" }}>
+    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
       <SectionHead eyebrow={t.eyebrow} title={t.title} />
       <div className="nk-reveal nk-row">
         {items.map((item) => (

@@ -133,7 +133,7 @@ export function FeedScreen() {
           <div className="nk-filterbar">
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                <span className="nk-searchfield" style={{ flex: "1 1 320px", minWidth: 240, padding: "12px 18px" }}>
+                <span className="nk-searchfield" style={{ flex: "1 1 320px", minWidth: 240, padding: "13px 20px" }}>
                   <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
                   <input id="nk-feed-search-input" value={qInput} onChange={(e) => setQInput(e.target.value)} placeholder={t.searchPlaceholder}
                     style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text)" }} />
@@ -188,7 +188,7 @@ export function FeedScreen() {
             </div>
           </div>
 
-          <section style={{ paddingBlock: "80px 0" }}>
+          <section style={{ paddingTop: "calc(var(--nk-section-y) * 0.55)", paddingBottom: "var(--nk-section-y)" }}>
             <div style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: 16 }}>
               <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{t.seoHeading}</h2>
               <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{t.seoBody}</p>

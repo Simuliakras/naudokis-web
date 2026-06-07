@@ -67,12 +67,15 @@ function Stars({ value, size = 14 }: { value: number; size?: number }) {
   );
 }
 
-function DateField({ label, value }: { label: string; value: string }) {
+function DateField({ label, value, onPick }: { label: string; value: string; onPick: () => void }) {
   return (
-    <span style={{ flex: 1, display: "flex", flexDirection: "column", gap: 3, padding: "11px 14px", borderRadius: 13, background: "var(--nk-input-bg)", border: "1px solid var(--nk-border)" }}>
-      <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--nk-text-muted)" }}>{label}</span>
-      <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{value}</span>
-    </span>
+    <button type="button" onClick={onPick} className="nk-lfield" style={{ flex: 1, textAlign: "left", display: "flex", flexDirection: "column", gap: 3, padding: "11px 15px", borderRadius: 13, background: "var(--nk-input-bg)", border: "1px solid var(--nk-border)" }}>
+      <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 11.5, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--nk-text-muted)" }}>{label}</span>
+      <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+        <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text)" }}>{value}</span>
+        <Icon name="Calendar" size={15} color="var(--nk-purple-hover)" stroke={2} />
+      </span>
+    </button>
   );
 }
 
@@ -170,7 +173,7 @@ export function ListingHeader({ listing, saved, onShare, onFav }: {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 24, flexWrap: "wrap", marginBottom: 22 }}>
       <div style={{ display: "flex", flexDirection: "column", gap: 13, minWidth: 0 }}>
-        <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 4vw, 50px)", lineHeight: 1.04, letterSpacing: "-0.015em", color: "var(--nk-text)" }}>{listing.title}</h1>
+        <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 4vw, 50px)", lineHeight: 1.04, letterSpacing: "-0.015em", color: "var(--nk-text)", textWrap: "balance" }}>{listing.title}</h1>
         <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
           {listing.rating && (
             <>
@@ -194,8 +197,8 @@ export function ListingHeader({ listing, saved, onShare, onFav }: {
         </div>
       </div>
       <div style={{ display: "flex", gap: 10, flex: "none" }}>
-        <button style={headerBtn} onClick={onShare}><Icon name="ArrowUpDown" size={17} stroke={2} color="var(--nk-text)" style={{ transform: "rotate(45deg)" }} /> {t.share}</button>
-        <button style={headerBtn} onClick={onFav}><Icon name="Heart" size={17} stroke={2} color={saved ? "var(--nk-orange)" : "var(--nk-text)"} fill={saved ? "var(--nk-orange)" : "none"} /> {t.save}</button>
+        <button className="nk-lfield" style={headerBtn} onClick={onShare}><Icon name="ArrowUpDown" size={17} stroke={2} color="var(--nk-text)" style={{ transform: "rotate(45deg)" }} /> {t.share}</button>
+        <button className="nk-lfield" style={headerBtn} onClick={onFav}><Icon name="Heart" size={17} stroke={2} color={saved ? "var(--nk-orange)" : "var(--nk-text)"} fill={saved ? "var(--nk-orange)" : "none"} /> {t.save}</button>
       </div>
     </div>
   );
@@ -253,7 +256,7 @@ function DescriptionSection({ description }: { description: string }) {
   return (
     <Section id="aprasymas" title={t.descHeading} first>
       <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 720 }}>
-        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", maxHeight: open ? "none" : 120, overflow: "hidden", maskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)", WebkitMaskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)" }}>{description}</p>
+        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxHeight: open ? "none" : 120, overflow: "hidden", maskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)", WebkitMaskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)" }}>{description}</p>
         {description.length > 180 && (
           <button onClick={() => setOpen((v) => !v)} style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-hover)" }}>
             {open ? t.descLess : t.descMore} <Icon name="ChevronDown" size={16} stroke={2.4} color="var(--nk-purple-hover)" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
@@ -287,31 +290,37 @@ function HandoverSection({ city }: { city: string }) {
   return (
     <Section id="perdavimas" title={t.handoverHeading} sub={t.deliverySub(city)}>
       <div className="nk-tworow" style={{ alignItems: "stretch", gap: 24 }}>
-        <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", minHeight: 200, display: "flex", alignItems: "center", justifyContent: "center", background:
-          "radial-gradient(circle at 50% 50%, var(--nk-purple-tint), transparent 42%)," +
-          "repeating-linear-gradient(0deg, var(--nk-ps-map-1), var(--nk-ps-map-1) 22px, var(--nk-ps-map-2) 22px, var(--nk-ps-map-2) 23px)," +
-          "repeating-linear-gradient(90deg, var(--nk-ps-map-1), var(--nk-ps-map-1) 22px, var(--nk-ps-map-2) 22px, var(--nk-ps-map-2) 23px)" }}>
-          <span style={{ width: 46, height: 46, borderRadius: 23, background: "var(--nk-purple)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 0 10px var(--nk-purple-tint)" }}>
-            <Icon name="MapPin" size={22} color="#fff" fill="#fff" />
+        <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", minHeight: 200, border: "1px solid var(--nk-border)", display: "flex", alignItems: "center", justifyContent: "center", background: "radial-gradient(120% 90% at 50% 40%, var(--nk-bg) 0%, var(--nk-bg-deep) 100%)" }}>
+          {/* faint road grid */}
+          <span style={{ position: "absolute", left: 0, right: 0, top: "32%", height: 2, background: "var(--nk-hairline)" }} />
+          <span style={{ position: "absolute", left: 0, right: 0, top: "68%", height: 2, background: "var(--nk-hairline)" }} />
+          <span style={{ position: "absolute", top: 0, bottom: 0, left: "28%", width: 2, background: "var(--nk-hairline)" }} />
+          <span style={{ position: "absolute", top: 0, bottom: 0, left: "70%", width: 2, background: "var(--nk-hairline)" }} />
+          {/* delivery radius */}
+          <span style={{ position: "absolute", left: "50%", top: "50%", width: 200, height: 200, transform: "translate(-50%,-50%)", borderRadius: "50%", background: "var(--nk-purple-soft)", border: "1.5px solid var(--nk-accent-border)" }} />
+          <span style={{ position: "absolute", left: "50%", top: "50%", width: 110, height: 110, transform: "translate(-50%,-50%)", borderRadius: "50%", background: "var(--nk-purple-soft)" }} />
+          {/* pin */}
+          <span style={{ position: "relative", width: 46, height: 46, borderRadius: 23, background: "var(--nk-purple)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 22px var(--nk-purple-glow-2)" }}>
+            <Icon name="MapPin" size={24} color="var(--nk-text)" stroke={2.2} />
           </span>
-          <span style={{ position: "absolute", left: 14, bottom: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "7px 12px", borderRadius: 999, background: "var(--nk-overlay)", backdropFilter: "blur(8px)", fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-2)" }}>
-            <Icon name="Car" size={15} color="var(--nk-text-muted)" stroke={2} /> {t.deliveryZone}
+          <span style={{ position: "absolute", left: 14, bottom: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "7px 13px", borderRadius: 999, background: "var(--nk-overlay)", backdropFilter: "blur(10px)", border: "1px solid var(--nk-border-soft)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 13.5, color: "var(--nk-text)" }}>
+            <Icon name="Car" size={14} color="var(--nk-text)" stroke={2} /> {t.deliveryZone}
           </span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 18 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <span style={{ width: 44, height: 44, borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="MapPin" size={21} stroke={2} color="var(--nk-purple-hover)" /></span>
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
-              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)" }}>{t.pickupLabel}</span>
-              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 18, color: "var(--nk-text)" }}>{city || "—"}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+            <span style={{ width: 42, height: 42, borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="MapPin" size={20} stroke={2} color="var(--nk-purple-hover)" /></span>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
+              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)" }}>{t.pickupLabel}</span>
+              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{city || "—"}</span>
             </div>
             <Pill tone="green">{t.pickupFree}</Pill>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <span style={{ width: 44, height: 44, borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="Car" size={21} stroke={2} color="var(--nk-purple-hover)" /></span>
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
-              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)" }}>{t.deliveryLabel}</span>
-              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 18, color: "var(--nk-text)" }}>{t.deliveryByArrangement}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+            <span style={{ width: 42, height: 42, borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="Car" size={20} stroke={2} color="var(--nk-purple-hover)" /></span>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
+              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)" }}>{t.deliveryLabel}</span>
+              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{t.deliveryByArrangement}</span>
             </div>
           </div>
         </div>
@@ -358,7 +367,7 @@ function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
       {/* rating breakdown */}
-      <div style={{ padding: 26, borderRadius: 18, background: "var(--nk-surface-glass)", border: "1px solid var(--nk-border)" }}>
+      <div style={{ padding: 24, borderRadius: 18, background: "var(--nk-surface-glass)", border: "1px solid var(--nk-border)" }}>
         <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "0 44px", alignItems: "center" }}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, paddingRight: 44, borderRight: "1px solid var(--nk-divider)" }}>
             <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 56, lineHeight: 1, color: "var(--nk-text)" }}>{rating}</span>
@@ -443,13 +452,14 @@ export function DetailBody({ listing, deposit, onContact }: {
 
 /* ---------------- Sidebar: booking panel ----------------
    Sticky reserve card (desktop): price, sample dates, cost breakdown, reserve CTA. */
-export function BookingPanel({ listing, deposit, days, subtotal, total, onReserve }: {
+export function BookingPanel({ listing, deposit, days, subtotal, total, onReserve, onPickDates }: {
   listing: ListingDetail;
   deposit: string;
   days: number;
   subtotal: string;
   total: string;
   onReserve: () => void;
+  onPickDates: () => void;
 }) {
   const { dict } = useI18n();
   const t = dict.detail;
@@ -465,15 +475,15 @@ export function BookingPanel({ listing, deposit, days, subtotal, total, onReserv
         )}
       </div>
       <div style={{ display: "flex", gap: 10 }}>
-        <DateField label={t.dateFrom} value={t.sampleDateFrom} />
-        <DateField label={t.dateTo} value={t.sampleDateTo} />
+        <DateField label={t.dateFrom} value={t.sampleDateFrom} onPick={onPickDates} />
+        <DateField label={t.dateTo} value={t.sampleDateTo} onPick={onPickDates} />
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 12, fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-2)" }}>
           <span>{t.lineItem(listing.price, days)}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{subtotal}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 12, fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-2)" }}>
-          <span>{t.serviceFee}</span><span style={{ color: "var(--nk-green)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.serviceFeeFree}</span>
+          <span title={t.serviceFeeHint} style={{ textDecoration: "underline dotted", textUnderlineOffset: 3, cursor: "help" }}>{t.serviceFee}</span><span style={{ color: "var(--nk-green)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.serviceFeeFree}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 12, fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
           <span>{t.depositReturnable}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{deposit}</span>

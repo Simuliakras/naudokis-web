@@ -249,6 +249,7 @@ export type Dict = {
     sampleDateTo: string;
     lineItem: (price: string, days: number) => string; // "20,00 € × 3 d."
     serviceFee: string;
+    serviceFeeHint: string; // tooltip explaining the free service fee
     serviceFeeFree: string; // "Nemokama"
     totalToday: string;
     freeCancellation: string;
@@ -358,6 +359,8 @@ export type Dict = {
     close: string;
     reserveTitle: string;
     reserveBody: string;
+    datesTitle: string;
+    datesBody: string;
     contactTitle: string;
     contactBody: string;
     favoriteTitle: string;

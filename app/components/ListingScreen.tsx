@@ -66,6 +66,7 @@ export function ListingScreen({ id }: { id: string }) {
   const lockFav = () => { setSaved(true); openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody }); };
   const lockShare = () => openRedirect({ title: dict.bridge.shareTitle, body: dict.bridge.shareBody });
   const reserve = () => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody });
+  const pickDates = () => openRedirect({ title: dict.bridge.datesTitle, body: dict.bridge.datesBody });
   const contact = () => openRedirect({ title: dict.bridge.contactTitle, body: dict.bridge.contactBody });
 
   return shell(
@@ -82,7 +83,7 @@ export function ListingScreen({ id }: { id: string }) {
         <div className="nk-detail-grid">
           <DetailBody listing={listing} deposit={deposit} onContact={contact} />
           <aside className="nk-reserve">
-            <BookingPanel listing={listing} deposit={deposit} days={SAMPLE_RENTAL_DAYS} subtotal={subtotal} total={total} onReserve={reserve} />
+            <BookingPanel listing={listing} deposit={deposit} days={SAMPLE_RENTAL_DAYS} subtotal={subtotal} total={total} onReserve={reserve} onPickDates={pickDates} />
             <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />
           </aside>
         </div>
