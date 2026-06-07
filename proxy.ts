@@ -35,5 +35,5 @@ export function proxy(request: NextRequest) {
 export const config = {
   // Run on page routes only; skip Next internals, static brand assets, and the
   // root-level SEO metadata routes (sitemap.xml / robots.txt) which are not localized.
-  matcher: ["/((?!_next/static|_next/image|naudokis|favicon.ico|sitemap.xml|robots.txt).*)"],
+  matcher: ["/((?!_next/static|_next/image|naudokis|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest).*)"],
 };

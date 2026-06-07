@@ -1,7 +1,7 @@
 "use client";
 // Naudokis UI kit — card components.
 import Link from "next/link";
-import { Icon, IconName, IllusName, Illustration, Dots, openRedirect } from "./ui";
+import { Icon, IconName, IllusName, Illustration, Dots, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
 
 /* ---------------- Offer / listing card ----------------
@@ -135,8 +135,7 @@ export function InterruptionBanner() {
   const t = dict.feed;
   return (
     <div className="nk-interrupt" style={{ gridColumn: "1 / -1" }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/naudokis/section-pattern.png" alt="" aria-hidden="true" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
+      <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/naudokis/logo-mark.svg" alt="" style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
       <div style={{ position: "relative", flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: 8 }}>

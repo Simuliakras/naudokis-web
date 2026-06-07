@@ -1,8 +1,9 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { requireLocale, organizationJsonLd, webSiteJsonLd } from "@/app/lib/seo";
+import { requireLocale, organizationJsonLd, webSiteJsonLd, faqJsonLd } from "@/app/lib/seo";
 import { makeQueryClient } from "@/app/lib/query";
 import { fetchListings, listingsKey } from "@/app/lib/listings";
 import { fetchCategories, categoriesKey } from "@/app/lib/categories";
+import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { HomeApp } from "../components/HomeApp";
 import { JsonLd } from "../components/JsonLd";
 
@@ -22,6 +23,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
     <HydrationBoundary state={dehydrate(qc)}>
       <JsonLd data={organizationJsonLd()} />
       <JsonLd data={webSiteJsonLd(locale)} />
+      <JsonLd data={faqJsonLd(getDictionary(locale).faq.items)} />
       <HomeApp />
     </HydrationBoundary>
   );

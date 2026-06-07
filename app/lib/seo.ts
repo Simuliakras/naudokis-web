@@ -4,6 +4,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { defaultLocale, isLocale, localePrefix, type Locale } from "@/app/lib/i18n/config";
+import { CONTACT_EMAIL, CONTACT_PHONE, SOCIAL_LINKS } from "@/app/lib/contact";
+import type { FaqItem } from "@/app/lib/i18n/types";
 
 const SITE_URL = "https://naudokis.lt";
 
@@ -101,12 +103,43 @@ export function absoluteUrl(locale: Locale, path: string): string {
 const inLanguage = (locale: Locale) => (locale === "lt" ? "lt-LT" : "en-US");
 
 export function organizationJsonLd(): JsonLdNode {
-  return {
+  const node: JsonLdNode = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Naudokis",
     url: SITE_URL,
     logo: `${SITE_URL}/naudokis/naudokis-logo.png`,
+    // Languages the brand operates in (correct Organization property; `inLanguage`
+    // belongs on CreativeWork/WebSite, not Organization).
+    knowsLanguage: ["lt", "en"],
+    areaServed: { "@type": "Country", name: "Lithuania" },
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      email: CONTACT_EMAIL,
+      telephone: CONTACT_PHONE,
+      availableLanguage: ["lt", "en"],
+    },
+  };
+  // Only emit sameAs once real brand profiles exist (see SOCIAL_LINKS) — wrong or
+  // placeholder URLs would undermine entity reconciliation rather than help it.
+  if (SOCIAL_LINKS.length > 0) {
+    node.sameAs = SOCIAL_LINKS;
+  }
+  return node;
+}
+
+// Homepage FAQ section → a FAQPage rich result. Sourced from the same dictionary
+// entries the visible accordion renders, so copy never diverges.
+export function faqJsonLd(items: readonly FaqItem[]): JsonLdNode {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
   };
 }
 

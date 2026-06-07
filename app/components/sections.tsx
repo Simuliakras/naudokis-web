@@ -2,9 +2,10 @@
 // Naudokis UI kit — page sections.
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Icon, type IconName, Logo, AppBadges, SectionHead, QR, openRedirect,
+  Icon, type IconName, Logo, AppBadges, SectionHead, QR, openRedirect, Pattern,
 } from "./ui";
 import {
   OfferCard, CategoryCard, FeatureCard, Testimonial, FaqRow, OfferCardSkeleton, CategoryCardSkeleton, EmptyState, SectionEmpty,
@@ -299,8 +300,7 @@ export function Hero() {
   const { dict } = useI18n();
   return (
     <section id="top" style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/naudokis/hero-pattern.png" alt="" aria-hidden="true"
+      <Pattern name="hero-pattern" priority
         style={{ position: "absolute", right: -80, top: 0, bottom: 0, height: "100%", width: 1000, objectFit: "cover", objectPosition: "right top", opacity: 0.30, pointerEvents: "none" }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
         <div className="nk-hero-panel" style={{ position: "relative", borderRadius: 20, background: "var(--nk-glass)", backdropFilter: "blur(35px)", border: "1px solid var(--nk-hairline)",
@@ -320,8 +320,9 @@ export function Hero() {
           </div>
           {/* right column — real app device + QR */}
           <div className="nk-hero-media" style={{ position: "relative", minHeight: 560 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} fetchPriority="high" decoding="async" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "drop-shadow(10px 18px 42px rgba(22,22,22,.55))" }} />
+            {/* LCP image: next/image serves responsive AVIF/WebP and `priority`
+                preloads it (replaces the manual fetchPriority hint). */}
+            <Image src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} priority sizes="(max-width: 980px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "drop-shadow(10px 18px 42px rgba(22,22,22,.55))" }} />
             <div style={{ position: "absolute", right: 32, bottom: 0 }}><QR size={132} /></div>
           </div>
         </div>
@@ -431,8 +432,7 @@ export function Features() {
   const { dict } = useI18n();
   return (
     <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/naudokis/section-pattern.png" alt="" aria-hidden="true" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.40 }} />
+      <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.40 }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y-lg)" }}>
         <div className="nk-reveal nk-row">
           {dict.features.map((f, i) => <div key={f.title} className="nk-reveal" data-delay={(i % 3) + 1} style={{ display: "flex", flex: 1 }}><FeatureCard {...f} /></div>)}
@@ -485,8 +485,7 @@ export function CtaBanner() {
       <div className="nk-reveal nk-cta" style={{ position: "relative", borderRadius: 20, overflow: "hidden", minHeight: 620, border: "1px solid var(--nk-border-strong)", background: "linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)", boxShadow: "0 34px 90px -38px rgba(0,0,0,.65)" }}>
         <AmbientGlow />
         {/* phone bleeding from the top, filling the right half down to the bottom edge */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} loading="lazy" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "drop-shadow(0 26px 50px rgba(0,0,0,.5))" }} />
+        <Image className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "drop-shadow(0 26px 50px rgba(0,0,0,.5))" }} />
         <div className="nk-cta__badges" style={{ position: "absolute", left: "var(--nk-panel-pad)", top: "var(--nk-panel-pad)" }}><AppBadges /></div>
         <div className="nk-cta__body" style={{ position: "absolute", left: "var(--nk-panel-pad)", bottom: "var(--nk-panel-pad)", maxWidth: 808, display: "flex", flexDirection: "column", gap: 20 }}>
           <span style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px 8px 12px", borderRadius: "var(--nk-r-pill)", background: "var(--nk-glass-strong)", border: "1px solid var(--nk-border)", backdropFilter: "blur(12px)" }}>
@@ -548,8 +547,7 @@ export function Footer() {
   const t = dict.footer;
   return (
     <footer id="kontaktai" className="nk-footer">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="nk-footer__pattern" src="/naudokis/footer-pattern.png" alt="" aria-hidden="true" loading="lazy" />
+      <Pattern name="footer-pattern" className="nk-footer__pattern" />
       <div className="nk-container">
         <div className="nk-footer__top">
           <div className="nk-footer__brand">

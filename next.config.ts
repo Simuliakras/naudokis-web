@@ -21,6 +21,12 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  // Serve modern formats from the built-in optimizer (used by next/image for the
+  // hero/CTA phone mockups). AVIF first, WebP fallback. Static brand patterns are
+  // pre-encoded to .avif/.webp and served via <picture>, so they skip the optimizer.
+  images: {
+    formats: ["image/avif", "image/webp"],
+  },
 };
 
 // Source-map upload only runs in CI when SENTRY_AUTH_TOKEN/org/project are set;

@@ -96,6 +96,28 @@ export function Icon({
   );
 }
 
+/* ---------------- Decorative background pattern ----------------
+   Brand pattern served AVIF→WebP→PNG via <picture>. Always decorative
+   (alt="", aria-hidden); lazy by default — pass `priority` for above-the-fold. */
+type PatternName = "hero-pattern" | "section-pattern" | "footer-pattern";
+
+export function Pattern({ name, className, style, priority = false }: {
+  name: PatternName;
+  className?: string;
+  style?: React.CSSProperties;
+  priority?: boolean;
+}) {
+  const base = `/naudokis/${name}`;
+  return (
+    <picture>
+      <source srcSet={`${base}.avif`} type="image/avif" />
+      <source srcSet={`${base}.webp`} type="image/webp" />
+      <img src={`${base}.png`} alt="" aria-hidden="true" className={className} style={style}
+        loading={priority ? undefined : "lazy"} />
+    </picture>
+  );
+}
+
 /* ---------------- Logo ---------------- */
 export function Logo({ height = 36 }: { height?: number }) {
   return (

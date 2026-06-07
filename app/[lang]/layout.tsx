@@ -13,7 +13,8 @@ const SITE_URL = "https://naudokis.lt";
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700", "800"],
+  // 800 was declared but never referenced in CSS/inline styles (max used is 700).
+  weight: ["400", "500", "600", "700"],
 });
 
 const sora = Sora({
@@ -38,6 +39,14 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
     description: meta.description,
     applicationName: "Naudokis",
     keywords: meta.keywords,
+    manifest: "/manifest.webmanifest",
+    icons: {
+      icon: [
+        { url: "/naudokis/icon-192.png", sizes: "192x192", type: "image/png" },
+        { url: "/naudokis/icon-512.png", sizes: "512x512", type: "image/png" },
+      ],
+      apple: { url: "/naudokis/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    },
     alternates: {
       canonical: localeHome(lang),
       languages: {

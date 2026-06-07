@@ -4,11 +4,12 @@
 // mock-up, a trust strip, a mini-FAQ and the green app-download CTA. Ported from
 // the design bundle's kaip-tai-veikia prototype to the nk- design system.
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Nav, Footer } from "./sections";
 import { Chrome } from "./Chrome";
 import { FaqRow } from "./cards";
-import { Icon, AppBadges, QR } from "./ui";
+import { Icon, AppBadges, QR, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { useScrollReveal } from "@/app/lib/use-scroll-reveal";
 import type { HtwScreen, HtwStep } from "@/app/lib/i18n/types";
@@ -40,8 +41,7 @@ export function HowItWorksScreen() {
 
         {/* HERO */}
         <section className="htw-hero">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="htw-hero__pattern" src="/naudokis/hero-pattern.png" alt="" aria-hidden="true" />
+          <Pattern name="hero-pattern" priority className="htw-hero__pattern" />
           <div className="nk-container htw-hero__inner">
             <span className="htw-hero__eyebrow nk-eyebrow">{t.eyebrow}</span>
             <h1>{t.title}</h1>
@@ -87,8 +87,7 @@ export function HowItWorksScreen() {
 
         {/* TRUST STRIP */}
         <section className="htw-trust">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="htw-trust__pattern" src="/naudokis/section-pattern.png" alt="" aria-hidden="true" loading="lazy" />
+          <Pattern name="section-pattern" className="htw-trust__pattern" />
           <div className="nk-container htw-trust__inner">
             <div className="htw-trust__head nk-reveal">
               <span className="nk-eyebrow">{t.trustEyebrow}</span>
@@ -111,8 +110,7 @@ export function HowItWorksScreen() {
         {/* CTA (green) */}
         <section className="nk-container htw-cta-wrap">
           <div className="htw-cta nk-reveal">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="htw-cta__phone" src="/naudokis/download-phone.png" alt={t.ctaPhoneAlt} loading="lazy" />
+            <Image className="htw-cta__phone" src="/naudokis/download-phone.png" alt={t.ctaPhoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" />
             <div className="htw-cta__spark" aria-hidden="true">
               <span style={{ left: "46%", top: "18%" }} /><span style={{ left: "58%", top: "30%" }} /><span style={{ left: "40%", top: "40%" }} />
             </div>
