@@ -160,7 +160,7 @@ export function FeatureCard({
   return (
     <div className="nk-feature" style={{
       flex: 1, borderRadius: 24, background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-hairline)",
-      padding: "56px 56px 60px", display: "flex", flexDirection: "column", alignItems: "center", gap: 36, textAlign: "center",
+      padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-stack-lg)", textAlign: "center",
     }}>
       <span style={{ width: 72, height: 72, borderRadius: 36, background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Icon name={icon} size={36} color="var(--nk-yellow)" stroke={2} />
@@ -183,7 +183,7 @@ export function Testimonial({
   avatarTint: string;
 }) {
   return (
-    <div style={{ flex: 1, background: "var(--nk-surface)", borderRadius: 16, padding: "56px 60px" }}>
+    <div style={{ flex: 1, background: "var(--nk-surface)", borderRadius: 16, padding: "var(--nk-block-pad)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 40 }}>
         <span className="nk-imgph" style={{ width: 60, height: 60, borderRadius: "50%", background: avatarTint }}>
           <Icon name="User" size={26} stroke={1.6} color="#5b6163" />
@@ -216,7 +216,7 @@ export function FaqRow({
       borderRadius: open ? 24 : 20, background: "var(--nk-surface)", transition: "border-radius .2s ease, border-color .2s ease, background .2s ease",
       overflow: "hidden",
     }}>
-      <button onClick={onToggle} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 24, padding: "20px 20px 20px 40px", textAlign: "left" }}>
+      <button type="button" onClick={onToggle} aria-expanded={open} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 24, padding: "20px 20px 20px 40px", textAlign: "left" }}>
         <span className="nk-h-row">{q}</span>
         <span style={{ width: 44, height: 44, borderRadius: 22, flex: "none", display: "flex", alignItems: "center", justifyContent: "center",
           transition: "transform .2s ease", transform: open ? "rotate(180deg)" : "none" }}>

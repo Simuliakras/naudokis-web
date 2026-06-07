@@ -116,8 +116,19 @@
   --nk-s-1:4px; --nk-s-2:8px; --nk-s-3:12px; --nk-s-4:16px; --nk-s-5:20px;
   --nk-s-6:24px; --nk-s-8:32px; --nk-s-10:40px; --nk-s-12:48px; --nk-s-15:60px;
   --nk-s-20:80px; --nk-s-30:120px; --nk-s-35:140px; --nk-s-50:200px;
-  --nk-gutter: 82px;   /* desktop container side padding                     */
   --nk-gap:    20px;   /* default gap between cards in a row                 */
+
+  /* ---- Fluid rhythm tokens (from the design bundle's colors_and_type.css) ---
+     Drive container gutters + section padding from clamp() so the desktop grid
+     scales down to mobile without per-component media queries. */
+  --nk-gutter:        clamp(20px, 6vw, 82px);   /* container side padding     */
+  --nk-section-y:     clamp(64px, 8vw, 112px);  /* standard section padding-y */
+  --nk-section-y-lg:  clamp(72px, 9vw, 120px);  /* hero / feature heavy bands */
+  --nk-section-head:  clamp(40px, 5vw, 60px);   /* section head → content gap */
+  --nk-card-pad:      clamp(20px, 1.4vw, 24px); /* listing-card body padding   */
+  --nk-block-pad:     clamp(32px, 4vw, 56px);   /* feature / testimonial card  */
+  --nk-panel-pad:     clamp(28px, 4.4vw, 60px); /* hero panel / large blocks   */
+  --nk-stack-lg:      clamp(28px, 3.4vw, 40px); /* large vertical stacks       */
 }
 
 /* ============================================================================
@@ -230,12 +241,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   font-family:var(--nk-font-body);font-size:16px;line-height:1;color:var(--nk-light-meta);border-radius:2px}
 
 /* ---- Heading block (eyebrow defined in the type ramp above) ---- */
-.nk-head{display:flex;flex-direction:column;gap:20px}
+.nk-head{display:flex;flex-direction:column;gap:10px}
 .nk-head h2{font-family:var(--nk-font-display);font-weight:700;font-size:clamp(30px,3.4vw,40px);line-height:1.1;color:var(--nk-text);margin:0}
 
 /* ---- Section scaffolding ---- */
-.nk-section{padding-block:120px}
-.nk-section__top{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:60px}
+.nk-section{padding-block:var(--nk-section-y)}
+.nk-section__top{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:var(--nk-section-head)}
 
 /* ---- image placeholder ---- */
 .nk-imgph{position:relative;background:var(--nk-ps-card);overflow:hidden;display:flex;align-items:center;justify-content:center}
@@ -247,13 +258,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .nk-dot--btn{padding:0;border:none;cursor:pointer;appearance:none;-webkit-appearance:none;transition:transform .18s ease,background .18s ease}
 .nk-dot--btn:hover{transform:scale(1.3);background:var(--nk-text)}
 
-/* testimonials carousel */
-.nk-tm-viewport{overflow:hidden;border-radius:16px;touch-action:pan-y}
-.nk-tm-track{display:flex;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
-.nk-tm-slide{flex:0 0 100%;min-width:0}
-
 @media(max-width:900px){
-  :root{--nk-gutter:20px}
   .nk-logo span{font-size:22px}
 }
 
@@ -280,14 +285,16 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 /* ---- sticky translucent nav — melts at top, condenses on scroll ---- */
 .nk-nav-bar{position:sticky;top:0;z-index:50;
   background:var(--nk-glass-nav);
-  -webkit-backdrop-filter:blur(28px) saturate(160%);backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(16px) saturate(150%) brightness(.82);backdrop-filter:blur(16px) saturate(150%) brightness(.82);
   border-bottom:1px solid var(--nk-border);
   transition:background .25s ease,box-shadow .25s ease,border-color .25s ease}
-.nk-nav-bar.nk-scrolled{background:rgba(26,26,26,.92);box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.nk-nav-bar.nk-scrolled{background:rgba(20,22,23,.40);
+  -webkit-backdrop-filter:blur(34px) saturate(160%) brightness(.82);backdrop-filter:blur(34px) saturate(160%) brightness(.82);
+  box-shadow:0 4px 16px rgba(0,0,0,.14);border-bottom-color:var(--nk-hairline)}
 .nk-nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;
   height:76px;transition:height .3s cubic-bezier(.2,.7,.2,1)}
 .nk-nav-bar.nk-scrolled .nk-nav-inner{height:68px}
-.nk-nav-links{display:flex;align-items:center;gap:32px}
+.nk-nav-links{display:flex;align-items:center;gap:60px}
 .nk-nav-burger{display:none;width:46px;height:46px;border-radius:14px;align-items:center;justify-content:center;
   background:var(--nk-surface-2);border:1px solid var(--nk-border);transition:background .15s ease,border-color .15s ease}
 .nk-nav-burger:hover{background:var(--nk-surface-hover);border-color:var(--nk-border-strong)}
@@ -304,7 +311,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
     font-family:var(--nk-font-display);font-weight:600;font-size:18px;color:var(--nk-text);text-decoration:none;
     background:transparent;transition:background .15s ease}
   .nk-drawer-item:hover,.nk-drawer-item:focus-visible{background:var(--nk-surface)}
-  .nk-drawer-item[aria-current="page"]{color:var(--nk-purple)}
+  .nk-drawer-item[aria-current="page"]{color:var(--nk-yellow)}
   .nk-drawer-locale{padding:12px 12px 4px}
 }
 
@@ -380,16 +387,17 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .nk-offer{transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease,border-color .28s ease;border:1px solid rgba(255,255,255,0.08)}
 .nk-offer:hover{border-color:var(--nk-accent-border)}
 .nk-offer:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.45)}
-.nk-offer__media{overflow:hidden}
+.nk-offer__media{overflow:hidden;background:#2c3133}
 .nk-offer__media .nk-zoom{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
 .nk-offer:hover .nk-zoom{transform:scale(1.06)}
 .nk-offer:hover .nk-round--solid{background:var(--nk-purple-hover)}
 
 /* ---- favorite heart ---- */
-.nk-fav{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:20px;
-  background:rgba(27,27,27,.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;
+.nk-fav{position:absolute;top:16px;right:16px;width:48px;height:48px;border-radius:24px;
+  background:rgba(40,44,45,.34);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(14px);
+  display:flex;align-items:center;justify-content:center;
   transition:transform .18s ease,background .18s ease;z-index:2}
-.nk-fav:hover{background:rgba(27,27,27,.7);transform:scale(1.08)}
+.nk-fav:hover{background:rgba(40,44,45,.5);transform:scale(1.08)}
 .nk-fav:active{transform:scale(.9)}
 
 /* ---- category card ---- */
@@ -443,13 +451,13 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .nk-footer{position:relative;background:var(--nk-bg-deep);overflow:hidden}
 .nk-footer__pattern{position:absolute;right:0;top:0;width:1053px;height:100%;object-fit:cover;object-position:right;opacity:.16;pointer-events:none}
 .nk-footer .nk-container{position:relative}
-.nk-footer__top{display:grid;grid-template-columns:1.7fr auto 1fr;gap:48px;padding-block:42px 56px}
+.nk-footer__top{display:grid;grid-template-columns:1.5fr 1.4fr 1fr;gap:48px 64px;padding-block:72px 56px;align-items:start}
 /* category links: one heading, links wrapped column-major into two columns */
 .nk-footer__catgrid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(4,auto);gap:15px 44px;align-content:start}
 .nk-footer__brand{display:flex;flex-direction:column;gap:22px;max-width:380px}
-.nk-footer__tagline{margin:0;font-family:var(--nk-font-body);font-size:16px;line-height:26px;color:var(--nk-text-muted);max-width:340px}
+.nk-footer__tagline{margin:0;font-family:var(--nk-font-body);font-size:18px;line-height:28px;color:var(--nk-text-muted);max-width:340px}
 .nk-footer__contact{display:flex;flex-direction:column;gap:12px}
-.nk-footer__contact a{position:relative;display:inline-flex;align-items:center;gap:11px;font-family:var(--nk-font-body);font-size:16px;color:var(--nk-text-2);text-decoration:none;transition:color .15s ease;width:fit-content}
+.nk-footer__contact a{position:relative;display:inline-flex;align-items:center;gap:11px;font-family:var(--nk-font-body);font-size:17px;color:var(--nk-text-2);text-decoration:none;transition:color .15s ease;width:fit-content}
 .nk-footer__contact a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--nk-purple);transition:right .25s ease}
 .nk-footer__contact a:hover::after,.nk-footer__contact a:focus-visible::after{right:0}
 .nk-footer__contact a:hover{color:var(--nk-purple)}
@@ -457,23 +465,24 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .nk-footer__social a{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
   background:var(--nk-surface-2);border:1px solid var(--nk-border);transition:background .15s ease,border-color .15s ease,transform .15s ease}
 .nk-footer__social a:hover{background:var(--nk-surface-hover);border-color:var(--nk-border-soft);transform:translateY(-2px)}
-.nk-footer__col{display:flex;flex-direction:column;gap:15px}
-@media(min-width:981px){.nk-footer__col{padding-top:8px}}
-.nk-footer__col h4{margin:0 0 2px;font-family:var(--nk-font-display);font-weight:700;font-size:16px;color:var(--nk-text)}
-.nk-footer__col a{position:relative;font-family:var(--nk-font-body);font-size:15px;line-height:1.2;color:var(--nk-text-muted);text-decoration:none;
+.nk-footer__col{display:flex;flex-direction:column;gap:20px}
+@media(min-width:981px){.nk-footer__brand{padding-top:4px}.nk-footer__col{padding-top:63px}}
+.nk-footer__col h4{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:19px;color:var(--nk-text);letter-spacing:.01em}
+.nk-footer__col a{position:relative;font-family:var(--nk-font-body);font-size:18px;line-height:1.25;color:var(--nk-text-muted);text-decoration:none;
   transition:color .15s ease;width:fit-content}
 .nk-footer__col a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--nk-purple);transition:right .25s ease}
 .nk-footer__col a:hover::after,.nk-footer__col a:focus-visible::after{right:0}
 .nk-footer__col a:hover{color:var(--nk-purple)}
 .nk-footer__bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
   padding-block:26px;border-top:1px solid var(--nk-border-soft)}
-.nk-footer__legal{font-family:var(--nk-font-body);font-size:14px;color:var(--nk-text-muted)}
+.nk-footer__legal{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-muted)}
 .nk-footer__pay{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.nk-footer__secure{display:inline-flex;align-items:center;gap:7px;font-family:var(--nk-font-body);font-size:14px;color:var(--nk-text-2);
+.nk-footer__secure{display:inline-flex;align-items:center;gap:7px;font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2);
   padding-right:16px;border-right:1px solid var(--nk-border-soft)}
 @media(max-width:980px){
-  .nk-footer__top{grid-template-columns:1fr 1fr;gap:44px 32px;padding-block:32px 44px}
+  .nk-footer__top{grid-template-columns:1fr 1fr;gap:48px 40px;padding-block:48px 44px}
   .nk-footer__brand{grid-column:1 / -1;max-width:none}
+  .nk-footer__col{padding-top:0}
 }
 @media(max-width:560px){
   .nk-footer__top{grid-template-columns:1fr}
@@ -648,14 +657,9 @@ footer .nk-link:hover{color:var(--nk-purple)}
 
 /* ============================================================
    "Kaip tai veikia" (How it works) page — ported from htw.css
-   Fluid rhythm tokens scoped here (globals uses inline clamp elsewhere).
+   Fluid rhythm tokens (--nk-section-y, --nk-panel-pad, …) are global now.
    ============================================================ */
 .htw-page{
-  --nk-section-y:clamp(64px,8vw,112px);
-  --nk-section-y-lg:clamp(72px,9vw,120px);
-  --nk-section-head:clamp(40px,5vw,60px);
-  --nk-stack-lg:clamp(28px,3.4vw,40px);
-  --nk-panel-pad:clamp(28px,4.4vw,60px);
   width:100%;background:var(--nk-bg);
 }
 

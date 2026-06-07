@@ -1,10 +1,10 @@
 "use client";
 // Naudokis UI kit — page sections.
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Icon, type IconName, Logo, Button, AppBadges, SectionHead, Dots, RoundArrow, QR, openRedirect,
+  Icon, type IconName, Logo, Button, AppBadges, SectionHead, QR, openRedirect,
 } from "./ui";
 import {
   OfferCard, CategoryCard, FeatureCard, Testimonial, FaqRow, OfferCardSkeleton, CategoryCardSkeleton, EmptyState, SectionEmpty,
@@ -42,7 +42,7 @@ export function Nav({ onSearch }: { onSearch: () => void }) {
   // Condense the bar once the page scrolls — wired here (not per-page) so it
   // works on every screen that renders the Nav.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 16);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -301,9 +301,9 @@ export function Hero() {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/naudokis/hero-pattern.png" alt="" aria-hidden="true"
         style={{ position: "absolute", right: -80, top: 0, bottom: 0, height: "100%", width: 1000, objectFit: "cover", objectPosition: "right top", opacity: 0.30, pointerEvents: "none" }} />
-      <div className="nk-container" style={{ position: "relative", paddingBlock: "40px 90px" }}>
-        <div className="nk-hero-panel" style={{ position: "relative", borderRadius: 20, background: "var(--nk-glass)", backdropFilter: "blur(40px)", border: "1px solid var(--nk-hairline)",
-          display: "grid", gridTemplateColumns: "1.1fr .9fr", gap: 40, padding: 60, minHeight: 700 }}>
+      <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
+        <div className="nk-hero-panel" style={{ position: "relative", borderRadius: 20, background: "var(--nk-glass)", backdropFilter: "blur(35px)", border: "1px solid var(--nk-hairline)",
+          display: "grid", gridTemplateColumns: "1.1fr .9fr", gap: "clamp(28px, 4vw, 40px)", padding: "var(--nk-panel-pad)", minHeight: 700 }}>
           {/* left column */}
           <div style={{ display: "flex", flexDirection: "column", gap: 36, justifyContent: "center", maxWidth: 680 }}>
             <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: 27, padding: "6px 18px 6px 6px" }}>
@@ -320,7 +320,7 @@ export function Hero() {
           {/* right column — real app device + QR */}
           <div className="nk-hero-media" style={{ position: "relative", minHeight: 560 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} fetchPriority="high" decoding="async" style={{ position: "absolute", top: -40, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "drop-shadow(10px 18px 42px rgba(22,22,22,.55))" }} />
+            <img src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} fetchPriority="high" decoding="async" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "drop-shadow(10px 18px 42px rgba(22,22,22,.55))" }} />
             <div style={{ position: "absolute", right: 32, bottom: 0 }}><QR size={132} /></div>
           </div>
         </div>
@@ -364,7 +364,7 @@ export function Categories() {
   const { data, isLoading, isError, refetch } = useCategories(locale);
   const list = (data ?? []).slice(0, 8);
   return (
-    <section id="kategorijos" className="nk-container" style={{ paddingBlock: "clamp(72px, 10vw, 120px)" }}>
+    <section id="kategorijos" className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
       <SectionHead eyebrow={t.eyebrow} title={t.title}
         action={<Button variant="outline" onClick={() => router.push("/kategorijos")}>{t.all}</Button>} />
       {isLoading ? (
@@ -396,7 +396,7 @@ export function Offers() {
   const { data, isLoading, isError, refetch } = useListings(locale);
   const list = (data ?? []).slice(0, 4);
   return (
-    <section id="skelbimai" className="nk-container" style={{ paddingBlock: "clamp(72px, 10vw, 120px)" }}>
+    <section id="skelbimai" className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
       <SectionHead eyebrow={t.eyebrow} title={t.title}
         action={<Button variant="outline" onClick={() => router.push("/skelbimai")}>{t.all}</Button>} />
       {isLoading ? (
@@ -433,7 +433,7 @@ export function Features() {
     <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/naudokis/section-pattern.png" alt="" aria-hidden="true" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.40 }} />
-      <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(80px, 11vw, 140px)" }}>
+      <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y-lg)" }}>
         <div className="nk-reveal nk-row">
           {dict.features.map((f, i) => <div key={f.title} className="nk-reveal" data-delay={(i % 3) + 1} style={{ display: "flex", flex: 1 }}><FeatureCard {...f} /></div>)}
         </div>
@@ -456,74 +456,19 @@ export function HomeSeo() {
   );
 }
 
-/* ---------------- Testimonials ---------------- */
-// A featured-quote carousel: one review at a time, navigable by dots, arrows,
-// keyboard (←/→), and swipe. Autoplays unless hovered/focused or the user
-// prefers reduced motion.
+/* ---------------- Testimonials ----------------
+   Static two-column pair of featured reviews, matching the design bundle. */
 export function Testimonials() {
   const { dict } = useI18n();
   const t = dict.testimonials;
-  const items = t.items;
-  const count = items.length;
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const dragStart = useRef<number | null>(null);
-
-  const next = useCallback(() => setActive((p) => (p + 1) % count), [count]);
-  const prev = useCallback(() => setActive((p) => (p - 1 + count) % count), [count]);
-
-  useEffect(() => {
-    if (count <= 1 || paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-    const id = window.setInterval(next, 6500);
-    return () => window.clearInterval(id);
-  }, [count, paused, next]);
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowLeft") {
-      prev();
-    } else if (e.key === "ArrowRight") {
-      next();
-    }
-  };
-  const onPointerUp = (e: React.PointerEvent) => {
-    const start = dragStart.current;
-    dragStart.current = null;
-    if (start === null || Math.abs(e.clientX - start) < 40) {
-      return;
-    }
-    if (e.clientX < start) {
-      next();
-    } else {
-      prev();
-    }
-  };
-
+  const items = t.items.slice(0, 2);
   return (
-    <section className="nk-container" style={{ paddingBlock: "clamp(96px, 14vw, 200px)" }}>
+    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y-lg)" }}>
       <SectionHead eyebrow={t.eyebrow} title={t.title} />
-      <div role="region" aria-roledescription="carousel" aria-label={t.title} onKeyDown={onKeyDown}
-        onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}
-        onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
-        <div className="nk-tm-viewport nk-reveal"
-          onPointerDown={(e) => { dragStart.current = e.clientX; }} onPointerUp={onPointerUp}>
-          <div className="nk-tm-track" style={{ transform: `translateX(-${active * 100}%)` }}>
-            {items.map((item, i) => (
-              <div key={item.name} className="nk-tm-slide" role="group" aria-roledescription="slide"
-                aria-label={`${i + 1} / ${count}`} aria-hidden={i !== active}>
-                <Testimonial name={item.name} role={item.role} quote={item.quote} avatarTint={item.avatarTint} />
-              </div>
-            ))}
-          </div>
-        </div>
-        {count > 1 && (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 24, marginTop: 48 }}>
-            <RoundArrow variant="outline" dir="left" onClick={prev} />
-            <Dots n={count} active={active} onSelect={setActive} label={t.goToReview} />
-            <RoundArrow variant="outline" dir="right" onClick={next} />
-          </div>
-        )}
+      <div className="nk-reveal nk-row">
+        {items.map((item) => (
+          <Testimonial key={item.name} name={item.name} role={item.role} quote={item.quote} avatarTint={item.avatarTint} />
+        ))}
       </div>
     </section>
   );
@@ -536,14 +481,14 @@ export function Testimonials() {
 export function CtaBanner() {
   const { dict } = useI18n();
   return (
-    <section className="nk-container" style={{ paddingBlock: "clamp(80px, 11vw, 140px)" }}>
+    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y-lg)" }}>
       <div className="nk-reveal nk-cta" style={{ position: "relative", borderRadius: 20, overflow: "hidden", minHeight: 620, border: "1px solid var(--nk-border-strong)", background: "linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)", boxShadow: "0 34px 90px -38px rgba(0,0,0,.65)" }}>
         <AmbientGlow />
         {/* phone bleeding from the top, filling the right half down to the bottom edge */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} loading="lazy" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "drop-shadow(0 26px 50px rgba(0,0,0,.5))" }} />
-        <div className="nk-cta__badges" style={{ position: "absolute", left: 60, top: 60 }}><AppBadges /></div>
-        <div className="nk-cta__body" style={{ position: "absolute", left: 60, bottom: 60, maxWidth: 808, display: "flex", flexDirection: "column", gap: 20 }}>
+        <div className="nk-cta__badges" style={{ position: "absolute", left: "var(--nk-panel-pad)", top: "var(--nk-panel-pad)" }}><AppBadges /></div>
+        <div className="nk-cta__body" style={{ position: "absolute", left: "var(--nk-panel-pad)", bottom: "var(--nk-panel-pad)", maxWidth: 808, display: "flex", flexDirection: "column", gap: 20 }}>
           <span style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px 8px 12px", borderRadius: "var(--nk-r-pill)", background: "var(--nk-glass-strong)", border: "1px solid var(--nk-border)", backdropFilter: "blur(12px)" }}>
             <Icon name="Sparkles" size={17} color="var(--nk-yellow)" />
             <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 15, letterSpacing: ".04em", color: "var(--nk-yellow)" }}>{dict.cta.badge}</span>
@@ -551,7 +496,7 @@ export function CtaBanner() {
           <h2 className="nk-h-cta" style={{ color: "var(--nk-text)" }}>{dict.cta.title}</h2>
           <p style={{ margin: 0, maxWidth: 640, fontFamily: "var(--nk-font-body)", fontSize: 20, lineHeight: "32px", color: "var(--nk-text-muted)" }}>{dict.cta.body}</p>
         </div>
-        <div className="nk-cta__media" style={{ position: "absolute", right: 80, bottom: 60 }}><QR size={168} /></div>
+        <div className="nk-cta__media" style={{ position: "absolute", right: 80, bottom: "var(--nk-panel-pad)" }}><QR size={168} /></div>
       </div>
     </section>
   );
@@ -577,7 +522,7 @@ export function Faq() {
   const [open, setOpen] = useState(0);
   return (
     <section style={{ background: "var(--nk-bg)" }}>
-      <div className="nk-container" style={{ paddingBlock: "clamp(80px, 11vw, 140px)", maxWidth: 1320 }}>
+      <div className="nk-container" style={{ paddingBlock: "var(--nk-section-y-lg)", maxWidth: 1320 }}>
         <div className="nk-reveal" style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 40, alignItems: "center", marginBottom: 60 }}>
           <h2 className="nk-h-section" style={{ margin: 0 }}>{dict.faq.heading}</h2>
           <p className="nk-body" style={{ margin: 0, maxWidth: 866, color: "var(--nk-yellow)" }}>{dict.faq.subheading}</p>
