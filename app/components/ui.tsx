@@ -561,10 +561,8 @@ export function FilterSelect({
             const sel = o.value === value;
             return (
               <button key={o.value} type="button" role="option" aria-selected={sel} onClick={() => { onChange(o.value); setOpen(false); }}
-                onMouseEnter={(e) => { if (!sel) e.currentTarget.style.background = "var(--nk-surface-2)"; }}
-                onMouseLeave={(e) => { if (!sel) e.currentTarget.style.background = "transparent"; }}
+                className={"nk-selopt" + (sel ? " is-selected" : "")}
                 style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, padding: "11px 13px", borderRadius: 10, cursor: "pointer", textAlign: "left",
-                  background: sel ? "var(--nk-accent-bg)" : "transparent", color: sel ? "var(--nk-accent-text)" : "var(--nk-text)",
                   fontFamily: "var(--nk-font-body)", fontSize: 16 }}>
                 {o.label}{sel && <Icon name="BadgeCheck" size={17} color="var(--nk-accent-text)" stroke={2} />}
               </button>

@@ -6,7 +6,13 @@ import { API_BASE } from "@/app/lib/api";
 const SITE_URL = "https://naudokis.lt";
 
 // Per-locale entries for a bare path ("" → home), with hreflang alternates.
-function localized(path: string, priority: number): MetadataRoute.Sitemap {
+// `lastModified`/`images` are only set for entries with real data (listings) —
+// a fabricated build-time lastmod on static pages is worse than none.
+function localized(
+  path: string,
+  priority: number,
+  extra?: { lastModified?: Date; images?: string[] },
+): MetadataRoute.Sitemap {
   const languages = Object.fromEntries(
     locales.map((l) => [l, `${SITE_URL}${localePrefix(l)}${path || "/"}`]),
   );
@@ -16,6 +22,8 @@ function localized(path: string, priority: number): MetadataRoute.Sitemap {
     // The unprefixed default locale is canonical, so rank it slightly higher.
     priority: locale === defaultLocale ? priority : Math.max(0.1, priority - 0.2),
     alternates: { languages },
+    ...(extra?.lastModified ? { lastModified: extra.lastModified } : {}),
+    ...(extra?.images?.length ? { images: extra.images } : {}),
   }));
 }
 
@@ -49,14 +57,19 @@ function legalEntries(): MetadataRoute.Sitemap {
 // backend can never blow up (or stall) the build. Any error degrades to "no
 // listings" rather than failing the whole sitemap.
 type SitemapListings = {
-  data?: { items?: { id?: string; status?: string }[]; has_more?: boolean; next_token?: string };
+  data?: {
+    items?: { id?: string; status?: string; updated_at?: string; images?: { url?: string }[] }[];
+    has_more?: boolean;
+    next_token?: string;
+  };
 };
+type ListingEntry = { id: string; lastModified?: Date; images: string[] };
 const LISTING_CAP = 1000; // NOTE: listings beyond this are not enumerated here.
-async function fetchListingIds(): Promise<string[]> {
-  const ids: string[] = [];
+async function fetchListingEntries(): Promise<ListingEntry[]> {
+  const entries: ListingEntry[] = [];
   let token: string | undefined;
   try {
-    for (let page = 0; page < 20 && ids.length < LISTING_CAP; page++) {
+    for (let page = 0; page < 20 && entries.length < LISTING_CAP; page++) {
       const url = new URL(`${API_BASE}/listings`);
       url.searchParams.set("limit", "100");
       if (token) {
@@ -68,9 +81,16 @@ async function fetchListingIds(): Promise<string[]> {
       }
       const body: SitemapListings = await res.json();
       for (const item of body.data?.items ?? []) {
-        if (item.id && (item.status === undefined || item.status === "active")) {
-          ids.push(item.id);
+        if (!item.id || (item.status !== undefined && item.status !== "active")) {
+          continue;
         }
+        const updated = item.updated_at ? new Date(item.updated_at) : undefined;
+        entries.push({
+          id: item.id,
+          lastModified: updated && !Number.isNaN(updated.getTime()) ? updated : undefined,
+          // First photo only — enough for image indexing without bloating the map.
+          images: item.images?.[0]?.url ? [item.images[0].url] : [],
+        });
       }
       token = body.data?.next_token;
       if (!body.data?.has_more || !token) {
@@ -80,11 +100,11 @@ async function fetchListingIds(): Promise<string[]> {
   } catch {
     // Keep whatever was collected; never throw from the sitemap.
   }
-  if (ids.length >= LISTING_CAP) {
+  if (entries.length >= LISTING_CAP) {
     // Surface silent truncation — listings past the cap are omitted from the map.
     console.warn(`sitemap: listing enumeration hit the ${LISTING_CAP} cap; remaining listings are not included.`);
   }
-  return ids.slice(0, LISTING_CAP);
+  return entries.slice(0, LISTING_CAP);
 }
 
 // Re-enumerate listings hourly (the fetches above are also cached for an hour).
@@ -93,6 +113,8 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries = STATIC_PATHS.flatMap(([path, priority]) => localized(path, priority));
   const legal = legalEntries();
-  const listingEntries = (await fetchListingIds()).flatMap((id) => localized(`/skelbimai/${id}`, 0.5));
+  const listingEntries = (await fetchListingEntries()).flatMap((l) =>
+    localized(`/skelbimai/${l.id}`, 0.5, { lastModified: l.lastModified, images: l.images }),
+  );
   return [...staticEntries, ...legal, ...listingEntries];
 }

@@ -160,9 +160,10 @@ function ratingLabel(average: number | null, count: number, locale: Locale): str
 }
 
 /* ---------------- Fetchers + hooks ---------------- */
-// How long server-side `fetch`es of a single listing stay fresh. Shared so the
-// detail page's prefetch and its raw-metadata fetch use identical options and
-// Next collapses them into one request (see fetchListing + the detail page).
+// How long server-side listing `fetch`es (browse + single) stay fresh. Shared
+// so the detail page's prefetch and its raw-metadata fetch use identical
+// options and Next collapses them into one request (see fetchListing + the
+// detail page); fetchListings uses it for the home/feed prefetches.
 export const LISTING_REVALIDATE = 300;
 
 // Single source of truth for the query keys — used by the hooks below and by
@@ -230,7 +231,10 @@ export async function fetchListings(locale: Locale, filters: ListingFilters): Pr
   if (filters.sort && filters.sort !== "recommended") {
     url.searchParams.set("sort", filters.sort);
   }
-  const res = await fetch(url);
+  // Server-side (home/feed prefetch) the browse data stays fresh for the same
+  // window as a single listing, and the route-level `revalidate = 300` on the
+  // home page can regenerate with fresh data. Browser fetches ignore `next`.
+  const res = await fetch(url, { next: { revalidate: LISTING_REVALIDATE } });
   if (!res.ok) {
     throw new Error(`Failed to load listings: ${res.status}`);
   }

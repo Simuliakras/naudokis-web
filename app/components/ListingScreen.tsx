@@ -5,7 +5,8 @@
 // the presentational pieces live in ./ListingDetail.
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Nav, Footer } from "./sections";
+import { Nav } from "./sections";
+import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Breadcrumb, openRedirect } from "./ui";
 import { EmptyState } from "./cards";
@@ -44,7 +45,7 @@ export function ListingScreen({ id }: { id: string }) {
         <main className="nk-container" style={{ paddingBlock: "26px 120px" }}>
           <div className="nk-detail">{children}</div>
         </main>
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </Chrome>
   );
@@ -77,7 +78,7 @@ export function ListingScreen({ id }: { id: string }) {
           items={detailCrumbs({ category, title: listing.title, categoriesLabel: dict.feed.crumbCategories })} />
 
         <ListingHeader listing={listing} saved={saved} onShare={lockShare} onFav={lockFav} />
-        <Gallery images={listing.images} isNew={isNew} onMore={lockShare} />
+        <Gallery images={listing.images} title={listing.title} isNew={isNew} onMore={lockShare} />
         <SubNav activeSec={activeSec} price={listing.price} onReserve={reserve} />
 
         <div className="nk-detail-grid">

@@ -2,7 +2,8 @@
 // All-categories list screen — breadcrumb, live-filter search, tile grid, SEO.
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Nav, Footer } from "./sections";
+import { Nav } from "./sections";
+import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb } from "./ui";
 import { CategoryTile, CategoryCardSkeleton, EmptyState } from "./cards";
@@ -80,7 +81,7 @@ export function CategoriesScreen() {
             </div>
           </section>
         </main>
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </Chrome>
   );

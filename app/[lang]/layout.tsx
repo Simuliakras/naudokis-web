@@ -76,6 +76,11 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
 export const viewport: Viewport = {
   themeColor: "#282C2D",
   colorScheme: "dark",
+  // viewport-fit=cover makes env(safe-area-inset-*) non-zero on notched iPhones
+  // (the sticky mobile bar, sheets and app banner all pad with it).
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 // Cookieless analytics (Plausible). Only loaded when a domain is configured, so

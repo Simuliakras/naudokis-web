@@ -23,7 +23,8 @@ export function proxy(request: NextRequest) {
     const stripped = pathname.slice(`/${defaultLocale}`.length) || "/";
     const url = request.nextUrl.clone();
     url.pathname = stripped;
-    return NextResponse.redirect(url);
+    // Permanent (308) — /lt/* is the non-canonical form of these URLs forever.
+    return NextResponse.redirect(url, 308);
   }
 
   // Everything else is the unprefixed default locale: rewrite to the internal segment.

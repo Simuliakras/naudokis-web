@@ -230,9 +230,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .nk-round{width:44px;height:44px;border-radius:var(--nk-r-icon);display:inline-flex;align-items:center;justify-content:center;
   transition:transform .15s ease,background .18s ease;flex:none}
 .nk-round--solid{background:var(--nk-purple)}
-.nk-round--solid:hover{background:var(--nk-purple-hover);transform:translateX(3px)}
+.nk-round--solid:hover{background:var(--nk-purple-hover)}
+@media(hover:hover) and (pointer:fine){.nk-round--solid:hover{transform:translateX(3px)}}
 .nk-round--outline{border:1px solid var(--nk-text)}
-.nk-round--outline:hover{background:rgba(249,249,249,.14);transform:translateX(3px)}
+.nk-round--outline:hover{background:rgba(249,249,249,.14)}
+@media(hover:hover) and (pointer:fine){.nk-round--outline:hover{transform:translateX(3px)}}
 
 /* ---- Chips / tags ---- */
 .nk-chip{display:inline-flex;align-items:center;gap:8px;border-radius:var(--nk-r-chip);
@@ -253,17 +255,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   text-decoration:none;transition:opacity .2s ease}
 .nk-cats-all svg{transition:transform .2s ease}
 .nk-cats-all:hover{opacity:.82}
-.nk-cats-all:hover svg{transform:translateX(3px)}
+@media(hover:hover) and (pointer:fine){.nk-cats-all:hover svg{transform:translateX(3px)}}
 
 /* ---- image placeholder ---- */
 .nk-imgph{position:relative;background:var(--nk-ps-card);overflow:hidden;display:flex;align-items:center;justify-content:center}
-.nk-imgph[data-img]{background-size:cover;background-position:center}
 .nk-imgph .nk-imgicon{opacity:.28;color:var(--nk-ps-icon)}
 .nk-dots{display:flex;align-items:center;gap:8px}
+/* button dots carry their own 12px hit padding, so drop the visual gap */
+.nk-dots:has(.nk-dot--btn){gap:0}
 .nk-dot{width:8px;height:8px;border-radius:50%;background:rgba(249,249,249,.55)}
 .nk-dot--on{background:var(--nk-text);width:9px;height:9px}
-.nk-dot--btn{padding:0;border:none;cursor:pointer;appearance:none;-webkit-appearance:none;transition:transform .18s ease,background .18s ease}
-.nk-dot--btn:hover{transform:scale(1.3);background:var(--nk-text)}
+/* keep the 8px visual dot but pad the button to a ~32px hit area
+   (background-clip keeps only the content box painted) */
+.nk-dot--btn{box-sizing:content-box;padding:12px;background-clip:content-box;border:none;cursor:pointer;
+  appearance:none;-webkit-appearance:none;transition:transform .18s ease,background .18s ease}
+@media(hover:hover) and (pointer:fine){.nk-dot--btn:hover{transform:scale(1.3);background-color:var(--nk-text)}}
 
 @media(max-width:900px){
   .nk-logo span{font-size:22px}
@@ -312,8 +318,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
   .nk-nav-burger{display:inline-flex}
   .nk-nav-drawer{display:block;overflow:hidden;max-height:0;opacity:0;
     transition:max-height .32s cubic-bezier(.2,.7,.2,1),opacity .25s ease;border-top:1px solid transparent}
-  .nk-nav-drawer.open{max-height:380px;opacity:1;border-top-color:var(--nk-hairline)}
-  .nk-nav-drawer-inner{padding:10px var(--nk-gutter) 18px;display:flex;flex-direction:column;gap:4px}
+  .nk-nav-drawer.open{max-height:min(70vh,480px);opacity:1;border-top-color:var(--nk-hairline)}
+  .nk-nav-drawer-inner{padding:10px var(--nk-gutter) calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:4px}
   .nk-drawer-item{display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:12px;min-height:48px;width:100%;
     font-family:var(--nk-font-display);font-weight:600;font-size:18px;color:var(--nk-text);text-decoration:none;
     background:transparent;transition:background .15s ease}
@@ -335,16 +341,17 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .nk-fadein{animation:nk-fadeswap .28s cubic-bezier(.2,.7,.2,1)}
 @keyframes nk-fadeswap{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
 .nk-navsearch{display:flex;align-items:center;gap:10px;background:var(--nk-glass-strong);border:1px solid var(--nk-border-soft);
-  border-radius:999px;padding:5px 5px 5px 16px;height:46px;width:clamp(280px,32vw,420px);
+  border-radius:999px;padding:3px 3px 3px 16px;height:48px;width:clamp(280px,32vw,420px);
   transition:border-color .15s ease,box-shadow .15s ease}
 .nk-navsearch:focus-within{border-color:var(--nk-purple);box-shadow:0 4px 18px rgba(102,101,224,.22)}
 .nk-navsearch input{flex:1;min-width:0;border:none;outline:none;background:transparent;
   font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text)}
 .nk-navsearch input::placeholder{color:var(--nk-text-muted)}
 .nk-navsearch__div{width:1px;height:24px;background:var(--nk-border);flex:none}
-.nk-navsearch__go{flex:none;width:36px;height:36px;border-radius:50%;background:var(--nk-purple);
+.nk-navsearch__go{flex:none;width:40px;height:40px;border-radius:50%;background:var(--nk-purple);
   display:flex;align-items:center;justify-content:center;transition:background .18s ease,transform .15s ease}
-.nk-navsearch__go:hover{background:var(--nk-purple-hover);transform:translateX(2px)}
+.nk-navsearch__go:hover{background:var(--nk-purple-hover)}
+@media(hover:hover) and (pointer:fine){.nk-navsearch__go:hover{transform:translateX(2px)}}
 @media(max-width:1040px){
   .nk-navsearch{width:clamp(220px,26vw,300px)}
   .nk-navsearch .nk-citypick,.nk-navsearch__div{display:none}
@@ -357,7 +364,7 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .nk-citypick__trigger{display:flex;align-items:center;cursor:pointer;white-space:nowrap;background:transparent;
   font-family:var(--nk-font-body);transition:background .15s ease}
 .nk-citypick__panel{position:absolute;right:0;display:flex;flex-direction:column;gap:2px;z-index:60;
-  box-shadow:0 20px 50px rgba(0,0,0,.28)}
+  max-width:calc(100vw - 2*var(--nk-gutter));box-shadow:0 20px 50px rgba(0,0,0,.28)}
 .nk-citypick__heading{font-family:var(--nk-font-display);font-weight:700;font-size:12px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--nk-light-meta);padding:8px 12px 6px}
 .nk-citypick__opt{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;text-align:left;
@@ -386,6 +393,12 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .nk-citypick--nav .nk-citypick__opt:hover{background:var(--nk-surface-2)}
 .nk-citypick--nav .nk-citypick__opt.is-active{background:var(--nk-purple-deep);color:var(--nk-text)}
 
+/* ---- FilterSelect dropdown option (hover via CSS so touch :active works too) ---- */
+.nk-selopt{background:transparent;color:var(--nk-text);transition:background .15s ease}
+.nk-selopt:hover,.nk-selopt:active{background:var(--nk-surface-2)}
+.nk-selopt.is-selected,.nk-selopt.is-selected:hover,.nk-selopt.is-selected:active{
+  background:var(--nk-accent-bg);color:var(--nk-accent-text)}
+
 /* stretched link — covers a card so the whole surface navigates while inner
    controls (favorite) stay clickable via a higher z-index */
 .nk-stretch{position:absolute;inset:0;z-index:1}
@@ -393,10 +406,10 @@ footer .nk-link:hover{color:var(--nk-purple)}
 /* ---- offer card hover ---- */
 .nk-offer{transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease,border-color .28s ease;border:1px solid rgba(255,255,255,0.08)}
 .nk-offer:hover{border-color:var(--nk-accent-border)}
-.nk-offer:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.45)}
+@media(hover:hover) and (pointer:fine){.nk-offer:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.45)}}
 .nk-offer__media{overflow:hidden;background:#2c3133}
 .nk-offer__media .nk-zoom{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
-.nk-offer:hover .nk-zoom{transform:scale(1.06)}
+@media(hover:hover) and (pointer:fine){.nk-offer:hover .nk-zoom{transform:scale(1.06)}}
 .nk-offer:hover .nk-round--solid{background:var(--nk-purple-hover)}
 
 /* ---- favorite heart ---- */
@@ -404,29 +417,33 @@ footer .nk-link:hover{color:var(--nk-purple)}
   background:rgba(40,44,45,.34);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(14px);
   display:flex;align-items:center;justify-content:center;
   transition:transform .18s ease,background .18s ease;z-index:2}
-.nk-fav:hover{background:rgba(40,44,45,.5);transform:scale(1.08)}
+.nk-fav:hover{background:rgba(40,44,45,.5)}
+@media(hover:hover) and (pointer:fine){.nk-fav:hover{transform:scale(1.08)}}
 .nk-fav:active{transform:scale(.9)}
 
 /* ---- category card ---- */
 .nk-cat{position:relative;width:100%;height:300px;border-radius:var(--nk-r-card);overflow:hidden;text-align:left;cursor:pointer;
   border:1px solid rgba(255,255,255,0.08);
   transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease,border-color .28s ease}
-.nk-cat:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.4);border-color:var(--nk-accent-border)}
+.nk-cat:hover{border-color:var(--nk-accent-border)}
+@media(hover:hover) and (pointer:fine){.nk-cat:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(0,0,0,.4)}}
 .nk-cat__img{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   background:linear-gradient(155deg,var(--nk-card-grad-1),var(--nk-card-grad-2));
   transition:transform .55s cubic-bezier(.2,.7,.2,1)}
-.nk-cat:hover .nk-cat__img{transform:scale(1.07)}
+@media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__img{transform:scale(1.07)}}
 /* legibility scrim under the bottom-aligned title */
 .nk-cat__overlay{position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(27,27,27,.35),rgba(27,27,27,.05) 38%,rgba(27,27,27,.65))}
 .nk-cat__content{position:absolute;left:20px;right:20px;bottom:20px;
   display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
 .nk-cat__arrow{transition:background .2s ease,border-color .2s ease,transform .2s ease}
-.nk-cat:hover .nk-cat__arrow{background:var(--nk-purple);border-color:var(--nk-purple);transform:translateX(3px)}
+.nk-cat:hover .nk-cat__arrow{background:var(--nk-purple);border-color:var(--nk-purple)}
+@media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__arrow{transform:translateX(3px)}}
 
 /* ---- feature card hover ---- */
 .nk-feature{transition:transform .28s ease,background .28s ease}
-.nk-feature:hover{transform:translateY(-4px);background:var(--nk-surface-hover-glass)}
+.nk-feature:hover{background:var(--nk-surface-hover-glass)}
+@media(hover:hover) and (pointer:fine){.nk-feature:hover{transform:translateY(-4px)}}
 
 /* ---- search bar focus ---- */
 .nk-search{transition:box-shadow .2s ease,border-color .2s ease}
@@ -470,9 +487,11 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .nk-footer__contact a:hover::after,.nk-footer__contact a:focus-visible::after{right:0}
 .nk-footer__contact a:hover{color:var(--nk-purple)}
 .nk-footer__social{display:flex;gap:12px}
-.nk-footer__social a{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+/* span = placeholder profile (decorative); a = real link once accounts exist */
+.nk-footer__social a,.nk-footer__social span{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;
   background:var(--nk-surface-2);border:1px solid var(--nk-border);transition:background .15s ease,border-color .15s ease,transform .15s ease}
-.nk-footer__social a:hover{background:var(--nk-surface-hover);border-color:var(--nk-border-soft);transform:translateY(-2px)}
+.nk-footer__social a:hover{background:var(--nk-surface-hover);border-color:var(--nk-border-soft)}
+@media(hover:hover) and (pointer:fine){.nk-footer__social a:hover{transform:translateY(-2px)}}
 .nk-footer__col{display:flex;flex-direction:column;gap:20px}
 @media(min-width:981px){.nk-footer__brand{padding-top:4px}.nk-footer__col{padding-top:63px}}
 .nk-footer__col h4{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:19px;color:var(--nk-text);letter-spacing:.01em}
@@ -517,7 +536,7 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .nk-redirect-panel{position:relative;width:min(480px,calc(100vw - 40px));background:var(--nk-bg);
   border:1px solid color-mix(in srgb,var(--nk-border) 50%,transparent);border-radius:24px;padding:36px;
   display:flex;flex-direction:column;gap:24px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
-.nk-redirect-close{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:20px;
+.nk-redirect-close{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:22px;
   display:flex;align-items:center;justify-content:center;background:var(--nk-surface)}
 .nk-redirect-mark{width:56px;height:56px;border-radius:16px;background:var(--nk-purple-tint);
   display:flex;align-items:center;justify-content:center}
@@ -531,10 +550,10 @@ footer .nk-link:hover{color:var(--nk-purple)}
 /* ============================================================
    Sticky mobile app banner (mobile only)
    ============================================================ */
-.nk-appbanner{position:fixed;left:16px;right:16px;bottom:16px;z-index:60;display:none;align-items:center;gap:12px;
+.nk-appbanner{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;display:none;align-items:center;gap:12px;
   background:var(--nk-surface);border:1px solid var(--nk-border);border-radius:16px;padding:12px 14px;
   box-shadow:0 16px 40px rgba(0,0,0,.45)}
-.nk-appbanner__x{width:28px;height:28px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--nk-bg)}
+.nk-appbanner__x{width:40px;height:40px;border-radius:20px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--nk-bg)}
 @media(max-width:900px){.nk-appbanner{display:flex}}
 
 /* ============================================================
@@ -644,6 +663,10 @@ footer .nk-link:hover{color:var(--nk-purple)}
 /* horizontal card rows (features / testimonials) stack on narrow screens */
 .nk-row{display:flex;gap:20px}
 
+/* hero panel layout (visual skin stays inline in <Hero>) */
+.nk-hero-panel{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,4vw,40px);padding:var(--nk-panel-pad);min-height:700px}
+.nk-hero-media{min-height:560px}
+
 /* 4-up card grid (offers) — base + responsive collapse */
 .nk-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 
@@ -651,8 +674,8 @@ footer .nk-link:hover{color:var(--nk-purple)}
   .nk-grid-4{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:980px){
-  .nk-hero-panel{grid-template-columns:1fr!important;padding:36px!important;min-height:0!important;gap:32px!important}
-  .nk-hero-media{min-height:420px!important;order:-1}
+  .nk-hero-panel{grid-template-columns:1fr;padding:36px;min-height:0;gap:32px}
+  .nk-hero-media{min-height:420px;order:-1}
   .nk-detail{grid-template-columns:1fr!important;gap:32px!important}
   .nk-row{flex-direction:column}
   /* CTA banner: drop the absolute phone/QR, switch to a single readable column */
@@ -738,7 +761,7 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .htw-stepcount b{color:var(--nk-text);font-family:var(--nk-font-display)}
 
 /* ---- phone frame + mini-screens ---- */
-.htw-phone{position:relative;width:340px;height:700px;border-radius:46px;background:var(--nk-ps-bg);
+.htw-phone{position:relative;width:min(340px,calc(100vw - 2*var(--nk-gutter)));aspect-ratio:340/700;border-radius:46px;background:var(--nk-ps-bg);
   border:1px solid var(--nk-ps-frame);box-shadow:var(--nk-shadow-hero);padding:14px;flex:none}
 .htw-phone__notch{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:120px;height:28px;
   border-radius:16px;background:var(--nk-ps-bg);z-index:3}
@@ -784,7 +807,8 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .htw-trust__card{display:flex;gap:24px;align-items:flex-start;padding:clamp(28px,3vw,36px);border-radius:16px;
   background:var(--nk-glass-strong);backdrop-filter:var(--nk-blur);border:1px solid var(--nk-hairline);
   transition:transform .28s ease,background .28s ease}
-.htw-trust__card:hover{transform:translateY(-4px);background:var(--nk-surface-hover-glass)}
+.htw-trust__card:hover{background:var(--nk-surface-hover-glass)}
+@media(hover:hover) and (pointer:fine){.htw-trust__card:hover{transform:translateY(-4px)}}
 .htw-trust__ico{width:62px;height:62px;border-radius:31px;flex:none;background:var(--nk-surface);
   display:flex;align-items:center;justify-content:center}
 .htw-trust__card h3{margin:0 0 8px;font-family:var(--nk-font-display);font-weight:700;font-size:23px;line-height:27px;color:var(--nk-text)}
@@ -830,4 +854,14 @@ footer .nk-link:hover{color:var(--nk-purple)}
   .htw-step__num{width:54px;height:54px;font-size:20px}
   .htw-list::before,.htw-list__fill{left:26px}
   .htw-step__top h3{font-size:22px}
+  /* CTA: drop the absolute collage, switch to a single readable column
+     (same approach as the homepage .nk-cta at 980px) */
+  .htw-cta{min-height:0;display:flex;flex-direction:column;gap:28px;padding:var(--nk-panel-pad)}
+  .htw-cta__phone{display:none}
+  .htw-cta__badges{position:static;left:auto;top:auto;order:2}
+  .htw-cta__copy{position:static;left:auto;bottom:auto;max-width:none}
+  .htw-cta__spark{display:none}
+}
+@media(max-width:560px){
+  .htw-toggle__btn{padding:13px 24px;font-size:16px}
 }

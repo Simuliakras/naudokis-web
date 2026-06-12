@@ -31,7 +31,7 @@ export function StickyAppBanner() {
         <Icon name="X" size={16} color="var(--nk-text-muted)" />
       </button>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/naudokis/logo-mark.svg" alt="" style={{ width: 38, height: 38, borderRadius: 10, flex: "none" }} />
+      <img src="/naudokis/logo-mark.svg" alt="" loading="lazy" style={{ width: 38, height: 38, borderRadius: 10, flex: "none" }} />
       <span style={{ flex: 1, display: "flex", flexDirection: "column", lineHeight: 1.2, minWidth: 0 }}>
         <b style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{dict.appBanner.title}</b>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>{dict.appBanner.body}</span>

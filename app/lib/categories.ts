@@ -40,7 +40,9 @@ export async function fetchCategories(locale: Locale): Promise<Category[]> {
   if (USE_MOCK) {
     return MOCK_CATEGORIES.map((c) => ({ id: c.id, title: locale === "en" ? c.name_en : c.name_lt }));
   }
-  const res = await fetch(`${API_BASE}/listings/categories`);
+  // Categories change rarely — server-side fetches stay fresh for an hour
+  // (matches the categories page's route revalidate). Browsers ignore `next`.
+  const res = await fetch(`${API_BASE}/listings/categories`, { next: { revalidate: 3600 } });
   if (!res.ok) {
     throw new Error(`Failed to load categories: ${res.status}`);
   }

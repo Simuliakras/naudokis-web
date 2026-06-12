@@ -4,7 +4,8 @@
 // (favorite/reserve/contact) are locked to the app.
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Nav, Footer } from "./sections";
+import { Nav } from "./sections";
+import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, FilterSelect, Toggle, openRedirect, type SelectOption } from "./ui";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
@@ -195,7 +196,7 @@ export function FeedScreen() {
             </div>
           </section>
         </main>
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </Chrome>
   );

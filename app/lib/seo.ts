@@ -129,8 +129,10 @@ export function organizationJsonLd(): JsonLdNode {
   return node;
 }
 
-// Homepage FAQ section → a FAQPage rich result. Sourced from the same dictionary
-// entries the visible accordion renders, so copy never diverges.
+// Homepage FAQ section → FAQPage structured data. Sourced from the same dictionary
+// entries the visible accordion renders, so copy never diverges. Note: since 2023
+// Google shows FAQ rich results only for authoritative (gov/health) sites — this
+// still aids content understanding, just don't expect FAQ snippets in SERPs.
 export function faqJsonLd(items: readonly FaqItem[]): JsonLdNode {
   return {
     "@context": "https://schema.org",
@@ -211,6 +213,9 @@ export function listingJsonLd({
     name,
     description,
     url,
+    // No itemCondition: the backend has no condition field, and structured data
+    // must only assert what the data actually contains (Search Console will warn
+    // "missing itemCondition" — that's acceptable; a fabricated value is not).
     offers: {
       "@type": "Offer",
       price,

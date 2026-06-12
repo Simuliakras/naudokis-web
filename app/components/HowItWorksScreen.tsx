@@ -6,7 +6,8 @@
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Nav, Footer } from "./sections";
+import { Nav } from "./sections";
+import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { FaqRow } from "./cards";
 import { Icon, AppBadges, QR, Pattern } from "./ui";
@@ -17,7 +18,7 @@ import type { HtwScreen, HtwStep } from "@/app/lib/i18n/types";
 type Role = "renter" | "owner";
 
 export function HowItWorksScreen() {
-  const { dict } = useI18n();
+  const { locale, dict } = useI18n();
   const t = dict.howItWorks;
   const router = useRouter();
 
@@ -136,7 +137,7 @@ export function HowItWorksScreen() {
           </div>
         </section>
 
-        <Footer />
+        <Footer locale={locale} />
       </div>
     </Chrome>
   );

@@ -5,6 +5,7 @@
 // the design bundle's "2026 rigorous redesign" (listing.jsx): premium bento
 // gallery, sticky in-page sub-nav, booking panel, trust-rich host card.
 import { useState } from "react";
+import Image from "next/image";
 import { Icon, IconName, Pill } from "./ui";
 import { SectionEmpty } from "./cards";
 import type { ListingDetail, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
@@ -79,10 +80,14 @@ function DateField({ label, value, onPick }: { label: string; value: string; onP
   );
 }
 
-function GalleryTile({ src, big, children }: { src?: string; big?: boolean; children?: React.ReactNode }) {
+function GalleryTile({ src, alt, big, children }: { src?: string; alt?: string; big?: boolean; children?: React.ReactNode }) {
   return (
-    <div className="nk-imgph nk-gtile" data-img={src ? "" : undefined}
-      style={{ borderRadius: big ? 18 : 14, position: "relative", backgroundImage: src ? `url("${src}")` : undefined, backgroundSize: "cover", backgroundPosition: "center" }}>
+    <div className="nk-imgph nk-gtile" style={{ borderRadius: big ? 18 : 14, position: "relative" }}>
+      {src && (
+        <Image src={src} alt={alt ?? ""} fill priority={big}
+          sizes={big ? "(max-width: 980px) 100vw, 60vw" : "(max-width: 980px) 50vw, 20vw"}
+          style={{ objectFit: "cover" }} />
+      )}
       {!src && <Icon name="Image" size={big ? 64 : 34} stroke={1.4} className="nk-imgicon" />}
       {children}
     </div>
@@ -205,14 +210,15 @@ export function ListingHeader({ listing, saved, onShare, onFav }: {
 }
 
 /* ---------------- Bento gallery ---------------- */
-export function Gallery({ images, isNew, onMore }: { images: string[]; isNew: boolean; onMore: () => void }) {
+export function Gallery({ images, title, isNew, onMore }: { images: string[]; title: string; isNew: boolean; onMore: () => void }) {
   const { dict } = useI18n();
   const t = dict.detail;
   const tiles = Array.from({ length: 5 }, (_, i) => images[i]);
   const extra = images.length > 5 ? images.length - 5 : 0;
+  const alt = (i: number) => (i === 0 ? title : `${title} — ${i + 1}`);
   return (
     <div className="nk-bento">
-      <GalleryTile src={tiles[0]} big>
+      <GalleryTile src={tiles[0]} alt={alt(0)} big>
         {isNew && (
           <span style={{ position: "absolute", top: 16, left: 16 }}>
             <Pill tone="yellow" icon="Sparkles">{t.newListingPill}</Pill>
@@ -220,10 +226,10 @@ export function Gallery({ images, isNew, onMore }: { images: string[]; isNew: bo
         )}
         <span className="nk-gtile__hint" style={{ position: "absolute", inset: 0, borderRadius: 18, background: "rgba(20,22,23,.18)" }} />
       </GalleryTile>
-      <GalleryTile src={tiles[1]} />
-      <GalleryTile src={tiles[2]} />
-      <GalleryTile src={tiles[3]} />
-      <GalleryTile src={tiles[4]}>
+      <GalleryTile src={tiles[1]} alt={alt(1)} />
+      <GalleryTile src={tiles[2]} alt={alt(2)} />
+      <GalleryTile src={tiles[3]} alt={alt(3)} />
+      <GalleryTile src={tiles[4]} alt={alt(4)}>
         <button onClick={onMore} style={{ position: "absolute", right: 14, bottom: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 16px", borderRadius: 12, background: "var(--nk-overlay)", backdropFilter: "blur(12px)", border: "1px solid var(--nk-border-strong)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 14.5, color: "#fff" }}>
           <Icon name="LayoutGrid" size={16} color="#fff" stroke={2} /> {extra > 0 ? t.galleryMore(extra) : t.galleryAll(Math.max(images.length, 1))}
         </button>
@@ -525,7 +531,8 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
   return (
     <div style={{ background: "var(--nk-surface)", borderRadius: 22, padding: 22, border: "1px solid var(--nk-border)", display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-        <span className="nk-imgph" data-img={owner.avatar ? "" : undefined} style={{ width: 58, height: 58, borderRadius: 29, flex: "none", border: "2px solid var(--nk-green-soft)", backgroundImage: owner.avatar ? `url("${owner.avatar}")` : undefined, backgroundSize: "cover", backgroundPosition: "center" }}>
+        <span className="nk-imgph" style={{ width: 58, height: 58, borderRadius: 29, flex: "none", border: "2px solid var(--nk-green-soft)" }}>
+          {owner.avatar && <Image src={owner.avatar} alt={owner.name} fill sizes="58px" style={{ objectFit: "cover" }} />}
           {!owner.avatar && <Icon name="User" size={26} stroke={1.6} color="#5b6163" />}
         </span>
         <div style={{ display: "flex", flexDirection: "column", gap: 7, minWidth: 0 }}>

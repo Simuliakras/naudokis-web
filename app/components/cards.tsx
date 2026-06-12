@@ -1,5 +1,6 @@
 "use client";
 // Naudokis UI kit — card components.
+import Image from "next/image";
 import Link from "next/link";
 import { Icon, IconName, IllusName, Illustration, Dots, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
@@ -29,9 +30,12 @@ export function OfferCard({
   return (
     <article className="nk-offer" style={{ position: "relative", background: "var(--nk-surface)", borderRadius: 24, overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
       {href && <Link href={href} className="nk-stretch" aria-label={title} />}
-      <div className="nk-offer__media nk-imgph" data-img={img ? "" : undefined}
-        style={{ height: 330, borderRadius: "24px 24px 0 0", backgroundImage: img ? `url("${img}")` : undefined }}>
-        {img && <div className="nk-zoom" style={{ position: "absolute", inset: 0, backgroundImage: `url("${img}")`, backgroundSize: "cover", backgroundPosition: "center" }} />}
+      <div className="nk-offer__media nk-imgph" style={{ height: 330, borderRadius: "24px 24px 0 0" }}>
+        {img && (
+          <Image src={img} alt={title} fill className="nk-zoom"
+            sizes="(max-width: 760px) 92vw, (max-width: 1100px) 46vw, 416px"
+            style={{ objectFit: "cover" }} />
+        )}
         <button className="nk-fav" onClick={lockFav} aria-label={c.favorite}>
           <Icon name="Heart" size={22} color="var(--nk-text)" fill="none" stroke={2} />
         </button>
@@ -137,7 +141,7 @@ export function InterruptionBanner() {
     <div className="nk-interrupt" style={{ gridColumn: "1 / -1" }}>
       <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/naudokis/logo-mark.svg" alt="" style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
+      <img src="/naudokis/logo-mark.svg" alt="" loading="lazy" style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
       <div style={{ position: "relative", flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: 8 }}>
         <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{t.interruptTitle}</h3>
         <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "26px", color: "var(--nk-text-2)", maxWidth: 520 }}>{t.interruptBody}</p>
@@ -217,13 +221,16 @@ export function FaqRow({
       borderRadius: open ? 24 : 20, background: "var(--nk-surface)", transition: "border-radius .2s ease, border-color .2s ease, background .2s ease",
       overflow: "hidden",
     }}>
-      <button type="button" onClick={onToggle} aria-expanded={open} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 24, padding: "20px 20px 20px 40px", textAlign: "left" }}>
-        <span className="nk-h-row">{q}</span>
-        <span style={{ width: 44, height: 44, borderRadius: 22, flex: "none", display: "flex", alignItems: "center", justifyContent: "center",
-          transition: "transform .2s ease", transform: open ? "rotate(180deg)" : "none" }}>
-          <Icon name="ChevronDown" size={22} color={open ? "var(--nk-purple)" : "var(--nk-text)"} stroke={2.2} />
-        </span>
-      </button>
+      {/* Semantic heading wraps the disclosure button (standard accordion pattern). */}
+      <h3 style={{ margin: 0 }}>
+        <button type="button" onClick={onToggle} aria-expanded={open} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 24, padding: "20px 20px 20px 40px", textAlign: "left", font: "inherit" }}>
+          <span className="nk-h-row">{q}</span>
+          <span style={{ width: 44, height: 44, borderRadius: 22, flex: "none", display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "transform .2s ease", transform: open ? "rotate(180deg)" : "none" }}>
+            <Icon name="ChevronDown" size={22} color={open ? "var(--nk-purple)" : "var(--nk-text)"} stroke={2.2} />
+          </span>
+        </button>
+      </h3>
       <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows .25s ease" }}>
         <div style={{ overflow: "hidden" }}>
           <p style={{ margin: 0, padding: "0 40px 24px 40px", fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "30px", color: "var(--nk-text-2)" }}>{a}</p>

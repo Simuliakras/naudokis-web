@@ -18,6 +18,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // NOTE: typedRoutes is deliberately OFF. Public URLs are the proxy-rewritten
+  // unprefixed forms (/kategorijos, /skelbimai/[id]) which don't exist in the
+  // typed /[lang]/... route tree, so every href would need an `as Route` cast.
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
@@ -26,6 +29,13 @@ const nextConfig: NextConfig = {
   // pre-encoded to .avif/.webp and served via <picture>, so they skip the optimizer.
   images: {
     formats: ["image/avif", "image/webp"],
+    // Listing photos / owner avatars come from the backend's CloudFront
+    // distributions, allowlisted per host so arbitrary CloudFront content can't
+    // be routed through our optimizer. Add the prod distribution here once it
+    // exists (and tighten the pathname to /listings/** if the key layout allows).
+    remotePatterns: [
+      new URL("https://d720uc9idaijs.cloudfront.net/**"), // dev
+    ],
   },
 };
 

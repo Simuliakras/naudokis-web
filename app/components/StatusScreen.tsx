@@ -2,7 +2,8 @@
 // Full-page fallback shared by the route-level not-found (404) and error
 // boundaries. Reuses the site chrome (Nav + Footer) so failures stay on-brand,
 // and the centered EmptyState carries the message + a single primary action.
-import { Nav, Footer } from "./sections";
+import { Nav } from "./sections";
+import { Footer } from "./sections-home";
 import { EmptyState } from "./cards";
 import { useI18nOptional } from "./I18nProvider";
 import { localeHome } from "@/app/lib/i18n/config";
@@ -41,7 +42,7 @@ export function StatusScreen({
           actionPrimary
         />
       </main>
-      <Footer />
+      <Footer locale={locale} />
     </div>
   );
 }
