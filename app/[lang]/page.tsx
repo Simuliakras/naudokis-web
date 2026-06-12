@@ -38,14 +38,16 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
       <Chrome>
         <div className="nk-page">
           <Nav />
-          <Hero locale={locale} />
-          <Categories />
-          <Offers />
-          <Features locale={locale} />
-          <Testimonials locale={locale} />
-          <CtaBanner locale={locale} />
-          <Faq />
-          <HomeSeo locale={locale} />
+          <main id="nk-main">
+            <Hero locale={locale} />
+            <Categories />
+            <Offers />
+            <Features locale={locale} />
+            <Testimonials locale={locale} />
+            <CtaBanner locale={locale} />
+            <Faq />
+            <HomeSeo locale={locale} />
+          </main>
           <Footer locale={locale} />
         </div>
         <ScrollReveal />

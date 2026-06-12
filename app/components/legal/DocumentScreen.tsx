@@ -42,7 +42,7 @@ export function DocumentScreen({
       <div className="nk-lg-root" data-layout="a">
         <LegalTopBar locale={locale} hubHref={hubHref} langHrefs={langHrefs} t={t} />
 
-        <div className="nk-lg-shell">
+        <main id="nk-main" className="nk-lg-shell">
           <nav className="nk-lg-crumbs" aria-label={t.breadcrumb}>
             <Link href={hubHref}>{t.policyCenter}</Link>
             <Icon name="chevRight" size={14} />
@@ -68,7 +68,7 @@ export function DocumentScreen({
               <RelatedDocs manifest={manifest} currentId={docId} locale={locale} t={t} />
             </article>
           </div>
-        </div>
+        </main>
 
         <LegalFooter locale={locale} hubHref={hubHref} t={t} />
 

@@ -283,10 +283,12 @@ export type Dict = {
     favorite: string; // aria-label on the heart button
     perDay: string; // price unit on cards
     reviewCount: (count: number) => string; // localized, pluralized review count
+    newListing: string; // card badge for listings with no reviews yet
     sampleCity: string; // sample listing city
     samplePrice: string; // sample listing price
     breadcrumbHome: string; // breadcrumb root label
     breadcrumbLabel: string; // accessible name for the breadcrumb <nav> landmark
+    skipToContent: string; // skip-link label (first focusable element on the page)
   };
   categoriesPage: {
     metaTitle: string;
@@ -334,6 +336,7 @@ export type Dict = {
       searchBody: string;
       searchAction: string;
       filterTitle: string; // L3 — active filters exclude everything
+      filterTitleCity: (city: string) => string; // L3 with a city filter — echoes the city
       filterBody: string;
       filterAction: string;
       categoryTitle: string; // L4 — valid but empty category
@@ -357,6 +360,7 @@ export type Dict = {
     defaultBody: string;
     qrHint: string;
     close: string;
+    opensAppHint: string; // affordance hint on locked CTAs ("Opens in the app")
     reserveTitle: string;
     reserveBody: string;
     datesTitle: string;

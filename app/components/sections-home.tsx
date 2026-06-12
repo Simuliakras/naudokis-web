@@ -71,10 +71,10 @@ export function Features({ locale }: { locale: Locale }) {
 export function HomeSeo({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).home;
   return (
-    <section className="nk-container" style={{ paddingBlock: "0 80px" }}>
+    <section className="nk-container" style={{ paddingBlock: "0 var(--nk-section-y)" }}>
       <div className="nk-reveal" style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: 16 }}>
         <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{t.seoHeading}</h2>
-        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{t.seoBody}</p>
+        <p className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{t.seoBody}</p>
       </div>
     </section>
   );

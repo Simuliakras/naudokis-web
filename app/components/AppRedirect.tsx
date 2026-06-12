@@ -14,7 +14,6 @@ export function AppRedirect() {
 
   const close = useCallback(() => {
     setState((s) => ({ ...s, open: false }));
-    document.body.style.overflow = "";
     lastFocused.current?.focus();
   }, []);
 
@@ -23,17 +22,19 @@ export function AppRedirect() {
       const d = (e as CustomEvent<RedirectPayload>).detail ?? { title: "", body: "" };
       lastFocused.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       setState({ open: true, title: d.title || dict.bridge.defaultTitle, body: d.body || dict.bridge.defaultBody });
-      document.body.style.overflow = "hidden";
     };
     window.addEventListener(NK_REDIRECT_EVENT, onOpen);
     return () => window.removeEventListener(NK_REDIRECT_EVENT, onOpen);
   }, [dict]);
 
-  // While open: move focus into the dialog, close on Escape, and trap Tab inside it.
+  // While open: lock body scroll (released on close AND unmount — the component
+  // remounts per page, so navigating away mid-dialog must not leave the page
+  // unscrollable), move focus into the dialog, close on Escape, trap Tab.
   useEffect(() => {
     if (!state.open) {
       return;
     }
+    document.body.style.overflow = "hidden";
     closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -60,7 +61,10 @@ export function AppRedirect() {
       }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
   }, [state.open, close]);
 
   if (!state.open) return null;

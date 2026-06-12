@@ -36,7 +36,7 @@ export function StickyAppBanner() {
         <b style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{dict.appBanner.title}</b>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>{dict.appBanner.body}</span>
       </span>
-      <button className="nk-btn nk-btn--primary" style={{ padding: "10px 20px", fontSize: 15, flex: "none" }}
+      <button className="nk-btn nk-btn--primary nk-btn--sm" style={{ flex: "none" }}
         onClick={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}>
         {dict.appBanner.install}
       </button>

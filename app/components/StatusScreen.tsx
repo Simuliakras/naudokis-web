@@ -30,6 +30,7 @@ export function StatusScreen({
     <div className="nk-page">
       <Nav onSearch={goHome} />
       <main
+        id="nk-main"
         className="nk-container"
         style={{ minHeight: "62vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "120px 0" }}
       >

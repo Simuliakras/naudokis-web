@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Icon, Logo, SectionHead, openRedirect } from "./ui";
+import { Icon, Logo, SectionHead, focusListboxSelection, listboxKeyNav, listboxTriggerKeyNav, openRedirect } from "./ui";
 import {
   OfferCard, CategoryCard, FaqRow, OfferCardSkeleton, CategoryCardSkeleton, EmptyState, SectionEmpty,
 } from "./cards";
@@ -191,6 +191,7 @@ function CityPicker({ value, onChange, variant }: {
   const { dict } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
+  const listRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const onDoc = (e: MouseEvent) => { if (ref.current && e.target instanceof Node && !ref.current.contains(e.target)) setOpen(false); };
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
@@ -198,6 +199,12 @@ function CityPicker({ value, onChange, variant }: {
     document.addEventListener("keydown", onKey);
     return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
   }, []);
+  // Move focus into the open list (onto the active city) for keyboard users.
+  useEffect(() => {
+    if (open) {
+      focusListboxSelection(listRef.current);
+    }
+  }, [open]);
   const options = useMemo<[string, string][]>(
     () => [["", dict.cityPicker.all], ...LT_CITIES.map((c) => [c, c] as [string, string])],
     [dict.cityPicker.all],
@@ -205,14 +212,16 @@ function CityPicker({ value, onChange, variant }: {
   const hero = variant === "hero";
   return (
     <span ref={ref} className={"nk-citypick nk-citypick--" + variant}>
-      <button type="button" className="nk-citypick__trigger" onClick={() => setOpen((v) => !v)} aria-haspopup="listbox" aria-expanded={open}>
+      <button type="button" className="nk-citypick__trigger" onClick={() => setOpen((v) => !v)}
+        onKeyDown={listboxTriggerKeyNav(open, setOpen)}
+        aria-haspopup="listbox" aria-expanded={open}>
         <Icon name="MapPin" size={hero ? 20 : 16} stroke={2} color={hero ? "var(--nk-bg)" : "var(--nk-text-muted)"} />
         <span className={"nk-citypick__val" + (value ? " is-set" : "")}>{value || dict.search.where}</span>
         <Icon name="ChevronDown" size={hero ? 16 : 14} stroke={2.2} color={hero ? "var(--nk-light-meta)" : "var(--nk-text-muted)"}
           style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
       </button>
       {open && (
-        <span role="listbox" className="nk-citypick__panel">
+        <span ref={listRef} role="listbox" aria-label={dict.cityPicker.heading} onKeyDown={listboxKeyNav} className="nk-citypick__panel">
           {hero && <span className="nk-citypick__heading">{dict.cityPicker.heading}</span>}
           {options.map(([val, label]) => {
             const active = value === val;
@@ -270,7 +279,9 @@ function LocaleSwitcher() {
   }, []);
   // Move focus into the open menu (onto the current locale) for keyboard users.
   useEffect(() => {
-    if (open) listRef.current?.querySelector<HTMLElement>('[aria-selected="true"]')?.focus();
+    if (open) {
+      focusListboxSelection(listRef.current);
+    }
   }, [open]);
   // Strip a leading locale prefix to get the bare path, then re-prefix for the
   // target locale (default locale is unprefixed). Keeps you on the same page.
@@ -278,14 +289,16 @@ function LocaleSwitcher() {
   const href = (l: Locale) => (localePrefix(l) + (bare === "/" ? "" : bare)) || "/";
   return (
     <span ref={ref} style={{ position: "relative", display: "inline-flex", marginInline: -10 }}>
-      <button type="button" onClick={() => setOpen((v) => !v)} aria-haspopup="listbox" aria-expanded={open}
+      <button type="button" onClick={() => setOpen((v) => !v)}
+        onKeyDown={listboxTriggerKeyNav(open, setOpen)}
+        aria-haspopup="listbox" aria-expanded={open}
         style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 10px", borderRadius: 10, cursor: "pointer", background: "transparent" }}>
         <Flag code={locale} />
         <span className="nk-nav" style={{ color: "var(--nk-text)" }}>{dict.nav.language}</span>
         <Icon name="ChevronDown" size={15} stroke={2.2} color="var(--nk-text-muted)" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
       </button>
       {open && (
-        <span ref={listRef} role="listbox" style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, minWidth: 160, background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 12, padding: 6, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 16px 40px rgba(0,0,0,.4)", zIndex: 60 }}>
+        <span ref={listRef} role="listbox" aria-label={dict.nav.language} onKeyDown={listboxKeyNav} style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, minWidth: 160, background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 12, padding: 6, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 16px 40px rgba(0,0,0,.4)", zIndex: 60 }}>
           {locales.map((l) => {
             const active = l === locale;
             return (
@@ -324,7 +337,7 @@ export function SearchBar() {
         <Icon name="Search" size={20} color="var(--nk-bg)" stroke={2} />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={dict.search.placeholder}
           aria-label={dict.search.inputLabel}
-          style={{ border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 18, color: "var(--nk-bg)", width: 150 }} />
+          style={{ border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 18, color: "var(--nk-bg)", flex: 1, minWidth: 110 }} />
       </span>
       <span style={{ width: 1, height: 36, background: "var(--nk-light-line)" }} />
       <CityPicker variant="hero" value={city} onChange={setCity} />

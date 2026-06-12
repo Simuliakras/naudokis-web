@@ -2,6 +2,8 @@
 // Naudokis UI kit — primitives.
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useI18nOptional } from "./I18nProvider";
+import { localeHome } from "@/app/lib/i18n/config";
 
 /* ---------------- Icon ----------------
    Self-contained icon set (Lucide-style geometry). `s` = stroke outline children,
@@ -55,6 +57,7 @@ const NK_ICONS: Record<string, IconDef> = {
   Handshake:   { s: <><path d="m11 17 2 2a1.4 1.4 0 0 0 2-2"/><path d="m13 15 2.2 2.2a1.4 1.4 0 0 0 2-2L14 11.8"/><path d="M3 11.5 7 7.6a2 2 0 0 1 2.3-.4l2.2 1.1a1.4 1.4 0 0 1 .3 2.3l-1.6 1.4a1.4 1.4 0 0 1-1.9 0L8 11"/><path d="m14 9 3.2-3.1a2 2 0 0 1 2.3-.3L21 6.4"/><path d="M3 11.5 5 13.5M19.5 5.5 21 6.4"/></> },
   Coins:       { s: <><circle cx="8" cy="8" r="6"/><path d="M18.1 6.5a6 6 0 0 1 0 11M8.7 6h.5a1.8 1.8 0 0 1 0 3.6h-1a1.8 1.8 0 0 0 0 3.6h.5M8 5.2v.8M8 13v.8"/></> },
   Snowflake:   { s: <><path d="M12 2v20M4.2 7l15.6 10M19.8 7 4.2 17"/><path d="m9 4 3 2 3-2M9 20l3-2 3 2M4 9.5l.5 3.3-2.6 1.9M20 9.5l-.5 3.3 2.6 1.9M4 14.5l-2.1-1.7M20 14.5l2.1-1.7"/></> },
+  Smartphone:  { s: <><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M11 17.8h2"/></> },
 };
 
 export type IconName = keyof typeof NK_ICONS;
@@ -119,12 +122,14 @@ export function Pattern({ name, className, style, priority = false }: {
 }
 
 /* ---------------- Logo ---------------- */
+// A real link to the locale home (a logo is expected to navigate, not no-op).
 export function Logo({ height = 36 }: { height?: number }) {
+  const { locale } = useI18nOptional();
   return (
-    <a className="nk-logo" href="#top" onClick={(e) => e.preventDefault()}>
+    <Link className="nk-logo" href={localeHome(locale)}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" style={{ height, width: "auto" }} />
-    </a>
+    </Link>
   );
 }
 
@@ -502,12 +507,60 @@ export function Breadcrumb({ items, homeLabel, label }: { items: Crumb[]; homeLa
             <Link href={c.href ?? "/"} className="nk-crumb" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "6px 10px", borderRadius: 9, fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", textDecoration: "none" }}>
               {home && <Icon name="Home" size={16} stroke={2} color="currentColor" />} {c.label}
             </Link>
-            <Icon name="ChevronRight" size={14} stroke={2.4} color="#5b6669" />
+            <Icon name="ChevronRight" size={14} stroke={2.4} color="var(--nk-text-muted)" />
           </React.Fragment>
         );
       })}
     </nav>
   );
+}
+
+/* ---------------- InputClear (clear-× inside a padded search field) ---------------- */
+export function InputClear({ onClick, label }: { onClick: () => void; label: string }) {
+  return (
+    <button type="button" className="nk-input-clear" onClick={onClick} aria-label={label}>
+      <Icon name="X" size={17} color="var(--nk-text-muted)" />
+    </button>
+  );
+}
+
+/* ---------------- Listbox keyboard navigation ----------------
+   Shared roving-focus handler for the custom listbox popovers (FilterSelect,
+   CityPicker, LocaleSwitcher): Arrow/Home/End move focus between the panel's
+   role="option" elements. Attach as onKeyDown on the listbox panel. */
+export function listboxKeyNav(e: React.KeyboardEvent) {
+  if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) {
+    return;
+  }
+  const options = Array.from(e.currentTarget.querySelectorAll<HTMLElement>('[role="option"]'));
+  if (options.length === 0) {
+    return;
+  }
+  e.preventDefault();
+  const i = options.indexOf(document.activeElement as HTMLElement);
+  const next =
+    e.key === "Home" ? 0
+    : e.key === "End" ? options.length - 1
+    : e.key === "ArrowDown" ? (i + 1) % options.length
+    : i < 0 ? options.length - 1 : (i - 1 + options.length) % options.length;
+  options[next].focus();
+}
+
+/* Open a closed listbox with ArrowDown — attach as onKeyDown on the trigger. */
+export function listboxTriggerKeyNav(open: boolean, setOpen: (open: boolean) => void) {
+  return (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown" && !open) {
+      e.preventDefault();
+      setOpen(true);
+    }
+  };
+}
+
+/* Focus the selected option (else the first) when a listbox panel opens —
+   call from an effect that runs on `open`. */
+export function focusListboxSelection(panel: HTMLElement | null) {
+  (panel?.querySelector<HTMLElement>('[aria-selected="true"]')
+    ?? panel?.querySelector<HTMLElement>('[role="option"]'))?.focus();
 }
 
 /* ---------------- FilterSelect (custom popover dropdown) ----------------
@@ -530,6 +583,7 @@ export function FilterSelect({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
+  const panelRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const onDoc = (e: MouseEvent) => { if (ref.current && e.target instanceof Node && !ref.current.contains(e.target)) setOpen(false); };
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
@@ -537,6 +591,12 @@ export function FilterSelect({
     document.addEventListener("keydown", onKey);
     return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
   }, []);
+  // Move focus into the open list (onto the selected option) for keyboard users.
+  useEffect(() => {
+    if (open) {
+      focusListboxSelection(panelRef.current);
+    }
+  }, [open]);
   const active = value !== defaultValue;
   const selected = options.find((o) => o.value === value);
   const panelPos: React.CSSProperties = direction === "up"
@@ -544,8 +604,10 @@ export function FilterSelect({
     : { top: "calc(100% + 10px)" };
   return (
     <span ref={ref} style={{ position: "relative", display: "inline-flex" }}>
-      <button type="button" onClick={() => setOpen((v) => !v)} aria-haspopup="listbox" aria-expanded={open} style={{
-        display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", cursor: "pointer", whiteSpace: "nowrap",
+      <button type="button" onClick={() => setOpen((v) => !v)}
+        onKeyDown={listboxTriggerKeyNav(open, setOpen)}
+        aria-haspopup="listbox" aria-expanded={open} style={{
+        display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-tap)", cursor: "pointer", whiteSpace: "nowrap",
         fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, transition: "background .15s ease, border-color .15s ease",
         background: active ? "var(--nk-accent-bg)" : "var(--nk-surface)", color: active ? "var(--nk-accent-text)" : "var(--nk-text)",
         border: "1px solid " + (active || open ? "var(--nk-accent-border)" : "var(--nk-border)"),
@@ -555,7 +617,7 @@ export function FilterSelect({
         <Icon name="ChevronDown" size={15} stroke={2.4} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
       </button>
       {open && (
-        <span role="listbox" style={{ position: "absolute", ...panelPos, [align]: 0, minWidth: 230, background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 16, padding: 7, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 20px 50px rgba(0,0,0,.45)", zIndex: 50 }}>
+        <span ref={panelRef} role="listbox" aria-label={label} onKeyDown={listboxKeyNav} style={{ position: "absolute", ...panelPos, [align]: 0, minWidth: 230, background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 16, padding: 7, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 20px 50px rgba(0,0,0,.45)", zIndex: 50 }}>
           {heading && <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--nk-text-muted)", padding: "8px 12px 6px" }}>{heading}</span>}
           {options.map((o) => {
             const sel = o.value === value;

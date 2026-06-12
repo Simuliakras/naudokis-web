@@ -1,10 +1,35 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
-// Pragmatic security headers applied to every route. No strict CSP yet — the
-// site relies on inline styles, next/font, and cross-origin calls to the
-// backend API, so a locked-down CSP needs its own observe-then-enforce pass.
+// Listing photos / owner avatars come from the backend's CloudFront
+// distributions, allowlisted per host (shared by image remotePatterns and the
+// CSP img-src so the two can't drift). Add the prod distribution here once it
+// exists (and tighten the pathname to /listings/** if the key layout allows).
+const imageCdnHosts = [
+  "https://d720uc9idaijs.cloudfront.net", // dev
+];
+
+// Observe-then-enforce CSP: served as Report-Only so violations surface in the
+// browser console (and Sentry, once a `report-to` endpoint is wired) without
+// breaking anything. 'unsafe-inline' is required today — the UI uses inline
+// style={} objects and Next.js streams inline bootstrap scripts. Once the
+// report stream is clean, rename the key to Content-Security-Policy.
+const cspReportOnly = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io",
+  "style-src 'self' 'unsafe-inline'",
+  `img-src 'self' data: blob: ${imageCdnHosts.join(" ")}`,
+  "font-src 'self' data:",
+  "connect-src 'self' https://api.naudokis.lt https://api-dev.naudokis.lt https://plausible.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
+  "frame-ancestors 'self'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join("; ");
+
+// Pragmatic security headers applied to every route. The strict CSP runs in
+// report-only mode (above) until its violation stream is clean.
 const securityHeaders = [
+  { key: "Content-Security-Policy-Report-Only", value: cspReportOnly },
   // Force HTTPS for two years, including subdomains; eligible for preload lists.
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
   // Disallow MIME sniffing.
@@ -29,13 +54,9 @@ const nextConfig: NextConfig = {
   // pre-encoded to .avif/.webp and served via <picture>, so they skip the optimizer.
   images: {
     formats: ["image/avif", "image/webp"],
-    // Listing photos / owner avatars come from the backend's CloudFront
-    // distributions, allowlisted per host so arbitrary CloudFront content can't
-    // be routed through our optimizer. Add the prod distribution here once it
-    // exists (and tighten the pathname to /listings/** if the key layout allows).
-    remotePatterns: [
-      new URL("https://d720uc9idaijs.cloudfront.net/**"), // dev
-    ],
+    // Per-host CDN allowlist (see imageCdnHosts) so arbitrary CloudFront
+    // content can't be routed through our optimizer.
+    remotePatterns: imageCdnHosts.map((host) => new URL(`${host}/**`)),
   },
 };
 

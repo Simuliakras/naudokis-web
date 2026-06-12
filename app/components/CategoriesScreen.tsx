@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
-import { Icon, Breadcrumb } from "./ui";
+import { Icon, Breadcrumb, InputClear } from "./ui";
 import { CategoryTile, CategoryCardSkeleton, EmptyState } from "./cards";
 import { useCategories } from "@/app/lib/categories";
 import { listingSearchHref } from "@/app/lib/search";
@@ -36,7 +36,7 @@ export function CategoriesScreen() {
     <Chrome>
       <div className="nk-page">
         <Nav onSearch={focusSearch} />
-        <main className="nk-container" style={{ paddingBlock: "32px 40px" }}>
+        <main id="nk-main" className="nk-container" style={{ paddingBlock: "32px 40px" }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={[{ label: t.crumb }]} />
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
             <span className="nk-eyebrow">{t.eyebrow}</span>
@@ -49,7 +49,7 @@ export function CategoriesScreen() {
               <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
               <input id="nk-cats-search-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.searchPlaceholder}
                 style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text)" }} />
-              {q && <button type="button" onClick={() => setQ("")} aria-label={dict.bridge.close} style={{ display: "flex", padding: 2 }}><Icon name="X" size={17} color="var(--nk-text-muted)" /></button>}
+              {q && <InputClear onClick={() => setQ("")} label={dict.bridge.close} />}
             </span>
             <button type="submit" className="nk-btn nk-btn--primary" style={{ padding: "14px 30px" }}>{t.submit}</button>
           </form>

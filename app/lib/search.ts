@@ -1,3 +1,5 @@
+import { localePrefix, type Locale } from "@/app/lib/i18n/config";
+
 // Single source of truth for the listings-feed URL. The feed reads `q`
 // (free-text search), `city` (exact city name) and `cat` (category id) — see
 // app/[lang]/skelbimai. Only non-empty params are emitted and `q` is trimmed,
@@ -16,4 +18,27 @@ export function listingSearchHref({ q, city, cat }: { q?: string; city?: string;
   }
   const qs = params.toString();
   return qs ? `/skelbimai?${qs}` : "/skelbimai";
+}
+
+// The feed remembers its last URL (path + filters) per tab so other screens —
+// e.g. the listing-detail nav search — can return to it with filters intact.
+const LAST_FEED_KEY = "nk_last_feed";
+
+export function rememberFeedUrl(url: string) {
+  try {
+    sessionStorage.setItem(LAST_FEED_KEY, url);
+  } catch {
+    // sessionStorage unavailable (privacy mode) — returning without filters is fine.
+  }
+}
+
+export function lastFeedUrl(locale: Locale): string | null {
+  try {
+    const url = sessionStorage.getItem(LAST_FEED_KEY);
+    // Ignore a URL recorded under another locale (the user switched language
+    // since) — better to fall back to the bare feed than flip locales on them.
+    return url?.startsWith(`${localePrefix(locale)}/skelbimai`) ? url : null;
+  } catch {
+    return null;
+  }
 }

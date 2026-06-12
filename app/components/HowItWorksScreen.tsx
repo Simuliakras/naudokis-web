@@ -39,103 +39,105 @@ export function HowItWorksScreen() {
     <Chrome>
       <div className="nk-page htw-page">
         <Nav onSearch={() => router.push("/kategorijos")} />
+        <main id="nk-main">
 
-        {/* HERO */}
-        <section className="htw-hero">
-          <Pattern name="hero-pattern" priority className="htw-hero__pattern" />
-          <div className="nk-container htw-hero__inner">
-            <span className="htw-hero__eyebrow nk-eyebrow">{t.eyebrow}</span>
-            <h1>{t.title}</h1>
-            <p className="htw-hero__lead">{t.lead}</p>
-          </div>
-        </section>
-
-        {/* STEPS (synced phone) */}
-        <section className="nk-container htw-steps">
-          <div className="htw-grid">
-            <div className="htw-left">
-              <div className="htw-toggle-row">
-                <div className="htw-toggle" role="group" aria-label={t.eyebrow}>
-                  {(["renter", "owner"] as Role[]).map((r) => (
-                    <button key={r} type="button" aria-pressed={role === r}
-                      className={"htw-toggle__btn" + (role === r ? " is-active" : "")}
-                      onClick={() => switchRole(r)}>
-                      {t[r].label}
-                    </button>
-                  ))}
-                  <span className="htw-toggle__thumb" style={{ transform: role === "owner" ? "translateX(100%)" : "none" }} />
-                </div>
-              </div>
-              <p className="htw-hero__lead" style={{ textAlign: "left", maxWidth: 560, fontSize: 19, lineHeight: "30px" }}>{data.lead}</p>
-              <StepList steps={steps} active={active} onSelect={setActive} role={role} />
+          {/* HERO */}
+          <section className="htw-hero">
+            <Pattern name="hero-pattern" priority className="htw-hero__pattern" />
+            <div className="nk-container htw-hero__inner">
+              <span className="htw-hero__eyebrow nk-eyebrow">{t.eyebrow}</span>
+              <h1>{t.title}</h1>
+              <p className="htw-hero__lead">{t.lead}</p>
             </div>
-            <div className="htw-right">
-              <div className="htw-phonewrap">
-                <div className="htw-phonewrap__glow" style={{ background: `radial-gradient(circle at 50% 40%, ${TONE_GLOW[current.tone]}, transparent 65%)` }} />
-                <div className="htw-phone">
-                  <div className="htw-phone__notch" />
-                  <div className="htw-phone__screen">
-                    <PhoneScreen key={role + active} kind={current.screen} />
+          </section>
+
+          {/* STEPS (synced phone) */}
+          <section className="nk-container htw-steps">
+            <div className="htw-grid">
+              <div className="htw-left">
+                <div className="htw-toggle-row">
+                  <div className="htw-toggle" role="group" aria-label={t.eyebrow}>
+                    {(["renter", "owner"] as Role[]).map((r) => (
+                      <button key={r} type="button" aria-pressed={role === r}
+                        className={"htw-toggle__btn" + (role === r ? " is-active" : "")}
+                        onClick={() => switchRole(r)}>
+                        {t[r].label}
+                      </button>
+                    ))}
+                    <span className="htw-toggle__thumb" style={{ transform: role === "owner" ? "translateX(100%)" : "none" }} />
                   </div>
                 </div>
-                <div style={{ display: "flex", justifyContent: "center", marginTop: 26 }}>
-                  <span className="htw-stepcount"><b>{active + 1}</b>&nbsp;/&nbsp;{steps.length}&nbsp;·&nbsp;{current.title}</span>
+                <p className="htw-hero__lead" style={{ textAlign: "left", maxWidth: 560, fontSize: 19, lineHeight: "30px" }}>{data.lead}</p>
+                <StepList steps={steps} active={active} onSelect={setActive} role={role} />
+              </div>
+              <div className="htw-right">
+                <div className="htw-phonewrap">
+                  <div className="htw-phonewrap__glow" style={{ background: `radial-gradient(circle at 50% 40%, ${TONE_GLOW[current.tone]}, transparent 65%)` }} />
+                  <div className="htw-phone">
+                    <div className="htw-phone__notch" />
+                    <div className="htw-phone__screen">
+                      <PhoneScreen key={role + active} kind={current.screen} />
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "center", marginTop: 26 }}>
+                    <span className="htw-stepcount"><b>{active + 1}</b>&nbsp;/&nbsp;{steps.length}&nbsp;·&nbsp;{current.title}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* TRUST STRIP */}
-        <section className="htw-trust">
-          <Pattern name="section-pattern" className="htw-trust__pattern" />
-          <div className="nk-container htw-trust__inner">
-            <div className="htw-trust__head nk-reveal">
-              <span className="nk-eyebrow">{t.trustEyebrow}</span>
-              <h2>{t.trustTitle}</h2>
-            </div>
-            <div className="htw-trust__grid nk-reveal">
-              {t.trust.map((c) => (
-                <div key={c.title} className="htw-trust__card">
-                  <span className="htw-trust__ico"><Icon name={c.icon} size={30} color="var(--nk-yellow)" stroke={1.8} /></span>
-                  <div>
-                    <h3>{c.title}</h3>
-                    <p>{c.body}</p>
+          {/* TRUST STRIP */}
+          <section className="htw-trust">
+            <Pattern name="section-pattern" className="htw-trust__pattern" />
+            <div className="nk-container htw-trust__inner">
+              <div className="htw-trust__head nk-reveal">
+                <span className="nk-eyebrow">{t.trustEyebrow}</span>
+                <h2>{t.trustTitle}</h2>
+              </div>
+              <div className="htw-trust__grid nk-reveal">
+                {t.trust.map((c) => (
+                  <div key={c.title} className="htw-trust__card">
+                    <span className="htw-trust__ico"><Icon name={c.icon} size={30} color="var(--nk-yellow)" stroke={1.8} /></span>
+                    <div>
+                      <h3>{c.title}</h3>
+                      <p>{c.body}</p>
+                    </div>
                   </div>
-                </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* CTA (green) */}
+          <section className="nk-container htw-cta-wrap">
+            <div className="htw-cta nk-reveal">
+              <Image className="htw-cta__phone" src="/naudokis/download-phone.png" alt={t.ctaPhoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" />
+              <div className="htw-cta__spark" aria-hidden="true">
+                <span style={{ left: "46%", top: "18%" }} /><span style={{ left: "58%", top: "30%" }} /><span style={{ left: "40%", top: "40%" }} />
+              </div>
+              <div className="htw-cta__badges"><AppBadges height={50} /></div>
+              <div className="htw-cta__copy">
+                <h2>{data.ctaTitle}</h2>
+                <p>{data.ctaBody}</p>
+              </div>
+              <div className="htw-cta__qr"><QR size={180} /></div>
+            </div>
+          </section>
+
+          {/* MINI-FAQ */}
+          <section className="nk-container htw-faq" id="duk">
+            <div className="htw-faq__head nk-reveal">
+              <span className="nk-eyebrow">{t.faqEyebrow}</span>
+              <h2>{t.faqTitle}</h2>
+            </div>
+            <div className="htw-faq__list nk-reveal">
+              {t.faq.map((f, i) => (
+                <FaqRow key={i} q={f.q} a={f.a} open={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? -1 : i)} />
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* CTA (green) */}
-        <section className="nk-container htw-cta-wrap">
-          <div className="htw-cta nk-reveal">
-            <Image className="htw-cta__phone" src="/naudokis/download-phone.png" alt={t.ctaPhoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" />
-            <div className="htw-cta__spark" aria-hidden="true">
-              <span style={{ left: "46%", top: "18%" }} /><span style={{ left: "58%", top: "30%" }} /><span style={{ left: "40%", top: "40%" }} />
-            </div>
-            <div className="htw-cta__badges"><AppBadges height={50} /></div>
-            <div className="htw-cta__copy">
-              <h2>{data.ctaTitle}</h2>
-              <p>{data.ctaBody}</p>
-            </div>
-            <div className="htw-cta__qr"><QR size={180} /></div>
-          </div>
-        </section>
-
-        {/* MINI-FAQ */}
-        <section className="nk-container htw-faq" id="duk">
-          <div className="htw-faq__head nk-reveal">
-            <span className="nk-eyebrow">{t.faqEyebrow}</span>
-            <h2>{t.faqTitle}</h2>
-          </div>
-          <div className="htw-faq__list nk-reveal">
-            {t.faq.map((f, i) => (
-              <FaqRow key={i} q={f.q} a={f.a} open={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? -1 : i)} />
-            ))}
-          </div>
-        </section>
+          </section>
+        </main>
 
         <Footer locale={locale} />
       </div>

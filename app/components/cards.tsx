@@ -2,7 +2,7 @@
 // Naudokis UI kit — card components.
 import Image from "next/image";
 import Link from "next/link";
-import { Icon, IconName, IllusName, Illustration, Dots, openRedirect, Pattern } from "./ui";
+import { Icon, IconName, IllusName, Illustration, Dots, Pill, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
 
 /* ---------------- Offer / listing card ----------------
@@ -30,13 +30,14 @@ export function OfferCard({
   return (
     <article className="nk-offer" style={{ position: "relative", background: "var(--nk-surface)", borderRadius: 24, overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
       {href && <Link href={href} className="nk-stretch" aria-label={title} />}
-      <div className="nk-offer__media nk-imgph" style={{ height: 330, borderRadius: "24px 24px 0 0" }}>
+      <div className="nk-offer__media nk-imgph" style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }}>
         {img && (
           <Image src={img} alt={title} fill className="nk-zoom"
             sizes="(max-width: 760px) 92vw, (max-width: 1100px) 46vw, 416px"
             style={{ objectFit: "cover" }} />
         )}
-        <button className="nk-fav" onClick={lockFav} aria-label={c.favorite}>
+        <button className="nk-fav" onClick={lockFav} title={dict.bridge.opensAppHint}
+          aria-label={`${c.favorite} (${dict.bridge.opensAppHint})`}>
           <Icon name="Heart" size={22} color="var(--nk-text)" fill="none" stroke={2} />
         </button>
         {!img && <Icon name="Image" size={64} stroke={1.5} className="nk-imgicon" />}
@@ -47,7 +48,7 @@ export function OfferCard({
         </div>
       </div>
       <div style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: 10 }}>
-        <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--nk-text)" }}>{title}</h3>
+        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
         {/* meta row: rating + count on the left, location pin + city on the right */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
           {rating ? (
@@ -58,7 +59,10 @@ export function OfferCard({
               </span>
               {count && <span className="nk-meta" style={{ color: "var(--nk-text-muted)" }}>({count})</span>}
             </span>
-          ) : <span />}
+          ) : (
+            // No reviews yet — surface that as a "New" trust signal instead of a gap.
+            <Pill tone="yellow" icon="Sparkles">{c.newListing}</Pill>
+          )}
           <span style={{ display: "flex", alignItems: "center", gap: 5, fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 18, color: "var(--nk-text-2)" }}>
             <Icon name="MapPin" size={18} color="var(--nk-text)" fill="var(--nk-text)" stroke={2} /> {city ?? c.sampleCity}
           </span>
@@ -167,7 +171,7 @@ export function FeatureCard({
       flex: 1, borderRadius: 24, background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-hairline)",
       padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-stack-lg)", textAlign: "center",
     }}>
-      <span style={{ width: 72, height: 72, borderRadius: 36, background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <span style={{ width: "var(--nk-size-icon-lg)", height: "var(--nk-size-icon-lg)", borderRadius: "50%", background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Icon name={icon} size={36} color="var(--nk-yellow)" stroke={2} />
       </span>
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -190,7 +194,7 @@ export function Testimonial({
   return (
     <div style={{ flex: 1, background: "var(--nk-surface)", borderRadius: 16, padding: "var(--nk-block-pad)", border: "1px solid var(--nk-hairline)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 40 }}>
-        <span className="nk-imgph" style={{ width: 60, height: 60, borderRadius: "50%", background: avatarTint }}>
+        <span className="nk-imgph" style={{ width: "var(--nk-size-icon-md)", height: "var(--nk-size-icon-md)", borderRadius: "50%", background: avatarTint }}>
           <Icon name="User" size={26} stroke={1.6} color="#5b6163" />
         </span>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -244,7 +248,7 @@ export function FaqRow({
 export function OfferCardSkeleton() {
   return (
     <article aria-hidden="true" style={{ background: "var(--nk-surface)", borderRadius: 24, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-      <div className="nk-skel" style={{ height: 330, borderRadius: "24px 24px 0 0" }} />
+      <div className="nk-skel" style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }} />
       <div style={{ padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: 12 }}>
         <div className="nk-skel" style={{ width: "70%", height: 26 }} />
         <div className="nk-skel" style={{ width: "48%", height: 18 }} />

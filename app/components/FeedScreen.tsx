@@ -2,17 +2,18 @@
 // Reusable listings feed — powers search (?q=) and category (?cat=) browsing.
 // Search / filter / sort are functional on the web; only transactional actions
 // (favorite/reserve/contact) are locked to the app.
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
-import { Icon, Breadcrumb, FilterSelect, Toggle, openRedirect, type SelectOption } from "./ui";
+import { Icon, Breadcrumb, FilterSelect, InputClear, Toggle, openRedirect, type SelectOption } from "./ui";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { useCategories } from "@/app/lib/categories";
 import { useListings, parseSortKey } from "@/app/lib/listings";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
+import { rememberFeedUrl } from "@/app/lib/search";
 import { LT_CITIES } from "@/app/lib/cities";
 import { useI18n } from "./I18nProvider";
 
@@ -32,6 +33,8 @@ export function FeedScreen() {
     delivery: sp.get("delivery") === "1",
   };
 
+  const filterBarRef = useRef<HTMLDivElement>(null);
+
   function setParams(patch: Record<string, string | boolean>, replace = false) {
     const next = new URLSearchParams(Array.from(sp.entries()));
     for (const [k, v] of Object.entries(patch)) {
@@ -41,8 +44,22 @@ export function FeedScreen() {
     }
     const qs = next.toString();
     const url = qs ? `${pathname}?${qs}` : pathname;
-    if (replace) window.history.replaceState(null, "", url);
-    else window.history.pushState(null, "", url);
+    if (replace) {
+      // replace = debounced typing into the search input — don't scroll under
+      // the user's cursor on every keystroke.
+      window.history.replaceState(null, "", url);
+      return;
+    }
+    window.history.pushState(null, "", url);
+    // Explicit filter change: if the user has scrolled past the (sticky)
+    // filter bar, bring the new result set into view — otherwise they're left
+    // staring at stale cards below the fold. scroll-margin-top on
+    // .nk-filterbar clears the nav.
+    const bar = filterBarRef.current;
+    if (bar && bar.getBoundingClientRect().top <= 100) {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      bar.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    }
   }
 
   // Search input: local state, debounced into the URL (replace, no history spam).
@@ -59,6 +76,11 @@ export function FeedScreen() {
     if (debounced !== params.q) setParams({ q: debounced }, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounced]);
+
+  // Remember the feed URL (incl. filters) so detail → search returns here intact.
+  useEffect(() => {
+    rememberFeedUrl(window.location.pathname + window.location.search);
+  }, [sp]);
 
   const cats = useCategories(locale).data ?? [];
   const { data, isLoading, isError, refetch } = useListings(locale, {
@@ -115,7 +137,8 @@ export function FeedScreen() {
         onAction={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}
         secondaryLabel={empty.categoryActionSecondary} onSecondaryAction={() => router.push("/kategorijos")} />;
     }
-    return <EmptyState illustration="filter" title={empty.filterTitle} subtitle={empty.filterBody}
+    return <EmptyState illustration="filter"
+      title={params.city ? empty.filterTitleCity(params.city) : empty.filterTitle} subtitle={empty.filterBody}
       actionLabel={empty.filterAction} onAction={reset} />;
   };
 
@@ -123,7 +146,7 @@ export function FeedScreen() {
     <Chrome>
       <div className="nk-page">
         <Nav onSearch={() => document.getElementById("nk-feed-search-input")?.focus()} />
-        <main className="nk-container" style={{ paddingBlock: "32px 40px" }}>
+        <main id="nk-main" className="nk-container" style={{ paddingBlock: "32px 40px" }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={crumbs} />
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
             <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 5vw, 52px)", lineHeight: 1.05, letterSpacing: "-0.01em", color: "var(--nk-text)" }}>{heading}</h1>
@@ -131,14 +154,14 @@ export function FeedScreen() {
           </div>
 
           {/* sticky filter bar */}
-          <div className="nk-filterbar">
+          <div ref={filterBarRef} className="nk-filterbar">
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 <span className="nk-searchfield" style={{ flex: "1 1 320px", minWidth: 240, padding: "13px 20px" }}>
                   <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
                   <input id="nk-feed-search-input" value={qInput} onChange={(e) => setQInput(e.target.value)} placeholder={t.searchPlaceholder}
                     style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text)" }} />
-                  {qInput && <button onClick={() => setQInput("")} aria-label={t.clear} style={{ display: "flex", padding: 2 }}><Icon name="X" size={17} color="var(--nk-text-muted)" /></button>}
+                  {qInput && <InputClear onClick={() => setQInput("")} label={t.clear} />}
                 </span>
                 <FilterSelect icon="ArrowUpDown" label={t.sortLabel} value={params.sort} defaultValue="recommended" options={sortOptions} onChange={(v) => setParams({ sort: v })} align="right" />
               </div>

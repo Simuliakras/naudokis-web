@@ -42,63 +42,65 @@ export function PolicyHub({ locale }: { locale: Locale }) {
       <div className="nk-lg-root" data-layout="a">
         <LegalTopBar locale={locale} hubHref={hubHref} langHrefs={langHrefs} t={t} />
 
-        <section className="nk-lg-hub-hero">
-          <p className="nk-lg-eyebrow">{t.hubEyebrow}</p>
-          <h1>{t.hubTitle}</h1>
-          <p>{t.hubIntro}</p>
-          <div className="nk-lg-meta nk-lg-hub-meta">
-            <span className="nk-lg-chip"><Icon name="book" size={14} /><b>{count}</b>&nbsp;{t.docsWord}</span>
-            <span className="nk-lg-chip"><Icon name="calendar" size={14} />{t.updated}&nbsp;<b>{fmtDate(manifest.updated, locale)}</b></span>
-            <Link className="nk-lg-chip" href={legalHref("policy-center", locale)} style={{ color: "var(--nk-purple-light)" }}>
-              <Icon name="layers" size={14} />{t.fullHierarchy}<Icon name="arrowRight" size={13} />
-            </Link>
-          </div>
-        </section>
-
-        <div className="nk-lg-hub-feat">
-          {featured.map((d) => (
-            <Link key={d.id} className="nk-lg-featcard" href={docHref(d, locale)}>
-              <span className="nk-lg-featcard__k">{t.featured}</span>
-              <h3 className="nk-lg-featcard__t">{d.label[locale]}</h3>
-              <p className="nk-lg-featcard__d">{truncate(localizedBlurb(d, locale), 180)}</p>
-              <span className="nk-lg-featcard__go">{t.read} <Icon name="arrowRight" size={16} /></span>
-            </Link>
-          ))}
-        </div>
-
-        {groups.map((g) => (
-          <section key={g.id} className="nk-lg-hub-section">
-            <div className="nk-lg-hub-section__h">
-              <h2>{g.label[locale]}</h2>
-              <span>{docsInGroup(g.id).length} {t.docsWord}</span>
+        <main id="nk-main">
+          <section className="nk-lg-hub-hero">
+            <p className="nk-lg-eyebrow">{t.hubEyebrow}</p>
+            <h1>{t.hubTitle}</h1>
+            <p>{t.hubIntro}</p>
+            <div className="nk-lg-meta nk-lg-hub-meta">
+              <span className="nk-lg-chip"><Icon name="book" size={14} /><b>{count}</b>&nbsp;{t.docsWord}</span>
+              <span className="nk-lg-chip"><Icon name="calendar" size={14} />{t.updated}&nbsp;<b>{fmtDate(manifest.updated, locale)}</b></span>
+              <Link className="nk-lg-chip" href={legalHref("policy-center", locale)} style={{ color: "var(--nk-purple-light)" }}>
+                <Icon name="layers" size={14} />{t.fullHierarchy}<Icon name="arrowRight" size={13} />
+              </Link>
             </div>
+          </section>
+
+          <div className="nk-lg-hub-feat">
+            {featured.map((d) => (
+              <Link key={d.id} className="nk-lg-featcard" href={docHref(d, locale)}>
+                <span className="nk-lg-featcard__k">{t.featured}</span>
+                <h3 className="nk-lg-featcard__t">{d.label[locale]}</h3>
+                <p className="nk-lg-featcard__d">{truncate(localizedBlurb(d, locale), 180)}</p>
+                <span className="nk-lg-featcard__go">{t.read} <Icon name="arrowRight" size={16} /></span>
+              </Link>
+            ))}
+          </div>
+
+          {groups.map((g) => (
+            <section key={g.id} className="nk-lg-hub-section">
+              <div className="nk-lg-hub-section__h">
+                <h2>{g.label[locale]}</h2>
+                <span>{docsInGroup(g.id).length} {t.docsWord}</span>
+              </div>
+              <div className="nk-lg-cardgrid">
+                {docsInGroup(g.id).map((d) => (
+                  <Link key={d.id} className="nk-lg-doccard" href={docHref(d, locale)}>
+                    <span className="nk-lg-doccard__t">{d.label[locale]}<Icon name="arrowRight" size={16} /></span>
+                    <p className="nk-lg-doccard__d">{truncate(localizedBlurb(d, locale), 130)}</p>
+                    {!d.hasEn && locale === "en" && <span className="nk-lg-doccard__lt">{t.ltOnlyBadge}</span>}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ))}
+
+          <section className="nk-lg-hub-section">
+            <div className="nk-lg-hub-section__h"><h2>{t.contacts}</h2></div>
             <div className="nk-lg-cardgrid">
-              {docsInGroup(g.id).map((d) => (
-                <Link key={d.id} className="nk-lg-doccard" href={docHref(d, locale)}>
-                  <span className="nk-lg-doccard__t">{d.label[locale]}<Icon name="arrowRight" size={16} /></span>
-                  <p className="nk-lg-doccard__d">{truncate(localizedBlurb(d, locale), 130)}</p>
-                  {!d.hasEn && locale === "en" && <span className="nk-lg-doccard__lt">{t.ltOnlyBadge}</span>}
-                </Link>
+              {contactRows.map((r, i) => (
+                <div key={i} className="nk-lg-doccard nk-lg-doccard--static">
+                  <span className="nk-lg-doccard__t">{r[0]}</span>
+                  <p className="nk-lg-doccard__d">
+                    {r[1]
+                      ? <a href={"mailto:" + r[1]}>{r[1]}</a>
+                      : <span>{t.appOrEmail} <a href={"mailto:" + CONTACT_EMAIL}>{CONTACT_EMAIL}</a></span>}
+                  </p>
+                </div>
               ))}
             </div>
           </section>
-        ))}
-
-        <section className="nk-lg-hub-section">
-          <div className="nk-lg-hub-section__h"><h2>{t.contacts}</h2></div>
-          <div className="nk-lg-cardgrid">
-            {contactRows.map((r, i) => (
-              <div key={i} className="nk-lg-doccard nk-lg-doccard--static">
-                <span className="nk-lg-doccard__t">{r[0]}</span>
-                <p className="nk-lg-doccard__d">
-                  {r[1]
-                    ? <a href={"mailto:" + r[1]}>{r[1]}</a>
-                    : <span>{t.appOrEmail} <a href={"mailto:" + CONTACT_EMAIL}>{CONTACT_EMAIL}</a></span>}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
+        </main>
 
         <div className="nk-lg-hub-footwrap">
           <LegalFooter locale={locale} hubHref={hubHref} t={t} />

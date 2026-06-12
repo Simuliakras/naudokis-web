@@ -72,7 +72,7 @@
   --nk-light-text:    #000000;
   --nk-light-meta:    #6A6A6A;   /* meta text                                */
   --nk-light-meta-2:  #757575;
-  --nk-light-line:    #A3A2A2;   /* outlined button / input border           */
+  --nk-light-line:    #8C8C8C;   /* outlined button / input border (≥3:1 on white) */
   --nk-light-btn:     #F1F1F1;   /* secondary button fill                    */
   --nk-light-btn-2:   #E4E4E4;   /* reserve button fill                      */
   --nk-chip:          #E2E2E2;   /* filter chip fill                         */
@@ -106,6 +106,12 @@
   --nk-r-pill-lg: 34px;   /* hero search bar                                 */
   --nk-r-faq:     46px;   /* FAQ accordion row                               */
   --nk-r-icon:    22px;   /* round icon button (44px circle)                 */
+
+  /* ---- Fixed element sizes ----------------------------------------------- */
+  --nk-tap: 44px;           /* minimum interactive target (WCAG 2.5.8)              */
+  --nk-size-icon-sm: 44px;  /* small icon/avatar container                          */
+  --nk-size-icon-md: 60px;  /* testimonial avatars, medium icon tiles               */
+  --nk-size-icon-lg: 72px;  /* feature-card icon tiles                              */
 
   /* ---- Elevation -------------------------------------------------------- */
   --nk-shadow-hero:   10px 15px 42px 0 rgba(22,22,22,0.50);  /* hero device  */
@@ -166,6 +172,7 @@
   font-family: var(--nk-font-body);
   font-weight: 400; font-size: 20px; line-height: 32px; color: var(--nk-text-2);
 }
+.nk-prose { max-width: 65ch }       /* line-length cap for long-form copy    */
 .nk-body-sm {                       /* small body / chip text                */
   font-family: var(--nk-font-body);
   font-weight: 400; font-size: 18px; line-height: 24px; color: var(--nk-text-2);
@@ -223,8 +230,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .nk-btn--outline{background:transparent;border:1px solid var(--nk-purple);color:var(--nk-text)}
 .nk-btn--outline:hover{background:var(--nk-purple-soft)}
 .nk-btn--ghost{background:var(--nk-input-bg);border:1px solid var(--nk-border);color:var(--nk-text);
-  font-weight:500;font-size:18px;letter-spacing:.04em;padding:10px 20px;border-radius:20px;backdrop-filter:blur(8px)}
+  font-weight:500;font-size:18px;letter-spacing:.04em;padding:12px 20px;min-height:var(--nk-tap);border-radius:20px;backdrop-filter:blur(8px)}
 .nk-btn--ghost:hover{background:rgba(255,255,255,.08);border-color:var(--nk-border-strong)}
+.nk-btn--sm{padding:12px 20px;font-size:15px;min-height:var(--nk-tap)}
 
 /* round arrow button */
 .nk-round{width:44px;height:44px;border-radius:var(--nk-r-icon);display:inline-flex;align-items:center;justify-content:center;
@@ -261,13 +269,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .nk-imgph{position:relative;background:var(--nk-ps-card);overflow:hidden;display:flex;align-items:center;justify-content:center}
 .nk-imgph .nk-imgicon{opacity:.28;color:var(--nk-ps-icon)}
 .nk-dots{display:flex;align-items:center;gap:8px}
-/* button dots carry their own 12px hit padding, so drop the visual gap */
+/* button dots carry their own 18px hit padding, so drop the visual gap */
 .nk-dots:has(.nk-dot--btn){gap:0}
 .nk-dot{width:8px;height:8px;border-radius:50%;background:rgba(249,249,249,.55)}
 .nk-dot--on{background:var(--nk-text);width:9px;height:9px}
-/* keep the 8px visual dot but pad the button to a ~32px hit area
+/* keep the 8px visual dot but pad the button to a 44px hit area
    (background-clip keeps only the content box painted) */
-.nk-dot--btn{box-sizing:content-box;padding:12px;background-clip:content-box;border:none;cursor:pointer;
+.nk-dot--btn{box-sizing:content-box;padding:18px;background-clip:content-box;border:none;cursor:pointer;
   appearance:none;-webkit-appearance:none;transition:transform .18s ease,background .18s ease}
 @media(hover:hover) and (pointer:fine){.nk-dot--btn:hover{transform:scale(1.3);background-color:var(--nk-text)}}
 
@@ -294,6 +302,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ---- accessibility focus ring ---- */
 a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-visible{
   outline:2px solid var(--nk-purple);outline-offset:3px;border-radius:6px}
+
+/* ---- skip-to-content link (visually hidden until keyboard-focused) ---- */
+.nk-skip{position:fixed;top:14px;left:14px;z-index:300;padding:13px 22px;border-radius:999px;
+  background:var(--nk-purple);color:var(--nk-text);font-family:var(--nk-font-display);font-weight:600;font-size:15px;
+  text-decoration:none;transform:translateY(calc(-100% - 20px));transition:transform .15s ease}
+.nk-skip:focus-visible{transform:none}
 
 /* ---- sticky translucent nav — melts at top, condenses on scroll ---- */
 .nk-nav-bar{position:sticky;top:0;z-index:50;
@@ -345,7 +359,7 @@ footer .nk-link:hover{color:var(--nk-purple)}
   transition:border-color .15s ease,box-shadow .15s ease}
 .nk-navsearch:focus-within{border-color:var(--nk-purple);box-shadow:0 4px 18px rgba(102,101,224,.22)}
 .nk-navsearch input{flex:1;min-width:0;border:none;outline:none;background:transparent;
-  font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text)}
+  font-family:var(--nk-font-body);font-size:16px;color:var(--nk-text)}
 .nk-navsearch input::placeholder{color:var(--nk-text-muted)}
 .nk-navsearch__div{width:1px;height:24px;background:var(--nk-border);flex:none}
 .nk-navsearch__go{flex:none;width:40px;height:40px;border-radius:50%;background:var(--nk-purple);
@@ -382,13 +396,13 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .nk-citypick--hero .nk-citypick__opt:hover{background:var(--nk-light-field)}
 .nk-citypick--hero .nk-citypick__opt.is-active{background:var(--nk-purple-soft);color:var(--nk-purple-deep)}
 /* nav (dark) */
-.nk-citypick--nav .nk-citypick__trigger{gap:7px;padding:8px 10px;border-radius:999px;font-size:15px;color:var(--nk-text-muted)}
+.nk-citypick--nav .nk-citypick__trigger{gap:7px;padding:10px;border-radius:999px;font-size:16px;color:var(--nk-text-muted)}
 .nk-citypick--nav .nk-citypick__trigger:hover{background:rgba(255,255,255,.08)}
 .nk-citypick--nav .nk-citypick__val{color:var(--nk-text-muted)}
 .nk-citypick--nav .nk-citypick__val.is-set{color:var(--nk-text)}
 .nk-citypick--nav .nk-citypick__panel{top:calc(100% + 16px);min-width:210px;background:var(--nk-surface);
   border:1px solid var(--nk-border);border-radius:14px;padding:7px;box-shadow:0 20px 50px rgba(0,0,0,.45)}
-.nk-citypick--nav .nk-citypick__opt{padding:10px 12px;border-radius:9px;font-size:15px;color:var(--nk-text)}
+.nk-citypick--nav .nk-citypick__opt{padding:10px 12px;border-radius:9px;font-size:16px;color:var(--nk-text)}
 .nk-citypick--nav .nk-citypick__opt-l{gap:8px}
 .nk-citypick--nav .nk-citypick__opt:hover{background:var(--nk-surface-2)}
 .nk-citypick--nav .nk-citypick__opt.is-active{background:var(--nk-purple-deep);color:var(--nk-text)}
@@ -478,7 +492,7 @@ footer .nk-link:hover{color:var(--nk-purple)}
 .nk-footer .nk-container{position:relative}
 .nk-footer__top{display:grid;grid-template-columns:1.5fr 1.4fr 1fr;gap:48px 64px;padding-block:72px 56px;align-items:start}
 /* category links: one heading, links wrapped column-major into two columns */
-.nk-footer__catgrid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(4,auto);gap:15px 44px;align-content:start}
+.nk-footer__catgrid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(4,auto);gap:var(--nk-s-4) 44px;align-content:start}
 .nk-footer__brand{display:flex;flex-direction:column;gap:22px;max-width:380px}
 .nk-footer__tagline{margin:0;font-family:var(--nk-font-body);font-size:18px;line-height:28px;color:var(--nk-text-muted);max-width:340px}
 .nk-footer__contact{display:flex;flex-direction:column;gap:12px}
@@ -586,6 +600,10 @@ footer .nk-link:hover{color:var(--nk-purple)}
 @media(max-width:680px){.nk-grid-feed{grid-template-columns:1fr}}
 .nk-clear{transition:color .15s ease}
 .nk-clear:hover{color:var(--nk-text)}
+/* clear (×) button inside a padded search field — full 44px hit area; the
+   negative margins absorb the field's own padding so the layout is unchanged */
+.nk-input-clear{display:flex;align-items:center;justify-content:center;flex:none;
+  width:var(--nk-tap);height:var(--nk-tap);margin:-13px -14px -13px 0}
 .nk-tagchip{transition:background .15s ease,border-color .15s ease}
 .nk-tagchip:hover{background:var(--nk-surface-2);border-color:var(--nk-accent-border)}
 
@@ -625,13 +643,13 @@ footer .nk-link:hover{color:var(--nk-purple)}
   border-bottom:1px solid var(--nk-hairline)}
 .nk-subnav__inner{display:flex;align-items:center;gap:4px;height:56px;overflow-x:auto;scrollbar-width:none}
 .nk-subnav__inner::-webkit-scrollbar{display:none}
-.nk-subnav__a{position:relative;flex:none;padding:8px 14px;border-radius:10px;text-decoration:none;
+.nk-subnav__a{position:relative;flex:none;display:inline-flex;align-items:center;min-height:var(--nk-tap);padding:8px 14px;border-radius:10px;text-decoration:none;
   font-family:var(--nk-font-display);font-weight:600;font-size:14.5px;color:var(--nk-text-muted);
   transition:color .15s ease,background .15s ease;white-space:nowrap}
 .nk-subnav__a:hover{color:var(--nk-text);background:rgba(255,255,255,.05)}
 .nk-subnav__a.is-active{color:var(--nk-text)}
 .nk-subnav__a.is-active::after{content:"";position:absolute;left:14px;right:14px;bottom:-9px;height:2px;border-radius:2px;background:var(--nk-purple-hover)}
-.nk-subnav__cta{margin-left:auto;flex:none;padding:9px 18px!important;font-size:14.5px!important}
+.nk-subnav__cta{margin-left:auto;flex:none;padding:9px 18px!important;min-height:var(--nk-tap);font-size:14.5px!important}
 .nk-mbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;
   background:rgba(27,30,31,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--nk-border);
   align-items:center;justify-content:space-between;gap:16px;padding:14px 20px calc(14px + env(safe-area-inset-bottom))}

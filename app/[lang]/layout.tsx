@@ -93,12 +93,14 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   if (!isLocale(lang)) {
     notFound();
   }
+  const dict = getDictionary(lang);
   return (
     <html lang={lang} className={`${archivo.variable} ${sora.variable}`}>
       {/* suppressHydrationWarning: browser extensions (Grammarly, dark-reader, …)
           inject attributes onto <body> before React hydrates; this silences the
           resulting one-level attribute mismatch without hiding it for children. */}
       <body suppressHydrationWarning>
+        <a href="#nk-main" className="nk-skip">{dict.common.skipToContent}</a>
         <Providers>
           <I18nProvider locale={lang}>{children}</I18nProvider>
         </Providers>

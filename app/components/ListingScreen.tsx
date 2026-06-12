@@ -15,6 +15,7 @@ import {
   BookingPanel, HostCard, SafetyBand, MobileBar, detailCrumbs,
 } from "./ListingDetail";
 import { useListing, formatPrice } from "@/app/lib/listings";
+import { lastFeedUrl } from "@/app/lib/search";
 import { MOCK_BOOKING, SAMPLE_RENTAL_DAYS } from "@/app/lib/mock";
 import { useI18n } from "./I18nProvider";
 
@@ -41,8 +42,9 @@ export function ListingScreen({ id }: { id: string }) {
   const shell = (children: React.ReactNode) => (
     <Chrome banner={false}>
       <div className="nk-page">
-        <Nav onSearch={() => router.push("/skelbimai")} />
-        <main className="nk-container" style={{ paddingBlock: "26px 120px" }}>
+        {/* Return to the feed with the user's last filters intact (deep links fall back to the bare feed). */}
+        <Nav onSearch={() => router.push(lastFeedUrl(locale) ?? "/skelbimai")} />
+        <main id="nk-main" className="nk-container" style={{ paddingBlock: "26px 120px" }}>
           <div className="nk-detail">{children}</div>
         </main>
         <Footer locale={locale} />

@@ -45,7 +45,7 @@ export const lt: Dict = {
     errorSubtitle: "Įvyko klaida kraunant kategorijas. Patikrinkite interneto ryšį ir bandykite dar kartą.",
     errorAction: "Bandyti dar kartą",
     emptyTitle: "Kategorijų nerasta",
-    emptySubtitle: (query) => `Pagal „${query}" neradome nė vienos kategorijos. Pabandykite kitą paiešką arba peržiūrėkite visas kategorijas.`,
+    emptySubtitle: (query) => `Pagal „${query}“ neradome nė vienos kategorijos. Pabandykite kitą paiešką arba peržiūrėkite visas kategorijas.`,
     emptyAction: "Rodyti visas kategorijas",
     bandEmptyTitle: "Kategorijų kol kas nėra",
     bandEmptyBody: "Netrukus jas papildysime — užsuk kiek vėliau.",
@@ -59,7 +59,7 @@ export const lt: Dict = {
     errorSubtitle: "Įvyko klaida kraunant skelbimus. Patikrinkite interneto ryšį ir bandykite dar kartą.",
     errorAction: "Bandyti dar kartą",
     emptyTitle: "Pagal jūsų paiešką nieko nerasta",
-    emptySubtitle: (query) => `Nepavyko rasti skelbimų pagal „${query}". Pabandykite kitą raktažodį, miestą ar išvalykite paiešką.`,
+    emptySubtitle: (query) => `Nepavyko rasti skelbimų pagal „${query}“. Pabandykite kitą raktažodį, miestą ar išvalykite paiešką.`,
     emptyAction: "Išvalyti paiešką",
     bandEmptyTitle: "Kol kas nėra pasiūlymų",
     bandEmptyBody: "Bendruomenė nuolat įkelia naujų daiktų — užsuk vėliau arba naršyk kategorijas.",
@@ -297,10 +297,12 @@ export const lt: Dict = {
       const word = (dd >= 11 && dd <= 19) || d === 0 ? "atsiliepimų" : d === 1 ? "atsiliepimas" : "atsiliepimai";
       return `${n} ${word}`;
     },
+    newListing: "Naujas",
     sampleCity: "Vilnius",
     samplePrice: "50 €",
     breadcrumbHome: "Pagrindinis",
     breadcrumbLabel: "Naršymo kelias",
+    skipToContent: "Pereiti prie turinio",
   },
   categoriesPage: {
     metaTitle: "Visos kategorijos — Naudokis.lt",
@@ -318,7 +320,7 @@ export const lt: Dict = {
       return `${n} ${word}`;
     },
     emptyTitle: "Kategorijų nerasta",
-    emptySubtitle: (query) => `Pagal „${query}" neradome kategorijų. Pabandykite kitą paiešką.`,
+    emptySubtitle: (query) => `Pagal „${query}“ neradome kategorijų. Pabandykite kitą paiešką.`,
     emptyAction: "Išvalyti",
     seoHeading: "Daiktų nuoma pagal kategorijas",
     seoBody: "Naudokis.lt apima visas populiariausias nuomos kategorijas — nuo transporto priemonių ir įrankių iki foto technikos, buitinės technikos ir laisvalaikio įrangos. Rinkis kategoriją ir atrask patikrintus skelbimus savo mieste už dalį pirkimo kainos.",
@@ -330,7 +332,7 @@ export const lt: Dict = {
     titleAll: "Visi skelbimai",
     titleSearch: "Paieškos rezultatai",
     subtitleAll: "Daiktų nuoma visoje Lietuvoje",
-    subtitleSearch: (q) => `Pagal „${q}" · visa Lietuva`,
+    subtitleSearch: (q) => `Pagal „${q}“ · visa Lietuva`,
     resultCount: (n) => {
       const d = n % 10;
       const dd = n % 100;
@@ -353,10 +355,11 @@ export const lt: Dict = {
     seoHeading: "Daiktų nuoma Lietuvoje",
     seoBody: "Naudokis.lt jungia žmones, norinčius išsinuomoti daiktus, su patikimais savininkais visoje Lietuvoje. Naršyk, ieškok ir filtruok skelbimus pagal kategoriją, miestą ar kainą tiesiog naršyklėje. Rezervaciją ir saugius atsiskaitymus užbaik Naudokis programėlėje.",
     empty: {
-      searchTitle: (q) => `Pagal „${q}" nieko nerasta`,
+      searchTitle: (q) => `Pagal „${q}“ nieko nerasta`,
       searchBody: "Nepavyko rasti skelbimų pagal šią paiešką. Pabandyk kitą raktažodį, miestą arba išvalyk paiešką.",
       searchAction: "Išvalyti paiešką",
       filterTitle: "Pagal pasirinktus filtrus nieko nerasta",
+      filterTitleCity: (city) => `Mieste „${city}“ pagal filtrus nieko nerasta`,
       filterBody: "Filtrai per siauri. Pabandyk platesnį miestą, kitą kategoriją arba išjunk pristatymą.",
       filterAction: "Išvalyti filtrus",
       categoryTitle: "Šioje kategorijoje dar nėra skelbimų",
@@ -378,6 +381,7 @@ export const lt: Dict = {
     defaultBody: "Šis veiksmas kol kas atliekamas Naudokis programėlėje. Atsisiųskite ją ir užbaikite per kelias sekundes.",
     qrHint: "Nuskenuokite kodą telefonu ir tęskite programėlėje.",
     close: "Uždaryti",
+    opensAppHint: "Atsidarys programėlėje",
     reserveTitle: "Rezervuokite programėlėje",
     reserveBody: "Datų pasirinkimas, kainos skaičiavimas ir rezervacija atliekami Naudokis programėlėje. Pinigai užšaldomi saugiai iki nuomos pabaigos.",
     datesTitle: "Pasirinkite datas programėlėje",

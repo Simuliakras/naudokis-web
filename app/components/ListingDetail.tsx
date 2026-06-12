@@ -202,8 +202,8 @@ export function ListingHeader({ listing, saved, onShare, onFav }: {
         </div>
       </div>
       <div style={{ display: "flex", gap: 10, flex: "none" }}>
-        <button className="nk-lfield" style={headerBtn} onClick={onShare}><Icon name="ArrowUpDown" size={17} stroke={2} color="var(--nk-text)" style={{ transform: "rotate(45deg)" }} /> {t.share}</button>
-        <button className="nk-lfield" style={headerBtn} onClick={onFav}><Icon name="Heart" size={17} stroke={2} color={saved ? "var(--nk-orange)" : "var(--nk-text)"} fill={saved ? "var(--nk-orange)" : "none"} /> {t.save}</button>
+        <button className="nk-lfield" style={headerBtn} onClick={onShare} title={dict.bridge.opensAppHint}><Icon name="ArrowUpDown" size={17} stroke={2} color="var(--nk-text)" style={{ transform: "rotate(45deg)" }} /> {t.share}</button>
+        <button className="nk-lfield" style={headerBtn} onClick={onFav} title={dict.bridge.opensAppHint}><Icon name="Heart" size={17} stroke={2} color={saved ? "var(--nk-orange)" : "var(--nk-text)"} fill={saved ? "var(--nk-orange)" : "none"} /> {t.save}</button>
       </div>
     </div>
   );
@@ -248,7 +248,7 @@ export function SubNav({ activeSec, price, onReserve }: { activeSec: string; pri
         {SUBNAV_IDS.map((sid) => (
           <a key={sid} href={"#" + sid} className={"nk-subnav__a" + (activeSec === sid ? " is-active" : "")}>{t.subnav[SUBNAV_LABEL_KEYS[sid]]}</a>
         ))}
-        <button className="nk-subnav__cta nk-btn nk-btn--primary" onClick={onReserve}>{price} {t.perDayShort} · {t.subnavReserve}</button>
+        <button className="nk-subnav__cta nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}>{price} {t.perDayShort} · {t.subnavReserve}</button>
       </div>
     </nav>
   );
@@ -262,7 +262,7 @@ function DescriptionSection({ description }: { description: string }) {
   return (
     <Section id="aprasymas" title={t.descHeading} first>
       <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 720 }}>
-        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxHeight: open ? "none" : 120, overflow: "hidden", maskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)", WebkitMaskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)" }}>{description}</p>
+        <p className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxHeight: open ? "none" : 120, overflow: "hidden", maskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)", WebkitMaskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)" }}>{description}</p>
         {description.length > 180 && (
           <button onClick={() => setOpen((v) => !v)} style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-hover)" }}>
             {open ? t.descLess : t.descMore} <Icon name="ChevronDown" size={16} stroke={2.4} color="var(--nk-purple-hover)" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
@@ -315,7 +315,7 @@ function HandoverSection({ city }: { city: string }) {
         </div>
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 18 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-            <span style={{ width: 42, height: 42, borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="MapPin" size={20} stroke={2} color="var(--nk-purple-hover)" /></span>
+            <span style={{ width: "var(--nk-size-icon-sm)", height: "var(--nk-size-icon-sm)", borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="MapPin" size={20} stroke={2} color="var(--nk-purple-hover)" /></span>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
               <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)" }}>{t.pickupLabel}</span>
               <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{city || "—"}</span>
@@ -323,7 +323,7 @@ function HandoverSection({ city }: { city: string }) {
             <Pill tone="green">{t.pickupFree}</Pill>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-            <span style={{ width: 42, height: 42, borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="Car" size={20} stroke={2} color="var(--nk-purple-hover)" /></span>
+            <span style={{ width: "var(--nk-size-icon-sm)", height: "var(--nk-size-icon-sm)", borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="Car" size={20} stroke={2} color="var(--nk-purple-hover)" /></span>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
               <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)" }}>{t.deliveryLabel}</span>
               <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{t.deliveryByArrangement}</span>
@@ -499,7 +499,9 @@ export function BookingPanel({ listing, deposit, days, subtotal, total, onReserv
           <span style={{ whiteSpace: "nowrap" }}>{t.totalToday}</span><span style={{ whiteSpace: "nowrap" }}>{total}</span>
         </div>
       </div>
-      <button className="nk-btn nk-btn--primary" onClick={onReserve} style={{ width: "100%", padding: 16, fontSize: 17 }}>{t.reserve}</button>
+      <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint} style={{ width: "100%", padding: 16, fontSize: 17 }}>
+        <Icon name="Smartphone" size={17} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
+      </button>
       <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center", padding: "9px 12px", borderRadius: 11, background: "var(--nk-green-tint)" }}>
         <Icon name="RefreshCcw" size={15} color="var(--nk-green)" stroke={2} />
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-green)", fontWeight: 500 }}>{t.freeCancellation}</span>
@@ -550,7 +552,7 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
           </span>
         ))}
       </div>
-      <button className="nk-btn nk-btn--outline" onClick={onContact} style={{ width: "100%", padding: "13px 24px", fontSize: 15.5 }}>
+      <button className="nk-btn nk-btn--outline" onClick={onContact} title={dict.bridge.opensAppHint} style={{ width: "100%", padding: "13px 24px", fontSize: 15.5 }}>
         <Icon name="MessageCircle" size={17} color="var(--nk-text)" stroke={2} /> {t.hostMessage}
       </button>
       <span style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center", fontFamily: "var(--nk-font-body)", fontSize: 12, color: "var(--nk-text-muted)", textAlign: "center" }}>
@@ -595,7 +597,9 @@ export function MobileBar({ price, deposit, onReserve }: { price: string; deposi
         <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, color: "var(--nk-text)" }}>{price} <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 400, fontSize: 15, color: "var(--nk-text-2)" }}>{t.perDayShort}</span></span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>{deposit} {t.depositNoun}</span>
       </span>
-      <button className="nk-btn nk-btn--primary" onClick={onReserve} style={{ padding: "14px 26px", fontSize: 16 }}>{t.reserveMobile}</button>
+      <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint} style={{ padding: "14px 26px", fontSize: 16 }}>
+        <Icon name="Smartphone" size={16} stroke={2.2} color="var(--nk-text)" /> {t.reserveMobile}
+      </button>
     </div>
   );
 }
