@@ -275,9 +275,6 @@ export type Dict = {
     termCancelSub: string;
     depositSafeTitle: string;
     depositSafeBody: string;
-    // safety band
-    safetyHeading: string;
-    safetyItems: { icon: IconName; title: string; body: string }[];
   };
   common: {
     favorite: string; // aria-label on the heart button
@@ -361,6 +358,8 @@ export type Dict = {
     qrHint: string;
     close: string;
     opensAppHint: string; // affordance hint on locked CTAs ("Opens in the app")
+    googlePlayAlt: string; // store-badge image alt / button accessible name
+    appStoreAlt: string;
     reserveTitle: string;
     reserveBody: string;
     datesTitle: string;

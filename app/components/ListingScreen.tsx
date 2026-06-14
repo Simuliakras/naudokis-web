@@ -12,7 +12,7 @@ import { Breadcrumb, openRedirect } from "./ui";
 import { EmptyState } from "./cards";
 import {
   SUBNAV_IDS, ListingSkeleton, ListingHeader, Gallery, SubNav, DetailBody,
-  BookingPanel, HostCard, SafetyBand, MobileBar, detailCrumbs,
+  BookingPanel, HostCard, MobileBar, detailCrumbs,
 } from "./ListingDetail";
 import { useListing, formatPrice } from "@/app/lib/listings";
 import { lastFeedUrl } from "@/app/lib/search";
@@ -90,8 +90,6 @@ export function ListingScreen({ id }: { id: string }) {
             <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />
           </aside>
         </div>
-
-        <SafetyBand />
       </div>
 
       <MobileBar price={listing.price} deposit={deposit} onReserve={reserve} />

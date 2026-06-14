@@ -10,6 +10,7 @@ import {
   OfferCard, CategoryCard, FaqRow, OfferCardSkeleton, CategoryCardSkeleton, EmptyState, SectionEmpty,
 } from "./cards";
 import { useCategories } from "@/app/lib/categories";
+import { categoryIconFor } from "@/app/lib/category-style";
 import { useListings } from "@/app/lib/listings";
 import { LT_CITIES } from "@/app/lib/cities";
 import { listingSearchHref } from "@/app/lib/search";
@@ -354,8 +355,8 @@ export function Categories() {
   const list = (data ?? []).slice(0, 8);
   return (
     <section id="kategorijos" className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
-      <SectionHead eyebrow={t.eyebrow} title={t.title}
-        action={<Link className="nk-cats-all" href="/kategorijos">{t.all} <Icon name="ArrowRight" size={24} stroke={2.4} color="var(--nk-purple)" /></Link>} />
+      <SectionHead eyebrow={t.eyebrow} title={t.title} quiet
+        action={<Link className="nk-cats-all" href="/kategorijos">{t.all} <Icon name="ArrowRight" size={24} stroke={2.4} color="currentColor" /></Link>} />
       {isLoading ? (
         <div className="nk-grid-cats">
           {Array.from({ length: 8 }).map((_, i) => <CategoryCardSkeleton key={i} />)}
@@ -367,7 +368,7 @@ export function Categories() {
           actionLabel={t.errorAction} onAction={() => refetch()} />
       ) : list.length ? (
         <div className="nk-grid-cats nk-reveal">
-          {list.map((c) => <CategoryCard key={c.id} title={c.title} count={dict.categoriesPage.tileCount(mockCategoryCount(c.id))} href={listingSearchHref({ cat: c.id })} />)}
+          {list.map((c) => <CategoryCard key={c.id} id={c.id} icon={c.icon} title={c.title} count={dict.categoriesPage.tileCount(mockCategoryCount(c.id))} href={listingSearchHref({ cat: c.id })} />)}
         </div>
       ) : (
         <SectionEmpty icon="LayoutGrid" title={t.bandEmptyTitle} subtitle={t.bandEmptyBody}
@@ -383,11 +384,14 @@ export function Offers() {
   const router = useRouter();
   const t = dict.offers;
   const { data, isLoading, isError, refetch } = useListings(locale);
+  // Already prefetched/cached for the Categories band — only read for the
+  // empty-photo placeholder glyphs.
+  const cats = useCategories(locale).data ?? [];
   const list = (data ?? []).slice(0, 4);
   return (
     <section id="skelbimai" className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
-      <SectionHead eyebrow={t.eyebrow} title={t.title}
-        action={<Link className="nk-cats-all" href="/skelbimai">{t.all} <Icon name="ArrowRight" size={24} stroke={2.4} color="var(--nk-purple)" /></Link>} />
+      <SectionHead eyebrow={t.eyebrow} title={t.title} quiet
+        action={<Link className="nk-cats-all" href="/skelbimai">{t.all} <Icon name="ArrowRight" size={24} stroke={2.4} color="currentColor" /></Link>} />
       {isLoading ? (
         <div className="nk-grid-4">
           {Array.from({ length: 4 }).map((_, i) => <OfferCardSkeleton key={i} />)}
@@ -404,6 +408,8 @@ export function Offers() {
               unit={dict.common.perDay}
               rating={o.rating}
               count={o.ratingCount > 0 ? dict.common.reviewCount(o.ratingCount) : undefined}
+              category={o.category}
+              categoryIcon={categoryIconFor(cats, o.category)}
               href={`/skelbimai/${o.id}`} />
           ))}
         </div>

@@ -9,7 +9,7 @@ import { useI18n } from "./I18nProvider";
    Final design: price hierarchy + hairline divider, locked favorite (opens the
    app modal), and a stretched <Link> covering the card for real navigation. */
 export function OfferCard({
-  title = "Dodge RAM 2016", city, price, unit, rating, count, img, href,
+  title = "Dodge RAM 2016", city, price, unit, rating, count, img, href, category, categoryIcon = "Tag",
 }: {
   title?: string;
   city?: string;
@@ -19,6 +19,8 @@ export function OfferCard({
   count?: string;
   img?: string;
   href?: string;
+  category?: string; // top-level category id — tints the empty-photo placeholder
+  categoryIcon?: IconName; // glyph for the empty-photo placeholder (from Category.icon)
 }) {
   const { dict } = useI18n();
   const c = dict.common;
@@ -30,7 +32,8 @@ export function OfferCard({
   return (
     <article className="nk-offer" style={{ position: "relative", background: "var(--nk-surface)", borderRadius: 24, overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
       {href && <Link href={href} className="nk-stretch" aria-label={title} />}
-      <div className="nk-offer__media nk-imgph" style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }}>
+      <div className={"nk-offer__media nk-imgph" + (img ? "" : " nk-offer__media--empty")}
+        data-cat={img ? undefined : category} style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }}>
         {img && (
           <Image src={img} alt={title} fill className="nk-zoom"
             sizes="(max-width: 760px) 92vw, (max-width: 1100px) 46vw, 416px"
@@ -40,7 +43,7 @@ export function OfferCard({
           aria-label={`${c.favorite} (${dict.bridge.opensAppHint})`}>
           <Icon name="Heart" size={22} color="var(--nk-text)" fill="none" stroke={2} />
         </button>
-        {!img && <Icon name="Image" size={64} stroke={1.5} className="nk-imgicon" />}
+        {!img && <Icon name={categoryIcon} size={56} stroke={1.5} className="nk-imgicon" />}
         <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center", zIndex: 2, pointerEvents: "none" }}>
           <span style={{ background: "rgba(40,44,45,.6)", borderRadius: 23, padding: "8px 14px", backdropFilter: "blur(4px)" }}>
             <Dots n={4} active={0} />
@@ -48,29 +51,29 @@ export function OfferCard({
         </div>
       </div>
       <div style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: 10 }}>
-        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
+        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
         {/* meta row: rating + count on the left, location pin + city on the right */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
           {rating ? (
-            <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 18, color: "var(--nk-text-2)" }}>{rating}</b>
-                <Icon name="Star" size={18} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
+                <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 16, color: "var(--nk-text-2)" }}>{rating}</b>
+                <Icon name="Star" size={16} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
               </span>
-              {count && <span className="nk-meta" style={{ color: "var(--nk-text-muted)" }}>({count})</span>}
+              {count && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>({count})</span>}
             </span>
           ) : (
             // No reviews yet — surface that as a "New" trust signal instead of a gap.
             <Pill tone="yellow" icon="Sparkles">{c.newListing}</Pill>
           )}
-          <span style={{ display: "flex", alignItems: "center", gap: 5, fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 18, color: "var(--nk-text-2)" }}>
-            <Icon name="MapPin" size={18} color="var(--nk-text)" fill="var(--nk-text)" stroke={2} /> {city ?? c.sampleCity}
+          <span style={{ display: "flex", alignItems: "center", gap: 5, fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 16, color: "var(--nk-text-2)" }}>
+            <Icon name="MapPin" size={16} color="var(--nk-text)" fill="var(--nk-text)" stroke={2} /> {city ?? c.sampleCity}
           </span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto", paddingTop: 16, borderTop: "1px solid var(--nk-border)" }}>
           <span style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-            <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price ?? c.samplePrice}</span>
-            <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
+            <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price ?? c.samplePrice}</span>
+            <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
           </span>
           <span className="nk-round nk-round--solid" aria-hidden="true">
             <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
@@ -83,17 +86,19 @@ export function OfferCard({
 
 /* ---------------- Category tile (all-categories page) ---------------- */
 export function CategoryTile({
-  title, count, href,
+  title, count, href, id, icon,
 }: {
   title: string;
   count: string;
   href: string;
+  id: string; // top-level category id — selects the accent hue
+  icon: IconName; // glyph resolved from the wire's icon_name (Category.icon)
 }) {
   return (
-    <div className="nk-cat">
+    <div className="nk-cat" data-cat={id}>
       <Link href={href} className="nk-stretch" aria-label={title} />
       <div className="nk-cat__img">
-        <Icon name="Image" size={52} stroke={1.5} className="nk-imgicon" />
+        <span className="nk-cat__disk"><Icon name={icon} size={30} stroke={1.8} /></span>
       </div>
       <div className="nk-cat__overlay" />
       <div className="nk-cat__content">
@@ -111,17 +116,19 @@ export function CategoryTile({
 
 /* ---------------- Category card ---------------- */
 export function CategoryCard({
-  title, count, href,
+  title, count, href, id, icon,
 }: {
   title: string;
   count?: string;
   href: string;
+  id: string; // top-level category id — selects the accent hue
+  icon: IconName; // glyph resolved from the wire's icon_name (Category.icon)
 }) {
   return (
-    <div className="nk-cat">
+    <div className="nk-cat" data-cat={id}>
       <Link href={href} className="nk-stretch" aria-label={title} />
       <div className="nk-cat__img">
-        <Icon name="Image" size={52} stroke={1.5} className="nk-imgicon" />
+        <span className="nk-cat__disk"><Icon name={icon} size={30} stroke={1.8} /></span>
       </div>
       <div className="nk-cat__overlay" />
       <div className="nk-cat__content">
@@ -142,7 +149,7 @@ export function InterruptionBanner() {
   const { dict } = useI18n();
   const t = dict.feed;
   return (
-    <div className="nk-interrupt" style={{ gridColumn: "1 / -1" }}>
+    <div className="nk-interrupt nk-grain" style={{ gridColumn: "1 / -1" }}>
       <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/naudokis/logo-mark.svg" alt="" loading="lazy" style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
@@ -192,10 +199,10 @@ export function Testimonial({
   avatarTint: string;
 }) {
   return (
-    <div style={{ flex: 1, background: "var(--nk-surface)", borderRadius: 16, padding: "var(--nk-block-pad)", border: "1px solid var(--nk-hairline)" }}>
+    <div className="nk-quote" style={{ flex: 1, borderRadius: "var(--nk-r-md)", padding: "var(--nk-block-pad)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 40 }}>
         <span className="nk-imgph" style={{ width: "var(--nk-size-icon-md)", height: "var(--nk-size-icon-md)", borderRadius: "50%", background: avatarTint }}>
-          <Icon name="User" size={26} stroke={1.6} color="#5b6163" />
+          <Icon name="User" size={26} stroke={1.6} color="var(--nk-avatar-icon)" />
         </span>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <span className="nk-h-row">{name}</span>
@@ -231,7 +238,7 @@ export function FaqRow({
           <span className="nk-h-row">{q}</span>
           <span style={{ width: 44, height: 44, borderRadius: 22, flex: "none", display: "flex", alignItems: "center", justifyContent: "center",
             transition: "transform .2s ease", transform: open ? "rotate(180deg)" : "none" }}>
-            <Icon name="ChevronDown" size={22} color={open ? "var(--nk-purple)" : "var(--nk-text)"} stroke={2.2} />
+            <Icon name="ChevronDown" size={22} color={open ? "var(--nk-purple-hover)" : "var(--nk-text)"} stroke={2.2} />
           </span>
         </button>
       </h3>

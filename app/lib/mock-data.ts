@@ -5,22 +5,23 @@
 // pages line up with the design screenshots. Do NOT present as authoritative.
 // ============================================================================
 
-export type MockCategory = { id: string; name_lt: string; name_en: string };
+export type MockCategory = { id: string; name_lt: string; name_en: string; icon_name: string };
 
-// Order matches the design's all-categories grid (categories.jsx ALL_CATEGORIES).
+// Mirrors the backend's top-level taxonomy (GET /listings/categories): same ids,
+// names and icon_name values, in display_order — so mock and live render alike.
 export const MOCK_CATEGORIES: MockCategory[] = [
-  { id: "transporto-priemones", name_lt: "Transporto priemonės", name_en: "Vehicles" },
-  { id: "foto-vaizdo-technika", name_lt: "Foto ir vaizdo technika", name_en: "Photo & video gear" },
-  { id: "irankiai-statyba", name_lt: "Įrankiai ir statyba", name_en: "Tools & construction" },
-  { id: "laisvalaikis-sportas", name_lt: "Laisvalaikis ir sportas", name_en: "Leisure & sports" },
-  { id: "buitine-technika", name_lt: "Buitinė technika", name_en: "Home appliances" },
-  { id: "renginiai-sventes", name_lt: "Renginiai ir šventės", name_en: "Events & parties" },
-  { id: "elektronika", name_lt: "Elektronika", name_en: "Electronics" },
-  { id: "drabuziai-aksesuarai", name_lt: "Drabužiai ir aksesuarai", name_en: "Clothing & accessories" },
-  { id: "vaikams", name_lt: "Vaikams", name_en: "For kids" },
-  { id: "muzikos-instrumentai", name_lt: "Muzikos instrumentai", name_en: "Musical instruments" },
-  { id: "sodas-kiemas", name_lt: "Sodas ir kiemas", name_en: "Garden & yard" },
-  { id: "kita", name_lt: "Kita", name_en: "Other" },
+  { id: "tools_construction", name_lt: "Įrankiai ir statyba", name_en: "Tools & Construction", icon_name: "wrench" },
+  { id: "home_garden", name_lt: "Namai ir sodas", name_en: "Home & Garden", icon_name: "home" },
+  { id: "transport", name_lt: "Transportas", name_en: "Transport", icon_name: "car" },
+  { id: "photo_video", name_lt: "Fotografija ir video", name_en: "Photo & Video", icon_name: "camera" },
+  { id: "audio_music_events", name_lt: "Garsas, muzika ir renginių technika", name_en: "Audio, Music & Event Tech", icon_name: "speaker" },
+  { id: "electronics_tech", name_lt: "Elektronika ir technologijos", name_en: "Electronics & Tech", icon_name: "laptop" },
+  { id: "sports_leisure", name_lt: "Sportas ir laisvalaikis", name_en: "Sports & Leisure", icon_name: "dumbbell" },
+  { id: "events_parties", name_lt: "Renginiai ir šventės", name_en: "Events & Parties", icon_name: "party-popper" },
+  { id: "clothing_accessories", name_lt: "Drabužiai ir aksesuarai", name_en: "Clothing & Accessories", icon_name: "shirt" },
+  { id: "kids", name_lt: "Vaikams", name_en: "Kids", icon_name: "baby" },
+  { id: "health_medical", name_lt: "Sveikata ir medicininė įranga", name_en: "Health & Medical Equipment", icon_name: "heart-pulse" },
+  { id: "other", name_lt: "Kita", name_en: "Other", icon_name: "more-horizontal" },
 ];
 
 export type MockListing = {
@@ -37,15 +38,15 @@ export type MockListing = {
 
 // First four match the home "Geriausi pasiūlymai" row (sections.jsx OFFERS).
 export const MOCK_LISTINGS: MockListing[] = [
-  { id: "dodge-ram-2016", title_lt: "Dodge RAM 2016", title_en: "Dodge RAM 2016", city: "Vilnius", price_per_day_cents: 5000, rating_average: 4.8, rating_count: 52, category: "transporto-priemones", hasDelivery: false },
-  { id: "sony-a7-iii", title_lt: "Sony A7 III", title_en: "Sony A7 III", city: "Kaunas", price_per_day_cents: 2500, rating_average: 4.9, rating_count: 38, category: "foto-vaizdo-technika", hasDelivery: true },
-  { id: "bosch-perforatorius", title_lt: "Bosch perforatorius", title_en: "Bosch rotary hammer", city: "Klaipėda", price_per_day_cents: 1200, rating_average: 4.7, rating_count: 21, category: "irankiai-statyba", hasDelivery: true },
-  { id: "sup-irklente", title_lt: "SUP irklentė", title_en: "SUP paddleboard", city: "Palanga", price_per_day_cents: 1800, rating_average: 5.0, rating_count: 64, category: "laisvalaikis-sportas", hasDelivery: false },
-  { id: "dji-mavic-3", title_lt: "DJI Mavic 3 dronas", title_en: "DJI Mavic 3 drone", city: "Vilnius", price_per_day_cents: 3500, rating_average: 4.9, rating_count: 27, category: "foto-vaizdo-technika", hasDelivery: true },
-  { id: "karcher-plovykla", title_lt: "Kärcher aukšto slėgio plovykla", title_en: "Kärcher pressure washer", city: "Kaunas", price_per_day_cents: 1500, rating_average: 4.6, rating_count: 19, category: "irankiai-statyba", hasDelivery: true },
-  { id: "stalo-tenisas", title_lt: "Stalo teniso stalas", title_en: "Table tennis table", city: "Šiauliai", price_per_day_cents: 1000, rating_average: 4.8, rating_count: 12, category: "laisvalaikis-sportas", hasDelivery: false },
-  { id: "epson-projektorius", title_lt: "Projektorius Epson", title_en: "Epson projector", city: "Vilnius", price_per_day_cents: 2000, rating_average: 4.7, rating_count: 33, category: "elektronika", hasDelivery: true },
-  { id: "iskylos-palapine", title_lt: "Iškylos palapinė 4 vietų", title_en: "4-person camping tent", city: "Klaipėda", price_per_day_cents: 800, rating_average: 4.9, rating_count: 41, category: "laisvalaikis-sportas", hasDelivery: false },
+  { id: "dodge-ram-2016", title_lt: "Dodge RAM 2016", title_en: "Dodge RAM 2016", city: "Vilnius", price_per_day_cents: 5000, rating_average: 4.8, rating_count: 52, category: "transport", hasDelivery: false },
+  { id: "sony-a7-iii", title_lt: "Sony A7 III", title_en: "Sony A7 III", city: "Kaunas", price_per_day_cents: 2500, rating_average: 4.9, rating_count: 38, category: "photo_video", hasDelivery: true },
+  { id: "bosch-perforatorius", title_lt: "Bosch perforatorius", title_en: "Bosch rotary hammer", city: "Klaipėda", price_per_day_cents: 1200, rating_average: 4.7, rating_count: 21, category: "tools_construction", hasDelivery: true },
+  { id: "sup-irklente", title_lt: "SUP irklentė", title_en: "SUP paddleboard", city: "Palanga", price_per_day_cents: 1800, rating_average: 5.0, rating_count: 64, category: "sports_leisure", hasDelivery: false },
+  { id: "dji-mavic-3", title_lt: "DJI Mavic 3 dronas", title_en: "DJI Mavic 3 drone", city: "Vilnius", price_per_day_cents: 3500, rating_average: 4.9, rating_count: 27, category: "photo_video", hasDelivery: true },
+  { id: "karcher-plovykla", title_lt: "Kärcher aukšto slėgio plovykla", title_en: "Kärcher pressure washer", city: "Kaunas", price_per_day_cents: 1500, rating_average: 4.6, rating_count: 19, category: "tools_construction", hasDelivery: true },
+  { id: "stalo-tenisas", title_lt: "Stalo teniso stalas", title_en: "Table tennis table", city: "Šiauliai", price_per_day_cents: 1000, rating_average: 4.8, rating_count: 12, category: "sports_leisure", hasDelivery: false },
+  { id: "epson-projektorius", title_lt: "Projektorius Epson", title_en: "Epson projector", city: "Vilnius", price_per_day_cents: 2000, rating_average: 4.7, rating_count: 33, category: "electronics_tech", hasDelivery: true },
+  { id: "iskylos-palapine", title_lt: "Iškylos palapinė 4 vietų", title_en: "4-person camping tent", city: "Klaipėda", price_per_day_cents: 800, rating_average: 4.9, rating_count: 41, category: "sports_leisure", hasDelivery: false },
 ];
 
 export type MockAttribute = { id: string; name_lt: string; name_en: string; value_lt: string; value_en: string };

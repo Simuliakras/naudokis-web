@@ -230,8 +230,8 @@ export function Gallery({ images, title, isNew, onMore }: { images: string[]; ti
       <GalleryTile src={tiles[2]} alt={alt(2)} />
       <GalleryTile src={tiles[3]} alt={alt(3)} />
       <GalleryTile src={tiles[4]} alt={alt(4)}>
-        <button onClick={onMore} style={{ position: "absolute", right: 14, bottom: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 16px", borderRadius: 12, background: "var(--nk-overlay)", backdropFilter: "blur(12px)", border: "1px solid var(--nk-border-strong)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 14.5, color: "#fff" }}>
-          <Icon name="LayoutGrid" size={16} color="#fff" stroke={2} /> {extra > 0 ? t.galleryMore(extra) : t.galleryAll(Math.max(images.length, 1))}
+        <button onClick={onMore} style={{ position: "absolute", right: 14, bottom: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 16px", borderRadius: 12, background: "var(--nk-overlay)", backdropFilter: "blur(12px)", border: "1px solid var(--nk-border-strong)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 14.5, color: "var(--nk-text)" }}>
+          <Icon name="LayoutGrid" size={16} color="var(--nk-text)" stroke={2} /> {extra > 0 ? t.galleryMore(extra) : t.galleryAll(Math.max(images.length, 1))}
         </button>
       </GalleryTile>
     </div>
@@ -404,7 +404,7 @@ function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews
           <div key={r.name} style={{ display: "flex", flexDirection: "column", gap: 11, padding: 22, borderRadius: 16, background: "var(--nk-surface)", border: "1px solid var(--nk-border)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
               <span className="nk-imgph" style={{ width: 42, height: 42, borderRadius: 21, flex: "none" }}>
-                <Icon name="User" size={20} stroke={1.6} color="#5b6163" />
+                <Icon name="User" size={20} stroke={1.6} color="var(--nk-avatar-icon)" />
               </span>
               <div style={{ display: "flex", flexDirection: "column", gap: 3, flex: 1, minWidth: 0 }}>
                 <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{r.name}</span>
@@ -470,7 +470,7 @@ export function BookingPanel({ listing, deposit, days, subtotal, total, onReserv
   const { dict } = useI18n();
   const t = dict.detail;
   return (
-    <div style={{ background: "var(--nk-surface)", borderRadius: 22, padding: 24, display: "flex", flexDirection: "column", gap: 18, border: "1px solid var(--nk-border-strong)", boxShadow: "0 24px 60px rgba(0,0,0,.34)" }}>
+    <div style={{ background: "var(--nk-surface)", borderRadius: 22, padding: 24, display: "flex", flexDirection: "column", gap: 18, border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
         <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 33, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.price}</span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{t.perDay}</span>
@@ -531,11 +531,11 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
     [t.hostMemberSince, t.hostStatMember],
   ];
   return (
-    <div style={{ background: "var(--nk-surface)", borderRadius: 22, padding: 22, border: "1px solid var(--nk-border)", display: "flex", flexDirection: "column", gap: 18 }}>
+    <div style={{ background: "var(--nk-surface)", borderRadius: 22, padding: 22, border: "1px solid var(--nk-border)", boxShadow: "var(--nk-edge-top)", display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
         <span className="nk-imgph" style={{ width: 58, height: 58, borderRadius: 29, flex: "none", border: "2px solid var(--nk-green-soft)" }}>
           {owner.avatar && <Image src={owner.avatar} alt={owner.name} fill sizes="58px" style={{ objectFit: "cover" }} />}
-          {!owner.avatar && <Icon name="User" size={26} stroke={1.6} color="#5b6163" />}
+          {!owner.avatar && <Icon name="User" size={26} stroke={1.6} color="var(--nk-avatar-icon)" />}
         </span>
         <div style={{ display: "flex", flexDirection: "column", gap: 7, minWidth: 0 }}>
           <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 19, color: "var(--nk-text)" }}>{owner.name}</span>
@@ -558,31 +558,6 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
       <span style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center", fontFamily: "var(--nk-font-body)", fontSize: 12, color: "var(--nk-text-muted)", textAlign: "center" }}>
         <Icon name="Info" size={14} color="var(--nk-purple-hover)" stroke={2} /> {t.hostVerifiedNote}
       </span>
-    </div>
-  );
-}
-
-/* ---------------- Safety band ---------------- */
-export function SafetyBand() {
-  const { dict } = useI18n();
-  const t = dict.detail;
-  return (
-    <div style={{ marginTop: 44, borderRadius: 22, background: "var(--nk-bg-deep)", border: "1px solid var(--nk-hairline)", padding: "clamp(24px,3vw,36px)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
-        <Icon name="ShieldCheck" size={22} color="var(--nk-green)" stroke={2} />
-        <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 22, color: "var(--nk-text)" }}>{t.safetyHeading}</h2>
-      </div>
-      <div className="nk-safety-grid">
-        {t.safetyItems.map((s) => (
-          <div key={s.title} style={{ display: "flex", flexDirection: "column", gap: 11 }}>
-            <span style={{ width: 44, height: 44, borderRadius: 13, background: "var(--nk-green-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Icon name={s.icon} size={21} color="var(--nk-green)" stroke={2} />
-            </span>
-            <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16.5, color: "var(--nk-text)" }}>{s.title}</span>
-            <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, lineHeight: "21px", color: "var(--nk-text-muted)" }}>{s.body}</span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

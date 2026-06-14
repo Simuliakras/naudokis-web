@@ -25,7 +25,7 @@ export function Hero({ locale }: { locale: Locale }) {
       <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
         {/* grid columns / padding / min-height live on .nk-hero-panel in globals.css
             so the 980px stack doesn't need !important overrides */}
-        <div className="nk-hero-panel" style={{ position: "relative", borderRadius: 20, background: "var(--nk-glass)", backdropFilter: "blur(35px)", border: "1px solid var(--nk-hairline)" }}>
+        <div className="nk-hero-panel nk-grain nk-gborder" style={{ position: "relative", borderRadius: 20, background: "var(--nk-glass)", backdropFilter: "blur(35px)" }}>
           {/* left column */}
           <div style={{ display: "flex", flexDirection: "column", gap: 36, justifyContent: "center", maxWidth: 680 }}>
             <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: 27, padding: "6px 18px 6px 6px" }}>
@@ -43,7 +43,7 @@ export function Hero({ locale }: { locale: Locale }) {
           <div className="nk-hero-media" style={{ position: "relative" }}>
             {/* LCP image: next/image serves responsive AVIF/WebP and `priority`
                 preloads it (replaces the manual fetchPriority hint). */}
-            <Image src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} priority sizes="(max-width: 980px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "drop-shadow(10px 18px 42px rgba(22,22,22,.55))" }} />
+            <Image src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} priority sizes="(max-width: 980px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
             <div style={{ position: "absolute", right: 32, bottom: 0 }}><QR size={132} /></div>
           </div>
         </div>
@@ -87,7 +87,7 @@ export function Testimonials({ locale }: { locale: Locale }) {
   const items = t.items.slice(0, 2);
   return (
     <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
-      <SectionHead eyebrow={t.eyebrow} title={t.title} />
+      <SectionHead eyebrow={t.eyebrow} title={t.title} quiet />
       <div className="nk-reveal nk-row">
         {items.map((item) => (
           <Testimonial key={item.name} name={item.name} role={item.role} quote={item.quote} avatarTint={item.avatarTint} />
@@ -105,10 +105,10 @@ export function CtaBanner({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
     <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y-lg)" }}>
-      <div className="nk-reveal nk-cta" style={{ position: "relative", borderRadius: 20, overflow: "hidden", minHeight: 620, border: "1px solid var(--nk-border-strong)", background: "linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)", boxShadow: "0 34px 90px -38px rgba(0,0,0,.65)" }}>
+      <div className="nk-reveal nk-cta nk-grain nk-gborder" style={{ position: "relative", borderRadius: 20, overflow: "hidden", minHeight: 620, background: "linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)", boxShadow: "var(--nk-shadow-banner)" }}>
         <AmbientGlow />
         {/* phone bleeding from the top, filling the right half down to the bottom edge */}
-        <Image className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "drop-shadow(0 26px 50px rgba(0,0,0,.5))" }} />
+        <Image className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "var(--nk-shadow-phone-cta)" }} />
         <div className="nk-cta__badges" style={{ position: "absolute", left: "var(--nk-panel-pad)", top: "var(--nk-panel-pad)" }}><AppBadges /></div>
         <div className="nk-cta__body" style={{ position: "absolute", left: "var(--nk-panel-pad)", bottom: "var(--nk-panel-pad)", maxWidth: 808, display: "flex", flexDirection: "column", gap: 20 }}>
           <span style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px 8px 12px", borderRadius: "var(--nk-r-pill)", background: "var(--nk-glass-strong)", border: "1px solid var(--nk-border)", backdropFilter: "blur(12px)" }}>
@@ -129,7 +129,7 @@ export function CtaBanner({ locale }: { locale: Locale }) {
 function AmbientGlow() {
   return (
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-      <div style={{ position: "absolute", top: "-16%", left: "-8%", width: 680, height: 680, borderRadius: "50%", background: "radial-gradient(circle, rgba(122,121,240,0.40) 0%, rgba(122,121,240,0) 68%)" }} />
+      <div style={{ position: "absolute", top: "-16%", left: "-8%", width: 680, height: 680, borderRadius: "50%", background: "radial-gradient(circle, var(--nk-glow-purple) 0%, transparent 68%)" }} />
       <div style={{ position: "absolute", top: "6%", right: "16%", width: 620, height: 620, borderRadius: "50%", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-purple-hover) 30%, transparent) 0%, transparent 70%)" }} />
       <div style={{ position: "absolute", top: "44%", right: "3%", width: 420, height: 420, borderRadius: "50%", transform: "translateY(-50%)", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-yellow) 16%, transparent) 0%, transparent 66%)" }} />
       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(120deg, color-mix(in srgb, var(--nk-purple) 12%, transparent) 0%, transparent 58%)" }} />

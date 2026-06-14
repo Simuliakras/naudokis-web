@@ -111,7 +111,7 @@ export function HowItWorksScreen() {
 
           {/* CTA (green) */}
           <section className="nk-container htw-cta-wrap">
-            <div className="htw-cta nk-reveal">
+            <div className="htw-cta nk-reveal nk-grain">
               <Image className="htw-cta__phone" src="/naudokis/download-phone.png" alt={t.ctaPhoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" />
               <div className="htw-cta__spark" aria-hidden="true">
                 <span style={{ left: "46%", top: "18%" }} /><span style={{ left: "58%", top: "30%" }} /><span style={{ left: "40%", top: "40%" }} />

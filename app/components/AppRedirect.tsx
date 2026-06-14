@@ -82,7 +82,7 @@ export function AppRedirect() {
           <h2 id="nk-redirect-title" style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{state.title}</h2>
           <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "26px", color: "var(--nk-text-2)" }}>{state.body}</p>
         </div>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}><AppBadges height={50} /></div>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}><AppBadges height={50} interactive={false} /></div>
         <div className="nk-redirect-qr">
           <QR size={96} />
           <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", maxWidth: 220 }}>{dict.bridge.qrHint}</span>

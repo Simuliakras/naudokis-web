@@ -281,12 +281,6 @@ export const lt: Dict = {
     termCancelSub: "Lankstus atšaukimas",
     depositSafeTitle: "Užstatas užšaldomas saugiai.",
     depositSafeBody: "Pinigai laikomi Stripe ir grąžinami per 1–2 d. d. po nuomos, jei daiktas nepažeistas.",
-    safetyHeading: "Sauga su Naudokis",
-    safetyItems: [
-      { icon: "ShieldCheck", title: "Saugus užstatas", body: "Užšaldomas per Stripe ir grąžinamas po nuomos." },
-      { icon: "BadgeCheck", title: "Patikrinti naudotojai", body: "Tapatybė ir telefono nr. patvirtinami registruojantis." },
-      { icon: "RefreshCcw", title: "Lankstus atšaukimas", body: "100% grąžinimas atšaukus likus 5+ dienoms." },
-    ],
   },
   common: {
     favorite: "Įsiminti",
@@ -382,6 +376,8 @@ export const lt: Dict = {
     qrHint: "Nuskenuokite kodą telefonu ir tęskite programėlėje.",
     close: "Uždaryti",
     opensAppHint: "Atsidarys programėlėje",
+    googlePlayAlt: "Gaukite „Google Play“ parduotuvėje",
+    appStoreAlt: "Atsisiųskite iš „App Store“",
     reserveTitle: "Rezervuokite programėlėje",
     reserveBody: "Datų pasirinkimas, kainos skaičiavimas ir rezervacija atliekami Naudokis programėlėje. Pinigai užšaldomi saugiai iki nuomos pabaigos.",
     datesTitle: "Pasirinkite datas programėlėje",

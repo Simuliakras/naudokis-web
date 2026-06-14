@@ -275,12 +275,6 @@ export const en: Dict = {
     termCancelSub: "Flexible cancellation",
     depositSafeTitle: "The deposit is held securely.",
     depositSafeBody: "Funds are held with Stripe and returned within 1–2 business days after the rental if the item is undamaged.",
-    safetyHeading: "Safety with Naudokis",
-    safetyItems: [
-      { icon: "ShieldCheck", title: "Secure deposit", body: "Held via Stripe and returned after the rental." },
-      { icon: "BadgeCheck", title: "Verified users", body: "Identity and phone number are verified at sign-up." },
-      { icon: "RefreshCcw", title: "Flexible cancellation", body: "100% refund when cancelling 5+ days ahead." },
-    ],
   },
   common: {
     favorite: "Save",
@@ -361,6 +355,8 @@ export const en: Dict = {
     qrHint: "Scan the code with your phone and continue in the app.",
     close: "Close",
     opensAppHint: "Opens in the app",
+    googlePlayAlt: "Get it on Google Play",
+    appStoreAlt: "Download on the App Store",
     reserveTitle: "Reserve in the app",
     reserveBody: "Choosing dates, calculating the price and reserving all happen in the Naudokis app. Funds are held securely until the rental ends.",
     datesTitle: "Pick your dates in the app",

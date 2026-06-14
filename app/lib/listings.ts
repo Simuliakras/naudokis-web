@@ -18,6 +18,7 @@ type ApiListing = {
   status: string;
   images: ApiImage[];
   delivery_types_available?: string[];
+  category_path?: string[]; // [top-level id, ...subcategories] — not guaranteed on browse items
 };
 
 type ListingsResponse = {
@@ -67,6 +68,7 @@ export type Offer = {
   rating?: string; // formatted value, present only when ratingCount > 0
   ratingCount: number; // raw count, for building the localized review label
   hasDelivery: boolean; // derived client-side from delivery_types_available — see note in fetchListings
+  category?: string; // top-level category id — tints the empty-photo placeholder (optional on the wire)
 };
 
 /* ---------------- Filters ---------------- */
@@ -191,6 +193,7 @@ function mockToOffer(l: MockListing, locale: Locale): Offer {
     rating: ratingLabel(l.rating_average, l.rating_count, locale),
     ratingCount: l.rating_count,
     hasDelivery: l.hasDelivery,
+    category: l.category,
   };
 }
 
@@ -252,6 +255,9 @@ export async function fetchListings(locale: Locale, filters: ListingFilters): Pr
       // Backend has no `delivery=` filter; it exposes the per-item delivery types
       // instead, so the "Su pristatymu" toggle filters the fetched page client-side.
       hasDelivery: (l.delivery_types_available ?? []).includes("user_delivery"),
+      // The wire's `category` field is a leaf id (e.g. "cars"); the accent and
+      // icon maps key on the top-level id, which leads category_path.
+      category: l.category_path?.[0],
     }));
 }
 

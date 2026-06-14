@@ -1,8 +1,10 @@
 // Category data layer — fetch top-level categories from the Naudokis backend.
 import { useQuery } from "@tanstack/react-query";
+import type { IconName } from "@/app/components/ui";
 import type { Locale } from "./i18n/config";
 import { API_BASE, USE_MOCK } from "./api";
 import { MOCK_CATEGORIES } from "./mock-data";
+import { categoryGlyph } from "./category-style";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiCategory = {
@@ -27,6 +29,7 @@ type CategoriesResponse = {
 export type Category = {
   id: string;
   title: string;
+  icon: IconName; // resolved from the wire's icon_name (Tag fallback)
 };
 
 // Single source of truth for the query key — used by useCategories() and by
@@ -38,7 +41,7 @@ export function categoriesKey(locale: Locale) {
 // Exported so server components can prefetch the same data useCategories reads.
 export async function fetchCategories(locale: Locale): Promise<Category[]> {
   if (USE_MOCK) {
-    return MOCK_CATEGORIES.map((c) => ({ id: c.id, title: locale === "en" ? c.name_en : c.name_lt }));
+    return MOCK_CATEGORIES.map((c) => ({ id: c.id, title: locale === "en" ? c.name_en : c.name_lt, icon: categoryGlyph(c.icon_name) }));
   }
   // Categories change rarely — server-side fetches stay fresh for an hour
   // (matches the categories page's route revalidate). Browsers ignore `next`.
@@ -50,7 +53,7 @@ export async function fetchCategories(locale: Locale): Promise<Category[]> {
   return body.data.categories
     .filter((c) => c.level === 0 && c.visibility === "public")
     .sort((a, b) => a.display_order - b.display_order)
-    .map((c) => ({ id: c.id, title: locale === "en" ? c.name_en : c.name_lt }));
+    .map((c) => ({ id: c.id, title: locale === "en" ? c.name_en : c.name_lt, icon: categoryGlyph(c.icon_name) }));
 }
 
 export function useCategories(locale: Locale) {

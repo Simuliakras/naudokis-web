@@ -14,7 +14,7 @@ type IconDef = {
   fOnly?: boolean;
 };
 
-const NK_ICONS: Record<string, IconDef> = {
+const NK_ICONS = {
   Search:      { s: <><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></> },
   MapPin:      { f: "M12 2a8 8 0 0 0-8 8c0 5.4 8 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8m0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6", fOnly: true,
                  s: <><path d="M20 10c0 5.4-8 12-8 12s-8-6.6-8-12a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></> },
@@ -58,7 +58,15 @@ const NK_ICONS: Record<string, IconDef> = {
   Coins:       { s: <><circle cx="8" cy="8" r="6"/><path d="M18.1 6.5a6 6 0 0 1 0 11M8.7 6h.5a1.8 1.8 0 0 1 0 3.6h-1a1.8 1.8 0 0 0 0 3.6h.5M8 5.2v.8M8 13v.8"/></> },
   Snowflake:   { s: <><path d="M12 2v20M4.2 7l15.6 10M19.8 7 4.2 17"/><path d="m9 4 3 2 3-2M9 20l3-2 3 2M4 9.5l.5 3.3-2.6 1.9M20 9.5l-.5 3.3 2.6 1.9M4 14.5l-2.1-1.7M20 14.5l2.1-1.7"/></> },
   Smartphone:  { s: <><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M11 17.8h2"/></> },
-};
+  Wrench:      { s: <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/> },
+  PartyPopper: { s: <><path d="M5.8 11.3 2 22l10.7-3.8z"/><path d="M4 3h.01M22 8h.01M15 2h.01M22 20h.01"/><path d="M22 13.3a2.3 2.3 0 0 0-2.4-2.3 2.3 2.3 0 0 1-2.4-2.6 2.4 2.4 0 0 0-4-2.1"/><path d="M11 13c1.3-1.3 1.4-3.2.3-4.3-1.1-1.1-3-1-4.3.3z"/></> },
+  Shirt:       { s: <path d="M20.4 6.5 17 4.2A2 2 0 0 0 15.9 4h-.4a3.5 3.5 0 0 1-7 0h-.4A2 2 0 0 0 7 4.2L3.6 6.5a1 1 0 0 0-.3 1.3l1.5 2.6a1 1 0 0 0 1.2.45L7.5 10v9a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1v-9l1.5.85a1 1 0 0 0 1.2-.45l1.5-2.6a1 1 0 0 0-.3-1.3z"/> },
+  Baby:        { s: <><path d="M9 12h.01M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5S14.4 8 13 8c-.9 0-1.6-.5-1.6-1.2"/></> },
+  Speaker:     { s: <><rect x="5" y="2.5" width="14" height="19" rx="2"/><circle cx="12" cy="14.5" r="3.6"/><path d="M12 7h.01"/></> },
+  Laptop:      { s: <><path d="M4.5 5.5A1.5 1.5 0 0 1 6 4h12a1.5 1.5 0 0 1 1.5 1.5V16h-15z"/><path d="M2.5 19h19a1 1 0 0 1-1 1h-17a1 1 0 0 1-1-1z"/><path d="M2.5 19 4.5 16h15l2 3"/></> },
+  Dumbbell:    { s: <><path d="m6.6 17.4 10.8-10.8"/><rect x="1.6" y="11.4" width="7" height="3.4" rx="1" transform="rotate(-45 5.1 13.1)"/><rect x="15.4" y="9.2" width="7" height="3.4" rx="1" transform="rotate(-45 18.9 10.9)"/><path d="m2.1 21.9 1.4-1.4M20.5 3.5l1.4-1.4"/></> },
+  HeartPulse:  { s: <><path d="M19.5 13 12 21l-7.5-8A5.4 5.4 0 0 1 12 5.7 5.4 5.4 0 0 1 19.5 13z"/><path d="M3.5 12h4l1.5-2.5 2.5 5L13 11l1.2 1.7h6.3"/></> },
+} satisfies Record<string, IconDef>;
 
 export type IconName = keyof typeof NK_ICONS;
 
@@ -73,8 +81,8 @@ export function Icon({
   style?: React.CSSProperties;
   className?: string;
 }) {
-  const def = NK_ICONS[name];
-  if (!def) return <svg width={size} height={size} viewBox="0 0 24 24" style={style} />;
+  // Widen from the per-entry literal types `satisfies` preserves on NK_ICONS.
+  const def: IconDef = NK_ICONS[name];
   // Star/MapPin can be requested filled (fill !== 'none').
   // Colors flow through `currentColor` (set via style.color) so callers can pass --nk-* tokens —
   // CSS custom properties don't resolve in raw SVG stroke/fill attributes.
@@ -200,16 +208,17 @@ export function Tag({ children }: { children: React.ReactNode }) {
 
 /* ---------------- Eyebrow + section head ---------------- */
 export function SectionHead({
-  eyebrow, title, action,
+  eyebrow, title, action, quiet = false,
 }: {
   eyebrow?: string;
   title: string;
   action?: React.ReactNode;
+  quiet?: boolean; // muted eyebrow — yellow stays reserved for hero/CTA bands
 }) {
   return (
     <div className="nk-section__top nk-reveal">
       <div className="nk-head">
-        {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
+        {eyebrow && <span className={"nk-eyebrow" + (quiet ? " nk-eyebrow--quiet" : "")}>{eyebrow}</span>}
         <h2>{title}</h2>
       </div>
       {action}
@@ -259,31 +268,46 @@ export function Dots({
   );
 }
 
-/* ---------------- App-store badges ---------------- */
+/* ---------------- App-store badges ----------------
+   Until the store listings go live the badge opens the install-bridge modal
+   (a real button, not a dead link). Inside that modal `interactive={false}`
+   renders a plain image — a badge that reopens the same dialog would loop. */
 export function StoreBadge({
-  store, height = 52, footer = false,
+  store, height = 52, footer = false, interactive = true,
 }: {
   store: "google" | "apple";
   height?: number;
   footer?: boolean;
+  interactive?: boolean;
 }) {
+  const { dict } = useI18nOptional();
   const isGoogle = store === "google";
   const suffix = footer ? "-footer" : "";
+  /* eslint-disable @next/next/no-img-element */
+  const img = (
+    <img src={isGoogle ? `/naudokis/btn-google-play${suffix}.png` : `/naudokis/btn-app-store${suffix}.png`}
+      alt={isGoogle ? dict.bridge.googlePlayAlt : dict.bridge.appStoreAlt}
+      style={{ height, width: "auto" }} />
+  );
+  /* eslint-enable @next/next/no-img-element */
+  if (!interactive) {
+    return <span style={{ display: "inline-flex" }}>{img}</span>;
+  }
   return (
-    <a href="#" onClick={(e) => e.preventDefault()} style={{ display: "inline-flex" }}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={isGoogle ? `/naudokis/btn-google-play${suffix}.png` : `/naudokis/btn-app-store${suffix}.png`}
-        alt={isGoogle ? "Get it on Google Play" : "Download on the App Store"}
-        style={{ height, width: "auto" }} />
-    </a>
+    <button type="button" className="nk-badgebtn"
+      onClick={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}>
+      {img}
+    </button>
   );
 }
 
-export function AppBadges({ gap = 20, height = 52, footer = false }: { gap?: number; height?: number; footer?: boolean }) {
+export function AppBadges({ gap = 20, height = 52, footer = false, interactive = true }: {
+  gap?: number; height?: number; footer?: boolean; interactive?: boolean;
+}) {
   return (
     <div style={{ display: "flex", gap }}>
-      <StoreBadge store="google" height={height} footer={footer} />
-      <StoreBadge store="apple" height={height} footer={footer} />
+      <StoreBadge store="google" height={height} footer={footer} interactive={interactive} />
+      <StoreBadge store="apple" height={height} footer={footer} interactive={interactive} />
     </div>
   );
 }
@@ -476,8 +500,8 @@ export function Pill({
   const tones: Record<string, { bg: string; fg: string }> = {
     accent: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
     purple: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
-    yellow: { bg: "rgba(249,243,103,.16)", fg: "var(--nk-yellow)" },
-    green: { bg: "rgba(16,185,129,.16)", fg: "var(--nk-green)" },
+    yellow: { bg: "var(--nk-yellow-tint)", fg: "var(--nk-yellow)" },
+    green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green)" },
   };
   const c = tones[tone] ?? tones.accent;
   return (
@@ -604,20 +628,18 @@ export function FilterSelect({
     : { top: "calc(100% + 10px)" };
   return (
     <span ref={ref} style={{ position: "relative", display: "inline-flex" }}>
-      <button type="button" onClick={() => setOpen((v) => !v)}
+      <button type="button" className={"nk-pillctl" + (active ? " is-active" : "")} onClick={() => setOpen((v) => !v)}
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
         aria-haspopup="listbox" aria-expanded={open} style={{
         display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-tap)", cursor: "pointer", whiteSpace: "nowrap",
-        fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, transition: "background .15s ease, border-color .15s ease",
-        background: active ? "var(--nk-accent-bg)" : "var(--nk-surface)", color: active ? "var(--nk-accent-text)" : "var(--nk-text)",
-        border: "1px solid " + (active || open ? "var(--nk-accent-border)" : "var(--nk-border)"),
+        fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5,
       }}>
         {icon && <Icon name={icon} size={16} stroke={2} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />}
         <span>{active && selected ? selected.label : label}</span>
         <Icon name="ChevronDown" size={15} stroke={2.4} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
       </button>
       {open && (
-        <span ref={panelRef} role="listbox" aria-label={label} onKeyDown={listboxKeyNav} style={{ position: "absolute", ...panelPos, [align]: 0, minWidth: 230, background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 16, padding: 7, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 20px 50px rgba(0,0,0,.45)", zIndex: 50 }}>
+        <span ref={panelRef} role="listbox" aria-label={label} onKeyDown={listboxKeyNav} style={{ position: "absolute", ...panelPos, [align]: 0, minWidth: 230, background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 16, padding: 7, display: "flex", flexDirection: "column", gap: 2, boxShadow: "var(--nk-shadow-3)", zIndex: 50 }}>
           {heading && <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--nk-text-muted)", padding: "8px 12px 6px" }}>{heading}</span>}
           {options.map((o) => {
             const sel = o.value === value;
@@ -646,11 +668,9 @@ export function Toggle({
   onChange: (on: boolean) => void;
 }) {
   return (
-    <button type="button" onClick={() => onChange(!on)} aria-pressed={on} style={{
+    <button type="button" className={"nk-pillctl" + (on ? " is-active" : "")} onClick={() => onChange(!on)} aria-pressed={on} style={{
       display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", cursor: "pointer",
-      fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, whiteSpace: "nowrap", transition: "background .15s ease, border-color .15s ease",
-      background: on ? "var(--nk-accent-bg)" : "var(--nk-surface)", color: on ? "var(--nk-accent-text)" : "var(--nk-text)",
-      border: "1px solid " + (on ? "var(--nk-accent-border)" : "var(--nk-border)"),
+      fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, whiteSpace: "nowrap",
     }}>
       {icon && <Icon name={icon} size={16} stroke={2} color={on ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />} {children}
     </button>

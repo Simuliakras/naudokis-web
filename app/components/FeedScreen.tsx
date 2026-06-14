@@ -13,6 +13,8 @@ import { useCategories } from "@/app/lib/categories";
 import { useListings, parseSortKey } from "@/app/lib/listings";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
+import { useScrollReveal } from "@/app/lib/use-scroll-reveal";
+import { categoryIconFor } from "@/app/lib/category-style";
 import { rememberFeedUrl } from "@/app/lib/search";
 import { LT_CITIES } from "@/app/lib/cities";
 import { useI18n } from "./I18nProvider";
@@ -24,6 +26,7 @@ export function FeedScreen() {
   const pathname = usePathname();
   const router = useRouter();
   const online = useOnlineStatus();
+  useScrollReveal();
 
   const params = {
     q: sp.get("q") ?? "",
@@ -117,10 +120,14 @@ export function FeedScreen() {
 
   const head = list.slice(0, 4);
   const tail = list.slice(4);
-  const card = (o: (typeof list)[number]) => (
-    <OfferCard key={o.id} title={o.title} city={o.city} price={o.price} unit={dict.common.perDay}
-      rating={o.rating} count={o.ratingCount > 0 ? dict.common.reviewCount(o.ratingCount) : undefined}
-      img={o.img} href={`/skelbimai/${o.id}`} />
+  const card = (o: (typeof list)[number], i: number) => (
+    // grid-display wrapper so the reveal element stretches the card to the row height
+    <div key={o.id} className="nk-reveal" data-delay={(i % 3) + 1} style={{ display: "grid" }}>
+      <OfferCard title={o.title} city={o.city} price={o.price} unit={dict.common.perDay}
+        rating={o.rating} count={o.ratingCount > 0 ? dict.common.reviewCount(o.ratingCount) : undefined}
+        img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
+        href={`/skelbimai/${o.id}`} />
+    </div>
   );
 
   // Zero-result empty, split by reason (L2 search / L4 empty category / L3 filters).
@@ -194,7 +201,8 @@ export function FeedScreen() {
             <div className="nk-grid-feed">
               {head.map(card)}
               {tail.length > 0 && <InterruptionBanner />}
-              {tail.map(card)}
+              {/* keep the reveal cascade continuous across the banner */}
+              {tail.map((o, i) => card(o, i + head.length))}
             </div>
           ) : (
             renderEmpty()
