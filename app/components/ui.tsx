@@ -208,17 +208,16 @@ export function Tag({ children }: { children: React.ReactNode }) {
 
 /* ---------------- Eyebrow + section head ---------------- */
 export function SectionHead({
-  eyebrow, title, action, quiet = false,
+  eyebrow, title, action,
 }: {
   eyebrow?: string;
   title: string;
   action?: React.ReactNode;
-  quiet?: boolean; // muted eyebrow — yellow stays reserved for hero/CTA bands
 }) {
   return (
     <div className="nk-section__top nk-reveal">
       <div className="nk-head">
-        {eyebrow && <span className={"nk-eyebrow" + (quiet ? " nk-eyebrow--quiet" : "")}>{eyebrow}</span>}
+        {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
         <h2>{title}</h2>
       </div>
       {action}

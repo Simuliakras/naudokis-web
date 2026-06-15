@@ -60,7 +60,7 @@ export function Features({ locale }: { locale: Locale }) {
       <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.40 }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y-lg)" }}>
         <div className="nk-reveal nk-row">
-          {dict.features.map((f, i) => <div key={f.title} className="nk-reveal" data-delay={(i % 3) + 1} style={{ display: "flex", flex: 1 }}><FeatureCard {...f} /></div>)}
+          {dict.features.map((f) => <div key={f.title} style={{ display: "flex", flex: 1 }}><FeatureCard {...f} /></div>)}
         </div>
       </div>
     </section>
@@ -87,7 +87,7 @@ export function Testimonials({ locale }: { locale: Locale }) {
   const items = t.items.slice(0, 2);
   return (
     <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
-      <SectionHead eyebrow={t.eyebrow} title={t.title} quiet />
+      <SectionHead eyebrow={t.eyebrow} title={t.title} />
       <div className="nk-reveal nk-row">
         {items.map((item) => (
           <Testimonial key={item.name} name={item.name} role={item.role} quote={item.quote} avatarTint={item.avatarTint} />
@@ -105,7 +105,7 @@ export function CtaBanner({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
     <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y-lg)" }}>
-      <div className="nk-reveal nk-cta nk-grain nk-gborder" style={{ position: "relative", borderRadius: 20, overflow: "hidden", minHeight: 620, background: "linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)", boxShadow: "var(--nk-shadow-banner)" }}>
+      <div className="nk-reveal nk-cta nk-grain nk-gborder" style={{ position: "relative", borderRadius: 20, overflow: "hidden", minHeight: 620, background: "linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)" }}>
         <AmbientGlow />
         {/* phone bleeding from the top, filling the right half down to the bottom edge */}
         <Image className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "var(--nk-shadow-phone-cta)" }} />
@@ -157,8 +157,8 @@ export function Footer({ locale }: { locale: Locale }) {
             <Logo />
             <p className="nk-footer__tagline">{t.tagline}</p>
             <div className="nk-footer__contact">
-              <a href={CONTACT_PHONE_TEL}><Icon name="Phone" size={17} stroke={2} color="var(--nk-text-muted)" /> {CONTACT_PHONE}</a>
-              <a href={"mailto:" + CONTACT_EMAIL}><Icon name="Mail" size={17} stroke={2} color="var(--nk-text-muted)" /> {CONTACT_EMAIL}</a>
+              <a href={CONTACT_PHONE_TEL}><Icon name="Phone" size={17} stroke={2} color="currentColor" /> {CONTACT_PHONE}</a>
+              <a href={"mailto:" + CONTACT_EMAIL}><Icon name="Mail" size={17} stroke={2} color="currentColor" /> {CONTACT_EMAIL}</a>
             </div>
             {/* Placeholder profiles — purely decorative until real URLs exist,
                 so the whole row is hidden from assistive tech. Swap the spans

@@ -13,7 +13,6 @@ import { useCategories } from "@/app/lib/categories";
 import { useListings, parseSortKey } from "@/app/lib/listings";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
-import { useScrollReveal } from "@/app/lib/use-scroll-reveal";
 import { categoryIconFor } from "@/app/lib/category-style";
 import { rememberFeedUrl } from "@/app/lib/search";
 import { LT_CITIES } from "@/app/lib/cities";
@@ -26,7 +25,6 @@ export function FeedScreen() {
   const pathname = usePathname();
   const router = useRouter();
   const online = useOnlineStatus();
-  useScrollReveal();
 
   const params = {
     q: sp.get("q") ?? "",
@@ -120,9 +118,9 @@ export function FeedScreen() {
 
   const head = list.slice(0, 4);
   const tail = list.slice(4);
-  const card = (o: (typeof list)[number], i: number) => (
-    // grid-display wrapper so the reveal element stretches the card to the row height
-    <div key={o.id} className="nk-reveal" data-delay={(i % 3) + 1} style={{ display: "grid" }}>
+  const card = (o: (typeof list)[number]) => (
+    // grid-display wrapper so the card stretches to the row height
+    <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
       <OfferCard title={o.title} city={o.city} price={o.price} unit={dict.common.perDay}
         rating={o.rating} count={o.ratingCount > 0 ? dict.common.reviewCount(o.ratingCount) : undefined}
         img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
@@ -201,8 +199,7 @@ export function FeedScreen() {
             <div className="nk-grid-feed">
               {head.map(card)}
               {tail.length > 0 && <InterruptionBanner />}
-              {/* keep the reveal cascade continuous across the banner */}
-              {tail.map((o, i) => card(o, i + head.length))}
+              {tail.map(card)}
             </div>
           ) : (
             renderEmpty()

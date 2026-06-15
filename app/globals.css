@@ -146,7 +146,6 @@
   --nk-glow-purple:   rgba(122,121,240,.40);                 /* ambient CTA radials */
   --nk-shadow-phone-hero: drop-shadow(10px 15px 42px rgba(22,22,22,.50)); /* hero phone img */
   --nk-shadow-phone-cta:  drop-shadow(0 26px 50px rgba(0,0,0,.5));        /* CTA phone img  */
-  --nk-shadow-banner: 0 34px 90px -38px rgba(0,0,0,.65);                  /* CTA gradient band */
 
   /* ---- Motion ------------------------------------------------------------ */
   --nk-ease:        cubic-bezier(.2,.7,.2,1);    /* house standard curve      */
@@ -180,13 +179,12 @@
 /* ============================================================================
    Semantic type ramp — apply directly or copy the rules.
    ========================================================================== */
-.nk-eyebrow {                       /* yellow label above section titles     */
+.nk-eyebrow {                       /* accent label above section titles     */
   font-family: var(--nk-font-body);
   font-weight: 500; font-size: 18px; line-height: 20px;
-  color: var(--nk-yellow);
+  color: var(--nk-purple-hover);
   text-transform: uppercase; letter-spacing: .08em;
 }
-.nk-eyebrow--quiet { color: var(--nk-text-muted) }  /* mid-page sections — yellow stays reserved for hero/CTA bands */
 .nk-h-hero {                        /* hero headline (fluid)                 */
   font-family: var(--nk-font-display);
   font-weight: 700; font-size: clamp(44px, 7.2vw, 92px); line-height: 1.08;
@@ -338,15 +336,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   *{animation-duration:.001ms!important;transition-duration:.001ms!important;transition-delay:0s!important;scroll-behavior:auto!important}
 }
 
-/* ---- scroll reveal ---- */
-.nk-reveal{opacity:0;transform:translateY(28px);transition:opacity .6s var(--nk-ease),transform .6s var(--nk-ease)}
-.nk-reveal.nk-in{opacity:1;transform:none}
-.nk-reveal[data-delay="1"]{transition-delay:.06s}
-.nk-reveal[data-delay="2"]{transition-delay:.12s}
-.nk-reveal[data-delay="3"]{transition-delay:.18s}
-.nk-reveal[data-delay="4"]{transition-delay:.24s}
-.nk-reveal[data-delay="5"]{transition-delay:.30s}
-.nk-reveal[data-delay="6"]{transition-delay:.36s}
+/* ---- scroll reveal (native, CSS-only; progressive enhancement) ----
+   Content is fully visible by default; the entry animation only applies when
+   motion is allowed AND scroll-driven timelines are supported. No JS, no
+   IntersectionObserver — zero main-thread cost. Unsupported browsers and
+   reduced-motion users simply see the content rendered in place. */
+@media (prefers-reduced-motion: no-preference){
+  @supports (animation-timeline: view()){
+    .nk-reveal{animation:nk-reveal-in linear both;animation-timeline:view();animation-range:entry 0% cover 18%}
+  }
+}
+@keyframes nk-reveal-in{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
 
 /* ---- film grain for large gradient surfaces (hero panel, CTA bands) ----
    Static data-URI noise — zero requests; never apply page-wide. */
@@ -438,8 +438,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-link::after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:2px;background:var(--nk-purple);transition:right .25s ease}
 .nk-link:hover::after,.nk-link:focus-visible::after{right:0}
-.nk-link[aria-current="page"]{color:var(--nk-purple-hover)}
-.nk-link[aria-current="page"]::after{right:0}
+.nk-link[aria-current="page"]{color:var(--nk-text)}
+.nk-link[aria-current="page"]::after{display:none}
 footer .nk-link:hover{color:var(--nk-purple-hover)}
 
 /* ---- nav inline search (expands once the hero search scrolls away) ---- */
@@ -624,7 +624,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__contact a{position:relative;display:inline-flex;align-items:center;gap:11px;font-family:var(--nk-font-body);font-size:17px;color:var(--nk-text-2);text-decoration:none;transition:color .15s ease;width:fit-content}
 .nk-footer__contact a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--nk-purple);transition:right .25s ease}
 .nk-footer__contact a:hover::after,.nk-footer__contact a:focus-visible::after{right:0}
+.nk-footer__contact a svg{color:var(--nk-text-muted)}      /* icon sits a shade quieter than the label */
 .nk-footer__contact a:hover{color:var(--nk-purple)}
+.nk-footer__contact a:hover svg,.nk-footer__contact a:focus-visible svg{color:var(--nk-purple)}
 .nk-footer__social{display:flex;gap:12px}
 /* span = placeholder profile (decorative); a = real link once accounts exist */
 .nk-footer__social a,.nk-footer__social span{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;
@@ -974,7 +976,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* ---- CTA (gradient) ---- */
 .htw-cta-wrap{padding-block:clamp(20px,3vw,40px) var(--nk-section-y-lg)}
 .htw-cta{position:relative;border-radius:20px;overflow:hidden;min-height:560px;
-  border:1px solid var(--nk-border-strong);box-shadow:var(--nk-shadow-banner);
+  border:1px solid var(--nk-border-strong);
   background:
     radial-gradient(680px 680px at -6% -18%, var(--nk-glow-purple), transparent 66%),
     radial-gradient(620px 620px at 84% 8%, color-mix(in srgb, var(--nk-purple-hover) 30%, transparent), transparent 70%),

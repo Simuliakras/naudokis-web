@@ -12,7 +12,6 @@ import { Chrome } from "./Chrome";
 import { FaqRow } from "./cards";
 import { Icon, AppBadges, QR, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
-import { useScrollReveal } from "@/app/lib/use-scroll-reveal";
 import type { HtwScreen, HtwStep } from "@/app/lib/i18n/types";
 
 type Role = "renter" | "owner";
@@ -31,9 +30,6 @@ export function HowItWorksScreen() {
   const current = steps[active];
 
   const switchRole = (r: Role) => { setRole(r); setActive(0); };
-
-  // Scroll-reveal (matches the rest of the site).
-  useScrollReveal();
 
   return (
     <Chrome>

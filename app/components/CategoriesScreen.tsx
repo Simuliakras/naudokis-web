@@ -11,7 +11,6 @@ import { useCategories } from "@/app/lib/categories";
 import { listingSearchHref } from "@/app/lib/search";
 import { mockCategoryCount } from "@/app/lib/mock";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
-import { useScrollReveal } from "@/app/lib/use-scroll-reveal";
 import { useI18n } from "./I18nProvider";
 
 export function CategoriesScreen() {
@@ -19,7 +18,6 @@ export function CategoriesScreen() {
   const t = dict.categoriesPage;
   const router = useRouter();
   const online = useOnlineStatus();
-  useScrollReveal();
   const [q, setQ] = useState("");
   const { data, isLoading, isError, refetch } = useCategories(locale);
 
@@ -68,8 +66,8 @@ export function CategoriesScreen() {
               actionLabel={dict.categories.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
           ) : list.length ? (
             <div className="nk-grid-cats">
-              {list.map((c, i) => (
-                <div key={c.id} className="nk-reveal" data-delay={(i % 4) + 1} style={{ display: "grid" }}>
+              {list.map((c) => (
+                <div key={c.id} className="nk-reveal" style={{ display: "grid" }}>
                   <CategoryTile id={c.id} icon={c.icon} title={c.title} count={t.tileCount(mockCategoryCount(c.id))} href={listingSearchHref({ cat: c.id })} />
                 </div>
               ))}

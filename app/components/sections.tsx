@@ -355,7 +355,7 @@ export function Categories() {
   const list = (data ?? []).slice(0, 8);
   return (
     <section id="kategorijos" className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
-      <SectionHead eyebrow={t.eyebrow} title={t.title} quiet
+      <SectionHead eyebrow={t.eyebrow} title={t.title}
         action={<Link className="nk-cats-all" href="/kategorijos">{t.all} <Icon name="ArrowRight" size={24} stroke={2.4} color="currentColor" /></Link>} />
       {isLoading ? (
         <div className="nk-grid-cats">
@@ -390,7 +390,7 @@ export function Offers() {
   const list = (data ?? []).slice(0, 4);
   return (
     <section id="skelbimai" className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
-      <SectionHead eyebrow={t.eyebrow} title={t.title} quiet
+      <SectionHead eyebrow={t.eyebrow} title={t.title}
         action={<Link className="nk-cats-all" href="/skelbimai">{t.all} <Icon name="ArrowRight" size={24} stroke={2.4} color="currentColor" /></Link>} />
       {isLoading ? (
         <div className="nk-grid-4">

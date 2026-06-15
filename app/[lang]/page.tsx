@@ -7,7 +7,6 @@ import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { Chrome } from "../components/Chrome";
 import { Nav, Categories, Offers, Faq } from "../components/sections";
 import { Hero, Features, Testimonials, CtaBanner, HomeSeo, Footer } from "../components/sections-home";
-import { ScrollReveal } from "../components/ScrollReveal";
 import { JsonLd } from "../components/JsonLd";
 
 // Regenerate the static home pages so the prefetched featured listings /
@@ -50,7 +49,6 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
           </main>
           <Footer locale={locale} />
         </div>
-        <ScrollReveal />
       </Chrome>
     </HydrationBoundary>
   );
