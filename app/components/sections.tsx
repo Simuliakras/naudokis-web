@@ -378,6 +378,50 @@ export function Categories() {
   );
 }
 
+/* Active-route test for footer/nav links — true when the bare current path
+   equals the link's route (or is nested under it). Hash-only links never match. */
+function useIsActiveHref() {
+  const pathname = usePathname();
+  const here = barePath(pathname);
+  return (href: string) => {
+    if (!href.startsWith("/")) {
+      return false;
+    }
+    return here === href || here.startsWith(href + "/");
+  };
+}
+
+/* Footer category links — live top-level categories from the backend, falling
+   back to the curated dictionary list while the fetch is pending / on error. */
+export function FooterCategories() {
+  const { locale, dict } = useI18n();
+  const { data } = useCategories(locale);
+  const isActive = useIsActiveHref();
+  const t = dict.footer;
+  const live = (data ?? []).slice(0, 6);
+  return (
+    <div className="nk-footer__catgrid">
+      <Link href="/kategorijos" aria-current={isActive("/kategorijos") ? "page" : undefined}>{t.allCategories}</Link>
+      {live.length
+        ? live.map((c) => <Link key={c.id} href={listingSearchHref({ cat: c.id })}>{c.title}</Link>)
+        : t.categories.map((c) => <Link key={c.q} href={listingSearchHref({ q: c.q })}>{c.label}</Link>)}
+    </div>
+  );
+}
+
+/* Footer help links — route links carry an active state for the current page. */
+export function FooterHelpLinks() {
+  const { dict } = useI18n();
+  const isActive = useIsActiveHref();
+  return (
+    <>
+      {dict.footer.help.map((link) => (
+        <Link key={link.href} href={link.href} aria-current={isActive(link.href) ? "page" : undefined}>{link.label}</Link>
+      ))}
+    </>
+  );
+}
+
 /* ---------------- Offers ---------------- */
 export function Offers() {
   const { locale, dict } = useI18n();
@@ -428,11 +472,11 @@ export function Faq() {
   return (
     <section style={{ background: "var(--nk-bg)" }}>
       <div className="nk-container" style={{ paddingBlock: "var(--nk-section-y-lg)", maxWidth: 1320 }}>
-        <div className="nk-reveal" style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 40, alignItems: "center", marginBottom: 60 }}>
+        <div className="nk-reveal" style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)", alignItems: "center", marginBottom: "var(--nk-section-head)" }}>
           <h2 className="nk-h-section" style={{ margin: 0 }}>{dict.faq.heading}</h2>
           <p className="nk-body" style={{ margin: 0, maxWidth: 866, color: "var(--nk-yellow)" }}>{dict.faq.subheading}</p>
         </div>
-        <div className="nk-reveal" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div className="nk-reveal" style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)" }}>
           {dict.faq.items.map((f, i) => <FaqRow key={i} q={f.q} a={f.a} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} />)}
         </div>
       </div>

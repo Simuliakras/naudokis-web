@@ -3,14 +3,12 @@
 // bundle; the same file compiles as client code where client screens import
 // Footer). Translations come from a `locale` prop + getDictionary — the Dict
 // holds function members, so it must never cross the server→client boundary.
-import Link from "next/link";
 import Image from "next/image";
 import {
   Icon, type IconName, Logo, AppBadges, SectionHead, QR, Pattern,
 } from "./ui";
 import { FeatureCard, Testimonial } from "./cards";
-import { SearchBar } from "./sections";
-import { listingSearchHref } from "@/app/lib/search";
+import { SearchBar, FooterCategories, FooterHelpLinks } from "./sections";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL } from "@/app/lib/contact";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import type { Locale } from "@/app/lib/i18n/config";
@@ -25,9 +23,9 @@ export function Hero({ locale }: { locale: Locale }) {
       <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
         {/* grid columns / padding / min-height live on .nk-hero-panel in globals.css
             so the 980px stack doesn't need !important overrides */}
-        <div className="nk-hero-panel nk-grain nk-gborder" style={{ position: "relative", borderRadius: 20, background: "var(--nk-glass)", backdropFilter: "blur(35px)" }}>
+        <div className="nk-hero-panel nk-grain nk-gborder" style={{ position: "relative", borderRadius: "var(--nk-r-lg)", background: "var(--nk-glass)", backdropFilter: "blur(35px)" }}>
           {/* left column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 36, justifyContent: "center", maxWidth: 680 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-stack-lg)", justifyContent: "center", maxWidth: 680 }}>
             <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: 27, padding: "6px 18px 6px 6px" }}>
               <span style={{ width: 32, height: 32, borderRadius: 16, background: "var(--nk-bg)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
                 <Icon name="Users" size={18} color="var(--nk-text)" stroke={1.8} />
@@ -59,8 +57,8 @@ export function Features({ locale }: { locale: Locale }) {
     <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
       <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.40 }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y-lg)" }}>
-        <div className="nk-reveal nk-row">
-          {dict.features.map((f) => <div key={f.title} style={{ display: "flex", flex: 1 }}><FeatureCard {...f} /></div>)}
+        <div className="nk-row">
+          {dict.features.map((f) => <FeatureCard key={f.title} {...f} className="nk-reveal" />)}
         </div>
       </div>
     </section>
@@ -71,8 +69,8 @@ export function Features({ locale }: { locale: Locale }) {
 export function HomeSeo({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).home;
   return (
-    <section className="nk-container" style={{ paddingBlock: "0 var(--nk-section-y)" }}>
-      <div className="nk-reveal" style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: 16 }}>
+    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-head) var(--nk-section-y)", borderTop: "1px solid var(--nk-border-faint)" }}>
+      <div className="nk-reveal" style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
         <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{t.seoHeading}</h2>
         <p className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{t.seoBody}</p>
       </div>
@@ -105,13 +103,13 @@ export function CtaBanner({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
     <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y-lg)" }}>
-      <div className="nk-reveal nk-cta nk-grain nk-gborder" style={{ position: "relative", borderRadius: 20, overflow: "hidden", minHeight: 620, background: "linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)" }}>
+      <div className="nk-reveal nk-cta nk-grain nk-gborder" style={{ position: "relative", borderRadius: "var(--nk-r-lg)", overflow: "hidden", minHeight: 620, background: "linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)" }}>
         <AmbientGlow />
         {/* phone bleeding from the top, filling the right half down to the bottom edge */}
         <Image className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "var(--nk-shadow-phone-cta)" }} />
         <div className="nk-cta__badges" style={{ position: "absolute", left: "var(--nk-panel-pad)", top: "var(--nk-panel-pad)" }}><AppBadges /></div>
-        <div className="nk-cta__body" style={{ position: "absolute", left: "var(--nk-panel-pad)", bottom: "var(--nk-panel-pad)", maxWidth: 808, display: "flex", flexDirection: "column", gap: 20 }}>
-          <span style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 16px 8px 12px", borderRadius: "var(--nk-r-pill)", background: "var(--nk-glass-strong)", border: "1px solid var(--nk-border)", backdropFilter: "blur(12px)" }}>
+        <div className="nk-cta__body" style={{ position: "absolute", left: "var(--nk-panel-pad)", bottom: "var(--nk-panel-pad)", maxWidth: 808, display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)" }}>
+          <span style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: "var(--nk-gap-xs)", padding: "8px 16px 8px 12px", borderRadius: "var(--nk-r-pill)", background: "var(--nk-glass-strong)", border: "1px solid var(--nk-border)", backdropFilter: "blur(12px)" }}>
             <Icon name="Sparkles" size={17} color="var(--nk-yellow)" />
             <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 15, letterSpacing: ".04em", color: "var(--nk-yellow)" }}>{dict.cta.badge}</span>
           </span>
@@ -175,19 +173,12 @@ export function Footer({ locale }: { locale: Locale }) {
 
           <nav className="nk-footer__col" aria-label={t.browseHeading}>
             <h4>{t.browseHeading}</h4>
-            <div className="nk-footer__catgrid">
-              <Link href="/kategorijos">{t.allCategories}</Link>
-              {t.categories.map((c) => (
-                <Link key={c.q} href={listingSearchHref({ q: c.q })}>{c.label}</Link>
-              ))}
-            </div>
+            <FooterCategories />
           </nav>
 
           <nav className="nk-footer__col" aria-label={t.helpHeading}>
             <h4>{t.helpHeading}</h4>
-            {t.help.map((link) => (
-              <Link key={link.href} href={link.href}>{link.label}</Link>
-            ))}
+            <FooterHelpLinks />
           </nav>
         </div>
 

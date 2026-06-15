@@ -243,8 +243,6 @@ export const en: Dict = {
     save: "Save",
     newListingPill: "New listing",
     galleryAll: (n) => `All ${n} photos`,
-    subnav: { description: "Description", specs: "Specs", handover: "Handover", terms: "Terms", reviews: "Reviews" },
-    subnavReserve: "Reserve",
     perDayShort: "/ day",
     dateFrom: "From",
     dateTo: "To",

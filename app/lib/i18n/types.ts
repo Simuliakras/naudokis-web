@@ -238,9 +238,6 @@ export type Dict = {
     save: string; // "Įsiminti" header action
     newListingPill: string; // gallery "Naujas skelbimas" badge
     galleryAll: (count: number) => string; // "Visos N nuotr."
-    // sticky in-page sub-nav (short labels)
-    subnav: { description: string; specs: string; handover: string; terms: string; reviews: string };
-    subnavReserve: string; // CTA verb in the sub-nav ("Rezervuoti")
     perDayShort: string; // "/ d."
     // booking panel
     dateFrom: string;

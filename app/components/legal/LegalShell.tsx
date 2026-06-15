@@ -24,7 +24,7 @@ export function LegalTopBar({
       <div className="nk-lg-topbar__in">
         <Link className="nk-lg-brand" href={hubHref}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/naudokis/logo-mark.svg" alt="" />
+          <img src="/naudokis/icon.png" alt="" />
           <span>Naudokis<small>{t.brandSub}</small></span>
         </Link>
         <div className="nk-lg-topbar__spacer" />

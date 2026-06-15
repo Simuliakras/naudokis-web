@@ -6,7 +6,7 @@ import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, InputClear } from "./ui";
-import { CategoryTile, CategoryCardSkeleton, EmptyState } from "./cards";
+import { CategoryCard, CategoryCardSkeleton, EmptyState } from "./cards";
 import { useCategories } from "@/app/lib/categories";
 import { listingSearchHref } from "@/app/lib/search";
 import { mockCategoryCount } from "@/app/lib/mock";
@@ -36,15 +36,15 @@ export function CategoriesScreen() {
     <Chrome>
       <div className="nk-page">
         <Nav onSearch={focusSearch} />
-        <main id="nk-main" className="nk-container" style={{ paddingBlock: "32px 40px" }}>
+        <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px" }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={[{ label: t.crumb }]} />
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: 32 }}>
             <span className="nk-eyebrow">{t.eyebrow}</span>
             <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 5vw, 52px)", lineHeight: 1.05, letterSpacing: "-0.01em", color: "var(--nk-text)" }}>{t.title}</h1>
             <p className="nk-body" style={{ margin: 0, maxWidth: 620 }}>{t.body}</p>
           </div>
 
-          <form onSubmit={submit} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32, flexWrap: "wrap" }}>
+          <form onSubmit={submit} style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)", marginBottom: 32, flexWrap: "wrap" }}>
             <span className="nk-searchfield" style={{ flex: "1 1 320px", minWidth: 240, maxWidth: 560 }}>
               <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
               <input id="nk-cats-search-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.searchPlaceholder}
@@ -68,7 +68,7 @@ export function CategoriesScreen() {
             <div className="nk-grid-cats">
               {list.map((c) => (
                 <div key={c.id} className="nk-reveal" style={{ display: "grid" }}>
-                  <CategoryTile id={c.id} icon={c.icon} title={c.title} count={t.tileCount(mockCategoryCount(c.id))} href={listingSearchHref({ cat: c.id })} />
+                  <CategoryCard id={c.id} icon={c.icon} title={c.title} count={t.tileCount(mockCategoryCount(c.id))} href={listingSearchHref({ cat: c.id })} />
                 </div>
               ))}
             </div>

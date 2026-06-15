@@ -76,7 +76,7 @@ export function AppRedirect() {
         </button>
         <span className="nk-redirect-mark">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/naudokis/logo-mark.svg" alt="" style={{ width: 34, height: 34 }} />
+          <img src="/naudokis/icon.png" alt="" style={{ width: 34, height: 34 }} />
         </span>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <h2 id="nk-redirect-title" style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{state.title}</h2>

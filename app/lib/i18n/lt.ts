@@ -249,8 +249,6 @@ export const lt: Dict = {
     save: "Įsiminti",
     newListingPill: "Naujas skelbimas",
     galleryAll: (n) => `Visos ${n} nuotr.`,
-    subnav: { description: "Aprašymas", specs: "Specifikacijos", handover: "Perdavimas", terms: "Sąlygos", reviews: "Atsiliepimai" },
-    subnavReserve: "Rezervuoti",
     perDayShort: "/ d.",
     dateFrom: "Nuo",
     dateTo: "Iki",

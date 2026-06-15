@@ -3,7 +3,7 @@
 // Browsing is real (data from the backend); reserve / contact / favorite are
 // locked to the app via the redirect modal. This file is the orchestrator —
 // the presentational pieces live in ./ListingDetail.
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
@@ -11,7 +11,7 @@ import { Chrome } from "./Chrome";
 import { Breadcrumb, openRedirect } from "./ui";
 import { EmptyState } from "./cards";
 import {
-  SUBNAV_IDS, ListingSkeleton, ListingHeader, Gallery, SubNav, DetailBody,
+  ListingSkeleton, ListingHeader, Gallery, DetailBody,
   BookingPanel, HostCard, MobileBar, detailCrumbs,
 } from "./ListingDetail";
 import { useListing, formatPrice } from "@/app/lib/listings";
@@ -24,27 +24,14 @@ export function ListingScreen({ id }: { id: string }) {
   const t = dict.detail;
   const router = useRouter();
   const [saved, setSaved] = useState(false);
-  const [activeSec, setActiveSec] = useState<string>("aprasymas");
   const { data: listing, isLoading, isError, refetch } = useListing(id, locale);
-
-  // Scrollspy for the sticky sub-nav.
-  useEffect(() => {
-    if (!listing || !("IntersectionObserver" in window)) return;
-    const els = SUBNAV_IDS.map((s) => document.getElementById(s)).filter((el): el is HTMLElement => !!el);
-    if (!els.length) return;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) setActiveSec(e.target.id); });
-    }, { rootMargin: "-140px 0px -64% 0px", threshold: 0 });
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, [listing]);
 
   const shell = (children: React.ReactNode) => (
     <Chrome banner={false}>
       <div className="nk-page">
         {/* Return to the feed with the user's last filters intact (deep links fall back to the bare feed). */}
         <Nav onSearch={() => router.push(lastFeedUrl(locale) ?? "/skelbimai")} />
-        <main id="nk-main" className="nk-container" style={{ paddingBlock: "26px 120px" }}>
+        <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 120px" }}>
           <div className="nk-detail">{children}</div>
         </main>
         <Footer locale={locale} />
@@ -81,7 +68,6 @@ export function ListingScreen({ id }: { id: string }) {
 
         <ListingHeader listing={listing} saved={saved} onShare={lockShare} onFav={lockFav} />
         <Gallery images={listing.images} title={listing.title} isNew={isNew} onMore={lockShare} />
-        <SubNav activeSec={activeSec} price={listing.price} onReserve={reserve} />
 
         <div className="nk-detail-grid">
           <DetailBody listing={listing} deposit={deposit} onContact={contact} />

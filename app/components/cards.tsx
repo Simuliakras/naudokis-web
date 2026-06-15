@@ -30,7 +30,7 @@ export function OfferCard({
     openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody });
   };
   return (
-    <article className="nk-offer" style={{ position: "relative", background: "var(--nk-surface)", borderRadius: 24, overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
+    <article className="nk-offer" style={{ position: "relative", background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
       {href && <Link href={href} className="nk-stretch" aria-label={title} />}
       <div className={"nk-offer__media nk-imgph" + (img ? "" : " nk-offer__media--empty")}
         data-cat={img ? undefined : category} style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }}>
@@ -50,13 +50,13 @@ export function OfferCard({
           </span>
         </div>
       </div>
-      <div style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
         <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
         {/* meta row: rating + count on the left, location pin + city on the right */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--nk-gap-sm)", flexWrap: "wrap" }}>
           {rating ? (
-            <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)" }}>
                 <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 16, color: "var(--nk-text-2)" }}>{rating}</b>
                 <Icon name="Star" size={16} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
               </span>
@@ -66,12 +66,12 @@ export function OfferCard({
             // No reviews yet — surface that as a "New" trust signal instead of a gap.
             <Pill tone="yellow" icon="Sparkles">{c.newListing}</Pill>
           )}
-          <span style={{ display: "flex", alignItems: "center", gap: 5, fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 16, color: "var(--nk-text-2)" }}>
+          <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 16, color: "var(--nk-text-2)" }}>
             <Icon name="MapPin" size={16} color="var(--nk-text)" fill="var(--nk-text)" stroke={2} /> {city ?? c.sampleCity}
           </span>
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto", paddingTop: 16, borderTop: "1px solid var(--nk-border)" }}>
-          <span style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto", paddingTop: "var(--nk-gap-md)", borderTop: "1px solid var(--nk-border)" }}>
+          <span style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
             <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price ?? c.samplePrice}</span>
             <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
           </span>
@@ -84,37 +84,7 @@ export function OfferCard({
   );
 }
 
-/* ---------------- Category tile (all-categories page) ---------------- */
-export function CategoryTile({
-  title, count, href, id, icon,
-}: {
-  title: string;
-  count: string;
-  href: string;
-  id: string; // top-level category id — selects the accent hue
-  icon: IconName; // glyph resolved from the wire's icon_name (Category.icon)
-}) {
-  return (
-    <div className="nk-cat" data-cat={id}>
-      <Link href={href} className="nk-stretch" aria-label={title} />
-      <div className="nk-cat__img">
-        <span className="nk-cat__disk"><Icon name={icon} size={30} stroke={1.8} /></span>
-      </div>
-      <div className="nk-cat__overlay" />
-      <div className="nk-cat__content">
-        <span style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "28px", color: "var(--nk-text)" }}>{title}</span>
-          <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{count}</span>
-        </span>
-        <span className="nk-cat__arrow nk-round nk-round--outline" style={{ flex: "none" }} aria-hidden="true">
-          <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------- Category card ---------------- */
+/* ---------------- Category card (all-categories grid + home section) ---------------- */
 export function CategoryCard({
   title, count, href, id, icon,
 }: {
@@ -127,14 +97,13 @@ export function CategoryCard({
   return (
     <div className="nk-cat" data-cat={id}>
       <Link href={href} className="nk-stretch" aria-label={title} />
-      <div className="nk-cat__img">
-        <span className="nk-cat__disk"><Icon name={icon} size={30} stroke={1.8} /></span>
-      </div>
+      <div className="nk-cat__img" />
       <div className="nk-cat__overlay" />
+      <span className="nk-cat__disk"><Icon name={icon} size={40} stroke={1.8} /></span>
       <div className="nk-cat__content">
-        <span style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <h3 className="nk-h-row" style={{ margin: 0 }}>{title}</h3>
-          {count && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{count}</span>}
+        <span style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "var(--nk-gap-sm)" }}>
+          <h3 className="nk-h-row" style={{ margin: 0, fontSize: 22, lineHeight: "26px" }}>{title}</h3>
+          {count && <span className="nk-cat__count">{count}</span>}
         </span>
         <span className="nk-cat__arrow nk-round nk-round--outline" style={{ flex: "none" }} aria-hidden="true">
           <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
@@ -152,8 +121,8 @@ export function InterruptionBanner() {
     <div className="nk-interrupt nk-grain" style={{ gridColumn: "1 / -1" }}>
       <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/naudokis/logo-mark.svg" alt="" loading="lazy" style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
-      <div style={{ position: "relative", flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: 8 }}>
+      <img src="/naudokis/icon.png" alt="" loading="lazy" style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
+      <div style={{ position: "relative", flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
         <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{t.interruptTitle}</h3>
         <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "26px", color: "var(--nk-text-2)", maxWidth: 520 }}>{t.interruptBody}</p>
       </div>
@@ -167,21 +136,22 @@ export function InterruptionBanner() {
 
 /* ---------------- Feature card (glass) ---------------- */
 export function FeatureCard({
-  icon = "ShieldCheck", title, body,
+  icon = "ShieldCheck", title, body, className,
 }: {
   icon?: IconName;
   title: string;
   body: string;
+  className?: string;
 }) {
   return (
-    <div className="nk-feature" style={{
-      flex: 1, borderRadius: 24, background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-hairline)",
+    <div className={className ? `nk-feature ${className}` : "nk-feature"} style={{
+      flex: 1, borderRadius: "var(--nk-r-card)", background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", WebkitBackdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-hairline)",
       padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-stack-lg)", textAlign: "center",
     }}>
       <span style={{ width: "var(--nk-size-icon-lg)", height: "var(--nk-size-icon-lg)", borderRadius: "50%", background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Icon name={icon} size={36} color="var(--nk-yellow)" stroke={2} />
       </span>
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
         <h3 className="nk-h-card" style={{ margin: 0 }}>{title}</h3>
         <p className="nk-body" style={{ margin: 0 }}>{body}</p>
       </div>
@@ -200,14 +170,14 @@ export function Testimonial({
 }) {
   return (
     <div className="nk-quote" style={{ flex: 1, borderRadius: "var(--nk-r-md)", padding: "var(--nk-block-pad)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 40 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", marginBottom: "var(--nk-stack-lg)" }}>
         <span className="nk-imgph" style={{ width: "var(--nk-size-icon-md)", height: "var(--nk-size-icon-md)", borderRadius: "50%", background: avatarTint }}>
           <Icon name="User" size={26} stroke={1.6} color="var(--nk-avatar-icon)" />
         </span>
-        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
           <span className="nk-h-row">{name}</span>
           {role && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)" }}>{role}</span>}
-          <span style={{ display: "flex", gap: 4 }}>
+          <span style={{ display: "flex", gap: "var(--nk-gap-2xs)" }}>
             {Array.from({ length: 5 }).map((_, i) => <Icon key={i} name="Star" size={16} color="var(--nk-yellow)" fill="var(--nk-yellow)" />)}
           </span>
         </div>
@@ -229,12 +199,12 @@ export function FaqRow({
   return (
     <div className="nk-faq" style={{
       border: "1px solid " + (open ? "var(--nk-purple)" : "var(--nk-border-soft)"),
-      borderRadius: open ? 24 : 20, background: "var(--nk-surface)", transition: "border-radius .2s ease, border-color .2s ease, background .2s ease",
+      borderRadius: open ? "var(--nk-r-card)" : "var(--nk-r-lg)", background: "var(--nk-surface)", transition: "border-radius .2s ease, border-color .2s ease, background .2s ease",
       overflow: "hidden",
     }}>
       {/* Semantic heading wraps the disclosure button (standard accordion pattern). */}
       <h3 style={{ margin: 0 }}>
-        <button type="button" onClick={onToggle} aria-expanded={open} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 24, padding: "20px 20px 20px 40px", textAlign: "left", font: "inherit" }}>
+        <button type="button" onClick={onToggle} aria-expanded={open} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "var(--nk-gap-xl)", padding: "20px 20px 20px 40px", textAlign: "left", font: "inherit" }}>
           <span className="nk-h-row">{q}</span>
           <span style={{ width: 44, height: 44, borderRadius: 22, flex: "none", display: "flex", alignItems: "center", justifyContent: "center",
             transition: "transform .2s ease", transform: open ? "rotate(180deg)" : "none" }}>
@@ -254,9 +224,9 @@ export function FaqRow({
 /* ---------------- Skeleton listing card ---------------- */
 export function OfferCardSkeleton() {
   return (
-    <article aria-hidden="true" style={{ background: "var(--nk-surface)", borderRadius: 24, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+    <article aria-hidden="true" style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <div className="nk-skel" style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }} />
-      <div style={{ padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
         <div className="nk-skel" style={{ width: "70%", height: 26 }} />
         <div className="nk-skel" style={{ width: "48%", height: 18 }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
@@ -271,9 +241,11 @@ export function OfferCardSkeleton() {
 /* ---------------- Skeleton category card ---------------- */
 export function CategoryCardSkeleton() {
   return (
-    <div aria-hidden="true" className="nk-skel" style={{ height: 300, borderRadius: "var(--nk-r-card)", position: "relative" }}>
-      <div className="nk-skel" style={{ position: "absolute", top: 16, left: 20, width: "55%", height: 26, background: "rgba(27,27,27,.3)" }} />
-      <div className="nk-skel" style={{ position: "absolute", right: 20, bottom: 20, width: 44, height: 44, borderRadius: 22, background: "rgba(27,27,27,.3)" }} />
+    <div aria-hidden="true" className="nk-skel" style={{ height: 248, borderRadius: "var(--nk-r-card)", position: "relative" }}>
+      <div className="nk-skel" style={{ position: "absolute", top: 22, left: 22, width: 64, height: 64, borderRadius: "50%", background: "rgba(27,27,27,.3)" }} />
+      <div className="nk-skel" style={{ position: "absolute", left: 22, bottom: 48, width: "55%", height: 22, background: "rgba(27,27,27,.3)" }} />
+      <div className="nk-skel" style={{ position: "absolute", left: 22, bottom: 22, width: 92, height: 18, borderRadius: 12, background: "rgba(27,27,27,.3)" }} />
+      <div className="nk-skel" style={{ position: "absolute", right: 22, bottom: 22, width: 44, height: 44, borderRadius: 22, background: "rgba(27,27,27,.3)" }} />
     </div>
   );
 }
@@ -305,12 +277,12 @@ export function EmptyState({
       {illustration
         ? <Illustration name={illustration} />
         : <span className="nk-empty__icon"><Icon name={icon} size={40} stroke={1.8} color="var(--nk-text-muted)" /></span>}
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 460 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", maxWidth: 460 }}>
         <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", color: "var(--nk-text)" }}>{title}</h3>
         <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "28px", color: "var(--nk-text-2)" }}>{subtitle}</p>
       </div>
       {(actionLabel || secondaryLabel) && (
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+        <div style={{ display: "flex", gap: "var(--nk-gap-sm)", flexWrap: "wrap", justifyContent: "center" }}>
           {actionLabel && (
             <button className={"nk-btn " + (actionPrimary ? "nk-btn--primary" : "nk-btn--outline")} onClick={onAction}>
               {actionIcon && <Icon name={actionIcon} size={18} stroke={2.2} color="var(--nk-text)" />}
@@ -347,11 +319,11 @@ export function SectionEmpty({
 }) {
   const c = SECTION_EMPTY_TONES[tone];
   return (
-    <div style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 24, padding: "26px 28px", display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
+    <div style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", alignItems: "center", gap: "var(--nk-gap-xl)", flexWrap: "wrap" }}>
       <span style={{ width: 60, height: 60, borderRadius: 30, flex: "none", background: c.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Icon name={icon} size={27} color={c.fg} stroke={2} />
       </span>
-      <div style={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column", gap: 5 }}>
+      <div style={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)" }}>
         <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", color: "var(--nk-text)" }}>{title}</span>
         {subtitle && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "25px", color: "var(--nk-text-2)" }}>{subtitle}</span>}
       </div>
