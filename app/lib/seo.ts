@@ -6,8 +6,12 @@ import { notFound } from "next/navigation";
 import { defaultLocale, isLocale, localePrefix, type Locale } from "@/app/lib/i18n/config";
 import { CONTACT_EMAIL, CONTACT_PHONE, SOCIAL_LINKS } from "@/app/lib/contact";
 import type { FaqItem } from "@/app/lib/i18n/types";
+import { LT_CITIES, type City } from "@/app/lib/cities";
+import type { Category } from "@/app/lib/categories";
 
-const SITE_URL = "https://naudokis.lt";
+// Canonical production origin — the single source of truth for absolute URLs,
+// shared by the metadata builders here and the sitemap/robots routes.
+export const SITE_URL = "https://naudokis.lt";
 
 // Shared guard for `[lang]` routes: narrow the segment to a valid `Locale` or
 // 404. Use in both `generateMetadata` and the page component so invalid locales
@@ -21,19 +25,64 @@ export function requireLocale(lang: string): Locale {
 }
 
 // `path` is the bare route, e.g. "/kategorijos" ("" for home).
-function ltPath(path: string) {
+export function ltPath(path: string) {
   return path || "/";
 }
-function enPath(path: string) {
+export function enPath(path: string) {
   return `/en${path}`;
 }
-function canonicalFor(locale: Locale, path: string) {
+export function canonicalFor(locale: Locale, path: string) {
   const prefix = localePrefix(locale);
   return prefix ? `${prefix}${path}` : ltPath(path);
 }
 
+export type ListingLandingFilters = { category?: string; city?: string };
+
+export function listingLandingPath(filters: ListingLandingFilters = {}): string {
+  const params = new URLSearchParams();
+  if (filters.category) {
+    params.set("cat", filters.category);
+  }
+  if (filters.city) {
+    params.set("city", filters.city);
+  }
+  const query = params.toString();
+  return query ? `/skelbimai?${query}` : "/skelbimai";
+}
+
+// Resolve the ?cat / ?city feed filters to the canonical category/city landing
+// state: the matched category/city (if valid), whether either param was invalid
+// (used to keep junk filter URLs out of the index), and the canonical path.
+export type ListingLanding = {
+  category?: Category;
+  city?: City;
+  hasInvalidCategory: boolean;
+  hasInvalidCity: boolean;
+  path: string;
+};
+
+export function resolveListingLanding({
+  catParam, cityParam, categories,
+}: {
+  catParam: string;
+  cityParam: string;
+  categories: Category[];
+}): ListingLanding {
+  const cat = catParam.trim();
+  const cityName = cityParam.trim();
+  const category = categories.find((c) => c.id === cat);
+  const city = LT_CITIES.find((c) => c === cityName);
+  return {
+    category,
+    city,
+    hasInvalidCategory: Boolean(cat && !category),
+    hasInvalidCity: Boolean(cityName && !city),
+    path: listingLandingPath({ category: category?.id, city }),
+  };
+}
+
 export function pageMetadata({
-  locale, path, title, description, ogLocale, ogImageAlt, keywords, image, ltOnly,
+  locale, path, title, description, ogLocale, ogImageAlt, image, ltOnly,
 }: {
   locale: Locale;
   path: string;
@@ -41,7 +90,6 @@ export function pageMetadata({
   description: string;
   ogLocale: string;
   ogImageAlt: string;
-  keywords?: string[];
   image?: string; // absolute URL for a per-page share image (e.g. a listing photo)
   // Set for content that exists only in Lithuanian (e.g. the policy-center doc):
   // the LT URL is canonical for both locales, the EN hreflang is dropped, and the
@@ -77,7 +125,6 @@ export function pageMetadata({
     title,
     description,
     applicationName: "Naudokis",
-    keywords,
     // Keep the duplicate LT-content-under-/en URL out of the index.
     robots: ltOnly && locale !== defaultLocale ? { index: false, follow: true } : undefined,
     alternates: {
@@ -194,7 +241,7 @@ export function itemListJsonLd(locale: Locale, items: { id: string; name: string
 // A rental listing as a Product with a per-day Offer (UnitPriceSpecification
 // keeps the daily rate honest — schema.org Offer has no native rental unit).
 export function listingJsonLd({
-  locale, id, name, description, image, priceCents, ratingAverage, ratingCount,
+  locale, id, name, description, image, priceCents, ratingAverage, ratingCount, itemCondition,
 }: {
   locale: Locale;
   id: string;
@@ -204,6 +251,7 @@ export function listingJsonLd({
   priceCents: number;
   ratingAverage: number | null;
   ratingCount: number;
+  itemCondition?: string;
 }): JsonLdNode {
   const price = (priceCents / 100).toFixed(2);
   const url = absoluteUrl(locale, `/skelbimai/${id}`);
@@ -213,9 +261,6 @@ export function listingJsonLd({
     name,
     description,
     url,
-    // No itemCondition: the backend has no condition field, and structured data
-    // must only assert what the data actually contains (Search Console will warn
-    // "missing itemCondition" — that's acceptable; a fabricated value is not).
     offers: {
       "@type": "Offer",
       price,
@@ -233,6 +278,9 @@ export function listingJsonLd({
   };
   if (image) {
     node.image = image;
+  }
+  if (itemCondition) {
+    node.itemCondition = itemCondition;
   }
   if (ratingAverage != null && ratingCount > 0) {
     node.aggregateRating = {

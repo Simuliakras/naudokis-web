@@ -31,11 +31,11 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
         }}
       >
-        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>Kažkas nepavyko</h1>
+        <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>Nepavyko parodyti puslapio</h1>
         <p style={{ margin: 0, maxWidth: 420, lineHeight: 1.5, color: "rgba(255,255,255,0.85)" /* --nk-text-2 */ }}>
-          Įvyko netikėta klaida. Pabandykite dar kartą.
+          Įvyko netikėta klaida. Pabandykite atnaujinti puslapį.
           <br />
-          Something went wrong. Please try again.
+          Something unexpected happened. Please try again.
         </p>
         <button
           onClick={reset}
@@ -50,7 +50,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
             color: "#FFFFFF", // --nk-text
           }}
         >
-          Bandyti dar kartą / Try again
+          Atnaujinti / Try again
         </button>
       </body>
     </html>

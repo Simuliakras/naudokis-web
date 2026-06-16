@@ -129,10 +129,6 @@ export function CtaBanner({ locale }: { locale: Locale }) {
         <Image className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "var(--nk-shadow-phone-cta)" }} />
         <div className="nk-cta__badges" style={{ position: "absolute", left: "var(--nk-panel-pad)", top: "var(--nk-panel-pad)" }}><AppBadges /></div>
         <div className="nk-cta__body" style={{ position: "absolute", left: "var(--nk-panel-pad)", bottom: "var(--nk-panel-pad)", maxWidth: 808, display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)" }}>
-          <span style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: "var(--nk-gap-xs)", padding: "8px 16px 8px 12px", borderRadius: "var(--nk-r-pill)", background: "var(--nk-glass-strong)", border: "1px solid var(--nk-border)", backdropFilter: "blur(12px)" }}>
-            <Icon name="Sparkles" size={17} color="var(--nk-yellow)" />
-            <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 15, letterSpacing: ".04em", color: "var(--nk-yellow)" }}>{dict.cta.badge}</span>
-          </span>
           <h2 className="nk-h-cta" style={{ color: "var(--nk-text)" }}>{dict.cta.title}</h2>
           <p style={{ margin: 0, maxWidth: 640, fontFamily: "var(--nk-font-body)", fontSize: 20, lineHeight: "32px", color: "var(--nk-text-muted)" }}>{dict.cta.body}</p>
         </div>

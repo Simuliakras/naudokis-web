@@ -5,6 +5,7 @@ import { Fragment } from "react";
 import type { Locale } from "@/app/lib/i18n/config";
 import type { Block, ListItem } from "@/app/lib/legal/types";
 import { Inline } from "./Inline";
+import { Icon } from "./Icon";
 
 function ListItems({ items, locale }: { items: ListItem[]; locale: Locale }) {
   return (
@@ -30,11 +31,12 @@ function ListItems({ items, locale }: { items: ListItem[]; locale: Locale }) {
 }
 
 export function Blocks({
-  blocks, locale, briefLabel,
+  blocks, locale, briefLabel, anchorLabel,
 }: {
   blocks: Block[];
   locale: Locale;
   briefLabel: string;
+  anchorLabel: string;
 }) {
   return (
     <>
@@ -46,6 +48,9 @@ export function Blocks({
               <h2 key={i} id={b.id} className="nk-lg-h2">
                 {m && <span className="nk-lg-h2__num">{m[1]}</span>}
                 <span><Inline text={m ? m[2] : b.text} locale={locale} /></span>
+                <a href={"#" + b.id} className="nk-lg-anchor" aria-label={anchorLabel}>
+                  <Icon name="hash" size={16} />
+                </a>
               </h2>
             );
           }

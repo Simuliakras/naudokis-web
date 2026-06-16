@@ -9,8 +9,10 @@ const ICONS = {
   menu: "M4 7h16M4 12h16M4 17h16",
   x: "M6 6l12 12M18 6L6 18",
   calendar: "M7 3v3M17 3v3M4 9h16M5 6h14v15H5z",
-  tag: "M3 12V4h8l9 9-7 7-9-9z M7.5 7.5h.01",
   hash: "M5 9h14M5 15h14M10 4l-2 16M16 4l-2 16",
+  arrowRight: "M5 12h14M13 6l6 6-6 6",
+  mail: "M3 6h18v12H3z M3 7l9 6 9-6",
+  printer: "M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z",
 } as const;
 
 export type LegalIconName = keyof typeof ICONS;

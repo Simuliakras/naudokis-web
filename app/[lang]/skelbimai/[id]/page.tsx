@@ -5,65 +5,32 @@ import {
   pageMetadata, requireLocale, breadcrumbJsonLd, listingJsonLd,
 } from "@/app/lib/seo";
 import { makeQueryClient } from "@/app/lib/query";
-import { fetchListing, listingKey, LISTING_REVALIDATE } from "@/app/lib/listings";
+import { fetchListing, listingKey } from "@/app/lib/listings";
+import { fetchListingMeta, type ListingMeta } from "@/app/lib/listing-seo";
 import { ListingScreen } from "@/app/components/ListingScreen";
 import { JsonLd } from "@/app/components/JsonLd";
-import { API_BASE } from "@/app/lib/api";
 
 // Per-listing detail is unbounded dynamic data — render on demand, cache 5 min.
 // (Literal to satisfy Next's static segment-config analysis; same value as
 // LISTING_REVALIDATE, which the data-layer fetches use.)
 export const revalidate = 300;
 
-// Raw server-side fetch for metadata + Product JSON-LD (title/description/image,
-// plus the raw price/rating numbers the structured data needs).
-type ListingMeta = {
-  title: string;
-  description: string;
-  image?: string;
-  priceCents: number;
-  ratingAverage: number | null;
-  ratingCount: number;
-};
-// Only the raw backend fields this metadata fetch reads (the full shape lives in
-// listings.ts). Typed so res.json() doesn't leak `any` into the meta mapping.
-type RawListing = {
-  title?: string;
-  description?: string;
-  images?: { url?: string }[];
-  price_per_day_cents?: number;
-  rating_average?: number | null;
-  rating_count?: number;
-};
-async function fetchListingMeta(id: string): Promise<ListingMeta | null> {
-  try {
-    // Same URL + options as fetchListing's server call so Next memoizes them
-    // into a single request (the detail page also prefetches that query).
-    const res = await fetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } });
-    if (!res.ok) return null;
-    const body: { data?: RawListing } = await res.json();
-    const l = body.data;
-    if (!l?.title) return null;
-    return {
-      title: l.title,
-      description: (l.description ?? "").slice(0, 200),
-      image: l.images?.[0]?.url,
-      priceCents: typeof l.price_per_day_cents === "number" ? l.price_per_day_cents : 0,
-      ratingAverage: typeof l.rating_average === "number" ? l.rating_average : null,
-      ratingCount: typeof l.rating_count === "number" ? l.rating_count : 0,
-    };
-  } catch {
-    return null;
-  }
+// Prefer the listing's own description (trimmed) when it's substantial; otherwise
+// fall back to the templated SEO description from the dictionary.
+function listingDescription(data: ListingMeta, fromDict: string): string {
+  const clean = data.description.trim().replace(/\s+/g, " ");
+  return clean.length >= 80 ? clean.slice(0, 200) : fromDict;
 }
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/skelbimai/[id]">): Promise<Metadata> {
   const { lang, id } = await params;
   const locale = requireLocale(lang);
   const { detail, meta } = getDictionary(locale);
-  const data = await fetchListingMeta(id);
-  const title = data ? `${data.title}${detail.metaTitleSuffix}` : detail.metaFallbackTitle;
-  const description = data?.description || detail.metaFallbackDescription;
+  const data = await fetchListingMeta(id, locale);
+  const title = data ? detail.seoTitle({ title: data.title.trim(), city: data.city }) : detail.metaFallbackTitle;
+  const description = data
+    ? listingDescription(data, detail.seoDescription({ title: data.title, city: data.city, category: data.categoryNames[0] }))
+    : detail.metaFallbackDescription;
   return pageMetadata({
     locale, path: `/skelbimai/${id}`, title, description,
     ogLocale: meta.ogLocale, ogImageAlt: data?.title ?? meta.ogImageAlt, image: data?.image,
@@ -80,7 +47,7 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
   const qc = makeQueryClient();
   const [, data] = await Promise.all([
     qc.prefetchQuery({ queryKey: listingKey(id, locale), queryFn: () => fetchListing(id, locale) }),
-    fetchListingMeta(id),
+    fetchListingMeta(id, locale),
   ]);
 
   const breadcrumb = breadcrumbJsonLd(locale, [
@@ -92,6 +59,7 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
     ? listingJsonLd({
         locale, id, name: data.title, description: data.description, image: data.image,
         priceCents: data.priceCents, ratingAverage: data.ratingAverage, ratingCount: data.ratingCount,
+        itemCondition: data.itemCondition,
       })
     : null;
 

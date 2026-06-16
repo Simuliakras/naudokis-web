@@ -4,7 +4,7 @@
 // and read scroll state from the shared LegalScroll context (one rAF-throttled
 // listener); the heavy document body stays server rendered. Ported from the
 // handoff chrome.jsx.
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { TocItem } from "@/app/lib/legal/types";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { useLegalScroll } from "./LegalScroll";
@@ -18,7 +18,7 @@ function smoothScrollTo(id: string) {
   }
 }
 
-export function TocSidebar({ toc, heading }: { toc: TocItem[]; heading: string }) {
+export function TocSidebar({ toc, heading, printLabel }: { toc: TocItem[]; heading: string; printLabel: string }) {
   const { activeId } = useLegalScroll();
   return (
     <aside className="nk-lg-toc">
@@ -37,30 +37,48 @@ export function TocSidebar({ toc, heading }: { toc: TocItem[]; heading: string }
           </li>
         ))}
       </ul>
+      <button className="nk-lg-print" onClick={() => window.print()}>
+        <Icon name="printer" size={15} /><span>{printLabel}</span>
+      </button>
     </aside>
   );
 }
 
 export function LegalChrome({
-  toc, contents, openMenu, backTop, readingProgress,
+  toc, contents, openMenu, backTop, readingProgress, printLabel,
 }: {
   toc: TocItem[];
   contents: string;
   openMenu: string;
   backTop: string;
   readingProgress: string;
+  printLabel: string;
 }) {
   const { progress, activeId, scrolledDown } = useLegalScroll();
   const [drawer, setDrawer] = useState(false);
+  const fabRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
-  // Lock body scroll while the drawer is open.
+  // Lock body scroll, close on Escape, and manage focus while the drawer is open.
   useEffect(() => {
     if (!drawer) {
       return;
     }
     const prev = document.body.style.overflow;
+    const fab = fabRef.current;
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
+    closeRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setDrawer(false);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener("keydown", onKey);
+      fab?.focus();
+    };
   }, [drawer]);
 
   const onDrawerLink = useCallback((id: string) => {
@@ -75,17 +93,17 @@ export function LegalChrome({
       </div>
 
       {toc.length > 0 && (
-        <button className="nk-lg-fab-toc" onClick={() => setDrawer(true)} aria-haspopup="dialog" aria-expanded={drawer}>
+        <button ref={fabRef} className="nk-lg-fab-toc" onClick={() => setDrawer(true)} aria-haspopup="dialog" aria-expanded={drawer}>
           <Icon name="menu" size={18} /><span>{openMenu}</span>
         </button>
       )}
 
       <div className={"nk-lg-drawer" + (drawer ? " is-open" : "")} aria-hidden={!drawer}>
         <div className="nk-lg-drawer__scrim" onClick={() => setDrawer(false)} />
-        <nav className="nk-lg-drawer__panel" aria-label={contents}>
+        <nav className="nk-lg-drawer__panel" role="dialog" aria-modal="true" aria-label={contents}>
           <div className="nk-lg-drawer__top">
             <h3>{contents}</h3>
-            <button className="nk-lg-iconbtn" style={{ display: "flex" }} onClick={() => setDrawer(false)} aria-label={contents}>
+            <button ref={closeRef} className="nk-lg-iconbtn" style={{ display: "flex" }} onClick={() => setDrawer(false)} aria-label={contents}>
               <Icon name="x" size={18} />
             </button>
           </div>
@@ -99,6 +117,9 @@ export function LegalChrome({
               {s.num && <span className="nk-lg-toc__num">{s.num}</span>}<span>{s.label}</span>
             </a>
           ))}
+          <button className="nk-lg-print nk-lg-print--drawer" onClick={() => { setDrawer(false); window.print(); }}>
+            <Icon name="printer" size={15} /><span>{printLabel}</span>
+          </button>
         </nav>
       </div>
 

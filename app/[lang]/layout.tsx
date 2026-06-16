@@ -38,7 +38,6 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
     title: meta.title,
     description: meta.description,
     applicationName: "Naudokis",
-    keywords: meta.keywords,
     manifest: "/manifest.webmanifest",
     icons: {
       icon: [

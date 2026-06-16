@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 import { locales, defaultLocale, localePrefix } from "@/app/lib/i18n/config";
-import { API_BASE } from "@/app/lib/api";
-
-const SITE_URL = "https://naudokis.lt";
+import { fetchCategories, mergeWithFallbackCategories } from "@/app/lib/categories";
+import { LT_CITIES } from "@/app/lib/cities";
+import { listingLandingPath, SITE_URL } from "@/app/lib/seo";
 
 // Per-locale entries for a bare path ("" → home), with hreflang alternates.
 // `lastModified`/`images` are only set for entries with real data (listings) —
@@ -37,67 +37,25 @@ const STATIC_PATHS: [path: string, priority: number][] = [
   ["/naudojimo-taisykles", 0.3],
 ];
 
-// Listing-detail enumeration — cursor-paginated and hard-capped so an unbounded
-// backend can never blow up (or stall) the build. Any error degrades to "no
-// listings" rather than failing the whole sitemap.
-type SitemapListings = {
-  data?: {
-    items?: { id?: string; status?: string; updated_at?: string; images?: { url?: string }[] }[];
-    has_more?: boolean;
-    next_token?: string;
-  };
-};
-type ListingEntry = { id: string; lastModified?: Date; images: string[] };
-const LISTING_CAP = 1000; // NOTE: listings beyond this are not enumerated here.
-async function fetchListingEntries(): Promise<ListingEntry[]> {
-  const entries: ListingEntry[] = [];
-  let token: string | undefined;
-  try {
-    for (let page = 0; page < 20 && entries.length < LISTING_CAP; page++) {
-      const url = new URL(`${API_BASE}/listings`);
-      url.searchParams.set("limit", "100");
-      if (token) {
-        url.searchParams.set("next_token", token);
-      }
-      const res = await fetch(url, { next: { revalidate: 3600 } });
-      if (!res.ok) {
-        break;
-      }
-      const body: SitemapListings = await res.json();
-      for (const item of body.data?.items ?? []) {
-        if (!item.id || (item.status !== undefined && item.status !== "active")) {
-          continue;
-        }
-        const updated = item.updated_at ? new Date(item.updated_at) : undefined;
-        entries.push({
-          id: item.id,
-          lastModified: updated && !Number.isNaN(updated.getTime()) ? updated : undefined,
-          // First photo only — enough for image indexing without bloating the map.
-          images: item.images?.[0]?.url ? [item.images[0].url] : [],
-        });
-      }
-      token = body.data?.next_token;
-      if (!body.data?.has_more || !token) {
-        break;
-      }
-    }
-  } catch {
-    // Keep whatever was collected; never throw from the sitemap.
-  }
-  if (entries.length >= LISTING_CAP) {
-    // Surface silent truncation — listings past the cap are omitted from the map.
-    console.warn(`sitemap: listing enumeration hit the ${LISTING_CAP} cap; remaining listings are not included.`);
-  }
-  return entries.slice(0, LISTING_CAP);
+async function listingLandingPaths(): Promise<string[]> {
+  const categories = mergeWithFallbackCategories(
+    defaultLocale,
+    await fetchCategories(defaultLocale).catch(() => []),
+  );
+  return [
+    ...categories.map((category) => listingLandingPath({ category: category.id })),
+    ...LT_CITIES.map((city) => listingLandingPath({ city })),
+    ...categories.flatMap((category) =>
+      LT_CITIES.map((city) => listingLandingPath({ category: category.id, city })),
+    ),
+  ];
 }
 
-// Re-enumerate listings hourly (the fetches above are also cached for an hour).
+// Re-enumerate category/city landing URLs hourly (the category fetch is cached).
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries = STATIC_PATHS.flatMap(([path, priority]) => localized(path, priority));
-  const listingEntries = (await fetchListingEntries()).flatMap((l) =>
-    localized(`/skelbimai/${l.id}`, 0.5, { lastModified: l.lastModified, images: l.images }),
-  );
-  return [...staticEntries, ...listingEntries];
+  const landingEntries = (await listingLandingPaths()).flatMap((path) => localized(path, 0.65));
+  return [...staticEntries, ...landingEntries];
 }

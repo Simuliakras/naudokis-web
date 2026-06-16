@@ -81,9 +81,9 @@ export type MockDetailExtra = {
 // populate the listing-detail spec grid, tags and owner panel for the design pass.
 export const MOCK_DETAIL_EXTRA: MockDetailExtra = {
   description_lt:
-    "Puikios būklės daiktas, prižiūrimas ir paruoštas nuomai. Tinka tiek profesionaliam, tiek mėgėjiškam naudojimui. Atsiimti galima Vilniuje arba susitarus dėl pristatymo. Visada laikomės sutartų terminų ir padedame, jei kyla klausimų.",
+    "Tvarkingas, prižiūrėtas ir nuomai paruoštas daiktas. Komplektacija patikrinta prieš kiekvieną perdavimą, todėl tinka tiek savaitgalio planams, tiek rimtesniems projektams. Atsiimti galima Vilniuje arba susitarus dėl pristatymo.",
   description_en:
-    "Item in excellent condition, well maintained and ready to rent. Suitable for both professional and amateur use. Pickup in Vilnius or delivery by arrangement. We always keep to agreed timelines and help if any questions come up.",
+    "Clean, well-maintained item prepared for rental. The full kit is checked before every handover, making it suitable for weekend plans as well as more serious projects. Pickup is available in Vilnius, with delivery by arrangement.",
   attributes: [
     { id: "condition", name_lt: "Būklė", name_en: "Condition", value_lt: "Puiki", value_en: "Excellent" },
     { id: "deposit", name_lt: "Užstatas", name_en: "Deposit", value_lt: "100 €", value_en: "€100" },
@@ -99,8 +99,8 @@ export const MOCK_DETAIL_EXTRA: MockDetailExtra = {
     rating_count: 52,
   },
   reviews: [
-    { name: "Greta M.", date_lt: "prieš 2 sav.", date_en: "2 weeks ago", stars: 5, text_lt: "Puikus daiktas, viskas veikė be priekaištų. Savininkė labai paslaugi, perdavimas sklandus ir greitas.", text_en: "Great item, everything worked flawlessly. The owner was very helpful and the handover was smooth and fast." },
-    { name: "Tomas K.", date_lt: "prieš mėnesį", date_en: "a month ago", stars: 5, text_lt: "Kaip naujas, pilnas komplektas. Tikrai rekomenduoju — išsinuomosiu dar.", text_en: "Like new, full kit included. Highly recommend — I'll rent again." },
-    { name: "Ieva P.", date_lt: "prieš 2 mėn.", date_en: "2 months ago", stars: 4, text_lt: "Greitas atsakymas, patogus atsiėmimas. Ačiū už sklandų bendradarbiavimą!", text_en: "Quick to reply, easy pickup. Thanks for the smooth experience!" },
+    { name: "Greta M.", date_lt: "prieš 2 sav.", date_en: "2 weeks ago", stars: 5, text_lt: "Daiktas atitiko aprašymą, viskas veikė nepriekaištingai. Savininkė atsakė greitai, perdavimas buvo aiškus ir punktualus.", text_en: "The item matched the description and worked perfectly. The owner replied quickly, and the handover was clear and punctual." },
+    { name: "Tomas K.", date_lt: "prieš mėnesį", date_en: "a month ago", stars: 5, text_lt: "Pilna komplektacija, gera būklė ir paprastas susitarimas dėl grąžinimo. Tikrai nuomočiausi dar kartą.", text_en: "Full kit, good condition and an easy return arrangement. I would definitely rent again." },
+    { name: "Ieva P.", date_lt: "prieš 2 mėn.", date_en: "2 months ago", stars: 4, text_lt: "Patogus atsiėmimas ir aiškios sąlygos. Viskas vyko sklandžiai nuo rezervacijos iki grąžinimo.", text_en: "Convenient pickup and clear terms. Everything went smoothly from reservation to return." },
   ],
 };

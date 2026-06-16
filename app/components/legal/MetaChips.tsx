@@ -16,10 +16,7 @@ export function MetaChips({
   if (meta.effective_date) {
     chips.push(["calendar", t.effective, fmtDate(meta.effective_date, locale)]);
   }
-  if (meta.version) {
-    chips.push(["tag", t.version, meta.version]);
-  }
-  if (meta.last_updated && meta.last_updated !== meta.effective_date) {
+  if (meta.last_updated) {
     chips.push(["calendar", t.updated, fmtDate(meta.last_updated, locale)]);
   }
   return (
@@ -29,9 +26,6 @@ export function MetaChips({
           <Icon name={c[0]} size={14} /><span>{c[1]}</span>&nbsp;<b>{c[2]}</b>
         </span>
       ))}
-      {meta.document_id && (
-        <span className="nk-lg-chip nk-lg-chip--id"><Icon name="hash" size={13} />{meta.document_id}</span>
-      )}
     </div>
   );
 }

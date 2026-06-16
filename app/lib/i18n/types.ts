@@ -34,10 +34,17 @@ export type LegalDict = {
   openMenu: string;        // mobile FAB label
   readingProgress: string; // progress-bar aria
   effective: string;
-  version: string;
   updated: string;
   onlyLt: string;          // LT-only fallback notice
   briefLabel: string;      // callout label ("Trumpai" / "In brief")
+  anchorLabel: string;     // h2 permalink aria-label ("Link to this section")
+  printLabel: string;      // print / save-as-PDF action
+  relatedHeading: string;  // "See also" heading at the bottom of a doc
+  docTermsTitle: string;   // sibling-link label → Terms of Use
+  docPrivacyTitle: string; // sibling-link label → Privacy Policy
+  questionsTitle: string;  // contact card heading
+  questionsBody: string;   // contact card body
+  contactCta: string;      // contact card mailto label
   metaDescriptionFallback: string;
 };
 
@@ -45,7 +52,6 @@ export type Dict = {
   meta: {
     title: string;
     description: string;
-    keywords: string[];
     ogLocale: string; // e.g. "lt_LT" / "en_US"
     ogImageAlt: string;
   };
@@ -148,7 +154,6 @@ export type Dict = {
     goToReview: (index: number) => string; // aria-label for carousel dot (0-based index)
   };
   cta: {
-    badge: string;
     title: string;
     body: string;
     phoneAlt: string;
@@ -171,7 +176,11 @@ export type Dict = {
   detail: {
     metaFallbackTitle: string;
     metaFallbackDescription: string;
-    metaTitleSuffix: string; // appended to a listing title for the <title>
+    // SEO <title> / description for a single listing. `city` is the raw city name
+    // (LT locative applied inside the dictionary); `category` is the listing's
+    // primary category name. Both already include the " — Naudokis.lt" suffix.
+    seoTitle: (parts: { title: string; city?: string }) => string;
+    seoDescription: (parts: { title: string; city?: string; category?: string }) => string;
     share: string; // aria-label on the gallery share/more button
     verifiedOwnerPill: string;
     galleryMore: (count: number) => string;
@@ -282,6 +291,14 @@ export type Dict = {
   feed: {
     metaTitle: string;
     metaDescription: string;
+    // SEO copy for the canonical category / city / category+city landing variants
+    // of /skelbimai. `categorySeoLabel` maps a category id to its display label
+    // (LT uses a genitive form; EN falls back to the plain title). `landingTitle` /
+    // `landingDescription` take that label plus the raw city name and apply any
+    // locale grammar (e.g. the LT locative) inside the dictionary.
+    categorySeoLabel: (id: string, fallback: string) => string;
+    landingTitle: (parts: { category?: string; city?: string }) => string;
+    landingDescription: (parts: { category?: string; city?: string }) => string;
     crumbCategories: string;
     titleAll: string;
     titleSearch: string;

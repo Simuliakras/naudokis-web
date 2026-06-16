@@ -6,7 +6,9 @@
 // used to each run. Emits no DOM, so it can wrap server-rendered children.
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-const HEADING_OFFSET = 130; // keep in sync with scroll-margin-top in legal.css
+const HEADING_OFFSET = 130; // scroll-spy lead: mark a heading active a little before it
+                            // reaches the sticky nav (headings' scroll-margin-top is
+                            // --nk-nav-h-scrolled + 24px in legal.css).
 const TO_TOP_AFTER = 600; // px scrolled before the back-to-top button shows
 
 type LegalScrollState = { progress: number; activeId: string; scrolledDown: boolean };

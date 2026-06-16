@@ -13,3 +13,18 @@ export const LT_CITIES = [
 ] as const;
 
 export type City = (typeof LT_CITIES)[number];
+
+const LT_CITY_LOCATIVES: Record<City, string> = {
+  Vilnius: "Vilniuje",
+  Kaunas: "Kaune",
+  Klaipėda: "Klaipėdoje",
+  Šiauliai: "Šiauliuose",
+  Panevėžys: "Panevėžyje",
+  Alytus: "Alytuje",
+  Marijampolė: "Marijampolėje",
+  Palanga: "Palangoje",
+};
+
+export function cityLocativeLt(city: string): string {
+  return LT_CITY_LOCATIVES[city as City] ?? city;
+}

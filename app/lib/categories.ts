@@ -38,10 +38,26 @@ export function categoriesKey(locale: Locale) {
   return ["categories", locale] as const;
 }
 
+export function fallbackCategories(locale: Locale): Category[] {
+  return MOCK_CATEGORIES.map((c) => ({
+    id: c.id,
+    title: locale === "en" ? c.name_en : c.name_lt,
+    icon: categoryGlyph(c.icon_name),
+  }));
+}
+
+export function mergeWithFallbackCategories(locale: Locale, categories: Category[]): Category[] {
+  const seen = new Set(categories.map((category) => category.id));
+  return [
+    ...categories,
+    ...fallbackCategories(locale).filter((category) => !seen.has(category.id)),
+  ];
+}
+
 // Exported so server components can prefetch the same data useCategories reads.
 export async function fetchCategories(locale: Locale): Promise<Category[]> {
   if (USE_MOCK) {
-    return MOCK_CATEGORIES.map((c) => ({ id: c.id, title: locale === "en" ? c.name_en : c.name_lt, icon: categoryGlyph(c.icon_name) }));
+    return fallbackCategories(locale);
   }
   // Categories change rarely — server-side fetches stay fresh for an hour
   // (matches the categories page's route revalidate). Browsers ignore `next`.

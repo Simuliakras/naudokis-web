@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { dehydrate, HydrationBoundary, type InfiniteData } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd } from "@/app/lib/seo";
+import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, resolveListingLanding } from "@/app/lib/seo";
 import { makeQueryClient } from "@/app/lib/query";
 import { fetchListingsPage, listingsInfiniteKey, LISTINGS_FIRST_CURSOR, parseSortKey, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
+import { fetchCategories, mergeWithFallbackCategories } from "@/app/lib/categories";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 
@@ -27,15 +28,43 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
   const { lang } = await params;
   const locale = requireLocale(lang);
   const { feed: t, meta } = getDictionary(locale);
+  const sp = await searchParams;
+  const categories = mergeWithFallbackCategories(locale, await fetchCategories(locale).catch(() => []));
+  const landing = resolveListingLanding({
+    catParam: firstValue(sp.cat) ?? "",
+    cityParam: firstValue(sp.city) ?? "",
+    categories,
+  });
+
+  // Default to the bare browse copy; a category and/or city filter swaps in the
+  // dictionary's landing copy (the category label is the LT genitive / EN title).
+  const categoryLabel = landing.category
+    ? t.categorySeoLabel(landing.category.id, landing.category.title)
+    : undefined;
+  const title = landing.category || landing.city
+    ? t.landingTitle({ category: categoryLabel, city: landing.city })
+    : t.metaTitle;
+  const description = landing.category || landing.city
+    ? t.landingDescription({ category: categoryLabel, city: landing.city })
+    : t.metaDescription;
+
   const md = pageMetadata({
-    locale, path: "/skelbimai", title: t.metaTitle, description: t.metaDescription,
+    locale, path: landing.path, title, description,
     ogLocale: meta.ogLocale, ogImageAlt: meta.ogImageAlt,
   });
-  // Canonical already points at the bare /skelbimai (no query). Additionally keep
-  // internal search-result states (?q=) out of the index; the bare browse page
-  // and category/city filters still canonicalize here and stay indexable.
-  const q = firstValue((await searchParams).q);
-  if (q && q.trim()) {
+  // Free-text searches, sort/delivery variants and invalid filter values create
+  // duplicate or thin states. Let crawlers follow their links, but index only the
+  // stable browse/category/city/category+city landing URLs.
+  const q = firstValue(sp.q);
+  const sort = firstValue(sp.sort);
+  const delivery = firstValue(sp.delivery);
+  if (
+    (q && q.trim()) ||
+    (sort && parseSortKey(sort) !== "recommended") ||
+    delivery === "1" ||
+    landing.hasInvalidCategory ||
+    landing.hasInvalidCity
+  ) {
     md.robots = { index: false, follow: true };
   }
   return md;
