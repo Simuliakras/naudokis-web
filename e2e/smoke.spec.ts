@@ -23,6 +23,16 @@ test("feed filters hydrate from the URL and clear back to the bare feed", async 
   await expect(page.locator("#nk-feed-search-input")).toHaveValue("");
 });
 
+test("feed pagination: renders the full set and shows no spurious load-more when there is no next page", async ({ page }) => {
+  await page.goto("/skelbimai");
+  const cards = page.locator("#nk-main article.nk-offer");
+  // The mock set fits in a single page (< page size), so the cursor is exhausted
+  // on the first page and the load-more control must not appear.
+  await expect(cards.first()).toBeVisible();
+  expect(await cards.count()).toBeGreaterThan(0);
+  await expect(page.locator("#nk-main button.nk-btn--ghost")).toHaveCount(0);
+});
+
 test("listing detail locked CTA opens the app-redirect dialog; Escape closes and unlocks scroll", async ({ page }) => {
   await page.goto("/skelbimai/sony-a7-iii");
   await expect(page.locator("h1")).toHaveText("Sony A7 III");

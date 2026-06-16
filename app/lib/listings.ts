@@ -1,5 +1,5 @@
 // Listing data layer — browse listings + single-listing detail from the Naudokis backend.
-import { useQuery, keepPreviousData, skipToken } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, keepPreviousData, skipToken } from "@tanstack/react-query";
 import type { Locale } from "./i18n/config";
 import { API_BASE, USE_MOCK } from "./api";
 import { MOCK_LISTINGS, MOCK_CATEGORIES, MOCK_DETAIL_EXTRA, type MockListing } from "./mock-data";
@@ -23,7 +23,7 @@ type ApiListing = {
 
 type ListingsResponse = {
   success: boolean;
-  data: { items: ApiListing[]; count: number; has_more: boolean };
+  data: { items: ApiListing[]; count: number; has_more: boolean; next_token?: string };
 };
 
 type ApiAttributeDisplay = {
@@ -180,6 +180,19 @@ export function listingKey(id: string | undefined, locale: Locale) {
   return ["listing", id, locale] as const;
 }
 
+// The feed loads page-by-page (infinite scroll); its query lives under its own
+// key so the home/feed single-page prefetches (listingsKey) stay independent.
+export const LISTINGS_PAGE_SIZE = 12;
+
+// First-page cursor — null until the backend returns a `next_token`. Typed so the
+// infinite-query page param widens to `string | null` without an inline `as`.
+export const LISTINGS_FIRST_CURSOR: string | null = null;
+
+export function listingsInfiniteKey(locale: Locale, filters: ListingFilters = {}) {
+  const { q = "", city = "", category = "", sort = "recommended" } = filters;
+  return ["listings-infinite", locale, q, city, category, sort] as const;
+}
+
 // Exported so server components can prefetch the same data the hooks consume
 // (identical queryKey + queryFn → the cache hydrates without a client refetch).
 // Map a mock fixture to the Offer view model (mirrors the real fetcher's shape).
@@ -197,29 +210,34 @@ function mockToOffer(l: MockListing, locale: Locale): Offer {
   };
 }
 
-export async function fetchListings(locale: Locale, filters: ListingFilters): Promise<Offer[]> {
-  if (USE_MOCK) {
-    let items = MOCK_LISTINGS.slice();
-    const q = filters.q?.trim().toLowerCase();
-    if (q) {
-      items = items.filter((l) =>
-        (locale === "en" ? l.title_en : l.title_lt).toLowerCase().includes(q) || l.city.toLowerCase().includes(q));
-    }
-    if (filters.city) {
-      items = items.filter((l) => l.city === filters.city);
-    }
-    if (filters.category) {
-      items = items.filter((l) => l.category === filters.category);
-    }
-    if (filters.sort === "price_asc") {
-      items.sort((a, b) => a.price_per_day_cents - b.price_per_day_cents);
-    } else if (filters.sort === "price_desc") {
-      items.sort((a, b) => b.price_per_day_cents - a.price_per_day_cents);
-    } else if (filters.sort === "rating_desc") {
-      items.sort((a, b) => b.rating_average - a.rating_average);
-    }
-    return items.map((l) => mockToOffer(l, locale));
+// Apply the mock filters/sort once, shared by the single-page and paginated
+// mock fetchers so they stay consistent.
+function filterMockListings(locale: Locale, filters: ListingFilters): MockListing[] {
+  let items = MOCK_LISTINGS.slice();
+  const q = filters.q?.trim().toLowerCase();
+  if (q) {
+    items = items.filter((l) =>
+      (locale === "en" ? l.title_en : l.title_lt).toLowerCase().includes(q) || l.city.toLowerCase().includes(q));
   }
+  if (filters.city) {
+    items = items.filter((l) => l.city === filters.city);
+  }
+  if (filters.category) {
+    items = items.filter((l) => l.category === filters.category);
+  }
+  if (filters.sort === "price_asc") {
+    items.sort((a, b) => a.price_per_day_cents - b.price_per_day_cents);
+  } else if (filters.sort === "price_desc") {
+    items.sort((a, b) => b.price_per_day_cents - a.price_per_day_cents);
+  } else if (filters.sort === "rating_desc") {
+    items.sort((a, b) => b.rating_average - a.rating_average);
+  }
+  return items;
+}
+
+// Build the backend `/listings` query URL from the active filters. `limit` /
+// `next_token` (cursor) are appended by the paginated fetcher when present.
+function buildListingsUrl(filters: ListingFilters): URL {
   const url = new URL(`${API_BASE}/listings`);
   if (filters.q) {
     url.searchParams.set("q", filters.q);
@@ -234,6 +252,33 @@ export async function fetchListings(locale: Locale, filters: ListingFilters): Pr
   if (filters.sort && filters.sort !== "recommended") {
     url.searchParams.set("sort", filters.sort);
   }
+  return url;
+}
+
+// Map a backend browse item to the Offer view model.
+function apiToOffer(l: ApiListing, locale: Locale): Offer {
+  return {
+    id: l.id,
+    title: l.title,
+    city: l.city ?? "",
+    price: formatPrice(l.price_per_day_cents, locale),
+    img: l.images?.[0]?.url,
+    rating: ratingLabel(l.rating_average, l.rating_count, locale),
+    ratingCount: l.rating_count,
+    // Backend has no `delivery=` filter; it exposes the per-item delivery types
+    // instead, so the "Su pristatymu" toggle filters the loaded results client-side.
+    hasDelivery: (l.delivery_types_available ?? []).includes("user_delivery"),
+    // The wire's `category` field is a leaf id (e.g. "cars"); the accent and
+    // icon maps key on the top-level id, which leads category_path.
+    category: l.category_path?.[0],
+  };
+}
+
+export async function fetchListings(locale: Locale, filters: ListingFilters): Promise<Offer[]> {
+  if (USE_MOCK) {
+    return filterMockListings(locale, filters).map((l) => mockToOffer(l, locale));
+  }
+  const url = buildListingsUrl(filters);
   // Server-side (home/feed prefetch) the browse data stays fresh for the same
   // window as a single listing, and the route-level `revalidate = 300` on the
   // home page can regenerate with fresh data. Browser fetches ignore `next`.
@@ -242,23 +287,38 @@ export async function fetchListings(locale: Locale, filters: ListingFilters): Pr
     throw new Error(`Failed to load listings: ${res.status}`);
   }
   const body: ListingsResponse = await res.json();
-  return body.data.items
-    .filter((l) => l.status === "active")
-    .map((l) => ({
-      id: l.id,
-      title: l.title,
-      city: l.city ?? "",
-      price: formatPrice(l.price_per_day_cents, locale),
-      img: l.images?.[0]?.url,
-      rating: ratingLabel(l.rating_average, l.rating_count, locale),
-      ratingCount: l.rating_count,
-      // Backend has no `delivery=` filter; it exposes the per-item delivery types
-      // instead, so the "Su pristatymu" toggle filters the fetched page client-side.
-      hasDelivery: (l.delivery_types_available ?? []).includes("user_delivery"),
-      // The wire's `category` field is a leaf id (e.g. "cars"); the accent and
-      // icon maps key on the top-level id, which leads category_path.
-      category: l.category_path?.[0],
-    }));
+  return body.data.items.filter((l) => l.status === "active").map((l) => apiToOffer(l, locale));
+}
+
+// One page of browse results plus the cursor for the next page (null at the end).
+export type ListingsPage = { offers: Offer[]; nextToken: string | null };
+
+// Cursor-paginated browse fetch backing the feed's infinite scroll. The mock
+// layer paginates by numeric offset; the backend uses an opaque `next_token`.
+export async function fetchListingsPage(
+  locale: Locale, filters: ListingFilters, pageParam: string | null,
+): Promise<ListingsPage> {
+  if (USE_MOCK) {
+    const all = filterMockListings(locale, filters).map((l) => mockToOffer(l, locale));
+    const start = pageParam ? Number(pageParam) : 0;
+    const offers = all.slice(start, start + LISTINGS_PAGE_SIZE);
+    const next = start + LISTINGS_PAGE_SIZE;
+    return { offers, nextToken: next < all.length ? String(next) : null };
+  }
+  const url = buildListingsUrl(filters);
+  url.searchParams.set("limit", String(LISTINGS_PAGE_SIZE));
+  if (pageParam) {
+    url.searchParams.set("next_token", pageParam);
+  }
+  const res = await fetch(url, { next: { revalidate: LISTING_REVALIDATE } });
+  if (!res.ok) {
+    throw new Error(`Failed to load listings: ${res.status}`);
+  }
+  const body: ListingsResponse = await res.json();
+  return {
+    offers: body.data.items.filter((l) => l.status === "active").map((l) => apiToOffer(l, locale)),
+    nextToken: body.data.next_token ?? null,
+  };
 }
 
 export function useListings(locale: Locale, filters: ListingFilters = {}) {
@@ -266,6 +326,19 @@ export function useListings(locale: Locale, filters: ListingFilters = {}) {
   return useQuery({
     queryKey: listingsKey(locale, { q, city, category, sort }),
     queryFn: () => fetchListings(locale, { q, city, category, sort }),
+    placeholderData: keepPreviousData,
+  });
+}
+
+// Feed hook: cursor-paginated browse with infinite scroll. keepPreviousData
+// keeps the prior result set on screen while a filter change refetches page 1.
+export function useListingsInfinite(locale: Locale, filters: ListingFilters = {}) {
+  const { q = "", city = "", category = "", sort = "recommended" } = filters;
+  return useInfiniteQuery({
+    queryKey: listingsInfiniteKey(locale, { q, city, category, sort }),
+    queryFn: ({ pageParam }) => fetchListingsPage(locale, { q, city, category, sort }, pageParam),
+    initialPageParam: LISTINGS_FIRST_CURSOR,
+    getNextPageParam: (lastPage) => lastPage.nextToken,
     placeholderData: keepPreviousData,
   });
 }

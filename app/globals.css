@@ -71,7 +71,17 @@
   --nk-overlay:       rgba(20,22,23,0.62);     /* dark glass scrim — gallery / map chips */
   --nk-ink:           #121212;   /* app-store badge / deepest ink             */
 
-  /* ---- Text on dark (app: white-at-opacity) ----------------------------- */
+  /* ---- Text on dark (app: white-at-opacity) -----------------------------
+     Verified WCAG contrast against --nk-bg (#282C2D), composited over the bg
+     for the translucent tokens (recompute if --nk-bg changes):
+       --nk-text       #FFF            14.1:1  ✓ AAA
+       --nk-text-2     white @85%      10.6:1  ✓ AAA
+       --nk-text-muted white @70%       7.7:1  ✓ AAA  (≥4.5 on --nk-surface too)
+       --nk-green      #10B981          5.6:1  ✓ AA   (status text / pills)
+       --nk-purple-hover #8A89FF        4.8:1  ✓ AA   (on-dark links / icons)
+     Button: white label on --nk-purple (#6665E0) is 4.7:1 ✓ AA. The hover
+     darkens to --nk-purple-deep (5.8:1). --nk-purple-hover is a TEXT/icon color
+     on dark only — never a button fill (white-on-#8A89FF is 3.0:1, fails). */
   --nk-text:          #FFFFFF;            /* textPrimary                      */
   --nk-text-2:        rgba(255,255,255,0.85);  /* textSecondary             */
   --nk-text-muted:    rgba(255,255,255,0.70);  /* textMuted                 */
@@ -285,7 +295,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   transition:transform var(--nk-dur-fast) var(--nk-ease-spring),background .18s ease,border-color .18s ease,box-shadow .18s ease,opacity .18s ease;white-space:nowrap}
 .nk-btn:active{transform:scale(.97)}
 .nk-btn:disabled{opacity:.5;pointer-events:none}
-/* hover darkens (AA: white label needs ≥4.5:1 — fails on --nk-purple-hover) */
+/* fill is --nk-purple: white label 4.7:1 ✓ AA (hover → --nk-purple-deep, 5.8:1).
+   Do NOT use --nk-purple-hover as a fill here — white-on-#8A89FF is 3.0:1, fails. */
 .nk-btn--primary{background:var(--nk-purple);border:1px solid var(--nk-purple-deep);color:var(--nk-text);
   box-shadow:var(--nk-edge-top),0 1px 2px rgba(0,0,0,.3)}
 .nk-btn--primary:hover{background:var(--nk-purple-deep);box-shadow:var(--nk-edge-top),var(--nk-glow-accent)}
@@ -791,6 +802,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 }
 @keyframes nk-sheet-in{from{transform:translateY(100%)}to{transform:none}}
 @keyframes nk-sheet-out{from{transform:none}to{transform:translateY(100%)}}
+/* repeat opens in a session skip the entrance (desktop pop + mobile sheet); the
+   two-class selector outranks the mobile single-class rule regardless of order */
+.nk-redirect-scrim .nk-redirect-panel--instant{animation:none}
 
 /* ============================================================
    Sticky mobile app banner (mobile only)
@@ -902,6 +916,32 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-gtile img{transition:transform .55s var(--nk-ease)}
 @media(hover:hover) and (pointer:fine){.nk-gtile:hover img{transform:scale(1.045)}}
 @media(prefers-reduced-motion:reduce){.nk-gtile img{transition:none}.nk-gtile:hover img{transform:none}}
+/* photo tiles open the lightbox — full-bleed button, no default chrome */
+.nk-gtile--btn{display:block;width:100%;height:100%;padding:0;border:0;background:none;cursor:pointer;overflow:hidden}
+/* "all photos" pill sits in the corner of the last tile (the tile itself is the trigger) */
+.nk-gtile__more{position:absolute;right:14px;bottom:14px;pointer-events:none;display:inline-flex;align-items:center;gap:8px;
+  padding:10px 16px;border-radius:12px;background:var(--nk-overlay);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border:1px solid var(--nk-border-strong);font-family:var(--nk-font-display);font-weight:700;font-size:14.5px;color:var(--nk-text)}
+
+/* ---- Gallery lightbox (full-screen photo viewer) ---- */
+.nk-lightbox{position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;
+  padding:clamp(12px,3vw,40px);background:rgba(10,11,12,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  animation:nk-scrim-in .2s ease both}
+.nk-lightbox__panel{position:relative;width:min(1180px,100%);height:100%;display:flex;flex-direction:column;gap:14px}
+.nk-lightbox__close{position:absolute;top:0;right:0;z-index:2;width:44px;height:44px;border-radius:22px;flex:none;
+  display:inline-flex;align-items:center;justify-content:center;background:var(--nk-overlay);border:1px solid var(--nk-border-strong);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);cursor:pointer;transition:background .15s ease}
+.nk-lightbox__close:hover{background:var(--nk-surface-2)}
+.nk-lightbox__stage{flex:1;min-height:0;display:flex;align-items:center;gap:clamp(8px,2vw,18px)}
+.nk-lightbox__img{position:relative;flex:1;height:100%;min-width:0}
+.nk-lightbox__nav{flex:none;width:48px;height:48px;border-radius:24px;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;background:var(--nk-overlay);border:1px solid var(--nk-border-strong);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:background .15s ease}
+.nk-lightbox__nav:hover{background:var(--nk-surface-2)}
+.nk-lightbox__bar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding-bottom:env(safe-area-inset-bottom)}
+.nk-lightbox__count{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2)}
+@media(max-width:560px){.nk-lightbox__nav{width:42px;height:42px}}
 /* content reveal after skeleton — opacity only, so the wrapper never becomes a
    containing block for the position:fixed .nk-mbar (which is a sibling anyway) */
 .nk-fadecontent{animation:nk-contentfade .45s var(--nk-ease) both}

@@ -4,9 +4,9 @@
 // detail PAGE (see ListingScreen.tsx, which orchestrates them). Layout mirrors
 // the design bundle's "2026 rigorous redesign" (listing.jsx): premium bento
 // gallery, sticky in-page sub-nav, booking panel, trust-rich host card.
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Icon, IconName, Pill } from "./ui";
+import { Icon, IconName, Pill, openRedirect } from "./ui";
 import { SectionEmpty } from "./cards";
 import type { ListingDetail, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
 import { listingSearchHref } from "@/app/lib/search";
@@ -64,9 +64,11 @@ function DateField({ label, value, onPick }: { label: string; value: string; onP
   );
 }
 
-function GalleryTile({ src, alt, big, children }: { src?: string; alt?: string; big?: boolean; children?: React.ReactNode }) {
-  return (
-    <div className="nk-imgph nk-gtile" style={{ borderRadius: "var(--nk-r-tile)", position: "relative" }}>
+function GalleryTile({ src, alt, big, onOpen, children }: {
+  src?: string; alt?: string; big?: boolean; onOpen?: () => void; children?: React.ReactNode;
+}) {
+  const inner = (
+    <>
       {src && (
         <Image src={src} alt={alt ?? ""} fill priority={big}
           sizes={big ? "(max-width: 980px) 100vw, 60vw" : "(max-width: 980px) 50vw, 20vw"}
@@ -74,6 +76,19 @@ function GalleryTile({ src, alt, big, children }: { src?: string; alt?: string; 
       )}
       {!src && <Icon name="Image" size={big ? 64 : 34} stroke={1.4} className="nk-imgicon" />}
       {children}
+    </>
+  );
+  // A tile with a photo opens the lightbox; the empty-state placeholder stays a plain div.
+  if (onOpen) {
+    return (
+      <button type="button" onClick={onOpen} className="nk-imgph nk-gtile nk-gtile--btn" style={{ borderRadius: "var(--nk-r-tile)", position: "relative" }}>
+        {inner}
+      </button>
+    );
+  }
+  return (
+    <div className="nk-imgph nk-gtile" style={{ borderRadius: "var(--nk-r-tile)", position: "relative" }}>
+      {inner}
     </div>
   );
 }
@@ -282,31 +297,142 @@ export function ListingHeader({ listing, saved, onShare, onFav }: {
   );
 }
 
-/* ---------------- Bento gallery ---------------- */
-export function Gallery({ images, title, isNew, onMore }: { images: string[]; title: string; isNew: boolean; onMore: () => void }) {
+/* ---------------- Bento gallery ----------------
+   Viewing photos needs no account, so the bento opens a real lightbox (prev/next,
+   keyboard, focus-trap). Only the app-bound actions stay locked — the lightbox
+   footer keeps the "reserve in the app" CTA. */
+export function Gallery({ images, title, isNew }: { images: string[]; title: string; isNew: boolean }) {
   const { dict } = useI18n();
   const t = dict.detail;
+  const [lightbox, setLightbox] = useState<number | null>(null);
   const tiles = Array.from({ length: 5 }, (_, i) => images[i]);
   const extra = images.length > 5 ? images.length - 5 : 0;
   const alt = (i: number) => (i === 0 ? title : `${title} — ${i + 1}`);
+  const open = (i: number) => setLightbox(Math.min(i, images.length - 1));
   return (
-    <div className="nk-bento">
-      <GalleryTile src={tiles[0]} alt={alt(0)} big>
-        {isNew && (
-          <span style={{ position: "absolute", top: 16, left: 16 }}>
-            <Pill tone="yellow" icon="Sparkles">{t.newListingPill}</Pill>
-          </span>
-        )}
-        <span className="nk-gtile__hint" style={{ position: "absolute", inset: 0, borderRadius: "var(--nk-r-tile)", background: "rgba(20,22,23,.18)" }} />
-      </GalleryTile>
-      <GalleryTile src={tiles[1]} alt={alt(1)} />
-      <GalleryTile src={tiles[2]} alt={alt(2)} />
-      <GalleryTile src={tiles[3]} alt={alt(3)} />
-      <GalleryTile src={tiles[4]} alt={alt(4)}>
-        <button onClick={onMore} style={{ position: "absolute", right: 14, bottom: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 16px", borderRadius: 12, background: "var(--nk-overlay)", backdropFilter: "blur(12px)", border: "1px solid var(--nk-border-strong)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 14.5, color: "var(--nk-text)" }}>
-          <Icon name="LayoutGrid" size={16} color="var(--nk-text)" stroke={2} /> {extra > 0 ? t.galleryMore(extra) : t.galleryAll(Math.max(images.length, 1))}
+    <>
+      <div className="nk-bento">
+        <GalleryTile src={tiles[0]} alt={alt(0)} big onOpen={tiles[0] ? () => open(0) : undefined}>
+          {isNew && (
+            <span style={{ position: "absolute", top: 16, left: 16 }}>
+              <Pill tone="yellow" icon="Sparkles">{t.newListingPill}</Pill>
+            </span>
+          )}
+          <span className="nk-gtile__hint" style={{ position: "absolute", inset: 0, borderRadius: "var(--nk-r-tile)", background: "rgba(20,22,23,.18)" }} />
+        </GalleryTile>
+        <GalleryTile src={tiles[1]} alt={alt(1)} onOpen={tiles[1] ? () => open(1) : undefined} />
+        <GalleryTile src={tiles[2]} alt={alt(2)} onOpen={tiles[2] ? () => open(2) : undefined} />
+        <GalleryTile src={tiles[3]} alt={alt(3)} onOpen={tiles[3] ? () => open(3) : undefined} />
+        <GalleryTile src={tiles[4]} alt={alt(4)} onOpen={tiles[4] ? () => open(4) : undefined}>
+          {tiles[4] && (
+            <span className="nk-gtile__more">
+              <Icon name="LayoutGrid" size={16} color="var(--nk-text)" stroke={2} /> {extra > 0 ? t.galleryMore(extra) : t.galleryAll(images.length)}
+            </span>
+          )}
+        </GalleryTile>
+      </div>
+      {lightbox !== null && (
+        <GalleryLightbox images={images} title={title} start={lightbox} onClose={() => setLightbox(null)} />
+      )}
+    </>
+  );
+}
+
+/* ---------------- Gallery lightbox ----------------
+   Full-screen photo viewer: prev/next, Esc/arrow keys, focus trap, scroll lock. */
+function GalleryLightbox({ images, title, start, onClose }: {
+  images: string[]; title: string; start: number; onClose: () => void;
+}) {
+  const { dict } = useI18n();
+  const t = dict.detail;
+  const [i, setI] = useState(start);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const lastFocused = useRef<HTMLElement | null>(null); // restored when the lightbox closes
+  const many = images.length > 1;
+  const prev = useCallback(() => setI((v) => (v - 1 + images.length) % images.length), [images.length]);
+  const next = useCallback(() => setI((v) => (v + 1) % images.length), [images.length]);
+
+  // Mount-only: lock body scroll, move focus into the dialog, and restore focus
+  // to the opener on close. Kept separate from the keydown effect so a parent
+  // re-render (which changes the onClose identity) never re-steals focus.
+  useEffect(() => {
+    lastFocused.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+    return () => {
+      document.body.style.overflow = "";
+      lastFocused.current?.focus();
+    };
+  }, []);
+
+  // Esc closes, arrows page (when multiple), Tab is trapped within the dialog.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key === "ArrowLeft" && many) {
+        e.preventDefault();
+        prev();
+        return;
+      }
+      if (e.key === "ArrowRight" && many) {
+        e.preventDefault();
+        next();
+        return;
+      }
+      if (e.key !== "Tab" || !panelRef.current) {
+        return;
+      }
+      const f = panelRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+      if (f.length === 0) {
+        return;
+      }
+      const first = f[0];
+      const last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose, prev, next, many]);
+
+  return (
+    <div className="nk-lightbox" role="dialog" aria-modal="true" aria-label={t.galleryViewLabel} onClick={onClose}>
+      <div ref={panelRef} className="nk-lightbox__panel" onClick={(e) => e.stopPropagation()}>
+        <button ref={closeRef} className="nk-lightbox__close" onClick={onClose} aria-label={t.galleryClose}>
+          <Icon name="X" size={20} color="var(--nk-text)" />
         </button>
-      </GalleryTile>
+        <div className="nk-lightbox__stage">
+          {many && (
+            <button className="nk-lightbox__nav" onClick={prev} aria-label={t.galleryPrev}>
+              <Icon name="ArrowLeft" size={22} stroke={2} color="var(--nk-text)" />
+            </button>
+          )}
+          <div className="nk-lightbox__img">
+            <Image src={images[i]} alt={i === 0 ? title : `${title} — ${i + 1}`} fill sizes="100vw" style={{ objectFit: "contain" }} />
+          </div>
+          {many && (
+            <button className="nk-lightbox__nav" onClick={next} aria-label={t.galleryNext}>
+              <Icon name="ArrowRight" size={22} stroke={2} color="var(--nk-text)" />
+            </button>
+          )}
+        </div>
+        <div className="nk-lightbox__bar">
+          <span className="nk-lightbox__count" aria-live="polite">{i + 1} / {images.length}</span>
+          <button className="nk-btn nk-btn--primary nk-btn--sm" title={dict.bridge.opensAppHint}
+            onClick={() => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody })}>
+            <Icon name="Smartphone" size={16} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -556,6 +682,9 @@ export function BookingPanel({ listing, deposit, days, subtotal, total, onReserv
           <span style={{ whiteSpace: "nowrap" }}>{t.totalToday}</span><span style={{ whiteSpace: "nowrap" }}>{total}</span>
         </div>
       </div>
+      <span style={{ display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-body)", fontSize: 12.5, lineHeight: "18px", color: "var(--nk-text-muted)" }}>
+        <Icon name="Smartphone" size={14} stroke={2} color="var(--nk-purple-hover)" style={{ flex: "none", marginTop: 1 }} /> {t.appOnlyNote}
+      </span>
       <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint} style={{ width: "100%", padding: 16, fontSize: 17 }}>
         <Icon name="Smartphone" size={17} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
       </button>

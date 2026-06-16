@@ -67,7 +67,7 @@ export function ListingScreen({ id }: { id: string }) {
           items={detailCrumbs({ category, title: listing.title, categoriesLabel: dict.feed.crumbCategories })} />
 
         <ListingHeader listing={listing} saved={saved} onShare={lockShare} onFav={lockFav} />
-        <Gallery images={listing.images} title={listing.title} isNew={isNew} onMore={lockShare} />
+        <Gallery images={listing.images} title={listing.title} isNew={isNew} />
 
         <div className="nk-detail-grid">
           <DetailBody listing={listing} deposit={deposit} onContact={contact} />

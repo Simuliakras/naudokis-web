@@ -10,9 +10,15 @@ import { prefersReducedMotion } from "@/app/lib/motion";
 // dialog unmounts only after the animation has finished painting.
 const EXIT_MS = 220;
 
+// Frequency cap: the first locked tap in a session gets the full spring entrance;
+// repeat opens skip it so the dialog feels like a calm reference, not a fresh
+// interruption each time. The store links / QR are always shown — only the
+// animation is softened, so conversion is never suppressed.
+const SEEN_KEY = "nk_bridge_seen";
+
 export function AppRedirect() {
   const { dict } = useI18n();
-  const [state, setState] = useState<{ open: boolean; closing: boolean } & RedirectPayload>({ open: false, closing: false, title: "", body: "" });
+  const [state, setState] = useState<{ open: boolean; closing: boolean; instant: boolean } & RedirectPayload>({ open: false, closing: false, instant: false, title: "", body: "" });
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null); // restored when the dialog closes
@@ -43,7 +49,14 @@ export function AppRedirect() {
       const d = (e as CustomEvent<RedirectPayload>).detail ?? { title: "", body: "" };
       lastFocused.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       if (exitTimer.current) clearTimeout(exitTimer.current);
-      setState({ open: true, closing: false, title: d.title || dict.bridge.defaultTitle, body: d.body || dict.bridge.defaultBody });
+      let seen = false;
+      try {
+        seen = sessionStorage.getItem(SEEN_KEY) === "1";
+        sessionStorage.setItem(SEEN_KEY, "1");
+      } catch {
+        // sessionStorage can throw in private modes — fall back to the full entrance.
+      }
+      setState({ open: true, closing: false, instant: seen, title: d.title || dict.bridge.defaultTitle, body: d.body || dict.bridge.defaultBody });
     };
     window.addEventListener(NK_REDIRECT_EVENT, onOpen);
     return () => window.removeEventListener(NK_REDIRECT_EVENT, onOpen);
@@ -92,7 +105,7 @@ export function AppRedirect() {
   if (!state.open) return null;
   return (
     <div className={state.closing ? "nk-redirect-scrim is-closing" : "nk-redirect-scrim"} onClick={close} role="dialog" aria-modal="true" aria-labelledby="nk-redirect-title">
-      <div ref={panelRef} className="nk-redirect-panel" onClick={(e) => e.stopPropagation()}>
+      <div ref={panelRef} className={state.instant ? "nk-redirect-panel nk-redirect-panel--instant" : "nk-redirect-panel"} onClick={(e) => e.stopPropagation()}>
         <button ref={closeRef} onClick={close} aria-label={dict.bridge.close} className="nk-redirect-close">
           <Icon name="X" size={20} color="var(--nk-text)" />
         </button>

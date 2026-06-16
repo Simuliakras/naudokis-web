@@ -243,6 +243,7 @@ export const lt: Dict = {
     depositReturnable: "Užstatas (grąžinamas)",
     reserve: "Rezervuoti programėlėje",
     reserveMobile: "Rezervuoti",
+    appOnlyNote: "Naršyti galima čia — rezervuoti ir susirašyti patogu „Naudokis“ programėlėje.",
     escrowNote: "Pinigai užšaldomi saugiai iki nuomos pabaigos",
     loadErrorTitle: "Nepavyko įkelti skelbimo",
     loadErrorBody: "Įvyko klaida kraunant skelbimą. Patikrinkite ryšį ir bandykite dar kartą.",
@@ -250,6 +251,10 @@ export const lt: Dict = {
     save: "Įsiminti",
     newListingPill: "Naujas skelbimas",
     galleryAll: (n) => `Visos ${n} nuotr.`,
+    galleryViewLabel: "Nuotraukų galerija",
+    galleryClose: "Uždaryti galeriją",
+    galleryPrev: "Ankstesnė nuotrauka",
+    galleryNext: "Kita nuotrauka",
     perDayShort: "/ d.",
     dateFrom: "Nuo",
     dateTo: "Iki",
@@ -332,6 +337,8 @@ export const lt: Dict = {
       const word = (dd >= 11 && dd <= 19) || d === 0 ? "skelbimų" : d === 1 ? "skelbimas" : "skelbimai";
       return `${n} ${word}`;
     },
+    loadMore: "Rodyti daugiau",
+    loadingMore: "Įkeliama…",
     clear: "Išvalyti",
     searchPlaceholder: "Ieškoti skelbimų…",
     sortLabel: "Rūšiuoti",

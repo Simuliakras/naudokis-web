@@ -10,7 +10,7 @@ import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, FilterSelect, InputClear, Toggle, openRedirect, type SelectOption } from "./ui";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { useCategories } from "@/app/lib/categories";
-import { useListings, parseSortKey } from "@/app/lib/listings";
+import { useListingsInfinite, parseSortKey } from "@/app/lib/listings";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { categoryIconFor } from "@/app/lib/category-style";
@@ -84,14 +84,44 @@ export function FeedScreen() {
   }, [sp]);
 
   const cats = useCategories(locale).data ?? [];
-  const { data, isLoading, isError, refetch } = useListings(locale, {
+  const {
+    data, isLoading, isError, refetch,
+    fetchNextPage, hasNextPage, isFetchingNextPage,
+  } = useListingsInfinite(locale, {
     q: params.q, city: params.city, category: params.cat, sort: params.sort,
   });
 
   useReloadOnReconnect({ online, isError, refetch });
 
-  let list = data ?? [];
-  if (params.delivery) list = list.filter((o) => o.hasDelivery);
+  const loaded = data?.pages.flatMap((p) => p.offers) ?? [];
+  // The "Su pristatymu" toggle is a client-side filter over the loaded pages
+  // (the backend has no delivery param).
+  const list = params.delivery ? loaded.filter((o) => o.hasDelivery) : loaded;
+  // The IntersectionObserver anchor tracks the raw loaded set, not the filtered
+  // view: when the delivery filter empties the current pages but more remain, we
+  // keep pulling pages until a match surfaces or the cursor is exhausted, rather
+  // than showing a false "no results" dead-end.
+  const canLoadMore = loaded.length > 0 && !!hasNextPage;
+  // Delivery filter has hidden everything loaded so far, but more pages exist —
+  // show "scanning" skeletons instead of the empty state while the next page loads.
+  const scanningMore = list.length === 0 && canLoadMore;
+
+  // Auto-load the next page when the sentinel scrolls into view; the visible
+  // "load more" button is the keyboard / reduced-motion fallback.
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasNextPage) {
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }, { rootMargin: "600px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const catTitle = cats.find((c) => c.id === params.cat)?.title;
   const isCat = !!params.cat;
@@ -156,10 +186,13 @@ export function FeedScreen() {
         actionLabel={empty.searchAction} onAction={reset} />;
     }
     if (isCat && !filtersActive) {
+      // Dead-end (empty category): keep the user browsing on the web as the
+      // primary path; the app CTA stays available as the secondary action.
       return <EmptyState illustration="listings" title={empty.categoryTitle} subtitle={empty.categoryBody}
-        actionLabel={empty.categoryActionPrimary} actionPrimary
-        onAction={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}
-        secondaryLabel={empty.categoryActionSecondary} onSecondaryAction={() => router.push("/kategorijos")} />;
+        actionLabel={empty.categoryActionSecondary} actionPrimary
+        onAction={() => router.push("/kategorijos")}
+        secondaryLabel={empty.categoryActionPrimary}
+        onSecondaryAction={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })} />;
     }
     return <EmptyState illustration="filter"
       title={params.city ? empty.filterTitleCity(params.city) : empty.filterTitle} subtitle={empty.filterBody}
@@ -222,7 +255,7 @@ export function FeedScreen() {
             <div className="nk-grid-feed">
               {Array.from({ length: 6 }).map((_, i) => <OfferCardSkeleton key={i} />)}
             </div>
-          ) : !online && (isError || (data ?? []).length === 0) ? (
+          ) : !online && (isError || loaded.length === 0) ? (
             <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body}
               actionLabel={dict.offline.retry} onAction={() => refetch()} />
           ) : isError ? (
@@ -234,8 +267,25 @@ export function FeedScreen() {
               {tail.length > 0 && <InterruptionBanner />}
               {tail.map(card)}
             </div>
+          ) : scanningMore ? (
+            <div className="nk-grid-feed">
+              {Array.from({ length: 6 }).map((_, i) => <OfferCardSkeleton key={i} />)}
+            </div>
           ) : (
             renderEmpty()
+          )}
+
+          {/* The anchor tracks the raw loaded set so auto-load survives an empty
+              filtered view; the visible button only shows alongside real results. */}
+          {canLoadMore && (
+            <div ref={sentinelRef} style={{ display: "flex", justifyContent: "center", marginTop: 36 }}>
+              {list.length > 0 && (
+                <button className="nk-btn nk-btn--ghost" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}
+                  aria-busy={isFetchingNextPage}>
+                  {isFetchingNextPage ? t.loadingMore : t.loadMore}
+                </button>
+              )}
+            </div>
           )}
 
           <div style={{ marginTop: 64, display: "flex", flexDirection: "column", gap: 18 }}>

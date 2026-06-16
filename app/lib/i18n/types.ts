@@ -231,6 +231,7 @@ export type Dict = {
     depositReturnable: string;
     reserve: string;
     reserveMobile: string;
+    appOnlyNote: string; // sets expectation before the locked reserve tap
     escrowNote: string;
     loadErrorTitle: string;
     loadErrorBody: string;
@@ -239,6 +240,10 @@ export type Dict = {
     save: string; // "Įsiminti" header action
     newListingPill: string; // gallery "Naujas skelbimas" badge
     galleryAll: (count: number) => string; // "Visos N nuotr."
+    galleryViewLabel: string; // lightbox dialog aria-label
+    galleryClose: string; // lightbox close-button aria-label
+    galleryPrev: string; // lightbox previous-photo aria-label
+    galleryNext: string; // lightbox next-photo aria-label
     perDayShort: string; // "/ d."
     // booking panel
     dateFrom: string;
@@ -310,6 +315,8 @@ export type Dict = {
     subtitleAll: string;
     subtitleSearch: (query: string) => string;
     resultCount: (count: number) => string;
+    loadMore: string; // "load more results" button
+    loadingMore: string; // button label while the next page is loading
     clear: string;
     searchPlaceholder: string;
     sortLabel: string;

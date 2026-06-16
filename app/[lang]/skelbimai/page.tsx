@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { dehydrate, HydrationBoundary, type InfiniteData } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd } from "@/app/lib/seo";
 import { makeQueryClient } from "@/app/lib/query";
-import { fetchListings, listingsKey, parseSortKey, type ListingFilters, type Offer } from "@/app/lib/listings";
+import { fetchListingsPage, listingsInfiniteKey, LISTINGS_FIRST_CURSOR, parseSortKey, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 
@@ -47,13 +47,19 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
   const { common, feed: t } = getDictionary(locale);
   const filters = filtersFromSearch(await searchParams);
 
-  // Seed the cache with the same data FeedScreen's useListings() will read, then
-  // reuse it for the ItemList. prefetchQuery swallows backend errors (the client
-  // just refetches), so a hiccup degrades gracefully instead of failing render.
+  // Seed the cache with the first page FeedScreen's useListingsInfinite() will
+  // read, then reuse it for the ItemList. prefetchInfiniteQuery swallows backend
+  // errors (the client just refetches), so a hiccup degrades gracefully instead
+  // of failing render.
   const qc = makeQueryClient();
-  const key = listingsKey(locale, filters);
-  await qc.prefetchQuery({ queryKey: key, queryFn: () => fetchListings(locale, filters) });
-  const listings = qc.getQueryData<Offer[]>(key) ?? [];
+  const key = listingsInfiniteKey(locale, filters);
+  await qc.prefetchInfiniteQuery({
+    queryKey: key,
+    queryFn: ({ pageParam }) => fetchListingsPage(locale, filters, pageParam),
+    initialPageParam: LISTINGS_FIRST_CURSOR,
+  });
+  const cached = qc.getQueryData<InfiniteData<ListingsPage>>(key);
+  const listings = cached?.pages.flatMap((p) => p.offers) ?? [];
 
   const breadcrumb = breadcrumbJsonLd(locale, [
     { name: common.breadcrumbHome, path: "" },
