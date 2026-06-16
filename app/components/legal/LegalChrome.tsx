@@ -6,13 +6,14 @@
 // handoff chrome.jsx.
 import { useCallback, useEffect, useState } from "react";
 import type { TocItem } from "@/app/lib/legal/types";
+import { prefersReducedMotion } from "@/app/lib/motion";
 import { useLegalScroll } from "./LegalScroll";
 import { Icon } from "./Icon";
 
 function smoothScrollTo(id: string) {
   const el = document.getElementById(id);
   if (el) {
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    el.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
     history.replaceState(null, "", "#" + id);
   }
 }
@@ -105,7 +106,7 @@ export function LegalChrome({
         className={"nk-lg-totop" + (scrolledDown ? " is-on" : "")}
         title={backTop}
         aria-label={backTop}
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        onClick={() => window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" })}
       >
         <Icon name="arrowUp" size={20} />
       </button>

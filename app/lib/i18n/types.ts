@@ -93,6 +93,7 @@ export type Dict = {
     title: string;
     body: string;
     phoneAlt: string;
+    trust: [string, string, string]; // three product-fact labels under the search bar
   };
   search: {
     placeholder: string;

@@ -638,7 +638,7 @@ export function FilterSelect({
         <Icon name="ChevronDown" size={15} stroke={2.4} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
       </button>
       {open && (
-        <span ref={panelRef} role="listbox" aria-label={label} onKeyDown={listboxKeyNav} style={{ position: "absolute", ...panelPos, [align]: 0, minWidth: 230, background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 16, padding: 7, display: "flex", flexDirection: "column", gap: 2, boxShadow: "var(--nk-shadow-3)", zIndex: 50 }}>
+        <span ref={panelRef} role="listbox" aria-label={label} onKeyDown={listboxKeyNav} style={{ position: "absolute", ...panelPos, [align]: 0, minWidth: 230, maxWidth: "calc(100vw - 2*var(--nk-gutter))", background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 16, padding: 7, display: "flex", flexDirection: "column", gap: 2, boxShadow: "var(--nk-shadow-3)", zIndex: 50 }}>
           {heading && <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--nk-text-muted)", padding: "8px 12px 6px" }}>{heading}</span>}
           {options.map((o) => {
             const sel = o.value === value;

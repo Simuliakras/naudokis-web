@@ -145,7 +145,7 @@ export function FeatureCard({
 }) {
   return (
     <div className={className ? `nk-feature ${className}` : "nk-feature"} style={{
-      flex: 1, borderRadius: "var(--nk-r-card)", background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", WebkitBackdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-hairline)",
+      flex: 1, borderRadius: "var(--nk-r-card)", background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", WebkitBackdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-glass-card-border)",
       padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-stack-lg)", textAlign: "center",
     }}>
       <span style={{ width: "var(--nk-size-icon-lg)", height: "var(--nk-size-icon-lg)", borderRadius: "50%", background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -259,7 +259,7 @@ export function CategoryCardSkeleton() {
 export function EmptyState({
   illustration, icon = "SearchX", title, subtitle,
   actionLabel, onAction, actionPrimary = false, actionIcon,
-  secondaryLabel, onSecondaryAction,
+  secondaryLabel, onSecondaryAction, tone = "default",
 }: {
   illustration?: IllusName;
   icon?: IconName;
@@ -271,12 +271,16 @@ export function EmptyState({
   actionIcon?: IconName;
   secondaryLabel?: string;
   onSecondaryAction?: () => void;
+  tone?: "default" | "danger"; // danger tints the icon disk for error states
 }) {
+  const danger = tone === "danger";
   return (
     <div className="nk-empty">
       {illustration
         ? <Illustration name={illustration} />
-        : <span className="nk-empty__icon"><Icon name={icon} size={40} stroke={1.8} color="var(--nk-text-muted)" /></span>}
+        : <span className="nk-empty__icon" style={danger ? { background: "var(--nk-danger-tint)" } : undefined}>
+            <Icon name={icon} size={40} stroke={1.8} color={danger ? "var(--nk-danger)" : "var(--nk-text-muted)"} />
+          </span>}
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", maxWidth: 460 }}>
         <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", color: "var(--nk-text)" }}>{title}</h3>
         <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "28px", color: "var(--nk-text-2)" }}>{subtitle}</p>

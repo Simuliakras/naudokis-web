@@ -30,6 +30,7 @@ export const en: Dict = {
     title: "Borrow what you need today.",
     body: "Top-quality rentals from trusted neighbours. From professional photo gear to leisure equipment.",
     phoneAlt: "Naudokis app",
+    trust: ["Verified neighbours", "Protected payments", "Free cancellation"],
   },
   search: {
     placeholder: "What do you need?",

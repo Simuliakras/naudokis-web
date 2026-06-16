@@ -14,6 +14,7 @@ import { categoryIconFor } from "@/app/lib/category-style";
 import { useListings } from "@/app/lib/listings";
 import { LT_CITIES } from "@/app/lib/cities";
 import { listingSearchHref } from "@/app/lib/search";
+import { prefersReducedMotion } from "@/app/lib/motion";
 import { mockCategoryCount } from "@/app/lib/mock";
 import { useI18n } from "./I18nProvider";
 import { locales, barePath, localePrefix, type Locale } from "@/app/lib/i18n/config";
@@ -108,7 +109,7 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
       onSearch();
       return;
     }
-    document.getElementById("kategorijos")?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("kategorijos")?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
   };
 
   return (
@@ -299,7 +300,7 @@ function LocaleSwitcher() {
         <Icon name="ChevronDown" size={15} stroke={2.2} color="var(--nk-text-muted)" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
       </button>
       {open && (
-        <span ref={listRef} role="listbox" aria-label={dict.nav.language} onKeyDown={listboxKeyNav} style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, minWidth: 160, background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 12, padding: 6, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 16px 40px rgba(0,0,0,.4)", zIndex: 60 }}>
+        <span ref={listRef} role="listbox" aria-label={dict.nav.language} onKeyDown={listboxKeyNav} style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, minWidth: 160, maxWidth: "calc(100vw - 2*var(--nk-gutter))", background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 12, padding: 6, display: "flex", flexDirection: "column", gap: 2, boxShadow: "0 16px 40px rgba(0,0,0,.4)", zIndex: 60 }}>
           {locales.map((l) => {
             const active = l === locale;
             return (
@@ -332,7 +333,7 @@ export function SearchBar() {
   return (
     <form id="nk-hero-search" className="nk-search" onSubmit={go} style={{
       display: "flex", alignItems: "center", gap: 8, background: "var(--nk-light-field)", border: "1px solid var(--nk-light-line)",
-      borderRadius: 34, boxShadow: "var(--nk-shadow-input)", padding: "8px 8px 8px 24px", maxWidth: 662,
+      borderRadius: 34, boxShadow: "var(--nk-shadow-2)", padding: "8px 8px 8px 24px", maxWidth: 662,
     }}>
       <span style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
         <Icon name="Search" size={20} color="var(--nk-bg)" stroke={2} />
@@ -362,12 +363,12 @@ export function Categories() {
           {Array.from({ length: 8 }).map((_, i) => <CategoryCardSkeleton key={i} />)}
         </div>
       ) : isError ? (
-        <EmptyState icon="LayoutGrid"
+        <EmptyState icon="LayoutGrid" tone="danger"
           title={t.errorTitle}
           subtitle={t.errorSubtitle}
           actionLabel={t.errorAction} onAction={() => refetch()} />
       ) : list.length ? (
-        <div className="nk-grid-cats nk-reveal">
+        <div className="nk-grid-cats nk-reveal-grid">
           {list.map((c) => <CategoryCard key={c.id} id={c.id} icon={c.icon} title={c.title} count={dict.categoriesPage.tileCount(mockCategoryCount(c.id))} href={listingSearchHref({ cat: c.id })} />)}
         </div>
       ) : (
@@ -441,12 +442,12 @@ export function Offers() {
           {Array.from({ length: 4 }).map((_, i) => <OfferCardSkeleton key={i} />)}
         </div>
       ) : isError ? (
-        <EmptyState icon="SearchX"
+        <EmptyState icon="SearchX" tone="danger"
           title={t.errorTitle}
           subtitle={t.errorSubtitle}
           actionLabel={t.errorAction} onAction={() => refetch()} />
       ) : list.length ? (
-        <div className="nk-grid-4 nk-reveal">
+        <div className="nk-grid-4 nk-reveal-grid">
           {list.map((o) => (
             <OfferCard key={o.id} title={o.title} city={o.city} price={o.price} img={o.img}
               unit={dict.common.perDay}

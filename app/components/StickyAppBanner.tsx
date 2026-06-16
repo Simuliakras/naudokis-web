@@ -19,6 +19,14 @@ export function StickyAppBanner() {
     setHidden(Date.now() < until);
   }, []);
 
+  // While the fixed banner is shown, reserve bottom space on the page so it
+  // never floats over the footer / last content on short pages (the class is
+  // scoped to the mobile breakpoint in CSS, matching when the banner renders).
+  useEffect(() => {
+    document.body.classList.toggle("nk-has-appbanner", !hidden);
+    return () => document.body.classList.remove("nk-has-appbanner");
+  }, [hidden]);
+
   function dismiss() {
     localStorage.setItem(DISMISS_KEY, String(Date.now() + DAY_MS));
     setHidden(true);

@@ -172,7 +172,7 @@ export function ListingSkeleton() {
           {/* reviews — breakdown card + 2 review cards + show-all */}
           <SkelSection titleW={200}>
             <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
-              <div style={{ padding: "var(--nk-card-pad)", borderRadius: "var(--nk-r-md)", background: "var(--nk-surface-glass)", border: "1px solid var(--nk-border)", display: "grid", gridTemplateColumns: "auto 1fr", gap: "0 44px", alignItems: "center" }}>
+              <div className="nk-ratebreak" style={{ padding: "var(--nk-card-pad)", borderRadius: "var(--nk-r-md)", background: "var(--nk-surface-glass)", border: "1px solid var(--nk-border)", display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "center" }}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, paddingRight: 44, borderRight: "1px solid var(--nk-divider)" }}>
                   <Skel w={72} h={52} r={10} /><Skel w={96} h={16} /><Skel w={70} h={13} />
                 </div>
@@ -431,7 +431,7 @@ function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xl)" }}>
       {/* rating breakdown */}
       <div style={{ padding: "var(--nk-card-pad)", borderRadius: "var(--nk-r-md)", background: "var(--nk-surface-glass)", border: "1px solid var(--nk-border)" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "0 44px", alignItems: "center" }}>
+        <div className="nk-ratebreak" style={{ display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "center" }}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-gap-xs)", paddingRight: 44, borderRight: "1px solid var(--nk-divider)" }}>
             <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 56, lineHeight: 1, color: "var(--nk-text)" }}>{rating}</span>
             <Stars value={ratingCount > 0 ? ratingValue : 0} size={18} />

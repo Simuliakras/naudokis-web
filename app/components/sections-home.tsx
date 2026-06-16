@@ -24,9 +24,10 @@ export function Hero({ locale }: { locale: Locale }) {
         {/* grid columns / padding / min-height live on .nk-hero-panel in globals.css
             so the 980px stack doesn't need !important overrides */}
         <div className="nk-hero-panel nk-grain nk-gborder" style={{ position: "relative", borderRadius: "var(--nk-r-lg)", background: "var(--nk-glass)", backdropFilter: "blur(35px)" }}>
+          <AmbientGlow variant="hero" />
           {/* left column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-stack-lg)", justifyContent: "center", maxWidth: 680 }}>
-            <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: 27, padding: "6px 18px 6px 6px" }}>
+          <div className="nk-hero-intro" style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", gap: "var(--nk-stack-lg)", justifyContent: "center", maxWidth: 680 }}>
+            <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: 27, padding: "6px 18px 6px 6px", boxShadow: "var(--nk-edge-top)" }}>
               <span style={{ width: 32, height: 32, borderRadius: 16, background: "var(--nk-bg)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
                 <Icon name="Users" size={18} color="var(--nk-text)" stroke={1.8} />
               </span>
@@ -35,10 +36,13 @@ export function Hero({ locale }: { locale: Locale }) {
             <AppBadges />
             <h1 className="nk-h-hero" style={{ margin: 0 }}>{dict.hero.title}</h1>
             <p className="nk-body" style={{ margin: 0, maxWidth: 540 }}>{dict.hero.body}</p>
-            <SearchBar />
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
+              <SearchBar />
+              <HeroTrust items={dict.hero.trust} />
+            </div>
           </div>
           {/* right column — real app device + QR */}
-          <div className="nk-hero-media" style={{ position: "relative" }}>
+          <div className="nk-hero-media" style={{ position: "relative", zIndex: 1 }}>
             {/* LCP image: next/image serves responsive AVIF/WebP and `priority`
                 preloads it (replaces the manual fetchPriority hint). */}
             <Image src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} priority sizes="(max-width: 980px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
@@ -47,6 +51,22 @@ export function Hero({ locale }: { locale: Locale }) {
         </div>
       </div>
     </section>
+  );
+}
+
+/* Real product-fact row under the hero search — verified / escrow / free
+   cancellation. Copy comes from the dict; the icons are fixed here. */
+const HERO_TRUST_ICONS: [IconName, IconName, IconName] = ["BadgeCheck", "ShieldCheck", "RefreshCcw"];
+function HeroTrust({ items }: { items: readonly [string, string, string] }) {
+  return (
+    <ul className="nk-hero-trust">
+      {items.map((label, i) => (
+        <li key={label}>
+          <Icon name={HERO_TRUST_ICONS[i]} size={17} color="var(--nk-green)" stroke={2} />
+          {label}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -104,7 +124,7 @@ export function CtaBanner({ locale }: { locale: Locale }) {
   return (
     <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y-lg)" }}>
       <div className="nk-reveal nk-cta nk-grain nk-gborder" style={{ position: "relative", borderRadius: "var(--nk-r-lg)", overflow: "hidden", minHeight: 620, background: "linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)" }}>
-        <AmbientGlow />
+        <AmbientGlow variant="cta" />
         {/* phone bleeding from the top, filling the right half down to the bottom edge */}
         <Image className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "var(--nk-shadow-phone-cta)" }} />
         <div className="nk-cta__badges" style={{ position: "absolute", left: "var(--nk-panel-pad)", top: "var(--nk-panel-pad)" }}><AppBadges /></div>
@@ -122,11 +142,24 @@ export function CtaBanner({ locale }: { locale: Locale }) {
   );
 }
 
-/* Ambient glow layer behind the CTA copy — purple + yellow radial glows, a
-   diagonal sheen, and a bottom vignette to keep the headline crisp. */
-function AmbientGlow() {
+/* Ambient glow layer — purple + yellow radial glows, a diagonal sheen and a
+   vignette. The "cta" variant keys the glow to the bottom-left copy; the "hero"
+   variant concentrates it behind the device on the right so the phone pops.
+   The wrapper is clipped to the panel's rounded rect (the phone itself
+   overflows it as a later sibling). */
+function AmbientGlow({ variant }: { variant: "cta" | "hero" }) {
+  if (variant === "hero") {
+    return (
+      <div style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", borderRadius: "inherit" }}>
+        <div style={{ position: "absolute", top: "50%", right: "-10%", width: 720, height: 720, borderRadius: "50%", transform: "translateY(-50%)", background: "radial-gradient(circle, var(--nk-glow-purple) 0%, transparent 66%)" }} />
+        <div style={{ position: "absolute", top: "-14%", right: "8%", width: 520, height: 520, borderRadius: "50%", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-purple-hover) 26%, transparent) 0%, transparent 70%)" }} />
+        <div style={{ position: "absolute", bottom: "-8%", right: "14%", width: 380, height: 380, borderRadius: "50%", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-yellow) 14%, transparent) 0%, transparent 64%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(120deg, color-mix(in srgb, var(--nk-purple) 10%, transparent) 0%, transparent 52%)" }} />
+      </div>
+    );
+  }
   return (
-    <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+    <div style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", borderRadius: "inherit" }}>
       <div style={{ position: "absolute", top: "-16%", left: "-8%", width: 680, height: 680, borderRadius: "50%", background: "radial-gradient(circle, var(--nk-glow-purple) 0%, transparent 68%)" }} />
       <div style={{ position: "absolute", top: "6%", right: "16%", width: 620, height: 620, borderRadius: "50%", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-purple-hover) 30%, transparent) 0%, transparent 70%)" }} />
       <div style={{ position: "absolute", top: "44%", right: "3%", width: 420, height: 420, borderRadius: "50%", transform: "translateY(-50%)", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-yellow) 16%, transparent) 0%, transparent 66%)" }} />

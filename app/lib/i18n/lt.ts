@@ -30,6 +30,7 @@ export const lt: Dict = {
     title: "Skolinkis tai, ko reikia šiandien.",
     body: "Aukščiausios kokybės daiktų nuoma iš patikimų kaimynų. Nuo profesionalios foto technikos iki laisvalaikio įrangos.",
     phoneAlt: "Naudokis programėlė",
+    trust: ["Patikrinti kaimynai", "Apsaugoti mokėjimai", "Nemokamas atšaukimas"],
   },
   search: {
     placeholder: "Ką nuomositės?",

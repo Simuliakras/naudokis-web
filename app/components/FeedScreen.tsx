@@ -15,6 +15,7 @@ import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { categoryIconFor } from "@/app/lib/category-style";
 import { rememberFeedUrl } from "@/app/lib/search";
+import { prefersReducedMotion } from "@/app/lib/motion";
 import { LT_CITIES } from "@/app/lib/cities";
 import { useI18n } from "./I18nProvider";
 
@@ -58,8 +59,7 @@ export function FeedScreen() {
     // .nk-filterbar clears the nav.
     const bar = filterBarRef.current;
     if (bar && bar.getBoundingClientRect().top <= 100) {
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      bar.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      bar.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
     }
   }
 
@@ -116,6 +116,25 @@ export function FeedScreen() {
   const catOptions: SelectOption[] = [{ value: "", label: t.allCategories }, ...cats.map((c) => ({ value: c.id, label: c.title }))];
   const cityOptions: SelectOption[] = [{ value: "", label: dict.cityPicker.all }, ...LT_CITIES.map((c) => ({ value: c, label: c }))];
 
+  // Active-filter chips — each removes just its own dimension (the reset button
+  // clears everything). Labels are derived from the existing option lists; the
+  // clear handler runs in the chip's onClick (an event handler, not render).
+  const sortLabel = sortOptions.find((o) => o.value === params.sort)?.label ?? params.sort;
+  type ChipKey = "q" | "cat" | "city" | "delivery" | "sort";
+  const activeChips: { key: ChipKey; label: string }[] = [];
+  if (params.q) activeChips.push({ key: "q", label: `“${params.q}”` });
+  if (isCat) activeChips.push({ key: "cat", label: catTitle ?? params.cat });
+  if (params.city) activeChips.push({ key: "city", label: params.city });
+  if (params.delivery) activeChips.push({ key: "delivery", label: t.deliveryToggle });
+  if (params.sort !== "recommended") activeChips.push({ key: "sort", label: sortLabel });
+  const clearChip = (key: ChipKey) => {
+    if (key === "q") { setQInput(""); setParams({ q: "" }); return; }
+    if (key === "cat") { setParams({ cat: "" }); return; }
+    if (key === "city") { setParams({ city: "" }); return; }
+    if (key === "delivery") { setParams({ delivery: false }); return; }
+    setParams({ sort: "recommended" });
+  };
+
   const head = list.slice(0, 4);
   const tail = list.slice(4);
   const card = (o: (typeof list)[number]) => (
@@ -161,7 +180,7 @@ export function FeedScreen() {
           {/* sticky filter bar */}
           <div ref={filterBarRef} className="nk-filterbar">
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+              <div className="nk-filter-row" style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 <span className="nk-searchfield" style={{ flex: "1 1 320px", minWidth: 240, padding: "13px 20px" }}>
                   <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
                   <input id="nk-feed-search-input" value={qInput} onChange={(e) => setQInput(e.target.value)} placeholder={t.searchPlaceholder}
@@ -170,20 +189,34 @@ export function FeedScreen() {
                 </span>
                 <FilterSelect icon="ArrowUpDown" label={t.sortLabel} value={params.sort} defaultValue="recommended" options={sortOptions} onChange={(v) => setParams({ sort: v })} align="right" />
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+              <div className="nk-filter-row" style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 <FilterSelect icon="LayoutGrid" label={t.categoryLabel} value={params.cat} defaultValue="" options={catOptions} onChange={(v) => setParams({ cat: v })} />
                 <FilterSelect icon="MapPin" label={t.cityLabel} value={params.city} defaultValue="" options={cityOptions} heading={dict.cityPicker.heading} onChange={(v) => setParams({ city: v })} />
                 <Toggle icon="Car" on={params.delivery} onChange={(on) => setParams({ delivery: on })}>{t.deliveryToggle}</Toggle>
-                <span style={{ flex: 1 }} />
-                <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.resultCount(list.length)}</span>
-                {anyActive && (
-                  <button onClick={reset} className="nk-clear" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 999, background: "transparent", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text-muted)" }}>
-                    <Icon name="X" size={15} stroke={2.2} color="currentColor" /> {t.clear}
-                  </button>
-                )}
+                <span className="nk-filter-spacer" style={{ flex: 1 }} />
+                <div className="nk-filter-meta" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span aria-live="polite" style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.resultCount(list.length)}</span>
+                  {anyActive && (
+                    <button onClick={reset} className="nk-clear" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 999, background: "transparent", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text-muted)" }}>
+                      <Icon name="X" size={15} stroke={2.2} color="currentColor" /> {t.clear}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
+
+          {activeChips.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--nk-gap-xs)", marginBottom: 28 }}>
+              {activeChips.map((chip) => (
+                <button key={chip.key} type="button" className="nk-fchip" onClick={() => clearChip(chip.key)}
+                  aria-label={`${t.clear}: ${chip.label}`}>
+                  <span>{chip.label}</span>
+                  <Icon name="X" size={15} stroke={2.2} color="currentColor" />
+                </button>
+              ))}
+            </div>
+          )}
 
           {isLoading ? (
             <div className="nk-grid-feed">

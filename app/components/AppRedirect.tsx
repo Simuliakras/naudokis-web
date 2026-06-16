@@ -4,24 +4,46 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon, AppBadges, QR, NK_REDIRECT_EVENT, type RedirectPayload } from "./ui";
 import { useI18n } from "./I18nProvider";
+import { prefersReducedMotion } from "@/app/lib/motion";
+
+// One buffer-frame past the .2s `nk-*-out` exit keyframes in globals.css, so the
+// dialog unmounts only after the animation has finished painting.
+const EXIT_MS = 220;
 
 export function AppRedirect() {
   const { dict } = useI18n();
-  const [state, setState] = useState<{ open: boolean } & RedirectPayload>({ open: false, title: "", body: "" });
+  const [state, setState] = useState<{ open: boolean; closing: boolean } & RedirectPayload>({ open: false, closing: false, title: "", body: "" });
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null); // restored when the dialog closes
+  const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const close = useCallback(() => {
-    setState((s) => ({ ...s, open: false }));
+  // Finalize teardown: unmount the dialog and restore focus to the opener.
+  const finalize = useCallback(() => {
+    setState((s) => ({ ...s, open: false, closing: false }));
     lastFocused.current?.focus();
   }, []);
+
+  // Play the exit animation, then finalize. Reduced-motion users skip straight
+  // to teardown so nothing lingers on screen.
+  const close = useCallback(() => {
+    if (prefersReducedMotion()) {
+      finalize();
+      return;
+    }
+    setState((s) => ({ ...s, closing: true }));
+    if (exitTimer.current) clearTimeout(exitTimer.current);
+    exitTimer.current = setTimeout(finalize, EXIT_MS);
+  }, [finalize]);
+
+  useEffect(() => () => { if (exitTimer.current) clearTimeout(exitTimer.current); }, []);
 
   useEffect(() => {
     const onOpen = (e: Event) => {
       const d = (e as CustomEvent<RedirectPayload>).detail ?? { title: "", body: "" };
       lastFocused.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      setState({ open: true, title: d.title || dict.bridge.defaultTitle, body: d.body || dict.bridge.defaultBody });
+      if (exitTimer.current) clearTimeout(exitTimer.current);
+      setState({ open: true, closing: false, title: d.title || dict.bridge.defaultTitle, body: d.body || dict.bridge.defaultBody });
     };
     window.addEventListener(NK_REDIRECT_EVENT, onOpen);
     return () => window.removeEventListener(NK_REDIRECT_EVENT, onOpen);
@@ -69,7 +91,7 @@ export function AppRedirect() {
 
   if (!state.open) return null;
   return (
-    <div className="nk-redirect-scrim" onClick={close} role="dialog" aria-modal="true" aria-labelledby="nk-redirect-title">
+    <div className={state.closing ? "nk-redirect-scrim is-closing" : "nk-redirect-scrim"} onClick={close} role="dialog" aria-modal="true" aria-labelledby="nk-redirect-title">
       <div ref={panelRef} className="nk-redirect-panel" onClick={(e) => e.stopPropagation()}>
         <button ref={closeRef} onClick={close} aria-label={dict.bridge.close} className="nk-redirect-close">
           <Icon name="X" size={20} color="var(--nk-text)" />
