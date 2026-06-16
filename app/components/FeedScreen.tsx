@@ -165,8 +165,11 @@ export function FeedScreen() {
     setParams({ sort: "recommended" });
   };
 
-  const head = list.slice(0, 4);
-  const tail = list.slice(4);
+  // The full-width interruption banner breaks the card row it lands on, so it must
+  // sit on a clean row boundary in every grid width. 6 = LCM(3,2): a full set of
+  // rows in the 3-col, 2-col and 1-col layouts, so no card is ever left orphaned.
+  const head = list.slice(0, 6);
+  const tail = list.slice(6);
   const card = (o: (typeof list)[number]) => (
     // grid-display wrapper so the card stretches to the row height
     <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
@@ -252,14 +255,15 @@ export function FeedScreen() {
           )}
 
           {isLoading ? (
-            <div className="nk-grid-feed">
+            <div className="nk-grid-feed" role="status" aria-live="polite">
+              <span className="nk-sr-only">{dict.common.loading}</span>
               {Array.from({ length: 6 }).map((_, i) => <OfferCardSkeleton key={i} />)}
             </div>
           ) : !online && (isError || loaded.length === 0) ? (
             <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body}
               actionLabel={dict.offline.retry} onAction={() => refetch()} />
           ) : isError ? (
-            <EmptyState illustration="error" title={dict.offers.errorTitle} subtitle={dict.offers.errorSubtitle}
+            <EmptyState illustration="error" tone="danger" title={dict.offers.errorTitle} subtitle={dict.offers.errorSubtitle}
               actionLabel={dict.offers.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
           ) : list.length ? (
             <div className="nk-grid-feed">

@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon, AppBadges, QR, NK_REDIRECT_EVENT, type RedirectPayload } from "./ui";
 import { useI18n } from "./I18nProvider";
+import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { prefersReducedMotion } from "@/app/lib/motion";
 
 // One buffer-frame past the .2s `nk-*-out` exit keyframes in globals.css, so the
@@ -64,7 +65,8 @@ export function AppRedirect() {
 
   // While open: lock body scroll (released on close AND unmount — the component
   // remounts per page, so navigating away mid-dialog must not leave the page
-  // unscrollable), move focus into the dialog, close on Escape, trap Tab.
+  // unscrollable), move focus into the dialog, close on Escape. Tab-trapping is
+  // handled by useFocusTrap below.
   useEffect(() => {
     if (!state.open) {
       return;
@@ -74,25 +76,6 @@ export function AppRedirect() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         close();
-        return;
-      }
-      if (e.key !== "Tab" || !panelRef.current) {
-        return;
-      }
-      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])',
-      );
-      if (focusable.length === 0) {
-        return;
-      }
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
       }
     };
     window.addEventListener("keydown", onKey);
@@ -101,6 +84,8 @@ export function AppRedirect() {
       document.body.style.overflow = "";
     };
   }, [state.open, close]);
+
+  useFocusTrap(panelRef, state.open);
 
   if (!state.open) return null;
   return (

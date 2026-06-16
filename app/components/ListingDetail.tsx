@@ -10,6 +10,7 @@ import { Icon, IconName, Pill, openRedirect } from "./ui";
 import { SectionEmpty } from "./cards";
 import type { ListingDetail, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
 import { listingSearchHref } from "@/app/lib/search";
+import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
 import { useI18n } from "./I18nProvider";
 
@@ -267,7 +268,7 @@ export function ListingHeader({ listing, saved, onShare, onFav }: {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "var(--nk-gap-xl)", flexWrap: "wrap", marginBottom: "var(--nk-gap-xl)" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", minWidth: 0 }}>
-        <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 4vw, 50px)", lineHeight: 1.04, letterSpacing: 0, color: "var(--nk-text)", textWrap: "balance" }}>{listing.title}</h1>
+        <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 4vw, 50px)", lineHeight: 1.04, letterSpacing: 0, color: "var(--nk-text)", textWrap: "balance", overflowWrap: "anywhere", hyphens: "auto" }}>{listing.title}</h1>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", flexWrap: "wrap" }}>
           {listing.rating && (
             <>
@@ -367,7 +368,7 @@ function GalleryLightbox({ images, title, start, onClose }: {
     };
   }, []);
 
-  // Esc closes, arrows page (when multiple), Tab is trapped within the dialog.
+  // Esc closes, arrows page (when multiple). Tab-trapping is handled by useFocusTrap.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -382,28 +383,13 @@ function GalleryLightbox({ images, title, start, onClose }: {
       if (e.key === "ArrowRight" && many) {
         e.preventDefault();
         next();
-        return;
-      }
-      if (e.key !== "Tab" || !panelRef.current) {
-        return;
-      }
-      const f = panelRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
-      if (f.length === 0) {
-        return;
-      }
-      const first = f[0];
-      const last = f[f.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose, prev, next, many]);
+
+  useFocusTrap(panelRef, true);
 
   return (
     <div className="nk-lightbox" role="dialog" aria-modal="true" aria-label={t.galleryViewLabel} onClick={onClose}>

@@ -214,9 +214,12 @@
   .nk-lg-root[data-layout="a"] .nk-lg-fab-toc{ display:flex; }
 }
 @media (max-width:680px){
-  .nk-lg-table{ min-width:0; table-layout:fixed; }
-  .nk-lg-table thead th{ padding:12px 14px; font-size:12px; overflow-wrap:anywhere; }
-  .nk-lg-td{ padding:12px 14px; font-size:14px; overflow-wrap:anywhere; word-break:normal; }
+  /* keep the cells legible and let the bordered wrapper scroll horizontally,
+     rather than crushing 2-3 columns into anywhere-breaking word stacks */
+  .nk-lg-table{ min-width:460px; }
+  .nk-lg-table thead th{ padding:12px 14px; font-size:12px; }
+  .nk-lg-td{ padding:12px 14px; font-size:14px; }
+  .nk-lg-tablescroll{ -webkit-overflow-scrolling:touch; }
 }
 
 /* print */

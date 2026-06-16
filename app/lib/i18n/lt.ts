@@ -322,6 +322,7 @@ export const lt: Dict = {
     breadcrumbHome: "Pagrindinis",
     breadcrumbLabel: "Naršymo kelias",
     skipToContent: "Pereiti prie turinio",
+    loading: "Kraunama…",
   },
   categoriesPage: {
     metaTitle: "Visos kategorijos — Naudokis.lt",

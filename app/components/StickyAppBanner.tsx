@@ -30,6 +30,17 @@ export function StickyAppBanner() {
   function dismiss() {
     localStorage.setItem(DISMISS_KEY, String(Date.now() + DAY_MS));
     setHidden(true);
+    // The banner unmounts on dismiss, so focus would fall to <body>; move it to
+    // the main content (or page) to keep keyboard users in a sensible place.
+    const target = document.querySelector<HTMLElement>("#nk-main, .nk-page");
+    if (target) {
+      // tabindex="-1" makes the region programmatically focusable without adding it
+      // to the tab order; left in place intentionally (harmless, keeps focus sane).
+      if (!target.hasAttribute("tabindex")) {
+        target.setAttribute("tabindex", "-1");
+      }
+      target.focus();
+    }
   }
 
   if (hidden) return null;

@@ -50,3 +50,5 @@ next-env.d.ts
 # Local full-site screenshot captures (scripts/screenshot-all.mjs)
 /screenshots/
 /screenshots-before/
+# Responsive sweep captures (e2e/responsive.spec.ts)
+/e2e/__screens__/

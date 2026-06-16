@@ -667,11 +667,16 @@ export function Toggle({
   onChange: (on: boolean) => void;
 }) {
   return (
-    <button type="button" className={"nk-pillctl" + (on ? " is-active" : "")} onClick={() => onChange(!on)} aria-pressed={on} style={{
-      display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", cursor: "pointer",
+    <button type="button" className={"nk-pillctl nk-toggle" + (on ? " is-active" : "")} onClick={() => onChange(!on)} aria-pressed={on} style={{
+      display: "inline-flex", alignItems: "center", gap: 12, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-tap)", cursor: "pointer",
       fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, whiteSpace: "nowrap",
     }}>
-      {icon && <Icon name={icon} size={16} stroke={2} color={on ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />} {children}
+      <span className="nk-toggle__lead" style={{ display: "inline-flex", alignItems: "center", gap: 9, minWidth: 0 }}>
+        {icon && <Icon name={icon} size={16} stroke={2} color={on ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />} {children}
+      </span>
+      {/* real on/off switch — gives the control a visible state and a trailing
+          element so the ≤560 full-width `justify-content:space-between` reads right */}
+      <span className="nk-switch" aria-hidden="true"><span className="nk-switch__knob" /></span>
     </button>
   );
 }

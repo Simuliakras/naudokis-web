@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { TocItem } from "@/app/lib/legal/types";
 import { prefersReducedMotion } from "@/app/lib/motion";
+import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { useLegalScroll } from "./LegalScroll";
 import { Icon } from "./Icon";
 
@@ -54,8 +55,10 @@ export function LegalChrome({
   const [drawer, setDrawer] = useState(false);
   const fabRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
 
-  // Lock body scroll, close on Escape, and manage focus while the drawer is open.
+  // Lock body scroll, close on Escape, and manage focus while open. Tab-trapping
+  // is handled by useFocusTrap below.
   useEffect(() => {
     if (!drawer) {
       return;
@@ -77,6 +80,8 @@ export function LegalChrome({
     };
   }, [drawer]);
 
+  useFocusTrap(panelRef, drawer);
+
   const onDrawerLink = useCallback((id: string) => {
     setDrawer(false);
     smoothScrollTo(id);
@@ -96,7 +101,7 @@ export function LegalChrome({
 
       <div className={"nk-lg-drawer" + (drawer ? " is-open" : "")} aria-hidden={!drawer}>
         <div className="nk-lg-drawer__scrim" onClick={() => setDrawer(false)} />
-        <nav className="nk-lg-drawer__panel" role="dialog" aria-modal="true" aria-label={contents}>
+        <nav ref={panelRef} className="nk-lg-drawer__panel" role="dialog" aria-modal="true" aria-label={contents}>
           <div className="nk-lg-drawer__top">
             <h3>{contents}</h3>
             <button ref={closeRef} className="nk-lg-iconbtn" style={{ display: "flex" }} onClick={() => setDrawer(false)} aria-label={contents}>

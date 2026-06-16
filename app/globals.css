@@ -462,6 +462,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
   text-decoration:none;transform:translateY(calc(-100% - 20px));transition:transform .15s ease}
 .nk-skip:focus-visible{transform:none}
 
+/* ---- visually-hidden (SR-only) — e.g. aria-live loading status ---- */
+.nk-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
 /* ---- sticky translucent nav — melts at top, condenses on scroll ---- */
 .nk-nav-bar{position:sticky;top:0;z-index:50;
   background:rgba(20,22,23,.22);
@@ -474,7 +478,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;
   height:var(--nk-nav-h);transition:height .3s var(--nk-ease)}
 .nk-nav-bar.nk-scrolled .nk-nav-inner{height:var(--nk-nav-h-scrolled)}
-.nk-nav-links{display:flex;align-items:center;gap:60px}
+/* nowrap keeps multi-word links ("How it works" / "Kaip tai veikia") on one line;
+   the gap tightens below ~1364px so the full nav still fits beside the search pill */
+.nk-nav-links{display:flex;align-items:center;gap:clamp(26px,4.4vw,60px);white-space:nowrap}
 .nk-nav-burger{display:none;width:46px;height:46px;border-radius:14px;align-items:center;justify-content:center;
   background:var(--nk-surface-2);border:1px solid var(--nk-border);transition:background .15s ease,border-color .15s ease}
 .nk-nav-burger:hover{background:var(--nk-surface-hover);border-color:var(--nk-border-strong)}
@@ -579,6 +585,15 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-pillctl:disabled{opacity:.5;pointer-events:none}
 .nk-pillctl[aria-expanded="true"]{border-color:var(--nk-accent-border)}
 .nk-pillctl.is-active{background:var(--nk-accent-bg);color:var(--nk-accent-text);border-color:var(--nk-accent-border)}
+/* toggle switch (delivery filter) — the lead never overflows; the track sits at
+   the trailing edge so the off/on state is always visible, incl. the ≤560 stack */
+.nk-toggle__lead{overflow:hidden;text-overflow:ellipsis}
+.nk-switch{position:relative;flex:none;width:34px;height:20px;border-radius:999px;
+  background:var(--nk-border-strong);transition:background .2s ease}
+.nk-switch__knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;
+  background:var(--nk-text-muted);transition:transform .22s var(--nk-ease-spring),background .2s ease}
+.nk-toggle.is-active .nk-switch{background:var(--nk-purple)}
+.nk-toggle.is-active .nk-switch__knob{transform:translateX(14px);background:var(--nk-text)}
 
 /* stretched link — covers a card so the whole surface navigates while inner
    controls (favorite) stay clickable via a higher z-index */
@@ -735,11 +750,13 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    Footer (multi-column marketplace sitemap)
    ============================================================ */
 .nk-footer{position:relative;background:var(--nk-bg-deep);overflow:hidden}
-.nk-footer__pattern{position:absolute;right:0;top:0;width:1053px;height:100%;object-fit:cover;object-position:right;opacity:.16;pointer-events:none}
+.nk-footer__pattern{position:absolute;right:0;top:0;width:1053px;max-width:62%;height:100%;object-fit:cover;object-position:right;opacity:.12;pointer-events:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.45) 38%,#000 100%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.45) 38%,#000 100%)}
 .nk-footer .nk-container{position:relative}
 .nk-footer__top{display:grid;grid-template-columns:1.5fr 1.4fr 1fr;gap:48px 64px;padding-block:72px 56px;align-items:start}
-/* category links: one heading, links wrapped column-major into two columns */
-.nk-footer__catgrid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(4,auto);gap:var(--nk-s-4) 44px;align-content:start}
+/* category links: single column by default; column-major into two columns only on wide desktop */
+.nk-footer__catgrid{display:grid;grid-auto-flow:row;grid-template-columns:1fr;gap:var(--nk-s-4) 44px;align-content:start}
+@media(min-width:1200px){.nk-footer__catgrid{grid-auto-flow:column;grid-template-columns:none;grid-template-rows:repeat(4,auto)}}
 .nk-footer__brand{display:flex;flex-direction:column;gap:var(--nk-gap-xl);max-width:380px}
 .nk-footer__tagline{margin:0;font-family:var(--nk-font-body);font-size:18px;line-height:28px;color:var(--nk-text-muted);max-width:340px}
 .nk-footer__contact{display:flex;flex-direction:column;gap:var(--nk-gap-sm)}
@@ -773,15 +790,18 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__secure{display:inline-flex;align-items:center;gap:7px;font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2);
   padding-right:16px;border-right:1px solid var(--nk-border-soft)}
 @media(max-width:900px){
-  .nk-footer__top{grid-template-columns:1fr 1fr;gap:48px 40px;padding-block:48px 44px}
+  .nk-footer__top{grid-template-columns:1fr 1fr;gap:var(--nk-s-10) var(--nk-s-12);padding-block:56px 44px}
   .nk-footer__brand{grid-column:1 / -1;max-width:none}
   .nk-footer__col{padding-top:0}
+  .nk-footer__pattern{opacity:.08}
 }
 @media(max-width:560px){
-  .nk-footer__top{grid-template-columns:1fr}
-  .nk-footer__catgrid{grid-auto-flow:row;grid-template-rows:none;grid-template-columns:1fr}
-  .nk-footer__bottom{flex-direction:column;align-items:flex-start;gap:18px}
-  .nk-footer__secure{border-right:none;padding-right:0}
+  .nk-footer__top{grid-template-columns:1fr;gap:var(--nk-s-10);padding-block:44px 36px}
+  .nk-footer__brand{gap:var(--nk-gap-lg)}
+  .nk-footer__bottom{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-md);padding-block:22px}
+  .nk-footer__pay{gap:var(--nk-gap-md) var(--nk-gap-lg)}
+  .nk-footer__secure{border-right:none;padding-right:0;flex-basis:100%}
+  .nk-footer__pattern{opacity:.05}
 }
 
 /* ============================================================
@@ -822,6 +842,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-redirect-panel{width:100%;border-radius:24px 24px 0 0;max-height:92vh;overflow:auto;
     padding-bottom:calc(36px + env(safe-area-inset-bottom));animation:nk-sheet-in .3s var(--nk-ease-spring) both}
   .nk-redirect-scrim.is-closing .nk-redirect-panel{animation:nk-sheet-out .2s var(--nk-ease) both}
+  /* scanning a QR with the same phone you're holding is impossible — the store
+     badges are the mobile path, so drop the QR block and reclaim sheet height */
+  .nk-redirect-qr{display:none}
 }
 @keyframes nk-sheet-in{from{transform:translateY(100%)}to{transform:none}}
 @keyframes nk-sheet-out{from{transform:none}to{transform:translateY(100%)}}
@@ -835,7 +858,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-appbanner{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;display:none;align-items:center;gap:12px;
   background:var(--nk-surface);border:1px solid var(--nk-border);border-radius:20px;padding:12px 14px;
   box-shadow:var(--nk-edge-top),var(--nk-shadow-3)}
-.nk-appbanner__x{width:40px;height:40px;border-radius:20px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--nk-bg);
+.nk-appbanner__x{width:44px;height:44px;border-radius:22px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--nk-bg);
   transition:background .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
 .nk-appbanner__x:hover{background:var(--nk-surface-2)}
 .nk-appbanner__x:active{transform:scale(.94)}

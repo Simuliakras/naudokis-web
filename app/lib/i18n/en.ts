@@ -292,6 +292,7 @@ export const en: Dict = {
     breadcrumbHome: "Home",
     breadcrumbLabel: "Breadcrumb",
     skipToContent: "Skip to content",
+    loading: "Loading…",
   },
   categoriesPage: {
     metaTitle: "All categories — Naudokis.lt",

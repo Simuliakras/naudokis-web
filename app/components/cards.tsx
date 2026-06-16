@@ -2,6 +2,7 @@
 // Naudokis UI kit — card components.
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import { Icon, IconName, IllusName, Illustration, Dots, Pill, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
 
@@ -44,11 +45,15 @@ export function OfferCard({
           <Icon name="Heart" size={22} color="var(--nk-text)" fill="none" stroke={2} />
         </button>
         {!img && <Icon name={categoryIcon} size={56} stroke={1.5} className="nk-imgicon" />}
-        <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center", zIndex: 2, pointerEvents: "none" }}>
-          <span style={{ background: "rgba(40,44,45,.6)", borderRadius: 23, padding: "8px 14px", backdropFilter: "blur(4px)" }}>
-            <Dots n={4} active={0} />
-          </span>
-        </div>
+        {/* carousel dots imply pageable photos — only show them over a real image,
+            never over the empty-photo placeholder (reads as unfinished otherwise) */}
+        {img && (
+          <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center", zIndex: 2, pointerEvents: "none" }}>
+            <span style={{ background: "rgba(40,44,45,.6)", borderRadius: 23, padding: "8px 14px", backdropFilter: "blur(4px)" }}>
+              <Dots n={4} active={0} />
+            </span>
+          </div>
+        )}
       </div>
       <div style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
         <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
@@ -204,9 +209,9 @@ export function FaqRow({
     }}>
       {/* Semantic heading wraps the disclosure button (standard accordion pattern). */}
       <h3 style={{ margin: 0 }}>
-        <button type="button" onClick={onToggle} aria-expanded={open} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "var(--nk-gap-xl)", padding: "20px 20px 20px 40px", textAlign: "left", font: "inherit" }}>
-          <span className="nk-h-row">{q}</span>
-          <span style={{ width: 44, height: 44, borderRadius: 22, flex: "none", display: "flex", alignItems: "center", justifyContent: "center",
+        <button type="button" onClick={onToggle} aria-expanded={open} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--nk-gap-md)", padding: "18px clamp(20px,5vw,40px) 18px clamp(22px,6vw,40px)", textAlign: "left", font: "inherit" }}>
+          <span className="nk-h-row" style={{ paddingTop: 5 }}>{q}</span>
+          <span style={{ width: 44, height: 44, borderRadius: 22, flex: "none", marginRight: -8, display: "flex", alignItems: "center", justifyContent: "center",
             transition: "transform .2s ease", transform: open ? "rotate(180deg)" : "none" }}>
             <Icon name="ChevronDown" size={22} color={open ? "var(--nk-purple-hover)" : "var(--nk-text)"} stroke={2.2} />
           </span>
@@ -214,7 +219,7 @@ export function FaqRow({
       </h3>
       <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows .25s ease" }}>
         <div style={{ overflow: "hidden" }}>
-          <p style={{ margin: 0, padding: "0 40px 24px 40px", fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "30px", color: "var(--nk-text-2)" }}>{a}</p>
+          <p style={{ margin: 0, padding: "0 clamp(22px,6vw,40px) 24px", fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "30px", color: "var(--nk-text-2)" }}>{a}</p>
         </div>
       </div>
     </div>
@@ -278,8 +283,20 @@ export function EmptyState({
   tone?: "default" | "danger"; // danger tints the icon disk for error states
 }) {
   const danger = tone === "danger";
+  // On an error state (danger + a retry action), move focus to the retry button ONCE
+  // so keyboard/SR users land on the recovery affordance. Guarded by a ref because
+  // call sites pass an inline onAction (new identity each render) — without it the
+  // effect would re-fire and re-steal focus on every parent re-render.
+  const actionRef = useRef<HTMLButtonElement>(null);
+  const focusedOnce = useRef(false);
+  useEffect(() => {
+    if (danger && onAction && !focusedOnce.current) {
+      focusedOnce.current = true;
+      actionRef.current?.focus();
+    }
+  }, [danger, onAction]);
   return (
-    <div className="nk-empty">
+    <div className="nk-empty" role={danger ? "alert" : undefined}>
       {illustration
         ? <Illustration name={illustration} />
         : <span className="nk-empty__icon" style={danger ? { background: "var(--nk-danger-tint)" } : undefined}>
@@ -292,7 +309,7 @@ export function EmptyState({
       {(actionLabel || secondaryLabel) && (
         <div style={{ display: "flex", gap: "var(--nk-gap-sm)", flexWrap: "wrap", justifyContent: "center" }}>
           {actionLabel && (
-            <button className={"nk-btn " + (actionPrimary ? "nk-btn--primary" : "nk-btn--outline")} onClick={onAction}>
+            <button ref={actionRef} className={"nk-btn " + (actionPrimary ? "nk-btn--primary" : "nk-btn--outline")} onClick={onAction}>
               {actionIcon && <Icon name={actionIcon} size={18} stroke={2.2} color="var(--nk-text)" />}
               {actionLabel}
             </button>

@@ -273,6 +273,7 @@ export type Dict = {
     breadcrumbHome: string; // breadcrumb root label
     breadcrumbLabel: string; // accessible name for the breadcrumb <nav> landmark
     skipToContent: string; // skip-link label (first focusable element on the page)
+    loading: string; // SR-only status announced while a list/page is loading
   };
   categoriesPage: {
     metaTitle: string;

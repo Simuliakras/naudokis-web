@@ -40,10 +40,15 @@ export function ListingScreen({ id }: { id: string }) {
   );
 
   if (isLoading) {
-    return shell(<ListingSkeleton />);
+    return shell(
+      <div role="status" aria-live="polite">
+        <span className="nk-sr-only">{dict.common.loading}</span>
+        <ListingSkeleton />
+      </div>,
+    );
   }
   if (isError || !listing) {
-    return shell(<EmptyState illustration="error" title={t.loadErrorTitle} subtitle={t.loadErrorBody} actionLabel={dict.offers.errorAction} onAction={() => refetch()} />);
+    return shell(<EmptyState illustration="error" tone="danger" title={t.loadErrorTitle} subtitle={t.loadErrorBody} actionLabel={dict.offers.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />);
   }
 
   const category = listing.tags[0];

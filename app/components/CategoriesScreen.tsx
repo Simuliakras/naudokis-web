@@ -55,14 +55,15 @@ export function CategoriesScreen() {
           </form>
 
           {isLoading ? (
-            <div className="nk-grid-cats">
+            <div className="nk-grid-cats" role="status" aria-live="polite">
+              <span className="nk-sr-only">{dict.common.loading}</span>
               {Array.from({ length: 8 }).map((_, i) => <CategoryCardSkeleton key={i} />)}
             </div>
           ) : !online && (isError || all.length === 0) ? (
             <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body}
               actionLabel={dict.offline.retry} onAction={() => refetch()} />
           ) : isError ? (
-            <EmptyState illustration="error" title={dict.categories.errorTitle} subtitle={dict.categories.errorSubtitle}
+            <EmptyState illustration="error" tone="danger" title={dict.categories.errorTitle} subtitle={dict.categories.errorSubtitle}
               actionLabel={dict.categories.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
           ) : list.length ? (
             <div className="nk-grid-cats">
