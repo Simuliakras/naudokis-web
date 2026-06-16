@@ -27,13 +27,9 @@ export type TestimonialItem = { name: string; role: string; quote: string; avata
 // comes from app/lib/legal/data/*.json, not the dictionaries.
 export type LegalDict = {
   // doc-page chrome
-  brandSub: string;        // topbar small label
-  langSwitchLabel: string; // LT/EN toggle group label + aria
-  breadcrumb: string;      // breadcrumb <nav> aria-label
-  policyCenter: string;    // hub name / breadcrumb root
+  brandSub: string;        // header eyebrow label above the document title
   inThisDoc: string;       // sidebar TOC heading
   contents: string;        // drawer heading
-  related: string;         // related-docs heading
   backTop: string;         // back-to-top aria/title
   openMenu: string;        // mobile FAB label
   readingProgress: string; // progress-bar aria
@@ -42,29 +38,6 @@ export type LegalDict = {
   updated: string;
   onlyLt: string;          // LT-only fallback notice
   briefLabel: string;      // callout label ("Trumpai" / "In brief")
-  company: string;         // footer company line
-  footHelp: string;
-  footWrite: string;
-  termsLabel: string;      // footer link label
-  privacyLabel: string;    // footer link label
-  // hub
-  hubEyebrow: string;
-  hubTitle: string;
-  hubIntro: string;
-  hubMetaDescription: string;
-  featured: string;        // "Start here"
-  read: string;            // "Read"
-  docsWord: string;        // "documents"
-  contacts: string;
-  fullHierarchy: string;   // "Read the full Policy Center document"
-  cGeneral: string;
-  cPrivacy: string;
-  cDsa: string;
-  cSafety: string;
-  appOrEmail: string;
-  ltOnlyBadge: string;     // doc-card badge for LT-only docs
-  searchPlaceholder: string;
-  searchNoResults: string;
   metaDescriptionFallback: string;
 };
 

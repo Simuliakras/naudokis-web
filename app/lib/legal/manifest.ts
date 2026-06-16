@@ -8,36 +8,22 @@ import type { LegalManifest, LegalDocMeta } from "./types";
 
 const MANIFEST = manifestData as LegalManifest;
 
-export function getLegalManifest(): LegalManifest {
-  return MANIFEST;
-}
-
 export function getLegalDocMeta(id: string): LegalDocMeta | undefined {
   return MANIFEST.docs.find((d) => d.id === id);
 }
 
-// The two primary documents keep their pretty top-level LT/EN routes; everything
-// else lives under the Policy Center hub at /teisine/<id>.
+// The two legal documents keep their pretty top-level LT/EN routes.
 export const CANONICAL_PATHS: Record<string, string> = {
   "privacy-policy": "/privatumo-politika",
   "terms-of-use": "/naudojimo-taisykles",
 };
 
-// Documents that are NOT reachable under /teisine/[slug] (they have their own
-// dedicated routes) — used to exclude them from generateStaticParams.
-export const CANONICAL_IDS = Object.keys(CANONICAL_PATHS);
-
-// In-app, locale-correct path for a document id. Canonical docs resolve to their
-// pretty route; all others to /teisine/<id>.
-export function legalHref(docId: string, locale: Locale): string {
-  const path = CANONICAL_PATHS[docId] ?? `/teisine/${docId}`;
-  return `${localePrefix(locale)}${path}`;
-}
-
-// Locale-correct href for a doc, honouring its hasEn flag: LT-only docs always
-// link to the LT URL so the link never lands on a missing translation.
-export function docHref(doc: LegalDocMeta, locale: Locale): string {
-  return legalHref(doc.id, doc.hasEn ? locale : "lt");
+// In-app, locale-correct path for a document id. Only the canonical docs have
+// real routes; any other id (e.g. a retired sub-document) resolves to undefined
+// so callers can render it as plain text rather than link to a 404.
+export function legalHref(docId: string, locale: Locale): string | undefined {
+  const path = CANONICAL_PATHS[docId];
+  return path ? `${localePrefix(locale)}${path}` : undefined;
 }
 
 // A doc's blurb in the requested locale, falling back to LT.

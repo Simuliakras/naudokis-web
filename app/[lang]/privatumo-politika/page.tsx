@@ -33,7 +33,6 @@ export default async function Page({ params }: PageProps<"/[lang]/privatumo-poli
   }
   return (
     <DocumentScreen
-      docId={DOC_ID}
       doc={loaded.doc}
       locale={locale}
       usedLang={loaded.usedLang}

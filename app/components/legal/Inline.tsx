@@ -33,7 +33,14 @@ export function Inline({ text, locale }: { text: string | undefined; locale: Loc
       const label = m[3];
       const href = m[4];
       if (href.startsWith("doc:")) {
-        nodes.push(<a key={key++} href={legalHref(href.slice(4), locale)}>{label}</a>);
+        // Only canonical docs have routes; a retired sub-document resolves to
+        // undefined and renders as plain text rather than a dead link.
+        const docPath = legalHref(href.slice(4), locale);
+        if (docPath) {
+          nodes.push(<a key={key++} href={docPath}>{label}</a>);
+        } else {
+          nodes.push(<span key={key++}>{label}</span>);
+        }
       } else if (href.startsWith("http")) {
         nodes.push(<a key={key++} href={href} target="_blank" rel="noopener noreferrer">{label}</a>);
       } else if (href.startsWith("#") || href.startsWith("mailto")) {

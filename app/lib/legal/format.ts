@@ -12,7 +12,7 @@ const EN_MONTHS = [
 ];
 
 // Truncate to ~n chars on a word/punctuation boundary, appending an ellipsis.
-// Shared by the hub cards and the SEO meta-description builder.
+// Used by the SEO meta-description builder in manifest.ts.
 export function truncate(s: string, n: number): string {
   if (!s) {
     return "";

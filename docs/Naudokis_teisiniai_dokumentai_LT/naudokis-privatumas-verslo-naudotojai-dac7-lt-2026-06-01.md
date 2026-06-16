@@ -1,0 +1,58 @@
+---
+title: "„Naudokis“ verslo naudotojų, Prekiautojų, DAC7 ir mokesčių privatumo priedas"
+document_type: "privacy_appendix"
+language: "lt"
+version: "2026-06-01"
+effective_date: "2026-06-01"
+last_updated: "2026-06-01"
+company: "MB Naudokis"
+juridical_person_code: "307423504"
+canonical_url: "https://naudokis.lt/legal/privatumas-verslo-naudotojai-dac7"
+document_id: "NAUDOKIS-PRIVACY-BUSINESS-DAC7-LT-2026-06-01"
+---
+
+# „Naudokis“ verslo naudotojų, Prekiautojų, DAC7 ir mokesčių privatumo priedas
+
+Įsigaliojimo data: 2026 m. birželio 1 d.
+Versija: 2026-06-01
+Kalba: lietuvių
+Paskutinį kartą atnaujinta: 2026 m. birželio 1 d.
+Dokumento ID: **NAUDOKIS-PRIVACY-BUSINESS-DAC7-LT-2026-06-01**
+
+Šis priedas yra „Naudokis“ privatumo politikos dalis ir turi būti aiškinamas kartu su pagrindine Politika.
+
+### 6.3 Verslo ir mokesčių duomenys
+
+**Šis skyrius svarbiausias Verslo naudotojams, Prekiautojams ir jų atstovams.**
+
+Jei naudojate verslo paskyrą, veikiate kaip Prekiautojas, Verslo nuomotojas ar Verslo nuomininkas arba atstovaujate Verslo naudotojui, tvarkome verslo, atstovavimo, mokėjimų ir mokesčių informaciją, įskaitant:
+
+- juridinį verslo pavadinimą, viešą verslo pavadinimą, registracijos numerį, šalį ir registruotos buveinės adresą;
+- atsiskaitymo el. pašto adresą, atsiskaitymo telefono numerį, PVM statusą ir PVM mokėtojo kodą, kai taikoma;
+- verslo atstovavimo patvirtinimą, verslo patvirtinimo būseną ir Stripe verslo profilio būseną;
+- savarankiško sąskaitų išrašymo sutikimą;
+- pardavėjo, pirkėjo, Nuomotojo, Nuomininko ar Prekiautojo mokestinį statusą;
+- mokesčių identifikatorius, DAC7 deklaracijas, pardavėjo, pirkėjo ar Verslo naudotojo ataskaitas;
+- sąskaitų išrašymo duomenis ir atitikties būseną.
+
+Jei pateikiate ES PVM mokėtojo kodą B2B atsiskaitymui, sąskaitų išrašymui ar mokesčių atitikties tikslui, „Naudokis“ turi teisę atlikti **PVM kodo formato patikrą ir VIES patikrą per Europos Komisijos sistemą**.
+
+Tokia patikra atliekama tik tada, kai ji reikalinga realiai Platformos funkcijai ar teisinei pareigai. Patikros rezultatas (galiojantis arba negaliojantis), Europos Komisijos VIES užklausos identifikatorius ir patikros laikas gali būti saugomi Rezervacijos, sąskaitos ir mokesčių audito tikslais.
+
+„Naudokis“ taip pat turi teisę periodiškai pakartotinai tikrinti pateikto PVM mokėtojo kodo galiojimą per VIES sistemą. Jei pakartotinės patikros kelis mėnesius iš eilės nepatvirtina PVM mokėtojo kodo galiojimo, „Naudokis“ gali automatiškai nustoti taikyti Naudotojui PVM mokėtojo statusą atitinkančią apmokestinimo ir sąskaitų faktūrų išrašymo tvarką, kol galiojantys duomenys bus patvirtinti. Apie tokį pakeitimą Naudotojas informuojamas. Naudotojas gali bet kada pateikti galiojantį PVM mokėtojo kodą, kad statusas būtų patikrintas ir atkurtas įprasta tvarka, taip pat kreiptis į **info@naudokis.lt** arba per Programėlės pagalbos funkcijas dėl žmogaus peržiūros ar tokio sprendimo ginčijimo.
+
+DAC7 ar panašių platformų ataskaitų teikimo duomenys renkami ir naudojami tik tiek, kiek būtina nustatyti ar vykdyti taikomas mokesčių pareigas. Kadangi DAC7 taikymo sritis priklauso nuo veiklos kategorijos ir teisės aktų, „Naudokis“ turi teisę prašyti informacijos statusui nustatyti, tačiau Valstybinei mokesčių inspekcijai (VMI) pagal DAC7 praneša tik tuos Naudotojus, sandorius ar veiklas, kuriuos privaloma pranešti pagal galiojančią teisę.
+
+### 22.6 Priedas F: verslo naudotojai, Prekiautojai, DAC7 ir mokesčiai
+
+Verslo naudotojų ir Prekiautojų duomenys tvarkomi ne tik Platformos funkcijoms, bet ir vartotojų informavimo, Prekiautojų atsekamumo, mokėjimų, išmokų, KYC, PVM, VIES, DAC7, sąskaitų išrašymo, apskaitos, mokesčių, ginčų ir teisinių pareigų tikslais.
+
+Tai gali apimti juridinį pavadinimą, viešą verslo pavadinimą, registracijos numerį, buveinės adresą, atstovo duomenis, PVM statusą, PVM mokėtojo kodą, mokesčių identifikatorius, banko arba Stripe informaciją, sandorių sumas, išmokas, sąskaitų duomenis, savarankiško sąskaitų išrašymo sutikimą, DAC7 deklaracijas ir atitikties būseną.
+
+Kai teisė reikalauja, dalis Prekiautojo informacijos gali būti pateikiama Nuomininkams, vartotojams, kitoms sandorio šalims, mokėjimų teikėjams, mokesčių institucijoms ar kitoms kompetentingoms institucijoms. „Naudokis“ turi teisę riboti Verslo naudotojo funkcijas ar išmokas, jei privalomi duomenys nepateikti, yra netikslūs, negali būti patikrinti arba kyla teisinė, mokesčių, mokėjimų ar vartotojų klaidinimo rizika.
+
+DAC7 ir panašūs mokesčių duomenys saugomi ir teikiami tiek, kiek būtina teisės aktų reikalavimams vykdyti, ataskaitoms parengti, tikslinti, pagrįsti ir apginti „Naudokis“ ar Naudotojų teises.
+
+Kai tokie duomenys taip pat patenka į DSA Prekiautojų atsekamumo taisykles, trumpesnis DSA saugojimas taikomas tik tiems duomenims, kurių nebereikia pagal kitą teisėtą pagrindą. Mokesčių, apskaitos ar ginčų duomenys gali būti saugomi ilgiau.
+
+DAC7 statuso nustatymo metu „Naudokis“ turi teisę tvarkyti kategorijos, sandorio tipo, Nuomotojo statuso, atlygio ir kitos informacijos signalus, kad įvertintų, ar veikla patenka į privalomo ataskaitų teikimo sritį. Toks vertinimas nėra mokestinė konsultacija Naudotojui ir nereiškia, kad visi Platformos daiktų nuomos sandoriai automatiškai pranešami mokesčių institucijoms.

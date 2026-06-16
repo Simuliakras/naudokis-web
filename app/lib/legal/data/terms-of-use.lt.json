@@ -28,9 +28,21 @@
       "label": "Platformos dokumentų struktūra",
       "num": null
     },
-    { "id": "1-savokos", "label": "Sąvokos", "num": "1" },
-    { "id": "2-salygu-priemimas", "label": "Sąlygų priėmimas", "num": "2" },
-    { "id": "3-kas-yra-naudokis", "label": "Kas yra „Naudokis“", "num": "3" },
+    {
+      "id": "1-savokos",
+      "label": "Sąvokos",
+      "num": "1"
+    },
+    {
+      "id": "2-salygu-priemimas",
+      "label": "Sąlygų priėmimas",
+      "num": "2"
+    },
+    {
+      "id": "3-kas-yra-naudokis",
+      "label": "Kas yra „Naudokis“",
+      "num": "3"
+    },
     {
       "id": "4-tinkamumas-ir-paskyra",
       "label": "Tinkamumas ir paskyra",
@@ -66,7 +78,11 @@
       "label": "Mokėjimai, mokesčiai ir Stripe",
       "num": "10"
     },
-    { "id": "11-uzstatai", "label": "Užstatai", "num": "11" },
+    {
+      "id": "11-uzstatai",
+      "label": "Užstatai",
+      "num": "11"
+    },
     {
       "id": "12-atsaukimai-grazinimai-ir-teise-atsisakyti-sutarties",
       "label": "Atšaukimai, grąžinimai ir teisė atsisakyti sutarties",
@@ -127,7 +143,11 @@
       "label": "Papildomos Platformos taisyklės",
       "num": "23"
     },
-    { "id": "24-kontaktai", "label": "Kontaktai", "num": "24" }
+    {
+      "id": "24-kontaktai",
+      "label": "Kontaktai",
+      "num": "24"
+    }
   ],
   "blocks": [
     {
@@ -136,7 +156,7 @@
     },
     {
       "t": "p",
-      "md": "Platforma apima mobiliąją „Naudokis“ Programėlę, susijusias interneto svetaines, nuomos funkcijas, mokėjimus, tapatybės patvirtinimą, pagalbą, komunikaciją ir kitas susijusias paslaugas (kartu – „**Platforma**“ arba „**Paslauga**“)."
+      "md": "Platforma apima mobiliąją „Naudokis“ Programėlę, susijusias interneto svetaines, nuomos funkcijas, mokėjimus, tapatybės patvirtinimą, pagalbą, komunikaciją ir kitas susijusias paslaugas (kartu – „**Platforma**“)."
     },
     {
       "t": "p",
@@ -144,11 +164,11 @@
     },
     {
       "t": "p",
-      "md": "Platformoje gali būti sudaromi skirtingų modelių Nuomos sandoriai, kai tai leidžia Platformos funkcijos, taikoma teisė ir konkretaus sandorio sąlygos. Tai gali būti privačių fizinių asmenų tarpusavio nuoma (P2P), Verslo naudotojo nuoma vartotojui (B2C / B2P), privataus asmens ar Verslo naudotojo nuoma Verslo naudotojui ir Verslo naudotojų tarpusavio nuoma (B2B)."
+      "md": "Platformoje gali būti sudaromi skirtingų modelių Nuomos sandoriai, kai tai leidžia Platformos funkcijos, taikoma teisė ir konkretaus sandorio sąlygos. Tai gali būti privačių fizinių asmenų tarpusavio nuoma (P2P), Verslo naudotojo nuoma vartotojui (B2C / B2P), Verslo naudotojų tarpusavio nuoma (B2B), taip pat privataus asmens nuoma Verslo naudotojui, kuriai taikomos atskiros 18 skyriaus nuostatos."
     },
     {
       "t": "p",
-      "md": "**Veiklos Lietuvoje apimtis.** „Naudokis“ veikia Lietuvos rinkoje. Programėlė skirta Lietuvoje esantiems daiktams, Lietuvos adresams, Lietuvoje taikomiems perdavimo ar pristatymo būdams, mokėjimams eurais ir Lietuvos reikalavimus atitinkantiems išmokų duomenims."
+      "md": "**Veiklos Lietuvoje apimtis.** „Naudokis“ veikia Lietuvos rinkoje. Programėlė skirta Lietuvoje esantiems daiktams, Lietuvos adresams, Lietuvoje taikomiems perdavimo ar pristatymo būdams, mokėjimams eurais ir išmokoms į Lietuvos reikalavimus atitinkančias mokėjimo sąskaitas."
     },
     {
       "t": "p",
@@ -197,7 +217,7 @@
         "**Mokėjimas autorizuojamas.** Jei taikoma, Rezervacijos suma ir Užstatas įtraukiami į Stripe mokėjimo autorizaciją, nebent mokėjimo sąsajoje aiškiai nurodyta kitaip.",
         "**Nuomotojas priima arba atmeta užklausą.** Mokėjimas nurašomas tik po Nuomotojo priėmimo ir sėkmingo mokėjimo užbaigimo, nebent mokėjimo sąsajoje aiškiai nurodyta kitaip.",
         "**Daiktas perduodamas ir naudojamas.** Abi šalys turi patikrinti būklę, priedus, instrukcijas ir bendradarbiauti Programėlėje numatytais perdavimo bei grąžinimo veiksmais.",
-        "**Daiktas grąžinamas.** Jei daiktas grąžinamas laiku, tinkamos būklės ir nėra pagrįstos pretenzijos, Užstato grąžinimas inicijuojamas pagal mokėjimų teikėjo, banko ir kortelių tinklų terminus.",
+        "**Daiktas grąžinamas.** Jei daiktas grąžinamas laiku, tinkamos būklės ir nėra pagrįstos pretenzijos, „Naudokis“ inicijuoja Užstato grąžinimą be nepagrįsto delsimo po nuomos užbaigimo; lėšų grąžinimo trukmė papildomai priklauso nuo mokėjimų teikėjo, banko ir kortelių tinklų terminų.",
         "**Jei kyla problema, pateikiami įrodymai.** Žalos, praradimo, vėlavimo ar Užstato ginčo atveju „Naudokis“ administruoja įrodymų, laikino sulaikymo, grąžinimo ir mokėjimo koregavimo procesą. Tai nepanaikina teisės kreiptis į mokėjimų teikėją, institucijas ar teismą."
       ]
     },
@@ -208,34 +228,46 @@
     },
     {
       "t": "table",
-      "head": ["Ieškote informacijos apie...", "Skaitykite"],
+      "head": [
+        "Ieškote informacijos apie...",
+        "Skaitykite"
+      ],
       "rows": [
-        ["Kas yra „Naudokis“ ir kas yra Nuomos sandorio šalis", "3 skyriuje"],
-        ["Paskyrą, amžių ir tapatybės patvirtinimą", "4 ir 6 skyriuose"],
+        [
+          "Kas yra „Naudokis“ ir kas yra Nuomos sandorio šalis",
+          "3 skyriuje"
+        ],
+        [
+          "Paskyrą, amžių ir tapatybės patvirtinimą",
+          "4 ir 6 skyriuose"
+        ],
         [
           "Skelbimus, draudžiamus daiktus ir rizikingas kategorijas",
-          "7 skyriuje ir [Draudžiamų bei ribojamų daiktų taisyklėse](doc:prohibited-restricted-items)"
+          "7 skyriuje ir Draudžiamų ir ribojamų daiktų taisyklėse"
         ],
-        ["Rezervacijas ir Nuomos sandorio sudarymą", "9 skyriuje"],
+        [
+          "Rezervacijas ir Nuomos sandorio sudarymą",
+          "9 skyriuje"
+        ],
         [
           "Mokėjimus, mokesčius, Stripe ir informaciją prieš mokėjimą",
-          "10 skyriuje ir [Mokėjimų, mokesčių bei Stripe taisyklėse](doc:payments-fees-stripe)"
+          "10 skyriuje ir Mokėjimų, mokesčių ir Stripe taisyklėse"
         ],
         [
           "Užstatus, žalą, praradimą ir ginčus",
-          "11 ir 13 skyriuose bei [Užstatų, žalos ir ginčų taisyklėse](doc:deposits-damage-disputes)"
+          "11 ir 13 skyriuose bei Užstatų, žalos, praradimo ir ginčų taisyklėse"
         ],
         [
           "Atšaukimą, grąžinimus ir teisę atsisakyti sutarties",
-          "12 skyriuje ir [Atšaukimo bei grąžinimų taisyklėse](doc:cancellations-refunds)"
+          "12 skyriuje ir Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklėse"
         ],
         [
           "Verslo naudotojus, Prekiautojus, PVM, VIES ir DAC7",
-          "15 skyriuje ir [Verslo naudotojų taisyklėse](doc:business-users)"
+          "15 skyriuje ir Verslo naudotojų, Prekiautojų ir B2B taisyklėse"
         ],
         [
           "Turinį, moderavimą, apeliacijas ir DSA pranešimus",
-          "16 ir 17 skyriuose bei [Moderavimo ir DSA taisyklėse](doc:moderation-dsa)"
+          "16 ir 17 skyriuose bei Moderavimo, skundų ir DSA taisyklėse"
         ],
         [
           "Vartotojų skundus, institucijas ir ginčų sprendimą",
@@ -243,21 +275,24 @@
         ],
         [
           "Rezervacijos būsenas, perdavimo ir užbaigimo procesą",
-          "[Rezervacijos, perdavimo ir užbaigimo proceso taisykles](doc:reservation-handover-completion)"
+          "Rezervacijos, perdavimo ir užbaigimo proceso taisykles"
         ],
         [
           "Tapatybės, rizikos ir pasitikėjimo priemones",
-          "[Pasitikėjimo, patikrų ir apsaugos priemonių standartą](doc:trust-checks-safeguards)"
+          "Pasitikėjimo, patikrų ir apsaugos priemonių standartą"
         ],
         [
           "Atsiliepimus, paiešką ir reitingavimą",
-          "[Atsiliepimų, paieškos ir reitingavimo taisykles](doc:reviews-search-ranking)"
+          "Atsiliepimų, paieškos ir reitingavimo taisykles"
         ],
         [
           "Visų teisinių dokumentų žemėlapį",
-          "[Politikų centrą](doc:policy-center)"
+          "Taisyklių centrą"
         ],
-        ["„Naudokis“ kontaktus", "24 skyriuje"]
+        [
+          "„Naudokis“ kontaktus",
+          "24 skyriuje"
+        ]
       ]
     },
     {
@@ -275,33 +310,43 @@
     },
     {
       "t": "p",
-      "md": "Visų dokumentų žemėlapį rasite [„Naudokis“ politikų centre](doc:policy-center)."
+      "md": "Visų dokumentų žemėlapį rasite „Naudokis“ taisyklių centre."
     },
     {
       "t": "p",
-      "md": "Praktinė rezervacijos eiga paaiškinta [Rezervacijos, perdavimo ir užbaigimo proceso taisyklėse](doc:reservation-handover-completion). Naudotojų pasitikėjimo, tapatybės, rizikos ir saugumo priemonės aprašytos [Pasitikėjimo, patikrų ir apsaugos priemonių standarte](doc:trust-checks-safeguards)."
+      "md": "Praktinė rezervacijos eiga paaiškinta Rezervacijos, perdavimo ir užbaigimo proceso taisyklėse. Naudotojų pasitikėjimo, tapatybės, rizikos ir saugumo priemonės aprašytos Pasitikėjimo, patikrų ir apsaugos priemonių standarte."
     },
     {
       "t": "p",
-      "md": "Atsiliepimų, paieškos ir matomumo taisyklės pateikiamos [Atsiliepimų, paieškos ir reitingavimo taisyklėse](doc:reviews-search-ranking)."
+      "md": "Atsiliepimų, paieškos ir matomumo taisyklės pateikiamos Atsiliepimų, paieškos ir reitingavimo taisyklėse."
     },
-    { "t": "h3", "text": "Kaip sudarytos šios Sąlygos" },
+    {
+      "t": "h3",
+      "text": "Kaip sudarytos šios Sąlygos"
+    },
     {
       "t": "p",
-      "md": "Šios Sąlygos yra pagrindinis „Naudokis“ Platformos naudojimo dokumentas. Jos taikomos kartu su jose nurodytomis ir Platformoje paskelbtomis papildomomis taisyklėmis. Papildomos taisyklės sukonkretina atskiras sritis, tokias kaip Užstatai, žala, ginčai, atšaukimai, draudžiami daiktai, verslo naudotojai, mokėjimai ir moderavimas. Jos yra šių Sąlygų dalis, jei konkrečioje taisyklėje nurodyta, kad ji taikoma „Naudokis“ Platformai."
+      "md": "Šios Sąlygos yra pagrindinis „Naudokis“ Platformos naudojimo dokumentas. Jos taikomos kartu su jose nurodytomis ir Platformoje paskelbtomis papildomomis taisyklėmis. Papildomos taisyklės sukonkretina atskiras sritis, tokias kaip Užstatai, žala, ginčai, atšaukimai, draudžiami daiktai, verslo naudotojai, mokėjimai ir moderavimas. Jos yra šių Sąlygų dalis, kai jos nurodytos šiose Sąlygose, Programėlėje arba konkrečios Rezervacijos eigoje."
     },
     {
       "t": "p",
       "md": "Jei tas pats klausimas reglamentuojamas šiose Sąlygose ir papildomose taisyklėse, nuostatos aiškinamos kartu. Jei kyla neaiškumas vartotojui taikomame sandoryje, pirmenybė teikiama Naudotojui palankesniam aiškinimui tiek, kiek to reikalauja privaloma teisė."
     },
-    { "t": "h2", "id": "1-savokos", "text": "1. Sąvokos" },
-    { "t": "p", "md": "Šiose Sąlygose vartojamos sąvokos reiškia:" },
+    {
+      "t": "h2",
+      "id": "1-savokos",
+      "text": "1. Sąvokos"
+    },
+    {
+      "t": "p",
+      "md": "Šiose Sąlygose vartojamos sąvokos reiškia:"
+    },
     {
       "t": "ul",
       "items": [
         "„**Programėlė**“ – mobilioji „Naudokis“ programėlė, per kurią teikiama visa Platforma arba dalis jos funkcijų.",
         "„**Naudotojas**“ – bet kuris asmuo, kuris lankosi Platformoje, susikuria paskyrą, skelbia daiktus, pateikia Rezervacijos užklausas, sudaro ar vykdo Nuomos sandorius, naudojasi pagalba arba kitaip naudojasi Platforma.",
-        "„**Nuomotojas**“ – Naudotojas, kuris per Platformą skelbia arba siūlo daiktą nuomai. Nuomotojas gali būti fizinis asmuo arba Verslo naudotojas.",
+        "„**Nuomotojas**“ – Naudotojas, kuris per Platformą skelbia arba siūlo daiktą nuomai. Programėlėje Nuomotojas vadinamas „savininku“. Nuomotojas gali būti fizinis asmuo arba Verslo naudotojas.",
         "„**Nuomininkas**“ – Naudotojas, kuris per Platformą ieško, rezervuoja, gauna ar naudoja nuomojamą daiktą. Nuomininkas gali būti fizinis asmuo arba Verslo naudotojas.",
         "„**Verslo naudotojas**“ – juridinis asmuo, individualią veiklą vykdantis asmuo ar kitas profesionaliai veikiantis asmuo, kuris per Platformą siūlo daiktus nuomai, nuomojasi daiktus arba kitaip naudojasi Platforma verslo ar profesinės veiklos tikslais.",
         "„**P2P sandoris**“ – Nuomos sandoris, kai tiek Nuomotojas, tiek Nuomininkas veikia kaip privatūs fiziniai asmenys, ne savo verslo ar profesinės veiklos tikslais.",
@@ -310,15 +355,30 @@
         "„**Veiklos Lietuvoje apimtis**“ – šiose Sąlygose vartojamas paaiškinimas, kad „Naudokis“ Platforma skirta Lietuvoje vykdomai daiktų nuomai, Lietuvoje esantiems daiktams, Lietuvoje taikomiems perdavimo ar pristatymo būdams ir mokėjimams eurais.",
         "„**Verslo nuomotojas**“ – Verslo naudotojas, kuris per Platformą siūlo daiktus nuomai.",
         "„**Verslo nuomininkas**“ – Verslo naudotojas, kuris per Platformą nuomojasi daiktus savo verslo ar profesinės veiklos tikslais.",
-        "„**Prekiautojas**“ – Verslo naudotojas ar kitas asmuo, kuris pagal taikomą vartotojų teisę laikomas prekiautoju vartotojų atžvilgiu.",
+        "„**Paleidimo laikotarpis**“ – laikotarpis, kuriuo „Naudokis“ veikia su pradine, Lietuvos rinkai pritaikyta funkcijų, kategorijų, mokėjimų, išmokų ir teikėjų apimtimi, kaip aprašyta šiose Sąlygose, specialiosiose taisyklėse ir Programėlėje. Apie Paleidimo laikotarpio pabaigą ar pakeitimus informuojame Programėlėje.",
+        "„**Prekiautojas**“ – Verslo naudotojas ar kitas asmuo, kuris pagal taikomą vartotojų teisę laikomas prekiautoju vartotojų atžvilgiu. Programėlėje Prekiautojo statusas rodomas kaip „Verslininkas“.",
         "„**Skelbimas**“ – Platformoje paskelbta informacija apie nuomojamą daiktą, jo savybes, būklę, kainą, Užstatą, prieinamumą, atsiėmimą, pristatymą, apribojimus ir kitas sąlygas.",
-        "„**Rezervacija**“ – per Platformą pateikta ir, jei taikoma, patvirtinta konkretaus daikto nuomos užklausa pasirinktoms datoms.",
+        "„**Rezervacijos užklausa**“ – per Platformą pateikta konkretaus daikto nuomos užklausa pasirinktoms datoms.",
+        "„**Rezervacija**“ – Rezervacijos užklausa ir jos pagrindu vykdomas nuomos procesas, įskaitant patvirtinimą, vykdymą, atšaukimą ar užbaigimą.",
         "„**Nuomos sandoris**“ – Nuomotojo ir Nuomininko tarpusavio susitarimas dėl daikto nuomos, sudaromas naudojantis Platformos priemonėmis.",
-        "„**Užstatas**“ – Programėlėje prieš mokėjimo patvirtinimą nurodyta grąžintina suma. Paleidimo laikotarpiu ji paprastai įtraukiama į Stripe mokėjimo autorizaciją kartu su Rezervacijos mokėjimu ir nurašoma tik po Nuomotojo priėmimo bei sėkmingo mokėjimo užbaigimo. Po nuomos Užstatas gali būti grąžinamas, iš dalies grąžinamas arba panaudojamas pagrįstiems reikalavimams padengti pagal šias Sąlygas, įrodymus, ginčo rezultatą, mokėjimų teikėjo taisykles ir taikomą teisę. Užstatas nėra draudimas, garantija, Nuomininko atsakomybės riba, atskira bankinė depozitinė, klientų lėšų ar sąlyginio deponavimo sąskaita, taip pat nėra palūkanas kaupianti sąskaita.",
+        "„**Užstatas**“ – Programėlėje prieš mokėjimo patvirtinimą nurodyta grąžintina suma."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Paleidimo laikotarpiu ji paprastai įtraukiama į Stripe mokėjimo autorizaciją kartu su Rezervacijos mokėjimu ir nurašoma tik po Nuomotojo priėmimo bei sėkmingo mokėjimo užbaigimo. Po nuomos Užstatas gali būti grąžinamas, iš dalies grąžinamas arba panaudojamas pagrįstiems reikalavimams padengti pagal šias Sąlygas, įrodymus, ginčo rezultatą, mokėjimų teikėjo taisykles ir taikomą teisę. Užstatas nėra draudimas, garantija, Nuomininko atsakomybės riba, atskira bankinė depozitinė, klientų lėšų ar sąlyginio deponavimo sąskaita, taip pat nėra palūkanas kaupianti sąskaita."
+    },
+    {
+      "t": "ul",
+      "items": [
         "„**Turinys**“ – skelbimai, nuotraukos, aprašymai, žinutės, atsiliepimai, įrodymai, profilio informacija, verslo informacija, pagalbos užklausos ir kita Naudotojų per Platformą pateikiama arba sukuriama informacija."
       ]
     },
-    { "t": "h2", "id": "2-salygu-priemimas", "text": "2. Sąlygų priėmimas" },
+    {
+      "t": "h2",
+      "id": "2-salygu-priemimas",
+      "text": "2. Sąlygų priėmimas"
+    },
     {
       "t": "p",
       "md": "Sukurdami paskyrą, priimdami šias Sąlygas Programėlėje, skelbdami daiktą, pateikdami Rezervacijos užklausą, atlikdami mokėjimą, susirašinėdami, naudodamiesi pagalba arba kitaip naudodamiesi Platforma, patvirtinate, kad perskaitėte šias Sąlygas, jas suprantate ir sutinkate jų laikytis."
@@ -339,7 +399,11 @@
       "t": "p",
       "md": "Jei naudojatės Platforma juridinio asmens, organizacijos ar kito verslo vardu, patvirtinate, kad turite teisę jam atstovauti ir jį įpareigoti."
     },
-    { "t": "h2", "id": "3-kas-yra-naudokis", "text": "3. Kas yra „Naudokis“" },
+    {
+      "t": "h2",
+      "id": "3-kas-yra-naudokis",
+      "text": "3. Kas yra „Naudokis“"
+    },
     {
       "t": "callout",
       "md": "„Naudokis“ suteikia Platformos priemones nuomos procesui organizuoti, mokėjimams administruoti, pagalbai teikti ir ginčams administruoti, tačiau paprastai nėra konkretaus daikto savininkė ar Nuomos sandorio šalis."
@@ -350,7 +414,7 @@
     },
     {
       "t": "p",
-      "md": "„Naudokis“ turi teisę teikti Platformos priemones Skelbimams, Rezervacijoms, mokėjimų inicijavimui ir administravimui, Užstatų apskaitai, grąžinimams, ginčams, mokesčiams, išmokoms, pagalbai, moderavimui ir saugumui užtikrinti."
+      "md": "„Naudokis“ teikia Platformos priemones Skelbimams, Rezervacijoms, mokėjimų inicijavimui ir administravimui, Užstatų apskaitai, grąžinimams, ginčams, mokesčiams, išmokoms, pagalbai, moderavimui ir saugumui užtikrinti."
     },
     {
       "t": "p",
@@ -385,7 +449,10 @@
       "t": "callout",
       "md": "Platforma skirta tik ne jaunesniems kaip 18 metų asmenims. Tam tikroms funkcijoms gali reikėti tapatybės, mokėjimų, verslo ar Stripe patvirtinimo."
     },
-    { "t": "h3", "text": "Tinkamumas naudotis Platforma" },
+    {
+      "t": "h3",
+      "text": "Tinkamumas naudotis Platforma"
+    },
     {
       "t": "p",
       "md": "Platforma ir paskyros funkcijos skirtos tik ne jaunesniems kaip 18 metų asmenims, kurie pagal taikomą teisę gali sudaryti atitinkamus susitarimus ir vykdyti su jais susijusias pareigas. Tai apima paskyros sukūrimą, Skelbimų publikavimą, Rezervacijų pateikimą, mokėjimus, Užstatus, išmokas, perdavimą, grąžinimą ir Nuomos sandorių sudarymą per Platformą."
@@ -410,12 +477,18 @@
       "t": "p",
       "md": "Jei sužinome, kad paskyrą sukūrė ar Platforma naudojasi jaunesnis nei 18 metų asmuo, tokio asmens tapatybės patvirtinimas atmetamas, prieiga prie amžiumi ribojamų funkcijų ribojama ir inicijuojama vidinė peržiūra. Atlikę tokią peržiūrą galime uždaryti paskyrą, o su ja susijusius asmens duomenis ištrinti, anonimizuoti arba saugoti ribotai, kaip aprašyta Privatumo politikoje ir kaip to reikalauja teisės aktai."
     },
-    { "t": "h3", "text": "Paskyra ir saugumas" },
+    {
+      "t": "h3",
+      "text": "Paskyra ir saugumas"
+    },
     {
       "t": "p",
       "md": "Kurdami paskyrą ir naudodamiesi Platforma privalote pateikti tikslią, išsamią ir aktualią informaciją. Turite ją atnaujinti, jei ji pasikeičia."
     },
-    { "t": "p", "md": "Jūs atsakote už:" },
+    {
+      "t": "p",
+      "md": "Jūs atsakote už:"
+    },
     {
       "t": "ul",
       "items": [
@@ -435,7 +508,10 @@
       "id": "5-naudotoju-vaidmenys",
       "text": "5. Naudotojų vaidmenys"
     },
-    { "t": "p", "md": "Platformoje gali dalyvauti:" },
+    {
+      "t": "p",
+      "md": "Platformoje gali dalyvauti:"
+    },
     {
       "t": "ul",
       "items": [
@@ -491,7 +567,7 @@
     },
     {
       "t": "p",
-      "md": "Išsamios draudžiamų, ribojamų ir aukštesnės rizikos daiktų taisyklės pateikiamos [Draudžiamų ir ribojamų daiktų taisyklėse](doc:prohibited-restricted-items)."
+      "md": "Išsamios draudžiamų, ribojamų ir aukštesnės rizikos daiktų taisyklės pateikiamos Draudžiamų ir ribojamų daiktų taisyklėse."
     },
     {
       "t": "h2",
@@ -502,9 +578,18 @@
       "t": "callout",
       "md": "Nuomotojas atsako už daiktą, Skelbimą ir perdavimą, o Nuomininkas – už apmokėjimą, saugų naudojimą ir grąžinimą laiku."
     },
-    { "t": "h3", "text": "Nuomotojo pareigos" },
-    { "t": "p", "md": "**Šis skyrius svarbiausias Nuomotojams.**" },
-    { "t": "p", "md": "Jei esate Nuomotojas, atsakote už:" },
+    {
+      "t": "h3",
+      "text": "Nuomotojo pareigos"
+    },
+    {
+      "t": "p",
+      "md": "**Šis skyrius svarbiausias Nuomotojams.**"
+    },
+    {
+      "t": "p",
+      "md": "Jei esate Nuomotojas, atsakote už:"
+    },
     {
       "t": "ul",
       "items": [
@@ -522,9 +607,18 @@
       "t": "p",
       "md": "Nuomotojas negali nukreipti Nuomininko mokėti, bendrauti ar užbaigti Rezervacijos ne per Platformą, kai Platformos taisyklės reikalauja veikti per Platformą."
     },
-    { "t": "h3", "text": "Nuomininko pareigos" },
-    { "t": "p", "md": "**Šis skyrius svarbiausias Nuomininkams.**" },
-    { "t": "p", "md": "Jei esate Nuomininkas, atsakote už:" },
+    {
+      "t": "h3",
+      "text": "Nuomininko pareigos"
+    },
+    {
+      "t": "p",
+      "md": "**Šis skyrius svarbiausias Nuomininkams.**"
+    },
+    {
+      "t": "p",
+      "md": "Jei esate Nuomininkas, atsakote už:"
+    },
     {
       "t": "ul",
       "items": [
@@ -550,7 +644,7 @@
     },
     {
       "t": "callout",
-      "md": "Nuomotojui priėmus Rezervacijos užklausą, ji gali būti rodoma kaip Nuomotojo priimta arba mokėjimas apdorojamas. Galutinai patvirtinta ir apmokėta Rezervacija atsiranda tik tada, kai autorizuotas mokėjimas sėkmingai nurašomas arba kitaip patvirtinamas Programėlėje."
+      "md": "Nuomotojui priėmus Rezervacijos užklausą, ji gali būti rodoma būsenoje „Nuomotojo priimta“ arba „Mokėjimas apdorojamas“. Galutinai patvirtinta ir apmokėta Rezervacija atsiranda tik tada, kai autorizuotas mokėjimas sėkmingai nurašomas arba kitaip patvirtinamas Programėlėje."
     },
     {
       "t": "p",
@@ -564,7 +658,10 @@
       "t": "p",
       "md": "Jei Nuomininkas veikia kaip Verslo nuomininkas, „Naudokis“ taip pat gali reikalauti verslo profilio, atstovavimo teisės, atsiskaitymo, PVM, sąskaitų išrašymo ar kitos B2B sandoriui reikalingos informacijos."
     },
-    { "t": "p", "md": "Tipinė Rezervacijos eiga:" },
+    {
+      "t": "p",
+      "md": "Tipinė Rezervacijos eiga:"
+    },
     {
       "t": "ol",
       "items": [
@@ -572,14 +669,14 @@
         "Nuomininko mokėjimo procesas inicijuojamas per Stripe, o Programėlėje nurodytos sumos įprastai pirmiausia autorizuojamos;",
         "pasirinktos datos gali būti laikinai rezervuojamos, kol laukiama mokėjimo patvirtinimo ir Nuomotojo sprendimo;",
         "Nuomotojas priima arba atmeta užklausą;",
-        "jeigu Nuomotojas priima užklausą, Rezervacija gali laikinai būti rodoma kaip Nuomotojo priimta arba mokėjimas apdorojamas, kol Platforma bando užbaigti autorizuoto mokėjimo nurašymą;",
+        "jeigu Nuomotojas priima užklausą, Rezervacija gali laikinai būti rodoma būsenoje „Nuomotojo priimta“ arba „Mokėjimas apdorojamas“, kol Platforma bando užbaigti autorizuoto mokėjimo nurašymą;",
         "mokėjimas nurašomas tik po to, kai Nuomotojas priima užklausą ir mokėjimas sėkmingai patvirtinamas;",
-        "jeigu Nuomotojas atmeta užklausą, ji pasibaigia, mokėjimo procesas nebaigiamas arba lėšų nurašymas nepavyksta, galutinai patvirtintas Nuomos sandoris nesudaromas, o pradėtas mokėjimo procesas atšaukiamas, neįvykdomas arba užbaigiamas pagal Stripe ir mokėjimų tinklų taisykles."
+        "jeigu Nuomotojas atmeta užklausą, užklausa pasibaigia, mokėjimo procesas neužbaigiamas arba lėšų nurašymas nepavyksta, galutinai patvirtintas Nuomos sandoris nesudaromas, o pradėtas mokėjimo procesas atšaukiamas arba pasibaigia pagal Stripe ir mokėjimų tinklų taisykles."
       ]
     },
     {
       "t": "p",
-      "md": "Vien mokėjimo proceso inicijavimas, mokėjimo priemonės patikra ar laikinas datos pažymėjimas nereiškia, kad Rezervacija yra galutinai patvirtinta. Vien Nuomotojo priėmimas taip pat gali reikšti tik tarpinę būseną, kurioje mokėjimas dar apdorojamas. Rezervacija laikoma galutinai patvirtinta ir apmokėta tik tada, kai Nuomotojas ją priima ir mokėjimas yra sėkmingai nurašomas arba kitaip patvirtinamas Programėlėje."
+      "md": "Vien mokėjimo proceso inicijavimas, mokėjimo priemonės patikra ar laikinas datos pažymėjimas nereiškia, kad Rezervacija yra galutinai patvirtinta. Vien Nuomotojo priėmimas taip pat gali reikšti tik tarpinę būseną, kurioje mokėjimas dar apdorojamas. Rezervacija laikoma galutinai patvirtinta ir apmokėta tik tada, kai Nuomotojas ją priima ir mokėjimas yra sėkmingai nurašomas. Jei konkrečiu atveju taikomas kitas mokėjimo patvirtinimo būdas, jis aiškiai nurodomas Programėlėje prieš mokėjimą."
     },
     {
       "t": "p",
@@ -591,7 +688,7 @@
     },
     {
       "t": "p",
-      "md": "„Naudokis“ turi teisę keisti taikomus Rezervacijų terminus, mokėjimo sesijos langus, pakartotinių bandymų taisykles ir sandorio ribas, tačiau tokie pakeitimai įprastai taikomi tik būsimoms Rezervacijoms ir yra nurodomi Programėlėje prieš Nuomininkui patvirtinant mokėjimą."
+      "md": "„Naudokis“ turi teisę keisti taikomus Rezervacijų terminus, mokėjimo sesijos trukmę, pakartotinių bandymų taisykles ir sandorio ribas, tačiau tokie pakeitimai įprastai taikomi tik būsimoms Rezervacijoms ir yra nurodomi Programėlėje prieš Nuomininkui patvirtinant mokėjimą."
     },
     {
       "t": "p",
@@ -599,7 +696,7 @@
     },
     {
       "t": "p",
-      "md": "Rezervacijos užklausa įforminama tik paspaudus aiškų pareigą sumokėti nurodantį mygtuką. Sudarytos Rezervacijos ir teisinių dokumentų priėmimo įrašus „Naudokis“ saugo, o Naudotojas gali su jais susipažinti per Programėlę ar pagalbos kanalą, kaip aprašyta Privatumo politikoje."
+      "md": "Rezervacijos užklausa pateikiama tik paspaudus mygtuką, kuriame aiškiai nurodyta, kad jį paspaudus atsiranda pareiga sumokėti. Sudarytos Rezervacijos ir teisinių dokumentų priėmimo įrašus „Naudokis“ saugo, o Naudotojas gali su jais susipažinti per Programėlę ar pagalbos kanalą, kaip aprašyta Privatumo politikoje."
     },
     {
       "t": "h2",
@@ -624,20 +721,24 @@
     },
     {
       "t": "p",
-      "md": "Išsamios mokėjimų, mokesčių, išmokų, Stripe, PVM, VIES, DAC7 ir sąskaitų taisyklės pateikiamos [Mokėjimų, mokesčių ir Stripe taisyklėse](doc:payments-fees-stripe)."
+      "md": "Išsamios mokėjimų, mokesčių, išmokų, Stripe, PVM, VIES, DAC7 ir sąskaitų taisyklės pateikiamos Mokėjimų, mokesčių ir Stripe taisyklėse."
     },
-    { "t": "h2", "id": "11-uzstatai", "text": "11. Užstatai" },
+    {
+      "t": "h2",
+      "id": "11-uzstatai",
+      "text": "11. Užstatai"
+    },
     {
       "t": "callout",
       "md": "Užstatas yra Programėlėje prieš mokėjimo patvirtinimą nurodyta grąžintina suma, kuri gali būti naudojama pagrįstiems reikalavimams dėl žalos, praradimo, vėlavimo, netinkamo naudojimo ar kitų Sąlygose numatytų atvejų padengti."
     },
     {
       "t": "p",
-      "md": "Užstatas nėra draudimas, garantija, sąlyginio deponavimo paslauga ar didžiausia Nuomininko atsakomybės riba. Jei nėra pagrįstos pretenzijos, Užstato grąžinimas inicijuojamas pagal mokėjimų teikėjo, banko ir kortelių tinklų terminus. Jei kyla pagrįsta pretenzija, Užstatas gali būti laikinai sulaikomas, iš dalies grąžinamas arba panaudojamas pagrįstam reikalavimui padengti."
+      "md": "Užstatas nėra draudimas, garantija, sąlyginio deponavimo paslauga ar didžiausia Nuomininko atsakomybės riba. Jei nėra pagrįstos pretenzijos, „Naudokis“ inicijuoja Užstato grąžinimą be nepagrįsto delsimo po nuomos užbaigimo; lėšų grąžinimo trukmė papildomai priklauso nuo mokėjimų teikėjo, banko ir kortelių tinklų terminų. Jei kyla pagrįsta pretenzija, Užstatas gali būti laikinai sulaikomas, iš dalies grąžinamas arba panaudojamas pagrįstam reikalavimui padengti."
     },
     {
       "t": "p",
-      "md": "Išsamios Užstato, žalos, praradimo, įrodymų ir ginčų taisyklės pateikiamos [Užstatų, žalos, praradimo ir ginčų taisyklėse](doc:deposits-damage-disputes)."
+      "md": "Išsamios Užstato, žalos, praradimo, įrodymų ir ginčų taisyklės pateikiamos Užstatų, žalos, praradimo ir ginčų taisyklėse."
     },
     {
       "t": "h2",
@@ -650,7 +751,7 @@
     },
     {
       "t": "p",
-      "md": "P2P, B2C / B2P ir B2B sandoriams gali būti taikomos skirtingos taisyklės. Kai Nuomininkas yra vartotojas, o Nuomotojas veikia kaip Prekiautojas, privalomos vartotojų teisės turi viršenybę prieš Programėlės ar Skelbimo sąlygas tiek, kiek to reikalauja taikoma teisė."
+      "md": "P2P, B2C / B2P ir B2B sandoriams gali būti taikomos skirtingos taisyklės. Kai Nuomininkas yra vartotojas, o Nuomotojas veikia kaip Prekiautojas, privalomos vartotojų teisės visada turi viršenybę prieš Programėlės ar Skelbimo sąlygas."
     },
     {
       "t": "p",
@@ -658,7 +759,7 @@
     },
     {
       "t": "p",
-      "md": "Išsamios atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklės pateikiamos [Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklėse](doc:cancellations-refunds)."
+      "md": "Išsamios atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklės pateikiamos Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklėse."
     },
     {
       "t": "h2",
@@ -671,7 +772,7 @@
     },
     {
       "t": "p",
-      "md": "Daiktas turi būti perduodamas ir grąžinamas sutartu laiku, sutartoje vietoje ar būdu, su sutartais priedais ir tokios būklės, kuri atitinka Skelbimą, įprastą nusidėvėjimą ir konkrečios Rezervacijos sąlygas. Žalos, praradimo, pavėluoto grąžinimo ar netinkamo naudojimo atveju „Naudokis“ gali administruoti įrodymų, laikino sulaikymo, Užstato, grąžinimo, išmokos ar kito mokėjimo koregavimo procesą."
+      "md": "Daiktas turi būti perduodamas ir grąžinamas sutartu laiku, sutartoje vietoje ar būdu, su sutartais priedais ir tokios būklės, kuri atitinka Skelbimą, įprastą nusidėvėjimą ir konkrečios Rezervacijos sąlygas. Žalos, praradimo, pavėluoto grąžinimo ar netinkamo naudojimo atveju „Naudokis“ gali administruoti įrodymų, laikino sulaikymo, Užstato, pinigų grąžinimo, išmokos ar kito mokėjimo koregavimo procesą."
     },
     {
       "t": "p",
@@ -679,7 +780,7 @@
     },
     {
       "t": "p",
-      "md": "Išsamios perdavimo, grąžinimo, žalos, praradimo, įrodymų ir ginčų taisyklės pateikiamos [Užstatų, žalos, praradimo ir ginčų taisyklėse](doc:deposits-damage-disputes)."
+      "md": "Išsamios perdavimo, grąžinimo, žalos, praradimo, įrodymų ir ginčų taisyklės pateikiamos Užstatų, žalos, praradimo ir ginčų taisyklėse."
     },
     {
       "t": "h2",
@@ -688,7 +789,7 @@
     },
     {
       "t": "p",
-      "md": "Po tinkamos Rezervacijos Naudotojai gali palikti atsiliepimą ir reitingą, jei tai leidžia Programėlė. Atsiliepimo langas šalims atidaromas po Rezervacijos užbaigimo (įprastai – po nuomos pabaigos datos arba po „Naudokis“ administratoriaus nustatyto atskaitos taško, pavyzdžiui, ginčo užbaigimo). Atsiliepimai turi būti teisingi, susiję su konkrečia nuomos patirtimi, pagrįsti ir neklaidinantys."
+      "md": "Po tinkamos Rezervacijos Naudotojai gali palikti atsiliepimą ir reitingą, jei tai leidžia Programėlė. Galimybė palikti atsiliepimą šalims atsiranda po Rezervacijos užbaigimo (įprastai – po nuomos pabaigos datos arba po „Naudokis“ administratoriaus nustatyto atskaitos taško, pavyzdžiui, ginčo užbaigimo). Atsiliepimai turi būti teisingi, susiję su konkrečia nuomos patirtimi, pagrįsti ir neklaidinantys."
     },
     {
       "t": "p",
@@ -696,7 +797,7 @@
     },
     {
       "t": "p",
-      "md": "Pagal Vartotojų teisių apsaugos direktyvos pakeitimus (Omnibus direktyva 2019/2161) „Naudokis“ informuoja, kad atsiliepimą gali palikti tik tos Rezervacijos šalys, kurios nustatyta tvarka užbaigė Rezervaciją per Platformą. Šis ribojimas užtikrina, kad rodomi atsiliepimai yra pagrįsti realia nuomos patirtimi."
+      "md": "Įgyvendindama vartotojų apsaugos reikalavimus dėl atsiliepimų tikrumo (Direktyva (ES) 2019/2161, kuria iš dalies keičiama, be kita ko, Direktyva 2005/29/EB), „Naudokis“ informuoja, kad atsiliepimą gali palikti tik tos Rezervacijos šalys, kurios nustatyta tvarka užbaigė Rezervaciją per Platformą. Šis ribojimas užtikrina, kad rodomi atsiliepimai yra pagrįsti realia nuomos patirtimi."
     },
     {
       "t": "p",
@@ -729,7 +830,7 @@
     },
     {
       "t": "p",
-      "md": "Išsamios verslo naudotojų, Prekiautojų, B2B, PVM, VIES, DAC7, sąskaitų, skaidrumo ir skundų taisyklės pateikiamos [Verslo naudotojų, Prekiautojų ir B2B taisyklėse](doc:business-users)."
+      "md": "Išsamios verslo naudotojų, Prekiautojų, B2B, PVM, VIES, DAC7, sąskaitų, skaidrumo ir skundų taisyklės pateikiamos Verslo naudotojų, Prekiautojų ir B2B taisyklėse."
     },
     {
       "t": "h2",
@@ -740,7 +841,10 @@
       "t": "callout",
       "md": "Platformoje negalima kelti neteisėto, klaidinančio, pavojingo, teises pažeidžiančio ar Platformos taisykles apeinančio turinio."
     },
-    { "t": "h3", "text": "Naudotojų turinys ir licencija" },
+    {
+      "t": "h3",
+      "text": "Naudotojų turinys ir licencija"
+    },
     {
       "t": "p",
       "md": "Jūs atsakote už Turinį, kurį pateikiate per Platformą, įskaitant Skelbimus, nuotraukas, aprašymus, žinutes, pagalbos užklausas, įrodymus, pranešimus, atsiliepimus, profilio informaciją ir verslo informaciją."
@@ -761,7 +865,10 @@
       "t": "p",
       "md": "Negalite pateikti neteisėto, klaidinančio, teises pažeidžiančio, konfidencialaus, privataus, įžeidžiančio, diskriminacinio, pavojingo, kenkėjiško ar kitaip neleistino Turinio."
     },
-    { "t": "h3", "text": "„Naudokis“ intelektinė nuosavybė" },
+    {
+      "t": "h3",
+      "text": "„Naudokis“ intelektinė nuosavybė"
+    },
     {
       "t": "p",
       "md": "Platforma, įskaitant Programėlę, jos programinį kodą, dizainą, naudotojo sąsają, logotipus, prekių ženklus, pavadinimą „Naudokis“, duomenų bazes, struktūrą ir kitą „Naudokis“ ar jos licenciarų sukurtą turinį, yra „Naudokis“ arba atitinkamų teisių turėtojų nuosavybė ir saugoma intelektinės nuosavybės teisių. Tai netaikoma Naudotojų pateiktam Turiniui."
@@ -772,7 +879,7 @@
     },
     {
       "t": "p",
-      "md": "Negalite kopijuoti, atgaminti, modifikuoti, platinti, viešai skelbti, dekompiliuoti, atvirkščiai inžinieruoti ar kurti išvestinių kūrinių iš Platformos ar jos dalių, taip pat naudoti „Naudokis“ prekių ženklų, pavadinimo ar logotipų be išankstinio rašytinio „Naudokis“ sutikimo, išskyrus atvejus, kai tai aiškiai leidžia taikoma teisė."
+      "md": "Negalite kopijuoti, atgaminti, modifikuoti, platinti, viešai skelbti, dekompiliuoti, atlikti atvirkštinę inžineriją ar kurti išvestinių kūrinių iš Platformos ar jos dalių, taip pat naudoti „Naudokis“ prekių ženklų, pavadinimo ar logotipų be išankstinio rašytinio „Naudokis“ sutikimo, išskyrus atvejus, kai tai aiškiai leidžia taikoma teisė."
     },
     {
       "t": "p",
@@ -786,8 +893,14 @@
       "t": "p",
       "md": "„Naudokis“ turi teisę pašalinti ar apriboti ginčijamą Turinį, paprašyti papildomos informacijos, suteikti paveiktam Naudotojui galimybę atsakyti, atkurti Turinį, jei pranešimas nepagrįstas, ir taikyti priemones pakartotiniams pažeidėjams, kiek tai leidžia taikoma teisė."
     },
-    { "t": "h3", "text": "Draudžiamas elgesys" },
-    { "t": "p", "md": "Naudodamiesi Platforma negalite:" },
+    {
+      "t": "h3",
+      "text": "Draudžiamas elgesys"
+    },
+    {
+      "t": "p",
+      "md": "Naudodamiesi Platforma negalite:"
+    },
     {
       "t": "ul",
       "items": [
@@ -810,7 +923,10 @@
       "t": "p",
       "md": "Tokie veiksmai gali apimti paskyros apribojimą, susijusių Rezervacijų atšaukimą, išmokų sulaikymą, atsisakymą teikti Platformos ginčų pagalbą arba Programėlėje numatytų pagalbos, reputacijos ar mokėjimų administravimo priemonių netaikymą. Ši nuostata neriboja privalomų vartotojų teisių ar teisės kreiptis į kompetentingas institucijas."
     },
-    { "t": "h3", "text": "Saugumas" },
+    {
+      "t": "h3",
+      "text": "Saugumas"
+    },
     {
       "t": "p",
       "md": "Naudotojai atsako už saugų daikto atsiėmimą, pristatymą, naudojimą, laikymą ir grąžinimą. Daiktus privaloma naudoti tik pagal paskirtį, laikantis teisės aktų, gamintojo instrukcijų, saugumo reikalavimų ir Skelbime nurodytų sąlygų."
@@ -834,7 +950,7 @@
     },
     {
       "t": "p",
-      "md": "„Naudokis“ gali gauti pranešimus apie neteisėtą Turinį ar netinkamą Skelbimą, įvertinti pranešimus, taikyti proporcingas priemones, pateikti sprendimų paaiškinimus ir leisti pateikti skundą dėl tam tikrų moderavimo sprendimų. Jei naudojamos automatizuotos ar DI priemonės, jos turi būti naudojamos pagal šias Sąlygas, Privatumo politiką ir taikomą teisę."
+      "md": "„Naudokis“ priima pranešimus apie galimai neteisėtą Turinį ar netinkamą Skelbimą, juos įvertina, taiko proporcingas priemones, pateikia sprendimų paaiškinimus ir sudaro galimybę pateikti skundą dėl moderavimo sprendimų taikomos teisės ir Moderavimo, skundų ir DSA taisyklių nustatyta tvarka. Jei naudojamos automatizuotos ar DI priemonės, jos turi būti naudojamos pagal šias Sąlygas, Privatumo politiką ir taikomą teisę."
     },
     {
       "t": "p",
@@ -842,7 +958,7 @@
     },
     {
       "t": "p",
-      "md": "Išsamios moderavimo, pranešimų, skundų, DSA, automatizuotų priemonių ir paskyros apribojimų taisyklės pateikiamos [Moderavimo, skundų ir DSA taisyklėse](doc:moderation-dsa)."
+      "md": "Išsamios moderavimo, pranešimų, skundų, DSA, automatizuotų priemonių ir paskyros apribojimų taisyklės pateikiamos Moderavimo, skundų ir DSA taisyklėse."
     },
     {
       "t": "h2",
@@ -863,11 +979,11 @@
     },
     {
       "t": "p",
-      "md": "Kai skundas pateikiamas „Naudokis“ arba per „Naudokis“ sąsają Prekiautojui ir jam taikomos Lietuvos vartotojų skundų nagrinėjimo taisyklės, „Naudokis“ arba atitinkamas Prekiautojas turi pateikti motyvuotą atsakymą ne vėliau kaip per **14 kalendorinių dienų** nuo skundo gavimo dienos."
+      "md": "Kai skundas pateikiamas „Naudokis“ arba per „Naudokis“ sąsają Prekiautojui ir skundui taikomos Lietuvos vartotojų skundų nagrinėjimo taisyklės, „Naudokis“ arba atitinkamas Prekiautojas turi pateikti motyvuotą atsakymą ne vėliau kaip per **14 kalendorinių dienų** nuo skundo gavimo dienos."
     },
     {
       "t": "p",
-      "md": "Kitoks terminas gali būti taikomas, jei jį numato privaloma teisė arba jei konkrečios aplinkybės objektyviai reikalauja papildomos informacijos, be kurios atsakymas negali būti parengtas."
+      "md": "Kitoks terminas gali būti taikomas tik tada, kai jį numato privaloma teisė. Jei skundui išnagrinėti objektyviai trūksta informacijos, „Naudokis“ ar Prekiautojas per tą patį terminą jos paprašo ir pateikia motyvuotą atsakymą apie skundo nagrinėjimo eigą."
     },
     {
       "t": "p",
@@ -883,13 +999,16 @@
     },
     {
       "t": "p",
-      "md": "Kai „Naudokis“ nėra atitinkamo Nuomos sandorio Prekiautojas ar sandorio šalis, „Naudokis“ turi teisę perduoti skundą atitinkamam Nuomotojui ar Prekiautojui arba koordinuoti jo nagrinėjimą, kad Vartotojas gautų motyvuotą atsakymą per taikomą terminą."
+      "md": "Kai „Naudokis“ nėra atitinkamo Nuomos sandorio Prekiautojas ar sandorio šalis, „Naudokis“ turi teisę perduoti skundą atitinkamam Nuomotojui ar Prekiautojui arba koordinuoti jo nagrinėjimą, kad vartotojas gautų motyvuotą atsakymą per taikomą terminą."
     },
     {
       "t": "p",
-      "md": "Jei Vartotojas nesutinka su atsakymu arba atsakymas nepateikiamas per taikomą terminą, Vartotojas gali kreiptis į Valstybinę vartotojų teisių apsaugos tarnybą, Valstybinę duomenų apsaugos inspekciją, mokėjimų teikėją, kitą kompetentingą instituciją ar teismą, kai tai leidžia taikoma teisė."
+      "md": "Jei vartotojas nesutinka su atsakymu arba atsakymas nepateikiamas per taikomą terminą, vartotojas gali kreiptis į Valstybinę vartotojų teisių apsaugos tarnybą, Valstybinę duomenų apsaugos inspekciją, mokėjimų teikėją, kitą kompetentingą instituciją ar teismą, kai tai leidžia taikoma teisė."
     },
-    { "t": "h3", "text": "Vartotojų teisės" },
+    {
+      "t": "h3",
+      "text": "Vartotojų teisės"
+    },
     {
       "t": "p",
       "md": "Jei naudojatės Platforma kaip vartotojas, jums gali būti taikomos privalomos vartotojų apsaugos teisės pagal Lietuvos Respublikos, Europos Sąjungos ar jūsų gyvenamosios vietos teisę."
@@ -923,7 +1042,10 @@
       "t": "callout",
       "md": "„Naudokis“ pati neteikia daiktų, žalos, vagystės, praradimo ar civilinės atsakomybės draudimo, nebent Programėlėje aiškiai nurodyta kitaip."
     },
-    { "t": "h3", "text": "Draudimas" },
+    {
+      "t": "h3",
+      "text": "Draudimas"
+    },
     {
       "t": "p",
       "md": "„Naudokis“ neteikia ir netarpininkauja teikiant draudimo apsaugą daiktams, Nuomotojams, Nuomininkams, žalai, vagystei, praradimui, asmens sužalojimui, pristatymui, negautoms pajamoms ar kitiems nuostoliams, nebent konkrečioje Programėlės funkcijoje aiškiai nurodyta kitaip. Jei Programėlėje aiškiai įdiegta atskira draudimo, garantijos ar kompensavimo apsauga, jai taikomos tos funkcijos arba atskiro rašytinio susitarimo sąlygos."
@@ -936,7 +1058,10 @@
       "t": "p",
       "md": "Jokie „Naudokis“ vartojami žodžiai, tokie kaip „saugumas“, „patvirtinimas“, „pasitikėjimas“, „Užstatas“, „ginčų nagrinėjimas“ ar panašūs apibūdinimai, neturi būti aiškinami kaip draudimo, garantijos, kompensavimo fondo ar „Naudokis“ pažado atlyginti žalą suteikimas, nebent tai aiškiai ir atskirai nurodyta Programėlėje ar rašytiniame susitarime."
     },
-    { "t": "h3", "text": "Produktų sauga ir atsakomybė" },
+    {
+      "t": "h3",
+      "text": "Produktų sauga ir atsakomybė"
+    },
     {
       "t": "p",
       "md": "Nuomotojai privalo užtikrinti, kad nuomojami daiktai būtų saugūs naudoti pagal paskirtį, atitiktų taikomus produktų saugos teisės aktus (įskaitant Lietuvos Respublikos produktų saugos įstatymą, Bendrąjį gaminių saugos reglamentą (ES) 2023/988 ir kitus taikomus ES gaminių saugos reglamentus) ir būtų lydimi būtinų naudojimo instrukcijų, įspėjimų, saugos priedų ar reikalingų asmeninių apsaugos priemonių."
@@ -975,7 +1100,7 @@
     },
     {
       "t": "p",
-      "md": "Jei „Naudokis“ tampa žinoma, kad daiktas, kurį vartotojas jau rezervavo ar naudojo, gali būti neteisėtas ar kelti rimtą saugos riziką, „Naudokis“, kiek leidžia ar reikalauja teisė, turi teisę informuoti paveiktus Naudotojus per Programėlę, el. paštu ar kitą turimą kontaktinį kanalą."
+      "md": "Jei „Naudokis“ sužino, kad daiktas, kurį vartotojas jau rezervavo ar naudojo, gali būti neteisėtas ar kelti rimtą saugos riziką, „Naudokis“, kiek leidžia ar reikalauja teisė, turi teisę informuoti paveiktus Naudotojus per Programėlę, el. paštu ar kitą turimą kontaktinį kanalą."
     },
     {
       "t": "p",
@@ -985,10 +1110,13 @@
       "t": "p",
       "md": "Jei Nuomininkas sužino, kad nuomotas daiktas yra nesaugus, gali sukelti žalą sveikatai ar turtui arba turi gamintojo nustatytų saugumo trūkumų, jis turi nedelsdamas sustabdyti naudojimą, pranešti Nuomotojui ir „Naudokis“ per Programėlės pagalbos funkcijas arba el. paštu **info@naudokis.lt**. Ginčo ar žalos atveju gali būti pritaikytos Lietuvos Respublikos civilinio kodekso ir taikomos vartotojų apsaugos teisės nuostatos."
     },
-    { "t": "h3", "text": "Atsakomybės atsisakymai" },
+    {
+      "t": "h3",
+      "text": "Atsakomybės atsisakymai"
+    },
     {
       "t": "p",
-      "md": "Kiek leidžia taikoma teisė, Platforma teikiama „tokia, kokia yra“ ir „kai prieinama“. „Naudokis“ negarantuoja, kad Skelbimai, Naudotojai, daiktai, kainos, prieinamumas, vietos, atsiliepimai, DI rezultatai, pagalbos atsakymai, perdavimai, grąžinimai, mokėjimai, išmokos ar ginčų rezultatai visada bus tikslūs, išsamūs, saugūs, teisėti, nenutrūkstami ar be klaidų."
+      "md": "Kiek leidžia taikoma teisė, Platforma teikiama „tokia, kokia yra“ ir „tokia, kokia prieinama“ principu. „Naudokis“ negarantuoja, kad Skelbimai, Naudotojai, daiktai, kainos, prieinamumas, vietos, atsiliepimai, DI rezultatai, pagalbos atsakymai, perdavimai, grąžinimai, mokėjimai, išmokos ar ginčų rezultatai visada bus tikslūs, išsamūs, saugūs, teisėti, nenutrūkstami ar be klaidų."
     },
     {
       "t": "p",
@@ -998,23 +1126,29 @@
       "t": "p",
       "md": "Niekas šiose Sąlygose neriboja ar nepanaikina atsakomybės, kurios negalima riboti pagal privalomą teisę, įskaitant atsakomybę už tyčią, didelį neatsargumą, žalą asmens gyvybei ar sveikatai, vartotojų teisių pažeidimus ar kitus atvejus, kai atsakomybės ribojimas draudžiamas."
     },
-    { "t": "h3", "text": "Atsakomybės ribojimas" },
+    {
+      "t": "h3",
+      "text": "Atsakomybės ribojimas"
+    },
     {
       "t": "p",
       "md": "Vartotojų atžvilgiu „Naudokis“ atsakomybė ribojama tik tiek, kiek leidžia privaloma vartotojų apsaugos ir kita taikoma teisė. Šios Sąlygos neriboja vartotojų teisių reikalauti teisių gynimo priemonių, kurios jiems privalomai suteikiamos pagal teisę."
     },
     {
       "t": "p",
-      "md": "Verslo naudotojų ir kitų ne vartotojų atžvilgiu, kiek leidžia teisė, „Naudokis“ neatsako už netiesioginę, atsitiktinę, specialią, pasekminę ar baudžiamąją žalą, negautą pelną, prarastas pajamas, duomenų praradimą, reputacijos žalą, verslo nutrūkimą ar kitus netiesioginius nuostolius."
+      "md": "Verslo naudotojų ir kitų ne vartotojų atžvilgiu, kiek leidžia teisė, „Naudokis“ neatsako už netiesioginius nuostolius, įskaitant negautą pelną, prarastas pajamas, duomenų praradimą, reputacijos žalą ar verslo veiklos nutrūkimą."
     },
     {
       "t": "p",
       "md": "Kiek leidžia teisė, Verslo naudotojų ir kitų ne vartotojų atžvilgiu bendra „Naudokis“ atsakomybė, kylanti iš Platformos ar su ja susijusi, ribojama Platformos mokesčiais, kuriuos atitinkamas Naudotojas sumokėjo „Naudokis“ per 12 mėnesių iki įvykio, dėl kurio kilo reikalavimas, nebent privaloma teisė reikalauja kitaip."
     },
-    { "t": "h3", "text": "Žalos atlyginimas" },
+    {
+      "t": "h3",
+      "text": "Žalos atlyginimas"
+    },
     {
       "t": "p",
-      "md": "Kiek leidžia taikoma teisė, sutinkate atlyginti „Naudokis“, jos vadovams, darbuotojams, paslaugų teikėjams ir susijusiems asmenims reikalavimus, nuostolius, žalą, baudas, kaštus ir išlaidas, kylančius iš jūsų Skelbimų, Nuomos sandorių, Turinio, mokestinių ar verslo pareigų, netinkamo Platformos naudojimo, šių Sąlygų pažeidimo, teisės aktų pažeidimo ar trečiųjų asmenų teisių pažeidimo."
+      "md": "Kiek leidžia taikoma teisė, sutinkate atlyginti „Naudokis“, jos vadovų, darbuotojų, paslaugų teikėjų ir susijusių asmenų nuostolius, žalą, baudas ir išlaidas (įskaitant pagrįstas teisines išlaidas), kylančius iš trečiųjų asmenų reikalavimų, susijusių su jūsų Skelbimais, Nuomos sandoriais, Turiniu, mokestinėmis ar verslo pareigomis, netinkamu Platformos naudojimu, šių Sąlygų pažeidimu, teisės aktų pažeidimu ar trečiųjų asmenų teisių pažeidimu."
     },
     {
       "t": "p",
@@ -1025,7 +1159,10 @@
       "id": "20-komunikacija-ir-privatumas",
       "text": "20. Komunikacija ir privatumas"
     },
-    { "t": "h3", "text": "Komunikacija ir pranešimai" },
+    {
+      "t": "h3",
+      "text": "Komunikacija ir pranešimai"
+    },
     {
       "t": "p",
       "md": "„Naudokis“ turi teisę siųsti jums el. laiškus, SMS, tiesioginius (push) pranešimus, pranešimus Programėlėje ir pagalbos žinutes apie paskyros saugumą, patvirtinimą, Rezervacijas, mokėjimus, grąžinimus, išmokas, ginčus, perdavimą, grąžinimą, atitiktį, mokesčius, teisės aktų ar Sąlygų pakeitimus, paskyros ištrynimą, duomenų eksportą, atsiliepimus, rekomendacijas ir pagalbą."
@@ -1042,17 +1179,23 @@
         "visais kitais atvejais – susisiekus su pagalba el. paštu **info@naudokis.lt**."
       ]
     },
-    { "t": "h3", "text": "Privatumas" },
+    {
+      "t": "h3",
+      "text": "Privatumas"
+    },
     {
       "t": "p",
-      "md": "„Naudokis“ tvarko asmens duomenis taip, kaip aprašyta „Naudokis“ privatumo politikoje, kuri yra neatskiriama santykių tarp „Naudokis“ ir Naudotojų dalis. Naudodamiesi Platforma suprantate, kad jos veikimui būtina tam tikrą informaciją dalytis su kita Nuomos sandorio šalimi, mokėjimų ir kitais paslaugų teikėjais, pagalbos ir administravimo darbuotojais, institucijomis ar kitais gavėjais Privatumo politikoje nurodytais atvejais."
+      "md": "„Naudokis“ tvarko asmens duomenis taip, kaip aprašyta „Naudokis“ privatumo politikoje, kuri yra neatskiriama santykių tarp „Naudokis“ ir Naudotojų dalis. Naudodamiesi Platforma suprantate, kad jos veikimui būtina dalytis tam tikra informacija su kita Nuomos sandorio šalimi, mokėjimų ir kitais paslaugų teikėjais, pagalbos ir administravimo darbuotojais, institucijomis ar kitais gavėjais Privatumo politikoje nurodytais atvejais."
     },
     {
       "t": "h2",
       "id": "21-pakeitimai-nutraukimas-ir-taikoma-teise",
       "text": "21. Pakeitimai, nutraukimas ir taikoma teisė"
     },
-    { "t": "h3", "text": "Paslaugos pakeitimai ir prieinamumas" },
+    {
+      "t": "h3",
+      "text": "Paslaugos pakeitimai ir prieinamumas"
+    },
     {
       "t": "p",
       "md": "„Naudokis“ turi teisę keisti, tobulinti, sustabdyti, pašalinti ar nutraukti Platformos funkcijas, limitus, mokesčius, kategorijas, pristatymo būdus, DI įrankius, patvirtinimo teikėjus, mokėjimų teikėjus, analitikos teikėjus, pagalbos procesus ar kitas Platformos dalis."
@@ -1061,7 +1204,10 @@
       "t": "p",
       "md": "Stengiamės užtikrinti patikimą Platformos veikimą, tačiau negarantuojame, kad Platforma visada veiks nepertraukiamai, be klaidų, saugiai ar bus prieinama konkrečiu metu. Platformos veikimą gali paveikti techniniai sutrikimai, priežiūros darbai, trečiųjų šalių paslaugos, mokėjimų teikėjai, ryšio paslaugos, force majeure ar kitos nuo mūsų nepriklausančios aplinkybės."
     },
-    { "t": "h3", "text": "Sąlygų pakeitimai" },
+    {
+      "t": "h3",
+      "text": "Sąlygų pakeitimai"
+    },
     {
       "t": "p",
       "md": "„Naudokis“ turi teisę atnaujinti šias Sąlygas, kai keičiasi Platforma, teisės aktai, mokesčiai, mokėjimų ar kiti paslaugų teikėjai, Platformos taisyklės, saugumo poreikiai arba kai reikia patikslinti nuostatas."
@@ -1080,13 +1226,16 @@
     },
     {
       "t": "p",
-      "md": "Apie esminius šių Sąlygų pakeitimus Verslo naudotojams pranešame ne vėliau kaip prieš **15 dienų** iki jų įsigaliojimo. Ilgesnis terminas gali būti taikomas, jei jo reikia atitinkamiems Verslo naudotojams prisitaikyti prie pokyčių."
+      "md": "Apie esminius šių Sąlygų pakeitimus Verslo naudotojams pranešame ne vėliau kaip likus **15 dienų** iki jų įsigaliojimo. Ilgesnis terminas gali būti taikomas, jei jo reikia atitinkamiems Verslo naudotojams prisitaikyti prie pokyčių."
     },
     {
       "t": "p",
       "md": "Trumpesnis pranešimo terminas Verslo naudotojams gali būti taikomas tik tais atvejais, kai tai leidžia taikoma teisė. Tai apima atvejus, kai pakeitimas būtinas dėl teisinės ar reguliavimo pareigos, siekiant pašalinti nenumatytą ir neišvengiamą saugumo, sukčiavimo, kibernetinio saugumo ar techninę riziką, arba kai Verslo naudotojas aiškiai atsisako ilgesnio pranešimo termino, jei toks atsisakymas leidžiamas pagal teisę."
     },
-    { "t": "h3", "text": "Taikoma teisė ir ginčų sprendimas" },
+    {
+      "t": "h3",
+      "text": "Taikoma teisė ir ginčų sprendimas"
+    },
     {
       "t": "p",
       "md": "Šioms Sąlygoms taikoma Lietuvos Respublikos teisė, nepažeidžiant privalomų vartotojų apsaugos nuostatų, kurios gali būti taikomos jūsų gyvenamosios vietos valstybėje."
@@ -1147,29 +1296,28 @@
     },
     {
       "t": "p",
-      "md": "Šios papildomos taisyklės yra šių Sąlygų dalis ir taikomos tiek, kiek jos susijusios su konkrečia Platformos funkcija, Rezervacija, Skelbimu, Naudotojo vaidmeniu ar ginču:"
+      "md": "Šios papildomos taisyklės yra šių Sąlygų dalis, kai jos nurodytos šiose Sąlygose, Programėlėje arba konkrečios Rezervacijos eigoje, ir taikomos tiek, kiek jos susijusios su konkrečia Platformos funkcija, Rezervacija, Skelbimu, Naudotojo vaidmeniu ar ginču:"
     },
     {
-      "t": "ul",
-      "items": [
-        "[Mokėjimų, mokesčių ir Stripe taisyklės](doc:payments-fees-stripe)",
-        "[Užstatų, žalos, praradimo ir ginčų taisyklės](doc:deposits-damage-disputes)",
-        "[Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklės](doc:cancellations-refunds)",
-        "[Draudžiamų ir ribojamų daiktų taisyklės](doc:prohibited-restricted-items)",
-        "[Verslo naudotojų, Prekiautojų ir B2B taisyklės](doc:business-users)",
-        "[Moderavimo, skundų ir DSA taisyklės](doc:moderation-dsa)"
-      ]
+      "t": "p",
+      "md": "23.1. Mokėjimų, mokesčių ir Stripe taisyklės 23.2. Užstatų, žalos, praradimo ir ginčų taisyklės 23.3. Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklės 23.4. Verslo naudotojų, Prekiautojų ir B2B taisyklės 23.5. Moderavimo, skundų ir DSA taisyklės 23.6. Draudžiamų ir ribojamų daiktų taisyklės"
     },
     {
       "t": "p",
       "md": "Programėlėje gali būti pateikiamos trumpesnės šių taisyklių santraukos, piktogramos, lentelės ar patvirtinimo ekranai. Tokios santraukos padeda suprasti taisykles, bet nepakeičia šių Sąlygų ar papildomų taisyklių, nebent Programėlėje aiškiai nurodyta, kad konkrečiai Rezervacijai taikoma speciali sąlyga."
     },
-    { "t": "h2", "id": "24-kontaktai", "text": "24. Kontaktai" },
+    {
+      "t": "h2",
+      "id": "24-kontaktai",
+      "text": "24. Kontaktai"
+    },
     {
       "t": "p",
       "md": "Operatorius: MB „Naudokis“ Juridinio asmens kodas: 307423504 Registruotas adresas: Numėjos g. 6, LT-08402 Vilnius, Lietuva Pagalba: info@naudokis.lt Privatumas: info@naudokis.lt Produktų saugos pranešimai: info@naudokis.lt DSA ir platformos moderavimo kontaktinis punktas: info@naudokis.lt"
     },
-    { "t": "hr" },
+    {
+      "t": "hr"
+    },
     {
       "t": "p",
       "md": "Ankstesnės šio dokumento versijos gali būti saugomos „Naudokis“ vidaus archyve. Jei jums reikia informacijos apie ankstesnę versiją, susisiekite su mumis el. paštu **info@naudokis.lt**."

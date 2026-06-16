@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
 import { locales, defaultLocale, localePrefix } from "@/app/lib/i18n/config";
-import { getLegalManifest, CANONICAL_IDS } from "@/app/lib/legal/manifest";
 import { API_BASE } from "@/app/lib/api";
 
 const SITE_URL = "https://naudokis.lt";
@@ -27,31 +26,16 @@ function localized(
   }));
 }
 
-// Static, indexable routes with their default-locale priority. The two canonical
-// legal docs keep their pretty routes; the Policy Center hub + remaining docs are
-// enumerated from the manifest in legalEntries().
+// Static, indexable routes with their default-locale priority. The two legal
+// documents keep their pretty top-level routes.
 const STATIC_PATHS: [path: string, priority: number][] = [
   ["", 1],
   ["/kaip-tai-veikia", 0.7],
   ["/kategorijos", 0.8],
   ["/skelbimai", 0.8],
-  ["/teisine", 0.4],
   ["/privatumo-politika", 0.3],
   ["/naudojimo-taisykles", 0.3],
 ];
-
-// Legal Policy Center documents (excluding the two canonical docs already in
-// STATIC_PATHS). LT-only docs (policy-center) emit a single Lithuanian URL with
-// no hreflang alternate, matching the page's noindex-on-/en behaviour.
-function legalEntries(): MetadataRoute.Sitemap {
-  return getLegalManifest()
-    .docs.filter((d) => !CANONICAL_IDS.includes(d.id))
-    .flatMap((d) =>
-      d.hasEn
-        ? localized(`/teisine/${d.id}`, 0.3)
-        : [{ url: `${SITE_URL}/teisine/${d.id}`, changeFrequency: "weekly" as const, priority: 0.3 }],
-    );
-}
 
 // Listing-detail enumeration — cursor-paginated and hard-capped so an unbounded
 // backend can never blow up (or stall) the build. Any error degrades to "no
@@ -112,9 +96,8 @@ export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries = STATIC_PATHS.flatMap(([path, priority]) => localized(path, priority));
-  const legal = legalEntries();
   const listingEntries = (await fetchListingEntries()).flatMap((l) =>
     localized(`/skelbimai/${l.id}`, 0.5, { lastModified: l.lastModified, images: l.images }),
   );
-  return [...staticEntries, ...legal, ...listingEntries];
+  return [...staticEntries, ...listingEntries];
 }

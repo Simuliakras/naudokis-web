@@ -1,0 +1,131 @@
+{
+  "package": "naudokis_legal_en_translation_2026-06-16",
+  "source_folder": "docs/Naudokis_teisiniai_dokumentai_LT",
+  "source_manifest": "naudokis_legal_lt_production_release_audit_2026-06-03",
+  "source_version": "2026-06-12-lt-audit-fixes",
+  "version": "2026-06-16-english-translation-lt-audit-fixes",
+  "language": "en",
+  "edition": "production_translation_en_lt_audit_aligned",
+  "created_utc": "2026-06-16T00:00:00.000Z",
+  "manifest_scope": "All translated Markdown legal files in this folder, excluding manifest.json.",
+  "translation_checks": [
+    "source_file_inventory",
+    "filename_translation_map",
+    "local_markdown_links",
+    "front_matter_required_fields",
+    "document_id_language_update",
+    "terminology_consistency",
+    "lithuanian_residue_scan",
+    "source_truth_alignment_2026-06-12_lt_audit_fixes"
+  ],
+  "files": [
+    {
+      "path": "naudokis-business-users-en-2026-06-01.md",
+      "bytes": 13483,
+      "words": 1908,
+      "sha256": "9054002c27e95662e808035d8f2479193b495dec285d9636bae990dc19547137"
+    },
+    {
+      "path": "naudokis-cancellations-refunds-en-2026-06-01.md",
+      "bytes": 17781,
+      "words": 2774,
+      "sha256": "9a085ff92e193aefaf317902b7bf00a7ea83de39dad7ce2ce430e91e3ac6bef7"
+    },
+    {
+      "path": "naudokis-deposits-damage-disputes-en-2026-06-01.md",
+      "bytes": 22790,
+      "words": 3467,
+      "sha256": "1c029b623ba1dbfc9b182e37e5a29b87444205dae6b0793939f085d38a13beca"
+    },
+    {
+      "path": "naudokis-moderation-dsa-en-2026-06-01.md",
+      "bytes": 19573,
+      "words": 2840,
+      "sha256": "b8c5ae0f5d0509e3cd65190ec136174fa4abd0ef7593ea2ef85a50aa9664e0d5"
+    },
+    {
+      "path": "naudokis-payments-fees-stripe-en-2026-06-01.md",
+      "bytes": 22812,
+      "words": 3372,
+      "sha256": "38453597c14fc09e2d569a1ad1c3126f49b83823503a49f38f28270f898fe8f1"
+    },
+    {
+      "path": "naudokis-policy-center-en-2026-06-01.md",
+      "bytes": 6055,
+      "words": 847,
+      "sha256": "9ee0a8629f4c463f3eeadfc313ea3ca3cc452bdc306403b6c781865c133c274b"
+    },
+    {
+      "path": "naudokis-privacy-ai-automated-checks-en-2026-06-01.md",
+      "bytes": 7203,
+      "words": 1023,
+      "sha256": "3873eb5a77092f8ff4c4397764c26b8e8c00a3496efda281b444ceb3f70e68db"
+    },
+    {
+      "path": "naudokis-privacy-business-users-dac7-en-2026-06-01.md",
+      "bytes": 5112,
+      "words": 728,
+      "sha256": "23280a3c0df7ec015a3956581a86d971332c607c97c1bf3dcfc510b8558d9aca"
+    },
+    {
+      "path": "naudokis-privacy-data-categories-en-2026-06-01.md",
+      "bytes": 23680,
+      "words": 3331,
+      "sha256": "59f108289f53964e36d4e64b7ea3766bf11579b3fbe4f6bbd22ce98faf917858"
+    },
+    {
+      "path": "naudokis-privacy-identity-fraud-en-2026-06-01.md",
+      "bytes": 10643,
+      "words": 1440,
+      "sha256": "1b3b57de5f9ede0f14a80534fe89a7c8a63a21b9b8bd83e6e88d8747befe093d"
+    },
+    {
+      "path": "naudokis-privacy-policy-en-2026-06-01.md",
+      "bytes": 42558,
+      "words": 5990,
+      "sha256": "b4c1eb23ae901234a20805c10b34fe029ab5ad8e708b25d69e96a8540f071237"
+    },
+    {
+      "path": "naudokis-privacy-retention-deletion-en-2026-06-01.md",
+      "bytes": 13472,
+      "words": 1943,
+      "sha256": "f73f55adf0ef80ccea3bbe645a68da7a4ad719a0bb7f6e797db525f8620f8513"
+    },
+    {
+      "path": "naudokis-privacy-vendors-sdk-en-2026-06-01.md",
+      "bytes": 12404,
+      "words": 1799,
+      "sha256": "7dbb767e31c7d744056644ffc25e8d3ce4c5f442342cabaca20951dd0cac9519"
+    },
+    {
+      "path": "naudokis-prohibited-restricted-items-en-2026-06-01.md",
+      "bytes": 13620,
+      "words": 1885,
+      "sha256": "588b7488342a9fdaa5ca9a668e81e12c3166a2d8003e5b33e9f15f7b1c6256e2"
+    },
+    {
+      "path": "naudokis-reservation-handover-completion-en-2026-06-01.md",
+      "bytes": 5489,
+      "words": 858,
+      "sha256": "fe9cc6581d145a141da80c5beae782afad6e199c3a594b84a721fc94271c4721"
+    },
+    {
+      "path": "naudokis-reviews-search-ranking-en-2026-06-01.md",
+      "bytes": 6314,
+      "words": 939,
+      "sha256": "c16bb7358737a581b67480bc6f595714baa26e71ca77c8ac554779cb9b1e78ec"
+    },
+    {
+      "path": "naudokis-terms-of-use-en-2026-06-01.md",
+      "bytes": 62379,
+      "words": 8922,
+      "sha256": "3b931785b227f836b2399c8ee19b6a1e13b1b3904d5e5498c1ac8b3b44d5731c"
+    },
+    {
+      "path": "naudokis-trust-checks-safeguards-en-2026-06-01.md",
+      "bytes": 6363,
+      "words": 933,
+      "sha256": "c1bb0a9cbc5ce186fee3629935e4f559f86e0626abe5777d1507886b0ff1ba80"
+    }
+  ]
+}

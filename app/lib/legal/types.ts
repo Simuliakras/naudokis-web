@@ -1,22 +1,20 @@
-// Legal Policy Center — data shapes for the manifest and parsed documents.
+// Legal documents — data shapes for the manifest and parsed documents.
 // The block union mirrors every `t` present across the data/*.json files; the
 // loader casts the imported JSON to these types (JSON inference is too loose for
 // the discriminated union).
 
 export type Lang = "en" | "lt";
 
-export type LegalGroup = { id: string; label: Record<Lang, string> };
-
+// One manifest entry per legal document. `hasEn` gates the loader's LT fallback;
+// `blurb` feeds the SEO meta-description. (The Policy Center grouping/label
+// fields were dropped when the hub was retired.)
 export type LegalDocMeta = {
   id: string;
-  grp: string;
-  label: Record<Lang, string>;
-  langs: Lang[];
   hasEn: boolean;
   blurb: Record<Lang, string>;
 };
 
-export type LegalManifest = { updated: string; groups: LegalGroup[]; docs: LegalDocMeta[] };
+export type LegalManifest = { docs: LegalDocMeta[] };
 
 export type TocItem = { id: string; label: string; num: string | null };
 

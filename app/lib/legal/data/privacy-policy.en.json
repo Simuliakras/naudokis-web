@@ -43,7 +43,11 @@
       "label": "To whom this Policy applies",
       "num": "3"
     },
-    { "id": "4-main-definitions", "label": "Main definitions", "num": "4" },
+    {
+      "id": "4-main-definitions",
+      "label": "Main definitions",
+      "num": "4"
+    },
     {
       "id": "5-sources-of-personal-data",
       "label": "Sources of Personal Data",
@@ -94,7 +98,11 @@
       "label": "Marketing, service-related notices, and notification settings",
       "num": "14"
     },
-    { "id": "15-retention-periods", "label": "Retention periods", "num": "15" },
+    {
+      "id": "15-retention-periods",
+      "label": "Retention periods",
+      "num": "15"
+    },
     {
       "id": "16-account-deletion-and-data-export",
       "label": "Account deletion and data export",
@@ -110,7 +118,11 @@
       "label": "Children and minors",
       "num": "18"
     },
-    { "id": "19-security", "label": "Security", "num": "19" },
+    {
+      "id": "19-security",
+      "label": "Security",
+      "num": "19"
+    },
     {
       "id": "20-changes-to-this-policy",
       "label": "Changes to this Policy",
@@ -126,7 +138,11 @@
       "label": "Privacy appendices",
       "num": "22"
     },
-    { "id": "23-contacts", "label": "Contacts", "num": "23" }
+    {
+      "id": "23-contacts",
+      "label": "Contacts",
+      "num": "23"
+    }
   ],
   "blocks": [
     {
@@ -143,7 +159,7 @@
     },
     {
       "t": "p",
-      "md": "The Platform may support P2P, B2C / B2P, and B2B rental transactions where permitted by Platform functions and applicable law."
+      "md": "The Platform may support rental between private individuals (P2P), between businesses and private individuals (B2C), and between business entities (B2B), where permitted by Platform functions and applicable law."
     },
     {
       "t": "p",
@@ -155,7 +171,7 @@
     },
     {
       "t": "p",
-      "md": "**Launch period** in this Policy means the period during which Naudokis publicly operates with a limited scope of functions, vendors, and technical processes adapted to the Lithuanian market. This is not a version with a lower level of privacy or security; the term only explains which functions and data Processing processes are currently actually enabled."
+      "md": "**Launch period** in this Policy means the period during which Naudokis operates in the Lithuanian market with the initial scope of functions, vendors, payments, payouts, categories, and technical processes described in this document. This is not a version with a lower level of privacy or security; the term only explains which functions and data Processing processes are currently actually enabled."
     },
     {
       "t": "h2",
@@ -164,41 +180,62 @@
     },
     {
       "t": "table",
-      "head": ["Looking for information about...", "Read"],
+      "head": [
+        "Looking for information about...",
+        "Read"
+      ],
       "rows": [
-        ["Who the Controller is and how to contact us", "Sections 1 and 23"],
-        ["A short privacy explanation", "Section 2"],
+        [
+          "Who the Controller is and how to contact us",
+          "Sections 1 and 23"
+        ],
+        [
+          "A short privacy explanation",
+          "Section 2"
+        ],
         [
           "What data we collect",
-          "Section 6 and the [Data Categories Appendix](doc:privacy-data-categories)"
+          "Section 6 and the Data Categories Appendix"
         ],
-        ["Why we use data and what legal bases we rely on", "Section 8"],
-        ["What data is visible to other Users", "Section 9"],
+        [
+          "Why we use data and what legal bases we rely on",
+          "Section 8"
+        ],
+        [
+          "What data is visible to other Users",
+          "Section 9"
+        ],
         [
           "Service providers, recipients, and their roles",
-          "Section 10 and the [Vendors and SDK Appendix](doc:privacy-vendors-sdk)"
+          "Section 10 and the Vendors and SDK Appendix"
         ],
         [
           "Payments, identity verification, and Stripe or Didit",
-          "Section 11 and the [Identity and Fraud Prevention Appendix](doc:privacy-identity-fraud)"
+          "Section 11 and the Identity and Fraud Prevention Appendix"
         ],
-        ["International data transfers", "Section 12"],
+        [
+          "International data transfers",
+          "Section 12"
+        ],
         [
           "AI, automated checks, and human review",
-          "Section 13 and the [AI and Automated Checks Appendix](doc:privacy-ai-automated-checks)"
+          "Section 13 and the AI and Automated Checks Appendix"
         ],
         [
           "Retention periods and account deletion",
-          "Sections 15 and 16 and the [Retention and Deletion Appendix](doc:privacy-retention-deletion)"
+          "Sections 15 and 16 and the Retention and Deletion Appendix"
         ],
-        ["Your GDPR rights", "Section 17"],
+        [
+          "Your GDPR rights",
+          "Section 17"
+        ],
         [
           "Cookies, SDKs, push notifications, and mobile technologies",
-          "the [Vendors and SDK Appendix](doc:privacy-vendors-sdk)"
+          "the Vendors and SDK Appendix"
         ],
         [
           "Business User, DAC7, and tax data",
-          "the [Business Users and DAC7 Privacy Appendix](doc:privacy-business-users-dac7)"
+          "the Business Users and DAC7 Privacy Appendix"
         ]
       ]
     },
@@ -274,7 +311,10 @@
         "**When you delete your account,** some data is deleted or anonymized, and some is retained on a limited basis where needed for active Reservations, Disputes, payments, taxes, accounting, security, or legal defence."
       ]
     },
-    { "t": "h3", "text": "Structure of this Policy" },
+    {
+      "t": "h3",
+      "text": "Structure of this Policy"
+    },
     {
       "t": "p",
       "md": "This Privacy Policy is the main Naudokis privacy document. It applies together with separate privacy appendices that explain specific data Processing areas in more detail:"
@@ -282,12 +322,12 @@
     {
       "t": "ul",
       "items": [
-        "[Data Categories Appendix](doc:privacy-data-categories)",
-        "[Vendors, Recipients, Cookies, and SDK Appendix](doc:privacy-vendors-sdk)",
-        "[Retention Periods and Deletion Appendix](doc:privacy-retention-deletion)",
-        "[Identity Verification and Fraud Prevention Appendix](doc:privacy-identity-fraud)",
-        "[AI and Automated Checks Appendix](doc:privacy-ai-automated-checks)",
-        "[Business Users, Traders, DAC7, and Tax Privacy Appendix](doc:privacy-business-users-dac7)"
+        "Data Categories Appendix",
+        "Vendors, Recipients, Cookies, and SDK Appendix",
+        "Retention Periods and Deletion Appendix",
+        "Identity Verification and Fraud Prevention Appendix",
+        "AI and Automated Checks Appendix",
+        "Business Users, Traders, DAC7, and Tax Privacy Appendix"
       ]
     },
     {
@@ -305,7 +345,11 @@
     },
     {
       "t": "table",
-      "head": ["Platform process", "Main data", "Main purpose"],
+      "head": [
+        "Platform process",
+        "Main data",
+        "Main purpose"
+      ],
       "rows": [
         [
           "Account creation",
@@ -408,7 +452,10 @@
       "id": "3-to-whom-this-policy-applies",
       "text": "3. To whom this Policy applies"
     },
-    { "t": "p", "md": "This Policy applies to:" },
+    {
+      "t": "p",
+      "md": "This Policy applies to:"
+    },
     {
       "t": "ul",
       "items": [
@@ -420,27 +467,43 @@
         "persons whose data is provided in messages, support requests, notices, Disputes, reviews, handover or return evidence, referrals, or other Platform Content."
       ]
     },
-    { "t": "h2", "id": "4-main-definitions", "text": "4. Main definitions" },
-    { "t": "p", "md": "Terms used in this Policy:" },
+    {
+      "t": "h2",
+      "id": "4-main-definitions",
+      "text": "4. Main definitions"
+    },
+    {
+      "t": "p",
+      "md": "Terms used in this Policy:"
+    },
     {
       "t": "ul",
       "items": [
         "**Platform** - the Naudokis mobile App, websites, administration interfaces, and related services.",
         "**Launch period** - the period during which Naudokis operates in the Lithuanian market and applies the initial territorial, payment, payout, category, or function restrictions described in this document, unless the App clearly states otherwise.",
         "**User** - any person who uses the Platform.",
-        "**Lessor** - a User who lists or rents out an item through the Platform.",
+        "**Lessor** - a User who lists or offers an item for rent through the Platform. A Lessor may be a natural person or a Business User.",
         "**Renter** - a User who submits a rental request or rents an item through the Platform. A Renter may be a natural person or a Business User.",
-        "**Business User** or **Trader** - a User who acts for business or professional purposes, including cases where the User offers items for rent, rents items, or performs both roles through the Platform.",
+        "**Business User** - a User who acts for business or professional purposes, including cases where the User offers items for rent, rents items, or performs both roles through the Platform.",
+        "**Trader** - a Business User or another person who is considered a trader in relation to Consumers under applicable consumer law.",
         "**B2B Reservation** - a Reservation or Rental Transaction where both the Lessor and the Renter act for business or professional purposes.",
-        "**Reservation** - the item-rental process submitted, confirmed, performed, cancelled, or completed through the Platform."
+        "**Reservation request** - a request submitted through the Platform for rental of a specific item on selected dates.",
+        "**Reservation** - the Reservation request and the rental process carried out on its basis, including confirmation, performance, cancellation, or completion."
       ]
+    },
+    {
+      "t": "p",
+      "md": "Other capitalized terms (Listing, Deposit, Content, Terms) have the meanings given to them in the Naudokis Terms of Use."
     },
     {
       "t": "h2",
       "id": "5-sources-of-personal-data",
       "text": "5. Sources of Personal Data"
     },
-    { "t": "p", "md": "We receive Personal Data from the following sources:" },
+    {
+      "t": "p",
+      "md": "We receive Personal Data from the following sources:"
+    },
     {
       "t": "ul",
       "items": [
@@ -460,10 +523,16 @@
       "t": "callout",
       "md": "The scope of data processed depends on whether you only browse, have an account, list items, reserve, use payments, identity verification, business functions, support, or Dispute processes."
     },
-    { "t": "p", "md": "We may process the following main data groups:" },
+    {
+      "t": "p",
+      "md": "We may process the following main data groups:"
+    },
     {
       "t": "table",
-      "head": ["Data group", "Examples"],
+      "head": [
+        "Data group",
+        "Examples"
+      ],
       "rows": [
         [
           "Account, authentication, and profile data",
@@ -509,7 +578,7 @@
     },
     {
       "t": "p",
-      "md": "A more detailed description of these data groups is provided in the [Data Categories Appendix](doc:privacy-data-categories)."
+      "md": "A more detailed description of these data groups is provided in the Data Categories Appendix."
     },
     {
       "t": "h2",
@@ -539,7 +608,11 @@
     },
     {
       "t": "table",
-      "head": ["Purpose", "Examples", "Legal basis"],
+      "head": [
+        "Purpose",
+        "Examples",
+        "Legal basis"
+      ],
       "rows": [
         [
           "Provide Platform services",
@@ -696,7 +769,10 @@
       "t": "p",
       "md": "Naudokis is a two-sided rental Platform, so some data must be displayed or transferred to other Users in order to carry out Listings, Reservations, handover, return, payments, reviews, and Disputes. The amount of data depends on the Reservation stage, transaction type, User roles, and what is necessary for the specific function."
     },
-    { "t": "p", "md": "Main principles:" },
+    {
+      "t": "p",
+      "md": "Main principles:"
+    },
     {
       "t": "ul",
       "items": [
@@ -712,7 +788,10 @@
     },
     {
       "t": "table",
-      "head": ["Stage or situation", "Data visible to other Users"],
+      "head": [
+        "Stage or situation",
+        "Data visible to other Users"
+      ],
       "rows": [
         [
           "Public Listing before Reservation",
@@ -775,7 +854,7 @@
     },
     {
       "t": "p",
-      "md": "A more detailed summary of vendors, recipients, Cookies, SDKs, and technologies is provided in the [Vendors, Recipients, Cookies, and SDK Appendix](doc:privacy-vendors-sdk)."
+      "md": "A more detailed summary of vendors, recipients, Cookies, SDKs, and technologies is provided in the Vendors, Recipients, Cookies, and SDK Appendix."
     },
     {
       "t": "h2",
@@ -792,7 +871,7 @@
     },
     {
       "t": "p",
-      "md": "Detailed rules on identity verification, the document technical security tag, fraud prevention, and regulated Processing are provided in the [Identity Verification and Fraud Prevention Appendix](doc:privacy-identity-fraud)."
+      "md": "Detailed rules on identity verification, the document technical security tag, fraud prevention, and regulated Processing are provided in the Identity Verification and Fraud Prevention Appendix."
     },
     {
       "t": "h2",
@@ -850,12 +929,16 @@
       "md": "The current list of subprocessors and transfer safeguard mechanisms applicable to them is published on the Naudokis website, in the App, or provided on request by email at **info@naudokis.lt**. You may request more information about safeguards applicable to specific transfers by contacting us by email at **info@naudokis.lt**."
     },
     {
+      "t": "h3",
+      "text": "Data protection impact and risk assessments"
+    },
+    {
       "t": "p",
       "md": "Before starting or materially changing higher-risk Processing, Naudokis documents a data protection impact assessment, legitimate interest assessment, or another proportionate risk assessment where required by GDPR or by the nature of the Processing risk."
     },
     {
       "t": "p",
-      "md": "Higher-risk Processing may include identity document verification, use of an identity document control fraud signal, detection of message Content signals, fraud prevention, payment or payout holds, AI auxiliary functions, and other processes that may have a significant effect."
+      "md": "Higher-risk Processing may include identity document verification, use of an identity document technical security tag (hash) for fraud prevention, detection of message Content signals, fraud prevention, payment or payout holds, AI auxiliary functions, and other processes that may have a significant effect."
     },
     {
       "t": "p",
@@ -872,18 +955,21 @@
     },
     {
       "t": "p",
-      "md": "Automated tools must not be used for unlawful identification of sensitive characteristics, general biometric categorization, or unlawful profiling. Where a decision materially affects a User, human review, complaint, or explanation processes may apply under this Policy, the Terms, and applicable law."
+      "md": "We do not use automated tools to identify or infer special categories of data, for biometric categorization, or for unlawful profiling. Naudokis does not make solely automated decisions that produce legal effects or a similar significant effect on a User without human review. If such a decision were made, you have the right to request human intervention, express your position, and contest the decision under this Policy, the Terms, and applicable law."
     },
     {
       "t": "p",
-      "md": "More detailed information is provided in the [AI and Automated Checks Appendix](doc:privacy-ai-automated-checks)."
+      "md": "More detailed information is provided in the AI and Automated Checks Appendix."
     },
     {
       "t": "h2",
       "id": "14-marketing-service-related-notices-and-notification-settings",
       "text": "14. Marketing, service-related notices, and notification settings"
     },
-    { "t": "p", "md": "Naudokis has the right to send:" },
+    {
+      "t": "p",
+      "md": "Naudokis has the right to send:"
+    },
     {
       "t": "ul",
       "items": [
@@ -915,7 +1001,7 @@
     },
     {
       "t": "p",
-      "md": "More detailed retention period and deletion logic is provided in the [Retention Periods and Deletion Appendix](doc:privacy-retention-deletion)."
+      "md": "More detailed retention period and deletion logic is provided in the Retention Periods and Deletion Appendix."
     },
     {
       "t": "h2",
@@ -928,7 +1014,7 @@
     },
     {
       "t": "p",
-      "md": "More detailed account deletion and export logic is provided in the [Retention Periods and Deletion Appendix](doc:privacy-retention-deletion)."
+      "md": "More detailed account deletion and export logic is provided in the Retention Periods and Deletion Appendix."
     },
     {
       "t": "h2",
@@ -991,7 +1077,11 @@
       "t": "p",
       "md": "Parents or guardians may contact us by email at **info@naudokis.lt** if they believe that a minor created an account. We will ask for sufficient information to verify the person's identity and relationship, and then promptly take appropriate action."
     },
-    { "t": "h2", "id": "19-security", "text": "19. Security" },
+    {
+      "t": "h2",
+      "id": "19-security",
+      "text": "19. Security"
+    },
     {
       "t": "p",
       "md": "We apply technical and organizational measures to protect Personal Data, including authentication, access control, encrypted transmission, log management, monitoring, controlled vendor access, evidence upload controls, separation of public and private Platform data, isolation of payment data through payment providers, and security reviews."
@@ -1054,20 +1144,26 @@
     {
       "t": "ul",
       "items": [
-        "[Data Categories Appendix](doc:privacy-data-categories)",
-        "[Vendors, Recipients, Cookies, and SDK Appendix](doc:privacy-vendors-sdk)",
-        "[Retention Periods and Deletion Appendix](doc:privacy-retention-deletion)",
-        "[Identity Verification and Fraud Prevention Appendix](doc:privacy-identity-fraud)",
-        "[AI and Automated Checks Appendix](doc:privacy-ai-automated-checks)",
-        "[Business Users, Traders, DAC7, and Tax Privacy Appendix](doc:privacy-business-users-dac7)"
+        "22.1 Retention Periods and Deletion Appendix",
+        "22.2-22.3 Vendors, Recipients, Cookies, and SDK Appendix",
+        "22.4 Identity Verification and Fraud Prevention Appendix",
+        "22.5 AI and Automated Checks Appendix",
+        "22.6 Business Users, Traders, DAC7, and Tax Privacy Appendix",
+        "Data Categories Appendix (appendix to Section 6 of the Policy)"
       ]
     },
-    { "t": "h2", "id": "23-contacts", "text": "23. Contacts" },
+    {
+      "t": "h2",
+      "id": "23-contacts",
+      "text": "23. Contacts"
+    },
     {
       "t": "p",
       "md": "Privacy requests: **info@naudokis.lt** Support: **info@naudokis.lt** Operator: **MB Naudokis, legal entity code 307423504, registered office address Numėjos g. 6, LT-08402 Vilnius, Lithuania**"
     },
-    { "t": "hr" },
+    {
+      "t": "hr"
+    },
     {
       "t": "p",
       "md": "Previous versions of this document may be retained in the Naudokis internal archive. If you need information about a previous version, contact us by email at **info@naudokis.lt**."
