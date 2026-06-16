@@ -18,8 +18,8 @@ export function Hero({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
     <section id="top" style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
-      <Pattern name="hero-pattern" priority
-        style={{ position: "absolute", right: -80, top: 0, bottom: 0, height: "100%", width: 1000, objectFit: "cover", objectPosition: "right top", opacity: 0.30, pointerEvents: "none" }} />
+      <Pattern name="hero-pattern" priority className="nk-hero-pattern"
+        style={{ position: "absolute", top: 0, bottom: 0, height: "100%", objectFit: "cover", objectPosition: "right top", opacity: 0.30, pointerEvents: "none" }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
         {/* grid columns / padding / min-height live on .nk-hero-panel in globals.css
             so the 980px stack doesn't need !important overrides */}
@@ -27,11 +27,11 @@ export function Hero({ locale }: { locale: Locale }) {
           <AmbientGlow variant="hero" />
           {/* left column */}
           <div className="nk-hero-intro" style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", gap: "var(--nk-stack-lg)", justifyContent: "center", maxWidth: 680 }}>
-            <span style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: 27, padding: "6px 18px 6px 6px", boxShadow: "var(--nk-edge-top)" }}>
+            <span className="nk-hero-badge" style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: 27, padding: "6px 18px 6px 6px", boxShadow: "var(--nk-edge-top)" }}>
               <span style={{ width: 32, height: 32, borderRadius: 16, background: "var(--nk-bg)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
                 <Icon name="Users" size={18} color="var(--nk-text)" stroke={1.8} />
               </span>
-              <b style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 18, color: "var(--nk-bg)", whiteSpace: "nowrap" }}>{dict.hero.badge}</b>
+              <b className="nk-hero-badge__label" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 18, color: "var(--nk-bg)", whiteSpace: "nowrap" }}>{dict.hero.badge}</b>
             </span>
             <AppBadges />
             <h1 className="nk-h-hero" style={{ margin: 0 }}>{dict.hero.title}</h1>

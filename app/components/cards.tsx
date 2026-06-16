@@ -221,17 +221,20 @@ export function FaqRow({
   );
 }
 
-/* ---------------- Skeleton listing card ---------------- */
-export function OfferCardSkeleton() {
+/* ---------------- Skeleton listing card ----------------
+   `ghost` swaps the shimmer for a static fill — used as a placeholder tile
+   behind a SectionEmptyGrid panel (signals "coming soon", not "loading"). */
+export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
+  const cls = ghost ? "nk-ghost" : "nk-skel";
   return (
     <article aria-hidden="true" style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-      <div className="nk-skel" style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }} />
+      <div className={cls} style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }} />
       <div style={{ padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
-        <div className="nk-skel" style={{ width: "70%", height: 26 }} />
-        <div className="nk-skel" style={{ width: "48%", height: 18 }} />
+        <div className={cls} style={{ width: "70%", height: 26 }} />
+        <div className={cls} style={{ width: "48%", height: 18 }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
-          <div className="nk-skel" style={{ width: 130, height: 20 }} />
-          <div className="nk-skel" style={{ width: 44, height: 44, borderRadius: 22 }} />
+          <div className={cls} style={{ width: 130, height: 20 }} />
+          <div className={cls} style={{ width: 44, height: 44, borderRadius: 22 }} />
         </div>
       </div>
     </article>
@@ -239,13 +242,14 @@ export function OfferCardSkeleton() {
 }
 
 /* ---------------- Skeleton category card ---------------- */
-export function CategoryCardSkeleton() {
+export function CategoryCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
+  const cls = ghost ? "nk-ghost" : "nk-skel";
   return (
-    <div aria-hidden="true" className="nk-skel" style={{ height: 248, borderRadius: "var(--nk-r-card)", position: "relative" }}>
-      <div className="nk-skel" style={{ position: "absolute", top: 22, left: 22, width: 64, height: 64, borderRadius: "50%", background: "rgba(27,27,27,.3)" }} />
-      <div className="nk-skel" style={{ position: "absolute", left: 22, bottom: 48, width: "55%", height: 22, background: "rgba(27,27,27,.3)" }} />
-      <div className="nk-skel" style={{ position: "absolute", left: 22, bottom: 22, width: 92, height: 18, borderRadius: 12, background: "rgba(27,27,27,.3)" }} />
-      <div className="nk-skel" style={{ position: "absolute", right: 22, bottom: 22, width: 44, height: 44, borderRadius: 22, background: "rgba(27,27,27,.3)" }} />
+    <div aria-hidden="true" className={cls} style={{ height: 248, borderRadius: "var(--nk-r-card)", position: "relative" }}>
+      <div className={cls} style={{ position: "absolute", top: 22, left: 22, width: 64, height: 64, borderRadius: "50%", background: "rgba(27,27,27,.3)" }} />
+      <div className={cls} style={{ position: "absolute", left: 22, bottom: 48, width: "55%", height: 22, background: "rgba(27,27,27,.3)" }} />
+      <div className={cls} style={{ position: "absolute", left: 22, bottom: 22, width: 92, height: 18, borderRadius: 12, background: "rgba(27,27,27,.3)" }} />
+      <div className={cls} style={{ position: "absolute", right: 22, bottom: 22, width: 44, height: 44, borderRadius: 22, background: "rgba(27,27,27,.3)" }} />
     </div>
   );
 }
@@ -305,10 +309,11 @@ export function EmptyState({
    Categories/Offers, listing reviews). No big dashed box / floating illustration
    — a small tinted icon disk carries it. Mirrors the app's EmptyState
    variant="section". */
-const SECTION_EMPTY_TONES: Record<"purple" | "yellow" | "green", { bg: string; fg: string }> = {
+const SECTION_EMPTY_TONES: Record<"purple" | "yellow" | "green" | "danger", { bg: string; fg: string }> = {
   purple: { bg: "var(--nk-purple-tag)", fg: "var(--nk-purple-hover)" },
   yellow: { bg: "var(--nk-yellow-tint)", fg: "var(--nk-yellow)" },
   green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green)" },
+  danger: { bg: "var(--nk-danger-tint)", fg: "var(--nk-danger)" },
 };
 
 export function SectionEmpty({
@@ -332,6 +337,53 @@ export function SectionEmpty({
         {subtitle && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "25px", color: "var(--nk-text-2)" }}>{subtitle}</span>}
       </div>
       {actionLabel && <button className="nk-btn nk-btn--outline" onClick={onAction} style={{ flex: "none" }}>{actionLabel}</button>}
+    </div>
+  );
+}
+
+/* ---------------- Section-level empty (ghost preview grid) ----------------
+   For a no-data homepage BAND (Categories / Offers). Keeps the section's
+   footprint by filling its real grid shape with dimmed, static ghost tiles
+   (no shimmer — they read as "coming soon", not "loading"), then floats a
+   glass message panel with dual CTAs over them. `tone="danger"` reuses it for
+   the error state. */
+export function SectionEmptyGrid({
+  variant, icon, title, subtitle,
+  primaryLabel, onPrimary, secondaryLabel, onSecondary, tone = "purple",
+}: {
+  variant: "categories" | "offers";
+  icon?: IconName;
+  title: string;
+  subtitle: string;
+  primaryLabel: string;
+  onPrimary: () => void;
+  secondaryLabel?: string;
+  onSecondary?: () => void;
+  tone?: "purple" | "yellow" | "green" | "danger";
+}) {
+  const c = SECTION_EMPTY_TONES[tone];
+  const cats = variant === "categories";
+  const fallbackIcon: IconName = cats ? "LayoutGrid" : "Tag";
+  const ghostCount = 4;
+  return (
+    <div className="nk-emptygrid">
+      <div className={"nk-emptygrid__ghost " + (cats ? "nk-grid-cats" : "nk-grid-4")} aria-hidden="true">
+        {Array.from({ length: ghostCount }).map((_, i) =>
+          cats ? <CategoryCardSkeleton key={i} ghost /> : <OfferCardSkeleton key={i} ghost />)}
+      </div>
+      <div className="nk-emptygrid__panel" role="status">
+        <span className="nk-emptygrid__icon" style={{ background: c.bg }}>
+          <Icon name={icon ?? fallbackIcon} size={28} color={c.fg} stroke={2} />
+        </span>
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)" }}>
+          <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 23, lineHeight: "28px", color: "var(--nk-text)" }}>{title}</span>
+          <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "24px", color: "var(--nk-text-2)" }}>{subtitle}</span>
+        </div>
+        <div style={{ display: "flex", gap: "var(--nk-gap-sm)", flexWrap: "wrap", justifyContent: "center", marginTop: 4 }}>
+          <button className="nk-btn nk-btn--primary" onClick={onPrimary}>{primaryLabel}</button>
+          {secondaryLabel && <button className="nk-btn nk-btn--outline" onClick={onSecondary}>{secondaryLabel}</button>}
+        </div>
+      </div>
     </div>
   );
 }

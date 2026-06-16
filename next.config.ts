@@ -20,6 +20,8 @@ const cspReportOnly = [
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: blob: ${imageCdnHosts.join(" ")}`,
   "font-src 'self' data:",
+  // Google Maps Embed API iframe on the listing-detail page.
+  "frame-src 'self' https://www.google.com",
   "connect-src 'self' https://api.naudokis.lt https://api-dev.naudokis.lt https://plausible.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
   "frame-ancestors 'self'",
   "base-uri 'self'",

@@ -69,7 +69,7 @@ export function DocumentScreen({
               <hr className="nk-lg-headrule" />
 
               <div className="nk-lg-body">
-                {doc.toc.length > 0 && <TocSidebar toc={doc.toc} heading={t.inThisDoc} printLabel={t.printLabel} />}
+                {doc.toc.length > 0 && <TocSidebar toc={doc.toc} heading={t.inThisDoc} />}
                 <article className="nk-lg-article">
                   <Blocks blocks={bodyBlocks} locale={usedLang} briefLabel={t.briefLabel} anchorLabel={t.anchorLabel} />
 
@@ -99,7 +99,6 @@ export function DocumentScreen({
               openMenu={t.openMenu}
               backTop={t.backTop}
               readingProgress={t.readingProgress}
-              printLabel={t.printLabel}
             />
           </div>
         </LegalScrollProvider>

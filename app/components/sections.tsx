@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Icon, Logo, SectionHead, focusListboxSelection, listboxKeyNav, listboxTriggerKeyNav, openRedirect } from "./ui";
 import {
-  OfferCard, CategoryCard, FaqRow, OfferCardSkeleton, CategoryCardSkeleton, EmptyState, SectionEmpty,
+  OfferCard, CategoryCard, FaqRow, OfferCardSkeleton, CategoryCardSkeleton, SectionEmptyGrid,
 } from "./cards";
 import { useCategories } from "@/app/lib/categories";
 import { categoryIconFor } from "@/app/lib/category-style";
@@ -363,17 +363,19 @@ export function Categories() {
           {Array.from({ length: 8 }).map((_, i) => <CategoryCardSkeleton key={i} />)}
         </div>
       ) : isError ? (
-        <EmptyState icon="LayoutGrid" tone="danger"
-          title={t.errorTitle}
-          subtitle={t.errorSubtitle}
-          actionLabel={t.errorAction} onAction={() => refetch()} />
+        <SectionEmptyGrid variant="categories" tone="danger" icon="LayoutGrid"
+          title={t.errorTitle} subtitle={t.errorSubtitle}
+          primaryLabel={t.errorAction} onPrimary={() => refetch()} />
       ) : list.length ? (
         <div className="nk-grid-cats nk-reveal-grid">
           {list.map((c) => <CategoryCard key={c.id} id={c.id} icon={c.icon} title={c.title} count={dict.categoriesPage.tileCount(mockCategoryCount(c.id))} href={listingSearchHref({ cat: c.id })} />)}
         </div>
       ) : (
-        <SectionEmpty icon="LayoutGrid" title={t.bandEmptyTitle} subtitle={t.bandEmptyBody}
-          actionLabel={t.bandEmptyAction} onAction={() => refetch()} />
+        <SectionEmptyGrid variant="categories" icon="LayoutGrid"
+          title={t.bandEmptyTitle} subtitle={t.bandEmptyBody}
+          primaryLabel={t.bandEmptyAction} onPrimary={() => refetch()}
+          secondaryLabel={t.bandEmptySecondary}
+          onSecondary={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })} />
       )}
     </section>
   );
@@ -442,10 +444,9 @@ export function Offers() {
           {Array.from({ length: 4 }).map((_, i) => <OfferCardSkeleton key={i} />)}
         </div>
       ) : isError ? (
-        <EmptyState icon="SearchX" tone="danger"
-          title={t.errorTitle}
-          subtitle={t.errorSubtitle}
-          actionLabel={t.errorAction} onAction={() => refetch()} />
+        <SectionEmptyGrid variant="offers" tone="danger" icon="SearchX"
+          title={t.errorTitle} subtitle={t.errorSubtitle}
+          primaryLabel={t.errorAction} onPrimary={() => refetch()} />
       ) : list.length ? (
         <div className="nk-grid-4 nk-reveal-grid">
           {list.map((o) => (
@@ -459,8 +460,11 @@ export function Offers() {
           ))}
         </div>
       ) : (
-        <SectionEmpty icon="Tag" title={t.bandEmptyTitle} subtitle={t.bandEmptyBody}
-          actionLabel={t.bandEmptyAction} onAction={() => router.push("/kategorijos")} />
+        <SectionEmptyGrid variant="offers" icon="Tag"
+          title={t.bandEmptyTitle} subtitle={t.bandEmptyBody}
+          primaryLabel={t.bandEmptyAction} onPrimary={() => router.push("/kategorijos")}
+          secondaryLabel={t.bandEmptySecondary}
+          onSecondary={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })} />
       )}
     </section>
   );

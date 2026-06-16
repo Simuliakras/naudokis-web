@@ -10,6 +10,7 @@ import { Icon, IconName, Pill, openRedirect } from "./ui";
 import { SectionEmpty } from "./cards";
 import type { ListingDetail, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
 import { listingSearchHref } from "@/app/lib/search";
+import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
 import { useI18n } from "./I18nProvider";
 
 /* ---------------- Shared primitives ---------------- */
@@ -266,7 +267,7 @@ export function ListingHeader({ listing, saved, onShare, onFav }: {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "var(--nk-gap-xl)", flexWrap: "wrap", marginBottom: "var(--nk-gap-xl)" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", minWidth: 0 }}>
-        <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 4vw, 50px)", lineHeight: 1.04, letterSpacing: "-0.015em", color: "var(--nk-text)", textWrap: "balance" }}>{listing.title}</h1>
+        <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 4vw, 50px)", lineHeight: 1.04, letterSpacing: 0, color: "var(--nk-text)", textWrap: "balance" }}>{listing.title}</h1>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", flexWrap: "wrap" }}>
           {listing.rating && (
             <>
@@ -473,29 +474,52 @@ function SpecsSection({ attributes }: { attributes: ListingDetail["attributes"] 
   );
 }
 
-function HandoverSection({ city }: { city: string }) {
+function DeliveryZoneGraphic() {
   const { dict } = useI18n();
   const t = dict.detail;
   return (
+    <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", minHeight: 200, border: "1px solid var(--nk-border)", display: "flex", alignItems: "center", justifyContent: "center", background: "radial-gradient(120% 90% at 50% 40%, var(--nk-bg) 0%, var(--nk-bg-deep) 100%)" }}>
+      {/* faint road grid */}
+      <span style={{ position: "absolute", left: 0, right: 0, top: "32%", height: 2, background: "var(--nk-hairline)" }} />
+      <span style={{ position: "absolute", left: 0, right: 0, top: "68%", height: 2, background: "var(--nk-hairline)" }} />
+      <span style={{ position: "absolute", top: 0, bottom: 0, left: "28%", width: 2, background: "var(--nk-hairline)" }} />
+      <span style={{ position: "absolute", top: 0, bottom: 0, left: "70%", width: 2, background: "var(--nk-hairline)" }} />
+      {/* delivery radius */}
+      <span style={{ position: "absolute", left: "50%", top: "50%", width: 200, height: 200, transform: "translate(-50%,-50%)", borderRadius: "50%", background: "var(--nk-purple-soft)", border: "1.5px solid var(--nk-accent-border)" }} />
+      <span style={{ position: "absolute", left: "50%", top: "50%", width: 110, height: 110, transform: "translate(-50%,-50%)", borderRadius: "50%", background: "var(--nk-purple-soft)" }} />
+      {/* pin */}
+      <span style={{ position: "relative", width: 46, height: 46, borderRadius: 23, background: "var(--nk-purple)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 22px var(--nk-purple-glow-2)" }}>
+        <Icon name="MapPin" size={24} color="var(--nk-text)" stroke={2.2} />
+      </span>
+      <span style={{ position: "absolute", left: 14, bottom: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "7px 13px", borderRadius: 999, background: "var(--nk-overlay)", backdropFilter: "blur(10px)", border: "1px solid var(--nk-border-soft)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 13.5, color: "var(--nk-text)" }}>
+        <Icon name="Car" size={14} color="var(--nk-text)" stroke={2} /> {t.deliveryZone}
+      </span>
+    </div>
+  );
+}
+
+function HandoverSection({ city }: { city: string }) {
+  const { locale, dict } = useI18n();
+  const t = dict.detail;
+  const mapSrc = GOOGLE_MAPS_API_KEY && city
+    ? `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(`${city}, Lietuva`)}&zoom=11&language=${locale}`
+    : null;
+  return (
     <Section id="perdavimas" title={t.handoverHeading} sub={t.deliverySub(city)}>
       <div className="nk-tworow" style={{ alignItems: "stretch", gap: "var(--nk-gap-xl)" }}>
-        <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", minHeight: 200, border: "1px solid var(--nk-border)", display: "flex", alignItems: "center", justifyContent: "center", background: "radial-gradient(120% 90% at 50% 40%, var(--nk-bg) 0%, var(--nk-bg-deep) 100%)" }}>
-          {/* faint road grid */}
-          <span style={{ position: "absolute", left: 0, right: 0, top: "32%", height: 2, background: "var(--nk-hairline)" }} />
-          <span style={{ position: "absolute", left: 0, right: 0, top: "68%", height: 2, background: "var(--nk-hairline)" }} />
-          <span style={{ position: "absolute", top: 0, bottom: 0, left: "28%", width: 2, background: "var(--nk-hairline)" }} />
-          <span style={{ position: "absolute", top: 0, bottom: 0, left: "70%", width: 2, background: "var(--nk-hairline)" }} />
-          {/* delivery radius */}
-          <span style={{ position: "absolute", left: "50%", top: "50%", width: 200, height: 200, transform: "translate(-50%,-50%)", borderRadius: "50%", background: "var(--nk-purple-soft)", border: "1.5px solid var(--nk-accent-border)" }} />
-          <span style={{ position: "absolute", left: "50%", top: "50%", width: 110, height: 110, transform: "translate(-50%,-50%)", borderRadius: "50%", background: "var(--nk-purple-soft)" }} />
-          {/* pin */}
-          <span style={{ position: "relative", width: 46, height: 46, borderRadius: 23, background: "var(--nk-purple)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 22px var(--nk-purple-glow-2)" }}>
-            <Icon name="MapPin" size={24} color="var(--nk-text)" stroke={2.2} />
-          </span>
-          <span style={{ position: "absolute", left: 14, bottom: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "7px 13px", borderRadius: 999, background: "var(--nk-overlay)", backdropFilter: "blur(10px)", border: "1px solid var(--nk-border-soft)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 13.5, color: "var(--nk-text)" }}>
-            <Icon name="Car" size={14} color="var(--nk-text)" stroke={2} /> {t.deliveryZone}
-          </span>
-        </div>
+        {mapSrc ? (
+          <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", minHeight: 200, border: "1px solid var(--nk-border)" }}>
+            <iframe
+              src={mapSrc}
+              title={t.mapTitle(city)}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
+            />
+          </div>
+        ) : (
+          <DeliveryZoneGraphic />
+        )}
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "var(--nk-gap-md)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)" }}>
             <span style={{ width: "var(--nk-size-icon-sm)", height: "var(--nk-size-icon-sm)", borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="MapPin" size={20} stroke={2} color="var(--nk-purple-hover)" /></span>

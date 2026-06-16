@@ -3,6 +3,11 @@
 // point at the dev API locally via NEXT_PUBLIC_API_BASE_URL in .env.local.
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.naudokis.lt";
 
+// Google Maps Embed API key (client-readable). When unset, the listing-detail
+// map falls back to the decorative delivery-zone graphic, so local dev and
+// screenshot builds work without a key.
+export const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+
 // Local-only escape hatch: serve mock fixtures instead of the live backend.
 // Enabled via NEXT_PUBLIC_USE_MOCK=1 in .env.local for design/screenshot work
 // (the public API blocks cross-origin browser requests from localhost). Hard-

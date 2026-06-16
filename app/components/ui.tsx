@@ -304,7 +304,7 @@ export function AppBadges({ gap = 20, height = 52, footer = false, interactive =
   gap?: number; height?: number; footer?: boolean; interactive?: boolean;
 }) {
   return (
-    <div style={{ display: "flex", gap }}>
+    <div className="nk-appbadges" style={{ gap }}>
       <StoreBadge store="google" height={height} footer={footer} interactive={interactive} />
       <StoreBadge store="apple" height={height} footer={footer} interactive={interactive} />
     </div>

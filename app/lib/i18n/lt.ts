@@ -66,6 +66,7 @@ export const lt: Dict = {
     bandEmptyTitle: "Kategorijų kol kas nėra",
     bandEmptyBody: "Kategorijas netrukus papildysime. Atnaujinkite puslapį arba užsukite vėliau.",
     bandEmptyAction: "Atnaujinti",
+    bandEmptySecondary: "Atidaryti programėlėje",
   },
   offers: {
     eyebrow: "Atrinkta jums",
@@ -80,6 +81,7 @@ export const lt: Dict = {
     bandEmptyTitle: "Kol kas nėra pasiūlymų",
     bandEmptyBody: "Nauji daiktai atsiranda nuolat. Užsukite vėliau arba pradėkite nuo kategorijų.",
     bandEmptyAction: "Visos kategorijos",
+    bandEmptySecondary: "Atidaryti programėlėje",
   },
   features: [
     { icon: "Users", title: "Patikrinti žmonės", body: "Tapatybės ir kontaktų patikros padeda nuomotis iš tikrų savininkų, o reputacija matoma prieš rezervuojant." },
@@ -242,6 +244,7 @@ export const lt: Dict = {
     },
     contact: "Rašyti savininkui",
     handoverHeading: "Daikto perdavimas",
+    mapTitle: (city) => `${city} žemėlapyje`,
     pickupLabel: "Atsiėmimas",
     pickupFree: "Nemokama",
     deliveryLabel: "Pristatymas",
@@ -460,7 +463,6 @@ export const lt: Dict = {
     onlyLt: "Šis dokumentas šiuo metu skelbiamas tik lietuvių kalba. Rodomas lietuviškas tekstas.",
     briefLabel: "Trumpai",
     anchorLabel: "Nuoroda į šį skyrių",
-    printLabel: "Spausdinti",
     relatedHeading: "Susiję dokumentai",
     docTermsTitle: "Naudojimosi sąlygos",
     docPrivacyTitle: "Privatumo politika",

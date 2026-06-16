@@ -38,7 +38,6 @@ export type LegalDict = {
   onlyLt: string;          // LT-only fallback notice
   briefLabel: string;      // callout label ("Trumpai" / "In brief")
   anchorLabel: string;     // h2 permalink aria-label ("Link to this section")
-  printLabel: string;      // print / save-as-PDF action
   relatedHeading: string;  // "See also" heading at the bottom of a doc
   docTermsTitle: string;   // sibling-link label → Terms of Use
   docPrivacyTitle: string; // sibling-link label → Privacy Policy
@@ -94,6 +93,7 @@ export type Dict = {
     bandEmptyTitle: string;
     bandEmptyBody: string;
     bandEmptyAction: string;
+    bandEmptySecondary: string;
   };
   offers: {
     eyebrow: string;
@@ -109,6 +109,7 @@ export type Dict = {
     bandEmptyTitle: string;
     bandEmptyBody: string;
     bandEmptyAction: string;
+    bandEmptySecondary: string;
   };
   features: [FeatureItem, FeatureItem, FeatureItem];
   // Standalone "Kaip tai veikia" page (/kaip-tai-veikia).
@@ -194,6 +195,7 @@ export type Dict = {
     ownerRentals: (count: number) => string;
     contact: string;
     handoverHeading: string;
+    mapTitle: (city: string) => string;
     pickupLabel: string;
     pickupFree: string;
     deliveryLabel: string;

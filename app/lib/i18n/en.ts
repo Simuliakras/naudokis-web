@@ -47,6 +47,7 @@ export const en: Dict = {
     bandEmptyTitle: "No categories yet",
     bandEmptyBody: "Categories will be updated shortly. Refresh the page or check back later.",
     bandEmptyAction: "Refresh",
+    bandEmptySecondary: "Open in the app",
   },
   offers: {
     eyebrow: "Picked for you",
@@ -61,6 +62,7 @@ export const en: Dict = {
     bandEmptyTitle: "No offers yet",
     bandEmptyBody: "New items are added all the time. Check back later or start with the categories.",
     bandEmptyAction: "All categories",
+    bandEmptySecondary: "Open in the app",
   },
   features: [
     { icon: "Users", title: "Verified people", body: "Identity and contact checks help you rent from real owners, with reputation visible before you reserve." },
@@ -217,6 +219,7 @@ export const en: Dict = {
     ownerRentals: (n) => `${n} completed rental${n === 1 ? "" : "s"}`,
     contact: "Message owner",
     handoverHeading: "Item handover",
+    mapTitle: (city) => `${city} on the map`,
     pickupLabel: "Pickup",
     pickupFree: "Free",
     deliveryLabel: "Delivery",
@@ -419,7 +422,6 @@ export const en: Dict = {
     onlyLt: "This document is currently published in Lithuanian only. Showing the Lithuanian text.",
     briefLabel: "In brief",
     anchorLabel: "Link to this section",
-    printLabel: "Print",
     relatedHeading: "Related documents",
     docTermsTitle: "Terms of Use",
     docPrivacyTitle: "Privacy Policy",

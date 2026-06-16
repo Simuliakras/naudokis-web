@@ -18,7 +18,7 @@ function smoothScrollTo(id: string) {
   }
 }
 
-export function TocSidebar({ toc, heading, printLabel }: { toc: TocItem[]; heading: string; printLabel: string }) {
+export function TocSidebar({ toc, heading }: { toc: TocItem[]; heading: string }) {
   const { activeId } = useLegalScroll();
   return (
     <aside className="nk-lg-toc">
@@ -37,22 +37,18 @@ export function TocSidebar({ toc, heading, printLabel }: { toc: TocItem[]; headi
           </li>
         ))}
       </ul>
-      <button className="nk-lg-print" onClick={() => window.print()}>
-        <Icon name="printer" size={15} /><span>{printLabel}</span>
-      </button>
     </aside>
   );
 }
 
 export function LegalChrome({
-  toc, contents, openMenu, backTop, readingProgress, printLabel,
+  toc, contents, openMenu, backTop, readingProgress,
 }: {
   toc: TocItem[];
   contents: string;
   openMenu: string;
   backTop: string;
   readingProgress: string;
-  printLabel: string;
 }) {
   const { progress, activeId, scrolledDown } = useLegalScroll();
   const [drawer, setDrawer] = useState(false);
@@ -117,9 +113,6 @@ export function LegalChrome({
               {s.num && <span className="nk-lg-toc__num">{s.num}</span>}<span>{s.label}</span>
             </a>
           ))}
-          <button className="nk-lg-print nk-lg-print--drawer" onClick={() => { setDrawer(false); window.print(); }}>
-            <Icon name="printer" size={15} /><span>{printLabel}</span>
-          </button>
         </nav>
       </div>
 

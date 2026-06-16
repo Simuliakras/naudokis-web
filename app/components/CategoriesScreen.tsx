@@ -40,7 +40,7 @@ export function CategoriesScreen() {
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={[{ label: t.crumb }]} />
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: 32 }}>
             <span className="nk-eyebrow">{t.eyebrow}</span>
-            <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 5vw, 52px)", lineHeight: 1.05, letterSpacing: "-0.01em", color: "var(--nk-text)" }}>{t.title}</h1>
+            <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 5vw, 52px)", lineHeight: 1.05, letterSpacing: 0, color: "var(--nk-text)" }}>{t.title}</h1>
             <p className="nk-body" style={{ margin: 0, maxWidth: 620 }}>{t.body}</p>
           </div>
 
