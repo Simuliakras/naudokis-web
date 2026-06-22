@@ -7,8 +7,7 @@ import { Providers } from "../providers";
 import { I18nProvider } from "../components/I18nProvider";
 import { locales, isLocale, localeHome } from "@/app/lib/i18n/config";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-
-const SITE_URL = "https://naudokis.lt";
+import { SITE_URL } from "@/app/lib/seo";
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -39,6 +38,14 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
     description: meta.description,
     applicationName: "Naudokis",
     manifest: "/manifest.webmanifest",
+    // Geo-targeting signals for Lithuania (Vilnius), carried over from the
+    // previous site so regional intent isn't lost in the migration.
+    other: {
+      "geo.region": "LT",
+      "geo.placename": "Vilnius",
+      "geo.position": "54.687157;25.279652",
+      ICBM: "54.687157, 25.279652",
+    },
     icons: {
       icon: [
         { url: "/naudokis/icon-192.png", sizes: "192x192", type: "image/png" },
@@ -86,6 +93,36 @@ export const viewport: Viewport = {
 // dev and unconfigured builds ship no third-party script and write no cookies.
 const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 const plausibleSrc = process.env.NEXT_PUBLIC_PLAUSIBLE_SRC ?? "https://plausible.io/js/script.js";
+// Pre-hydration handoff for the app-redirect modal. Runs beforeInteractive so a
+// tap on the primary "Reserve" CTA before React hydrates still opens the modal
+// instead of doing nothing. Contract (three parts, shared with AppRedirect.tsx):
+//   1. Triggers opt in via `data-nk-redirect` + `data-nk-redirect-title|-body`
+//      attributes (only the Reserve buttons in ListingDetail.tsx carry them;
+//      their copy mirrors dict.bridge.reserveTitle/reserveBody).
+//   2. While `window.__nkBridgeReady` is false, this captures the click, stashes
+//      the payload on `window.__nkPendingRedirect`, and dispatches `nk:redirect`.
+//   3. On mount, AppRedirect sets `__nkBridgeReady = true` and replays any
+//      `__nkPendingRedirect` once; thereafter this early-returns and the React
+//      `onClick={onReserve}` path (openRedirect → same event) owns every tap.
+// No double-open: pre-hydration the dispatched event has no listener yet, so the
+// single source of truth is the replayed pending payload.
+const bridgeBootstrap = `
+(() => {
+  const EVENT = "nk:redirect";
+  document.addEventListener("click", (event) => {
+    if (window.__nkBridgeReady) return;
+    const trigger = event.target && event.target.closest && event.target.closest("[data-nk-redirect]");
+    if (!trigger) return;
+    event.preventDefault();
+    const payload = {
+      title: trigger.getAttribute("data-nk-redirect-title") || "",
+      body: trigger.getAttribute("data-nk-redirect-body") || ""
+    };
+    window.__nkPendingRedirect = payload;
+    window.dispatchEvent(new CustomEvent(EVENT, { detail: payload }));
+  }, true);
+})();
+`;
 
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
@@ -94,11 +131,12 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   }
   const dict = getDictionary(lang);
   return (
-    <html lang={lang} className={`${archivo.variable} ${sora.variable}`}>
+    <html lang={lang} className={`${archivo.variable} ${sora.variable}`} data-scroll-behavior="smooth">
       {/* suppressHydrationWarning: browser extensions (Grammarly, dark-reader, …)
           inject attributes onto <body> before React hydrates; this silences the
           resulting one-level attribute mismatch without hiding it for children. */}
       <body suppressHydrationWarning>
+        <Script id="nk-bridge-bootstrap" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: bridgeBootstrap }} />
         <a href="#nk-main" className="nk-skip">{dict.common.skipToContent}</a>
         <Providers>
           <I18nProvider locale={lang}>{children}</I18nProvider>

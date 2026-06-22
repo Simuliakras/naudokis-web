@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "Account & Data Deletion",
+    "version": "2026-06-01",
+    "effective_date": "2026-06-01",
+    "last_updated": "2026-06-01",
+    "document_id": "NAUDOKIS-ACCOUNT-DELETION-EN-2026-06-01",
+    "document_type": "account_deletion"
+  },
+  "toc": [
+    { "id": "1-who-operates-naudokis", "label": "Who operates Naudokis", "num": "1" },
+    { "id": "2-delete-your-account-in-the-app", "label": "Delete your account in the app", "num": "2" },
+    { "id": "3-dont-have-the-app-installed", "label": "Don’t have the app installed?", "num": "3" },
+    { "id": "4-what-is-deleted", "label": "What is deleted", "num": "4" },
+    { "id": "5-what-is-retained", "label": "What is retained", "num": "5" },
+    { "id": "6-contact", "label": "Contact", "num": "6" }
+  ],
+  "blocks": [
+    { "t": "h2", "id": "1-who-operates-naudokis", "text": "1. Who operates Naudokis" },
+    { "t": "p", "md": "Naudokis is operated by MB “Naudokis” (company code 307423504), registered address Numėjos g. 6, LT-08402 Vilnius, Lithuania." },
+
+    { "t": "h2", "id": "2-delete-your-account-in-the-app", "text": "2. Delete your account in the app" },
+    { "t": "ol", "items": [
+      "Open the Naudokis app and sign in.",
+      "Go to Account → Delete account.",
+      "Re-authenticate (your password or social login) to confirm.",
+      "Your account is disabled immediately and deletion is queued. You then have a 30-day grace period during which you can cancel the deletion using the link in the email we send you. After the grace period, your account is permanently deleted."
+    ] },
+
+    { "t": "h2", "id": "3-dont-have-the-app-installed", "text": "3. Don’t have the app installed?" },
+    { "t": "p", "md": "Email info@naudokis.lt from your account’s email address and request account deletion — we process it the same way." },
+
+    { "t": "h2", "id": "4-what-is-deleted", "text": "4. What is deleted" },
+    { "t": "ul", "items": [
+      "Profile and photo",
+      "Identity, phone and email verification records",
+      "Notification settings and push tokens",
+      "Favorites, blocks and mutes"
+    ] },
+    { "t": "p", "md": "Your listings, bookings, chat messages and reviews are anonymized — they remain visible to the other party but no longer carry your name or contact details." },
+
+    { "t": "h2", "id": "5-what-is-retained", "text": "5. What is retained" },
+    { "t": "p", "md": "Certain payment, accounting, tax, DAC7 and legal-defence records are kept as required by Lithuanian and EU law for statutory periods, which may be 5 to 10 years or longer where the law requires. Safety and content-moderation reports are kept for up to 3 years. After these periods the data is deleted." },
+
+    { "t": "h2", "id": "6-contact", "text": "6. Contact" },
+    { "t": "p", "md": "For any questions about deletion or your data, contact info@naudokis.lt." }
+  ]
+}

@@ -102,6 +102,7 @@
   --nk-light-meta:    #6A6A6A;   /* meta text                                */
   --nk-light-meta-2:  #757575;
   --nk-light-line:    #8C8C8C;   /* outlined button / input border (≥3:1 on white) */
+  --nk-light-divider: #E6E6E6;   /* hairline field separators + softer mobile card border */
   --nk-light-btn:     #F1F1F1;   /* secondary button fill                    */
   --nk-light-btn-2:   #E4E4E4;   /* reserve button fill                      */
   --nk-chip:          #E2E2E2;   /* filter chip fill                         */
@@ -267,18 +268,21 @@
    Naudokis marketplace UI kit — component styles
    ========================================================================== */
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{
   margin:0;background:var(--nk-bg);color:var(--nk-text);
   font-family:var(--nk-font-body);
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:clip;
 }
 img{display:block;max-width:100%}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+button,input,select,textarea{font:inherit}
+a,button,input,textarea,select{touch-action:manipulation}
 ::selection{background:var(--nk-purple);color:var(--nk-text)}
 
 .nk-page{width:100%;overflow-x:clip}
-.nk-container{max-width:1920px;margin:0 auto;padding-inline:var(--nk-gutter)}
+.nk-container{width:100%;max-width:1920px;margin:0 auto;padding-inline:var(--nk-gutter)}
 .nk-hero-pattern{right:0!important;width:min(1000px,100vw)!important}
 
 /* ---- Logo ---- */
@@ -292,8 +296,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ---- Buttons ---- */
 .nk-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
   font-family:var(--nk-font-display);font-weight:700;font-size:18px;line-height:1;
-  border-radius:var(--nk-r-pill);padding:16px 28px;
-  max-width:100%;text-align:center;
+  border-radius:var(--nk-r-pill);padding:16px 28px;min-height:var(--nk-tap);
+  max-width:100%;text-align:center;overflow-wrap:anywhere;
   transition:transform var(--nk-dur-fast) var(--nk-ease-spring),background .18s ease,border-color .18s ease,box-shadow .18s ease,opacity .18s ease;white-space:nowrap}
 .nk-btn:active{transform:scale(.97)}
 .nk-btn:disabled{opacity:.5;pointer-events:none}
@@ -323,7 +327,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* ---- Chips / tags ---- */
 .nk-chip{display:inline-flex;align-items:center;gap:8px;border-radius:var(--nk-r-chip);
   background:rgba(40,44,45,.5);padding:6px 16px 6px 12px;font-family:var(--nk-font-body);font-size:18px;line-height:20px;color:var(--nk-text);
-  backdrop-filter:blur(4px);box-shadow:var(--nk-edge-top)}
+  backdrop-filter:blur(4px);box-shadow:var(--nk-edge-top);max-width:100%}
+.nk-chip > :not(.nk-ico){min-width:0;overflow:hidden;text-overflow:ellipsis}
 .nk-tag{display:inline-flex;align-items:center;background:var(--nk-tag);padding:6px 8px;
   font-family:var(--nk-font-body);font-size:16px;line-height:1;color:var(--nk-light-meta);border-radius:2px}
 
@@ -357,7 +362,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   appearance:none;-webkit-appearance:none;transition:transform .18s ease,background .18s ease}
 @media(hover:hover) and (pointer:fine){.nk-dot--btn:hover{transform:scale(1.3);background-color:var(--nk-text)}}
 
-@media(max-width:900px){
+@media(max-width:1024px){
   .nk-logo span{font-size:22px}
 }
 
@@ -406,6 +411,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .nk-hero-intro > :nth-child(4){animation-delay:.25s}
   .nk-hero-intro > :nth-child(5){animation-delay:.32s}
   .nk-hero-media{animation:nk-hero-rise .7s var(--nk-ease) .18s both}
+}
+/* when the hero stacks (≤1024px) the CSS `order` reorders children, so remap the
+   rise delays to fire top-to-bottom in the new visual order (badge → h1 → body → search → badges) */
+@media (max-width:1024px) and (prefers-reduced-motion: no-preference){
+  .nk-hero-intro > :nth-child(1){animation-delay:.04s} /* badge   visual 1 */
+  .nk-hero-intro > :nth-child(3){animation-delay:.11s} /* h1      visual 2 */
+  .nk-hero-intro > :nth-child(4){animation-delay:.18s} /* body    visual 3 */
+  .nk-hero-intro > :nth-child(5){animation-delay:.25s} /* search  visual 4 */
+  .nk-hero-intro > :nth-child(2){animation-delay:.32s} /* badges  visual 5 */
 }
 @keyframes nk-hero-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
@@ -475,18 +489,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-nav-bar.nk-scrolled{background:rgba(20,22,23,.40);
   -webkit-backdrop-filter:blur(34px) saturate(160%) brightness(.82);backdrop-filter:blur(34px) saturate(160%) brightness(.82);
   box-shadow:var(--nk-shadow-1);border-bottom-color:var(--nk-hairline)}
-.nk-nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;
+.nk-nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;min-width:0;
   height:var(--nk-nav-h);transition:height .3s var(--nk-ease)}
 .nk-nav-bar.nk-scrolled .nk-nav-inner{height:var(--nk-nav-h-scrolled)}
+.nk-nav-inner > .nk-logo{flex:none}
 /* nowrap keeps multi-word links ("How it works" / "Kaip tai veikia") on one line;
    the gap tightens below ~1364px so the full nav still fits beside the search pill */
-.nk-nav-links{display:flex;align-items:center;gap:clamp(26px,4.4vw,60px);white-space:nowrap}
+.nk-nav-links{display:flex;align-items:center;gap:clamp(18px,3vw,52px);white-space:nowrap;min-width:0}
 .nk-nav-burger{display:none;width:46px;height:46px;border-radius:14px;align-items:center;justify-content:center;
   background:var(--nk-surface-2);border:1px solid var(--nk-border);transition:background .15s ease,border-color .15s ease}
 .nk-nav-burger:hover{background:var(--nk-surface-hover);border-color:var(--nk-border-strong)}
 .nk-nav-burger:active{transform:scale(.94)}
 .nk-nav-drawer{display:none}
-@media(max-width:820px){
+@media(max-width:1120px){
   .nk-nav-links{display:none}
   .nk-nav-burger{display:inline-flex}
   .nk-nav-drawer{display:block;overflow:hidden;max-height:0;opacity:0;
@@ -527,7 +542,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   display:flex;align-items:center;justify-content:center;transition:background .18s ease,transform .15s ease}
 .nk-navsearch__go:hover{background:var(--nk-purple-hover)}
 @media(hover:hover) and (pointer:fine){.nk-navsearch__go:hover{transform:translateX(2px)}}
-@media(max-width:1100px){
+@media(max-width:1280px){
   .nk-navsearch{width:clamp(220px,26vw,300px)}
   .nk-navsearch .nk-citypick,.nk-navsearch__div{display:none}
 }
@@ -585,6 +600,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-pillctl:disabled{opacity:.5;pointer-events:none}
 .nk-pillctl[aria-expanded="true"]{border-color:var(--nk-accent-border)}
 .nk-pillctl.is-active{background:var(--nk-accent-bg);color:var(--nk-accent-text);border-color:var(--nk-accent-border)}
+.nk-pillctl__label{min-width:0;overflow:hidden;text-overflow:ellipsis}
 /* toggle switch (delivery filter) — the lead never overflows; the track sits at
    the trailing edge so the off/on state is always visible, incl. the ≤560 stack */
 .nk-toggle__lead{overflow:hidden;text-overflow:ellipsis}
@@ -620,6 +636,13 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-offer:hover .nk-round--solid{background:var(--nk-purple-deep)}
 @media(hover:hover) and (pointer:fine){.nk-offer:hover .nk-round--solid{transform:translateX(3px)}}
 .nk-offer:focus-within,.nk-cat:focus-within{border-color:var(--nk-accent-border)}
+.nk-offer h3,.nk-cat h3{overflow-wrap:anywhere;hyphens:auto}
+.nk-offer__body,.nk-offer__pricebar{min-width:0}
+.nk-offer__pricebar{gap:var(--nk-gap-md)}
+@media(max-width:360px){
+  .nk-offer__pricebar{align-items:flex-start!important;flex-direction:column}
+  .nk-offer__pricebar .nk-round{align-self:flex-end}
+}
 
 /* accent gradient ring on hover — extends the hero/CTA gborder technique to
    cards (offers fall back to brand purple; tiles use their category accent) */
@@ -657,6 +680,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-cats-all{font-size:17px}
   .nk-cat{height:184px;padding:18px}
   .nk-cat__disk{width:54px;height:54px}
+  .nk-cat__content{align-items:flex-start}
+  .nk-cat__arrow{width:40px;height:40px}
 }
 /* per-category gradient identity — accent blended strongly so each tile reads distinctly */
 .nk-cat__img{position:absolute;inset:0;z-index:0;
@@ -707,6 +732,11 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* ---- search bar focus ---- */
 .nk-search{transition:box-shadow .2s ease,border-color .2s ease}
 .nk-search:focus-within{border-color:var(--nk-purple);box-shadow:0 6px 24px rgba(102,101,224,.28)}
+/* labeled field columns — micro-label shows only on mobile (see @media below) */
+.nk-search__col{display:flex;flex-direction:column;min-width:0}
+.nk-search__label{display:none}
+.nk-search__input{border:0;outline:0;background:transparent;font-family:var(--nk-font-body);
+  font-size:18px;color:var(--nk-bg);width:100%;min-width:110px}
 
 /* ---- FAQ hover ---- */
 .nk-faq{transition:border-color .2s ease,background .2s ease,border-radius .2s ease}
@@ -756,7 +786,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__top{display:grid;grid-template-columns:1.5fr 1.4fr 1fr;gap:48px 64px;padding-block:72px 56px;align-items:start}
 /* category links: single column by default; column-major into two columns only on wide desktop */
 .nk-footer__catgrid{display:grid;grid-auto-flow:row;grid-template-columns:1fr;gap:var(--nk-s-4) 44px;align-content:start}
-@media(min-width:1200px){.nk-footer__catgrid{grid-auto-flow:column;grid-template-columns:none;grid-template-rows:repeat(4,auto)}}
+@media(min-width:1280px){.nk-footer__catgrid{grid-auto-flow:column;grid-template-columns:none;grid-template-rows:repeat(4,auto)}}
 .nk-footer__brand{display:flex;flex-direction:column;gap:var(--nk-gap-xl);max-width:380px}
 .nk-footer__tagline{margin:0;font-family:var(--nk-font-body);font-size:18px;line-height:28px;color:var(--nk-text-muted);max-width:340px}
 .nk-footer__contact{display:flex;flex-direction:column;gap:var(--nk-gap-sm)}
@@ -774,7 +804,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(hover:hover) and (pointer:fine){.nk-footer__social a:hover{transform:translateY(-2px)}}
 .nk-footer__social a:active{transform:scale(.94)}
 .nk-footer__col{display:flex;flex-direction:column;gap:var(--nk-gap-lg)}
-@media(min-width:901px){.nk-footer__brand{padding-top:4px}.nk-footer__col{padding-top:63px}}
+@media(min-width:1025px){.nk-footer__brand{padding-top:4px}.nk-footer__col{padding-top:63px}}
 .nk-footer__col h4{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:19px;color:var(--nk-text);letter-spacing:.01em}
 .nk-footer__col a{position:relative;font-family:var(--nk-font-body);font-size:18px;line-height:1.25;color:var(--nk-text-muted);text-decoration:none;
   transition:color .15s ease;width:fit-content}
@@ -789,7 +819,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__pay{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .nk-footer__secure{display:inline-flex;align-items:center;gap:7px;font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2);
   padding-right:16px;border-right:1px solid var(--nk-border-soft)}
-@media(max-width:900px){
+@media(max-width:1024px){
   .nk-footer__top{grid-template-columns:1fr 1fr;gap:var(--nk-s-10) var(--nk-s-12);padding-block:56px 44px}
   .nk-footer__brand{grid-column:1 / -1;max-width:none}
   .nk-footer__col{padding-top:0}
@@ -862,12 +892,22 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   transition:background .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
 .nk-appbanner__x:hover{background:var(--nk-surface-2)}
 .nk-appbanner__x:active{transform:scale(.94)}
-/* 820px matches the nav-drawer breakpoint — desktop nav and the mobile app
+/* 1120px matches the nav-drawer breakpoint — desktop nav and the mobile app
    banner never show together */
-@media(max-width:820px){
+@media(max-width:1120px){
   .nk-appbanner{display:flex}
   /* reserve room for the fixed banner so it can't cover footer links */
   body.nk-has-appbanner .nk-page{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+}
+@media(max-width:980px){
+  body:has(.nk-mbar) .nk-appbanner{display:none}
+  body:has(.nk-mbar) .nk-page{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
+}
+@media(max-width:360px){
+  .nk-appbanner{left:10px;right:10px;gap:8px;padding:10px 10px}
+  .nk-appbanner > img{display:none!important}
+  .nk-appbanner__x{width:40px;height:40px}
+  .nk-appbanner .nk-btn{padding:12px 14px;font-size:14px;min-height:40px}
 }
 
 /* ============================================================
@@ -875,6 +915,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    ============================================================ */
 .nk-crumb{transition:color .15s ease,background .15s ease}
 .nk-crumb:hover{color:var(--nk-text);background:var(--nk-surface)}
+.nk-crumbs{min-width:0}
+.nk-crumbs > *{min-width:0}
+.nk-crumbs [aria-current="page"]{max-width:100%;overflow-wrap:anywhere}
 
 /* ============================================================
    Rounded search field (categories + feed)
@@ -883,12 +926,13 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   border:1px solid var(--nk-border);border-radius:999px;padding:13px 20px;
   transition:border-color .15s ease,box-shadow .15s ease}
 .nk-searchfield:focus-within{border-color:var(--nk-purple);box-shadow:var(--nk-glow-accent)}
+.nk-searchfield input{min-height:24px}
 
 /* category tile grid (all-categories page) */
 .nk-grid-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--nk-grid-gap)}
 /* wide tablets keep a dense 3-up; portrait tablets drop to 2-up (not a sparse 2-col across 1100px) */
-@media(max-width:1100px){.nk-grid-cats{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:900px){.nk-grid-cats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1280px){.nk-grid-cats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1024px){.nk-grid-cats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.nk-grid-cats{grid-template-columns:1fr}}
 
 /* ============================================================
@@ -921,8 +965,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-fchip:hover svg{color:var(--nk-text)}
 .nk-grid-feed{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--nk-grid-row-gap) var(--nk-grid-gap)}
 /* hold 3-up through wide/landscape tablets; 2-up on portrait tablets, single on phones */
-@media(max-width:900px){.nk-grid-feed{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:680px){.nk-grid-feed{grid-template-columns:1fr}}
+@media(max-width:1024px){.nk-grid-feed{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.nk-grid-feed{grid-template-columns:1fr}}
 .nk-clear{transition:color .15s ease}
 .nk-clear:hover{color:var(--nk-text)}
 /* clear (×) button inside a padded search field — full 44px hit area; the
@@ -938,6 +982,12 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-interrupt{position:relative;overflow:hidden;display:flex;align-items:center;gap:var(--nk-gap-xl);flex-wrap:wrap;
   background:linear-gradient(135deg,var(--nk-card-grad-1),var(--nk-card-grad-2));
   border:1px solid var(--nk-accent-border);border-radius:20px;padding:28px 32px;box-shadow:var(--nk-edge-top)}
+.nk-interrupt .nk-btn{margin-left:auto}
+@media(max-width:560px){
+  .nk-interrupt{padding:22px;gap:var(--nk-gap-md)}
+  .nk-interrupt img{width:64px!important;height:64px!important;border-radius:16px!important}
+  .nk-interrupt .nk-btn{width:100%;margin-left:0}
+}
 
 /* ============================================================
    Listing detail page
@@ -951,10 +1001,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-spec-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:48px;row-gap:0}
 .nk-tworow{display:grid;grid-template-columns:1.1fr 1fr;column-gap:48px}
 .nk-hl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--nk-gap-md)}
-.nk-reserve{position:sticky;top:calc(var(--nk-nav-h-scrolled) + 28px);display:flex;flex-direction:column;gap:var(--nk-gap-md);align-self:start}
+.nk-reserve{position:sticky;top:calc(var(--nk-nav-h-scrolled) + 28px);display:flex;flex-direction:column;gap:var(--nk-gap-md);align-self:start;min-width:0}
 .nk-sec{scroll-margin-top:calc(var(--nk-nav-h-scrolled) + 28px)}
 /* interactive listing-detail control (header buttons, date pickers) */
-.nk-lfield{transition:background .15s ease,border-color .15s ease}
+.nk-lfield{min-width:0;transition:background .15s ease,border-color .15s ease}
 .nk-lfield:hover{background:var(--nk-purple-soft);border-color:var(--nk-accent-border)}
 /* gallery tile hover — scrim + subtle photo zoom (matches the offer cards) */
 .nk-gtile__hint{opacity:0;transition:opacity .2s ease;pointer-events:none}
@@ -996,8 +1046,11 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-mbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;
   background:rgba(27,30,31,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--nk-border);
   align-items:center;justify-content:space-between;gap:16px;padding:14px 20px calc(14px + env(safe-area-inset-bottom))}
+.nk-mbar > *{min-width:0}
+.nk-mbar > span{overflow:hidden}
+.nk-mbar > span span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* keep the booking sidebar through landscape tablets; collapse to the bottom bar only on portrait tablets/phones */
-@media(max-width:900px){
+@media(max-width:980px){
   .nk-detail-grid{grid-template-columns:1fr;gap:40px}
   .nk-reserve{display:none}
   .nk-mbar{display:flex}
@@ -1006,7 +1059,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-tworow{grid-template-columns:1fr}
   .nk-rev-grid{grid-template-columns:1fr!important}
 }
-@media(max-width:720px){
+@media(max-width:768px){
   .nk-spec-grid{grid-template-columns:1fr;column-gap:0}
 }
 @media(max-width:560px){
@@ -1014,17 +1067,30 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-bento{grid-template-columns:1fr 1fr;grid-auto-rows:116px;gap:8px}
   .nk-bento > :first-child{grid-column:1 / -1;height:230px}
   .nk-hl-grid{grid-template-columns:1fr}
+  .nk-mbar{gap:12px;padding:12px 14px calc(12px + env(safe-area-inset-bottom))}
+  .nk-mbar .nk-btn{flex:0 0 auto;padding-inline:18px!important;font-size:15px!important}
 }
 /* rating breakdown — wide column gap reads as a void on small phones */
 .nk-ratebreak{row-gap:0;column-gap:44px}
-@media(max-width:480px){.nk-ratebreak{column-gap:22px}}
+@media(max-width:560px){
+  .nk-ratebreak{grid-template-columns:1fr!important;row-gap:18px;column-gap:0}
+  .nk-ratebreak > :first-child{padding-right:0!important;padding-bottom:18px;border-right:0!important;border-bottom:1px solid var(--nk-divider)}
+}
 
 /* ============================================================
    Responsive
+   ------------------------------------------------------------
+   Standard breakpoint ladder (CSS @media can't read var() widths,
+   so these are the canonical literals — snap new rules to one of):
+     xs  360px  tiny phones
+     sm  560px  phones
+     md  768px  portrait tablet
+     lg  1024px landscape tablet / small laptop  (hero + nav stack here)
+     xl  1280px desktop
    ============================================================ */
 /* horizontal card rows (features / testimonials): 3-up → tablet 2-up wrap → phone stack */
 .nk-row{display:flex;gap:var(--nk-gap-lg)}
-@media(max-width:1000px){
+@media(max-width:1024px){
   .nk-row{flex-wrap:wrap}
   .nk-row > *{flex:1 1 calc(50% - var(--nk-gap-lg))}
 }
@@ -1032,8 +1098,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* hero panel layout (visual skin stays inline in <Hero>) — fluid min-height avoids a forced-tall 2-col on landscape tablets */
 .nk-hero-panel{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,4vw,40px);padding:var(--nk-panel-pad);min-height:clamp(560px,64vw,700px)}
 .nk-hero-panel > *{min-width:0}
-.nk-hero-media{min-height:560px}
+.nk-hero-media{min-height:clamp(360px,42vw,560px)}
 .nk-hero-intro{width:100%;min-width:0}
+/* fluid badge label — degrades smoothly instead of jumping at the sm cliff; wraps by default (no inline nowrap) */
+.nk-hero-badge__label{font-size:clamp(14.5px,2.4vw,18px);line-height:1.15}
 /* product-fact row under the hero search (icon + label, wraps on narrow) */
 .nk-hero-trust{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px 22px}
 .nk-hero-trust li{display:inline-flex;align-items:center;gap:8px;font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2)}
@@ -1041,13 +1109,19 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* 4-up card grid (offers) — full ladder kept together: 4 → wide-tablet 3 →
    portrait-tablet 2 → phone 1 (was a sparse 4→2 jump at 1100) */
 .nk-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--nk-grid-gap)}
-@media(max-width:1100px){.nk-grid-4{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:900px){.nk-grid-4{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:680px){.nk-grid-4{grid-template-columns:1fr}}
+@media(max-width:1280px){.nk-grid-4{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1024px){.nk-grid-4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.nk-grid-4{grid-template-columns:1fr}}
 
-@media(max-width:980px){
+@media(max-width:1024px){
   .nk-hero-panel{grid-template-columns:1fr;padding:36px;min-height:0;gap:32px}
-  .nk-hero-media{min-height:420px;order:-1}
+  .nk-hero-media{min-height:clamp(320px,46vw,440px);order:-1}
+  /* stacked hero leads with the value prop: badge → headline → body → search → store badges */
+  .nk-hero-intro > :nth-child(1){order:1}  /* badge        */
+  .nk-hero-intro > :nth-child(3){order:2}  /* headline     */
+  .nk-hero-intro > :nth-child(4){order:3}  /* body         */
+  .nk-hero-intro > :nth-child(5){order:4}  /* search+trust */
+  .nk-hero-intro > :nth-child(2){order:5}  /* AppBadges    */
   .nk-detail{grid-template-columns:1fr!important;gap:32px!important}
   /* CTA banner: drop the absolute phone/QR, switch to a single readable column */
   .nk-cta{min-height:0!important}
@@ -1055,26 +1129,42 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-cta__body{position:static!important;max-width:none!important;padding:48px 32px!important}
   .nk-cta__badges{position:static!important;padding:32px 32px 0!important}
 }
-@media(max-width:680px){
+@media(max-width:768px){
   .nk-row{flex-direction:column}
   .nk-row > *{flex:1 1 auto}
   .nk-sheet{padding-bottom:env(safe-area-inset-bottom)}
 }
 /* tighter, app-like type density on phones — headings stay fluid (clamp) */
 @media(max-width:560px){
+  .nk-btn{white-space:normal}
+  /* hero is much shorter without the phone — drop the desktop-scale section padding */
+  #top > .nk-container{padding-block:clamp(16px,4vw,24px) clamp(40px,12vw,64px)}
   .nk-hero-panel{padding:24px;gap:24px;border-radius:18px!important}
-  .nk-hero-media{order:2;min-height:300px}
+  /* the visitor is already on a phone — drop the device mockup + QR entirely so the
+     hero is a tight value-prop stack with no dead vertical space (badge → headline →
+     body → search → trust → store badges). The <Image> keeps `priority` for the
+     desktop LCP; the mobile preload cost is accepted. */
+  .nk-hero-media{display:none}
+  /* denser left-column rhythm than the desktop --nk-stack-lg gap */
+  .nk-hero-panel .nk-hero-intro{gap:18px}
   .nk-h-hero{font-size:clamp(36px,11vw,44px);line-height:1.04}
-  .nk-hero-badge{max-width:100%;gap:10px!important;padding:6px 14px 6px 6px!important}
-  .nk-hero-badge__label{white-space:normal!important;font-size:15.5px!important;line-height:19px}
-  .nk-appbadges{gap:10px!important}
-  .nk-appbadges .nk-badgebtn img{height:clamp(40px,11vw,46px)!important;width:auto!important}
-  .nk-search{width:100%;max-width:100%!important;flex-direction:column!important;align-items:stretch!important;padding:10px!important;border-radius:26px!important;gap:8px!important}
-  .nk-search > span:first-child{flex:1 1 auto!important;min-width:0;width:100%;padding:5px 8px}
-  .nk-search > span:nth-child(2){display:none}
+  .nk-h-cta{font-size:clamp(32px,10vw,44px);overflow-wrap:anywhere;text-wrap:balance}
+  .nk-hero-badge{max-width:100%;gap:8px!important;padding:6px 14px 6px 6px!important}
+  .nk-hero-badge > span:first-child{width:28px!important;height:28px!important}
+  .nk-hero-badge__label{line-height:18px}
+  /* store badges as one scaled row (no wrap to two lines at 344px) */
+  .nk-appbadges{flex-wrap:nowrap!important;gap:10px!important;width:100%}
+  .nk-appbadges .nk-badgebtn{flex:1 1 0;min-width:0}
+  .nk-appbadges .nk-badgebtn img{width:100%!important;height:auto!important;max-height:46px;object-fit:contain;object-position:left}
+  .nk-search{width:100%;max-width:100%!important;flex-direction:column!important;align-items:stretch!important;padding:8px!important;border-radius:24px!important;gap:0!important;border-color:var(--nk-light-divider)!important}
+  .nk-search > span:first-child{flex:1 1 auto!important;min-width:0;width:100%;padding:12px 14px;gap:14px!important}
+  /* repurpose the desktop vertical divider as a full-width hairline between fields */
+  .nk-search > span:nth-child(2){display:block!important;width:auto!important;height:1px!important;margin:0 14px;background:var(--nk-light-divider)}
   .nk-search .nk-citypick{flex:1 1 auto;min-width:0;width:100%}
-  .nk-search .nk-citypick__trigger{width:100%;justify-content:space-between}
-  .nk-search .nk-btn{width:100%;padding-inline:20px!important}
+  .nk-search .nk-citypick__trigger{width:100%;justify-content:flex-start;gap:14px;padding:12px 14px;text-align:left}
+  .nk-search .nk-search__col{flex:1;text-align:left}
+  .nk-search .nk-search__label{display:block;font-family:var(--nk-font-display);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--nk-light-meta);margin-bottom:2px}
+  .nk-search .nk-btn{width:100%;padding-inline:20px!important;min-height:54px;margin-top:8px;border-radius:18px}
   .nk-hero-trust{gap:9px 14px}
   .nk-hero-trust li{font-size:13.5px}
   .nk-body{font-size:17px;line-height:27px}
@@ -1244,17 +1334,17 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .htw-cta__spark span:nth-child(2){background:var(--nk-purple-deep)}
 .htw-cta__spark span:nth-child(3){background:var(--nk-light-field);width:9px;height:9px}
 
-@media(max-width:1100px){
+@media(max-width:1280px){
   .htw-grid{grid-template-columns:1fr;gap:54px}
   .htw-right{position:static;order:-1}
   .htw-trust__grid{grid-template-columns:repeat(2,1fr)}
   .htw-cta__phone{opacity:.18}
   .htw-cta__qr{display:none}
 }
-@media(max-width:680px){
+@media(max-width:768px){
   .htw-trust__grid{grid-template-columns:1fr}
 }
-@media(max-width:760px){
+@media(max-width:768px){
   .htw-step__num{width:54px;height:54px;font-size:20px}
   .htw-list::before,.htw-list__fill{left:26px}
   .htw-step__top h3{font-size:22px}

@@ -34,8 +34,12 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Run on page routes only; skip Next internals, static brand assets, and the
-  // root-level SEO metadata routes and generated listing sitemaps, which are
-  // not localized as routable pages.
-  matcher: ["/((?!_next/static|_next/image|naudokis|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|listings/sitemap).*)"],
+  // Run on page routes only; skip Next internals, static brand assets, the
+  // root-level SEO metadata routes and generated listing sitemaps (not localized
+  // as routable pages), and the app universal-link / .well-known / deep-link
+  // paths (handled by next.config rewrites + public files — must not be rewritten
+  // into the /lt segment).
+  // The deep-link path segments below mirror `appLinkPaths` in next.config.ts
+  // (the canonical list) — keep them in sync when that list changes.
+  matcher: ["/((?!_next/static|_next/image|naudokis|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|listings/sitemap|\\.well-known|listing|booking-request|review|chat|my-profile|ref|deep-link\\.html).*)"],
 };

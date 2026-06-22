@@ -15,7 +15,8 @@ export function getLegalDocMeta(id: string): LegalDocMeta | undefined {
 // The two legal documents keep their pretty top-level LT/EN routes.
 export const CANONICAL_PATHS: Record<string, string> = {
   "privacy-policy": "/privatumo-politika",
-  "terms-of-use": "/naudojimo-taisykles",
+  "terms-of-use": "/naudojimosi-salygos",
+  "account-deletion": "/paskyros-trynimas",
 };
 
 // In-app, locale-correct path for a document id. Only the canonical docs have

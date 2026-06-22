@@ -17,6 +17,13 @@ const EXIT_MS = 220;
 // animation is softened, so conversion is never suppressed.
 const SEEN_KEY = "nk_bridge_seen";
 
+declare global {
+  interface Window {
+    __nkBridgeReady?: boolean;
+    __nkPendingRedirect?: RedirectPayload | null;
+  }
+}
+
 export function AppRedirect() {
   const { dict } = useI18n();
   const [state, setState] = useState<{ open: boolean; closing: boolean; instant: boolean } & RedirectPayload>({ open: false, closing: false, instant: false, title: "", body: "" });
@@ -46,8 +53,8 @@ export function AppRedirect() {
   useEffect(() => () => { if (exitTimer.current) clearTimeout(exitTimer.current); }, []);
 
   useEffect(() => {
-    const onOpen = (e: Event) => {
-      const d = (e as CustomEvent<RedirectPayload>).detail ?? { title: "", body: "" };
+    const openPayload = (payload: RedirectPayload) => {
+      const d = payload ?? { title: "", body: "" };
       lastFocused.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       if (exitTimer.current) clearTimeout(exitTimer.current);
       let seen = false;
@@ -57,10 +64,23 @@ export function AppRedirect() {
       } catch {
         // sessionStorage can throw in private modes — fall back to the full entrance.
       }
+      window.__nkPendingRedirect = null;
       setState({ open: true, closing: false, instant: seen, title: d.title || dict.bridge.defaultTitle, body: d.body || dict.bridge.defaultBody });
     };
+    const onOpen = (e: Event) => {
+      openPayload((e as CustomEvent<RedirectPayload>).detail ?? { title: "", body: "" });
+    };
     window.addEventListener(NK_REDIRECT_EVENT, onOpen);
-    return () => window.removeEventListener(NK_REDIRECT_EVENT, onOpen);
+    // Flip the bootstrap handoff only after the real listener is live; otherwise
+    // an early tap can miss both the pre-hydration fallback and the hydrated path.
+    window.__nkBridgeReady = true;
+    if (window.__nkPendingRedirect) {
+      openPayload(window.__nkPendingRedirect);
+    }
+    return () => {
+      window.removeEventListener(NK_REDIRECT_EVENT, onOpen);
+      window.__nkBridgeReady = false;
+    };
   }, [dict]);
 
   // While open: lock body scroll (released on close AND unmount — the component

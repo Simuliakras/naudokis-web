@@ -1,7 +1,8 @@
 "use client";
 // Site chrome for Locked-mode pages: renders the page body plus the shared
-// app-redirect modal and the sticky app banner. Legal pages opt out (no
-// redirect UI per spec) by simply not wrapping their content in <Chrome/>.
+// app-redirect modal and the sticky app banner. Legal pages keep the modal/nav/
+// footer but pass `banner={false}` to drop the sticky install banner, clearing
+// the fixed-action zone for their TOC drawer / back-to-top controls.
 import { AppRedirect } from "./AppRedirect";
 import { StickyAppBanner } from "./StickyAppBanner";
 

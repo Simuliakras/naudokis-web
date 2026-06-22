@@ -22,7 +22,7 @@ import { locales, barePath, localePrefix, type Locale } from "@/app/lib/i18n/con
 /* ---------------- Nav ----------------
    Translucent sticky bar that condenses on scroll. The "Paieška" ghost button
    swaps for an inline search once the hero search bar scrolls out of view; on
-   mobile (≤820px) the links collapse into a hamburger drawer.
+   tablet/mobile (≤1120px) the links collapse into a hamburger drawer.
    `onSearch` is optional so the server-rendered home page can mount <Nav />
    without passing a function across the server→client boundary; the default
    scrolls to the homepage categories band. Client screens pass their own. */
@@ -46,6 +46,13 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   // Condense the bar once the page scrolls — wired here (not per-page) so it
   // works on every screen that renders the Nav.
   useEffect(() => {
+    (window as Window & { __nkNavReady?: boolean }).__nkNavReady = true;
+    return () => {
+      (window as Window & { __nkNavReady?: boolean }).__nkNavReady = false;
+    };
+  }, []);
+
+  useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -66,10 +73,10 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
     return () => io.disconnect();
   }, []);
 
-  // Close the drawer when the viewport grows past the mobile breakpoint
-  // (same 820px query as the .nk-nav-drawer rules in globals.css).
+  // Close the drawer when the viewport grows past the tablet/mobile breakpoint
+  // (same 1120px query as the .nk-nav-drawer rules in globals.css).
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 820px)");
+    const mq = window.matchMedia("(max-width: 1120px)");
     const onChange = () => { if (!mq.matches) setMenuOpen(false); };
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
@@ -218,7 +225,14 @@ function CityPicker({ value, onChange, variant }: {
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
         aria-haspopup="listbox" aria-expanded={open}>
         <Icon name="MapPin" size={hero ? 20 : 16} stroke={2} color={hero ? "var(--nk-bg)" : "var(--nk-text-muted)"} />
-        <span className={"nk-citypick__val" + (value ? " is-set" : "")}>{value || dict.search.where}</span>
+        {hero ? (
+          <span className="nk-search__col" style={{ flex: 1 }}>
+            <span className="nk-search__label">{dict.search.labelWhere}</span>
+            <span className={"nk-citypick__val" + (value ? " is-set" : "")}>{value || dict.cityPicker.all}</span>
+          </span>
+        ) : (
+          <span className={"nk-citypick__val" + (value ? " is-set" : "")}>{value || dict.search.where}</span>
+        )}
         <Icon name="ChevronDown" size={hero ? 16 : 14} stroke={2.2} color={hero ? "var(--nk-light-meta)" : "var(--nk-text-muted)"}
           style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
       </button>
@@ -337,9 +351,12 @@ export function SearchBar() {
     }}>
       <span style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
         <Icon name="Search" size={20} color="var(--nk-bg)" stroke={2} />
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={dict.search.placeholder}
-          aria-label={dict.search.inputLabel}
-          style={{ border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 18, color: "var(--nk-bg)", flex: 1, minWidth: 110 }} />
+        <span className="nk-search__col" style={{ flex: 1 }}>
+          <span className="nk-search__label">{dict.search.labelWhat}</span>
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={dict.search.placeholder}
+            aria-label={dict.search.inputLabel}
+            className="nk-search__input" />
+        </span>
       </span>
       <span style={{ width: 1, height: 36, background: "var(--nk-light-line)" }} />
       <CityPicker variant="hero" value={city} onChange={setCity} />
@@ -488,4 +505,3 @@ export function Faq() {
     </section>
   );
 }
-

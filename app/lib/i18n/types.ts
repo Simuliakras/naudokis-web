@@ -77,6 +77,8 @@ export type Dict = {
     placeholder: string;
     inputLabel: string; // accessible name for the hero search <input>
     where: string;
+    labelWhat: string; // micro-label above the hero search field (mobile)
+    labelWhere: string; // micro-label above the hero city field (mobile)
     submit: string;
   };
   categories: {

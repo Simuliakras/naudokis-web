@@ -15,6 +15,14 @@
         "en": "This Privacy Policy explains how MB Naudokis (\"Naudokis\", \"we\", \"us\", \"our\") collects, uses, stores, discloses, and otherwise processes Personal Data.",
         "lt": "Šioje Privatumo politikoje paaiškinama, kaip MB „Naudokis“ („Naudokis“, „mes“, „mus“, „mūsų“) renka, naudoja, saugo, atskleidžia ir kitaip tvarko asmens duomenis."
       }
+    },
+    {
+      "id": "account-deletion",
+      "hasEn": true,
+      "blurb": {
+        "en": "How to delete your Naudokis account and personal data, what is deleted, and what is retained for legal reasons.",
+        "lt": "Kaip ištrinti Naudokis paskyrą ir asmens duomenis, kas ištrinama ir kas saugoma dėl teisinių reikalavimų."
+      }
     }
   ]
 }

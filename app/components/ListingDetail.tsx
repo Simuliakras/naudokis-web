@@ -695,7 +695,9 @@ export function BookingPanel({ listing, deposit, days, subtotal, total, onReserv
       <span style={{ display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-body)", fontSize: 12.5, lineHeight: "18px", color: "var(--nk-text-muted)" }}>
         <Icon name="Smartphone" size={14} stroke={2} color="var(--nk-purple-hover)" style={{ flex: "none", marginTop: 1 }} /> {t.appOnlyNote}
       </span>
-      <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint} style={{ width: "100%", padding: 16, fontSize: 17 }}>
+      <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}
+        data-nk-redirect data-nk-redirect-title={dict.bridge.reserveTitle} data-nk-redirect-body={dict.bridge.reserveBody}
+        style={{ width: "100%", padding: 16, fontSize: 17 }}>
         <Icon name="Smartphone" size={17} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
       </button>
       <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", padding: "9px 12px", borderRadius: 11, background: "var(--nk-green-tint)" }}>
@@ -768,7 +770,9 @@ export function MobileBar({ price, deposit, onReserve }: { price: string; deposi
         <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, color: "var(--nk-text)" }}>{price} <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 400, fontSize: 15, color: "var(--nk-text-2)" }}>{t.perDayShort}</span></span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>{deposit} {t.depositNoun}</span>
       </span>
-      <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint} style={{ padding: "14px 26px", fontSize: 16 }}>
+      <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}
+        data-nk-redirect data-nk-redirect-title={dict.bridge.reserveTitle} data-nk-redirect-body={dict.bridge.reserveBody}
+        style={{ padding: "14px 26px", fontSize: 16 }}>
         <Icon name="Smartphone" size={16} stroke={2.2} color="var(--nk-text)" /> {t.reserveMobile}
       </button>
     </div>

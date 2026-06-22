@@ -4,14 +4,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { defaultLocale, isLocale, localePrefix, type Locale } from "@/app/lib/i18n/config";
-import { CONTACT_EMAIL, CONTACT_PHONE, SOCIAL_LINKS } from "@/app/lib/contact";
+import { CONTACT_EMAIL, CONTACT_PHONE, SOCIAL_LINKS, APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 import type { FaqItem } from "@/app/lib/i18n/types";
 import { LT_CITIES, type City } from "@/app/lib/cities";
 import type { Category } from "@/app/lib/categories";
 
 // Canonical production origin — the single source of truth for absolute URLs,
 // shared by the metadata builders here and the sitemap/robots routes.
-export const SITE_URL = "https://naudokis.lt";
+export const SITE_URL = "https://www.naudokis.lt";
 
 // Shared guard for `[lang]` routes: narrow the segment to a valid `Locale` or
 // 404. Use in both `generateMetadata` and the page component so invalid locales
@@ -174,6 +174,24 @@ export function organizationJsonLd(): JsonLdNode {
     node.sameAs = SOCIAL_LINKS;
   }
   return node;
+}
+
+// The Naudokis mobile app as a SoftwareApplication — the core thing this bridge
+// site promotes. Free to download (App-Store/Google-Play Offer at price 0), with
+// the two store listings as `sameAs`. No `aggregateRating` is emitted: we don't
+// have first-party store-rating data on the wire, and fabricating it is a policy
+// violation (see the no-fabricated-structured-data convention).
+export function softwareApplicationJsonLd(): JsonLdNode {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Naudokis",
+    operatingSystem: "iOS, Android",
+    applicationCategory: "LifestyleApplication",
+    url: SITE_URL,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    sameAs: [APP_STORE_URL, PLAY_STORE_URL],
+  };
 }
 
 // Homepage FAQ section → FAQPage structured data. Sourced from the same dictionary

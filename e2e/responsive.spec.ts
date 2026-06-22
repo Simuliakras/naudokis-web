@@ -25,7 +25,7 @@ const SURFACES: Surface[] = [
   { name: "listing", tag: "@listing", path: "/skelbimai/sony-a7-iii" },
   { name: "categories", tag: "@categories", path: "/kategorijos" },
   { name: "how", tag: "@how", path: "/kaip-tai-veikia" },
-  { name: "terms", tag: "@legal", path: "/naudojimo-taisykles" },
+  { name: "terms", tag: "@legal", path: "/naudojimosi-salygos" },
   { name: "privacy", tag: "@legal", path: "/privatumo-politika" },
   { name: "notfound", tag: "@status", path: "/this-route-does-not-exist" },
   { name: "home-en", tag: "@home", path: "/en" },
@@ -90,6 +90,7 @@ test("states: app-redirect modal @state", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/skelbimai/sony-a7-iii", { waitUntil: "domcontentloaded" });
   await settle(page);
+  await page.waitForFunction(() => (window as Window & { __nkBridgeReady?: boolean }).__nkBridgeReady === true);
   await page.locator(".nk-mbar button.nk-btn--primary").click();
   await expect(page.locator('[role="dialog"]')).toBeVisible();
   await page.waitForTimeout(350);
@@ -100,7 +101,10 @@ test("states: nav mobile drawer @state", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await settle(page);
+  await page.waitForFunction(() => (window as Window & { __nkNavReady?: boolean }).__nkNavReady === true);
   await page.locator(".nk-nav-burger").click();
+  await expect(page.locator(".nk-nav-burger")).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator(".nk-nav-drawer")).toHaveClass(/open/);
   await page.waitForTimeout(300);
   await page.screenshot({ path: path.join(OUT, "state-navdrawer-390.png"), fullPage: false });
 });
@@ -118,8 +122,9 @@ test.skip("states: lightbox @state", async ({ page }) => {
 
 test("states: legal mobile TOC drawer @state", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/naudojimo-taisykles", { waitUntil: "domcontentloaded" });
+  await page.goto("/naudojimosi-salygos", { waitUntil: "domcontentloaded" });
   await settle(page);
+  await expect(page.locator(".nk-appbanner")).toHaveCount(0);
   await page.locator(".nk-lg-fab-toc").click();
   await page.waitForTimeout(300);
   await page.screenshot({ path: path.join(OUT, "state-legaldrawer-390.png"), fullPage: false });

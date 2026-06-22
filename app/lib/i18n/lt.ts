@@ -51,6 +51,8 @@ export const lt: Dict = {
     placeholder: "Ko ieškote nuomai?",
     inputLabel: "Ieškoti daiktų nuomai",
     where: "Kur?",
+    labelWhat: "Ką?",
+    labelWhere: "Kur?",
     submit: "Ieškoti",
   },
   categories: {
@@ -211,7 +213,8 @@ export const lt: Dict = {
       { label: "DUK", href: "#duk" },
       { label: "Kontaktai", href: "#kontaktai" },
       { label: "Privatumo politika", href: "/privatumo-politika" },
-      { label: "Naudojimo taisyklės", href: "/naudojimo-taisykles" },
+      { label: "Naudojimosi sąlygos", href: "/naudojimosi-salygos" },
+      { label: "Paskyros trynimas", href: "/paskyros-trynimas" },
     ],
     copyright: "© 2026 Naudokis.lt · Visos teisės saugomos",
     secure: "Saugūs atsiskaitymai",

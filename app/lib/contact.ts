@@ -8,8 +8,15 @@ export const CONTACT_PHONE = "+370 643 49559";
 // `tel:`-safe form of CONTACT_PHONE (no spaces).
 export const CONTACT_PHONE_TEL = "tel:" + CONTACT_PHONE.replace(/\s+/g, "");
 
-// Official brand profiles (social, App Store, Google Play) emitted as schema.org
-// `sameAs` on the Organization node so search engines can reconcile the entity.
-// Empty until real URLs exist — `organizationJsonLd` only emits `sameAs` when this
-// is non-empty, so no placeholder/wrong URLs ever reach the markup.
-export const SOCIAL_LINKS: string[] = [];
+// Native app store listings — the production URLs the previous site already
+// linked to. Used by the SoftwareApplication JSON-LD (app-launch signal) and the
+// deep-link fallback page.
+export const APP_STORE_URL = "https://apps.apple.com/app/id6753683957";
+export const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.naudokislt.naudokis";
+
+// Official brand profiles emitted as schema.org `sameAs` on the Organization node
+// so search engines can reconcile the entity. Only real, verified URLs belong
+// here — `organizationJsonLd` emits `sameAs` only when this is non-empty.
+export const SOCIAL_LINKS: string[] = [
+  "https://www.facebook.com/profile.php?id=61581076403677",
+];

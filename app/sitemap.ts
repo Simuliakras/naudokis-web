@@ -34,7 +34,8 @@ const STATIC_PATHS: [path: string, priority: number][] = [
   ["/kategorijos", 0.8],
   ["/skelbimai", 0.8],
   ["/privatumo-politika", 0.3],
-  ["/naudojimo-taisykles", 0.3],
+  ["/naudojimosi-salygos", 0.3],
+  ["/paskyros-trynimas", 0.3],
 ];
 
 async function listingLandingPaths(): Promise<string[]> {

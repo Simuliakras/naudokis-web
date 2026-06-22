@@ -1,10 +1,6 @@
-// Legal — full document reading page (server component). Renders under the same
-// marketing chrome the home page uses: <Chrome> (app-redirect modal + sticky
-// banner), the shared <Nav> and <Footer>. Inside that it keeps the calm reading
-// experience — document header, server-rendered block body, a scroll-spy sidebar
-// TOC, and the fixed chrome island (reading progress, mobile TOC drawer,
-// back-to-top). The bespoke legal topbar/footer, breadcrumb and related-docs
-// grid were dropped when the Policy Center hub was retired.
+// Legal — full document reading page (server component). Uses the shared nav,
+// footer and redirect modal, but opts out of the sticky install banner so the
+// mobile TOC / back-to-top controls keep a clear fixed-action zone.
 import "./legal.css";
 import Link from "next/link";
 import type { Locale } from "@/app/lib/i18n/config";
@@ -44,7 +40,7 @@ export function DocumentScreen({
   const bodyBlocks = intro ? doc.blocks.filter((b) => b !== intro) : doc.blocks;
 
   return (
-    <Chrome>
+    <Chrome banner={false}>
       <div className="nk-page">
         <Nav />
         <LegalScrollProvider ids={doc.toc.map((s) => s.id)}>

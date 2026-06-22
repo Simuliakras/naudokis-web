@@ -32,6 +32,8 @@ export const en: Dict = {
     placeholder: "What do you want to rent?",
     inputLabel: "Search items to rent",
     where: "Where?",
+    labelWhat: "What?",
+    labelWhere: "Where?",
     submit: "Search",
   },
   categories: {
@@ -192,7 +194,8 @@ export const en: Dict = {
       { label: "FAQ", href: "#duk" },
       { label: "Contacts", href: "#kontaktai" },
       { label: "Privacy policy", href: "/privatumo-politika" },
-      { label: "Terms of use", href: "/naudojimo-taisykles" },
+      { label: "Terms of use", href: "/naudojimosi-salygos" },
+      { label: "Account deletion", href: "/paskyros-trynimas" },
     ],
     copyright: "© 2026 Naudokis.lt · All rights reserved",
     secure: "Secure payments",

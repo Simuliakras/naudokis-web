@@ -44,12 +44,65 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
 ];
 
+// Mobile-app universal-link / deep-link paths. The app claims these via
+// .well-known/{apple-app-site-association,assetlinks.json}; when the app isn't
+// installed they fall through to a static promo page (public/deep-link.html,
+// noindex). Carried over from the previous site so existing app links keep
+// working after the migration.
+//
+// CANONICAL list of deep-link paths. The same set is mirrored, by hand, in two
+// places that can't import it: the `proxy.ts` matcher exclusion regex, and the
+// `paths` array in public/.well-known/apple-app-site-association. Keep all three
+// in sync when adding/removing a path (see public/.well-known/README.md).
+const appLinkPaths = [
+  "/listing/:path*",
+  "/booking-request/:path*",
+  "/review/:path*",
+  "/chat/:path*",
+  "/my-profile",
+  "/ref/:path*",
+];
+
 const nextConfig: NextConfig = {
   // NOTE: typedRoutes is deliberately OFF. Public URLs are the proxy-rewritten
   // unprefixed forms (/kategorijos, /skelbimai/[id]) which don't exist in the
   // typed /[lang]/... route tree, so every href would need an `as Route` cast.
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // apple-app-site-association is extensionless; iOS requires it served as
+      // application/json (no .json file is fetched by the OS).
+      {
+        source: "/.well-known/apple-app-site-association",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      // Canonical host is www. Send the apex (naudokis.lt) to www permanently.
+      // The host value is anchored so www.naudokis.lt doesn't match itself (loop).
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "^naudokis\\.lt$" }],
+        destination: "https://www.naudokis.lt/:path*",
+        permanent: true,
+      },
+      // Legal URLs that changed between the old site and this one. The old EN
+      // slugs were indexed; preserve their link equity. The LT terms slug
+      // matches the old site after the rename, so only the dev-era LT slug needs
+      // a defensive redirect.
+      { source: "/en/terms-of-service", destination: "/en/naudojimosi-salygos", permanent: true },
+      { source: "/en/privacy-policy", destination: "/en/privatumo-politika", permanent: true },
+      { source: "/en/account-deletion", destination: "/en/paskyros-trynimas", permanent: true },
+      { source: "/naudojimo-taisykles", destination: "/naudojimosi-salygos", permanent: true },
+      { source: "/en/naudojimo-taisykles", destination: "/en/naudojimosi-salygos", permanent: true },
+    ];
+  },
+  async rewrites() {
+    // Serve the deep-link fallback without changing the URL (so the universal
+    // link still matches if the app installs mid-session).
+    return appLinkPaths.map((source) => ({ source, destination: "/deep-link.html" }));
   },
   // Serve modern formats from the built-in optimizer (used by next/image for the
   // hero/CTA phone mockups). AVIF first, WebP fallback. Static brand patterns are

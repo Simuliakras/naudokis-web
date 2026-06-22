@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "Paskyros ir duomenų trynimas",
+    "version": "2026-06-01",
+    "effective_date": "2026-06-01",
+    "last_updated": "2026-06-01",
+    "document_id": "NAUDOKIS-ACCOUNT-DELETION-LT-2026-06-01",
+    "document_type": "account_deletion"
+  },
+  "toc": [
+    { "id": "1-kas-teikia-naudokis-paslauga", "label": "Kas teikia Naudokis paslaugą", "num": "1" },
+    { "id": "2-istrinkite-paskyra-programeleje", "label": "Ištrinkite paskyrą programėlėje", "num": "2" },
+    { "id": "3-neturite-idiegtos-programeles", "label": "Neturite įdiegtos programėlės?", "num": "3" },
+    { "id": "4-kas-istrinama", "label": "Kas ištrinama", "num": "4" },
+    { "id": "5-kas-saugoma", "label": "Kas saugoma", "num": "5" },
+    { "id": "6-kontaktai", "label": "Kontaktai", "num": "6" }
+  ],
+  "blocks": [
+    { "t": "h2", "id": "1-kas-teikia-naudokis-paslauga", "text": "1. Kas teikia Naudokis paslaugą" },
+    { "t": "p", "md": "Naudokis – tai paslauga, kurią teikia MB „Naudokis“ (įmonės kodas 307423504), registracijos adresas Numėjos g. 6, LT-08402 Vilnius." },
+
+    { "t": "h2", "id": "2-istrinkite-paskyra-programeleje", "text": "2. Ištrinkite paskyrą programėlėje" },
+    { "t": "ol", "items": [
+      "Atidarykite Naudokis programėlę ir prisijunkite.",
+      "Eikite į Paskyra → Ištrinti paskyrą.",
+      "Patvirtinkite iš naujo prisijungdami (slaptažodžiu arba socialiniu prisijungimu).",
+      "Paskyra iškart išjungiama, o trynimas suplanuojamas. Per 30 dienų galite atšaukti trynimą paspaudę nuorodą mūsų atsiųstame el. laiške. Pasibaigus šiam terminui, paskyra ištrinama negrįžtamai."
+    ] },
+
+    { "t": "h2", "id": "3-neturite-idiegtos-programeles", "text": "3. Neturite įdiegtos programėlės?" },
+    { "t": "p", "md": "Parašykite el. paštu info@naudokis.lt iš savo paskyros el. pašto adreso ir paprašykite ištrinti paskyrą — sutvarkysime tokiu pačiu būdu." },
+
+    { "t": "h2", "id": "4-kas-istrinama", "text": "4. Kas ištrinama" },
+    { "t": "ul", "items": [
+      "Profilis ir nuotrauka",
+      "Tapatybės, telefono ir el. pašto patvirtinimų įrašai",
+      "Pranešimų nustatymai ir push žetonai",
+      "Mėgstamiausi, blokavimai ir nutildymai"
+    ] },
+    { "t": "p", "md": "Jūsų skelbimai, rezervacijos, pokalbių žinutės ir atsiliepimai nuasmeninami — jie lieka matomi kitai šaliai, tačiau nebeturi jūsų vardo ar kontaktinių duomenų." },
+
+    { "t": "h2", "id": "5-kas-saugoma", "text": "5. Kas saugoma" },
+    { "t": "p", "md": "Tam tikri mokėjimų, apskaitos, mokesčių, DAC7 ir teisinės gynybos įrašai saugomi taip, kaip reikalauja Lietuvos ir ES teisės aktai, įstatymų nustatytais terminais, kurie gali būti 5–10 metų ar ilgiau, kai to reikalauja įstatymai. Saugumo ir turinio moderavimo pranešimai saugomi iki 3 metų. Pasibaigus šiems terminams, duomenys ištrinami." },
+
+    { "t": "h2", "id": "6-kontaktai", "text": "6. Kontaktai" },
+    { "t": "p", "md": "Visais klausimais dėl trynimo ar jūsų duomenų kreipkitės el. paštu info@naudokis.lt." }
+  ]
+}

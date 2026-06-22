@@ -7,9 +7,9 @@ import { getLegalDoc } from "@/app/lib/legal/loader";
 import { DocumentScreen } from "@/app/components/legal/DocumentScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 
-const DOC_ID = "terms-of-use";
+const DOC_ID = "account-deletion";
 
-export async function generateMetadata({ params }: PageProps<"/[lang]/naudojimo-taisykles">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[lang]/paskyros-trynimas">): Promise<Metadata> {
   const { lang } = await params;
   const locale = requireLocale(lang);
   const loaded = await getLegalDoc(DOC_ID, locale);
@@ -18,14 +18,14 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/naudojimo-
   }
   const { legal, meta } = getDictionary(locale);
   return pageMetadata({
-    locale, path: "/naudojimo-taisykles",
+    locale, path: "/paskyros-trynimas",
     title: `${loaded.doc.meta.title} — Naudokis.lt`,
     description: legalBlurbDescription(DOC_ID, locale, legal.metaDescriptionFallback),
     ogLocale: meta.ogLocale, ogImageAlt: meta.ogImageAlt,
   });
 }
 
-export default async function Page({ params }: PageProps<"/[lang]/naudojimo-taisykles">) {
+export default async function Page({ params }: PageProps<"/[lang]/paskyros-trynimas">) {
   const { lang } = await params;
   const locale = requireLocale(lang);
   const loaded = await getLegalDoc(DOC_ID, locale);
@@ -35,7 +35,7 @@ export default async function Page({ params }: PageProps<"/[lang]/naudojimo-tais
   const { common } = getDictionary(locale);
   const breadcrumb = breadcrumbJsonLd(locale, [
     { name: common.breadcrumbHome, path: "" },
-    { name: loaded.doc.meta.title, path: "/naudojimo-taisykles" },
+    { name: loaded.doc.meta.title, path: "/paskyros-trynimas" },
   ]);
   return (
     <>

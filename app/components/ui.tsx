@@ -634,7 +634,7 @@ export function FilterSelect({
         fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5,
       }}>
         {icon && <Icon name={icon} size={16} stroke={2} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />}
-        <span>{active && selected ? selected.label : label}</span>
+        <span className="nk-pillctl__label">{active && selected ? selected.label : label}</span>
         <Icon name="ChevronDown" size={15} stroke={2.4} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
       </button>
       {open && (

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "„Naudokis“ privatumo politika",
+    "title": "Privatumo politika",
     "version": "2026-06-01",
     "effective_date": "2026-06-01",
     "last_updated": "2026-06-01",
@@ -180,31 +180,16 @@
     },
     {
       "t": "table",
-      "head": [
-        "Ieškote informacijos apie...",
-        "Skaitykite"
-      ],
+      "head": ["Ieškote informacijos apie...", "Skaitykite"],
       "rows": [
-        [
-          "Kas yra duomenų valdytojas ir kaip susisiekti",
-          "1 ir 23 skyriuose"
-        ],
-        [
-          "Trumpą privatumo paaiškinimą",
-          "2 skyriuje"
-        ],
-        [
-          "Kokius duomenis renkame",
-          "6 skyriuje ir Duomenų kategorijų priede"
-        ],
+        ["Kas yra duomenų valdytojas ir kaip susisiekti", "1 ir 23 skyriuose"],
+        ["Trumpą privatumo paaiškinimą", "2 skyriuje"],
+        ["Kokius duomenis renkame", "6 skyriuje ir Duomenų kategorijų priede"],
         [
           "Kodėl naudojame duomenis ir kokiais teisiniais pagrindais remiamės",
           "8 skyriuje"
         ],
-        [
-          "Kokie duomenys matomi kitiems Naudotojams",
-          "9 skyriuje"
-        ],
+        ["Kokie duomenys matomi kitiems Naudotojams", "9 skyriuje"],
         [
           "Paslaugų teikėjus, gavėjus ir jų vaidmenis",
           "10 skyriuje ir Teikėjų, gavėjų, slapukų ir SDK priede"
@@ -213,10 +198,7 @@
           "Mokėjimus, tapatybės patvirtinimą ir Stripe arba Didit",
           "11 skyriuje ir Tapatybės patvirtinimo ir sukčiavimo prevencijos privatumo priede"
         ],
-        [
-          "Tarptautinius duomenų perdavimus",
-          "12 skyriuje"
-        ],
+        ["Tarptautinius duomenų perdavimus", "12 skyriuje"],
         [
           "DI, automatizuotas patikras ir žmogaus peržiūrą",
           "13 skyriuje ir DI ir automatizuotų patikrų priede"
@@ -225,10 +207,7 @@
           "Saugojimo terminus ir paskyros ištrynimą",
           "15 ir 16 skyriuose bei Saugojimo terminų ir ištrynimo priede"
         ],
-        [
-          "Jūsų BDAR teises",
-          "17 skyriuje"
-        ],
+        ["Jūsų BDAR teises", "17 skyriuje"],
         [
           "Slapukus, SDK, tiesioginius pranešimus ir mobiliąsias technologijas",
           "Teikėjų, gavėjų, slapukų ir SDK priedą"
@@ -529,10 +508,7 @@
     },
     {
       "t": "table",
-      "head": [
-        "Duomenų grupė",
-        "Pavyzdžiai"
-      ],
+      "head": ["Duomenų grupė", "Pavyzdžiai"],
       "rows": [
         [
           "Paskyros, autentifikavimo ir profilio duomenys",
@@ -608,11 +584,7 @@
     },
     {
       "t": "table",
-      "head": [
-        "Tikslas",
-        "Pavyzdžiai",
-        "Teisinis pagrindas"
-      ],
+      "head": ["Tikslas", "Pavyzdžiai", "Teisinis pagrindas"],
       "rows": [
         [
           "Teikti Platformos paslaugas",
@@ -788,10 +760,7 @@
     },
     {
       "t": "table",
-      "head": [
-        "Etapas arba situacija",
-        "Kitiems naudotojams matomi duomenys"
-      ],
+      "head": ["Etapas arba situacija", "Kitiems naudotojams matomi duomenys"],
       "rows": [
         [
           "Viešas Skelbimas prieš Rezervaciją",

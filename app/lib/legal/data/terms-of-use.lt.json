@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "„Naudokis“ naudojimosi sąlygos",
+    "title": "Naudojimosi sąlygos",
     "version": "2026-06-01",
     "effective_date": "2026-06-01",
     "last_updated": "2026-06-01",
@@ -228,27 +228,15 @@
     },
     {
       "t": "table",
-      "head": [
-        "Ieškote informacijos apie...",
-        "Skaitykite"
-      ],
+      "head": ["Ieškote informacijos apie...", "Skaitykite"],
       "rows": [
-        [
-          "Kas yra „Naudokis“ ir kas yra Nuomos sandorio šalis",
-          "3 skyriuje"
-        ],
-        [
-          "Paskyrą, amžių ir tapatybės patvirtinimą",
-          "4 ir 6 skyriuose"
-        ],
+        ["Kas yra „Naudokis“ ir kas yra Nuomos sandorio šalis", "3 skyriuje"],
+        ["Paskyrą, amžių ir tapatybės patvirtinimą", "4 ir 6 skyriuose"],
         [
           "Skelbimus, draudžiamus daiktus ir rizikingas kategorijas",
           "7 skyriuje ir Draudžiamų ir ribojamų daiktų taisyklėse"
         ],
-        [
-          "Rezervacijas ir Nuomos sandorio sudarymą",
-          "9 skyriuje"
-        ],
+        ["Rezervacijas ir Nuomos sandorio sudarymą", "9 skyriuje"],
         [
           "Mokėjimus, mokesčius, Stripe ir informaciją prieš mokėjimą",
           "10 skyriuje ir Mokėjimų, mokesčių ir Stripe taisyklėse"
@@ -285,14 +273,8 @@
           "Atsiliepimus, paiešką ir reitingavimą",
           "Atsiliepimų, paieškos ir reitingavimo taisykles"
         ],
-        [
-          "Visų teisinių dokumentų žemėlapį",
-          "Taisyklių centrą"
-        ],
-        [
-          "„Naudokis“ kontaktus",
-          "24 skyriuje"
-        ]
+        ["Visų teisinių dokumentų žemėlapį", "Taisyklių centrą"],
+        ["„Naudokis“ kontaktus", "24 skyriuje"]
       ]
     },
     {

@@ -26,16 +26,16 @@ export function Hero({ locale }: { locale: Locale }) {
         <div className="nk-hero-panel nk-grain nk-gborder" style={{ position: "relative", borderRadius: "var(--nk-r-lg)", background: "var(--nk-glass)", backdropFilter: "blur(35px)" }}>
           <AmbientGlow variant="hero" />
           {/* left column */}
-          <div className="nk-hero-intro" style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", gap: "var(--nk-stack-lg)", justifyContent: "center", maxWidth: 680 }}>
+          <div className="nk-hero-intro" style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", gap: "var(--nk-stack-lg)", justifyContent: "center", maxWidth: "min(100%, 680px)" }}>
             <span className="nk-hero-badge" style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: 27, padding: "6px 18px 6px 6px", boxShadow: "var(--nk-edge-top)" }}>
               <span style={{ width: 32, height: 32, borderRadius: 16, background: "var(--nk-bg)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
                 <Icon name="Users" size={18} color="var(--nk-text)" stroke={1.8} />
               </span>
-              <b className="nk-hero-badge__label" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 18, color: "var(--nk-bg)", whiteSpace: "nowrap" }}>{dict.hero.badge}</b>
+              <b className="nk-hero-badge__label" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, color: "var(--nk-bg)" }}>{dict.hero.badge}</b>
             </span>
             <AppBadges />
             <h1 className="nk-h-hero" style={{ margin: 0 }}>{dict.hero.title}</h1>
-            <p className="nk-body" style={{ margin: 0, maxWidth: 540 }}>{dict.hero.body}</p>
+            <p className="nk-body" style={{ margin: 0, maxWidth: "min(100%, 540px)" }}>{dict.hero.body}</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
               <SearchBar />
               <HeroTrust items={dict.hero.trust} />
@@ -45,8 +45,8 @@ export function Hero({ locale }: { locale: Locale }) {
           <div className="nk-hero-media" style={{ position: "relative", zIndex: 1 }}>
             {/* LCP image: next/image serves responsive AVIF/WebP and `priority`
                 preloads it (replaces the manual fetchPriority hint). */}
-            <Image src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} priority sizes="(max-width: 980px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
-            <div style={{ position: "absolute", right: 32, bottom: 0 }}><QR size={132} /></div>
+            <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} priority sizes="(max-width: 1024px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
+            <div className="nk-hero-qr" style={{ position: "absolute", right: "clamp(16px, 2vw, 32px)", bottom: 0 }}><QR size={132} /></div>
           </div>
         </div>
       </div>
