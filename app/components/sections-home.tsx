@@ -36,10 +36,7 @@ export function Hero({ locale }: { locale: Locale }) {
             <AppBadges />
             <h1 className="nk-h-hero" style={{ margin: 0 }}>{dict.hero.title}</h1>
             <p className="nk-body" style={{ margin: 0, maxWidth: "min(100%, 540px)" }}>{dict.hero.body}</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
-              <SearchBar />
-              <HeroTrust items={dict.hero.trust} />
-            </div>
+            <SearchBar />
           </div>
           {/* right column — real app device + QR */}
           <div className="nk-hero-media" style={{ position: "relative", zIndex: 1 }}>
@@ -51,22 +48,6 @@ export function Hero({ locale }: { locale: Locale }) {
         </div>
       </div>
     </section>
-  );
-}
-
-/* Real product-fact row under the hero search — verified / escrow / free
-   cancellation. Copy comes from the dict; the icons are fixed here. */
-const HERO_TRUST_ICONS: [IconName, IconName, IconName] = ["BadgeCheck", "ShieldCheck", "RefreshCcw"];
-function HeroTrust({ items }: { items: readonly [string, string, string] }) {
-  return (
-    <ul className="nk-hero-trust">
-      {items.map((label, i) => (
-        <li key={label}>
-          <Icon name={HERO_TRUST_ICONS[i]} size={17} color="var(--nk-green)" stroke={2} />
-          {label}
-        </li>
-      ))}
-    </ul>
   );
 }
 

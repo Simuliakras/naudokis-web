@@ -864,8 +864,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   transition:background .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
 .nk-redirect-close:hover{background:var(--nk-surface-2)}
 .nk-redirect-close:active{transform:scale(.94)}
-.nk-redirect-mark{width:56px;height:56px;border-radius:16px;background:var(--nk-purple-tint);
-  display:flex;align-items:center;justify-content:center}
 .nk-redirect-qr{display:flex;align-items:center;gap:16px;padding-top:4px}
 @media(max-width:560px){
   .nk-redirect-scrim{align-items:flex-end}
@@ -1102,9 +1100,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-hero-intro{width:100%;min-width:0}
 /* fluid badge label — degrades smoothly instead of jumping at the sm cliff; wraps by default (no inline nowrap) */
 .nk-hero-badge__label{font-size:clamp(14.5px,2.4vw,18px);line-height:1.15}
-/* product-fact row under the hero search (icon + label, wraps on narrow) */
-.nk-hero-trust{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px 22px}
-.nk-hero-trust li{display:inline-flex;align-items:center;gap:8px;font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2)}
 
 /* 4-up card grid (offers) — full ladder kept together: 4 → wide-tablet 3 →
    portrait-tablet 2 → phone 1 (was a sparse 4→2 jump at 1100) */
@@ -1165,8 +1160,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-search .nk-search__col{flex:1;text-align:left}
   .nk-search .nk-search__label{display:block;font-family:var(--nk-font-display);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--nk-light-meta);margin-bottom:2px}
   .nk-search .nk-btn{width:100%;padding-inline:20px!important;min-height:54px;margin-top:8px;border-radius:18px}
-  .nk-hero-trust{gap:9px 14px}
-  .nk-hero-trust li{font-size:13.5px}
   .nk-body{font-size:17px;line-height:27px}
   .nk-body-sm{font-size:15.5px;line-height:24px}
   .nk-meta{font-size:15.5px;line-height:24px}

@@ -114,19 +114,17 @@ export function AppRedirect() {
         <button ref={closeRef} onClick={close} aria-label={dict.bridge.close} className="nk-redirect-close">
           <Icon name="X" size={20} color="var(--nk-text)" />
         </button>
-        <span className="nk-redirect-mark">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/naudokis/icon.png" alt="" style={{ width: 34, height: 34 }} />
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" style={{ height: 32, width: "auto", alignSelf: "flex-start" }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <h2 id="nk-redirect-title" style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{state.title}</h2>
           <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "26px", color: "var(--nk-text-2)" }}>{state.body}</p>
         </div>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}><AppBadges height={50} interactive={false} /></div>
         <div className="nk-redirect-qr">
           <QR size={96} />
           <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", maxWidth: 220 }}>{dict.bridge.qrHint}</span>
         </div>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}><AppBadges height={50} interactive={false} /></div>
       </div>
     </div>
   );

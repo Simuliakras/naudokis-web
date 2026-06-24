@@ -33,9 +33,9 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
       >
         <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>Nepavyko parodyti puslapio</h1>
         <p style={{ margin: 0, maxWidth: 420, lineHeight: 1.5, color: "rgba(255,255,255,0.85)" /* --nk-text-2 */ }}>
-          Įvyko netikėta klaida. Pabandykite atnaujinti puslapį.
+          Pabandykite dar kartą. Jei problema kartosis, grįžkite šiek tiek vėliau.
           <br />
-          Something unexpected happened. Please try again.
+          Please try again. If the problem continues, come back a little later.
         </p>
         <button
           onClick={reset}
@@ -50,7 +50,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
             color: "#FFFFFF", // --nk-text
           }}
         >
-          Atnaujinti / Try again
+          Bandyti dar kartą / Try again
         </button>
       </body>
     </html>

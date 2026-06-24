@@ -5,14 +5,13 @@ export const en: Dict = {
   meta: {
     title: "Naudokis.lt — trusted item rental from people nearby",
     description:
-      "Rent tools, vehicles, photo gear, electronics and leisure equipment from trusted people across Lithuania. Secure payments, clear terms and easy reservations in the app.",
+      "Rent tools, vehicles, photo gear, electronics and leisure equipment from trusted people across Lithuania. Browse on the web, then reserve securely in the app.",
     ogLocale: "en_US",
     ogImageAlt: "Naudokis.lt",
   },
   nav: {
     search: "Search",
     category: "Categories",
-    contacts: "Contact",
     howItWorks: "How it works",
     getApp: "Get the app",
     language: "Language",
@@ -22,23 +21,22 @@ export const en: Dict = {
     closeMenu: "Close menu",
   },
   hero: {
-    badge: "Join 10,000+ people in Lithuania",
+    badge: "Trusted rentals across Lithuania",
     title: "Rent what you need, exactly when you need it.",
-    body: "Trusted item rental from people nearby: professional photo gear, tools, vehicles, event equipment and everything for a better weekend.",
+    body: "Find tools, vehicles, photo gear, electronics and leisure equipment from trusted people nearby. Browse on the web, then reserve securely in the app.",
     phoneAlt: "Naudokis app",
-    trust: ["Verified users", "Protected payments", "Clear rental terms"],
   },
   search: {
-    placeholder: "What do you want to rent?",
+    placeholder: "What do you need to rent?",
     inputLabel: "Search items to rent",
     where: "Where?",
     labelWhat: "What?",
-    labelWhere: "Where?",
+    labelWhere: "City",
     submit: "Search",
   },
   categories: {
     eyebrow: "Browse",
-    title: "Categories",
+    title: "Find rentals by category",
     all: "All categories",
     errorTitle: "Couldn’t load categories",
     errorSubtitle: "We couldn’t show categories right now. Check your connection and try again.",
@@ -53,12 +51,12 @@ export const en: Dict = {
   },
   offers: {
     eyebrow: "Picked for you",
-    title: "Popular rentals near you",
+    title: "Popular rentals nearby",
     all: "All listings",
     errorTitle: "Couldn’t load listings",
     errorSubtitle: "We couldn’t show listings right now. Check your connection and try again.",
     errorAction: "Try again",
-    emptyTitle: "Nothing matched your search",
+    emptyTitle: "We couldn’t find anything for this search",
     emptySubtitle: (query) => `We couldn’t find listings for “${query}”. Try another keyword or city, or clear your search.`,
     emptyAction: "Clear search",
     bandEmptyTitle: "No offers yet",
@@ -67,9 +65,9 @@ export const en: Dict = {
     bandEmptySecondary: "Open in the app",
   },
   features: [
-    { icon: "Users", title: "Verified people", body: "Identity and contact checks help you rent from real owners, with reputation visible before you reserve." },
-    { icon: "ShieldCheck", title: "Protected payments", body: "The payment is held securely and released to the owner only after the rental is completed under the agreed terms." },
-    { icon: "MapPin", title: "Closer than buying", body: "Find the item you need in your city or neighborhood and avoid buying, storing or waiting for things you use once in a while." },
+    { icon: "Users", title: "Verified members", body: "Identity, contact and reputation signals help you choose trusted people before you reserve." },
+    { icon: "ShieldCheck", title: "Protected payments", body: "The rental payment is held securely and released to the owner only after a successful rental." },
+    { icon: "MapPin", title: "Items closer to you", body: "Find what you need in your city and avoid buying, storing or waiting for things you only use occasionally." },
   ],
   howItWorks: {
     meta: {
@@ -78,14 +76,14 @@ export const en: Dict = {
     },
     eyebrow: "How it works",
     title: "Rent or earn from the items already nearby",
-    lead: "Naudokis connects people who need an item for a short time with owners who want to rent out unused gear securely. Pick your side and see the full journey.",
+    lead: "Naudokis connects people who need an item for a short time with owners who want to rent out unused things securely. Pick your side and see the full journey.",
     renter: {
       label: "Renter",
       lead: "From search to return — a clear path when you need something for a day, a weekend or a project.",
       ctaTitle: "Ready to reserve? Continue in the app",
       ctaBody: "In the Naudokis app you can choose dates, message the owner and complete a protected payment in one place.",
       steps: [
-        { icon: "Search", title: "Find what you need", tag: "Fast", tone: "yellow", screen: "search",
+        { icon: "Search", title: "Find the item", tag: "Fast", tone: "yellow", screen: "search",
           body: "Browse verified listings near you and filter by city, date or price. Browsing is always free." },
         { icon: "Calendar", title: "Reserve in the app", tag: "Secure", tone: "green", screen: "reserve",
           body: "Choose your dates and reserve in the app. The rental amount is held securely and released to the owner only after a successful rental." },
@@ -112,9 +110,9 @@ export const en: Dict = {
       ],
     },
     trustEyebrow: "Safe on both sides",
-    trustTitle: "Trust built into every step",
+    trustTitle: "Trust at every step of the rental",
     trust: [
-      { icon: "Snowflake", title: "Payment held securely", body: "The rental amount is held safely and released to the owner only after a successful rental." },
+      { icon: "Snowflake", title: "Payment held securely", body: "The rental amount is held securely and released to the owner only after a successful rental." },
       { icon: "Users", title: "Verified community", body: "User checks and reviews help you choose trusted people nearby." },
       { icon: "ShieldCheck", title: "Deposit and support", body: "Deposits, clear rules and dispute support protect both sides of each rental." },
     ],
@@ -128,7 +126,7 @@ export const en: Dict = {
     ],
     ctaPhoneAlt: "Naudokis app",
     screen: {
-      searchPlaceholder: "What do you want to rent?",
+      searchPlaceholder: "What do you need to rent?",
       reserveCta: "Reserve",
       frozenPill: "Held",
       pickupCta: "Meet the owner",
@@ -145,7 +143,7 @@ export const en: Dict = {
   },
   home: {
     seoHeading: "Rent items from people nearby across Lithuania",
-    seoBody: "Naudokis is a community rental platform connecting item owners and renters across Lithuania. Rent tools, vehicles, electronics, sports and leisure gear from trusted people in Vilnius, Kaunas, Klaipėda and beyond. Browsing is free, and payments are protected — the rental amount is held securely and released to the owner only after a successful rental. Why buy, when you can use it exactly when you need it?",
+    seoBody: "Naudokis is a community rental platform connecting item owners and renters across Lithuania. Rent tools, vehicles, electronics, sports and leisure gear from trusted people in Vilnius, Kaunas, Klaipėda and beyond. Browsing is free, and payments are protected — the rental amount is held securely and released to the owner only after a successful rental. Why buy when you can use it exactly when you need it?",
   },
   testimonials: {
     eyebrow: "Reviews",
@@ -178,7 +176,7 @@ export const en: Dict = {
     ],
   },
   footer: {
-    tagline: "A trusted rental marketplace connecting people across Lithuania.",
+    tagline: "A trusted item-rental platform for people across Lithuania.",
     browseHeading: "Browse",
     allCategories: "All categories",
     categories: [
@@ -242,7 +240,7 @@ export const en: Dict = {
     depositReturnable: "Deposit (refundable)",
     reserve: "Reserve in the app",
     reserveMobile: "Reserve",
-    appOnlyNote: "Browse freely here, then reserve, message and pay securely in the Naudokis app.",
+    appOnlyNote: "You can review the listing on the web. Choose dates, message and pay securely in the Naudokis app.",
     escrowNote: "Payment is held securely until the rental ends",
     loadErrorTitle: "Couldn’t load the listing",
     loadErrorBody: "We couldn’t show this listing right now. Check your connection and try again.",
@@ -277,13 +275,13 @@ export const en: Dict = {
     deliveryZone: "≈20 km zone",
     depositNoun: "deposit",
     termRentSub: "Rental price per day",
-    termDepositSub: "Returned if the item is undamaged",
+    termDepositSub: "Returned if the item comes back in the agreed condition",
     termDuration: "1–60 days",
     termDurationSub: "Flexible rental period",
     termCancel: "100% up to 5 days before",
     termCancelSub: "Clear cancellation terms",
     depositSafeTitle: "The deposit is held securely.",
-    depositSafeBody: "The deposit is held through Stripe and returned after the rental if the item comes back in the agreed condition.",
+    depositSafeBody: "The deposit is returned after the rental if the item comes back in the agreed condition.",
   },
   common: {
     favorite: "Save",
@@ -303,7 +301,7 @@ export const en: Dict = {
     crumb: "Categories",
     eyebrow: "Browse",
     title: "All categories",
-    body: "Browse categories and find the item you need nearby.",
+    body: "Browse the most popular rental categories and discover items nearby.",
     searchPlaceholder: "Search categories…",
     submit: "Search",
     tileCount: (n) => `${n} listing${n === 1 ? "" : "s"}`,
@@ -315,7 +313,7 @@ export const en: Dict = {
   },
   feed: {
     metaTitle: "Listings — item rental | Naudokis.lt",
-    metaDescription: "Browse and filter item-rental listings across Lithuania by category, city and price. Finish the reservation in the Naudokis app.",
+    metaDescription: "Browse and filter item-rental listings across Lithuania by category, city and price. Reserve securely in the Naudokis app.",
     // EN uses the plain category title and city name (no grammatical inflection).
     categorySeoLabel: (_id, fallback) => fallback,
     landingTitle: ({ category, city }) => {
@@ -325,10 +323,10 @@ export const en: Dict = {
     },
     landingDescription: ({ category, city }) => {
       if (category && city) {
-        return `Browse ${category.toLowerCase()} rentals in ${city}. Find trusted owners nearby, compare prices and finish the reservation in the Naudokis app.`;
+        return `Browse ${category.toLowerCase()} rentals in ${city}. Find trusted owners nearby, compare prices and reserve in the Naudokis app.`;
       }
       if (category) {
-        return `Find ${category.toLowerCase()} to rent across Lithuania. Filter listings by city and price, then finish the reservation in the Naudokis app.`;
+        return `Find ${category.toLowerCase()} to rent across Lithuania. Filter listings by city and price, then reserve in the Naudokis app.`;
       }
       return `Browse item rentals in ${city}: tools, vehicles, photo gear, electronics and leisure equipment from trusted owners nearby.`;
     },
@@ -356,12 +354,12 @@ export const en: Dict = {
     seoHeading: "Item rental in Lithuania",
     seoBody: "Naudokis.lt connects people who need items for a short time with trusted owners across Lithuania. Browse, search and filter listings by category, city or price right in your browser. Finish the reservation, messaging and protected payment in the Naudokis app.",
     empty: {
-      searchTitle: (q) => `Nothing found for “${q}”`,
+      searchTitle: (q) => `We couldn’t find anything for “${q}”`,
       searchBody: "We couldn’t find listings for this search. Try another keyword or city, or clear your search.",
       searchAction: "Clear search",
-      filterTitle: "Nothing matched your filters",
-      filterTitleCity: (city) => `Nothing matched your filters in ${city}`,
-      filterBody: "Your filters are too narrow. Try a wider city, another category or turn off delivery.",
+      filterTitle: "We couldn’t find anything for these filters",
+      filterTitleCity: (city) => `We couldn’t find anything for these filters in ${city}`,
+      filterBody: "Try a wider city, another category or turn off the delivery filter.",
       filterAction: "Clear filters",
       categoryTitle: "No listings in this category yet",
       categoryBody: "Be the first to list something for rent here, or explore other categories.",
@@ -369,26 +367,26 @@ export const en: Dict = {
       categoryActionSecondary: "All categories",
     },
     interruptTitle: "Reserve in the app in a few taps",
-    interruptBody: "Listings, owner chats, payments and deposits — all in one place.",
+    interruptBody: "Listings, owner messages, protected payments and deposits — all in one place.",
     interruptCta: "Download the app",
   },
   offline: {
     title: "You’re offline",
-    body: "Your device has no internet connection. Listings will load once you’re back online.",
+    body: "Listings will load once your connection is back.",
     retry: "Try again",
   },
   bridge: {
     defaultTitle: "Continue in the app",
-    defaultBody: "This action happens in the Naudokis app, where reservations, messages and protected payments are available.",
+    defaultBody: "Reservations, messages, payments, deposits and reviews are managed securely in the Naudokis app.",
     qrHint: "Scan the code with your phone and open the Naudokis app.",
     close: "Close",
     opensAppHint: "Opens in the app",
     googlePlayAlt: "Get it on Google Play",
     appStoreAlt: "Download on the App Store",
     reserveTitle: "Reserve in the app",
-    reserveBody: "Choosing dates, calculating the price and reserving all happen in the Naudokis app. Payment is held securely until the rental ends.",
+    reserveBody: "Choose dates, see the final price and complete your reservation securely in the app.",
     datesTitle: "Pick your dates in the app",
-    datesBody: "The available-date calendar and price calculation happen in the Naudokis app.",
+    datesBody: "Available dates and the final price are shown in the Naudokis app.",
     contactTitle: "Message in the app",
     contactBody: "Message the owner securely in the Naudokis app.",
     favoriteTitle: "Save it in the app",
@@ -410,7 +408,7 @@ export const en: Dict = {
     notFoundTitle: "Page not found",
     notFoundBody: "This page doesn’t exist or has moved. Head back home and keep searching.",
     notFoundAction: "Back to home",
-    errorTitle: "Something went wrong",
+    errorTitle: "We couldn’t load this page",
     errorBody: "An unexpected error occurred. Please try again, and if it keeps happening, come back a little later.",
     errorAction: "Try again",
   },

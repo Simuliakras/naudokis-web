@@ -57,7 +57,6 @@ export type Dict = {
   nav: {
     search: string;
     category: string;
-    contacts: string;
     howItWorks: string; // "Kaip tai veikia" link
     getApp: string; // primary "Get the app" button
     language: string; // language-picker trigger label ("Kalba" / "Language")
@@ -71,7 +70,6 @@ export type Dict = {
     title: string;
     body: string;
     phoneAlt: string;
-    trust: [string, string, string]; // three product-fact labels under the search bar
   };
   search: {
     placeholder: string;

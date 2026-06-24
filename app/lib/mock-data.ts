@@ -81,9 +81,9 @@ export type MockDetailExtra = {
 // populate the listing-detail spec grid, tags and owner panel for the design pass.
 export const MOCK_DETAIL_EXTRA: MockDetailExtra = {
   description_lt:
-    "Tvarkingas, prižiūrėtas ir nuomai paruoštas daiktas. Komplektacija patikrinta prieš kiekvieną perdavimą, todėl tinka tiek savaitgalio planams, tiek rimtesniems projektams. Atsiimti galima Vilniuje arba susitarus dėl pristatymo.",
+    "Tvarkingas, prižiūrėtas ir nuomai paruoštas daiktas. Komplektacija patikrinama prieš kiekvieną perdavimą, todėl tinka tiek savaitgalio planams, tiek rimtesniems projektams. Atsiimti galima Vilniuje arba susitarus dėl pristatymo.",
   description_en:
-    "Clean, well-maintained item prepared for rental. The full kit is checked before every handover, making it suitable for weekend plans as well as more serious projects. Pickup is available in Vilnius, with delivery by arrangement.",
+    "Clean, well-maintained item prepared for rental. The full kit is checked before every handover, so it works for weekend plans and more serious projects. Pickup is available in Vilnius, with delivery by arrangement.",
   attributes: [
     { id: "condition", name_lt: "Būklė", name_en: "Condition", value_lt: "Puiki", value_en: "Excellent" },
     { id: "deposit", name_lt: "Užstatas", name_en: "Deposit", value_lt: "100 €", value_en: "€100" },

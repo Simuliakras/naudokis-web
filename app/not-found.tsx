@@ -27,7 +27,7 @@ export default function NotFound() {
       <p style={{ margin: 0, fontSize: 15, fontWeight: 700, letterSpacing: "0.18em", color: "#6665E0" /* --nk-purple */ }}>404</p>
       <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>Puslapis nerastas</h1>
       <p style={{ margin: 0, maxWidth: 420, lineHeight: 1.5, color: "rgba(255,255,255,0.85)" /* --nk-text-2 */ }}>
-        Tokio puslapio nėra arba jis buvo perkeltas.
+        Šis puslapis neegzistuoja arba buvo perkeltas.
         <br />
         This page doesn’t exist or has moved.
       </p>

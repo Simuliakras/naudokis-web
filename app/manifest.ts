@@ -6,7 +6,7 @@ import type { MetadataRoute } from "next";
 // rewrites them. The proxy matcher also excludes manifest.webmanifest itself.
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Naudokis — patikima daiktų nuoma",
+    name: "Naudokis — daiktų nuoma iš žmonių šalia",
     short_name: "Naudokis",
     description:
       "Išsinuomokite įrankius, transportą, foto techniką, elektroniką ir laisvalaikio įrangą iš patikimų žmonių Lietuvoje.",

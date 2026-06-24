@@ -127,7 +127,6 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
           {(searchExpanded || !isHome) && <NavSearch key="navsearch" />}
           <Link className="nk-nav nk-link" href="/kaip-tai-veikia" aria-current={isHowItWorks ? "page" : undefined}>{dict.nav.howItWorks}</Link>
           <Link className="nk-nav nk-link" href="/kategorijos" aria-current={isCategories ? "page" : undefined}>{dict.nav.category}</Link>
-          <a className="nk-nav nk-link" href="#kontaktai">{dict.nav.contacts}</a>
           <LocaleSwitcher />
           <button className="nk-btn nk-btn--primary" style={{ padding: "10px 20px", fontSize: 15 }}
             onClick={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}>
@@ -150,9 +149,6 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
           <Link className="nk-drawer-item" href="/kategorijos" aria-current={isCategories ? "page" : undefined} onClick={() => setMenuOpen(false)}>
             <Icon name="LayoutGrid" size={20} stroke={2} color="var(--nk-text)" /> {dict.nav.category}
           </Link>
-          <a className="nk-drawer-item" href="#kontaktai" onClick={() => setMenuOpen(false)}>
-            <Icon name="MessageCircle" size={20} stroke={2} color="var(--nk-text)" /> {dict.nav.contacts}
-          </a>
           <div className="nk-drawer-locale"><LocaleSwitcher /></div>
           <button className="nk-btn nk-btn--primary" style={{ margin: "4px 12px 0", justifyContent: "center" }}
             onClick={() => { setMenuOpen(false); openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody }); }}>

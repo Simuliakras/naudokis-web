@@ -136,7 +136,10 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
           inject attributes onto <body> before React hydrates; this silences the
           resulting one-level attribute mismatch without hiding it for children. */}
       <body suppressHydrationWarning>
-        <Script id="nk-bridge-bootstrap" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: bridgeBootstrap }} />
+        {/* Raw server-rendered <script> (not next/script): emitted into the SSR HTML and
+            hydrated rather than client-created, so it runs synchronously at parse time —
+            before hydration — and avoids React 19's "script tag in component" warning. */}
+        <script id="nk-bridge-bootstrap" dangerouslySetInnerHTML={{ __html: bridgeBootstrap }} />
         <a href="#nk-main" className="nk-skip">{dict.common.skipToContent}</a>
         <Providers>
           <I18nProvider locale={lang}>{children}</I18nProvider>
