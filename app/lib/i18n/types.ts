@@ -173,13 +173,18 @@ export type Dict = {
   };
   detail: {
     metaFallbackTitle: string;
+    metaFallbackTitleForId: (readableId: string) => string;
     metaFallbackDescription: string;
     // SEO <title> / description for a single listing. `city` is the raw city name
     // (LT locative applied inside the dictionary); `category` is the listing's
     // primary category name. Both already include the " — Naudokis.lt" suffix.
     seoTitle: (parts: { title: string; city?: string }) => string;
     seoDescription: (parts: { title: string; city?: string; category?: string }) => string;
+    webModeEyebrow: string;
+    webModeTitle: string;
+    webModeBody: string;
     share: string; // aria-label on the gallery share/more button
+    shareCopied: string;
     verifiedOwnerPill: string;
     galleryMore: (count: number) => string;
     descHeading: string;
@@ -207,7 +212,7 @@ export type Dict = {
     reviewsHeading: string;
     reviewsEmptyTitle: string;
     reviewsEmptyBody: string;
-    reviewsShowAll: (count: number) => string;
+    reviewsInApp: (count: number) => string;
     perDay: string;
     depositReturnable: string;
     reserve: string;
@@ -229,36 +234,35 @@ export type Dict = {
     // booking panel
     dateFrom: string;
     dateTo: string;
-    sampleDateFrom: string;
-    sampleDateTo: string;
-    lineItem: (price: string, days: number) => string; // "20,00 € × 3 d."
+    dateInApp: string;
+    pricePerDayLine: string;
     serviceFee: string;
     serviceFeeHint: string; // tooltip explaining the free service fee
     serviceFeeFree: string; // "Nemokama"
+    inAppValue: string;
     totalToday: string;
-    freeCancellation: string;
+    cancellationInApp: string;
     // host card
     hostStatRating: string;
     hostStatReviews: string;
-    hostStatResponse: string;
-    hostStatMember: string;
-    hostResponseTime: string; // "~1 val."
-    hostMemberSince: string; // "2024"
+    hostStatRentals: string;
+    hostStatStatus: string;
     hostMessage: string; // "Rašyti žinutę"
     hostVerifiedNote: string;
     // delivery block
     deliverySub: (city: string) => string;
     deliveryZone: string; // "≈20 km zona"
     // terms fact cards
-    depositNoun: string; // "užstatas"
     termRentSub: string;
+    termDepositInApp: string;
     termDepositSub: string;
-    termDuration: string;
+    termDurationInApp: string;
     termDurationSub: string;
-    termCancel: string;
+    termCancelInApp: string;
     termCancelSub: string;
     depositSafeTitle: string;
     depositSafeBody: string;
+    mobileBookingNote: string;
   };
   common: {
     favorite: string; // aria-label on the heart button

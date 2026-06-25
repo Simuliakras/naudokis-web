@@ -14,12 +14,12 @@ export type { IconName };
 
 /* ---------------- Logo ---------------- */
 // A real link to the locale home (a logo is expected to navigate, not no-op).
-export function Logo({ height = 36 }: { height?: number }) {
+export function Logo({ height = 36, priority = false }: { height?: number; priority?: boolean }) {
   const { locale } = useI18nOptional();
   return (
     <Link className="nk-logo" href={localeHome(locale)}>
       <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={287} height={64}
-        style={{ height, width: "auto" }} />
+        priority={priority} style={{ height, width: "auto" }} />
     </Link>
   );
 }
@@ -100,10 +100,14 @@ export function SectionHead({
   return (
     <div className="nk-section__top nk-reveal">
       <div className="nk-head">
-        {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
+        {(eyebrow || action) && (
+          <div className="nk-head__top">
+            {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
+            {action}
+          </div>
+        )}
         <h2>{title}</h2>
       </div>
-      {action}
     </div>
   );
 }

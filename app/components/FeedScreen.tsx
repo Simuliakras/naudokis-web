@@ -18,6 +18,7 @@ import { rememberFeedUrl } from "@/app/lib/search";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { LT_CITIES } from "@/app/lib/cities";
 import { useI18n } from "./I18nProvider";
+import { localePath } from "@/app/lib/i18n/config";
 
 export function FeedScreen() {
   const { locale, dict } = useI18n();
@@ -129,9 +130,9 @@ export function FeedScreen() {
   const heading = isCat ? (catTitle ?? t.titleAll) : isSearch ? t.titleSearch : t.titleAll;
   const subtitle = isSearch ? t.subtitleSearch(params.q) : t.subtitleAll;
   const crumbs = isCat
-    ? [{ label: t.crumbCategories, href: "/kategorijos" }, { label: catTitle ?? params.cat }]
+    ? [{ label: t.crumbCategories, href: localePath(locale, "/kategorijos") }, { label: catTitle ?? params.cat }]
     : isSearch
-      ? [{ label: t.crumbCategories, href: "/kategorijos" }, { label: t.titleSearch }]
+      ? [{ label: t.crumbCategories, href: localePath(locale, "/kategorijos") }, { label: t.titleSearch }]
       : [{ label: t.crumbCategories }];
 
   const anyActive = !!params.q || isCat || !!params.city || params.delivery || params.sort !== "recommended";
@@ -176,7 +177,7 @@ export function FeedScreen() {
       <OfferCard title={o.title} city={o.city} price={o.price} unit={dict.common.perDay}
         rating={o.rating} count={o.ratingCount > 0 ? dict.common.reviewCount(o.ratingCount) : undefined}
         img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
-        href={`/skelbimai/${o.id}`} />
+        href={localePath(locale, `/skelbimai/${o.id}`)} />
     </div>
   );
 
@@ -193,7 +194,7 @@ export function FeedScreen() {
       // primary path; the app CTA stays available as the secondary action.
       return <EmptyState illustration="listings" title={empty.categoryTitle} subtitle={empty.categoryBody}
         actionLabel={empty.categoryActionSecondary} actionPrimary
-        onAction={() => router.push("/kategorijos")}
+        onAction={() => router.push(localePath(locale, "/kategorijos"))}
         secondaryLabel={empty.categoryActionPrimary}
         onSecondaryAction={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })} />;
     }

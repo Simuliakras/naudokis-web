@@ -1,10 +1,20 @@
-import { localePrefix, type Locale } from "@/app/lib/i18n/config";
+import { localePath, localePrefix, type Locale } from "@/app/lib/i18n/config";
 
 // Single source of truth for the listings-feed URL. The feed reads `q`
 // (free-text search), `city` (exact city name) and `cat` (category id) — see
 // app/[lang]/skelbimai. Only non-empty params are emitted and `q` is trimmed,
 // so callers can pass raw input without pre-cleaning it.
-export function listingSearchHref({ q, city, cat }: { q?: string; city?: string; cat?: string }): string {
+export function listingSearchHref({
+  q,
+  city,
+  cat,
+  locale,
+}: {
+  q?: string;
+  city?: string;
+  cat?: string;
+  locale?: Locale;
+}): string {
   const params = new URLSearchParams();
   const query = q?.trim();
   if (query) {
@@ -17,7 +27,8 @@ export function listingSearchHref({ q, city, cat }: { q?: string; city?: string;
     params.set("cat", cat);
   }
   const qs = params.toString();
-  return qs ? `/skelbimai?${qs}` : "/skelbimai";
+  const path = locale ? localePath(locale, "/skelbimai") : "/skelbimai";
+  return qs ? `${path}?${qs}` : path;
 }
 
 // The feed remembers its last URL (path + filters) per tab so other screens —

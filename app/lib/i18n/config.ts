@@ -26,3 +26,11 @@ export function localePrefix(locale: Locale): string {
 export function localeHome(locale: Locale): string {
   return localePrefix(locale) || "/";
 }
+
+export function localePath(locale: Locale, path: string): string {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  if (normalized === "/") {
+    return localeHome(locale);
+  }
+  return `${localePrefix(locale)}${normalized}`;
+}

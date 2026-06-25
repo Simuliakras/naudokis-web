@@ -21,10 +21,9 @@ const PAGES = [
   { slug: "skelbimas-detail", path: "/skelbimai/dodge-ram-2016" },
   { slug: "kategorijos", path: "/kategorijos" },
   { slug: "kaip-tai-veikia", path: "/kaip-tai-veikia" },
-  { slug: "teisine", path: "/teisine" },
-  { slug: "teisine-terms", path: "/teisine/terms-of-use" },
-  { slug: "naudojimo-taisykles", path: "/naudojimo-taisykles" },
+  { slug: "naudojimosi-salygos", path: "/naudojimosi-salygos" },
   { slug: "privatumo-politika", path: "/privatumo-politika" },
+  { slug: "paskyros-trynimas", path: "/paskyros-trynimas" },
 ];
 
 const LOCALES = [

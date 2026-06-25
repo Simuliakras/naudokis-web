@@ -15,8 +15,20 @@ export const APP_STORE_URL = "https://apps.apple.com/app/id6753683957";
 export const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.naudokis.naudokis";
 
 // Official brand profiles emitted as schema.org `sameAs` on the Organization node
-// so search engines can reconcile the entity. Only real, verified URLs belong
-// here — `organizationJsonLd` emits `sameAs` only when this is non-empty.
-export const SOCIAL_LINKS: string[] = [
-  "https://www.facebook.com/profile.php?id=61581076403677",
-];
+// and rendered in the footer. Only real brand URLs belong here.
+export const SOCIAL_PROFILES = [
+  {
+    id: "facebook",
+    label: "Facebook",
+    href: "https://www.facebook.com/profile.php?id=61581076403677",
+    icon: "Facebook",
+  },
+  {
+    id: "linkedin",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/naudokis/",
+    icon: "Linkedin",
+  },
+] as const;
+
+export const SOCIAL_LINKS: string[] = SOCIAL_PROFILES.map((profile) => profile.href);

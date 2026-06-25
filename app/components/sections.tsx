@@ -7,6 +7,7 @@ import { categoryIconFor } from "@/app/lib/category-style";
 import { LT_CITIES } from "@/app/lib/cities";
 import {
   barePath,
+  localePath,
   localePrefix,
   locales,
   type Locale,
@@ -46,7 +47,7 @@ import {
    without passing a function across the server→client boundary; the default
    scrolls to the homepage categories band. Client screens pass their own. */
 export function Nav({ onSearch }: { onSearch?: () => void }) {
-  const { dict } = useI18n();
+  const { locale, dict } = useI18n();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchExpanded, setSearchExpanded] = useState(false);
@@ -150,29 +151,29 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   return (
     <header className={"nk-nav-bar" + (scrolled ? " nk-scrolled" : "")}>
       <div className="nk-nav-inner nk-container">
-        <Logo />
+        <Logo priority />
         <nav className="nk-nav-links" aria-label={dict.nav.primary}>
           {(searchExpanded || !isHome) && <NavSearch key="navsearch" />}
           <Link
             className="nk-nav nk-link"
-            href="/kaip-tai-veikia"
-            aria-current={isHowItWorks ? "page" : undefined}
-          >
-            {dict.nav.howItWorks}
-          </Link>
-          <Link
-            className="nk-nav nk-link"
-            href="/kategorijos"
+            href={localePath(locale, "/kategorijos")}
             aria-current={isCategories ? "page" : undefined}
           >
             {dict.nav.category}
           </Link>
           <Link
             className="nk-nav nk-link"
-            href="/skelbimai"
+            href={localePath(locale, "/skelbimai")}
             aria-current={isListings ? "page" : undefined}
           >
             {dict.nav.listings}
+          </Link>
+          <Link
+            className="nk-nav nk-link"
+            href={localePath(locale, "/kaip-tai-veikia")}
+            aria-current={isHowItWorks ? "page" : undefined}
+          >
+            {dict.nav.howItWorks}
           </Link>
           <button
             className="nk-btn nk-btn--primary"
@@ -221,16 +222,7 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
           </button>
           <Link
             className="nk-drawer-item"
-            href="/kaip-tai-veikia"
-            aria-current={isHowItWorks ? "page" : undefined}
-            onClick={() => setMenuOpen(false)}
-          >
-            <Icon name="Sparkles" size={20} stroke={2} color="var(--nk-text)" />{" "}
-            {dict.nav.howItWorks}
-          </Link>
-          <Link
-            className="nk-drawer-item"
-            href="/kategorijos"
+            href={localePath(locale, "/kategorijos")}
             aria-current={isCategories ? "page" : undefined}
             onClick={() => setMenuOpen(false)}
           >
@@ -244,12 +236,21 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
           </Link>
           <Link
             className="nk-drawer-item"
-            href="/skelbimai"
+            href={localePath(locale, "/skelbimai")}
             aria-current={isListings ? "page" : undefined}
             onClick={() => setMenuOpen(false)}
           >
             <Icon name="Tag" size={20} stroke={2} color="var(--nk-text)" />{" "}
             {dict.nav.listings}
+          </Link>
+          <Link
+            className="nk-drawer-item"
+            href={localePath(locale, "/kaip-tai-veikia")}
+            aria-current={isHowItWorks ? "page" : undefined}
+            onClick={() => setMenuOpen(false)}
+          >
+            <Icon name="Sparkles" size={20} stroke={2} color="var(--nk-text)" />{" "}
+            {dict.nav.howItWorks}
           </Link>
           <div className="nk-drawer-locale">
             <LocaleSwitcher />
@@ -281,13 +282,13 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
 
 /* Inline nav search — compact search field in the nav; routes to the feed. */
 function NavSearch() {
-  const { dict } = useI18n();
+  const { locale, dict } = useI18n();
   const router = useRouter();
   const [q, setQ] = useState("");
   const [city, setCity] = useState("");
   const go = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(listingSearchHref({ q, city }));
+    router.push(listingSearchHref({ q, city, locale }));
   };
   return (
     <form className="nk-navsearch nk-fadein" onSubmit={go} role="search">
@@ -660,7 +661,7 @@ export function Categories() {
         eyebrow={t.eyebrow}
         title={t.title}
         action={
-          <Link className="nk-cats-all" href="/kategorijos">
+          <Link className="nk-cats-all" href={localePath(locale, "/kategorijos")}>
             {t.all}{" "}
             <Icon
               name="ArrowRight"
@@ -695,7 +696,7 @@ export function Categories() {
               id={c.id}
               icon={c.icon}
               title={c.title}
-              href={listingSearchHref({ cat: c.id })}
+              href={listingSearchHref({ cat: c.id, locale })}
             />
           ))}
         </div>
@@ -740,7 +741,7 @@ export function Offers() {
         eyebrow={t.eyebrow}
         title={t.title}
         action={
-          <Link className="nk-cats-all" href="/skelbimai">
+          <Link className="nk-cats-all" href={localePath(locale, "/skelbimai")}>
             {t.all}{" "}
             <Icon
               name="ArrowRight"
@@ -785,7 +786,7 @@ export function Offers() {
               }
               category={o.category}
               categoryIcon={categoryIconFor(cats, o.category)}
-              href={`/skelbimai/${o.id}`}
+              href={localePath(locale, `/skelbimai/${o.id}`)}
             />
           ))}
         </div>
@@ -796,7 +797,7 @@ export function Offers() {
           title={t.bandEmptyTitle}
           subtitle={t.bandEmptyBody}
           primaryLabel={t.bandEmptyAction}
-          onPrimary={() => router.push("/kategorijos")}
+          onPrimary={() => router.push(localePath(locale, "/kategorijos"))}
           secondaryLabel={t.bandEmptySecondary}
           onSecondary={() =>
             openRedirect({

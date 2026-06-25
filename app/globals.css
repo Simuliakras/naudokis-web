@@ -333,7 +333,8 @@ a,button,input,textarea,select{touch-action:manipulation}
   font-family:var(--nk-font-body);font-size:16px;line-height:1;color:var(--nk-light-meta);border-radius:2px}
 
 /* ---- Heading block (eyebrow defined in the type ramp above) ---- */
-.nk-head{display:flex;flex-direction:column;gap:10px}
+.nk-head{display:flex;flex-direction:column;gap:10px;width:100%}
+.nk-head__top{display:flex;align-items:center;justify-content:space-between;gap:var(--nk-gap-xl)}
 .nk-head h2{font-family:var(--nk-font-display);font-weight:700;font-size:clamp(30px,3.4vw,40px);line-height:1.1;color:var(--nk-text);margin:0}
 
 /* ---- Section scaffolding ---- */
@@ -351,6 +352,11 @@ a,button,input,textarea,select{touch-action:manipulation}
 /* ---- image placeholder ---- */
 .nk-imgph{position:relative;background:var(--nk-ps-card);overflow:hidden;display:flex;align-items:center;justify-content:center}
 .nk-imgph .nk-imgicon{opacity:.28;color:var(--nk-ps-icon)}
+.nk-imgph::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(72% 72% at 50% 44%, rgba(255,255,255,.075), transparent 64%)}
+.nk-imgph::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(145deg, rgba(255,255,255,.055), transparent 42% 62%, rgba(0,0,0,.18))}
+.nk-imgph .nk-imgicon{position:relative;z-index:1}
 .nk-dots{display:flex;align-items:center;gap:8px}
 /* button dots carry their own 18px hit padding, so drop the visual gap */
 .nk-dots:has(.nk-dot--btn){gap:0}
@@ -625,8 +631,15 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* branded empty-photo state — category-tinted radial + faint diagonal hatch */
 .nk-offer__media--empty{background:
   radial-gradient(90% 70% at 50% 110%, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 18%, transparent), transparent 70%),
+  radial-gradient(62% 54% at 50% 44%, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 20%, transparent), transparent 72%),
   repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 2px, transparent 2px 14px),
   var(--nk-media)}
+.nk-offer__media--empty .nk-imgicon{opacity:.46;filter:drop-shadow(0 10px 24px rgba(0,0,0,.25))}
+.nk-gtile:not(.nk-gtile--btn){background:
+  radial-gradient(80% 70% at 50% 52%, rgba(102,101,224,.18), transparent 70%),
+  repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 2px, transparent 2px 14px),
+  var(--nk-ps-card)}
+.nk-gtile:not(.nk-gtile--btn) .nk-imgicon{opacity:.42;filter:drop-shadow(0 10px 24px rgba(0,0,0,.25))}
 .nk-offer__media .nk-zoom{transition:transform .5s var(--nk-ease)}
 @media(hover:hover) and (pointer:fine){.nk-offer:hover .nk-zoom{transform:scale(1.06)}}
 /* photo legibility scrim — gentle top + bottom darkening so the heart and
@@ -723,6 +736,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-quote::before{content:"\201C";position:absolute;top:6px;right:26px;pointer-events:none;
   font-family:var(--nk-font-display);font-weight:700;font-size:120px;line-height:1;
   color:var(--nk-purple);opacity:.80}
+.nk-avatar-initial{width:var(--nk-size-icon-md);height:var(--nk-size-icon-md);border-radius:50%;flex:none;
+  display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 12px 28px rgba(0,0,0,.18);
+  font-family:var(--nk-font-display);font-weight:700;font-size:24px;color:var(--nk-text)}
 
 /* ---- search bar focus ---- */
 .nk-search{transition:box-shadow .2s ease,border-color .2s ease}
@@ -792,10 +809,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__contact a:hover{color:var(--nk-purple-hover)}
 .nk-footer__contact a:hover svg,.nk-footer__contact a:focus-visible svg{color:var(--nk-purple-hover)}
 .nk-footer__social{display:flex;gap:var(--nk-gap-sm)}
-/* span = placeholder profile (decorative); a = real link once accounts exist */
 .nk-footer__social a,.nk-footer__social span{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-  background:var(--nk-surface-2);border:1px solid var(--nk-border);transition:background .15s ease,border-color .15s ease,transform .15s ease}
+  color:var(--nk-text-2);background:var(--nk-surface-2);border:1px solid var(--nk-border);transition:background .15s ease,border-color .15s ease,transform .15s ease,color .15s ease}
 .nk-footer__social a:hover{background:var(--nk-surface-hover);border-color:var(--nk-border-soft)}
+.nk-footer__social a:hover,.nk-footer__social a:focus-visible{color:var(--nk-purple-hover)}
 @media(hover:hover) and (pointer:fine){.nk-footer__social a:hover{transform:translateY(-2px)}}
 .nk-footer__social a:active{transform:scale(.94)}
 .nk-footer__col{display:flex;flex-direction:column;gap:var(--nk-gap-lg)}
@@ -910,14 +927,16 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* filter controls collapse to full-width, comfortably tappable rows on phones —
    the desktop layout relies on a flex spacer that reads awkwardly once wrapped */
 @media(max-width:560px){
-  .nk-filter-row{flex-direction:column;align-items:stretch;gap:10px}
+  .nk-filterbar{padding-block:8px 10px;margin-bottom:22px}
+  .nk-filter-row{display:grid!important;grid-template-columns:1fr 1fr;align-items:stretch;gap:8px}
+  .nk-filter-row:first-child{grid-template-columns:minmax(0,1fr) minmax(126px,36%)}
   /* override the inline `flex:1 1 320px` (desktop row sizing) — in this column
      layout a 320px flex-basis becomes a 320px-tall field; !important beats inline */
-  .nk-filter-row > .nk-searchfield{flex:1 1 auto!important;min-width:0}
-  .nk-filter-row > *{width:100%}
-  .nk-filter-row .nk-pillctl{width:100%;justify-content:space-between}
+  .nk-filter-row > .nk-searchfield{flex:1 1 auto!important;min-width:0;width:100%;padding:10px 14px}
+  .nk-filter-row > *{width:100%;min-width:0}
+  .nk-filter-row .nk-pillctl{width:100%;justify-content:space-between;min-height:42px!important;padding:9px 12px!important;font-size:14.5px!important}
   .nk-filter-spacer{display:none}
-  .nk-filter-meta{justify-content:space-between;padding-top:2px}
+  .nk-filter-meta{grid-column:1 / -1;justify-content:space-between;padding-top:0}
 }
 /* removable active-filter chip */
 .nk-fchip{display:inline-flex;align-items:center;gap:8px;border-radius:var(--nk-r-chip);padding:9px 12px 9px 16px;
@@ -969,6 +988,18 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-hl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--nk-gap-md)}
 .nk-reserve{position:sticky;top:calc(var(--nk-nav-h-scrolled) + 28px);display:flex;flex-direction:column;gap:var(--nk-gap-md);align-self:start;min-width:0}
 .nk-sec{scroll-margin-top:calc(var(--nk-nav-h-scrolled) + 28px)}
+.nk-appmode{display:flex;gap:var(--nk-gap-md);align-items:flex-start;padding:var(--nk-card-pad-sm);border-radius:16px;
+  background:linear-gradient(180deg,rgba(102,101,224,.13),rgba(102,101,224,.05));border:1px solid var(--nk-accent-border)}
+.nk-appmode__icon{flex:none;width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+  background:var(--nk-purple-tag);box-shadow:var(--nk-edge-top)}
+.nk-appmode__copy{min-width:0;display:flex;flex-direction:column;gap:4px;font-family:var(--nk-font-body);font-size:14.5px;line-height:21px;color:var(--nk-text-2)}
+.nk-appmode__copy b{font-family:var(--nk-font-display);font-size:16px;line-height:20px;color:var(--nk-text)}
+.nk-appmode__eyebrow{font-family:var(--nk-font-display);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--nk-purple-hover)}
+.nk-appmode--compact{padding:13px 14px;border-radius:14px}
+.nk-appmode--compact .nk-appmode__icon{width:34px;height:34px;border-radius:11px}
+.nk-appmode--compact .nk-appmode__copy{font-size:12.5px;line-height:18px}
+.nk-appmode--compact .nk-appmode__copy b{font-size:14.5px;line-height:18px}
+.nk-appmode-mobile{display:none;margin-bottom:32px}
 /* interactive listing-detail control (header buttons, date pickers) */
 .nk-lfield{min-width:0;transition:background .15s ease,border-color .15s ease}
 .nk-lfield:hover{background:var(--nk-purple-soft);border-color:var(--nk-accent-border)}
@@ -1011,7 +1042,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(prefers-reduced-motion:reduce){.nk-fadecontent{animation:none}}
 .nk-mbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;
   background:rgba(27,30,31,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--nk-border);
-  align-items:center;justify-content:space-between;gap:16px;padding:14px 20px calc(14px + env(safe-area-inset-bottom))}
+  align-items:center;justify-content:space-between;gap:16px;padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+  transition:transform .22s var(--nk-ease),opacity .18s ease}
+.nk-mbar.is-hidden{opacity:0;transform:translateY(calc(100% + env(safe-area-inset-bottom)));pointer-events:none}
 .nk-mbar > *{min-width:0}
 .nk-mbar > span{overflow:hidden}
 .nk-mbar > span span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1019,6 +1052,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(max-width:980px){
   .nk-detail-grid{grid-template-columns:1fr;gap:40px}
   .nk-reserve{display:none}
+  .nk-appmode-mobile{display:block}
   .nk-mbar{display:flex}
   body:has(.nk-mbar) .nk-page{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
   .nk-bento{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:clamp(150px,22vw,190px)}
@@ -1034,8 +1068,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-bento{grid-template-columns:1fr 1fr;grid-auto-rows:116px;gap:8px}
   .nk-bento > :first-child{grid-column:1 / -1;height:230px}
   .nk-hl-grid{grid-template-columns:1fr}
-  .nk-mbar{gap:12px;padding:12px 14px calc(12px + env(safe-area-inset-bottom))}
-  .nk-mbar .nk-btn{flex:0 0 auto;padding-inline:18px!important;font-size:15px!important}
+  .nk-mbar{gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+  .nk-mbar .nk-btn{flex:0 0 auto;padding:12px 16px!important;font-size:14.5px!important}
 }
 /* rating breakdown — wide column gap reads as a void on small phones */
 .nk-ratebreak{row-gap:0;column-gap:44px}
@@ -1079,6 +1113,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-hero-panel > *{min-width:0}
 .nk-hero-media{min-height:clamp(360px,42vw,560px)}
 .nk-hero-intro{width:100%;min-width:0}
+@media (min-width:1121px){
+  :lang(lt) .nk-hero-panel .nk-h-hero{font-size:clamp(44px,5.8vw,78px);line-height:1.04}
+}
 /* fluid badge label — degrades smoothly instead of jumping at the sm cliff; wraps by default (no inline nowrap) */
 .nk-hero-badge__label{font-size:clamp(14.5px,2.4vw,18px);line-height:1.15}
 

@@ -173,8 +173,8 @@ export function Testimonial({
   return (
     <div className="nk-quote" style={{ flex: 1, borderRadius: "var(--nk-r-md)", padding: "var(--nk-block-pad)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", marginBottom: "var(--nk-stack-lg)" }}>
-        <span className="nk-imgph" style={{ width: "var(--nk-size-icon-md)", height: "var(--nk-size-icon-md)", borderRadius: "50%", background: avatarTint }}>
-          <Icon name="User" size={26} stroke={1.6} color="var(--nk-avatar-icon)" />
+        <span className="nk-avatar-initial" style={{ background: avatarTint }}>
+          {name.trim().charAt(0).toUpperCase()}
         </span>
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
           <span className="nk-h-row">{name}</span>

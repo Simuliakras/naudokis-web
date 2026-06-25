@@ -221,6 +221,11 @@
   .nk-lg-table thead th{ padding:12px 14px; font-size:12px; }
   .nk-lg-td{ padding:12px 14px; font-size:14px; }
   .nk-lg-tablescroll{ -webkit-overflow-scrolling:touch; }
+  .nk-lg-shell{ padding-bottom:calc(72px + env(safe-area-inset-bottom)); }
+  .nk-lg-fab-toc{ left:16px; bottom:calc(16px + env(safe-area-inset-bottom)); height:44px; padding:0 15px; border-radius:13px;
+    box-shadow:0 12px 30px rgba(0,0,0,.28), var(--nk-edge-top); }
+  .nk-lg-totop{ right:16px; bottom:calc(16px + env(safe-area-inset-bottom)); width:44px; height:44px; border-radius:13px;
+    box-shadow:0 12px 30px rgba(0,0,0,.28), var(--nk-edge-top); }
 }
 
 /* print */

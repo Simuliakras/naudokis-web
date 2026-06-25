@@ -2,8 +2,9 @@
 // description and Product JSON-LD need (the full view model lives in listings.ts).
 // Kept out of the page component so generateMetadata/Page stay thin.
 import type { Locale } from "@/app/lib/i18n/config";
-import { API_BASE } from "@/app/lib/api";
+import { API_BASE, USE_MOCK } from "@/app/lib/api";
 import { LISTING_REVALIDATE } from "@/app/lib/listings";
+import { MOCK_CATEGORIES, MOCK_DETAIL_EXTRA, MOCK_LISTINGS } from "@/app/lib/mock-data";
 
 export type ListingMeta = {
   title: string;
@@ -82,6 +83,21 @@ function conditionValue(l: RawListing, locale: Locale): string | undefined {
 }
 
 export async function fetchListingMeta(id: string, locale: Locale): Promise<ListingMeta | null> {
+  if (USE_MOCK) {
+    const l = MOCK_LISTINGS.find((x) => x.id === id) ?? MOCK_LISTINGS[0];
+    const cat = MOCK_CATEGORIES.find((c) => c.id === l.category);
+    const condition = MOCK_DETAIL_EXTRA.attributes.find((a) => a.id === "condition");
+    return {
+      title: locale === "en" ? l.title_en : l.title_lt,
+      description: locale === "en" ? MOCK_DETAIL_EXTRA.description_en : MOCK_DETAIL_EXTRA.description_lt,
+      city: l.city,
+      categoryNames: cat ? [locale === "en" ? cat.name_en : cat.name_lt] : [],
+      priceCents: l.price_per_day_cents,
+      ratingAverage: l.rating_average,
+      ratingCount: l.rating_count,
+      itemCondition: schemaConditionFromValue(locale === "en" ? condition?.value_en : condition?.value_lt),
+    };
+  }
   try {
     // Same URL + options as fetchListing's server call so Next memoizes them
     // into a single request (the detail page also prefetches that query).

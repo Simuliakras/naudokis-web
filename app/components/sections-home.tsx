@@ -12,9 +12,9 @@ import {
   AppBadges,
 } from "./ui";
 import { SearchBar } from "./HeroSearch";
-import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL } from "@/app/lib/contact";
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, SOCIAL_PROFILES } from "@/app/lib/contact";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import type { Locale } from "@/app/lib/i18n/config";
+import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { listingSearchHref } from "@/app/lib/search";
 
 /* ---------------- Hero ---------------- */
@@ -147,7 +147,6 @@ function AmbientGlow({ variant }: { variant: "cta" | "hero" }) {
 /* ---------------- Footer ----------------
    Multi-column marketplace sitemap: brand + Browse / Help columns, then a bottom
    bar with copyright, a "secure payments" badge and the payment marks. */
-const FOOTER_SOCIAL: IconName[] = ["Facebook", "Instagram", "Linkedin"];
 const FOOTER_PAY: [string, string][] = [
   ["pay-visa", "Visa"], ["pay-apple", "Apple Pay"], ["pay-google", "Google Pay"], ["pay-mastercard", "Mastercard"],
 ];
@@ -166,14 +165,11 @@ export function Footer({ locale }: { locale: Locale }) {
               <a href={CONTACT_PHONE_TEL}><Icon name="Phone" size={17} stroke={2} color="currentColor" /> {CONTACT_PHONE}</a>
               <a href={"mailto:" + CONTACT_EMAIL}><Icon name="Mail" size={17} stroke={2} color="currentColor" /> {CONTACT_EMAIL}</a>
             </div>
-            {/* Placeholder profiles — purely decorative until real URLs exist,
-                so the whole row is hidden from assistive tech. Swap the spans
-                for <a href> when the accounts go live. */}
-            <div className="nk-footer__social" aria-hidden="true">
-              {FOOTER_SOCIAL.map((n) => (
-                <span key={n}>
-                  <Icon name={n} size={20} color="var(--nk-text)" stroke={1.8} />
-                </span>
+            <div className="nk-footer__social" aria-label="Social media">
+              {SOCIAL_PROFILES.map((profile) => (
+                <a key={profile.id} href={profile.href} target="_blank" rel="noopener noreferrer" aria-label={profile.label}>
+                  <Icon name={profile.icon} size={20} color="currentColor" />
+                </a>
               ))}
             </div>
             <AppBadges footer={true} height={46} />
@@ -209,9 +205,9 @@ function FooterCategories({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).footer;
   return (
     <div className="nk-footer__catgrid">
-      <Link href="/kategorijos">{t.allCategories}</Link>
+      <Link href={localePath(locale, "/kategorijos")}>{t.allCategories}</Link>
       {t.categories.map((category) => (
-        <Link key={category.q} href={listingSearchHref({ q: category.q })}>
+        <Link key={category.q} href={listingSearchHref({ q: category.q, locale })}>
           {category.label}
         </Link>
       ))}
@@ -223,7 +219,7 @@ function FooterHelpLinks({ locale }: { locale: Locale }) {
   return (
     <>
       {getDictionary(locale).footer.help.map((link) => (
-        <Link key={link.href} href={link.href}>{link.label}</Link>
+        <Link key={link.href} href={localePath(locale, link.href)}>{link.label}</Link>
       ))}
     </>
   );

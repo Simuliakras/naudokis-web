@@ -12,6 +12,7 @@ import { Chrome } from "./Chrome";
 import { FaqRow } from "./cards";
 import { Icon, AppBadges, QR, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
+import { localePath } from "@/app/lib/i18n/config";
 import type { HtwScreen, HtwStep } from "@/app/lib/i18n/types";
 
 type Role = "renter" | "owner";
@@ -34,7 +35,7 @@ export function HowItWorksScreen() {
   return (
     <Chrome>
       <div className="nk-page htw-page">
-        <Nav onSearch={() => router.push("/kategorijos")} />
+        <Nav onSearch={() => router.push(localePath(locale, "/kategorijos"))} />
         <main id="nk-main">
 
           {/* HERO */}

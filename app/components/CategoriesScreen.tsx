@@ -25,7 +25,7 @@ export function CategoriesScreen() {
   const focusSearch = () => document.getElementById("nk-cats-search-input")?.focus();
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (q.trim()) router.push(listingSearchHref({ q }));
+    if (q.trim()) router.push(listingSearchHref({ q, locale }));
   };
   const term = q.trim().toLowerCase();
   const all = data ?? [];
@@ -68,7 +68,7 @@ export function CategoriesScreen() {
             <div className="nk-grid-cats">
               {list.map((c) => (
                 <div key={c.id} className="nk-reveal" style={{ display: "grid" }}>
-                  <CategoryCard id={c.id} icon={c.icon} title={c.title} href={listingSearchHref({ cat: c.id })} />
+                  <CategoryCard id={c.id} icon={c.icon} title={c.title} href={listingSearchHref({ cat: c.id, locale })} />
                 </div>
               ))}
             </div>

@@ -10,6 +10,7 @@ import { Icon, IconName, Pill, openRedirect } from "./ui";
 import { SectionEmpty } from "./cards";
 import type { ListingDetail, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
 import { listingSearchHref } from "@/app/lib/search";
+import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
 import { useI18n } from "./I18nProvider";
@@ -260,8 +261,8 @@ const headerBtn: React.CSSProperties = {
 const metaItem: React.CSSProperties = { display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", whiteSpace: "nowrap" };
 const Dot = () => <span style={{ width: 3, height: 3, borderRadius: 2, background: "var(--nk-text-muted)", flex: "none" }} />;
 
-export function ListingHeader({ listing, saved, onShare, onFav }: {
-  listing: ListingDetail; saved: boolean; onShare: () => void; onFav: () => void;
+export function ListingHeader({ listing, saved, shared, onShare, onFav }: {
+  listing: ListingDetail; saved: boolean; shared: boolean; onShare: () => void; onFav: () => void;
 }) {
   const { dict } = useI18n();
   const t = dict.detail;
@@ -292,9 +293,26 @@ export function ListingHeader({ listing, saved, onShare, onFav }: {
         </div>
       </div>
       <div style={{ display: "flex", gap: "var(--nk-gap-sm)", flex: "none" }}>
-        <button className="nk-lfield" style={headerBtn} onClick={onShare} title={dict.bridge.opensAppHint}><Icon name="ArrowUpDown" size={17} stroke={2} color="var(--nk-text)" style={{ transform: "rotate(45deg)" }} /> {t.share}</button>
+        <button className="nk-lfield" style={headerBtn} onClick={onShare}><Icon name="ArrowUpDown" size={17} stroke={2} color="var(--nk-text)" style={{ transform: "rotate(45deg)" }} /> {shared ? t.shareCopied : t.share}</button>
         <button className="nk-lfield" style={headerBtn} onClick={onFav} title={dict.bridge.opensAppHint}><Icon name="Heart" size={17} stroke={2} color={saved ? "var(--nk-orange)" : "var(--nk-text)"} fill={saved ? "var(--nk-orange)" : "none"} /> {t.save}</button>
       </div>
+    </div>
+  );
+}
+
+function WebAppModeNote({ compact = false }: { compact?: boolean }) {
+  const { dict } = useI18n();
+  const t = dict.detail;
+  return (
+    <div className={compact ? "nk-appmode nk-appmode--compact" : "nk-appmode"}>
+      <span className="nk-appmode__icon">
+        <Icon name="Smartphone" size={compact ? 17 : 20} stroke={2.1} color="var(--nk-purple-hover)" />
+      </span>
+      <span className="nk-appmode__copy">
+        {!compact && <span className="nk-appmode__eyebrow">{t.webModeEyebrow}</span>}
+        <b>{t.webModeTitle}</b>
+        <span>{t.webModeBody}</span>
+      </span>
     </div>
   );
 }
@@ -528,7 +546,7 @@ function HandoverSection({ city }: { city: string }) {
   );
 }
 
-function TermsSection({ price, deposit }: { price: string; deposit: string }) {
+function TermsSection({ price }: { price: string }) {
   const { dict } = useI18n();
   const t = dict.detail;
   return (
@@ -536,9 +554,9 @@ function TermsSection({ price, deposit }: { price: string; deposit: string }) {
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xl)" }}>
         <div className="nk-hl-grid">
           <FactCard icon="Tag" title={`${price} ${t.perDay}`} sub={t.termRentSub} />
-          <FactCard icon="ShieldCheck" title={`${deposit} ${t.depositNoun}`} sub={t.termDepositSub} />
-          <FactCard icon="Calendar" title={t.termDuration} sub={t.termDurationSub} />
-          <FactCard icon="RefreshCcw" title={t.termCancel} sub={t.termCancelSub} />
+          <FactCard icon="ShieldCheck" title={t.termDepositInApp} sub={t.termDepositSub} />
+          <FactCard icon="Calendar" title={t.termDurationInApp} sub={t.termDurationSub} />
+          <FactCard icon="RefreshCcw" title={t.termCancelInApp} sub={t.termCancelSub} />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", padding: "var(--nk-card-pad-sm)", borderRadius: 14, background: "var(--nk-green-tint)", border: "1px solid var(--nk-green-soft)" }}>
           <Icon name="ShieldCheck" size={20} color="var(--nk-green)" stroke={2} />
@@ -625,7 +643,7 @@ function ReviewsSection({ listing, onContact }: { listing: ListingDetail; onCont
       {listing.reviews.length > 0 ? (
         <ReviewsBreakdown rating={listing.rating} ratingValue={listing.ratingValue} ratingCount={listing.ratingCount}
           breakdown={listing.ratingBreakdown} reviews={listing.reviews}
-          reviewCountLabel={dict.common.reviewCount(listing.ratingCount)} showAllLabel={t.reviewsShowAll(listing.ratingCount)}
+          reviewCountLabel={dict.common.reviewCount(listing.ratingCount)} showAllLabel={t.reviewsInApp(listing.ratingCount)}
           onContact={onContact} />
       ) : (
         <SectionEmpty icon="MessageCircle" title={t.reviewsEmptyTitle} subtitle={t.reviewsEmptyBody} />
@@ -635,28 +653,27 @@ function ReviewsSection({ listing, onContact }: { listing: ListingDetail; onCont
 }
 
 // The full focus column: description → specs → handover → terms → reviews.
-export function DetailBody({ listing, deposit, onContact }: {
-  listing: ListingDetail; deposit: string; onContact: () => void;
+export function DetailBody({ listing, onContact }: {
+  listing: ListingDetail; onContact: () => void;
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
+      <div className="nk-appmode-mobile">
+        <WebAppModeNote />
+      </div>
       <DescriptionSection description={listing.description} />
       {listing.attributes.length > 0 && <SpecsSection attributes={listing.attributes} />}
       <HandoverSection city={listing.city} />
-      <TermsSection price={listing.price} deposit={deposit} />
+      <TermsSection price={listing.price} />
       <ReviewsSection listing={listing} onContact={onContact} />
     </div>
   );
 }
 
 /* ---------------- Sidebar: booking panel ----------------
-   Sticky reserve card (desktop): price, sample dates, cost breakdown, reserve CTA. */
-export function BookingPanel({ listing, deposit, days, subtotal, total, onReserve, onPickDates }: {
+   Sticky reserve card (desktop): price, app-confirmed booking facts, reserve CTA. */
+export function BookingPanel({ listing, onReserve, onPickDates }: {
   listing: ListingDetail;
-  deposit: string;
-  days: number;
-  subtotal: string;
-  total: string;
   onReserve: () => void;
   onPickDates: () => void;
 }) {
@@ -664,6 +681,7 @@ export function BookingPanel({ listing, deposit, days, subtotal, total, onReserv
   const t = dict.detail;
   return (
     <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
+      <WebAppModeNote compact />
       <div style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
         <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 33, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.price}</span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{t.perDay}</span>
@@ -674,22 +692,22 @@ export function BookingPanel({ listing, deposit, days, subtotal, total, onReserv
         )}
       </div>
       <div style={{ display: "flex", gap: "var(--nk-gap-sm)" }}>
-        <DateField label={t.dateFrom} value={t.sampleDateFrom} onPick={onPickDates} />
-        <DateField label={t.dateTo} value={t.sampleDateTo} onPick={onPickDates} />
+        <DateField label={t.dateFrom} value={t.dateInApp} onPick={onPickDates} />
+        <DateField label={t.dateTo} value={t.dateInApp} onPick={onPickDates} />
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-2)" }}>
-          <span>{t.lineItem(listing.price, days)}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{subtotal}</span>
+          <span>{t.pricePerDayLine}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.price}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-2)" }}>
           <span title={t.serviceFeeHint} style={{ textDecoration: "underline dotted", textUnderlineOffset: 3, cursor: "help" }}>{t.serviceFee}</span><span style={{ color: "var(--nk-green)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.serviceFeeFree}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
-          <span>{t.depositReturnable}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{deposit}</span>
+          <span>{t.depositReturnable}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{t.inAppValue}</span>
         </div>
         <span style={{ height: 1, background: "var(--nk-divider)", margin: "2px 0" }} />
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 17, color: "var(--nk-text)" }}>
-          <span style={{ whiteSpace: "nowrap" }}>{t.totalToday}</span><span style={{ whiteSpace: "nowrap" }}>{total}</span>
+          <span style={{ whiteSpace: "nowrap" }}>{t.totalToday}</span><span style={{ whiteSpace: "nowrap" }}>{t.inAppValue}</span>
         </div>
       </div>
       <span style={{ display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-body)", fontSize: 12.5, lineHeight: "18px", color: "var(--nk-text-muted)" }}>
@@ -702,7 +720,7 @@ export function BookingPanel({ listing, deposit, days, subtotal, total, onReserv
       </button>
       <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", padding: "9px 12px", borderRadius: 11, background: "var(--nk-green-tint)" }}>
         <Icon name="RefreshCcw" size={15} color="var(--nk-green)" stroke={2} />
-        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-green)", fontWeight: 500 }}>{t.freeCancellation}</span>
+        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-green)", fontWeight: 500 }}>{t.cancellationInApp}</span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", textAlign: "center" }}>
         <Icon name="ShieldCheck" size={15} color="var(--nk-text-muted)" stroke={2} />
@@ -725,8 +743,8 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
   const stats: [string, string][] = [
     [rating ?? "—", t.hostStatRating],
     [String(ratingCount), t.hostStatReviews],
-    [t.hostResponseTime, t.hostStatResponse],
-    [t.hostMemberSince, t.hostStatMember],
+    [t.ownerRentals(owner.completedRentals), t.hostStatRentals],
+    [owner.verified ? t.ownerVerified : t.ownerNewMember, t.hostStatStatus],
   ];
   return (
     <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad-sm)", border: "1px solid var(--nk-border)", boxShadow: "var(--nk-edge-top)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
@@ -753,22 +771,24 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
       <button className="nk-btn nk-btn--outline" onClick={onContact} title={dict.bridge.opensAppHint} style={{ width: "100%", padding: "13px 24px", fontSize: 15.5 }}>
         <Icon name="MessageCircle" size={17} color="var(--nk-text)" stroke={2} /> {t.hostMessage}
       </button>
-      <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", fontFamily: "var(--nk-font-body)", fontSize: 12, color: "var(--nk-text-muted)", textAlign: "center" }}>
-        <Icon name="Info" size={14} color="var(--nk-purple-hover)" stroke={2} /> {t.hostVerifiedNote}
-      </span>
+      {owner.verified && (
+        <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", fontFamily: "var(--nk-font-body)", fontSize: 12, color: "var(--nk-text-muted)", textAlign: "center" }}>
+          <Icon name="Info" size={14} color="var(--nk-purple-hover)" stroke={2} /> {t.hostVerifiedNote}
+        </span>
+      )}
     </div>
   );
 }
 
 /* ---------------- Mobile reserve bar ---------------- */
-export function MobileBar({ price, deposit, onReserve }: { price: string; deposit: string; onReserve: () => void }) {
+export function MobileBar({ price, hidden, onReserve }: { price: string; hidden?: boolean; onReserve: () => void }) {
   const { dict } = useI18n();
   const t = dict.detail;
   return (
-    <div className="nk-mbar">
+    <div className={"nk-mbar" + (hidden ? " is-hidden" : "")}>
       <span style={{ display: "flex", flexDirection: "column" }}>
         <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, color: "var(--nk-text)" }}>{price} <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 400, fontSize: 15, color: "var(--nk-text-2)" }}>{t.perDayShort}</span></span>
-        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>{deposit} {t.depositNoun}</span>
+        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>{t.mobileBookingNote}</span>
       </span>
       <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}
         data-nk-redirect data-nk-redirect-title={dict.bridge.reserveTitle} data-nk-redirect-body={dict.bridge.reserveBody}
@@ -781,12 +801,12 @@ export function MobileBar({ price, deposit, onReserve }: { price: string; deposi
 
 /* ---------------- Breadcrumb items helper ----------------
    Categories → (category search) → listing title. */
-export function detailCrumbs({ category, title, categoriesLabel }: {
-  category?: string; title: string; categoriesLabel: string;
+export function detailCrumbs({ category, title, categoriesLabel, locale }: {
+  category?: string; title: string; categoriesLabel: string; locale: Locale;
 }) {
   return [
-    { label: categoriesLabel, href: "/kategorijos" },
-    ...(category ? [{ label: category, href: listingSearchHref({ q: category }) }] : []),
+    { label: categoriesLabel, href: localePath(locale, "/kategorijos") },
+    ...(category ? [{ label: category, href: listingSearchHref({ q: category, locale }) }] : []),
     { label: title },
   ];
 }

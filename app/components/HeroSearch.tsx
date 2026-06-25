@@ -109,13 +109,13 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: s
 }
 
 export function SearchBar() {
-  const { dict } = useI18n();
+  const { locale, dict } = useI18n();
   const router = useRouter();
   const [q, setQ] = useState("");
   const [city, setCity] = useState("");
   const go = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(listingSearchHref({ q, city }));
+    router.push(listingSearchHref({ q, city, locale }));
   };
   return (
     <form
@@ -155,4 +155,3 @@ export function SearchBar() {
     </form>
   );
 }
-
