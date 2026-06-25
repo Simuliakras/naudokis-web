@@ -21,7 +21,10 @@ export type FooterLink = { label: string; href: string };
 // A footer category link: localized display `label` + a stable Lithuanian
 // search `q` (shared across locales, since listings are predominantly LT).
 export type FooterCategory = { label: string; q: string };
-export type TestimonialItem = { name: string; role: string; quote: string; avatarTint: string };
+// Homepage social-proof band: honest, non-attributed use-case cards (icon disk +
+// scenario title + supporting line). Deliberately NOT framed as named, star-rated
+// customer reviews — see the testimonials reframe note in the design audit.
+export type UseCaseItem = { icon: IconName; title: string; body: string; tone: HtwTone };
 
 // Legal Policy Center — UI chrome strings only. The document content itself
 // comes from app/lib/legal/data/*.json, not the dictionaries.
@@ -145,11 +148,11 @@ export type Dict = {
       completedPill: string;
     };
   };
-  testimonials: {
+  useCases: {
     eyebrow: string;
     title: string;
-    items: TestimonialItem[];
-    goToReview: (index: number) => string; // aria-label for carousel dot (0-based index)
+    items: [UseCaseItem, UseCaseItem, UseCaseItem];
+    goToSlide: (index: number) => string; // aria-label for carousel dot (0-based index)
   };
   cta: {
     title: string;

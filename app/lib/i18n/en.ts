@@ -142,18 +142,21 @@ export const en: Dict = {
       completedPill: "Completed",
     },
   },
-  testimonials: {
-    eyebrow: "Reviews",
+  // NOTE: reframed from placeholder customer "reviews" to honest, non-attributed
+  // use-case cards (no invented names / stars). Copy is illustrative — review with
+  // marketing before launch.
+  useCases: {
+    eyebrow: "Everyday uses",
     title: "Why people choose Naudokis",
     items: [
-      { name: "Eglė J.", role: "Renter, Vilnius", avatarTint: "#C1C1C1",
-        quote: "“I rented a Sony camera for the weekend. The booking was clear, the owner replied quickly and the quality matched the listing exactly.”" },
-      { name: "Marius V.", role: "Owner, Kaunas", avatarTint: "#A7B0AE",
-        quote: "“My tools used to sit on a shelf between projects. Now they earn money in between, with payments and deposits handled through the platform.”" },
-      { name: "Rūta P.", role: "Renter, Klaipėda", avatarTint: "#B8C0A7",
-        quote: "“I needed a pressure washer for one day. Found one nearby, arranged it quickly and didn’t have to buy something I’d use once a year.”" },
+      { icon: "Camera", tone: "purple", title: "Gear for a short project",
+        body: "Rent a camera or lens for the weekend instead of buying something you’ll rarely use." },
+      { icon: "Wrench", tone: "yellow", title: "Tools that earn",
+        body: "Items sitting on a shelf between projects can earn instead — payments and deposits handled in the app." },
+      { icon: "Coins", tone: "green", title: "Rent instead of buy",
+        body: "Only need it for a day? Find one nearby and skip buying something you’d use once a year." },
     ],
-    goToReview: (i) => `Show review ${i + 1}`,
+    goToSlide: (i) => `Show example ${i + 1}`,
   },
   cta: {
     title: "Reserve, message and pay in the app",

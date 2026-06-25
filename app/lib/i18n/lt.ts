@@ -161,18 +161,21 @@ export const lt: Dict = {
       completedPill: "Užbaigta",
     },
   },
-  testimonials: {
-    eyebrow: "Atsiliepimai",
+  // NOTE: reframed from placeholder customer "reviews" to honest, non-attributed
+  // use-case cards (no invented names / stars). Copy is illustrative — review with
+  // marketing before launch.
+  useCases: {
+    eyebrow: "Kasdienė nauda",
     title: "Kodėl žmonės renkasi Naudokis",
     items: [
-      { name: "Eglė J.", role: "Nuomininkė, Vilnius", avatarTint: "#C1C1C1",
-        quote: "“Savaitgaliui išsinuomojau Sony fotoaparatą. Rezervacija aiški, savininkas atsakė greitai, o kokybė buvo būtent tokia, kaip aprašyta.”" },
-      { name: "Marius V.", role: "Savininkas, Kaunas", avatarTint: "#A7B0AE",
-        quote: "“Įrankiai dažnai tiesiog stovi lentynoje. Dabar jie uždirba tarp mano projektų, o mokėjimai ir užstatas sutvarkomi platformoje.”" },
-      { name: "Rūta P.", role: "Nuomininkė, Klaipėda", avatarTint: "#B8C0A7",
-        quote: "“Aukšto slėgio plovyklės reikėjo tik vienai dienai. Radau netoliese, susitarėme greitai, ir nereikėjo pirkti daikto, kuris būtų naudojamas kartą per metus.”" },
+      { icon: "Camera", tone: "purple", title: "Technika trumpam",
+        body: "Išsinuomokite fotoaparatą ar objektyvą savaitgaliui, užuot pirkę tai, ko prireikia retai." },
+      { icon: "Wrench", tone: "yellow", title: "Įrankiai, kurie uždirba",
+        body: "Daiktai, gulintys lentynoje tarp projektų, gali uždirbti — mokėjimai ir užstatas tvarkomi programėlėje." },
+      { icon: "Coins", tone: "green", title: "Vietoj pirkimo — nuoma",
+        body: "Reikia tik vienai dienai? Raskite netoliese ir nepirkite to, ką naudotumėte kartą per metus." },
     ],
-    goToReview: (i) => `Rodyti ${i + 1}-ą atsiliepimą`,
+    goToSlide: (i) => `Rodyti ${i + 1} pavyzdį`,
   },
   cta: {
     title: "Rezervuokite, susirašykite ir mokėkite programėlėje",

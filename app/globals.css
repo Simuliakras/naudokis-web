@@ -211,9 +211,9 @@
    ========================================================================== */
 .nk-eyebrow {                       /* accent label above section titles     */
   font-family: var(--nk-font-body);
-  font-weight: 500; font-size: 18px; line-height: 20px;
+  font-weight: 600; font-size: 14px; line-height: 18px;
   color: var(--nk-yellow);
-  text-transform: uppercase; letter-spacing: .08em;
+  text-transform: uppercase; letter-spacing: .12em;
 }
 .nk-h-hero {                        /* hero headline (fluid)                 */
   font-family: var(--nk-font-display);
@@ -223,7 +223,7 @@
 .nk-h-cta {                         /* CTA banner headline (fluid)           */
   font-family: var(--nk-font-display);
   font-weight: 700; font-size: clamp(36px, 5.6vw, 80px); line-height: 1.1;
-  color: var(--nk-bg-deep); letter-spacing: 0; margin: 0;
+  color: var(--nk-text); letter-spacing: 0; margin: 0;
 }
 .nk-h-section {                     /* section heading (fluid)               */
   font-family: var(--nk-font-display);
@@ -233,7 +233,7 @@
   font-family: var(--nk-font-display);
   font-weight: 700; font-size: 28px; line-height: 32px; color: var(--nk-text);
 }
-.nk-h-row {                         /* FAQ / testimonial name / row title    */
+.nk-h-row {                         /* FAQ / use-case / row title            */
   font-family: var(--nk-font-display);
   font-weight: 700; font-size: 24px; line-height: 28px; color: var(--nk-text);
 }
@@ -330,7 +330,7 @@ a,button,input,textarea,select{touch-action:manipulation}
   backdrop-filter:blur(4px);box-shadow:var(--nk-edge-top);max-width:100%}
 .nk-chip > :not(.nk-ico){min-width:0;overflow:hidden;text-overflow:ellipsis}
 .nk-tag{display:inline-flex;align-items:center;background:var(--nk-tag);padding:6px 8px;
-  font-family:var(--nk-font-body);font-size:16px;line-height:1;color:var(--nk-light-meta);border-radius:2px}
+  font-family:var(--nk-font-body);font-size:16px;line-height:1;color:var(--nk-light-meta);border-radius:var(--nk-r-sm)}
 
 /* ---- Heading block (eyebrow defined in the type ramp above) ---- */
 .nk-head{display:flex;flex-direction:column;gap:10px;width:100%}
@@ -418,15 +418,8 @@ a,button,input,textarea,select{touch-action:manipulation}
   .nk-hero-intro > :nth-child(5){animation-delay:.32s}
   .nk-hero-media{animation:nk-hero-rise .7s var(--nk-ease) .18s both}
 }
-/* when the hero stacks (≤1024px) the CSS `order` reorders children, so remap the
-   rise delays to fire top-to-bottom in the new visual order (badge → h1 → body → search → badges) */
-@media (max-width:1024px) and (prefers-reduced-motion: no-preference){
-  .nk-hero-intro > :nth-child(1){animation-delay:.04s} /* badge   visual 1 */
-  .nk-hero-intro > :nth-child(3){animation-delay:.11s} /* h1      visual 2 */
-  .nk-hero-intro > :nth-child(4){animation-delay:.18s} /* body    visual 3 */
-  .nk-hero-intro > :nth-child(5){animation-delay:.25s} /* search  visual 4 */
-  .nk-hero-intro > :nth-child(2){animation-delay:.32s} /* badges  visual 5 */
-}
+/* DOM order is now badge → h1 → body → search → store badges at every width, so the
+   sequential nth-child delays above already cascade top-to-bottom — no stacked remap. */
 @keyframes nk-hero-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
 /* ---- film grain for large gradient surfaces (hero panel, CTA bands) ----
@@ -730,16 +723,14 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-feature:hover{background:var(--nk-surface-hover-glass)}
 @media(hover:hover) and (pointer:fine){.nk-feature:hover{transform:translateY(-4px)}}
 
-/* ---- testimonial (glass quote card) ---- */
+/* ---- glass card (use-case band) ---- */
 .nk-quote{position:relative;background:var(--nk-glass-strong);backdrop-filter:var(--nk-blur);
   border:1px solid var(--nk-glass-card-border);box-shadow:var(--nk-edge-top);overflow:hidden}
 .nk-quote::before{content:"\201C";position:absolute;top:6px;right:26px;pointer-events:none;
   font-family:var(--nk-font-display);font-weight:700;font-size:120px;line-height:1;
   color:var(--nk-purple);opacity:.80}
-.nk-avatar-initial{width:var(--nk-size-icon-md);height:var(--nk-size-icon-md);border-radius:50%;flex:none;
-  display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.14);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 12px 28px rgba(0,0,0,.18);
-  font-family:var(--nk-font-display);font-weight:700;font-size:24px;color:var(--nk-text)}
+/* use-case variant: honest social proof, not a quote — drop the quote-mark flourish */
+.nk-quote.nk-usecase::before{content:none}
 
 /* ---- search bar focus ---- */
 .nk-search{transition:box-shadow .2s ease,border-color .2s ease}
@@ -948,10 +939,13 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-fchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
 .nk-fchip svg{color:var(--nk-text-muted);transition:color .15s ease}
 .nk-fchip:hover svg{color:var(--nk-text)}
-.nk-grid-feed{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--nk-grid-row-gap) var(--nk-grid-gap)}
-/* hold 3-up through wide/landscape tablets; 2-up on portrait tablets, single on phones */
-@media(max-width:1024px){.nk-grid-feed{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:768px){.nk-grid-feed{grid-template-columns:1fr}}
+.nk-grid-feed{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--nk-grid-row-gap) var(--nk-grid-gap)}
+/* column ladder mirrors .nk-grid-cats exactly so the feed and category grids step
+   together: 5-up → 4-up → 3-up → 2-up → single at 1440/1280/900/560 */
+@media(max-width:1440px){.nk-grid-feed{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:1280px){.nk-grid-feed{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.nk-grid-feed{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.nk-grid-feed{grid-template-columns:1fr}}
 .nk-clear{transition:color .15s ease}
 .nk-clear:hover{color:var(--nk-text)}
 /* clear (×) button inside a padded search field — full 44px hit area; the
@@ -1089,14 +1083,14 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
      lg  1024px landscape tablet / small laptop  (hero + nav stack here)
      xl  1280px desktop
    ============================================================ */
-/* horizontal card rows (features / testimonials): 3-up → tablet 2-up wrap → phone stack */
+/* horizontal card rows (features / use-case cards): 3-up → tablet 2-up wrap → phone stack */
 .nk-row{display:flex;gap:var(--nk-gap-lg)}
 @media(max-width:900px){
   .nk-row{flex-wrap:wrap}
   .nk-row > *{flex:1 1 calc(50% - var(--nk-gap-lg))}
 }
 
-/* testimonials carousel: desktop 3-up like .nk-row; ≤1024px a scroll-snap slider with dots */
+/* use-case carousel: desktop 3-up like .nk-row; ≤1024px a scroll-snap slider with dots */
 .nk-carousel{display:flex;gap:var(--nk-gap-lg)}
 .nk-carousel > *{flex:1 1 0;min-width:0;display:flex}
 .nk-carousel-dots{display:none}
@@ -1129,12 +1123,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(max-width:1024px){
   .nk-hero-panel{grid-template-columns:1fr;padding:36px;min-height:0;gap:32px}
   .nk-hero-media{min-height:clamp(300px,42vw,400px)}
-  /* stacked hero leads with the value prop: badge → headline → body → search → store badges */
-  .nk-hero-intro > :nth-child(1){order:1}  /* badge        */
-  .nk-hero-intro > :nth-child(3){order:2}  /* headline     */
-  .nk-hero-intro > :nth-child(4){order:3}  /* body         */
-  .nk-hero-intro > :nth-child(5){order:4}  /* search+trust */
-  .nk-hero-intro > :nth-child(2){order:5}  /* AppBadges    */
+  /* stacked hero follows DOM order (badge → headline → body → search → store badges);
+     the JSX leads with the value prop, so no `order` remap is needed */
   .nk-detail{grid-template-columns:1fr!important;gap:32px!important}
   /* CTA banner: drop the absolute phone/QR, switch to a single readable column */
   .nk-cta{min-height:0!important}
@@ -1144,10 +1134,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 }
 @media(min-width:901px) and (max-width:1024px){
   .nk-hero-panel{grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:28px;padding:36px;min-height:clamp(500px,58vw,590px)}
-  .nk-hero-media{order:0;min-height:clamp(420px,50vw,520px)}
+  .nk-hero-media{min-height:clamp(420px,50vw,520px)}
   .nk-hero-phone{height:112%!important;transform:translateX(-50%)!important}
   .nk-hero-qr{right:12px!important}
-  .nk-hero-intro > *{order:0}
   .nk-hero-panel .nk-hero-intro{gap:clamp(20px,2.4vw,28px)}
   .nk-hero-panel .nk-h-hero{font-size:clamp(44px,6vw,64px)}
   .nk-hero-panel .nk-body{font-size:18px;line-height:29px}
@@ -1206,7 +1195,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-body{font-size:17px;line-height:27px}
   .nk-body-sm{font-size:15.5px;line-height:24px}
   .nk-meta{font-size:15.5px;line-height:24px}
-  .nk-eyebrow{font-size:15px}
+  .nk-eyebrow{font-size:13px}
   .nk-nav{font-size:16px}
 }
 @media(max-width:360px){

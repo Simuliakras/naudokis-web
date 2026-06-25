@@ -31,22 +31,25 @@ export function Hero({ locale }: { locale: Locale }) {
           <AmbientGlow variant="hero" />
           {/* left column */}
           <div className="nk-hero-intro" style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", gap: "var(--nk-stack-lg)", justifyContent: "center", maxWidth: "min(100%, 680px)" }}>
-            <span className="nk-hero-badge" style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: 27, padding: "6px 18px 6px 6px", boxShadow: "var(--nk-edge-top)" }}>
+            <span className="nk-hero-badge" style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: "var(--nk-r-pill)", padding: "6px 18px 6px 6px", boxShadow: "var(--nk-edge-top)" }}>
               <span style={{ width: 32, height: 32, borderRadius: 16, background: "var(--nk-bg)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
                 <Icon name="Users" size={18} color="var(--nk-text)" stroke={1.8} />
               </span>
               <b className="nk-hero-badge__label" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, color: "var(--nk-bg)" }}>{dict.hero.badge}</b>
             </span>
-            <AppBadges />
             <h1 className="nk-h-hero" style={{ margin: 0 }}>{dict.hero.title}</h1>
             <p className="nk-body" style={{ margin: 0, maxWidth: "min(100%, 540px)" }}>{dict.hero.body}</p>
             <SearchBar />
+            <AppBadges />
           </div>
           {/* right column — real app device + QR */}
           <div className="nk-hero-media" style={{ position: "relative", zIndex: 1 }}>
             {/* LCP image: next/image serves responsive AVIF/WebP and `priority`
                 preloads it (replaces the manual fetchPriority hint). */}
-            <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} priority sizes="(max-width: 1024px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
+            {/* `priority` preloads the desktop LCP; the ≤560px candidate is tiny on
+                purpose because the device mockup is `display:none` there (see globals),
+                so phones don't waste bandwidth preloading an image they never show. */}
+            <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} priority sizes="(max-width: 560px) 60px, (max-width: 1024px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
             <div className="nk-hero-qr" style={{ position: "absolute", right: "clamp(16px, 2vw, 32px)", bottom: 0 }}><QR size={132} /></div>
           </div>
         </div>
@@ -108,7 +111,7 @@ export function CtaBanner({ locale }: { locale: Locale }) {
         <Image className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "var(--nk-shadow-phone-cta)" }} />
         <div className="nk-cta__badges" style={{ position: "absolute", left: "var(--nk-panel-pad)", top: "var(--nk-panel-pad)" }}><AppBadges /></div>
         <div className="nk-cta__body" style={{ position: "absolute", left: "var(--nk-panel-pad)", bottom: "var(--nk-panel-pad)", maxWidth: 808, display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)" }}>
-          <h2 className="nk-h-cta" style={{ color: "var(--nk-text)" }}>{dict.cta.title}</h2>
+          <h2 className="nk-h-cta">{dict.cta.title}</h2>
           <p style={{ margin: 0, maxWidth: 640, fontFamily: "var(--nk-font-body)", fontSize: 20, lineHeight: "32px", color: "var(--nk-text-muted)" }}>{dict.cta.body}</p>
         </div>
         <div className="nk-cta__media" style={{ position: "absolute", right: 80, bottom: "var(--nk-panel-pad)" }}><QR size={168} /></div>

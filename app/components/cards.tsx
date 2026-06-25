@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { Icon, IconName, IllusName, Illustration, Dots, Pill, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
+import type { UseCaseItem } from "@/app/lib/i18n/types";
 
 /* ---------------- Offer / listing card ----------------
    Final design: price hierarchy + hairline divider, locked favorite (opens the
@@ -48,8 +49,8 @@ export function OfferCard({
         {/* carousel dots imply pageable photos — only show them over a real image,
             never over the empty-photo placeholder (reads as unfinished otherwise) */}
         {img && (
-          <div style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center", zIndex: 2, pointerEvents: "none" }}>
-            <span style={{ background: "rgba(40,44,45,.6)", borderRadius: 23, padding: "8px 14px", backdropFilter: "blur(4px)" }}>
+          <div aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center", zIndex: 2, pointerEvents: "none" }}>
+            <span style={{ background: "rgba(40,44,45,.6)", borderRadius: "var(--nk-r-pill)", padding: "8px 14px", backdropFilter: "blur(4px)" }}>
               <Dots n={4} active={0} />
             </span>
           </div>
@@ -161,30 +162,28 @@ export function FeatureCard({
   );
 }
 
-/* ---------------- Testimonial ---------------- */
-export function Testimonial({
-  name, role, quote, avatarTint,
-}: {
-  name: string;
-  role?: string;
-  quote: string;
-  avatarTint: string;
-}) {
+/* ---------------- Use-case card ----------------
+   Honest social proof: a tinted icon disk + scenario title + supporting line.
+   Deliberately NOT a named, star-rated "review" (those were placeholder copy —
+   see the design audit). Reuses the glass `.nk-quote` skin; `.nk-usecase`
+   suppresses its decorative quote-mark. */
+const USECASE_TONES: Record<UseCaseItem["tone"], { bg: string; fg: string }> = {
+  purple: { bg: "var(--nk-purple-tag)", fg: "var(--nk-purple-hover)" },
+  yellow: { bg: "var(--nk-yellow-tint)", fg: "var(--nk-yellow)" },
+  green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green)" },
+};
+
+export function UseCaseCard({ icon, title, body, tone }: UseCaseItem) {
+  const c = USECASE_TONES[tone];
   return (
-    <div className="nk-quote" style={{ flex: 1, borderRadius: "var(--nk-r-md)", padding: "var(--nk-block-pad)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", marginBottom: "var(--nk-stack-lg)" }}>
-        <span className="nk-avatar-initial" style={{ background: avatarTint }}>
-          {name.trim().charAt(0).toUpperCase()}
-        </span>
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
-          <span className="nk-h-row">{name}</span>
-          {role && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)" }}>{role}</span>}
-          <span style={{ display: "flex", gap: "var(--nk-gap-2xs)" }}>
-            {Array.from({ length: 5 }).map((_, i) => <Icon key={i} name="Star" size={16} color="var(--nk-yellow)" fill="var(--nk-yellow)" />)}
-          </span>
-        </div>
+    <div className="nk-quote nk-usecase" style={{ flex: 1, borderRadius: "var(--nk-r-md)", padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)" }}>
+      <span style={{ width: "var(--nk-size-icon-lg)", height: "var(--nk-size-icon-lg)", borderRadius: "50%", flex: "none", background: c.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Icon name={icon} size={32} color={c.fg} stroke={2} />
+      </span>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
+        <h3 className="nk-h-row" style={{ margin: 0 }}>{title}</h3>
+        <p className="nk-body" style={{ margin: 0 }}>{body}</p>
       </div>
-      <p className="nk-body" style={{ margin: 0 }}>{quote}</p>
     </div>
   );
 }

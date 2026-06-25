@@ -25,7 +25,7 @@ import {
   OfferCard,
   OfferCardSkeleton,
   SectionEmptyGrid,
-  Testimonial,
+  UseCaseCard,
 } from "./cards";
 import { useI18n } from "./I18nProvider";
 import {
@@ -811,13 +811,13 @@ export function Offers() {
   );
 }
 
-/* ---------------- Testimonials ----------------
-   Desktop shows all reviews 3-up; ≤1024px becomes a scroll-snap slider with
-   navigation dots. The active dot tracks the real scroll position via an
+/* ---------------- Use cases ----------------
+   Desktop shows all use-case cards 3-up; ≤1024px becomes a scroll-snap slider
+   with navigation dots. The active dot tracks the real scroll position via an
    IntersectionObserver (same idiom as ScrollReveal). */
-export function Testimonials() {
+export function UseCases() {
   const { dict } = useI18n();
-  const t = dict.testimonials;
+  const t = dict.useCases;
   const items = t.items;
   const [active, setActive] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -866,12 +866,12 @@ export function Testimonials() {
       <SectionHead eyebrow={t.eyebrow} title={t.title} />
       <div ref={trackRef} className="nk-reveal nk-carousel">
         {items.map((item, i) => (
-          <div key={item.name} data-idx={i}>
-            <Testimonial
-              name={item.name}
-              role={item.role}
-              quote={item.quote}
-              avatarTint={item.avatarTint}
+          <div key={item.title} data-idx={i}>
+            <UseCaseCard
+              icon={item.icon}
+              title={item.title}
+              body={item.body}
+              tone={item.tone}
             />
           </div>
         ))}
@@ -881,7 +881,7 @@ export function Testimonials() {
           n={items.length}
           active={active}
           onSelect={goTo}
-          label={t.goToReview}
+          label={t.goToSlide}
         />
       </div>
     </section>

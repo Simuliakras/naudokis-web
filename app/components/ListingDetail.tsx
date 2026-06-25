@@ -254,7 +254,7 @@ export function ListingSkeleton() {
 
 /* ---------------- Header ---------------- */
 const headerBtn: React.CSSProperties = {
-  display: "inline-flex", alignItems: "center", gap: 9, padding: "10px 16px", borderRadius: 13,
+  display: "inline-flex", alignItems: "center", gap: 9, padding: "10px 16px", minHeight: "var(--nk-tap)", borderRadius: 13,
   fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text)",
   background: "var(--nk-input-bg)", border: "1px solid var(--nk-border)", whiteSpace: "nowrap",
 };

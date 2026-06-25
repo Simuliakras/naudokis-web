@@ -5,7 +5,7 @@ import { fetchListings, listingsKey } from "@/app/lib/listings";
 import { fetchCategories, categoriesKey } from "@/app/lib/categories";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { Chrome } from "../components/Chrome";
-import { Nav, Categories, Offers, Faq, Testimonials } from "../components/sections";
+import { Nav, Categories, Offers, Faq, UseCases } from "../components/sections";
 import { Hero, Features, CtaBanner, Footer } from "../components/sections-home";
 import { JsonLd } from "../components/JsonLd";
 
@@ -43,7 +43,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
             <Categories />
             <Offers />
             <Features locale={locale} />
-            <Testimonials />
+            <UseCases />
             <CtaBanner locale={locale} />
             <Faq />
           </main>
