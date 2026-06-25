@@ -27,7 +27,7 @@ export function ListingScreen({ id }: { id: string }) {
   const { data: listing, isLoading, isError, refetch } = useListing(id, locale);
 
   const shell = (children: React.ReactNode) => (
-    <Chrome banner={false}>
+    <Chrome>
       <div className="nk-page">
         {/* Return to the feed with the user's last filters intact (deep links fall back to the bare feed). */}
         <Nav onSearch={() => router.push(lastFeedUrl(locale) ?? "/skelbimai")} />

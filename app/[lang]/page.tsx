@@ -5,8 +5,8 @@ import { fetchListings, listingsKey } from "@/app/lib/listings";
 import { fetchCategories, categoriesKey } from "@/app/lib/categories";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { Chrome } from "../components/Chrome";
-import { Nav, Categories, Offers, Faq } from "../components/sections";
-import { Hero, Features, Testimonials, CtaBanner, HomeSeo, Footer } from "../components/sections-home";
+import { Nav, Categories, Offers, Faq, Testimonials } from "../components/sections";
+import { Hero, Features, CtaBanner, Footer } from "../components/sections-home";
 import { JsonLd } from "../components/JsonLd";
 
 // Regenerate the static home pages so the prefetched featured listings /
@@ -43,10 +43,9 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
             <Categories />
             <Offers />
             <Features locale={locale} />
-            <Testimonials locale={locale} />
+            <Testimonials />
             <CtaBanner locale={locale} />
             <Faq />
-            <HomeSeo locale={locale} />
           </main>
           <Footer locale={locale} />
         </div>

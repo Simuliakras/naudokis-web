@@ -12,7 +12,7 @@ export const CONTACT_PHONE_TEL = "tel:" + CONTACT_PHONE.replace(/\s+/g, "");
 // linked to. Used by the SoftwareApplication JSON-LD (app-launch signal) and the
 // deep-link fallback page.
 export const APP_STORE_URL = "https://apps.apple.com/app/id6753683957";
-export const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.naudokislt.naudokis";
+export const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.naudokis.naudokis";
 
 // Official brand profiles emitted as schema.org `sameAs` on the Organization node
 // so search engines can reconcile the entity. Only real, verified URLs belong

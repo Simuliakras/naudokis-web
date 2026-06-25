@@ -75,7 +75,7 @@ export function OfferCard({
             <Icon name="MapPin" size={16} color="var(--nk-text)" fill="var(--nk-text)" stroke={2} /> {city ?? c.sampleCity}
           </span>
         </div>
-        <div className="nk-offer__pricebar" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto", paddingTop: "var(--nk-gap-md)", borderTop: "1px solid var(--nk-border)" }}>
+        <div className="nk-offer__pricebar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: "var(--nk-gap-md)", borderTop: "1px solid var(--nk-border)" }}>
           <span style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
             <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price ?? c.samplePrice}</span>
             <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
@@ -91,10 +91,9 @@ export function OfferCard({
 
 /* ---------------- Category card (all-categories grid + home section) ---------------- */
 export function CategoryCard({
-  title, count, href, id, icon,
+  title, href, id, icon,
 }: {
   title: string;
-  count?: string;
   href: string;
   id: string; // top-level category id — selects the accent hue
   icon: IconName; // glyph resolved from the wire's icon_name (Category.icon)
@@ -104,12 +103,9 @@ export function CategoryCard({
       <Link href={href} className="nk-stretch" aria-label={title} />
       <div className="nk-cat__img" />
       <div className="nk-cat__overlay" />
-      <span className="nk-cat__disk"><Icon name={icon} size={40} stroke={1.8} /></span>
+      <span className="nk-cat__disk"><Icon name={icon} size={52} stroke={1.7} /></span>
       <div className="nk-cat__content">
-        <span style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "var(--nk-gap-sm)" }}>
-          <h3 className="nk-h-row" style={{ margin: 0, fontSize: 22, lineHeight: "26px" }}>{title}</h3>
-          {count && <span className="nk-cat__count">{count}</span>}
-        </span>
+        <h3 className="nk-h-row" style={{ margin: 0, fontSize: 22, lineHeight: "26px" }}>{title}</h3>
         <span className="nk-cat__arrow nk-round nk-round--outline" style={{ flex: "none" }} aria-hidden="true">
           <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
         </span>
@@ -125,14 +121,15 @@ export function InterruptionBanner() {
   return (
     <div className="nk-interrupt nk-grain" style={{ gridColumn: "1 / -1" }}>
       <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/naudokis/icon.png" alt="" loading="lazy" style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
+      <Image src="/naudokis/icon.png" alt="" width={409} height={409}
+        style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
       <div style={{ position: "relative", flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
         <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{t.interruptTitle}</h3>
         <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "26px", color: "var(--nk-text-2)", maxWidth: 520 }}>{t.interruptBody}</p>
       </div>
       <button className="nk-btn nk-btn--primary" style={{ position: "relative", padding: "16px 28px" }}
         onClick={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}>
+        <Icon name="Download" size={17} stroke={2.2} color="var(--nk-text)" />{" "}
         {t.interruptCta}
       </button>
     </div>
@@ -251,9 +248,8 @@ export function CategoryCardSkeleton({ ghost = false }: { ghost?: boolean } = {}
   const cls = ghost ? "nk-ghost" : "nk-skel";
   return (
     <div aria-hidden="true" className={cls} style={{ height: 248, borderRadius: "var(--nk-r-card)", position: "relative" }}>
-      <div className={cls} style={{ position: "absolute", top: 22, left: 22, width: 64, height: 64, borderRadius: "50%", background: "rgba(27,27,27,.3)" }} />
-      <div className={cls} style={{ position: "absolute", left: 22, bottom: 48, width: "55%", height: 22, background: "rgba(27,27,27,.3)" }} />
-      <div className={cls} style={{ position: "absolute", left: 22, bottom: 22, width: 92, height: 18, borderRadius: 12, background: "rgba(27,27,27,.3)" }} />
+      <div className={cls} style={{ position: "absolute", inset: "0 0 44px", margin: "auto", width: 88, height: 88, borderRadius: "50%", background: "rgba(27,27,27,.3)" }} />
+      <div className={cls} style={{ position: "absolute", left: 22, bottom: 22, width: "55%", height: 22, background: "rgba(27,27,27,.3)" }} />
       <div className={cls} style={{ position: "absolute", right: 22, bottom: 22, width: 44, height: 44, borderRadius: 22, background: "rgba(27,27,27,.3)" }} />
     </div>
   );

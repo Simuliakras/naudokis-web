@@ -513,7 +513,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
     background:transparent;transition:background .15s ease}
   .nk-drawer-item:hover,.nk-drawer-item:focus-visible{background:var(--nk-surface)}
   .nk-drawer-item:active{background:var(--nk-surface-2)}
-  .nk-drawer-item[aria-current="page"]{color:var(--nk-purple)}
+  .nk-drawer-item[aria-current="page"]{color:var(--nk-purple-hover)}
   .nk-drawer-locale{padding:12px 12px 4px}
 }
 
@@ -523,7 +523,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-link::after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:2px;background:var(--nk-purple);transition:right .25s ease}
 .nk-link:hover::after,.nk-link:focus-visible::after{right:0}
-.nk-link[aria-current="page"]{color:var(--nk-purple)}
+.nk-link[aria-current="page"]{color:var(--nk-purple-hover)}
 .nk-link[aria-current="page"]::after{display:none}
 footer .nk-link:hover{color:var(--nk-purple-hover)}
 
@@ -666,7 +666,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 
 /* ---- category card (editorial: icon top-left, title + count chip bottom) ---- */
 .nk-cat{position:relative;width:100%;height:248px;border-radius:var(--nk-r-card);overflow:hidden;text-align:left;cursor:pointer;
-  display:flex;flex-direction:column;justify-content:space-between;padding:22px;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:22px;
   border:1px solid var(--nk-divider);box-shadow:var(--nk-edge-top);
   transition:transform .28s var(--nk-ease),box-shadow .28s ease,border-color .28s ease}
 .nk-cat:hover{border-color:var(--nk-accent-border)}
@@ -679,7 +679,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-section__top{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-md)}
   .nk-cats-all{font-size:17px}
   .nk-cat{height:184px;padding:18px}
-  .nk-cat__disk{width:54px;height:54px}
+  .nk-cat__disk{width:72px;height:72px}
   .nk-cat__content{align-items:flex-start}
   .nk-cat__arrow{width:40px;height:40px}
 }
@@ -693,22 +693,17 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* legibility scrim — lighter at the top (keeps the icon disk vivid), darker at the title */
 .nk-cat__overlay{position:absolute;inset:0;z-index:0;
   background:linear-gradient(180deg,rgba(27,27,27,.10),rgba(27,27,27,0) 42%,rgba(27,27,27,.72))}
-/* category icon disk (top-left) */
-.nk-cat__disk{position:relative;z-index:1;align-self:flex-start;
-  width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+/* category icon disk (centered in the tile) */
+.nk-cat__disk{position:absolute;z-index:1;inset:0 0 44px;margin:auto;
+  width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   background:color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 32%, transparent);
   border:1px solid color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 48%, transparent);
   color:color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 72%, white);
   box-shadow:var(--nk-edge-top);
   transition:transform .28s var(--nk-ease),box-shadow .28s ease}
 @media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__disk{transform:translateY(-2px);box-shadow:var(--nk-edge-top),0 8px 20px rgba(0,0,0,.28)}}
-.nk-cat__content{position:relative;z-index:1;
-  display:flex;justify-content:space-between;align-items:flex-end;gap:var(--nk-gap-sm)}
-/* listing-count pill chip */
-.nk-cat__count{display:inline-flex;align-items:center;width:fit-content;
-  padding:3px 11px;border-radius:var(--nk-r-pill);
-  background:var(--nk-glass-strong);border:1px solid var(--nk-hairline);backdrop-filter:var(--nk-blur);
-  font-family:var(--nk-font-body);font-size:13px;line-height:18px;color:var(--nk-text-2)}
+.nk-cat__content{position:relative;z-index:1;margin-inline:-8px;
+  display:flex;justify-content:space-between;align-items:center;gap:var(--nk-gap-sm)}
 .nk-cat__arrow{transition:background .2s ease,border-color .2s ease,transform .2s ease}
 .nk-cat:hover .nk-cat__arrow{background:var(--nk-purple);border-color:var(--nk-purple)}
 @media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__arrow{transform:translateX(3px)}}
@@ -727,7 +722,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   border:1px solid var(--nk-glass-card-border);box-shadow:var(--nk-edge-top);overflow:hidden}
 .nk-quote::before{content:"\201C";position:absolute;top:6px;right:26px;pointer-events:none;
   font-family:var(--nk-font-display);font-weight:700;font-size:120px;line-height:1;
-  color:var(--nk-purple);opacity:.16}
+  color:var(--nk-purple);opacity:.80}
 
 /* ---- search bar focus ---- */
 .nk-search{transition:box-shadow .2s ease,border-color .2s ease}
@@ -811,7 +806,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__col a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--nk-purple);transition:right .25s ease}
 .nk-footer__col a:hover::after,.nk-footer__col a:focus-visible::after{right:0}
 .nk-footer__col a:hover{color:var(--nk-purple-hover)}
-.nk-footer__col a[aria-current="page"]{color:var(--nk-purple)}
+.nk-footer__col a[aria-current="page"]{color:var(--nk-purple-hover)}
 .nk-footer__col a[aria-current="page"]::after{display:none}
 .nk-footer__bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
   padding-block:26px;border-top:1px solid var(--nk-border-soft)}
@@ -881,34 +876,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-redirect-scrim .nk-redirect-panel--instant{animation:none}
 
 /* ============================================================
-   Sticky mobile app banner (mobile only)
-   ============================================================ */
-.nk-appbanner{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;display:none;align-items:center;gap:12px;
-  background:var(--nk-surface);border:1px solid var(--nk-border);border-radius:20px;padding:12px 14px;
-  box-shadow:var(--nk-edge-top),var(--nk-shadow-3)}
-.nk-appbanner__x{width:44px;height:44px;border-radius:22px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--nk-bg);
-  transition:background .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
-.nk-appbanner__x:hover{background:var(--nk-surface-2)}
-.nk-appbanner__x:active{transform:scale(.94)}
-/* 1120px matches the nav-drawer breakpoint — desktop nav and the mobile app
-   banner never show together */
-@media(max-width:1120px){
-  .nk-appbanner{display:flex}
-  /* reserve room for the fixed banner so it can't cover footer links */
-  body.nk-has-appbanner .nk-page{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
-}
-@media(max-width:980px){
-  body:has(.nk-mbar) .nk-appbanner{display:none}
-  body:has(.nk-mbar) .nk-page{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
-}
-@media(max-width:360px){
-  .nk-appbanner{left:10px;right:10px;gap:8px;padding:10px 10px}
-  .nk-appbanner > img{display:none!important}
-  .nk-appbanner__x{width:40px;height:40px}
-  .nk-appbanner .nk-btn{padding:12px 14px;font-size:14px;min-height:40px}
-}
-
-/* ============================================================
    Breadcrumb
    ============================================================ */
 .nk-crumb{transition:color .15s ease,background .15s ease}
@@ -927,10 +894,11 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-searchfield input{min-height:24px}
 
 /* category tile grid (all-categories page) */
-.nk-grid-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--nk-grid-gap)}
-/* wide tablets keep a dense 3-up; portrait tablets drop to 2-up (not a sparse 2-col across 1100px) */
+.nk-grid-cats{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--nk-grid-gap)}
+/* step the ladder down: 5 → 4 → wide-tablet 3 → portrait-tablet 2 → phone 1 */
+@media(max-width:1440px){.nk-grid-cats{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:1280px){.nk-grid-cats{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:1024px){.nk-grid-cats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.nk-grid-cats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.nk-grid-cats{grid-template-columns:1fr}}
 
 /* ============================================================
@@ -1052,6 +1020,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-detail-grid{grid-template-columns:1fr;gap:40px}
   .nk-reserve{display:none}
   .nk-mbar{display:flex}
+  body:has(.nk-mbar) .nk-page{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
   .nk-bento{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:clamp(150px,22vw,190px)}
   .nk-bento > :first-child{grid-column:1 / -1;grid-row:auto;height:clamp(260px,34vw,320px)}
   .nk-tworow{grid-template-columns:1fr}
@@ -1088,10 +1057,22 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    ============================================================ */
 /* horizontal card rows (features / testimonials): 3-up → tablet 2-up wrap → phone stack */
 .nk-row{display:flex;gap:var(--nk-gap-lg)}
-@media(max-width:1024px){
+@media(max-width:900px){
   .nk-row{flex-wrap:wrap}
   .nk-row > *{flex:1 1 calc(50% - var(--nk-gap-lg))}
 }
+
+/* testimonials carousel: desktop 3-up like .nk-row; ≤1024px a scroll-snap slider with dots */
+.nk-carousel{display:flex;gap:var(--nk-gap-lg)}
+.nk-carousel > *{flex:1 1 0;min-width:0;display:flex}
+.nk-carousel-dots{display:none}
+@media(max-width:900px){
+  .nk-carousel{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .nk-carousel::-webkit-scrollbar{display:none}
+  .nk-carousel > *{flex:0 0 86%;scroll-snap-align:center}
+  .nk-carousel-dots{display:flex;justify-content:center;margin-top:var(--nk-stack-lg)}
+}
+@media(prefers-reduced-motion:reduce){.nk-carousel{scroll-behavior:auto}}
 
 /* hero panel layout (visual skin stays inline in <Hero>) — fluid min-height avoids a forced-tall 2-col on landscape tablets */
 .nk-hero-panel{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,4vw,40px);padding:var(--nk-panel-pad);min-height:clamp(560px,64vw,700px)}
@@ -1105,12 +1086,12 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    portrait-tablet 2 → phone 1 (was a sparse 4→2 jump at 1100) */
 .nk-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--nk-grid-gap)}
 @media(max-width:1280px){.nk-grid-4{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:1024px){.nk-grid-4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.nk-grid-4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:768px){.nk-grid-4{grid-template-columns:1fr}}
 
 @media(max-width:1024px){
   .nk-hero-panel{grid-template-columns:1fr;padding:36px;min-height:0;gap:32px}
-  .nk-hero-media{min-height:clamp(320px,46vw,440px);order:-1}
+  .nk-hero-media{min-height:clamp(300px,42vw,400px)}
   /* stacked hero leads with the value prop: badge → headline → body → search → store badges */
   .nk-hero-intro > :nth-child(1){order:1}  /* badge        */
   .nk-hero-intro > :nth-child(3){order:2}  /* headline     */
@@ -1123,6 +1104,31 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-cta__media{display:none!important}
   .nk-cta__body{position:static!important;max-width:none!important;padding:48px 32px!important}
   .nk-cta__badges{position:static!important;padding:32px 32px 0!important}
+}
+@media(min-width:901px) and (max-width:1024px){
+  .nk-hero-panel{grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:28px;padding:36px;min-height:clamp(500px,58vw,590px)}
+  .nk-hero-media{order:0;min-height:clamp(420px,50vw,520px)}
+  .nk-hero-phone{height:112%!important;transform:translateX(-50%)!important}
+  .nk-hero-qr{right:12px!important}
+  .nk-hero-intro > *{order:0}
+  .nk-hero-panel .nk-hero-intro{gap:clamp(20px,2.4vw,28px)}
+  .nk-hero-panel .nk-h-hero{font-size:clamp(44px,6vw,64px)}
+  .nk-hero-panel .nk-body{font-size:18px;line-height:29px}
+  .nk-hero-panel .nk-search{max-width:100%!important;padding-left:18px!important}
+  .nk-hero-panel .nk-search .nk-citypick,
+  .nk-hero-panel .nk-search > span:nth-child(2){display:none!important}
+  .nk-hero-panel .nk-search .nk-btn{padding-inline:24px!important}
+  .nk-cta{min-height:560px!important}
+  .nk-cta__media{display:block!important}
+  img.nk-cta__media{right:-28px!important;top:48px!important;height:520px!important;max-width:50%!important;object-fit:contain!important;object-position:center bottom!important;z-index:1}
+  div.nk-cta__media{right:40px!important;bottom:36px!important;z-index:3}
+  .nk-cta__body{position:absolute!important;left:var(--nk-panel-pad)!important;bottom:var(--nk-panel-pad)!important;max-width:min(46%,440px)!important;padding:0!important}
+  .nk-cta__badges{position:absolute!important;left:var(--nk-panel-pad)!important;top:var(--nk-panel-pad)!important;padding:0!important}
+}
+@media(min-width:561px) and (max-width:900px){
+  .nk-hero-panel .nk-h-hero{font-size:clamp(44px,6vw,56px)}
+  .nk-hero-panel .nk-search .nk-citypick,
+  .nk-hero-panel .nk-search > span:nth-child(2){display:none!important}
 }
 @media(max-width:768px){
   .nk-row{flex-direction:column}

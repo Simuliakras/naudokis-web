@@ -2,6 +2,7 @@
 // Locked-mode "Bridge" — app-redirect modal (desktop dialog / mobile bottom-sheet).
 // Mounted once via <Chrome/>; opened from anywhere via openRedirect({title, body}).
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Icon, AppBadges, QR, NK_REDIRECT_EVENT, type RedirectPayload } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
@@ -114,8 +115,8 @@ export function AppRedirect() {
         <button ref={closeRef} onClick={close} aria-label={dict.bridge.close} className="nk-redirect-close">
           <Icon name="X" size={20} color="var(--nk-text)" />
         </button>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" style={{ height: 32, width: "auto", alignSelf: "flex-start" }} />
+        <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={287} height={64}
+          style={{ height: 32, width: "auto", alignSelf: "flex-start" }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <h2 id="nk-redirect-title" style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{state.title}</h2>
           <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "26px", color: "var(--nk-text-2)" }}>{state.body}</p>

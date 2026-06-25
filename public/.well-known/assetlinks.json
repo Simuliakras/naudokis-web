@@ -3,7 +3,7 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.naudokislt.naudokis",
+      "package_name": "com.naudokis.naudokis",
       "sha256_cert_fingerprints": [
         "PASTE_PLAY_APP_SIGNING_KEY_SHA256",
         "PASTE_UPLOAD_KEY_SHA256"

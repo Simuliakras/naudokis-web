@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import "../globals.css";
 import { Providers } from "../providers";
 import { I18nProvider } from "../components/I18nProvider";
+import { ScrollToTop } from "../components/ScrollToTop";
 import { locales, isLocale, localeHome } from "@/app/lib/i18n/config";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { SITE_URL } from "@/app/lib/seo";
@@ -142,7 +143,10 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
         <script id="nk-bridge-bootstrap" dangerouslySetInnerHTML={{ __html: bridgeBootstrap }} />
         <a href="#nk-main" className="nk-skip">{dict.common.skipToContent}</a>
         <Providers>
-          <I18nProvider locale={lang}>{children}</I18nProvider>
+          <I18nProvider locale={lang}>
+            <ScrollToTop />
+            {children}
+          </I18nProvider>
         </Providers>
         {plausibleDomain && (
           <Script defer data-domain={plausibleDomain} src={plausibleSrc} strategy="afterInteractive" />

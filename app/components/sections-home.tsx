@@ -4,14 +4,18 @@
 // Footer). Translations come from a `locale` prop + getDictionary — the Dict
 // holds function members, so it must never cross the server→client boundary.
 import Image from "next/image";
+import Link from "next/link";
 import {
-  Icon, type IconName, Logo, AppBadges, SectionHead, QR, Pattern,
+  Icon, type IconName, LogoMark, QR, Pattern,
+} from "./visual";
+import {
+  AppBadges,
 } from "./ui";
-import { FeatureCard, Testimonial } from "./cards";
-import { SearchBar, FooterCategories, FooterHelpLinks } from "./sections";
+import { SearchBar } from "./HeroSearch";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL } from "@/app/lib/contact";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import type { Locale } from "@/app/lib/i18n/config";
+import { listingSearchHref } from "@/app/lib/search";
 
 /* ---------------- Hero ---------------- */
 export function Hero({ locale }: { locale: Locale }) {
@@ -66,33 +70,27 @@ export function Features({ locale }: { locale: Locale }) {
   );
 }
 
-/* ---------------- Bottom SEO text block ---------------- */
-export function HomeSeo({ locale }: { locale: Locale }) {
-  const t = getDictionary(locale).home;
+function FeatureCard({
+  icon = "ShieldCheck", title, body, className,
+}: {
+  icon?: IconName;
+  title: string;
+  body: string;
+  className?: string;
+}) {
   return (
-    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-head) var(--nk-section-y)", borderTop: "1px solid var(--nk-border-faint)" }}>
-      <div className="nk-reveal" style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
-        <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{t.seoHeading}</h2>
-        <p className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{t.seoBody}</p>
+    <div className={className ? `nk-feature ${className}` : "nk-feature"} style={{
+      flex: 1, borderRadius: "var(--nk-r-card)", background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", WebkitBackdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-glass-card-border)",
+      padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-stack-lg)", textAlign: "center",
+    }}>
+      <span style={{ width: "var(--nk-size-icon-lg)", height: "var(--nk-size-icon-lg)", borderRadius: "50%", background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Icon name={icon} size={36} color="var(--nk-yellow)" stroke={2} />
+      </span>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
+        <h3 className="nk-h-card" style={{ margin: 0 }}>{title}</h3>
+        <p className="nk-body" style={{ margin: 0 }}>{body}</p>
       </div>
-    </section>
-  );
-}
-
-/* ---------------- Testimonials ----------------
-   Static two-column pair of featured reviews, matching the design bundle. */
-export function Testimonials({ locale }: { locale: Locale }) {
-  const t = getDictionary(locale).testimonials;
-  const items = t.items.slice(0, 2);
-  return (
-    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
-      <SectionHead eyebrow={t.eyebrow} title={t.title} />
-      <div className="nk-reveal nk-row">
-        {items.map((item) => (
-          <Testimonial key={item.name} name={item.name} role={item.role} quote={item.quote} avatarTint={item.avatarTint} />
-        ))}
-      </div>
-    </section>
+    </div>
   );
 }
 
@@ -162,7 +160,7 @@ export function Footer({ locale }: { locale: Locale }) {
       <div className="nk-container">
         <div className="nk-footer__top">
           <div className="nk-footer__brand">
-            <Logo />
+            <LogoMark locale={locale} />
             <p className="nk-footer__tagline">{t.tagline}</p>
             <div className="nk-footer__contact">
               <a href={CONTACT_PHONE_TEL}><Icon name="Phone" size={17} stroke={2} color="currentColor" /> {CONTACT_PHONE}</a>
@@ -183,12 +181,12 @@ export function Footer({ locale }: { locale: Locale }) {
 
           <nav className="nk-footer__col" aria-label={t.browseHeading}>
             <h4>{t.browseHeading}</h4>
-            <FooterCategories />
+            <FooterCategories locale={locale} />
           </nav>
 
           <nav className="nk-footer__col" aria-label={t.helpHeading}>
             <h4>{t.helpHeading}</h4>
-            <FooterHelpLinks />
+            <FooterHelpLinks locale={locale} />
           </nav>
         </div>
 
@@ -197,12 +195,36 @@ export function Footer({ locale }: { locale: Locale }) {
           <div className="nk-footer__pay">
             <span className="nk-footer__secure"><Icon name="ShieldCheck" size={17} color="var(--nk-green)" stroke={2} /> {t.secure}</span>
             {FOOTER_PAY.map(([f, a]) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={f} src={`/naudokis/${f}.png`} alt={a} loading="lazy" style={{ height: 30, width: "auto" }} />
+              <Image key={f} src={`/naudokis/${f}.png`} alt={a} width={100} height={52}
+                style={{ height: 30, width: "auto" }} />
             ))}
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterCategories({ locale }: { locale: Locale }) {
+  const t = getDictionary(locale).footer;
+  return (
+    <div className="nk-footer__catgrid">
+      <Link href="/kategorijos">{t.allCategories}</Link>
+      {t.categories.map((category) => (
+        <Link key={category.q} href={listingSearchHref({ q: category.q })}>
+          {category.label}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function FooterHelpLinks({ locale }: { locale: Locale }) {
+  return (
+    <>
+      {getDictionary(locale).footer.help.map((link) => (
+        <Link key={link.href} href={link.href}>{link.label}</Link>
+      ))}
+    </>
   );
 }

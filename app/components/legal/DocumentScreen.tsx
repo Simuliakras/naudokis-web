@@ -40,7 +40,7 @@ export function DocumentScreen({
   const bodyBlocks = intro ? doc.blocks.filter((b) => b !== intro) : doc.blocks;
 
   return (
-    <Chrome banner={false}>
+    <Chrome>
       <div className="nk-page">
         <Nav />
         <LegalScrollProvider ids={doc.toc.map((s) => s.id)}>

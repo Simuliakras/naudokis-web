@@ -9,7 +9,6 @@ import { Icon, Breadcrumb, InputClear } from "./ui";
 import { CategoryCard, CategoryCardSkeleton, EmptyState } from "./cards";
 import { useCategories } from "@/app/lib/categories";
 import { listingSearchHref } from "@/app/lib/search";
-import { mockCategoryCount } from "@/app/lib/mock";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { useI18n } from "./I18nProvider";
 
@@ -69,7 +68,7 @@ export function CategoriesScreen() {
             <div className="nk-grid-cats">
               {list.map((c) => (
                 <div key={c.id} className="nk-reveal" style={{ display: "grid" }}>
-                  <CategoryCard id={c.id} icon={c.icon} title={c.title} count={t.tileCount(mockCategoryCount(c.id))} href={listingSearchHref({ cat: c.id })} />
+                  <CategoryCard id={c.id} icon={c.icon} title={c.title} href={listingSearchHref({ cat: c.id })} />
                 </div>
               ))}
             </div>

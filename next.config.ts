@@ -9,29 +9,38 @@ const imageCdnHosts = [
   "https://d720uc9idaijs.cloudfront.net", // dev
 ];
 
-// Observe-then-enforce CSP: served as Report-Only so violations surface in the
-// browser console (and Sentry, once a `report-to` endpoint is wired) without
-// breaking anything. 'unsafe-inline' is required today — the UI uses inline
-// style={} objects and Next.js streams inline bootstrap scripts. Once the
-// report stream is clean, rename the key to Content-Security-Policy.
-const cspReportOnly = [
+const isDev = process.env.NODE_ENV === "development";
+
+// Enforced CSP with local violation reporting. We keep 'unsafe-inline' for now
+// because the app intentionally uses inline style objects and a tiny
+// pre-hydration bridge script; removing it would require nonce-based dynamic
+// rendering (or a full CSS extraction pass) and would undo the current SSG/ISR
+// posture. 'unsafe-eval' is dev-only per the Next.js 16 CSP guide.
+const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://plausible.io`,
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: blob: ${imageCdnHosts.join(" ")}`,
   "font-src 'self' data:",
+  "object-src 'none'",
+  "media-src 'self' data: blob:",
+  "worker-src 'self' blob:",
+  "manifest-src 'self'",
   // Google Maps Embed API iframe on the listing-detail page.
   "frame-src 'self' https://www.google.com",
   "connect-src 'self' https://api.naudokis.lt https://api-dev.naudokis.lt https://plausible.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
   "frame-ancestors 'self'",
   "base-uri 'self'",
   "form-action 'self'",
+  "report-to csp-endpoint",
+  "report-uri /api/csp-report",
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
-// Pragmatic security headers applied to every route. The strict CSP runs in
-// report-only mode (above) until its violation stream is clean.
+// Pragmatic security headers applied to every route.
 const securityHeaders = [
-  { key: "Content-Security-Policy-Report-Only", value: cspReportOnly },
+  { key: "Content-Security-Policy", value: csp },
+  { key: "Reporting-Endpoints", value: 'csp-endpoint="/api/csp-report"' },
   // Force HTTPS for two years, including subdomains; eligible for preload lists.
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
   // Disallow MIME sniffing.

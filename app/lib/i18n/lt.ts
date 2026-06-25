@@ -31,8 +31,9 @@ export const lt: Dict = {
   nav: {
     search: "Paieška",
     category: "Kategorijos",
+    listings: "Skelbimai",
     howItWorks: "Kaip tai veikia",
-    getApp: "Gauti programėlę",
+    getApp: "Atsisiųsti programėlę",
     language: "Kalba",
     languageNames: { lt: "Lietuvių", en: "English" },
     primary: "Pagrindinė navigacija",
@@ -160,10 +161,6 @@ export const lt: Dict = {
       completedPill: "Užbaigta",
     },
   },
-  home: {
-    seoHeading: "Daiktų nuoma iš žmonių šalia visoje Lietuvoje",
-    seoBody: "Naudokis – tai bendruomenės nuomos platforma, jungianti daiktų savininkus ir nuomininkus visoje Lietuvoje. Išsinuomokite įrankius, transporto priemones, elektroniką, sporto ir laisvalaikio įrangą iš patikimų žmonių Vilniuje, Kaune, Klaipėdoje ir kituose miestuose. Naršyti galima nemokamai, o mokėjimai apsaugoti – nuomos suma laikoma saugiai ir savininkui pervedama tik sėkmingai užbaigus nuomą. Kam pirkti, jei galite naudotis tada, kai reikia?",
-  },
   testimonials: {
     eyebrow: "Atsiliepimai",
     title: "Kodėl žmonės renkasi Naudokis",
@@ -206,7 +203,7 @@ export const lt: Dict = {
       { label: "Buitinė technika", q: "buitinė technika" },
       { label: "Elektronika", q: "elektronika" },
     ],
-    helpHeading: "Pagalba",
+    helpHeading: "Informacija",
     help: [
       { label: "DUK", href: "#duk" },
       { label: "Kontaktai", href: "#kontaktai" },
@@ -334,12 +331,6 @@ export const lt: Dict = {
     body: "Naršykite populiariausias nuomos kategorijas ir atraskite daiktus šalia savęs.",
     searchPlaceholder: "Ieškoti kategorijos…",
     submit: "Ieškoti",
-    tileCount: (n) => {
-      const d = n % 10;
-      const dd = n % 100;
-      const word = (dd >= 11 && dd <= 19) || d === 0 ? "skelbimų" : d === 1 ? "skelbimas" : "skelbimai";
-      return `${n} ${word}`;
-    },
     emptyTitle: "Kategorijų nerasta",
     emptySubtitle: (query) => `Pagal „${query}“ kategorijų neradome. Pabandykite platesnę paiešką.`,
     emptyAction: "Išvalyti",
@@ -409,7 +400,7 @@ export const lt: Dict = {
     },
     interruptTitle: "Rezervuokite programėlėje per kelias akimirkas",
     interruptBody: "Skelbimai, žinutės savininkams, saugūs mokėjimai ir užstatai — vienoje vietoje.",
-    interruptCta: "Gauti programėlę",
+    interruptCta: "Atsisiųsti programėlę",
   },
   offline: {
     title: "Nėra interneto ryšio",
@@ -434,12 +425,6 @@ export const lt: Dict = {
     favoriteBody: "Mėgstamų skelbimų sąrašas saugomas jūsų paskyroje — atsisiųskite Naudokis programėlę.",
     shareTitle: "Atidarykite programėlėje",
     shareBody: "Atsisiųskite Naudokis programėlę ir atidarykite šį skelbimą telefone.",
-  },
-  appBanner: {
-    title: "Naudokis programėlė",
-    body: "Rezervacijos, žinutės ir mokėjimai",
-    install: "Diegti",
-    dismiss: "Uždaryti",
   },
   cityPicker: {
     heading: "Pasirinkite miestą",

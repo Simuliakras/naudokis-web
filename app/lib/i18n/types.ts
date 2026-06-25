@@ -57,6 +57,7 @@ export type Dict = {
   nav: {
     search: string;
     category: string;
+    listings: string; // "Skelbimai" link to the feed
     howItWorks: string; // "Kaip tai veikia" link
     getApp: string; // primary "Get the app" button
     language: string; // language-picker trigger label ("Kalba" / "Language")
@@ -143,10 +144,6 @@ export type Dict = {
       payoutLabel: string;
       completedPill: string;
     };
-  };
-  home: {
-    seoHeading: string;
-    seoBody: string;
   };
   testimonials: {
     eyebrow: string;
@@ -284,7 +281,6 @@ export type Dict = {
     body: string;
     searchPlaceholder: string;
     submit: string;
-    tileCount: (count: number) => string; // localized "X skelbimų"
     emptyTitle: string;
     emptySubtitle: (query: string) => string;
     emptyAction: string;
@@ -368,12 +364,6 @@ export type Dict = {
     favoriteBody: string;
     shareTitle: string;
     shareBody: string;
-  };
-  appBanner: {
-    title: string;
-    body: string;
-    install: string;
-    dismiss: string;
   };
   cityPicker: {
     heading: string; // dropdown header, e.g. "Pasirinkite miestą"

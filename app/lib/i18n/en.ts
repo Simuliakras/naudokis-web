@@ -12,6 +12,7 @@ export const en: Dict = {
   nav: {
     search: "Search",
     category: "Categories",
+    listings: "Listings",
     howItWorks: "How it works",
     getApp: "Get the app",
     language: "Language",
@@ -140,10 +141,6 @@ export const en: Dict = {
       payoutLabel: "Payout sent",
       completedPill: "Completed",
     },
-  },
-  home: {
-    seoHeading: "Rent items from people nearby across Lithuania",
-    seoBody: "Naudokis is a community rental platform connecting item owners and renters across Lithuania. Rent tools, vehicles, electronics, sports and leisure gear from trusted people in Vilnius, Kaunas, Klaipėda and beyond. Browsing is free, and payments are protected — the rental amount is held securely and released to the owner only after a successful rental. Why buy when you can use it exactly when you need it?",
   },
   testimonials: {
     eyebrow: "Reviews",
@@ -304,7 +301,6 @@ export const en: Dict = {
     body: "Browse the most popular rental categories and discover items nearby.",
     searchPlaceholder: "Search categories…",
     submit: "Search",
-    tileCount: (n) => `${n} listing${n === 1 ? "" : "s"}`,
     emptyTitle: "No categories found",
     emptySubtitle: (query) => `We couldn’t find categories for “${query}”. Try a broader search.`,
     emptyAction: "Clear",
@@ -393,12 +389,6 @@ export const en: Dict = {
     favoriteBody: "Your saved listings live in your account — download the Naudokis app.",
     shareTitle: "Open in the app",
     shareBody: "Download the Naudokis app and open this listing on your phone.",
-  },
-  appBanner: {
-    title: "Naudokis app",
-    body: "Reservations, messages and payments",
-    install: "Install",
-    dismiss: "Dismiss",
   },
   cityPicker: {
     heading: "Choose a city",
