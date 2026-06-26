@@ -19,12 +19,12 @@ The site is **bilingual (Lithuanian + English)** with no external i18n library �
 - **Language**: TypeScript 5 (strict mode)
 - **Styling**: Tailwind CSS 4 (via `@tailwindcss/postcss`) **plus a custom `--nk-*` design-token system** in `app/globals.css` (see Styling below)
 - **Fonts**: `Archivo` (display) and `Sora` (body) loaded via `next/font/google` in `app/[lang]/layout.tsx`
-- **Icons**: self-contained inline SVG icon set in `app/components/ui.tsx` — no icon library
+- **Icons**: [`lucide-react`](https://lucide.dev) via a thin `Icon` wrapper in `app/components/visual.tsx`; a few inline-SVG glyphs (brand marks + the solid Play triangle) stay hand-rolled
 - **Data fetching**: [TanStack Query](https://tanstack.com/query) (`@tanstack/react-query`) against the Naudokis backend REST API (see **Data fetching** below)
 - **i18n**: hand-rolled typed dictionaries + `proxy.ts` locale routing — no i18n library (see **Internationalization** below)
 - **Code Quality**: ESLint 9 (`eslint-config-next`), TypeScript strict
 
-The runtime dependency surface is deliberately tiny: `package.json` lists only `next`, `react`, `react-dom`, **`@tanstack/react-query`** and **`@sentry/nextjs`** (observability; inert without a DSN). Do not reach for next-intl, i18next, aws-amplify, react-icons, an image optimizer, axios, or similar without discussing it first.
+The runtime dependency surface is deliberately tiny: `package.json` lists only `next`, `react`, `react-dom`, **`@tanstack/react-query`**, **`@sentry/nextjs`** (observability; inert without a DSN) and **`lucide-react`** (icons). Do not reach for next-intl, i18next, aws-amplify, react-icons, an image optimizer, axios, or similar without discussing it first.
 
 ### Scripts
 
@@ -71,7 +71,7 @@ app/
 │   ├── ScrollReveal.tsx    # Client leaf mounting the .nk-reveal IntersectionObserver
 │   ├── cards.tsx           # Cards: OfferCard, CategoryTile/Card, FeatureCard, Testimonial,
 │   │                       #   FaqRow, skeletons, EmptyState/SectionEmpty, InterruptionBanner
-│   ├── ui.tsx              # Primitives: Icon (NK_ICONS), Logo, buttons, SectionHead, Breadcrumb,
+│   ├── ui.tsx              # Primitives: Icon (re-exported from visual.tsx, lucide-react), Logo, buttons, SectionHead, Breadcrumb,
 │   │                       #   FilterSelect, StoreBadge, AppBadges, QR, openRedirect()
 │   ├── FeedScreen.tsx / CategoriesScreen.tsx / HowItWorksScreen.tsx   # Page orchestrators
 │   ├── ListingScreen.tsx / ListingDetail.tsx   # Detail orchestrator + presentational pieces
@@ -121,7 +121,7 @@ When adding or changing UI:
 
 ### Icons & images
 
-- **Icons**: use the `Icon` component and its `NK_ICONS` set in `ui.tsx`. To add an icon, add an entry to `NK_ICONS` (Lucide-style geometry) — do not add an icon dependency.
+- **Icons**: use the `Icon` component (`<Icon name="Search" size={…} stroke={…} color="var(--nk-…)" />`) re-exported from `ui.tsx` and defined in `app/components/visual.tsx`. It's a thin wrapper over `lucide-react`: to add an icon, named-import it from `lucide-react` and add a `lucide(Name)` entry to the `ICONS` registry — the `IconName` type stays the source of truth. Brand marks (`Apple`/`Facebook`/`Instagram`/`Linkedin`) and the solid `Play` triangle are kept as inline-SVG `glyph({…})` entries because Lucide doesn't ship them (its `Apple` is a fruit). Color flows through `currentColor` via `style.color` — never pass a `--nk-*` token to Lucide's `color` prop (CSS vars don't resolve in SVG presentation attributes).
 - **Images**: large brand imagery (hero/CTA phones) uses `next/image`; small static brand assets (logos, payment marks) are plain `<img>` with absolute `/naudokis/...` paths and an inline `@next/next/no-img-element` disable. Remote content images from the backend (listing photos, owner avatars) use `next/image` against the CloudFront hosts allowlisted in `next.config.ts` `remotePatterns`, with the inline `Icon name="Image"` placeholder on `nk-imgph` containers when no image is present.
 
 ## Internationalization (i18n)

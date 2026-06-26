@@ -16,7 +16,9 @@ const OUT = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "naudo
 const svg = await QRCode.toString(INSTALL_URL, {
   type: "svg",
   errorCorrectionLevel: "M",
-  margin: 4, // standard 4-module quiet zone — required for reliable scanning
+  margin: 1, // minimal quiet zone — the white QR card's 16px padding (see QR in
+  //           app/components/visual.tsx) supplies the rest of the quiet zone, so
+  //           the code fills most of the card while staying reliably scannable.
   color: { dark: "#000000ff", light: "#ffffffff" },
 });
 

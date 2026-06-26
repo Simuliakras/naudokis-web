@@ -289,23 +289,6 @@ export function ListingHeader({ listing, saved, shared, onShare, onFav }: {
   );
 }
 
-function WebAppModeNote({ compact = false }: { compact?: boolean }) {
-  const { dict } = useI18n();
-  const t = dict.detail;
-  return (
-    <div className={compact ? "nk-appmode nk-appmode--compact" : "nk-appmode"}>
-      <span className="nk-appmode__icon">
-        <Icon name="Smartphone" size={compact ? 17 : 20} stroke={2.1} color="var(--nk-purple-hover)" />
-      </span>
-      <span className="nk-appmode__copy">
-        {!compact && <span className="nk-appmode__eyebrow">{t.webModeEyebrow}</span>}
-        <b>{t.webModeTitle}</b>
-        <span>{t.webModeBody}</span>
-      </span>
-    </div>
-  );
-}
-
 /* ---------------- Bento gallery ----------------
    Viewing photos needs no account, so the bento opens a real lightbox (prev/next,
    keyboard, focus-trap). Only the app-bound actions stay locked — the lightbox
@@ -676,9 +659,6 @@ export function DetailBody({ listing, onContact }: {
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
-      <div className="nk-appmode-mobile">
-        <WebAppModeNote />
-      </div>
       <DescriptionSection description={listing.description} />
       {listing.attributes.length > 0 && <SpecsSection attributes={listing.attributes} />}
       <HandoverSection city={listing.city} delivery={listing.delivery} />
@@ -699,7 +679,6 @@ export function BookingPanel({ listing, onReserve, onPickDates }: {
   const t = dict.detail;
   return (
     <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
-      <WebAppModeNote compact />
       <div style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
         <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 33, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.price}</span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{t.perDay}</span>

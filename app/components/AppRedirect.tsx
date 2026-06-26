@@ -3,7 +3,7 @@
 // Mounted once via <Chrome/>; opened from anywhere via openRedirect({title, body}).
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Icon, AppBadges, QR, NK_REDIRECT_EVENT, type RedirectPayload } from "./ui";
+import { Icon, QR, NK_REDIRECT_EVENT, type RedirectPayload } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { prefersReducedMotion } from "@/app/lib/motion";
@@ -125,14 +125,12 @@ export function AppRedirect() {
           <QR size={96} />
           <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", maxWidth: 220 }}>{dict.bridge.qrHint}</span>
         </div>
-        {/* Working install paths: a one-tap smart link (sniffs the OS — the
-            primary mobile CTA, since the QR is hidden ≤560px) above the two
-            store badges, which now link straight to their listings. */}
+        {/* Working install path: a one-tap smart link that sniffs the OS — the
+            primary CTA, since the QR is hidden ≤560px. */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <a className="nk-btn nk-btn--primary" href="/go" target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}>
             <Icon name="Download" size={18} stroke={2.2} color="var(--nk-text)" /> {dict.bridge.installCta}
           </a>
-          <AppBadges height={50} />
         </div>
       </div>
     </div>

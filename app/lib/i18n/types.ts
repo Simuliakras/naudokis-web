@@ -183,9 +183,6 @@ export type Dict = {
     // primary category name. Both already include the " — Naudokis.lt" suffix.
     seoTitle: (parts: { title: string; city?: string }) => string;
     seoDescription: (parts: { title: string; city?: string; category?: string }) => string;
-    webModeEyebrow: string;
-    webModeTitle: string;
-    webModeBody: string;
     share: string; // aria-label on the gallery share/more button
     shareCopied: string;
     verifiedOwnerPill: string;
