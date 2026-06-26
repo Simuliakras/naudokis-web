@@ -8,7 +8,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Icon, IconName, Pill, openRedirect } from "./ui";
 import { SectionEmpty } from "./cards";
-import type { ListingDetail, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
+import type { ListingDetail, ListingDelivery, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
+import { RichText } from "@/app/lib/rich-text";
 import { listingSearchHref } from "@/app/lib/search";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
@@ -284,10 +285,10 @@ export function ListingHeader({ listing, saved, shared, onShare, onFav }: {
           {listing.city && (
             <>
               <span style={metaItem}><Icon name="MapPin" size={16} color="var(--nk-text-muted)" stroke={2} /> {listing.city}</span>
-              {listing.owner.verified && <Dot />}
+              {listing.owner?.verified && <Dot />}
             </>
           )}
-          {listing.owner.verified && (
+          {listing.owner?.verified && (
             <span style={metaItem}><Icon name="BadgeCheck" size={16} color="var(--nk-green)" stroke={2} /> <span style={{ color: "var(--nk-green)", fontWeight: 600, fontFamily: "var(--nk-font-display)" }}>{t.verifiedOwnerPill}</span></span>
           )}
         </div>
@@ -450,7 +451,7 @@ function DescriptionSection({ description }: { description: string }) {
   return (
     <Section id="aprasymas" title={t.descHeading} first>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)", maxWidth: 720 }}>
-        <p className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxHeight: open ? "none" : 120, overflow: "hidden", maskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)", WebkitMaskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)" }}>{description}</p>
+        <div className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxHeight: open ? "none" : 120, overflow: "hidden", maskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)", WebkitMaskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)" }}><RichText html={description} /></div>
         {description.length > 180 && (
           <button onClick={() => setOpen((v) => !v)} style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-hover)" }}>
             {open ? t.descLess : t.descMore} <Icon name="ChevronDown" size={16} stroke={2.4} color="var(--nk-purple-hover)" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
@@ -478,7 +479,7 @@ function SpecsSection({ attributes }: { attributes: ListingDetail["attributes"] 
   );
 }
 
-function DeliveryZoneGraphic() {
+function DeliveryZoneGraphic({ radiusKm }: { radiusKm: number | null }) {
   const { dict } = useI18n();
   const t = dict.detail;
   return (
@@ -496,18 +497,35 @@ function DeliveryZoneGraphic() {
         <Icon name="MapPin" size={24} color="var(--nk-text)" stroke={2.2} />
       </span>
       <span style={{ position: "absolute", left: 14, bottom: 14, display: "inline-flex", alignItems: "center", gap: 8, padding: "7px 13px", borderRadius: 999, background: "var(--nk-overlay)", backdropFilter: "blur(10px)", border: "1px solid var(--nk-border-soft)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 13.5, color: "var(--nk-text)" }}>
-        <Icon name="Car" size={14} color="var(--nk-text)" stroke={2} /> {t.deliveryZone}
+        <Icon name="Car" size={14} color="var(--nk-text)" stroke={2} /> {radiusKm ? t.deliveryZoneKm(radiusKm) : t.deliveryZone}
       </span>
     </div>
   );
 }
 
-function HandoverSection({ city }: { city: string }) {
+// One pickup/delivery row in the handover panel.
+function HandoverRow({ icon, label, value, pill }: { icon: IconName; label: string; value: string; pill?: React.ReactNode }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)" }}>
+      <span style={{ width: "var(--nk-size-icon-sm)", height: "var(--nk-size-icon-sm)", borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name={icon} size={20} stroke={2} color="var(--nk-purple-hover)" /></span>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)" }}>
+        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)" }}>{label}</span>
+        <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{value}</span>
+      </div>
+      {pill}
+    </div>
+  );
+}
+
+function HandoverSection({ city, delivery }: { city: string; delivery: ListingDelivery }) {
   const { locale, dict } = useI18n();
   const t = dict.detail;
   const mapSrc = GOOGLE_MAPS_API_KEY && city
     ? `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(`${city}, Lietuva`)}&zoom=11&language=${locale}`
     : null;
+  // A listing offers pickup, delivery, or both; show only the rows that apply,
+  // falling back to a plain location row when the data lists neither.
+  const showPickup = delivery.pickup || !delivery.delivery;
   return (
     <Section id="perdavimas" title={t.handoverHeading} sub={t.deliverySub(city)}>
       <div className="nk-tworow" style={{ alignItems: "stretch", gap: "var(--nk-gap-xl)" }}>
@@ -522,41 +540,32 @@ function HandoverSection({ city }: { city: string }) {
             />
           </div>
         ) : (
-          <DeliveryZoneGraphic />
+          <DeliveryZoneGraphic radiusKm={delivery.radiusKm} />
         )}
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "var(--nk-gap-md)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)" }}>
-            <span style={{ width: "var(--nk-size-icon-sm)", height: "var(--nk-size-icon-sm)", borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="MapPin" size={20} stroke={2} color="var(--nk-purple-hover)" /></span>
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)" }}>
-              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)" }}>{t.pickupLabel}</span>
-              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{city || "—"}</span>
-            </div>
-            <Pill tone="green">{t.pickupFree}</Pill>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)" }}>
-            <span style={{ width: "var(--nk-size-icon-sm)", height: "var(--nk-size-icon-sm)", borderRadius: 12, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon name="Car" size={20} stroke={2} color="var(--nk-purple-hover)" /></span>
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)" }}>
-              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)" }}>{t.deliveryLabel}</span>
-              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{t.deliveryByArrangement}</span>
-            </div>
-          </div>
+          {showPickup && (
+            <HandoverRow icon="MapPin" label={t.pickupLabel} value={city || "—"} pill={<Pill tone="green">{t.pickupFree}</Pill>} />
+          )}
+          {delivery.delivery && (
+            <HandoverRow icon="Car" label={t.deliveryLabel} value={delivery.radiusKm ? t.deliveryRadius(delivery.radiusKm) : t.deliveryByArrangement} />
+          )}
         </div>
       </div>
     </Section>
   );
 }
 
-function TermsSection({ price }: { price: string }) {
+function TermsSection({ listing }: { listing: ListingDetail }) {
   const { dict } = useI18n();
   const t = dict.detail;
   return (
     <Section id="salygos" title={t.termsHeading}>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xl)" }}>
         <div className="nk-hl-grid">
-          <FactCard icon="Tag" title={`${price} ${t.perDay}`} sub={t.termRentSub} />
-          <FactCard icon="ShieldCheck" title={t.termDepositInApp} sub={t.termDepositSub} />
-          <FactCard icon="Calendar" title={t.termDurationInApp} sub={t.termDurationSub} />
-          <FactCard icon="RefreshCcw" title={t.termCancelInApp} sub={t.termCancelSub} />
+          <FactCard icon="Tag" title={`${listing.price} ${t.perDay}`} sub={t.termRentSub} />
+          <FactCard icon="ShieldCheck" title={listing.deposit ?? t.depositNone} sub={t.termDepositSub} />
+          <FactCard icon="Calendar" title={t.durationRange(listing.minDays, listing.maxDays)} sub={t.termDurationSub} />
+          <FactCard icon="RefreshCcw" title={t.cancellationLabel(listing.cancellation)} sub={t.termCancelSub} />
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", padding: "var(--nk-card-pad-sm)", borderRadius: 14, background: "var(--nk-green-tint)", border: "1px solid var(--nk-green-soft)" }}>
           <Icon name="ShieldCheck" size={20} color="var(--nk-green)" stroke={2} />
@@ -615,7 +624,8 @@ function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews
           <div key={r.name} style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", padding: "var(--nk-card-pad-sm)", borderRadius: 16, background: "var(--nk-surface)", border: "1px solid var(--nk-border)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)" }}>
               <span className="nk-imgph" style={{ width: 42, height: 42, borderRadius: 21, flex: "none" }}>
-                <Icon name="User" size={20} stroke={1.6} color="var(--nk-avatar-icon)" />
+                {r.avatar && <Image src={r.avatar} alt={r.name} fill sizes="42px" style={{ objectFit: "cover" }} />}
+                {!r.avatar && <Icon name="User" size={20} stroke={1.6} color="var(--nk-avatar-icon)" />}
               </span>
               <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)", flex: 1, minWidth: 0 }}>
                 <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{r.name}</span>
@@ -640,7 +650,7 @@ function ReviewsSection({ listing, onContact }: { listing: ListingDetail; onCont
   const t = dict.detail;
   return (
     <Section id="atsiliepimai" title={t.reviewsHeading}>
-      {listing.reviews.length > 0 ? (
+      {listing.ratingCount > 0 ? (
         <ReviewsBreakdown rating={listing.rating} ratingValue={listing.ratingValue} ratingCount={listing.ratingCount}
           breakdown={listing.ratingBreakdown} reviews={listing.reviews}
           reviewCountLabel={dict.common.reviewCount(listing.ratingCount)} showAllLabel={t.reviewsInApp(listing.ratingCount)}
@@ -663,8 +673,8 @@ export function DetailBody({ listing, onContact }: {
       </div>
       <DescriptionSection description={listing.description} />
       {listing.attributes.length > 0 && <SpecsSection attributes={listing.attributes} />}
-      <HandoverSection city={listing.city} />
-      <TermsSection price={listing.price} />
+      <HandoverSection city={listing.city} delivery={listing.delivery} />
+      <TermsSection listing={listing} />
       <ReviewsSection listing={listing} onContact={onContact} />
     </div>
   );
@@ -703,7 +713,7 @@ export function BookingPanel({ listing, onReserve, onPickDates }: {
           <span title={t.serviceFeeHint} style={{ textDecoration: "underline dotted", textUnderlineOffset: 3, cursor: "help" }}>{t.serviceFee}</span><span style={{ color: "var(--nk-green)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.serviceFeeFree}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
-          <span>{t.depositReturnable}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{t.inAppValue}</span>
+          <span>{t.depositReturnable}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.deposit ?? t.depositNone}</span>
         </div>
         <span style={{ height: 1, background: "var(--nk-divider)", margin: "2px 0" }} />
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 17, color: "var(--nk-text)" }}>
@@ -720,7 +730,7 @@ export function BookingPanel({ listing, onReserve, onPickDates }: {
       </button>
       <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", padding: "9px 12px", borderRadius: 11, background: "var(--nk-green-tint)" }}>
         <Icon name="RefreshCcw" size={15} color="var(--nk-green)" stroke={2} />
-        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-green)", fontWeight: 500 }}>{t.cancellationInApp}</span>
+        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-green)", fontWeight: 500 }}>{t.cancellationNote(listing.cancellation)}</span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", textAlign: "center" }}>
         <Icon name="ShieldCheck" size={15} color="var(--nk-text-muted)" stroke={2} />
@@ -743,7 +753,7 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
   const stats: [string, string][] = [
     [rating ?? "—", t.hostStatRating],
     [String(ratingCount), t.hostStatReviews],
-    [t.ownerRentals(owner.completedRentals), t.hostStatRentals],
+    [t.ownerListings(owner.listingsCount), t.hostStatListings],
     [owner.verified ? t.ownerVerified : t.ownerNewMember, t.hostStatStatus],
   ];
   return (

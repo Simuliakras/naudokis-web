@@ -86,7 +86,11 @@ export function Blocks({
                     <tbody>
                       {b.rows.map((r, j) => (
                         <tr key={j}>
-                          {r.map((c, k) => <td key={k} className="nk-lg-td"><Inline text={c} locale={locale} /></td>)}
+                          {r.map((c, k) => (
+                            <td key={k} className="nk-lg-td" data-label={b.head[k] ?? ""}>
+                              <Inline text={c} locale={locale} />
+                            </td>
+                          ))}
                         </tr>
                       ))}
                     </tbody>

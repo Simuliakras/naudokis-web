@@ -3,11 +3,21 @@
 // own reset and brand chrome. Copy is LT-primary with an EN secondary line
 // (mirroring app/global-error.tsx), since unmatched root URLs can be hit in
 // either language. Inlined colors mirror --nk-* tokens; keep in sync.
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Šio puslapio neradome | Page not found",
+  description: "Adresas gali būti neteisingas arba puslapis perkeltas. The address may be wrong or the page may have moved.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const navLinks = [
   { href: "/kategorijos", label: "Kategorijos" },
-  { href: "/skelbimai", label: "Skelbimai" },
+  { href: "/skelbimai", label: "Nuomojami daiktai" },
   { href: "/kaip-tai-veikia", label: "Kaip tai veikia" },
 ];
 
@@ -151,7 +161,7 @@ export default function NotFound() {
                 letterSpacing: 0,
               }}
             >
-              Puslapis nerastas
+              Šio puslapio neradome
             </h1>
             <p
               style={{
@@ -162,7 +172,7 @@ export default function NotFound() {
                 lineHeight: 1.55,
               }}
             >
-              Šis adresas neegzistuoja arba buvo perkeltas. Grįžkite į pagrindinį puslapį arba tęskite daiktų paiešką.
+              Adresas gali būti neteisingas arba puslapis perkeltas. Grįžkite į pradžią arba toliau naršykite nuomos pasiūlymus.
             </p>
             <p
               style={{
@@ -173,7 +183,7 @@ export default function NotFound() {
                 lineHeight: 1.55,
               }}
             >
-              This page doesn’t exist or has moved. Head back home or keep browsing rentals.
+              The address may be wrong or the page may have moved. Go home or keep browsing rentals.
             </p>
             <div
               style={{
@@ -188,7 +198,7 @@ export default function NotFound() {
                 Į pradžią
               </Link>
               <Link href="/skelbimai" style={secondaryCta}>
-                Naršyti skelbimus
+                Naršyti nuomą
               </Link>
             </div>
           </div>

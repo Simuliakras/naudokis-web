@@ -60,7 +60,7 @@ export type Dict = {
   nav: {
     search: string;
     category: string;
-    listings: string; // "Skelbimai" link to the feed
+    listings: string; // "Items to rent" / "Nuomojami daiktai" link to the feed
     howItWorks: string; // "Kaip tai veikia" link
     getApp: string; // primary "Get the app" button
     language: string; // language-picker trigger label ("Kalba" / "Language")
@@ -172,7 +172,7 @@ export type Dict = {
     helpHeading: string;
     help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
     copyright: string;
-    secure: string; // "Saugūs atsiskaitymai" badge by the payment marks
+    secure: string; // "Protected payments" badge by the payment marks
   };
   detail: {
     metaFallbackTitle: string;
@@ -197,7 +197,7 @@ export type Dict = {
     ownerHeading: string;
     ownerVerified: string;
     ownerNewMember: string;
-    ownerRentals: (count: number) => string;
+    ownerListings: (count: number) => string;
     contact: string;
     handoverHeading: string;
     mapTitle: (city: string) => string;
@@ -205,6 +205,7 @@ export type Dict = {
     pickupFree: string;
     deliveryLabel: string;
     deliveryByArrangement: string;
+    deliveryRadius: (km: number) => string; // "Pristatymas iki N km"
     termsHeading: string;
     priceLabel: string;
     depositLabel: string;
@@ -244,24 +245,25 @@ export type Dict = {
     serviceFeeFree: string; // "Nemokama"
     inAppValue: string;
     totalToday: string;
-    cancellationInApp: string;
+    cancellationNote: (tier: string) => string; // booking-panel cancellation pill
     // host card
     hostStatRating: string;
     hostStatReviews: string;
-    hostStatRentals: string;
+    hostStatListings: string;
     hostStatStatus: string;
     hostMessage: string; // "Rašyti žinutę"
     hostVerifiedNote: string;
     // delivery block
     deliverySub: (city: string) => string;
-    deliveryZone: string; // "≈20 km zona"
+    deliveryZone: string; // "≈20 km zona" fallback when radius unknown
+    deliveryZoneKm: (km: number) => string; // "≈N km zona" graphic label
     // terms fact cards
     termRentSub: string;
-    termDepositInApp: string;
+    depositNone: string; // shown when the listing takes no deposit
     termDepositSub: string;
-    termDurationInApp: string;
+    durationRange: (min: number, max: number) => string; // rental length, e.g. "1–30 dienų"
     termDurationSub: string;
-    termCancelInApp: string;
+    cancellationLabel: (tier: string) => string; // policy tier name
     termCancelSub: string;
     depositSafeTitle: string;
     depositSafeBody: string;

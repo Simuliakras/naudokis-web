@@ -3,7 +3,7 @@
 // Kept out of the page component so generateMetadata/Page stay thin.
 import type { Locale } from "@/app/lib/i18n/config";
 import { API_BASE, USE_MOCK } from "@/app/lib/api";
-import { LISTING_REVALIDATE } from "@/app/lib/listings";
+import { LISTING_REVALIDATE, fetchReviewStats } from "@/app/lib/listings";
 import { MOCK_CATEGORIES, MOCK_DETAIL_EXTRA, MOCK_LISTINGS } from "@/app/lib/mock-data";
 
 export type ListingMeta = {
@@ -38,8 +38,6 @@ type RawListing = {
   condition_label_en?: string;
   images?: { url?: string }[];
   price_per_day_cents?: number;
-  rating_average?: number | null;
-  rating_count?: number;
 };
 
 // Map a free-text condition label (LT or EN) to a schema.org itemCondition URL.
@@ -99,9 +97,14 @@ export async function fetchListingMeta(id: string, locale: Locale): Promise<List
     };
   }
   try {
-    // Same URL + options as fetchListing's server call so Next memoizes them
-    // into a single request (the detail page also prefetches that query).
-    const res = await fetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } });
+    // The detail doc (title/description/price/condition) plus the review-stats
+    // endpoint, which owns the listing-level rating average + count the contract's
+    // ListingDetail no longer carries. Both reuse fetchListing's URLs + options, so
+    // Next memoizes the shared server requests into one each.
+    const [res, stats] = await Promise.all([
+      fetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } }),
+      fetchReviewStats(id),
+    ]);
     if (!res.ok) return null;
     const body: { data?: RawListing } = await res.json();
     const l = body.data;
@@ -115,8 +118,8 @@ export async function fetchListingMeta(id: string, locale: Locale): Promise<List
         .filter(Boolean),
       image: l.images?.[0]?.url,
       priceCents: typeof l.price_per_day_cents === "number" ? l.price_per_day_cents : 0,
-      ratingAverage: typeof l.rating_average === "number" ? l.rating_average : null,
-      ratingCount: typeof l.rating_count === "number" ? l.rating_count : 0,
+      ratingAverage: stats.ratingAverage,
+      ratingCount: stats.ratingCount,
       itemCondition: schemaConditionFromValue(conditionValue(l, locale)),
     };
   } catch {

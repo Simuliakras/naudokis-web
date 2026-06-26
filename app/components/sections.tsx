@@ -552,6 +552,7 @@ function LocaleSwitcher() {
     >
       <button
         type="button"
+        className="nk-locale-trigger"
         onClick={() => setOpen((v) => !v)}
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
         aria-haspopup="listbox"

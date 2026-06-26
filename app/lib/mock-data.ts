@@ -53,9 +53,8 @@ export type MockAttribute = { id: string; name_lt: string; name_en: string; valu
 
 export type MockOwner = {
   name: string;
-  is_business: boolean;
   verified: boolean;
-  completed_rentals: number;
+  total_listings: number;
   rating_average: number;
   rating_count: number;
 };
@@ -72,6 +71,11 @@ export type MockReview = {
 export type MockDetailExtra = {
   description_lt: string;
   description_en: string;
+  deposit_amount_cents: number | null;
+  minimum_rental_days: number;
+  maximum_rental_days: number;
+  cancellation_policy: string;
+  delivery_methods: { type: string; delivery_radius_km?: number }[];
   attributes: MockAttribute[];
   owner: MockOwner;
   reviews: MockReview[];
@@ -84,6 +88,11 @@ export const MOCK_DETAIL_EXTRA: MockDetailExtra = {
     "Tvarkingas, prižiūrėtas ir nuomai paruoštas daiktas. Komplektacija patikrinama prieš kiekvieną perdavimą, todėl tinka tiek savaitgalio planams, tiek rimtesniems projektams. Atsiimti galima Vilniuje arba susitarus dėl pristatymo.",
   description_en:
     "Clean, well-maintained item prepared for rental. The full kit is checked before every handover, so it works for weekend plans and more serious projects. Pickup is available in Vilnius, with delivery by arrangement.",
+  deposit_amount_cents: 10000,
+  minimum_rental_days: 1,
+  maximum_rental_days: 30,
+  cancellation_policy: "moderate",
+  delivery_methods: [{ type: "pickup" }, { type: "user_delivery", delivery_radius_km: 20 }],
   attributes: [
     { id: "condition", name_lt: "Būklė", name_en: "Condition", value_lt: "Puiki", value_en: "Excellent" },
     { id: "deposit", name_lt: "Užstatas", name_en: "Deposit", value_lt: "100 €", value_en: "€100" },
@@ -92,9 +101,8 @@ export const MOCK_DETAIL_EXTRA: MockDetailExtra = {
   ],
   owner: {
     name: "Eglė J.",
-    is_business: false,
     verified: true,
-    completed_rentals: 48,
+    total_listings: 12,
     rating_average: 4.9,
     rating_count: 52,
   },

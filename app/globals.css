@@ -242,6 +242,15 @@
   font-weight: 400; font-size: 20px; line-height: 32px; color: var(--nk-text-2);
 }
 .nk-prose { max-width: 65ch }       /* line-length cap for long-form copy    */
+.nk-prose > :first-child { margin-top: 0 }
+.nk-prose > :last-child { margin-bottom: 0 }
+.nk-prose p { margin: 0 0 .85em }
+.nk-prose strong, .nk-prose b { font-weight: 700; color: var(--nk-text) }
+.nk-prose em, .nk-prose i { font-style: italic }
+.nk-prose ul, .nk-prose ol { margin: .4em 0 .85em; padding-left: 1.4em }
+.nk-prose ul { list-style: disc }
+.nk-prose ol { list-style: decimal }
+.nk-prose li { margin: .25em 0 }
 .nk-body-sm {                       /* small body / chip text                */
   font-family: var(--nk-font-body);
   font-weight: 400; font-size: 18px; line-height: 26px; color: var(--nk-text-2);
@@ -600,6 +609,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-pillctl[aria-expanded="true"]{border-color:var(--nk-accent-border)}
 .nk-pillctl.is-active{background:var(--nk-accent-bg);color:var(--nk-accent-text);border-color:var(--nk-accent-border)}
 .nk-pillctl__label{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.nk-locale-trigger{min-width:var(--nk-tap);min-height:var(--nk-tap);justify-content:center}
 /* toggle switch (delivery filter) — the lead never overflows; the track sits at
    the trailing edge so the off/on state is always visible, incl. the ≤560 stack */
 .nk-toggle__lead{overflow:hidden;text-overflow:ellipsis}
@@ -886,7 +896,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* ============================================================
    Breadcrumb
    ============================================================ */
-.nk-crumb{transition:color .15s ease,background .15s ease}
+.nk-crumb{min-height:var(--nk-tap);transition:color .15s ease,background .15s ease}
 .nk-crumb:hover{color:var(--nk-text);background:var(--nk-surface)}
 .nk-crumbs{min-width:0}
 .nk-crumbs > *{min-width:0}
@@ -920,14 +930,19 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(max-width:560px){
   .nk-filterbar{padding-block:8px 10px;margin-bottom:22px}
   .nk-filter-row{display:grid!important;grid-template-columns:1fr 1fr;align-items:stretch;gap:8px}
-  .nk-filter-row:first-child{grid-template-columns:minmax(0,1fr) minmax(126px,36%)}
+  .nk-filter-row:first-child{grid-template-columns:minmax(0,1fr) minmax(138px,40%)}
   /* override the inline `flex:1 1 320px` (desktop row sizing) — in this column
      layout a 320px flex-basis becomes a 320px-tall field; !important beats inline */
   .nk-filter-row > .nk-searchfield{flex:1 1 auto!important;min-width:0;width:100%;padding:10px 14px}
   .nk-filter-row > *{width:100%;min-width:0}
-  .nk-filter-row .nk-pillctl{width:100%;justify-content:space-between;min-height:42px!important;padding:9px 12px!important;font-size:14.5px!important}
+  .nk-filter-row .nk-pillctl{width:100%;justify-content:space-between;min-height:var(--nk-tap)!important;padding:9px 12px!important;font-size:14.5px!important}
+  .nk-filter-row .nk-toggle{grid-column:1 / -1}
+  .nk-filter-row .nk-toggle__lead,.nk-filter-row .nk-pillctl__label{white-space:nowrap}
   .nk-filter-spacer{display:none}
   .nk-filter-meta{grid-column:1 / -1;justify-content:space-between;padding-top:0}
+}
+@media(max-width:420px){
+  .nk-filter-row:first-child{grid-template-columns:1fr}
 }
 /* removable active-filter chip */
 .nk-fchip{display:inline-flex;align-items:center;gap:8px;border-radius:var(--nk-r-chip);padding:9px 12px 9px 16px;
@@ -953,7 +968,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-input-clear{display:flex;align-items:center;justify-content:center;flex:none;
   width:var(--nk-tap);height:var(--nk-tap);margin:-13px -14px -13px 0;transition:color .15s ease}
 .nk-input-clear:hover{color:var(--nk-text)}
-.nk-tagchip{transition:background .15s ease,border-color .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
+.nk-tagchip{min-height:var(--nk-tap);transition:background .15s ease,border-color .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
 .nk-tagchip:hover{background:var(--nk-surface-2);border-color:var(--nk-accent-border)}
 .nk-tagchip:active{transform:scale(.96)}
 
@@ -1118,7 +1133,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--nk-grid-gap)}
 @media(max-width:1280px){.nk-grid-4{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:900px){.nk-grid-4{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:768px){.nk-grid-4{grid-template-columns:1fr}}
+@media(max-width:560px){.nk-grid-4{grid-template-columns:1fr}}
 
 @media(max-width:1024px){
   .nk-hero-panel{grid-template-columns:1fr;padding:36px;min-height:0;gap:32px}
@@ -1165,34 +1180,34 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(max-width:560px){
   .nk-btn{white-space:normal}
   /* hero is much shorter without the phone — drop the desktop-scale section padding */
-  #top > .nk-container{padding-block:clamp(16px,4vw,24px) clamp(40px,12vw,64px)}
-  .nk-hero-panel{padding:24px;gap:24px;border-radius:18px!important}
+  #top > .nk-container{padding-block:8px 16px!important}
+  .nk-hero-panel{padding:16px;gap:14px;border-radius:18px!important}
   /* the visitor is already on a phone — drop the device mockup + QR entirely so the
      hero is a tight value-prop stack with no dead vertical space (badge → headline →
      body → search → trust → store badges). The <Image> keeps `priority` for the
      desktop LCP; the mobile preload cost is accepted. */
   .nk-hero-media{display:none}
   /* denser left-column rhythm than the desktop --nk-stack-lg gap */
-  .nk-hero-panel .nk-hero-intro{gap:18px}
-  .nk-h-hero{font-size:clamp(36px,11vw,44px);line-height:1.04}
+  .nk-hero-panel .nk-hero-intro{gap:12px!important}
+  .nk-h-hero{font-size:clamp(32px,9.6vw,38px);line-height:1.03}
   .nk-h-cta{font-size:clamp(32px,10vw,44px);overflow-wrap:anywhere;text-wrap:balance}
-  .nk-hero-badge{max-width:100%;gap:8px!important;padding:6px 14px 6px 6px!important}
-  .nk-hero-badge > span:first-child{width:28px!important;height:28px!important}
-  .nk-hero-badge__label{line-height:18px}
+  .nk-hero-badge{max-width:100%;gap:8px!important;padding:5px 12px 5px 5px!important}
+  .nk-hero-badge > span:first-child{width:26px!important;height:26px!important}
+  .nk-hero-badge__label{font-size:13.5px;line-height:16px}
   /* store badges as one scaled row (no wrap to two lines at 344px) */
   .nk-appbadges{flex-wrap:nowrap!important;gap:10px!important;width:100%}
   .nk-appbadges .nk-badgebtn{flex:1 1 0;min-width:0}
-  .nk-appbadges .nk-badgebtn img{width:100%!important;height:auto!important;max-height:46px;object-fit:contain;object-position:left}
-  .nk-search{width:100%;max-width:100%!important;flex-direction:column!important;align-items:stretch!important;padding:8px!important;border-radius:24px!important;gap:0!important;border-color:var(--nk-light-divider)!important}
-  .nk-search > span:first-child{flex:1 1 auto!important;min-width:0;width:100%;padding:12px 14px;gap:14px!important}
+  .nk-appbadges .nk-badgebtn img{width:100%!important;height:auto!important;max-height:40px;object-fit:contain;object-position:left}
+  .nk-search{width:100%;max-width:100%!important;flex-direction:column!important;align-items:stretch!important;padding:6px!important;border-radius:22px!important;gap:0!important;border-color:var(--nk-light-divider)!important}
+  .nk-search > span:first-child{flex:1 1 auto!important;min-width:0;width:100%;padding:8px 12px!important;gap:12px!important}
   /* repurpose the desktop vertical divider as a full-width hairline between fields */
   .nk-search > span:nth-child(2){display:block!important;width:auto!important;height:1px!important;margin:0 14px;background:var(--nk-light-divider)}
   .nk-search .nk-citypick{flex:1 1 auto;min-width:0;width:100%}
-  .nk-search .nk-citypick__trigger{width:100%;justify-content:flex-start;gap:14px;padding:12px 14px;text-align:left}
+  .nk-search .nk-citypick__trigger{width:100%;justify-content:flex-start;gap:12px;padding:8px 12px!important;text-align:left}
   .nk-search .nk-search__col{flex:1;text-align:left}
   .nk-search .nk-search__label{display:block;font-family:var(--nk-font-display);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--nk-light-meta);margin-bottom:2px}
-  .nk-search .nk-btn{width:100%;padding-inline:20px!important;min-height:54px;margin-top:8px;border-radius:18px}
-  .nk-body{font-size:17px;line-height:27px}
+  .nk-search .nk-btn{width:100%;padding-block:12px!important;padding-inline:20px!important;min-height:48px;margin-top:4px;border-radius:17px}
+  .nk-body{font-size:15.5px;line-height:24px}
   .nk-body-sm{font-size:15.5px;line-height:24px}
   .nk-meta{font-size:15.5px;line-height:24px}
   .nk-eyebrow{font-size:13px}
@@ -1200,8 +1215,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 }
 @media(max-width:360px){
   .nk-btn{white-space:normal}
-  .nk-hero-panel{padding:22px}
-  .nk-h-hero{font-size:36px}
+  .nk-hero-panel{padding:16px}
+  .nk-h-hero{font-size:33px}
 }
 
 /* ============================================================

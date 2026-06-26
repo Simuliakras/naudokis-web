@@ -106,7 +106,7 @@ export function ListingScreen({ id }: { id: string }) {
           <DetailBody listing={listing} onContact={contact} />
           <aside className="nk-reserve">
             <BookingPanel listing={listing} onReserve={reserve} onPickDates={pickDates} />
-            <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />
+            {listing.owner && <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />}
           </aside>
         </div>
       </div>

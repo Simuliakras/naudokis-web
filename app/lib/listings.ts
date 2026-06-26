@@ -38,25 +38,79 @@ type ApiAttributeDisplay = {
   value_label_en?: string;
 };
 
+// Owner block on the detail endpoint. Per the backend `ListingOwner` contract
+// every field but `name` is optional, and the detail owner has no completed-rentals
+// count (that lives only on the browse-card summary) — the host card uses
+// `total_listings` instead.
 type ApiOwner = {
-  id: string;
   name: string;
-  is_business: boolean;
-  verified: boolean;
-  completed_rentals: number;
-  rating_average: number | null;
-  rating_count: number;
-  avatar: string | null;
+  business_name?: string | null;
+  is_business?: boolean;
+  verified?: boolean;
+  rating_average?: number;
+  rating_count?: number;
+  total_listings?: number;
+  avatar?: string;
 };
 
-type ApiListingDetail = ApiListing & {
+// A delivery option on the listing. Only the fields the handover section reads are
+// modelled; `type` is "pickup" | "user_delivery" on the wire.
+type ApiDeliveryMethod = {
+  type: string;
+  delivery_radius_km?: number;
+};
+
+// Faithful (read-only) model of the backend `ListingDetail` contract — only the
+// fields this site reads. `owner` / `attributes_display` / `city` are
+// contract-optional (an owner-less or attribute-less listing is valid). The
+// listing-level rating is intentionally absent here: the average, count and
+// distribution all come from the separate /review-stats endpoint (see fetchReviewStats).
+type ApiListingDetail = {
+  id: string;
+  title: string;
   description: string;
+  city?: string;
+  price_per_day_cents: number;
+  deposit_amount_cents?: number | null;
+  minimum_rental_days?: number;
+  maximum_rental_days?: number;
+  cancellation_policy?: string;
+  delivery_methods?: ApiDeliveryMethod[];
+  images?: ApiImage[];
   category_names: ApiCategoryName[];
-  attributes_display: ApiAttributeDisplay[];
-  owner: ApiOwner;
+  attributes_display?: ApiAttributeDisplay[];
+  owner?: ApiOwner;
+  owner_name?: string;
 };
 
 type ListingDetailResponse = { success: boolean; data: ApiListingDetail };
+
+// GET /listings/{id}/review-stats — listing-level rating count + per-star
+// distribution (anonymously accessible). rating_distribution keys are "1".."5".
+type ApiReviewStats = {
+  rating_average: number | null;
+  rating_count: number;
+  rating_distribution: Record<string, number>;
+};
+
+type ReviewStatsResponse = { success: boolean; data: ApiReviewStats };
+
+// GET /listings/{id}/reviews — public reviews page. Only the fields the review
+// card renders are modelled (the wire also carries reviewer/reviewee identity and
+// review context the bridge site doesn't surface).
+type ApiPublicReview = {
+  review_id: string;
+  reviewer_name: string;
+  reviewer_photo_url?: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+};
+
+type PublicReviewsResponse = {
+  success: boolean;
+  data: { reviews: ApiPublicReview[]; count: number; has_more: boolean; next_token?: string };
+};
 
 /* ---------------- View models ---------------- */
 export type Offer = {
@@ -94,14 +148,16 @@ export type ListingFilters = {
 
 export type ListingAttribute = { id: string; label: string; value: string };
 
-export type ListingReview = { name: string; date: string; stars: number; text: string };
+export type ListingReview = { name: string; date: string; stars: number; text: string; avatar: string | null };
 export type RatingBucket = { stars: number; count: number };
+
+// Summarized delivery options for the handover section.
+export type ListingDelivery = { pickup: boolean; delivery: boolean; radiusKm: number | null };
 
 export type ListingOwner = {
   name: string;
-  isBusiness: boolean;
   verified: boolean;
-  completedRentals: number;
+  listingsCount: number; // owner.total_listings — host-card "listings" stat
   rating?: string;
   ratingCount: number;
   avatar: string | null;
@@ -113,6 +169,11 @@ export type ListingDetail = {
   city: string;
   price: string;
   priceCents: number; // raw per-day price, for the booking-panel breakdown math
+  deposit: string | null; // formatted refundable deposit; null when the listing takes none
+  minDays: number;
+  maxDays: number;
+  cancellation: string; // policy tier id ("flexible" | "moderate" | "strict" | …)
+  delivery: ListingDelivery;
   description: string;
   rating?: string; // localized display string ("4,9" / "4.9")
   ratingValue: number; // raw numeric average, for star rendering / math
@@ -120,7 +181,7 @@ export type ListingDetail = {
   images: string[];
   tags: string[];
   attributes: ListingAttribute[];
-  owner: ListingOwner;
+  owner: ListingOwner | null; // null when the listing has no owner block / owner_name
   reviews: ListingReview[];
   ratingBreakdown: RatingBucket[]; // [5★…1★] counts; empty when no reviews
 };
@@ -159,6 +220,40 @@ function ratingLabel(average: number | null, count: number, locale: Locale): str
     return undefined;
   }
   return formatRating(average, locale);
+}
+
+// Formatted refundable deposit; null when the listing takes none (so the UI can
+// fall back to a "no deposit" label rather than rendering "0 €").
+function formatDeposit(cents: number | null | undefined, locale: Locale): string | null {
+  return cents && cents > 0 ? formatPrice(cents, locale) : null;
+}
+
+// review-stats `rating_distribution` ({ "1": n … "5": n }) → the [5★…1★] buckets
+// the rating breakdown bars render.
+function distributionToBuckets(dist: Record<string, number>): RatingBucket[] {
+  return [5, 4, 3, 2, 1].map((stars) => ({ stars, count: dist[String(stars)] ?? 0 }));
+}
+
+// ISO timestamp → localized relative date ("2 weeks ago" / "prieš 2 savaites").
+// Computed once inside the fetch and baked into the cached result, so there's no
+// server/client "now" drift on hydration. Intl supports both lt and en.
+function formatReviewDate(iso: string, locale: Locale): string {
+  const ms = new Date(iso).getTime();
+  if (Number.isNaN(ms)) {
+    return "";
+  }
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  const divisions: [number, Intl.RelativeTimeFormatUnit][] = [
+    [60, "second"], [60, "minute"], [24, "hour"], [7, "day"], [4.34524, "week"], [12, "month"], [Number.POSITIVE_INFINITY, "year"],
+  ];
+  let value = (ms - Date.now()) / 1000;
+  for (const [amount, unit] of divisions) {
+    if (Math.abs(value) < amount) {
+      return rtf.format(Math.round(value), unit);
+    }
+    value /= amount;
+  }
+  return rtf.format(Math.round(value), "year");
 }
 
 /* ---------------- Fetchers + hooks ---------------- */
@@ -343,6 +438,96 @@ export function useListingsInfinite(locale: Locale, filters: ListingFilters = {}
   });
 }
 
+// GET /listings/{id} — the core detail document. Throws on a non-OK response so
+// the screen renders its error state; rating + reviews are layered on top from the
+// two review endpoints. Same `next` options as the detail page's raw-metadata fetch
+// so Next memoizes the same-URL server requests into one (ignored by browser fetch).
+async function fetchListingDetailRaw(id: string): Promise<ApiListingDetail> {
+  const res = await fetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } });
+  if (!res.ok) {
+    throw new Error(`Failed to load listing ${id}: ${res.status}`);
+  }
+  const body: ListingDetailResponse = await res.json();
+  return body.data;
+}
+
+export type ReviewStatsView = { ratingAverage: number | null; ratingCount: number; breakdown: RatingBucket[] };
+
+// GET /listings/{id}/review-stats — listing-level rating average, count and per-star
+// distribution. Resilient: a failure degrades to "no ratings" rather than failing the
+// whole page. Exported so the detail page's SEO fetch reuses it (same URL + options →
+// Next collapses the two server requests into one).
+export async function fetchReviewStats(id: string): Promise<ReviewStatsView> {
+  try {
+    const res = await fetch(`${API_BASE}/listings/${id}/review-stats`, { next: { revalidate: LISTING_REVALIDATE } });
+    if (!res.ok) {
+      return { ratingAverage: null, ratingCount: 0, breakdown: [] };
+    }
+    const body: ReviewStatsResponse = await res.json();
+    const s = body.data;
+    return {
+      ratingAverage: s.rating_average,
+      ratingCount: s.rating_count,
+      breakdown: s.rating_count > 0 ? distributionToBuckets(s.rating_distribution) : [],
+    };
+  } catch {
+    return { ratingAverage: null, ratingCount: 0, breakdown: [] };
+  }
+}
+
+// GET /listings/{id}/reviews — the latest few public reviews for the cards.
+// Resilient like the stats fetch; dates are pre-formatted into the cached result.
+async function fetchReviews(id: string, locale: Locale): Promise<ListingReview[]> {
+  try {
+    const res = await fetch(`${API_BASE}/listings/${id}/reviews?limit=3`, { next: { revalidate: LISTING_REVALIDATE } });
+    if (!res.ok) {
+      return [];
+    }
+    const body: PublicReviewsResponse = await res.json();
+    return body.data.reviews.map((r) => ({
+      name: r.reviewer_name,
+      date: formatReviewDate(r.created_at, locale),
+      stars: r.rating,
+      text: r.comment,
+      avatar: r.reviewer_photo_url ?? null,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+// Summarize the delivery methods array into the flags the handover section needs.
+function mapDelivery(methods: ApiDeliveryMethod[] | undefined): ListingDelivery {
+  const list = methods ?? [];
+  const userDelivery = list.find((m) => m.type === "user_delivery");
+  return {
+    pickup: list.some((m) => m.type === "pickup"),
+    delivery: !!userDelivery,
+    radiusKm: userDelivery?.delivery_radius_km ?? null,
+  };
+}
+
+// Map the contract-optional detail owner to the host-card view model. Returns null
+// when the listing has no owner block and no `owner_name` fallback — the screen then
+// hides the host card entirely. Display name prefers the business name.
+function mapDetailOwner(detail: ApiListingDetail, locale: Locale): ListingOwner | null {
+  const o = detail.owner;
+  if (!o) {
+    if (!detail.owner_name) {
+      return null;
+    }
+    return { name: detail.owner_name, verified: false, listingsCount: 0, ratingCount: 0, avatar: null };
+  }
+  return {
+    name: o.business_name ?? o.name ?? detail.owner_name ?? "",
+    verified: o.verified ?? false,
+    listingsCount: o.total_listings ?? 0,
+    rating: ratingLabel(o.rating_average ?? null, o.rating_count ?? 0, locale),
+    ratingCount: o.rating_count ?? 0,
+    avatar: o.avatar ?? null,
+  };
+}
+
 export async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> {
   if (USE_MOCK) {
     const l = MOCK_LISTINGS.find((x) => x.id === id) ?? MOCK_LISTINGS[0];
@@ -354,6 +539,11 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
       city: l.city,
       price: formatPrice(l.price_per_day_cents, locale),
       priceCents: l.price_per_day_cents,
+      deposit: formatDeposit(e.deposit_amount_cents, locale),
+      minDays: e.minimum_rental_days,
+      maxDays: e.maximum_rental_days,
+      cancellation: e.cancellation_policy,
+      delivery: mapDelivery(e.delivery_methods),
       description: locale === "en" ? e.description_en : e.description_lt,
       rating: ratingLabel(l.rating_average, l.rating_count, locale),
       ratingValue: l.rating_average,
@@ -367,9 +557,8 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
       })),
       owner: {
         name: e.owner.name,
-        isBusiness: e.owner.is_business,
         verified: e.owner.verified,
-        completedRentals: e.owner.completed_rentals,
+        listingsCount: e.owner.total_listings,
         rating: ratingLabel(e.owner.rating_average, e.owner.rating_count, locale),
         ratingCount: e.owner.rating_count,
         avatar: null,
@@ -379,31 +568,36 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
         date: locale === "en" ? r.date_en : r.date_lt,
         stars: r.stars,
         text: locale === "en" ? r.text_en : r.text_lt,
+        avatar: null,
       })),
       ratingBreakdown: l.rating_count > 0 ? mockRatingBreakdown(l.rating_count) : [],
     };
   }
-  // Same `next` options as the detail page's raw-metadata fetch so Next memoizes
-  // the two same-URL server requests into one (ignored by the browser fetch).
-  const res = await fetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } });
-  if (!res.ok) {
-    throw new Error(`Failed to load listing ${id}: ${res.status}`);
-  }
-  const body: ListingDetailResponse = await res.json();
-  const l = body.data;
+  // The detail document plus its two review endpoints, fetched in parallel. Only
+  // the detail fetch can reject (→ error screen); stats/reviews degrade gracefully.
+  const [detail, stats, reviews] = await Promise.all([
+    fetchListingDetailRaw(id),
+    fetchReviewStats(id),
+    fetchReviews(id, locale),
+  ]);
   return {
-    id: l.id,
-    title: l.title,
-    city: l.city ?? "",
-    price: formatPrice(l.price_per_day_cents, locale),
-    priceCents: l.price_per_day_cents,
-    description: l.description,
-    rating: ratingLabel(l.rating_average, l.rating_count, locale),
-    ratingValue: l.rating_average ?? 0,
-    ratingCount: l.rating_count,
-    images: l.images.map((im) => im.url),
-    tags: l.category_names.map((c) => (locale === "en" ? c.en : c.lt)),
-    attributes: l.attributes_display
+    id: detail.id,
+    title: detail.title,
+    city: detail.city ?? "",
+    price: formatPrice(detail.price_per_day_cents, locale),
+    priceCents: detail.price_per_day_cents,
+    deposit: formatDeposit(detail.deposit_amount_cents, locale),
+    minDays: detail.minimum_rental_days ?? 1,
+    maxDays: detail.maximum_rental_days ?? 0,
+    cancellation: detail.cancellation_policy ?? "",
+    delivery: mapDelivery(detail.delivery_methods),
+    description: detail.description,
+    rating: ratingLabel(stats.ratingAverage, stats.ratingCount, locale),
+    ratingValue: stats.ratingAverage ?? 0,
+    ratingCount: stats.ratingCount,
+    images: (detail.images ?? []).map((im) => im.url),
+    tags: detail.category_names.map((c) => (locale === "en" ? c.en : c.lt)),
+    attributes: (detail.attributes_display ?? [])
       .filter((a) => !a.orphan)
       .map((a) => ({
         id: a.id,
@@ -411,18 +605,9 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
         value: (locale === "en" ? a.value_label_en : a.value_label_lt) ?? "",
       }))
       .filter((a) => a.value),
-    owner: {
-      name: l.owner.name,
-      isBusiness: l.owner.is_business,
-      verified: l.owner.verified,
-      completedRentals: l.owner.completed_rentals,
-      rating: ratingLabel(l.owner.rating_average, l.owner.rating_count, locale),
-      ratingCount: l.owner.rating_count,
-      avatar: l.owner.avatar,
-    },
-    // The public backend doesn't expose individual reviews on the web yet.
-    reviews: [],
-    ratingBreakdown: [],
+    owner: mapDetailOwner(detail, locale),
+    reviews,
+    ratingBreakdown: stats.breakdown,
   };
 }
 

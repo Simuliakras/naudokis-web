@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Naudokis — daiktų nuoma iš žmonių šalia",
     short_name: "Naudokis",
     description:
-      "Išsinuomokite įrankius, transportą, foto techniką, elektroniką ir laisvalaikio įrangą iš patikimų žmonių Lietuvoje.",
+      "Išsinuomokite įrankius, transportą, foto techniką, elektroniką ir laisvalaikio įrangą iš žmonių šalia.",
     start_url: "/",
     display: "standalone",
     background_color: "#282C2D",
