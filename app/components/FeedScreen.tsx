@@ -210,7 +210,7 @@ export function FeedScreen() {
         <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px" }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={crumbs} />
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: 32 }}>
-            <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 5vw, 52px)", lineHeight: 1.05, letterSpacing: 0, color: "var(--nk-text)" }}>{heading}</h1>
+            <h1 className="nk-h-page">{heading}</h1>
             <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 19, color: "var(--nk-text-muted)" }}>{subtitle}</span>
           </div>
 
@@ -232,7 +232,7 @@ export function FeedScreen() {
                 <Toggle icon="Car" on={params.delivery} onChange={(on) => setParams({ delivery: on })}>{t.deliveryToggle}</Toggle>
                 <span className="nk-filter-spacer" style={{ flex: 1 }} />
                 <div className="nk-filter-meta" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span aria-live="polite" style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.resultCount(list.length)}</span>
+                  <span aria-live="polite" className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.resultCount(list.length)}</span>
                   {anyActive && (
                     <button onClick={reset} className="nk-clear" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 999, background: "transparent", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text-muted)" }}>
                       <Icon name="X" size={15} stroke={2.2} color="currentColor" /> {t.clear}

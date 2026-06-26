@@ -75,9 +75,9 @@ app/
 │   │                       #   FilterSelect, StoreBadge, AppBadges, QR, openRedirect()
 │   ├── FeedScreen.tsx / CategoriesScreen.tsx / HowItWorksScreen.tsx   # Page orchestrators
 │   ├── ListingScreen.tsx / ListingDetail.tsx   # Detail orchestrator + presentational pieces
-│   ├── Chrome.tsx          # Page shell: children + AppRedirect modal + StickyAppBanner
+│   ├── Chrome.tsx          # Page shell: children + AppRedirect modal
 │   ├── StatusScreen.tsx    # Shared error/404 screen (Nav + Footer chrome)
-│   ├── AppRedirect.tsx / StickyAppBanner.tsx   # "Locked-mode" app-install bridge UI
+│   ├── AppRedirect.tsx     # "Locked-mode" app-install bridge modal (real QR + store links)
 │   └── legal/              # Policy-center components
 └── lib/
     ├── api.ts              # API_BASE (defaults to prod) + USE_MOCK gate

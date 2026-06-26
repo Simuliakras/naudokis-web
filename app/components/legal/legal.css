@@ -16,7 +16,7 @@
   --lg-read:        720px;
   --lg-pad:         clamp(20px, 5vw, 64px);
   --nk-purple-light: var(--nk-purple-hover);
-  --nk-text-tertiary: rgba(255,255,255,0.45);
+  --nk-text-tertiary: rgba(255,255,255,0.62);  /* ≥4.5:1 on --nk-bg for the small uppercase TOC/related labels */
   --lg-elevated:    #1C1F20;
   --lg-float-bg:    rgba(47,52,54,0.9);  /* floating TOC / language panel */
   background:var(--nk-bg); color:var(--nk-text-2); font-family:var(--nk-font-body);

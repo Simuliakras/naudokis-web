@@ -36,8 +36,12 @@ export function DocumentScreen({
   const siblingTitle = siblingId === "privacy-policy" ? t.docPrivacyTitle : t.docTermsTitle;
   const contactEmail = docId === "privacy-policy" ? CONTACT_PRIVACY_EMAIL : CONTACT_EMAIL;
 
-  const intro = doc.blocks.find((b) => b.t === "p");
-  const bodyBlocks = intro ? doc.blocks.filter((b) => b !== intro) : doc.blocks;
+  // Only the document's FIRST block counts as the lede, and only when it's a
+  // paragraph. Searching for the first `p` anywhere would hoist a paragraph that
+  // sits under heading 1 (e.g. the account-deletion doc opens h2 → p), leaving
+  // section 1 rendered as an empty heading.
+  const intro = doc.blocks[0]?.t === "p" ? doc.blocks[0] : undefined;
+  const bodyBlocks = intro ? doc.blocks.slice(1) : doc.blocks;
 
   return (
     <Chrome>

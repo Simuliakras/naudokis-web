@@ -22,6 +22,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
       body={t.errorBody}
       actionLabel={t.errorAction}
       onAction={reset}
+      tone="danger"
     />
   );
 }

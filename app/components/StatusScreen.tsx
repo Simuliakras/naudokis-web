@@ -10,7 +10,7 @@ import { localeHome } from "@/app/lib/i18n/config";
 import type { IllusName } from "./ui";
 
 export function StatusScreen({
-  illustration, title, body, actionLabel, onAction,
+  illustration, title, body, actionLabel, onAction, tone = "default",
 }: {
   illustration: IllusName;
   title: string;
@@ -19,6 +19,9 @@ export function StatusScreen({
   // Defaults to navigating to the locale home — the right action for a 404. The
   // error boundary overrides it with reset() to retry the failed segment.
   onAction?: () => void;
+  // "danger" (crash boundary) makes EmptyState announce via role="alert" and
+  // move focus to the retry action; 404 stays "default".
+  tone?: "default" | "danger";
 }) {
   const { locale } = useI18nOptional();
   // The Nav search icon must not piggyback on the page action (on the error
@@ -41,6 +44,7 @@ export function StatusScreen({
           actionLabel={actionLabel}
           onAction={onAction ?? goHome}
           actionPrimary
+          tone={tone}
         />
       </main>
       <Footer locale={locale} />

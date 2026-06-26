@@ -9,12 +9,14 @@ import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Breadcrumb, openRedirect } from "./ui";
-import { EmptyState } from "./cards";
+import { EmptyState, OfferCard } from "./cards";
 import {
   ListingSkeleton, ListingHeader, Gallery, DetailBody,
   BookingPanel, HostCard, MobileBar, detailCrumbs,
 } from "./ListingDetail";
-import { useListing } from "@/app/lib/listings";
+import { useListing, useListings } from "@/app/lib/listings";
+import { useCategories } from "@/app/lib/categories";
+import { categoryIconFor } from "@/app/lib/category-style";
 import { lastFeedUrl } from "@/app/lib/search";
 import { localePath } from "@/app/lib/i18n/config";
 import { useI18n } from "./I18nProvider";
@@ -109,9 +111,42 @@ export function ListingScreen({ id }: { id: string }) {
             {listing.owner && <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />}
           </aside>
         </div>
+
+        {category && <SimilarRail currentId={listing.id} category={category} />}
       </div>
 
       <MobileBar price={listing.price} hidden={footerInView} onReserve={reserve} />
     </>,
+  );
+}
+
+/* ---------------- Similar-items cross-sell rail ----------------
+   The detail page's highest-leverage re-engagement surface — reuses the browse
+   feed (category text-search), drops the current listing, shows up to 4. Only
+   mounted when the listing has a category (see caller), so it never fires a broad
+   all-listings fetch nor mislabels arbitrary items as "similar"; hidden too when
+   fewer than two siblings surface, so it never renders a lonely single card. */
+function SimilarRail({ currentId, category }: { currentId: string; category: string }) {
+  const { locale, dict } = useI18n();
+  const { data } = useListings(locale, { q: category });
+  const cats = useCategories(locale).data ?? [];
+  const items = (data ?? []).filter((o) => o.id !== currentId).slice(0, 4);
+  if (items.length < 2) {
+    return null;
+  }
+  return (
+    <section style={{ marginTop: 64 }} aria-label={dict.detail.similarHeading}>
+      <h2 style={{ margin: "0 0 24px", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text)" }}>{dict.detail.similarHeading}</h2>
+      <div className="nk-grid-4">
+        {items.map((o) => (
+          <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
+            <OfferCard title={o.title} city={o.city} price={o.price} unit={dict.common.perDay}
+              rating={o.rating} count={o.ratingCount > 0 ? dict.common.reviewCount(o.ratingCount) : undefined}
+              img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
+              href={localePath(locale, `/skelbimai/${o.id}`)} />
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

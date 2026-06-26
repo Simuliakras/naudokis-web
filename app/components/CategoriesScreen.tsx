@@ -23,10 +23,9 @@ export function CategoriesScreen() {
   useReloadOnReconnect({ online, isError, refetch });
 
   const focusSearch = () => document.getElementById("nk-cats-search-input")?.focus();
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (q.trim()) router.push(listingSearchHref({ q, locale }));
-  };
+  // The field is a pure category filter — Enter must not navigate. Cross-search
+  // to the items feed is an explicit affordance from the no-results empty state.
+  const searchItems = () => { if (q.trim()) { router.push(listingSearchHref({ q, locale })); } };
   const term = q.trim().toLowerCase();
   const all = data ?? [];
   const list = all.filter((c) => c.title.toLowerCase().includes(term));
@@ -39,18 +38,22 @@ export function CategoriesScreen() {
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={[{ label: t.crumb }]} />
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: 32 }}>
             <span className="nk-eyebrow">{t.eyebrow}</span>
-            <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 5vw, 52px)", lineHeight: 1.05, letterSpacing: 0, color: "var(--nk-text)" }}>{t.title}</h1>
+            <h1 className="nk-h-page">{t.title}</h1>
             <p className="nk-body" style={{ margin: 0, maxWidth: 620 }}>{t.body}</p>
           </div>
 
-          <form onSubmit={submit} style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)", marginBottom: 32, flexWrap: "wrap" }}>
-            <span className="nk-searchfield" style={{ flex: "1 1 320px", minWidth: 240, maxWidth: 560 }}>
+          <form onSubmit={(e) => e.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: 32 }}>
+            <span className="nk-searchfield" style={{ width: "100%", maxWidth: 560 }}>
               <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
               <input id="nk-cats-search-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.searchPlaceholder}
                 style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text)" }} />
               {q && <InputClear onClick={() => setQ("")} label={dict.bridge.close} />}
             </span>
-            <button type="submit" className="nk-btn nk-btn--primary" style={{ padding: "14px 30px" }}>{t.submit}</button>
+            {/* Always-mounted live region (toggle its text, not its existence) so the
+                count change is reliably announced on every keystroke. */}
+            <span aria-live="polite" className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
+              {!isLoading && !isError && all.length > 0 ? t.foundCount(list.length) : ""}
+            </span>
           </form>
 
           {isLoading ? (
@@ -73,7 +76,9 @@ export function CategoriesScreen() {
               ))}
             </div>
           ) : (
-            <EmptyState illustration="search" title={t.emptyTitle} subtitle={t.emptySubtitle(q.trim())} actionLabel={t.emptyAction} onAction={() => setQ("")} />
+            <EmptyState illustration="search" title={t.emptyTitle} subtitle={t.emptySubtitle(q.trim())}
+              actionLabel={t.searchItems(q.trim())} actionPrimary actionIcon="Search" onAction={searchItems}
+              secondaryLabel={t.emptyAction} onSecondaryAction={() => setQ("")} />
           )}
 
           <section style={{ paddingTop: "calc(var(--nk-section-y) * 0.55)", paddingBottom: "var(--nk-section-y)" }}>

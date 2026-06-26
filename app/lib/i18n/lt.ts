@@ -262,6 +262,7 @@ export const lt: Dict = {
     durationLabel: "Nuomos trukmė",
     durationValue: "Nuo 1 iki 60 dienų",
     reviewsHeading: "Atsiliepimai",
+    similarHeading: "Panašūs daiktai",
     reviewsEmptyTitle: "Šis daiktas dar neturi atsiliepimų",
     reviewsEmptyBody: "Išsinuomokite pirmi ir padėkite kitiems apsispręsti.",
     reviewsInApp: (n) => `Visi ${n} atsiliepimai programėlėje`,
@@ -285,6 +286,7 @@ export const lt: Dict = {
     dateFrom: "Nuo",
     dateTo: "Iki",
     dateInApp: "Pasirinksite programėlėje",
+    chooseDates: "Pasirinkti datas",
     pricePerDayLine: "Nuomos kaina už parą",
     serviceFee: "Nuomininko aptarnavimo mokestis",
     serviceFeeHint: "Nuomininkams aptarnavimo mokestis Naudokis netaikomas. Mokate savininko nurodytą nuomos kainą ir, jei taikoma, grąžinamą užstatą.",
@@ -351,6 +353,14 @@ export const lt: Dict = {
     emptyTitle: "Kategorijų nerasta",
     emptySubtitle: (query) => `Pagal „${query}“ kategorijų neradome. Pabandykite platesnę paiešką.`,
     emptyAction: "Išvalyti",
+    foundCount: (n) => {
+      const mod10 = n % 10, mod100 = n % 100;
+      const word = mod10 === 1 && mod100 !== 11 ? "kategorija"
+        : mod10 >= 2 && mod10 <= 9 && (mod100 < 11 || mod100 > 19) ? "kategorijos"
+          : "kategorijų";
+      return `Rasta ${n} ${word}`;
+    },
+    searchItems: (query) => `Ieškoti „${query}“ tarp daiktų`,
     seoHeading: "Daiktų nuoma pagal kategorijas",
     seoBody: "Naudokis.lt apima kasdienes nuomos kategorijas visoje Lietuvoje — nuo įrankių ir transporto iki foto technikos, elektronikos, buitinės technikos, renginių ir laisvalaikio įrangos. Pasirinkite kategoriją ir raskite daiktus netoliese be poreikio pirkti tai, ko reikia tik kartais.",
   },
@@ -428,6 +438,7 @@ export const lt: Dict = {
     defaultTitle: "Tęskite Naudokis programėlėje",
     defaultBody: "Rezervacijos, žinutės, mokėjimai, užstatai ir atsiliepimai saugiai valdomi programėlėje.",
     qrHint: "Nuskenuokite QR kodą telefonu ir atidarykite Naudokis.",
+    installCta: "Atsisiųsti programėlę",
     close: "Uždaryti",
     opensAppHint: "Atsidarys programėlėje",
     googlePlayAlt: "Gaukite „Google Play“ parduotuvėje",

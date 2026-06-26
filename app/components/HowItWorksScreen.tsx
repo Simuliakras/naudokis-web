@@ -55,7 +55,7 @@ export function HowItWorksScreen() {
                 <div className="htw-toggle-row">
                   <div className="htw-toggle" role="group" aria-label={t.eyebrow}>
                     {(["renter", "owner"] as Role[]).map((r) => (
-                      <button key={r} type="button" aria-pressed={role === r}
+                      <button key={r} type="button" aria-pressed={role === r} aria-controls="htw-steplist"
                         className={"htw-toggle__btn" + (role === r ? " is-active" : "")}
                         onClick={() => switchRole(r)}>
                         {t[r].label}
@@ -67,10 +67,13 @@ export function HowItWorksScreen() {
                 <p className="htw-hero__lead" style={{ textAlign: "left", maxWidth: 560, fontSize: 19, lineHeight: "30px" }}>{data.lead}</p>
                 <StepList steps={steps} active={active} onSelect={setActive} role={role} />
               </div>
-              <div className="htw-right">
+              {/* live region: the decorative device is aria-hidden, so changing a
+                  step announces only the step counter line ("2 / 4 · Reserve") —
+                  the synced-phone payoff becomes audible, not just visual */}
+              <div className="htw-right" id="htw-preview" aria-live="polite">
                 <div className="htw-phonewrap">
                   <div className="htw-phonewrap__glow" style={{ background: `radial-gradient(circle at 50% 40%, ${TONE_GLOW[current.tone]}, transparent 65%)` }} />
-                  <div className="htw-phone">
+                  <div className="htw-phone" aria-hidden="true">
                     <div className="htw-phone__notch" />
                     <div className="htw-phone__screen">
                       <PhoneScreen key={role + active} kind={current.screen} />
@@ -203,10 +206,13 @@ function StepList({
   }, [measure, role]);
 
   return (
-    <div className="htw-list" ref={listRef}>
+    <div className="htw-list" ref={listRef} id="htw-steplist">
       <span className="htw-list__fill" ref={fillRef} />
       {steps.map((s, i) => (
         <button key={s.title} type="button"
+          aria-current={i === active ? "step" : undefined}
+          aria-expanded={i === active}
+          aria-controls="htw-preview"
           className={"htw-step" + (i === active ? " is-active" : i < active ? " is-done" : "")}
           onClick={() => onSelect(i)}>
           <span className="htw-step__num">

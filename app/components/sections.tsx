@@ -14,6 +14,7 @@ import {
 } from "@/app/lib/i18n/config";
 import { useListings } from "@/app/lib/listings";
 import { prefersReducedMotion } from "@/app/lib/motion";
+import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { listingSearchHref } from "@/app/lib/search";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -131,9 +132,26 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
         burgerRef.current?.focus();
       }
     };
+    // Click outside the drawer (and not on the burger toggle) closes it — same
+    // pattern as the FilterSelect popovers, no scrim element needed.
+    const onDown = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (drawerRef.current?.contains(target) || burgerRef.current?.contains(target)) {
+        return;
+      }
+      setMenuOpen(false);
+    };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onDown);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onDown);
+    };
   }, [menuOpen]);
+
+  // Trap Tab within the open drawer so focus can't slip behind it (Escape + the
+  // scrim are the exits) — same hook the modal + lightbox use.
+  useFocusTrap(drawerRef, menuOpen);
 
   const doSearch = () => {
     setMenuOpen(false);

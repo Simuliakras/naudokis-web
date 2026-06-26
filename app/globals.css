@@ -22,6 +22,7 @@
   --nk-yellow:        #F9F367;   /* eyebrows, stars, highlights, logo left    */
   --nk-yellow-deep:   #e6df4e;   /* deep stop for yellow gradients (rating bar) */
   --nk-green:         #10B981;   /* download banner, success badge            */
+  --nk-green-text:    #34D399;   /* green TEXT on green tints (≥6:1) — solid fills/icons keep --nk-green */
   --nk-orange:        #E07A4A;   /* pattern accent (4th brand color)          */
   /* feedback / state colors (error EmptyState) */
   --nk-danger:        #E5564B;   /* error / destructive                       */
@@ -229,6 +230,10 @@
   font-family: var(--nk-font-display);
   font-weight: 700; font-size: clamp(30px, 3.4vw, 40px); line-height: 1.1; color: var(--nk-text);
 }
+.nk-h-page {                        /* page H1 (feed / categories / status)  */
+  font-family: var(--nk-font-display);
+  font-weight: 700; font-size: clamp(34px, 5vw, 52px); line-height: 1.05; letter-spacing: 0; color: var(--nk-text); margin: 0;
+}
 .nk-h-card {                        /* card / offer title                    */
   font-family: var(--nk-font-display);
   font-weight: 700; font-size: 28px; line-height: 32px; color: var(--nk-text);
@@ -258,11 +263,16 @@
 .nk-meta {                          /* review counts, secondary meta         */
   font-family: var(--nk-font-body);
   font-weight: 400; font-size: 18px; line-height: 26px; color: var(--nk-text-muted);
+  font-variant-numeric: tabular-nums;   /* aligned figures — counts/ratings don't jitter on refetch */
 }
 .nk-price {                         /* price line                            */
   font-family: var(--nk-font-body);
   font-weight: 400; font-size: 20px; line-height: 24px; color: var(--nk-text);
+  font-variant-numeric: tabular-nums;
 }
+/* tabular-figure utility for inline-styled numeric spans (prices, totals, rating
+   breakdown %) so aligned columns stay stable across hover / data refetch */
+.nk-tnum { font-variant-numeric: tabular-nums }
 .nk-nav {                           /* nav items / utility labels            */
   font-family: var(--nk-font-display);
   font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: 0.04em;
@@ -560,7 +570,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    because <Icon> always writes style.color and a class can't override it. */
 .nk-citypick{position:relative;display:inline-flex}
 .nk-citypick__trigger{display:flex;align-items:center;cursor:pointer;white-space:nowrap;background:transparent;
-  font-family:var(--nk-font-body);transition:background .15s ease}
+  min-height:var(--nk-tap);font-family:var(--nk-font-body);transition:background .15s ease}
 .nk-citypick__panel{position:absolute;right:0;display:flex;flex-direction:column;gap:2px;z-index:60;
   max-width:calc(100vw - 2*var(--nk-gutter));box-shadow:var(--nk-shadow-3)}
 .nk-citypick__heading{font-family:var(--nk-font-display);font-weight:700;font-size:12px;letter-spacing:.08em;
@@ -714,7 +724,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   background:color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 32%, transparent);
   border:1px solid color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 48%, transparent);
-  color:color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 72%, white);
+  /* white glyph (the disk fill + ring + tile gradient already carry the category
+     hue) — guarantees strong icon contrast vs the earlier accent-on-accent tint */
+  color:rgba(255,255,255,.92);
   box-shadow:var(--nk-edge-top);
   transition:transform .28s var(--nk-ease),box-shadow .28s ease}
 @media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__disk{transform:translateY(-2px);box-shadow:var(--nk-edge-top),0 8px 20px rgba(0,0,0,.28)}}
@@ -761,6 +773,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.11),transparent);
   animation:nk-shimmer 1.15s infinite}
 @keyframes nk-shimmer{100%{transform:translateX(100%)}}
+/* stop the shimmer outright for reduced-motion (the global rule only collapses
+   its duration, which would otherwise spin it ~instantly instead of resting) */
+@media(prefers-reduced-motion:reduce){.nk-skel::after{animation:none}}
 
 /* ---- empty state (screen-level: floating brand illustration) ---- */
 .nk-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(16px,2vw,24px);
@@ -1042,8 +1057,19 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-lightbox__nav:hover{background:var(--nk-surface-2)}
 .nk-lightbox__bar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;
   padding-bottom:env(safe-area-inset-bottom)}
-.nk-lightbox__count{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2)}
-@media(max-width:560px){.nk-lightbox__nav{width:42px;height:42px}}
+.nk-lightbox__count{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2);font-variant-numeric:tabular-nums}
+/* photo crossfade on navigate (keyed remount) — opacity only, reduced-motion off */
+.nk-lightbox__imgfade{animation:nk-lbfade .22s var(--nk-ease)}
+@keyframes nk-lbfade{from{opacity:.3}to{opacity:1}}
+/* thumbnail scrubber — horizontal strip mapped to the active index */
+.nk-lightbox__thumbs{flex:none;display:flex;gap:8px;overflow-x:auto;padding:2px;scrollbar-width:none}
+.nk-lightbox__thumbs::-webkit-scrollbar{display:none}
+.nk-lightbox__thumb{position:relative;flex:none;width:64px;height:46px;border-radius:8px;overflow:hidden;cursor:pointer;
+  border:2px solid transparent;opacity:.5;transition:opacity .15s ease,border-color .15s ease}
+.nk-lightbox__thumb:hover{opacity:.85}
+.nk-lightbox__thumb.is-active{opacity:1;border-color:var(--nk-purple)}
+@media(prefers-reduced-motion:reduce){.nk-lightbox__imgfade{animation:none}}
+@media(max-width:560px){.nk-lightbox__nav{width:42px;height:42px}.nk-lightbox__thumb{width:54px;height:40px}}
 /* content reveal after skeleton — opacity only, so the wrapper never becomes a
    containing block for the position:fixed .nk-mbar (which is a sibling anyway) */
 .nk-fadecontent{animation:nk-contentfade .45s var(--nk-ease) both}
@@ -1310,7 +1336,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .htw-ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .htw-ps-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .htw-ps-pill{font-family:var(--nk-font-body);font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px;white-space:nowrap}
-.htw-ps-pill--green{background:var(--nk-green-soft);color:var(--nk-green)}
+.htw-ps-pill--green{background:var(--nk-green-soft);color:var(--nk-green-text)}
 .htw-ps-pill--purple{background:var(--nk-purple-pill);color:var(--nk-purple-hover)}
 .htw-ps-cta{margin-top:auto;text-align:center;padding:15px;border-radius:16px;background:var(--nk-purple);
   font-family:var(--nk-font-display);font-weight:700;font-size:16px;color:var(--nk-text)}

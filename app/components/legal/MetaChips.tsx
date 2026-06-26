@@ -16,7 +16,9 @@ export function MetaChips({
   if (meta.effective_date) {
     chips.push(["calendar", t.effective, fmtDate(meta.effective_date, locale)]);
   }
-  if (meta.last_updated) {
+  // Only show the "updated" chip when it actually differs from "effective" —
+  // otherwise an unchanged doc renders the same date twice.
+  if (meta.last_updated && meta.last_updated !== meta.effective_date) {
     chips.push(["calendar", t.updated, fmtDate(meta.last_updated, locale)]);
   }
   return (

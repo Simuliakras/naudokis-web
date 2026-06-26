@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import { pageMetadata, requireLocale, breadcrumbJsonLd } from "@/app/lib/seo";
+import { pageMetadata, requireLocale, breadcrumbJsonLd, faqJsonLd } from "@/app/lib/seo";
 import { HowItWorksScreen } from "@/app/components/HowItWorksScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 
@@ -30,6 +30,7 @@ export default async function Page({ params }: PageProps<"/[lang]/kaip-tai-veiki
   return (
     <>
       <JsonLd data={breadcrumb} />
+      <JsonLd data={faqJsonLd(t.faq)} />
       <HowItWorksScreen />
     </>
   );

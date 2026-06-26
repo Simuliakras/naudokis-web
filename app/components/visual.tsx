@@ -135,42 +135,18 @@ export function LogoMark({ locale, height = 36 }: { locale: Locale; height?: num
   );
 }
 
-const QR_N = 21;
-
-function QrFinder({ x, y, cell, light }: { x: number; y: number; cell: number; light: boolean }) {
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <rect width={cell * 7} height={cell * 7} fill="#000" />
-      <rect x={cell} y={cell} width={cell * 5} height={cell * 5} fill={light ? "#F9F9F9" : "#fff"} />
-      <rect x={cell * 2} y={cell * 2} width={cell * 3} height={cell * 3} fill="#000" />
-    </g>
-  );
-}
-
-function qrCells(cell: number): React.ReactNode[] {
-  const cells: React.ReactNode[] = [];
-  const isFinder = (r: number, c: number) =>
-    (r < 7 && c < 7) || (r < 7 && c >= QR_N - 7) || (r >= QR_N - 7 && c < 7);
-  let seed = 7;
-  const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
-  for (let r = 0; r < QR_N; r++) for (let c = 0; c < QR_N; c++) {
-    if (isFinder(r, c)) continue;
-    if (rnd() > 0.55) cells.push(<rect key={r + "_" + c} x={c * cell} y={r * cell} width={cell} height={cell} fill="#000" />);
-  }
-  return cells;
-}
-
-export function QR({ size = 152, light = false }: { size?: number; light?: boolean }) {
-  const cell = size / QR_N;
-  const cells = qrCells(cell);
+// Real, scannable install QR. The matrix is generated at build time into the
+// committed static asset public/naudokis/install-qr.svg (see scripts/
+// generate-install-qr.mjs · `yarn gen:qr`), encoding the smart-install URL
+// https://www.naudokis.lt/go which sniffs the OS and routes to the right store.
+// Decorative for AT (a QR can only be scanned visually) — the adjacent install
+// CTA + store badges are the non-visual path.
+export function QR({ size = 152 }: { size?: number }) {
   return (
     <span style={{ background: "#fff", borderRadius: 8, padding: 16, display: "inline-flex" }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} shapeRendering="crispEdges">
-        {cells}
-        <QrFinder x={0} y={0} cell={cell} light={light} />
-        <QrFinder x={cell * (QR_N - 7)} y={0} cell={cell} light={light} />
-        <QrFinder x={0} y={cell * (QR_N - 7)} cell={cell} light={light} />
-      </svg>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/naudokis/install-qr.svg" alt="" aria-hidden="true" width={size} height={size}
+        style={{ display: "block", width: size, height: size }} />
     </span>
   );
 }

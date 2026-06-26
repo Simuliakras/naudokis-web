@@ -2,8 +2,8 @@
 // Naudokis UI kit — card components.
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { Icon, IconName, IllusName, Illustration, Dots, Pill, openRedirect, Pattern } from "./ui";
+import { useEffect, useId, useRef } from "react";
+import { Icon, IconName, IllusName, Illustration, Pill, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
 import type { UseCaseItem } from "@/app/lib/i18n/types";
 
@@ -46,15 +46,9 @@ export function OfferCard({
           <Icon name="Heart" size={22} color="var(--nk-text)" fill="none" stroke={2} />
         </button>
         {!img && <Icon name={categoryIcon} size={56} stroke={1.5} className="nk-imgicon" />}
-        {/* carousel dots imply pageable photos — only show them over a real image,
-            never over the empty-photo placeholder (reads as unfinished otherwise) */}
-        {img && (
-          <div aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, bottom: 16, display: "flex", justifyContent: "center", zIndex: 2, pointerEvents: "none" }}>
-            <span style={{ background: "rgba(40,44,45,.6)", borderRadius: "var(--nk-r-pill)", padding: "8px 14px", backdropFilter: "blur(4px)" }}>
-              <Dots n={4} active={0} />
-            </span>
-          </div>
-        )}
+        {/* No carousel dots: the browse card carries a single photo, so paging
+            dots would be a false affordance. The lightbox/gallery lives on the
+            detail page where the full photo set is available. */}
       </div>
       <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
         <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
@@ -197,6 +191,7 @@ export function FaqRow({
   open: boolean;
   onToggle: () => void;
 }) {
+  const panelId = useId();
   return (
     <div className="nk-faq" style={{
       border: "1px solid " + (open ? "var(--nk-purple)" : "var(--nk-border-soft)"),
@@ -205,7 +200,7 @@ export function FaqRow({
     }}>
       {/* Semantic heading wraps the disclosure button (standard accordion pattern). */}
       <h3 style={{ margin: 0 }}>
-        <button type="button" onClick={onToggle} aria-expanded={open} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--nk-gap-md)", padding: "18px clamp(20px,5vw,40px) 18px clamp(22px,6vw,40px)", textAlign: "left", font: "inherit" }}>
+        <button type="button" onClick={onToggle} aria-expanded={open} aria-controls={panelId} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--nk-gap-md)", padding: "18px clamp(20px,5vw,40px) 18px clamp(22px,6vw,40px)", textAlign: "left", font: "inherit" }}>
           <span className="nk-h-row" style={{ paddingTop: 5 }}>{q}</span>
           <span style={{ width: 44, height: 44, borderRadius: 22, flex: "none", marginRight: -8, display: "flex", alignItems: "center", justifyContent: "center",
             transition: "transform .2s ease", transform: open ? "rotate(180deg)" : "none" }}>
@@ -213,7 +208,7 @@ export function FaqRow({
           </span>
         </button>
       </h3>
-      <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows .25s ease" }}>
+      <div id={panelId} style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows .25s ease" }}>
         <div style={{ overflow: "hidden" }}>
           <p style={{ margin: 0, padding: "0 clamp(22px,6vw,40px) 24px", fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "30px", color: "var(--nk-text-2)" }}>{a}</p>
         </div>

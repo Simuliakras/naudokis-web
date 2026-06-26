@@ -56,6 +56,12 @@ export default function NotFound() {
         body {
           overflow-x: hidden;
         }
+        a:focus-visible { outline: 2px solid #8A89FF; outline-offset: 3px; }
+        .nf-nav a:hover { color: #8A89FF; }
+        .nf-cta { transition: opacity .15s ease, transform .15s ease; }
+        .nf-cta:hover { opacity: .92; }
+        .nf-cta:active { transform: scale(.98); }
+        .nf-get:hover { color: #FFFFFF; }
         @media (max-width: 640px) {
           .nf-header {
             justify-content: center !important;
@@ -194,13 +200,19 @@ export default function NotFound() {
                 marginTop: 30,
               }}
             >
-              <Link href="/" style={primaryCta}>
+              <Link href="/" className="nf-cta" style={primaryCta}>
                 Į pradžią
               </Link>
-              <Link href="/skelbimai" style={secondaryCta}>
+              <Link href="/skelbimai" className="nf-cta" style={secondaryCta}>
                 Naršyti nuomą
               </Link>
             </div>
+            {/* minimal install affordance — /go is a redirect route handler (sniffs
+                the OS), so a full navigation via <a> is correct, not next/link. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a href="/go" className="nf-get" style={{ display: "inline-block", marginTop: 22, color: "rgba(255,255,255,.6)", textDecoration: "underline", textUnderlineOffset: 3, fontSize: 14, transition: "color .15s ease" }}>
+              Atsisiųsti programėlę / Get the app
+            </a>
           </div>
         </section>
       </main>

@@ -4,7 +4,7 @@
 // detail PAGE (see ListingScreen.tsx, which orchestrates them). Layout mirrors
 // the design bundle's "2026 rigorous redesign" (listing.jsx): premium bento
 // gallery, sticky in-page sub-nav, booking panel, trust-rich host card.
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import { Icon, IconName, Pill, openRedirect } from "./ui";
 import { SectionEmpty } from "./cards";
@@ -53,18 +53,6 @@ function Stars({ value, size = 14 }: { value: number; size?: number }) {
         <Icon key={i} name="Star" size={size} color="var(--nk-yellow)" fill={i < Math.round(value) ? "var(--nk-yellow)" : "none"} />
       ))}
     </span>
-  );
-}
-
-function DateField({ label, value, onPick }: { label: string; value: string; onPick: () => void }) {
-  return (
-    <button type="button" onClick={onPick} className="nk-lfield" style={{ flex: 1, textAlign: "left", display: "flex", flexDirection: "column", gap: 3, padding: "11px 15px", borderRadius: 13, background: "var(--nk-input-bg)", border: "1px solid var(--nk-border)" }}>
-      <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 11.5, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--nk-text-muted)" }}>{label}</span>
-      <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-        <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text)" }}>{value}</span>
-        <Icon name="Calendar" size={15} color="var(--nk-purple-hover)" stroke={2} />
-      </span>
-    </button>
   );
 }
 
@@ -220,7 +208,7 @@ export function ListingSkeleton() {
         <div className="nk-reserve">
           <div style={{ ...card, background: "var(--nk-surface)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><Skel w={130} h={32} r={9} /><Skel w={70} h={16} /></div>
-            <div style={{ display: "flex", gap: 10 }}><Skel h={56} r={13} /><Skel h={56} r={13} /></div>
+            <Skel h={52} r={13} />
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="55%" h={14} /><Skel w={48} h={14} /></div>
               <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="40%" h={14} /><Skel w={40} h={14} /></div>
@@ -295,7 +283,7 @@ export function ListingHeader({ listing, saved, shared, onShare, onFav }: {
       </div>
       <div style={{ display: "flex", gap: "var(--nk-gap-sm)", flex: "none" }}>
         <button className="nk-lfield" style={headerBtn} onClick={onShare}><Icon name="ArrowUpDown" size={17} stroke={2} color="var(--nk-text)" style={{ transform: "rotate(45deg)" }} /> {shared ? t.shareCopied : t.share}</button>
-        <button className="nk-lfield" style={headerBtn} onClick={onFav} title={dict.bridge.opensAppHint}><Icon name="Heart" size={17} stroke={2} color={saved ? "var(--nk-orange)" : "var(--nk-text)"} fill={saved ? "var(--nk-orange)" : "none"} /> {t.save}</button>
+        <button className="nk-lfield" style={headerBtn} onClick={onFav} aria-pressed={saved} title={dict.bridge.opensAppHint}><Icon name="Heart" size={17} stroke={2} color={saved ? "var(--nk-orange)" : "var(--nk-text)"} fill={saved ? "var(--nk-orange)" : "none"} /> {t.save}</button>
       </div>
     </div>
   );
@@ -370,6 +358,7 @@ function GalleryLightbox({ images, title, start, onClose }: {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null); // restored when the lightbox closes
+  const touchStartX = useRef<number | null>(null); // horizontal-swipe origin (touch paging)
   const many = images.length > 1;
   const prev = useCallback(() => setI((v) => (v - 1 + images.length) % images.length), [images.length]);
   const next = useCallback(() => setI((v) => (v + 1) % images.length), [images.length]);
@@ -416,13 +405,20 @@ function GalleryLightbox({ images, title, start, onClose }: {
         <button ref={closeRef} className="nk-lightbox__close" onClick={onClose} aria-label={t.galleryClose}>
           <Icon name="X" size={20} color="var(--nk-text)" />
         </button>
-        <div className="nk-lightbox__stage">
+        <div className="nk-lightbox__stage"
+          onTouchStart={(e) => { touchStartX.current = e.touches[0]?.clientX ?? null; }}
+          onTouchEnd={(e) => {
+            if (touchStartX.current === null || !many) { return; }
+            const dx = (e.changedTouches[0]?.clientX ?? touchStartX.current) - touchStartX.current;
+            touchStartX.current = null;
+            if (dx > 40) { prev(); } else if (dx < -40) { next(); }
+          }}>
           {many && (
             <button className="nk-lightbox__nav" onClick={prev} aria-label={t.galleryPrev}>
               <Icon name="ArrowLeft" size={22} stroke={2} color="var(--nk-text)" />
             </button>
           )}
-          <div className="nk-lightbox__img">
+          <div key={i} className="nk-lightbox__img nk-lightbox__imgfade">
             <Image src={images[i]} alt={i === 0 ? title : `${title} — ${i + 1}`} fill sizes="100vw" style={{ objectFit: "contain" }} />
           </div>
           {many && (
@@ -431,6 +427,17 @@ function GalleryLightbox({ images, title, start, onClose }: {
             </button>
           )}
         </div>
+        {many && (
+          <div className="nk-lightbox__thumbs">
+            {images.map((src, idx) => (
+              <button key={idx} type="button" onClick={() => setI(idx)} aria-current={idx === i}
+                aria-label={`${idx + 1} / ${images.length}`}
+                className={"nk-lightbox__thumb" + (idx === i ? " is-active" : "")}>
+                <Image src={src} alt="" fill sizes="64px" style={{ objectFit: "cover" }} />
+              </button>
+            ))}
+          </div>
+        )}
         <div className="nk-lightbox__bar">
           <span className="nk-lightbox__count" aria-live="polite">{i + 1} / {images.length}</span>
           <button className="nk-btn nk-btn--primary nk-btn--sm" title={dict.bridge.opensAppHint}
@@ -448,12 +455,13 @@ function DescriptionSection({ description }: { description: string }) {
   const { dict } = useI18n();
   const t = dict.detail;
   const [open, setOpen] = useState(false);
+  const proseId = useId();
   return (
     <Section id="aprasymas" title={t.descHeading} first>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)", maxWidth: 720 }}>
-        <div className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxHeight: open ? "none" : 120, overflow: "hidden", maskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)", WebkitMaskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)" }}><RichText html={description} /></div>
+        <div id={proseId} className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxHeight: open ? "none" : 120, overflow: "hidden", maskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)", WebkitMaskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)" }}><RichText html={description} /></div>
         {description.length > 180 && (
-          <button onClick={() => setOpen((v) => !v)} style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-hover)" }}>
+          <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-controls={proseId} style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-hover)" }}>
             {open ? t.descLess : t.descMore} <Icon name="ChevronDown" size={16} stroke={2.4} color="var(--nk-purple-hover)" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
           </button>
         )}
@@ -611,7 +619,7 @@ function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews
                   <span style={{ flex: 1, height: 7, borderRadius: 4, background: "var(--nk-divider)", overflow: "hidden" }}>
                     <span style={{ display: "block", width: pct + "%", height: "100%", borderRadius: 4, background: "linear-gradient(90deg,var(--nk-yellow),var(--nk-yellow-deep))" }} />
                   </span>
-                  <span style={{ width: 34, textAlign: "right", fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-muted)" }}>{pct}%</span>
+                  <span className="nk-tnum" style={{ width: 34, textAlign: "right", fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-muted)" }}>{pct}%</span>
                 </div>
               );
             })}
@@ -693,7 +701,7 @@ export function BookingPanel({ listing, onReserve, onPickDates }: {
     <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
       <WebAppModeNote compact />
       <div style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
-        <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 33, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.price}</span>
+        <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 33, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.price}</span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{t.perDay}</span>
         {listing.rating && (
           <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-2)", whiteSpace: "nowrap" }}>
@@ -701,16 +709,20 @@ export function BookingPanel({ listing, onReserve, onPickDates }: {
           </span>
         )}
       </div>
-      <div style={{ display: "flex", gap: "var(--nk-gap-sm)" }}>
-        <DateField label={t.dateFrom} value={t.dateInApp} onPick={onPickDates} />
-        <DateField label={t.dateTo} value={t.dateInApp} onPick={onPickDates} />
-      </div>
+      <button type="button" onClick={onPickDates} className="nk-lfield" style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)", width: "100%", textAlign: "left", padding: "12px 15px", borderRadius: 13, background: "var(--nk-input-bg)", border: "1px solid var(--nk-border)" }}>
+        <Icon name="Calendar" size={18} color="var(--nk-purple-hover)" stroke={2} style={{ flex: "none" }} />
+        <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
+          <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15, color: "var(--nk-text)" }}>{t.chooseDates}</span>
+          <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)" }}>{t.dateInApp}</span>
+        </span>
+        <Icon name="ChevronRight" size={16} color="var(--nk-text-muted)" stroke={2} style={{ flex: "none" }} />
+      </button>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-2)" }}>
           <span>{t.pricePerDayLine}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.price}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-2)" }}>
-          <span title={t.serviceFeeHint} style={{ textDecoration: "underline dotted", textUnderlineOffset: 3, cursor: "help" }}>{t.serviceFee}</span><span style={{ color: "var(--nk-green)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.serviceFeeFree}</span>
+          <span title={t.serviceFeeHint} style={{ textDecoration: "underline dotted", textUnderlineOffset: 3, cursor: "help" }}>{t.serviceFee}</span><span style={{ color: "var(--nk-green-text)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.serviceFeeFree}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
           <span>{t.depositReturnable}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.deposit ?? t.depositNone}</span>
@@ -730,7 +742,7 @@ export function BookingPanel({ listing, onReserve, onPickDates }: {
       </button>
       <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", padding: "9px 12px", borderRadius: 11, background: "var(--nk-green-tint)" }}>
         <Icon name="RefreshCcw" size={15} color="var(--nk-green)" stroke={2} />
-        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-green)", fontWeight: 500 }}>{t.cancellationNote(listing.cancellation)}</span>
+        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-green-text)", fontWeight: 500 }}>{t.cancellationNote(listing.cancellation)}</span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", textAlign: "center" }}>
         <Icon name="ShieldCheck" size={15} color="var(--nk-text-muted)" stroke={2} />
@@ -797,7 +809,7 @@ export function MobileBar({ price, hidden, onReserve }: { price: string; hidden?
   return (
     <div className={"nk-mbar" + (hidden ? " is-hidden" : "")}>
       <span style={{ display: "flex", flexDirection: "column" }}>
-        <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, color: "var(--nk-text)" }}>{price} <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 400, fontSize: 15, color: "var(--nk-text-2)" }}>{t.perDayShort}</span></span>
+        <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, color: "var(--nk-text)" }}>{price} <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 400, fontSize: 15, color: "var(--nk-text-2)" }}>{t.perDayShort}</span></span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>{t.mobileBookingNote}</span>
       </span>
       <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}

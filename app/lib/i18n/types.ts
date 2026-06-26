@@ -217,6 +217,7 @@ export type Dict = {
     reviewsEmptyTitle: string;
     reviewsEmptyBody: string;
     reviewsInApp: (count: number) => string;
+    similarHeading: string; // "Similar items" cross-sell rail at the page foot
     perDay: string;
     depositReturnable: string;
     reserve: string;
@@ -239,6 +240,7 @@ export type Dict = {
     dateFrom: string;
     dateTo: string;
     dateInApp: string;
+    chooseDates: string; // single booking-panel date affordance label
     pricePerDayLine: string;
     serviceFee: string;
     serviceFeeHint: string; // tooltip explaining the free service fee
@@ -293,6 +295,8 @@ export type Dict = {
     emptyTitle: string;
     emptySubtitle: (query: string) => string;
     emptyAction: string;
+    foundCount: (count: number) => string; // live "N categories" count (aria-live)
+    searchItems: (query: string) => string; // explicit cross-search to the items feed
     seoHeading: string;
     seoBody: string;
   };
@@ -359,6 +363,7 @@ export type Dict = {
     defaultTitle: string;
     defaultBody: string;
     qrHint: string;
+    installCta: string; // primary install button in the bridge modal (→ /go smart link)
     close: string;
     opensAppHint: string; // affordance hint on locked CTAs ("Opens in the app")
     googlePlayAlt: string; // store-badge image alt / button accessible name

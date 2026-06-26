@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useI18nOptional } from "./I18nProvider";
 import { localeHome } from "@/app/lib/i18n/config";
+import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 // Icon / Pattern / QR / IconName are defined in the server-renderable visual.tsx
 // (single source of truth) and re-exported here so existing `from "./ui"` import
 // sites keep working unchanged.
@@ -155,9 +156,9 @@ export function Dots({
 }
 
 /* ---------------- App-store badges ----------------
-   Until the store listings go live the badge opens the install-bridge modal
-   (a real button, not a dead link). Inside that modal `interactive={false}`
-   renders a plain image — a badge that reopens the same dialog would loop. */
+   Each badge links straight to its store listing (apple → App Store, google →
+   Play). `interactive={false}` renders a plain image for the rare context where
+   a link would be redundant. */
 export function StoreBadge({
   store, height = 52, footer = false, interactive = true,
 }: {
@@ -180,10 +181,10 @@ export function StoreBadge({
     return <span style={{ display: "inline-flex" }}>{img}</span>;
   }
   return (
-    <button type="button" className="nk-badgebtn"
-      onClick={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}>
+    <a className="nk-badgebtn" href={isGoogle ? PLAY_STORE_URL : APP_STORE_URL}
+      target="_blank" rel="noopener noreferrer">
       {img}
-    </button>
+    </a>
   );
 }
 
@@ -345,7 +346,7 @@ export function Pill({
     accent: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
     purple: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
     yellow: { bg: "var(--nk-yellow-tint)", fg: "var(--nk-yellow)" },
-    green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green)" },
+    green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green-text)" },
   };
   const c = tones[tone] ?? tones.accent;
   return (

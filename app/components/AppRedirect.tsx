@@ -110,7 +110,7 @@ export function AppRedirect() {
 
   if (!state.open) return null;
   return (
-    <div className={state.closing ? "nk-redirect-scrim is-closing" : "nk-redirect-scrim"} onClick={close} role="dialog" aria-modal="true" aria-labelledby="nk-redirect-title">
+    <div className={state.closing ? "nk-redirect-scrim is-closing" : "nk-redirect-scrim"} onClick={close} role="dialog" aria-modal="true" aria-labelledby="nk-redirect-title" aria-describedby="nk-redirect-body">
       <div ref={panelRef} className={state.instant ? "nk-redirect-panel nk-redirect-panel--instant" : "nk-redirect-panel"} onClick={(e) => e.stopPropagation()}>
         <button ref={closeRef} onClick={close} aria-label={dict.bridge.close} className="nk-redirect-close">
           <Icon name="X" size={20} color="var(--nk-text)" />
@@ -119,13 +119,21 @@ export function AppRedirect() {
           style={{ height: 32, width: "auto", alignSelf: "flex-start" }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <h2 id="nk-redirect-title" style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{state.title}</h2>
-          <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "26px", color: "var(--nk-text-2)" }}>{state.body}</p>
+          <p id="nk-redirect-body" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "26px", color: "var(--nk-text-2)" }}>{state.body}</p>
         </div>
         <div className="nk-redirect-qr">
           <QR size={96} />
           <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", maxWidth: 220 }}>{dict.bridge.qrHint}</span>
         </div>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}><AppBadges height={50} interactive={false} /></div>
+        {/* Working install paths: a one-tap smart link (sniffs the OS — the
+            primary mobile CTA, since the QR is hidden ≤560px) above the two
+            store badges, which now link straight to their listings. */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <a className="nk-btn nk-btn--primary" href="/go" target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}>
+            <Icon name="Download" size={18} stroke={2.2} color="var(--nk-text)" /> {dict.bridge.installCta}
+          </a>
+          <AppBadges height={50} />
+        </div>
       </div>
     </div>
   );

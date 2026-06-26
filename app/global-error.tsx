@@ -31,6 +31,14 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
         }}
       >
+        {/* No globals.css here (this replaces the whole document), so hover/focus
+            states are provided by a self-contained inline <style> — CSP allows
+            'unsafe-inline' for style-src. */}
+        <style>{`
+          .ge-btn:hover{background:#5756C6}
+          .ge-btn:focus-visible,.ge-home:focus-visible{outline:2px solid #8A89FF;outline-offset:3px}
+          .ge-home:hover{opacity:.82}
+        `}</style>
         <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>Nepavyko parodyti puslapio</h1>
         <p style={{ margin: 0, maxWidth: 420, lineHeight: 1.5, color: "rgba(255,255,255,0.85)" /* --nk-text-2 */ }}>
           Pabandykite dar kartą. Jei problema kartosis, grįžkite šiek tiek vėliau.
@@ -38,6 +46,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           Please try again. If the problem continues, come back a little later.
         </p>
         <button
+          className="ge-btn"
           onClick={reset}
           style={{
             cursor: "pointer",
@@ -48,10 +57,18 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
             fontWeight: 600,
             background: "#6665E0", // --nk-purple (matches .nk-btn--primary)
             color: "#FFFFFF", // --nk-text
+            transition: "background .15s ease",
           }}
         >
           Bandyti dar kartą / Try again
         </button>
+        {/* Hard escape if reset() keeps failing — a full navigation (NOT next/link,
+            which can't be relied on from the last-resort boundary that replaces the
+            whole document). */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+        <a className="ge-home" href="/" style={{ color: "rgba(255,255,255,0.7)", textDecoration: "underline", textUnderlineOffset: 3, fontSize: 14 }}>
+          Grįžti į pradžią / Back to home
+        </a>
       </body>
     </html>
   );
