@@ -299,18 +299,6 @@ export function FeedScreen() {
             </div>
           )}
 
-          <div style={{ marginTop: 64, display: "flex", flexDirection: "column", gap: 18 }}>
-            <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 22, color: "var(--nk-text)" }}>{t.relatedHeading}</h2>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              {t.relatedTags.map((tag) => (
-                <button key={tag} onClick={() => { setQInput(tag); setParams({ q: tag, cat: "" }); }} className="nk-tagchip"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 8, borderRadius: 999, padding: "10px 18px", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 16, color: "var(--nk-text)", background: "var(--nk-surface)", border: "1px solid var(--nk-border)" }}>
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <section style={{ paddingTop: "calc(var(--nk-section-y) * 0.55)", paddingBottom: "var(--nk-section-y)" }}>
             <div style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: 16 }}>
               <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{t.seoHeading}</h2>

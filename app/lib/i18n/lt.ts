@@ -359,8 +359,6 @@ export const lt: Dict = {
     verifiedOwnerPill: "Patikrintas savininkas",
     galleryMore: (n) => `+${n} nuotraukų`,
     descHeading: "Aprašymas",
-    descMore: "Skaityti daugiau",
-    descLess: "Rodyti mažiau",
     specsHeading: "Specifikacijos",
     ownerHeading: "Daikto savininkas",
     ownerVerified: "Patikrintas",
@@ -450,9 +448,6 @@ export const lt: Dict = {
       return "Standartinė";
     },
     termCancelSub: "Atšaukimo politika",
-    depositSafeTitle: "Užstatas grąžinamas.",
-    depositSafeBody:
-      "Mokėjimas ir užstatas laikomi saugiai iki nuomos pabaigos. Tikslias datas ir galutinę kainą patvirtinsite programėlėje.",
     mobileBookingNote: "Rezervacija programėlėje",
   },
   common: {
@@ -558,15 +553,6 @@ export const lt: Dict = {
     allCategories: "Visos kategorijos",
     cityLabel: "Miestas",
     deliveryToggle: "Pristatymas galimas",
-    relatedHeading: "Populiarios paieškos",
-    relatedTags: [
-      "Nešiojami kompiuteriai",
-      "Foto technika",
-      "Dronai",
-      "Įrankiai",
-      "Garso technika",
-      "Dviračiai",
-    ],
     seoHeading: "Daiktų nuoma Lietuvoje",
     seoBody:
       "Naudokis.lt jungia žmones, norinčius trumpam išsinuomoti daiktus, su patikimais savininkais visoje Lietuvoje. Naršykite, ieškokite ir filtruokite nuomos pasiūlymus pagal kategoriją, miestą ar kainą tiesiog naršyklėje. Rezervaciją, žinutes ir apsaugotą mokėjimą užbaikite Naudokis programėlėje.",

@@ -341,8 +341,6 @@ export const en: Dict = {
     verifiedOwnerPill: "Verified owner",
     galleryMore: (n) => `+${n} photos`,
     descHeading: "Description",
-    descMore: "Read more",
-    descLess: "Show less",
     specsHeading: "Specifications",
     ownerHeading: "Item owner",
     ownerVerified: "Verified",
@@ -428,9 +426,6 @@ export const en: Dict = {
       return "Standard";
     },
     termCancelSub: "Cancellation policy",
-    depositSafeTitle: "The deposit is refundable.",
-    depositSafeBody:
-      "Payment and deposit are held securely until the rental ends. Exact dates and the final price are confirmed in the app.",
     mobileBookingNote: "Reservation in the app",
   },
   common: {
@@ -505,15 +500,6 @@ export const en: Dict = {
     allCategories: "All categories",
     cityLabel: "City",
     deliveryToggle: "Delivery available",
-    relatedHeading: "Popular searches",
-    relatedTags: [
-      "Laptops",
-      "Photo gear",
-      "Drones",
-      "Tools",
-      "Audio gear",
-      "Bikes",
-    ],
     seoHeading: "Item rental in Lithuania",
     seoBody:
       "Naudokis.lt connects people who need items for a short time with trusted owners across Lithuania. Browse, search and filter rentals by category, city or price right in your browser. Finish the reservation, messaging and protected payment in the Naudokis app.",

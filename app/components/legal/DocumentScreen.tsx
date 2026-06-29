@@ -58,7 +58,7 @@ export function DocumentScreen({
                 />
               </div>
               <header className="nk-lg-dochead">
-                <p className="nk-lg-eyebrow">{t.brandSub}</p>
+                <p className="nk-eyebrow" style={{ margin: "0 0 8px" }}>{t.brandSub}</p>
                 <h1 className="nk-lg-title">{doc.meta.title}</h1>
                 {intro && intro.t === "p" && (
                   <p className="nk-lg-intro"><Inline text={intro.md} locale={usedLang} /></p>

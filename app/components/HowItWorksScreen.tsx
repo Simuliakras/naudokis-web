@@ -40,7 +40,7 @@ export function HowItWorksScreen() {
 
           {/* HERO */}
           <section className="htw-hero">
-            <Pattern name="hero-pattern" priority className="htw-hero__pattern" />
+            <Pattern name="hero-pattern" priority className="htw-hero__pattern nk-brand-pattern" />
             <div className="nk-container htw-hero__inner">
               <span className="htw-hero__eyebrow nk-eyebrow">{t.eyebrow}</span>
               <h1>{t.title}</h1>
@@ -89,7 +89,7 @@ export function HowItWorksScreen() {
 
           {/* TRUST STRIP */}
           <section className="htw-trust">
-            <Pattern name="section-pattern" className="htw-trust__pattern" />
+            <Pattern name="section-pattern" className="htw-trust__pattern nk-brand-pattern" />
             <div className="nk-container htw-trust__inner">
               <div className="htw-trust__head nk-reveal">
                 <span className="nk-eyebrow">{t.trustEyebrow}</span>

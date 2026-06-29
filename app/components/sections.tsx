@@ -4,7 +4,6 @@
 // can render them as server components.
 import { useCategories } from "@/app/lib/categories";
 import { categoryIconFor } from "@/app/lib/category-style";
-import { LT_CITIES } from "@/app/lib/cities";
 import {
   barePath,
   localePath,
@@ -18,7 +17,7 @@ import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { listingSearchHref } from "@/app/lib/search";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CategoryCard,
   CategoryCardSkeleton,
@@ -41,9 +40,8 @@ import {
 } from "./ui";
 
 /* ---------------- Nav ----------------
-   Translucent sticky bar that condenses on scroll. The inline search bar is
-   always visible in the nav links; on tablet/mobile (≤1120px) the links
-   collapse into a hamburger drawer.
+   Translucent sticky bar that condenses on scroll; on tablet/mobile (≤1120px)
+   the links collapse into a hamburger drawer.
    `onSearch` is optional so the server-rendered home page can mount <Nav />
    without passing a function across the server→client boundary; the default
    scrolls to the homepage categories band. Client screens pass their own. */
@@ -51,7 +49,6 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   const { locale, dict } = useI18n();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchExpanded, setSearchExpanded] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const burgerRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -62,9 +59,6 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   const isHowItWorks = barePath(pathname) === "/kaip-tai-veikia";
   // Section-level match: highlights on both the feed and listing-detail pages.
   const isListings = barePath(pathname).startsWith("/skelbimai");
-  // Only the home page has a hero search bar; on every other page the inline nav
-  // search is shown by default (the design has no ghost "Paieška" button).
-  const isHome = barePath(pathname) === "/";
   // Condense the bar once the page scrolls — wired here (not per-page) so it
   // works on every screen that renders the Nav.
   useEffect(() => {
@@ -79,22 +73,6 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Expand the inline nav search once the hero search bar leaves the viewport.
-  // On pages without a hero search (#nk-hero-search) the observer never fires,
-  // so the inline search stays hidden until you scroll past the hero.
-  useEffect(() => {
-    const hero = document.getElementById("nk-hero-search");
-    if (!hero || !("IntersectionObserver" in window)) {
-      return;
-    }
-    const io = new IntersectionObserver(
-      ([e]) => setSearchExpanded(!e.isIntersecting),
-      { rootMargin: "-72px 0px 0px 0px", threshold: 0 },
-    );
-    io.observe(hero);
-    return () => io.disconnect();
   }, []);
 
   // Close the drawer when the viewport grows past the tablet/mobile breakpoint
@@ -171,7 +149,6 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
       <div className="nk-nav-inner nk-container">
         <Logo priority />
         <nav className="nk-nav-links" aria-label={dict.nav.primary}>
-          {(searchExpanded || !isHome) && <NavSearch key="navsearch" />}
           <Link
             className="nk-nav nk-link"
             href={localePath(locale, "/kategorijos")}
@@ -193,6 +170,7 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
           >
             {dict.nav.howItWorks}
           </Link>
+          <LocaleSwitcher />
           <button
             className="nk-btn nk-btn--primary"
             style={{ padding: "10px 20px", fontSize: 15 }}
@@ -295,154 +273,6 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
         </div>
       </div>
     </header>
-  );
-}
-
-/* Inline nav search — compact search field in the nav; routes to the feed. */
-function NavSearch() {
-  const { locale, dict } = useI18n();
-  const router = useRouter();
-  const [q, setQ] = useState("");
-  const [city, setCity] = useState("");
-  const go = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push(listingSearchHref({ q, city, locale }));
-  };
-  return (
-    <form className="nk-navsearch nk-fadein" onSubmit={go} role="search">
-      <Icon name="Search" size={17} stroke={2.2} color="var(--nk-text-muted)" />
-      <input
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder={dict.search.placeholder}
-        aria-label={dict.search.inputLabel}
-      />
-      <span className="nk-navsearch__div" />
-      <CityPicker value={city} onChange={setCity} />
-      <button
-        type="submit"
-        className="nk-navsearch__go"
-        aria-label={dict.search.submit}
-      >
-        <Icon name="ArrowRight" size={19} stroke={2.2} color="#fff" />
-      </button>
-    </form>
-  );
-}
-
-/* City dropdown — the dark nav variant used by the inline NavSearch (the light
-   hero variant lives as HeroCityPicker in HeroSearch.tsx). Owns its open state,
-   outside-click + Escape close, and the listbox markup. Icon tints are passed
-   inline because <Icon> always sets style.color, so a CSS class can't override
-   it — layout/text colors live in the .nk-citypick rules. */
-function CityPicker({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (city: string) => void;
-}) {
-  const { dict } = useI18n();
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-  const listRef = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const onDoc = (e: MouseEvent) => {
-      if (
-        ref.current &&
-        e.target instanceof Node &&
-        !ref.current.contains(e.target)
-      )
-        setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("mousedown", onDoc);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDoc);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, []);
-  // Move focus into the open list (onto the active city) for keyboard users.
-  useEffect(() => {
-    if (open) {
-      focusListboxSelection(listRef.current);
-    }
-  }, [open]);
-  const options = useMemo<[string, string][]>(
-    () => [
-      ["", dict.cityPicker.all],
-      ...LT_CITIES.map((c) => [c, c] as [string, string]),
-    ],
-    [dict.cityPicker.all],
-  );
-  return (
-    <span ref={ref} className="nk-citypick nk-citypick--nav">
-      <button
-        type="button"
-        className="nk-citypick__trigger"
-        onClick={() => setOpen((v) => !v)}
-        onKeyDown={listboxTriggerKeyNav(open, setOpen)}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-      >
-        <Icon name="MapPin" size={16} stroke={2} color="var(--nk-text-muted)" />
-        <span className={"nk-citypick__val" + (value ? " is-set" : "")}>
-          {value || dict.search.where}
-        </span>
-        <Icon
-          name="ChevronDown"
-          size={14}
-          stroke={2.2}
-          color="var(--nk-text-muted)"
-          style={{
-            transform: open ? "rotate(180deg)" : "none",
-            transition: "transform .2s ease",
-          }}
-        />
-      </button>
-      {open && (
-        <span
-          ref={listRef}
-          role="listbox"
-          aria-label={dict.cityPicker.heading}
-          onKeyDown={listboxKeyNav}
-          className="nk-citypick__panel"
-        >
-          {options.map(([val, label]) => {
-            const active = value === val;
-            return (
-              <button
-                key={label}
-                type="button"
-                role="option"
-                aria-selected={active}
-                onClick={() => {
-                  onChange(val);
-                  setOpen(false);
-                }}
-                className={"nk-citypick__opt" + (active ? " is-active" : "")}
-              >
-                <span className="nk-citypick__opt-l">
-                  <Icon
-                    name="MapPin"
-                    size={15}
-                    stroke={2}
-                    color={active ? "#fff" : "var(--nk-light-icon)"}
-                  />{" "}
-                  {label}
-                </span>
-                {active && (
-                  <Icon name="BadgeCheck" size={16} stroke={2} color="#fff" />
-                )}
-              </button>
-            );
-          })}
-        </span>
-      )}
-    </span>
   );
 }
 
@@ -575,7 +405,6 @@ function LocaleSwitcher() {
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={dict.nav.language}
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -583,10 +412,10 @@ function LocaleSwitcher() {
           padding: "6px 10px",
           borderRadius: 10,
           cursor: "pointer",
-          background: "transparent",
         }}
       >
         <Flag code={locale} />
+        <span className="nk-nav">{dict.nav.language}</span>
         <Icon
           name="ChevronDown"
           size={15}

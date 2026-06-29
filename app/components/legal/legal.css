@@ -45,8 +45,6 @@
 
 .nk-lg-crumbs{ padding:clamp(22px,3vw,36px) 0 0; }
 .nk-lg-dochead{ padding:6px 0 0; }
-.nk-lg-eyebrow{ font-family:var(--nk-font-body); font-weight:400; font-size:17px;
-  letter-spacing:.16em; text-transform:uppercase; color:var(--nk-yellow); margin:0 0 8px; }
 .nk-lg-title{ font-family:var(--nk-font-display); font-weight:700; letter-spacing:0;
   color:var(--nk-text); margin:0; font-size:clamp(30px,4.6vw,50px); line-height:1.05; max-width:18ch;
   overflow-wrap:anywhere; text-wrap:balance; }

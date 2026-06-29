@@ -22,8 +22,8 @@ export function Hero({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
     <section id="top" style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
-      <Pattern name="hero-pattern" priority className="nk-hero-pattern"
-        style={{ position: "absolute", top: 0, bottom: 0, height: "100%", objectFit: "cover", objectPosition: "right top", opacity: 0.30, pointerEvents: "none" }} />
+      <Pattern name="hero-pattern" priority className="nk-hero-pattern nk-brand-pattern"
+        style={{ position: "absolute", top: 0, bottom: 0, height: "100%", objectFit: "cover", objectPosition: "right top", pointerEvents: "none" }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
         {/* grid columns / padding / min-height live on .nk-hero-panel in globals.css
             so the 980px stack doesn't need !important overrides */}
@@ -63,7 +63,7 @@ export function Features({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
     <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
-      <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.40 }} />
+      <Pattern name="section-pattern" className="nk-brand-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y-lg)" }}>
         <div className="nk-row">
           {dict.features.map((f) => <FeatureCard key={f.title} {...f} className="nk-reveal" />)}

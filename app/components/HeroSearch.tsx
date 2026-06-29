@@ -119,7 +119,6 @@ export function SearchBar() {
   };
   return (
     <form
-      id="nk-hero-search"
       className="nk-search"
       onSubmit={go}
       style={{

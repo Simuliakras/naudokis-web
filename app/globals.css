@@ -303,6 +303,11 @@ a,button,input,textarea,select{touch-action:manipulation}
 .nk-page{width:100%;overflow-x:clip}
 .nk-container{width:100%;max-width:1920px;margin:0 auto;padding-inline:var(--nk-gutter)}
 .nk-hero-pattern{right:0!important;width:min(1000px,100vw)!important}
+/* Branded background pattern — shared subtle opacity so every dark section
+   matches the footer's texture; steps down on smaller viewports. */
+.nk-brand-pattern{opacity:.12}
+@media(max-width:1024px){.nk-brand-pattern{opacity:.08}}
+@media(max-width:560px){.nk-brand-pattern{opacity:.05}}
 
 /* ---- Logo ---- */
 .nk-logo{display:flex;align-items:center;gap:14px;text-decoration:none}
@@ -545,28 +550,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-link[aria-current="page"]::after{display:none}
 footer .nk-link:hover{color:var(--nk-purple-hover)}
 
-/* ---- nav inline search (expands once the hero search scrolls away) ---- */
-.nk-fadein{animation:nk-fadeswap .28s var(--nk-ease)}
-@keyframes nk-fadeswap{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
-.nk-navsearch{display:flex;align-items:center;gap:10px;background:var(--nk-glass-strong);border:1px solid var(--nk-border-soft);
-  border-radius:999px;padding:3px 3px 3px 16px;height:48px;width:clamp(320px,38vw,500px);
-  transition:border-color .15s ease,box-shadow .15s ease}
-.nk-navsearch:focus-within{border-color:var(--nk-purple);box-shadow:var(--nk-glow-accent)}
-.nk-navsearch input{flex:1;min-width:0;border:none;outline:none;background:transparent;
-  font-family:var(--nk-font-body);font-size:16px;color:var(--nk-text)}
-.nk-navsearch input::placeholder{color:var(--nk-text-muted)}
-.nk-navsearch__div{width:1px;height:24px;background:var(--nk-border);flex:none}
-.nk-navsearch__go{flex:none;width:40px;height:40px;border-radius:50%;background:var(--nk-purple);
-  display:flex;align-items:center;justify-content:center;transition:background .18s ease,transform .15s ease}
-.nk-navsearch__go:hover{background:var(--nk-purple-hover)}
-@media(hover:hover) and (pointer:fine){.nk-navsearch__go:hover{transform:translateX(2px)}}
-@media(max-width:1280px){
-  .nk-navsearch{width:clamp(220px,26vw,300px)}
-  .nk-navsearch .nk-citypick,.nk-navsearch__div{display:none}
-}
-
-/* ---- city picker (shared dropdown: hero light + nav dark variants) ----
-   Layout + text colors live here; icon tints are set inline in <CityPicker>
+/* ---- city picker (hero light dropdown) ----
+   Layout + text colors live here; icon tints are set inline in <HeroCityPicker>
    because <Icon> always writes style.color and a class can't override it. */
 .nk-citypick{position:relative;display:inline-flex}
 .nk-citypick__trigger{display:flex;align-items:center;cursor:pointer;white-space:nowrap;background:transparent;
@@ -590,17 +575,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-citypick--hero .nk-citypick__opt-l{gap:10px}
 .nk-citypick--hero .nk-citypick__opt:hover{background:var(--nk-light-field)}
 .nk-citypick--hero .nk-citypick__opt.is-active{background:var(--nk-purple-soft);color:var(--nk-purple-deep)}
-/* nav (dark) */
-.nk-citypick--nav .nk-citypick__trigger{gap:7px;padding:10px;border-radius:999px;font-size:16px;color:var(--nk-text-muted)}
-.nk-citypick--nav .nk-citypick__trigger:hover{background:var(--nk-hover-wash)}
-.nk-citypick--nav .nk-citypick__val{color:var(--nk-text-muted)}
-.nk-citypick--nav .nk-citypick__val.is-set{color:var(--nk-text)}
-.nk-citypick--nav .nk-citypick__panel{top:calc(100% + 16px);min-width:210px;background:var(--nk-surface);
-  border:1px solid var(--nk-border);border-radius:14px;padding:7px;box-shadow:var(--nk-shadow-3)}
-.nk-citypick--nav .nk-citypick__opt{padding:10px 12px;border-radius:9px;font-size:16px;color:var(--nk-text)}
-.nk-citypick--nav .nk-citypick__opt-l{gap:8px}
-.nk-citypick--nav .nk-citypick__opt:hover{background:var(--nk-surface-2)}
-.nk-citypick--nav .nk-citypick__opt.is-active{background:var(--nk-purple-deep);color:var(--nk-text)}
 
 /* ---- FilterSelect dropdown option (hover via CSS so touch :active works too) ---- */
 .nk-selopt{background:transparent;color:var(--nk-text);transition:background .15s ease}
@@ -619,7 +593,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-pillctl[aria-expanded="true"]{border-color:var(--nk-accent-border)}
 .nk-pillctl.is-active{background:var(--nk-accent-bg);color:var(--nk-accent-text);border-color:var(--nk-accent-border)}
 .nk-pillctl__label{min-width:0;overflow:hidden;text-overflow:ellipsis}
-.nk-locale-trigger{min-width:var(--nk-tap);min-height:var(--nk-tap);justify-content:center}
+.nk-locale-trigger{min-width:var(--nk-tap);min-height:var(--nk-tap);justify-content:center;
+  transition:background .15s ease}
+.nk-locale-trigger:hover,.nk-locale-trigger[aria-expanded="true"]{background:var(--nk-hover-wash)}
 /* toggle switch (delivery filter) — the lead never overflows; the track sits at
    the trailing edge so the off/on state is always visible, incl. the ≤560 stack */
 .nk-toggle__lead{overflow:hidden;text-overflow:ellipsis}
@@ -990,9 +966,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-input-clear{display:flex;align-items:center;justify-content:center;flex:none;
   width:var(--nk-tap);height:var(--nk-tap);margin:-13px -14px -13px 0;transition:color .15s ease}
 .nk-input-clear:hover{color:var(--nk-text)}
-.nk-tagchip{min-height:var(--nk-tap);transition:background .15s ease,border-color .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
-.nk-tagchip:hover{background:var(--nk-surface-2);border-color:var(--nk-accent-border)}
-.nk-tagchip:active{transform:scale(.96)}
 
 /* feed interruption banner */
 .nk-interrupt{position:relative;overflow:hidden;display:flex;align-items:center;gap:var(--nk-gap-xl);flex-wrap:wrap;
@@ -1250,7 +1223,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* ---- hero ---- */
 .htw-hero{position:relative;overflow:hidden;background:var(--nk-bg-deep)}
 .htw-hero__pattern{position:absolute;right:-80px;top:0;height:100%;width:1000px;object-fit:cover;
-  object-position:right top;opacity:.22;pointer-events:none}
+  object-position:right top;pointer-events:none}
 .htw-hero__inner{position:relative;padding-block:var(--nk-section-y-lg);display:flex;flex-direction:column;
   align-items:center;text-align:center;gap:32px}
 .htw-hero__eyebrow{display:inline-flex;align-items:center;gap:10px}
@@ -1350,7 +1323,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 
 /* ---- trust strip ---- */
 .htw-trust{position:relative;overflow:hidden;background:var(--nk-bg-deep)}
-.htw-trust__pattern{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.34;pointer-events:none}
+.htw-trust__pattern{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
 .htw-trust__inner{position:relative;padding-block:var(--nk-section-y)}
 .htw-trust__head{display:flex;flex-direction:column;gap:var(--nk-gap-xs);margin-bottom:var(--nk-section-head);max-width:760px}
 .htw-trust__head h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:clamp(30px,4vw,44px);line-height:1.1;color:var(--nk-text)}

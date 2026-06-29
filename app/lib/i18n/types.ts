@@ -194,8 +194,6 @@ export type Dict = {
     verifiedOwnerPill: string;
     galleryMore: (count: number) => string;
     descHeading: string;
-    descMore: string;
-    descLess: string;
     specsHeading: string;
     ownerHeading: string;
     ownerVerified: string;
@@ -270,8 +268,6 @@ export type Dict = {
     termDurationSub: string;
     cancellationLabel: (tier: string) => string; // policy tier name
     termCancelSub: string;
-    depositSafeTitle: string;
-    depositSafeBody: string;
     mobileBookingNote: string;
   };
   common: {
@@ -333,8 +329,6 @@ export type Dict = {
     allCategories: string;
     cityLabel: string;
     deliveryToggle: string;
-    relatedHeading: string;
-    relatedTags: string[];
     seoHeading: string;
     seoBody: string;
     // Zero-result empty states, split by reason (mirrors the design's L2/L3/L4).

@@ -4,7 +4,7 @@
 // detail PAGE (see ListingScreen.tsx, which orchestrates them). Layout mirrors
 // the design bundle's "2026 rigorous redesign" (listing.jsx): premium bento
 // gallery, sticky in-page sub-nav, booking panel, trust-rich host card.
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Icon, IconName, Pill, openRedirect } from "./ui";
 import { SectionEmpty } from "./cards";
@@ -21,7 +21,7 @@ function Section({ id, title, sub, first, children }: {
   id: string; title: string; sub?: string; first?: boolean; children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="nk-sec" style={{ paddingTop: first ? 0 : 44, borderTop: first ? "none" : "1px solid var(--nk-hairline)" }}>
+    <section id={id} className="nk-sec" style={{ marginTop: first ? 0 : 32, paddingTop: first ? 0 : 32, borderTop: first ? "none" : "1px solid var(--nk-hairline)" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: sub ? "var(--nk-gap-2xs)" : 0, marginBottom: "var(--nk-gap-xl)" }}>
         <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 25, lineHeight: "30px", color: "var(--nk-text)" }}>{title}</h2>
         {sub && <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>{sub}</p>}
@@ -98,11 +98,12 @@ function SkelLines({ rows = 3, gap = 12, last = "60%" }: { rows?: number; gap?: 
     </div>
   );
 }
-// Mirrors the real <Section> chrome (top hairline + 44px pad on every section but the first,
-// 25px-ish title with a 24px gap to the content) so the focus column shares its exact rhythm.
+// Mirrors the real <Section> chrome (top hairline centered in a 32px-above / 32px-below
+// gutter on every section but the first, 25px-ish title with a 24px gap to the content)
+// so the focus column shares its exact rhythm.
 function SkelSection({ first, titleW = 200, children }: { first?: boolean; titleW?: number | string; children: React.ReactNode }) {
   return (
-    <div style={{ paddingTop: first ? 0 : 44, borderTop: first ? "none" : "1px solid var(--nk-hairline)" }}>
+    <div style={{ marginTop: first ? 0 : 32, paddingTop: first ? 0 : 32, borderTop: first ? "none" : "1px solid var(--nk-hairline)" }}>
       <Skel w={titleW} h={26} r={9} style={{ marginBottom: 24 }} />
       {children}
     </div>
@@ -135,9 +136,8 @@ export function ListingSkeleton() {
         <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
           {/* description */}
           <SkelSection first titleW={170}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 720 }}>
+            <div style={{ maxWidth: 720 }}>
               <SkelLines rows={4} last="45%" />
-              <Skel w={110} h={22} r={8} />
             </div>
           </SkelSection>
           {/* specs */}
@@ -162,18 +162,15 @@ export function ListingSkeleton() {
               </div>
             </div>
           </SkelSection>
-          {/* terms — 4 fact cards + green info box */}
+          {/* terms — 4 fact cards */}
           <SkelSection titleW={180}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-              <div className="nk-hl-grid">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", padding: "var(--nk-card-pad-sm)", borderRadius: 16, background: "var(--nk-surface-glass)", border: "1px solid var(--nk-border)" }}>
-                    <Skel w={46} h={46} r={13} />
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}><Skel w="70%" h={15} /><Skel w="90%" h={13} /></div>
-                  </div>
-                ))}
-              </div>
-              <Skel h={52} r={14} />
+            <div className="nk-hl-grid">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", padding: "var(--nk-card-pad-sm)", borderRadius: 16, background: "var(--nk-surface-glass)", border: "1px solid var(--nk-border)" }}>
+                  <Skel w={46} h={46} r={13} />
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}><Skel w="70%" h={15} /><Skel w="90%" h={13} /></div>
+                </div>
+              ))}
             </div>
           </SkelSection>
           {/* reviews — breakdown card + 2 review cards + show-all */}
@@ -437,18 +434,9 @@ function GalleryLightbox({ images, title, start, onClose }: {
 function DescriptionSection({ description }: { description: string }) {
   const { dict } = useI18n();
   const t = dict.detail;
-  const [open, setOpen] = useState(false);
-  const proseId = useId();
   return (
     <Section id="aprasymas" title={t.descHeading} first>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)", maxWidth: 720 }}>
-        <div id={proseId} className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxHeight: open ? "none" : 120, overflow: "hidden", maskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)", WebkitMaskImage: open ? "none" : "linear-gradient(180deg,#000 64%,transparent)" }}><RichText html={description} /></div>
-        {description.length > 180 && (
-          <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-controls={proseId} style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-hover)" }}>
-            {open ? t.descLess : t.descMore} <Icon name="ChevronDown" size={16} stroke={2.4} color="var(--nk-purple-hover)" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
-          </button>
-        )}
-      </div>
+      <div className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxWidth: 720 }}><RichText html={description} /></div>
     </Section>
   );
 }
@@ -551,19 +539,11 @@ function TermsSection({ listing }: { listing: ListingDetail }) {
   const t = dict.detail;
   return (
     <Section id="salygos" title={t.termsHeading}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xl)" }}>
-        <div className="nk-hl-grid">
-          <FactCard icon="Tag" title={`${listing.price} ${t.perDay}`} sub={t.termRentSub} />
-          <FactCard icon="ShieldCheck" title={listing.deposit ?? t.depositNone} sub={t.termDepositSub} />
-          <FactCard icon="Calendar" title={t.durationRange(listing.minDays, listing.maxDays)} sub={t.termDurationSub} />
-          <FactCard icon="RefreshCcw" title={t.cancellationLabel(listing.cancellation)} sub={t.termCancelSub} />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", padding: "var(--nk-card-pad-sm)", borderRadius: 14, background: "var(--nk-green-tint)", border: "1px solid var(--nk-green-soft)" }}>
-          <Icon name="ShieldCheck" size={20} color="var(--nk-green)" stroke={2} />
-          <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14.5, lineHeight: "21px", color: "var(--nk-text-2)" }}>
-            <b style={{ fontFamily: "var(--nk-font-display)", color: "var(--nk-text)" }}>{t.depositSafeTitle}</b> {t.depositSafeBody}
-          </span>
-        </div>
+      <div className="nk-hl-grid">
+        <FactCard icon="Tag" title={`${listing.price} ${t.perDay}`} sub={t.termRentSub} />
+        <FactCard icon="ShieldCheck" title={listing.deposit ?? t.depositNone} sub={t.termDepositSub} />
+        <FactCard icon="Calendar" title={t.durationRange(listing.minDays, listing.maxDays)} sub={t.termDurationSub} />
+        <FactCard icon="RefreshCcw" title={t.cancellationLabel(listing.cancellation)} sub={t.termCancelSub} />
       </div>
     </Section>
   );
