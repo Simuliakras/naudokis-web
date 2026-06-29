@@ -10,6 +10,7 @@ import {
   Speaker, Star, Tag, User, Users, Wrench, X,
 } from "lucide-react";
 import { localeHome, type Locale } from "@/app/lib/i18n/config";
+import { DynamicQR } from "./DynamicQR";
 
 /* ---------------- Icon ----------------
    Canonical, server-renderable icon set shared by the server homepage sections
@@ -135,15 +136,19 @@ export function LogoMark({ locale, height = 36 }: { locale: Locale; height?: num
   );
 }
 
-// Real, scannable install QR. The matrix is generated at build time into the
-// committed static asset public/naudokis/install-qr.svg (see scripts/
-// generate-install-qr.mjs · `yarn gen:qr`), encoding the smart-install URL
-// https://www.naudokis.lt/go which sniffs the OS and routes to the right store.
+// Real, scannable install QR. Without a `value` it serves the committed static
+// matrix public/naudokis/install-qr.svg (built via scripts/generate-install-qr.mjs ·
+// `yarn gen:qr`), encoding the smart-install URL https://www.naudokis.lt/go which
+// sniffs the OS and routes to the right store. Pass a `value` (e.g. a per-code
+// Branch link on /invite) to encode it at runtime via <DynamicQR/> instead.
 // Decorative for AT (a QR can only be scanned visually) — the adjacent install
 // CTA + store badges are the non-visual path.
-export function QR({ size = 152 }: { size?: number }) {
+export function QR({ size = 152, value }: { size?: number; value?: string }) {
+  if (value) {
+    return <DynamicQR value={value} size={size} />;
+  }
   return (
-    <span style={{ background: "#fff", borderRadius: 8, padding: 16, display: "inline-flex" }}>
+    <span className="nk-qr-card">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/naudokis/install-qr.svg" alt="" aria-hidden="true" width={size} height={size}
         style={{ display: "block", width: size, height: size }} />

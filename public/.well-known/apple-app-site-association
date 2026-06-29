@@ -5,6 +5,7 @@
       {
         "appID": "U2NZQ56A8W.com.naudokislt.naudokis",
         "paths": [
+          "/invite",
           "/booking-request/*",
           "/review/*",
           "/chat/*",

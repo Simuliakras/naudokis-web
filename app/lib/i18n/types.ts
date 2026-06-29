@@ -376,6 +376,22 @@ export type Dict = {
     shareTitle: string;
     shareBody: string;
   };
+  // Referral bridge (/invite) — validates a ?code, shows the reward and routes to
+  // the app. Copy must stay honest: the reward lands AFTER the user verifies
+  // identity in the app, and the inviter is paid on the new user's first
+  // completed rental. No referrer identity is available, so messaging is generic.
+  invite: {
+    meta: { title: string; description: string };
+    eyebrow: string;
+    titleValid: (amount: string) => string; // valid code → reward headline
+    titleUnknown: string; // network / rate-limited → optimistic, no reward claim
+    titleGeneric: string; // invalid / missing code → plain install
+    lead: string;
+    rewardExplainer: string; // the honest "when do I get it" note
+    ctaInstall: string;
+    qrHint: string;
+    codeLabel: string; // label above the on-page code (manual-entry fallback)
+  };
   cityPicker: {
     heading: string; // dropdown header, e.g. "Pasirinkite miestą"
     all: string; // "Visi miestai" / "All cities"

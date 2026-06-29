@@ -552,6 +552,24 @@ export const en: Dict = {
     shareTitle: "Open this item in the app",
     shareBody: "Download Naudokis to open this item on your phone.",
   },
+  invite: {
+    meta: {
+      title: "You’ve been invited to Naudokis — get the app",
+      description:
+        "A friend invited you to try Naudokis — rent items from trusted people nearby. Get the app to start.",
+    },
+    eyebrow: "Invitation",
+    titleValid: (amount) =>
+      `You’ve been invited to Naudokis! Get ${amount} on your first rental.`,
+    titleUnknown: "You’ve been invited to Naudokis.",
+    titleGeneric: "Get the Naudokis app.",
+    lead: "Naudokis is item rental from trusted people nearby. Get the app to start.",
+    rewardExplainer:
+      "Your reward is credited to your account once you verify your identity in the app. The friend who invited you is rewarded after your first completed rental.",
+    ctaInstall: "Get the app",
+    qrHint: "Scan with your phone",
+    codeLabel: "Your invite code",
+  },
   cityPicker: {
     heading: "Choose a city",
     all: "All cities",

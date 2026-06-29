@@ -606,6 +606,23 @@ export const lt: Dict = {
     shareTitle: "Atidarykite šį daiktą programėlėje",
     shareBody: "Atsisiųskite Naudokis ir atidarykite šį pasiūlymą telefone.",
   },
+  invite: {
+    meta: {
+      title: "Jus pakvietė į Naudokis — atsisiųskite programėlę",
+      description:
+        "Jus pakvietė išbandyti Naudokis — daiktų nuomą iš patikimų žmonių šalia. Atsisiųskite programėlę ir pradėkite.",
+    },
+    eyebrow: "Pakvietimas",
+    titleValid: (amount) => `Jus pakvietė į Naudokis! Gaukite ${amount} pirmai nuomai.`,
+    titleUnknown: "Jus pakvietė į Naudokis.",
+    titleGeneric: "Atsisiųskite Naudokis programėlę.",
+    lead: "Naudokis — daiktų nuoma iš patikimų žmonių šalia. Atsisiųskite programėlę, kad pradėtumėte.",
+    rewardExplainer:
+      "Premija įskaitoma jūsų paskyroje, kai programėlėje patvirtinsite tapatybę. Jus pakvietęs draugas premiją gauna po jūsų pirmos užbaigtos nuomos.",
+    ctaInstall: "Atsisiųsti programėlę",
+    qrHint: "Nuskenuokite telefonu",
+    codeLabel: "Jūsų pakvietimo kodas",
+  },
   cityPicker: {
     heading: "Pasirinkite miestą",
     all: "Visi miestai",

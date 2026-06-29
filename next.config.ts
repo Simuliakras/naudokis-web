@@ -28,7 +28,9 @@ const csp = [
   "manifest-src 'self'",
   // Google Maps Embed API iframe on the listing-detail page.
   "frame-src 'self' https://www.google.com",
-  "connect-src 'self' https://api.naudokis.lt https://api-dev.naudokis.lt https://plausible.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
+  // Branch (api2/api3.branch.io) backs the /invite referral bridge's deferred
+  // attribution. Expand here if Branch integration testing surfaces more hosts.
+  "connect-src 'self' https://api.naudokis.lt https://api-dev.naudokis.lt https://api2.branch.io https://api3.branch.io https://plausible.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
   "frame-ancestors 'self'",
   "base-uri 'self'",
   "form-action 'self'",

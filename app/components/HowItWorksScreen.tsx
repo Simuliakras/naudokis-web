@@ -39,12 +39,12 @@ export function HowItWorksScreen() {
         <main id="nk-main">
 
           {/* HERO */}
-          <section className="htw-hero">
-            <Pattern name="hero-pattern" priority className="htw-hero__pattern nk-brand-pattern" />
-            <div className="nk-container htw-hero__inner">
+          <section className="nk-hero-band">
+            <Pattern name="hero-pattern" priority className="nk-hero-band__pattern nk-brand-pattern" />
+            <div className="nk-container nk-hero-band__inner">
               <span className="htw-hero__eyebrow nk-eyebrow">{t.eyebrow}</span>
               <h1>{t.title}</h1>
-              <p className="htw-hero__lead">{t.lead}</p>
+              <p className="nk-hero-band__lead">{t.lead}</p>
             </div>
           </section>
 
@@ -64,7 +64,7 @@ export function HowItWorksScreen() {
                     <span className="htw-toggle__thumb" style={{ transform: role === "owner" ? "translateX(100%)" : "none" }} />
                   </div>
                 </div>
-                <p className="htw-hero__lead" style={{ textAlign: "left", maxWidth: 560, fontSize: 19, lineHeight: "30px" }}>{data.lead}</p>
+                <p className="nk-hero-band__lead" style={{ textAlign: "left", maxWidth: 560, fontSize: 19, lineHeight: "30px" }}>{data.lead}</p>
                 <StepList steps={steps} active={active} onSelect={setActive} role={role} />
               </div>
               {/* live region: the decorative device is aria-hidden, so changing a

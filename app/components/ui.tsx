@@ -158,14 +158,16 @@ export function Dots({
 /* ---------------- App-store badges ----------------
    Each badge links straight to its store listing (apple → App Store, google →
    Play). `interactive={false}` renders a plain image for the rare context where
-   a link would be redundant. */
+   a link would be redundant. `href` overrides the destination — e.g. on /invite
+   both badges point at the attribution (Branch) link, which auto-routes per OS. */
 export function StoreBadge({
-  store, height = 52, footer = false, interactive = true,
+  store, height = 52, footer = false, interactive = true, href,
 }: {
   store: "google" | "apple";
   height?: number;
   footer?: boolean;
   interactive?: boolean;
+  href?: string;
 }) {
   const { dict } = useI18nOptional();
   const isGoogle = store === "google";
@@ -181,20 +183,20 @@ export function StoreBadge({
     return <span style={{ display: "inline-flex" }}>{img}</span>;
   }
   return (
-    <a className="nk-badgebtn" href={isGoogle ? PLAY_STORE_URL : APP_STORE_URL}
+    <a className="nk-badgebtn" href={href ?? (isGoogle ? PLAY_STORE_URL : APP_STORE_URL)}
       target="_blank" rel="noopener noreferrer">
       {img}
     </a>
   );
 }
 
-export function AppBadges({ gap = 20, height = 52, footer = false, interactive = true }: {
-  gap?: number; height?: number; footer?: boolean; interactive?: boolean;
+export function AppBadges({ gap = 20, height = 52, footer = false, interactive = true, href }: {
+  gap?: number; height?: number; footer?: boolean; interactive?: boolean; href?: string;
 }) {
   return (
     <div className="nk-appbadges" style={{ gap }}>
-      <StoreBadge store="google" height={height} footer={footer} interactive={interactive} />
-      <StoreBadge store="apple" height={height} footer={footer} interactive={interactive} />
+      <StoreBadge store="google" height={height} footer={footer} interactive={interactive} href={href} />
+      <StoreBadge store="apple" height={height} footer={footer} interactive={interactive} href={href} />
     </div>
   );
 }

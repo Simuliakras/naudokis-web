@@ -1220,16 +1220,24 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   width:100%;background:var(--nk-bg);
 }
 
-/* ---- hero ---- */
-.htw-hero{position:relative;overflow:hidden;background:var(--nk-bg-deep)}
-.htw-hero__pattern{position:absolute;right:-80px;top:0;height:100%;width:1000px;object-fit:cover;
+/* ---- hero ----
+   Shared hero band: dark, pattern-backed, centered funnel used by the
+   How-it-works and Invite pages. Typography is parametrized via --hero-*
+   custom properties; the defaults below are the How-it-works values, so that
+   page needs no overrides and pages like /invite set only the deltas. */
+.nk-hero-band{position:relative;overflow:hidden;background:var(--nk-bg-deep)}
+.nk-hero-band__pattern{position:absolute;right:-80px;top:0;height:100%;width:1000px;object-fit:cover;
   object-position:right top;pointer-events:none}
-.htw-hero__inner{position:relative;padding-block:var(--nk-section-y-lg);display:flex;flex-direction:column;
-  align-items:center;text-align:center;gap:32px}
+.nk-hero-band__inner{position:relative;padding-block:var(--nk-section-y-lg);display:flex;flex-direction:column;
+  align-items:center;text-align:center;gap:var(--hero-gap,32px)}
+.nk-hero-band h1{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:var(--hero-title,clamp(42px,6.4vw,76px));
+  line-height:var(--hero-title-lh,1.05);letter-spacing:0;color:var(--nk-text);max-width:var(--hero-title-mw,1100px);text-wrap:balance}
+.nk-hero-band__lead{margin:0;max-width:var(--hero-lead-mw,680px);font-family:var(--nk-font-body);
+  font-size:var(--hero-lead,21px);line-height:var(--hero-lead-lh,33px);color:var(--nk-text-2)}
 .htw-hero__eyebrow{display:inline-flex;align-items:center;gap:10px}
-.htw-hero h1{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:clamp(42px,6.4vw,76px);
-  line-height:1.05;letter-spacing:0;color:var(--nk-text);max-width:1100px;text-wrap:balance}
-.htw-hero__lead{margin:0;max-width:680px;font-family:var(--nk-font-body);font-size:21px;line-height:33px;color:var(--nk-text-2)}
+
+/* White rounded QR card shared by the static <QR/> and the dynamic <DynamicQR/>. */
+.nk-qr-card{background:#fff;border-radius:8px;padding:16px;display:inline-flex}
 
 /* ---- role toggle (renter / owner segmented control) ---- */
 .htw-toggle{position:relative;display:inline-flex;padding:6px;border-radius:999px;
@@ -1400,4 +1408,28 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .htw-step__top{gap:var(--nk-gap-xs)}
   .htw-trust__grid{width:100%;max-width:calc(100vw - 40px)}
   .htw-trust__card{padding:22px}
+}
+
+/* ============================================================
+   Invite — referral bridge (/invite). Dark hero with the brand
+   pattern; centered install funnel (headline → reward note →
+   CTA + badges → QR → on-page code).
+   ============================================================ */
+.invite-page{width:100%;background:var(--nk-bg)}
+/* /invite tunes the shared .nk-hero-band smaller than How-it-works (see --hero-* above). */
+.invite-hero{--hero-gap:24px;--hero-title:clamp(38px,5.6vw,68px);--hero-title-lh:1.06;--hero-title-mw:900px;
+  --hero-lead-mw:620px;--hero-lead:20px;--hero-lead-lh:32px}
+.invite-reward{margin:0;max-width:560px;font-family:var(--nk-font-body);font-size:15px;line-height:24px;
+  color:var(--nk-text-muted)}
+.invite-actions{display:flex;flex-direction:column;align-items:center;gap:20px;margin-top:8px}
+.invite-qr{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:8px}
+.invite-qr__hint{font-family:var(--nk-font-display);font-weight:600;font-size:14px;color:var(--nk-text-muted)}
+.invite-code{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:4px}
+.invite-code__label{font-family:var(--nk-font-display);font-weight:600;font-size:13px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--nk-text-muted)}
+.invite-code__value{font-family:var(--nk-font-body);font-weight:700;font-size:22px;letter-spacing:.18em;
+  color:var(--nk-text);background:var(--nk-surface);border:1px solid var(--nk-border);
+  border-radius:var(--nk-r-pill);padding:10px 20px}
+@media(max-width:560px){
+  .invite-hero{--hero-gap:20px}
 }

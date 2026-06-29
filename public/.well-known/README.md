@@ -9,6 +9,28 @@ These two files let the native Naudokis app claim the deep-link paths declared i
 - Must be served as `application/json` (enforced by the `headers()` rule in `next.config.ts`).
 - `appID` is `<TeamID>.<bundleID>`; `paths` mirrors `appLinkPaths` in `next.config.ts`.
 
+### `/invite` is a dual-purpose path — handle it differently
+
+`/invite` (the referral bridge) is listed in `paths` here **but deliberately NOT**
+in `appLinkPaths` (`next.config.ts`) **nor** in the `proxy.ts` matcher exclusion.
+That is intentional, not an oversight:
+
+- The other paths (`/listing/*`, `/booking-request/*`, …) are app-only and rewrite
+  to the static `deep-link.html` fallback. `/invite` instead has a **real localized
+  web page** (`app/[lang]/invite/page.tsx`) that **is** its own fallback — adding it
+  to `appLinkPaths` would rewrite it to `deep-link.html` and the bridge would never
+  render; excluding it from the proxy would break its `/lt` locale rewrite.
+- So for `/invite`: app installed → iOS opens the app via this AASA entry; app not
+  installed → the browser loads the bridge. Both work without any other config.
+- The app team must add an intent filter / route handler for `/invite` (confirm
+  whether the app expects `/invite` or the existing `/ref/*`).
+- **Apex caveat:** the backend emits apex `naudokis.lt/invite?code=…`, but
+  `next.config.ts` 301-redirects apex→www for all paths (incl. `/.well-known`). iOS
+  does not follow redirects for AASA, so **apex** invite links won't open the app
+  (they fall through to the www bridge — acceptable; Branch still attributes). To
+  make installed-app direct-open work from the shared link, have the backend emit
+  `www.naudokis.lt/invite` or add a `/.well-known` exception to the apex redirect.
+
 ## `assetlinks.json` (Android App Links)
 
 > ⚠️ **LAUNCH BLOCKER — placeholder fingerprints.**
