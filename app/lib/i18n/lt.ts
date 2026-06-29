@@ -58,6 +58,9 @@ export const lt: Dict = {
     eyebrow: "Naršykite",
     title: "Populiarios nuomos kategorijos",
     all: "Visos kategorijos",
+    seoFallbackBody: (name) =>
+      `Nuomokitės „${name}“ kategorijos daiktus iš patikimų žmonių šalia visoje Lietuvoje.`,
+    metaTitleFallback: (name) => `${name} | Naudokis.lt`,
     errorTitle: "Nepavyko įkelti kategorijų",
     errorSubtitle:
       "Kategorijų šiuo metu nepavyko parodyti. Patikrinkite ryšį ir bandykite dar kartą.",

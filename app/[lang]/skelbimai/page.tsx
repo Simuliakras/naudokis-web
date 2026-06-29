@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { dehydrate, HydrationBoundary, type InfiniteData } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, resolveListingLanding } from "@/app/lib/seo";
+import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding } from "@/app/lib/seo";
 import { makeQueryClient } from "@/app/lib/query";
 import { fetchListingsPage, listingsInfiniteKey, LISTINGS_FIRST_CURSOR, parseSortKey, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
-import { fetchCategories, mergeWithFallbackCategories } from "@/app/lib/categories";
+import { fetchCategories, mergeWithFallbackCategories, categoriesKey, type Category } from "@/app/lib/categories";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 
@@ -36,17 +36,28 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
     categories,
   });
 
-  // Default to the bare browse copy; a category and/or city filter swaps in the
-  // dictionary's landing copy (the category label is the LT genitive / EN title).
-  const categoryLabel = landing.category
-    ? t.categorySeoLabel(landing.category.id, landing.category.title)
+  // A clean category landing (no city filter) renders the taxonomy's authored
+  // copy verbatim — already brand-suffixed and length-budgeted. City-only and
+  // category+city combos keep the synthesized, city-aware templates (the backend
+  // authors no city dimension); bare browse falls back to the feed defaults.
+  const category = landing.category;
+  const categoryLabel = category
+    ? t.categorySeoLabel(category.id, category.title)
     : undefined;
-  const title = landing.category || landing.city
-    ? t.landingTitle({ category: categoryLabel, city: landing.city })
-    : t.metaTitle;
-  const description = landing.category || landing.city
-    ? t.landingDescription({ category: categoryLabel, city: landing.city })
-    : t.metaDescription;
+  // `authored` = a clean category landing (the case described above); narrowing on
+  // it lets the ternaries stay flat without a non-null assertion.
+  const authored = category && !landing.city ? category : undefined;
+  const isLanding = Boolean(category || landing.city);
+  const title = authored
+    ? authored.metaTitle
+    : isLanding
+      ? t.landingTitle({ category: categoryLabel, city: landing.city })
+      : t.metaTitle;
+  const description = authored
+    ? authored.metaDescription
+    : isLanding
+      ? t.landingDescription({ category: categoryLabel, city: landing.city })
+      : t.metaDescription;
 
   const md = pageMetadata({
     locale, path: landing.path, title, description,
@@ -76,17 +87,35 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
   const { common, feed: t } = getDictionary(locale);
   const filters = filtersFromSearch(await searchParams);
 
-  // Seed the cache with the first page FeedScreen's useListingsInfinite() will
-  // read, then reuse it for the ItemList. prefetchInfiniteQuery swallows backend
-  // errors (the client just refetches), so a hiccup degrades gracefully instead
-  // of failing render.
   const qc = makeQueryClient();
   const key = listingsInfiniteKey(locale, filters);
-  await qc.prefetchInfiniteQuery({
-    queryKey: key,
-    queryFn: ({ pageParam }) => fetchListingsPage(locale, filters, pageParam),
-    initialPageParam: LISTINGS_FIRST_CURSOR,
-  });
+  // Prefetch the category set (FeedScreen's heading + intro and the CollectionPage
+  // node) and the first listings page (the feed + ItemList) concurrently — they're
+  // independent, and both prefetch* swallow backend errors (the client just
+  // refetches), so the combined await never rejects and a hiccup degrades to the
+  // fallback categories / a client refetch instead of failing render.
+  await Promise.all([
+    qc.prefetchQuery({ queryKey: categoriesKey(locale), queryFn: () => fetchCategories(locale) }),
+    qc.prefetchInfiniteQuery({
+      queryKey: key,
+      queryFn: ({ pageParam }) => fetchListingsPage(locale, filters, pageParam),
+      initialPageParam: LISTINGS_FIRST_CURSOR,
+    }),
+  ]);
+
+  // Resolve the landing from the cached categories for the CollectionPage node
+  // (clean category landing only — a city filter keeps the synthesized templates).
+  const categories = mergeWithFallbackCategories(locale, qc.getQueryData<Category[]>(categoriesKey(locale)) ?? []);
+  const landing = resolveListingLanding({ catParam: filters.category ?? "", cityParam: filters.city ?? "", categories });
+  const collectionPage = landing.category && !landing.city
+    ? collectionPageJsonLd({
+        locale,
+        name: landing.category.seoTitle,
+        description: landing.category.metaDescription,
+        path: landing.path,
+      })
+    : null;
+
   const cached = qc.getQueryData<InfiniteData<ListingsPage>>(key);
   const listings = cached?.pages.flatMap((p) => p.offers) ?? [];
 
@@ -99,6 +128,7 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
   return (
     <HydrationBoundary state={dehydrate(qc)}>
       <JsonLd data={breadcrumb} />
+      {collectionPage && <JsonLd data={collectionPage} />}
       <JsonLd data={itemList} />
       {/* FeedScreen reads ?q/?cat/?city/?sort/?delivery via useSearchParams, which
           requires a Suspense boundary on a prerendered route (Next.js 16). */}

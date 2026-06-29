@@ -39,6 +39,9 @@ export const en: Dict = {
     eyebrow: "Browse",
     title: "Popular rental categories",
     all: "All categories",
+    seoFallbackBody: (name) =>
+      `Rent ${name} from trusted local owners across Lithuania.`,
+    metaTitleFallback: (name) => `${name} | Naudokis.lt`,
     errorTitle: "We couldn’t load categories",
     errorSubtitle:
       "We couldn’t show categories right now. Check your connection and try again.",

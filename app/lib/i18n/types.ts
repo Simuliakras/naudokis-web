@@ -87,6 +87,12 @@ export type Dict = {
     eyebrow: string;
     title: string;
     all: string;
+    // Generic page-intro fallback for a category landing when the backend has no
+    // authored seo/meta description yet (e.g. a brand-new, un-seeded node).
+    seoFallbackBody: (name: string) => string;
+    // Brand-suffixed <title> fallback for the same un-authored case — keeps the
+    // site's "… | Naudokis.lt" convention out of the data layer.
+    metaTitleFallback: (name: string) => string;
     errorTitle: string;
     errorSubtitle: string;
     errorAction: string;

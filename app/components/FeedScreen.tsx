@@ -124,11 +124,14 @@ export function FeedScreen() {
     return () => io.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const catTitle = cats.find((c) => c.id === params.cat)?.title;
+  // A category landing renders the taxonomy's authored heading + intro
+  // (seoTitle/seoBody); the short name stays the breadcrumb/chip label.
+  const cat = cats.find((c) => c.id === params.cat);
+  const catTitle = cat?.title;
   const isCat = !!params.cat;
   const isSearch = !!params.q && !isCat;
-  const heading = isCat ? (catTitle ?? t.titleAll) : isSearch ? t.titleSearch : t.titleAll;
-  const subtitle = isSearch ? t.subtitleSearch(params.q) : t.subtitleAll;
+  const heading = isCat ? (cat?.seoTitle ?? catTitle ?? t.titleAll) : isSearch ? t.titleSearch : t.titleAll;
+  const subtitle = isCat ? (cat?.seoBody ?? t.subtitleAll) : isSearch ? t.subtitleSearch(params.q) : t.subtitleAll;
   const crumbs = isCat
     ? [{ label: t.crumbCategories, href: localePath(locale, "/kategorijos") }, { label: catTitle ?? params.cat }]
     : isSearch
@@ -209,9 +212,12 @@ export function FeedScreen() {
         <Nav onSearch={() => document.getElementById("nk-feed-search-input")?.focus()} />
         <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px" }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={crumbs} />
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: 32 }}>
+          {/* 65ch caps the line length so a long authored category intro (seoBody,
+              up to ~600 chars) stays readable; short browse/search subtitles never
+              reach it. Matches the .nk-prose measure used elsewhere. */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: 32, maxWidth: "65ch" }}>
             <h1 className="nk-h-page">{heading}</h1>
-            <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 19, color: "var(--nk-text-muted)" }}>{subtitle}</span>
+            <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 19, lineHeight: "28px", color: "var(--nk-text-muted)" }}>{subtitle}</p>
           </div>
 
           {/* sticky filter bar */}

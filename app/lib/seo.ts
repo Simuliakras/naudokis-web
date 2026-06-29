@@ -241,6 +241,27 @@ export function breadcrumbJsonLd(locale: Locale, items: { name: string; path: st
   };
 }
 
+// A category landing as a CollectionPage — name/description come from the
+// taxonomy's authored SEO copy (seo_title / meta_description), so the structured
+// data matches the visible heading and the <head> snippet.
+export function collectionPageJsonLd({
+  locale, name, description, path,
+}: {
+  locale: Locale;
+  name: string;
+  description: string;
+  path: string;
+}): JsonLdNode {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name,
+    description,
+    url: absoluteUrl(locale, path),
+    inLanguage: inLanguage(locale),
+  };
+}
+
 // Listings → an ItemList of links to each detail page (category/search/city pages).
 export function itemListJsonLd(locale: Locale, items: { id: string; name: string }[]): JsonLdNode {
   return {

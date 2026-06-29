@@ -10,9 +10,9 @@ const CATEGORY_GLYPH: Record<string, IconName> = {
   // tools_construction
   "wrench": "Wrench", "tools": "Wrench",
   // home_garden
-  "home": "Home", "home-variant-outline": "Home",
+  "home": "Home", "home-variant-outline": "Home", "house": "Home",
   // transport
-  "car": "Car", "car-multiple": "Car",
+  "car": "Car", "car-multiple": "Car", "car-front": "Car",
   // photo_video
   "camera": "Camera", "camera-outline": "Camera",
   // audio_music_events
@@ -30,7 +30,7 @@ const CATEGORY_GLYPH: Record<string, IconName> = {
   // health_medical
   "heart-pulse": "HeartPulse",
   // other
-  "more-horizontal": "MoreHorizontal", "ellipsis-horizontal-outline": "MoreHorizontal",
+  "more-horizontal": "MoreHorizontal", "ellipsis-horizontal-outline": "MoreHorizontal", "ellipsis": "MoreHorizontal",
 };
 
 export function categoryGlyph(iconName?: string): IconName {

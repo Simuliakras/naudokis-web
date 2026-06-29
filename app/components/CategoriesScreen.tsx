@@ -71,7 +71,7 @@ export function CategoriesScreen() {
             <div className="nk-grid-cats">
               {list.map((c) => (
                 <div key={c.id} className="nk-reveal" style={{ display: "grid" }}>
-                  <CategoryCard id={c.id} icon={c.icon} title={c.title} href={listingSearchHref({ cat: c.id, locale })} />
+                  <CategoryCard id={c.id} icon={c.icon} title={c.title} description={c.seoBody} href={listingSearchHref({ cat: c.id, locale })} />
                 </div>
               ))}
             </div>

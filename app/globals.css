@@ -732,6 +732,13 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__disk{transform:translateY(-2px);box-shadow:var(--nk-edge-top),0 8px 20px rgba(0,0,0,.28)}}
 .nk-cat__content{position:relative;z-index:1;margin-inline:-8px;
   display:flex;justify-content:space-between;align-items:center;gap:var(--nk-gap-sm)}
+/* title + optional intro stack; min-width:0 lets the clamp shrink inside the flex row */
+.nk-cat__text{display:flex;flex-direction:column;gap:6px;min-width:0}
+/* authored category intro — single line so the fixed-height tile never overflows */
+.nk-cat__desc{margin:0;font-family:var(--nk-font-body);font-size:14px;line-height:19px;color:var(--nk-text-muted);
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+/* a described tile lifts its centred disk so the extra intro line clears it */
+.nk-cat--lead .nk-cat__disk{inset:0 0 64px}
 .nk-cat__arrow{transition:background .2s ease,border-color .2s ease,transform .2s ease}
 .nk-cat:hover .nk-cat__arrow{background:var(--nk-purple);border-color:var(--nk-purple)}
 @media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__arrow{transform:translateX(3px)}}

@@ -86,21 +86,25 @@ export function OfferCard({
 
 /* ---------------- Category card (all-categories grid + home section) ---------------- */
 export function CategoryCard({
-  title, href, id, icon,
+  title, href, id, icon, description,
 }: {
   title: string;
   href: string;
   id: string; // top-level category id — selects the accent hue
   icon: IconName; // glyph resolved from the wire's icon_name (Category.icon)
+  description?: string; // authored category intro (Category.seoBody), clamped to fit
 }) {
   return (
-    <div className="nk-cat" data-cat={id}>
+    <div className={description ? "nk-cat nk-cat--lead" : "nk-cat"} data-cat={id}>
       <Link href={href} className="nk-stretch" aria-label={title} />
       <div className="nk-cat__img" />
       <div className="nk-cat__overlay" />
       <span className="nk-cat__disk"><Icon name={icon} size={52} stroke={1.7} /></span>
       <div className="nk-cat__content">
-        <h3 className="nk-h-row" style={{ margin: 0, fontSize: 22, lineHeight: "26px" }}>{title}</h3>
+        <div className="nk-cat__text">
+          <h3 className="nk-h-row" style={{ margin: 0, fontSize: 22, lineHeight: "26px" }}>{title}</h3>
+          {description && <p className="nk-cat__desc">{description}</p>}
+        </div>
         <span className="nk-cat__arrow nk-round nk-round--outline" style={{ flex: "none" }} aria-hidden="true">
           <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
         </span>
