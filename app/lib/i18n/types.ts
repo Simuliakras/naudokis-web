@@ -179,6 +179,7 @@ export type Dict = {
     help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
     copyright: string;
     secure: string; // "Protected payments" badge by the payment marks
+    socialLabel: string; // aria-label for the social-links group
   };
   detail: {
     metaFallbackTitle: string;
@@ -208,12 +209,6 @@ export type Dict = {
     deliveryByArrangement: string;
     deliveryRadius: (km: number) => string; // "Pristatymas iki N km"
     termsHeading: string;
-    priceLabel: string;
-    depositLabel: string;
-    refundLabel: string;
-    refundValue: string;
-    durationLabel: string;
-    durationValue: string;
     reviewsHeading: string;
     reviewsEmptyTitle: string;
     reviewsEmptyBody: string;

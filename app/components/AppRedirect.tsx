@@ -3,7 +3,7 @@
 // Mounted once via <Chrome/>; opened from anywhere via openRedirect({title, body}).
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Icon, QR, NK_REDIRECT_EVENT, type RedirectPayload } from "./ui";
+import { Icon, QR, AppBadges, NK_REDIRECT_EVENT, type RedirectPayload } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { prefersReducedMotion } from "@/app/lib/motion";
@@ -126,11 +126,16 @@ export function AppRedirect() {
           <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", maxWidth: 220 }}>{dict.bridge.qrHint}</span>
         </div>
         {/* Working install path: a one-tap smart link that sniffs the OS — the
-            primary CTA, since the QR is hidden ≤560px. */}
+            primary CTA, since the QR is hidden ≤560px. The store badges give
+            desktop visitors a real click target (the /go link only resolves to a
+            store on a phone), so the modal is never a desktop dead-end. */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <a className="nk-btn nk-btn--primary" href="/go" target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}>
             <Icon name="Download" size={18} stroke={2.2} color="var(--nk-text)" /> {dict.bridge.installCta}
           </a>
+          <div className="nk-redirect-stores">
+            <AppBadges height={44} gap={12} />
+          </div>
         </div>
       </div>
     </div>

@@ -109,8 +109,9 @@
   background:rgba(255,255,255,0.06); padding:1px 6px; border-radius:5px; color:var(--nk-text); }
 
 /* lists */
-.nk-lg-ul, .nk-lg-ol{ margin:18px 0 0; padding:0; display:flex; flex-direction:column; gap:11px; }
-.nk-lg-ul{ list-style:none; }
+/* Suppress any native marker on BOTH lists (the <ol> too) — the bullet/number is
+   drawn via ::before; list-style:none keeps it from doubling up. */
+.nk-lg-ul, .nk-lg-ol{ margin:18px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:11px; }
 .nk-lg-li{ font-family:var(--nk-font-body); font-size:16.5px; line-height:1.72; color:var(--nk-text-2);
   position:relative; padding-left:26px; text-wrap:pretty; }
 .nk-lg-ul > .nk-lg-li::before{ content:""; position:absolute; left:7px; top:.72em; width:6px; height:6px;

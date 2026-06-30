@@ -25,71 +25,6 @@ export function Logo({ height = 36, priority = false }: { height?: number; prior
   );
 }
 
-/* ---------------- Buttons ---------------- */
-export function Button({
-  variant = "primary", children, icon, onClick, style, type = "button",
-}: {
-  variant?: "primary" | "outline";
-  children: React.ReactNode;
-  icon?: IconName;
-  onClick?: () => void;
-  style?: React.CSSProperties;
-  type?: "button" | "submit";
-}) {
-  return (
-    <button type={type} className={"nk-btn nk-btn--" + variant} onClick={onClick} style={style}>
-      {icon && <Icon name={icon} size={18} stroke={2.2} />}
-      {children}
-    </button>
-  );
-}
-
-export function GhostButton({
-  children, icon, onClick, style,
-}: {
-  children: React.ReactNode;
-  icon?: IconName;
-  onClick?: () => void;
-  style?: React.CSSProperties;
-}) {
-  return (
-    <button type="button" className="nk-btn nk-btn--ghost" onClick={onClick} style={style}>
-      {icon && <Icon name={icon} size={17} stroke={2} />}
-      {children}
-    </button>
-  );
-}
-
-export function RoundArrow({
-  variant = "solid", dir = "right", size = 44, onClick,
-}: {
-  variant?: "solid" | "outline";
-  dir?: "right" | "left" | "down";
-  size?: number;
-  onClick?: () => void;
-}) {
-  const icon: IconName = dir === "right" ? "ArrowRight" : dir === "down" ? "ChevronDown" : "ArrowLeft";
-  return (
-    <button type="button" className={"nk-round nk-round--" + variant} onClick={onClick} style={{ width: size, height: size }}>
-      <Icon name={icon} size={20} stroke={2} color="var(--nk-text)" />
-    </button>
-  );
-}
-
-/* ---------------- Chips / tags ---------------- */
-export function LocationChip({ city = "Vilnius" }: { city?: string }) {
-  return (
-    <span className="nk-chip">
-      <Icon name="MapPin" size={16} stroke={2.2} color="var(--nk-text)" fill="var(--nk-text)" />
-      {city}
-    </span>
-  );
-}
-
-export function Tag({ children }: { children: React.ReactNode }) {
-  return <span className="nk-tag">{children}</span>;
-}
-
 /* ---------------- Eyebrow + section head ---------------- */
 export function SectionHead({
   eyebrow, title, action,
@@ -109,19 +44,6 @@ export function SectionHead({
         )}
         <h2>{title}</h2>
       </div>
-    </div>
-  );
-}
-
-/* ---------------- Rating ---------------- */
-export function Rating({ value = "4,8", count = "52 atsiliepimai" }: { value?: string; count?: string }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-      <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-        <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 18, color: "var(--nk-text-2)" }}>{value}</b>
-        <Icon name="Star" size={18} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
-      </span>
-      <span className="nk-meta" style={{ color: "var(--nk-text-muted)" }}>({count})</span>
     </div>
   );
 }

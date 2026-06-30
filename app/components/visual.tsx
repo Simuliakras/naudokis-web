@@ -6,7 +6,7 @@ import {
   ChevronDown, ChevronRight, Coins, Download, Dumbbell, Handshake, Heart, HeartPulse,
   Home, Image as ImageIcon, Inbox, Info, Laptop, LayoutGrid, type LucideIcon, Mail,
   MapPin, Menu, MessageCircle, MoreHorizontal, PartyPopper, Phone, RefreshCcw, Search,
-  SearchX, ShieldCheck, Shirt, SlidersHorizontal, Smartphone, Snowflake, Sparkles,
+  SearchX, Share2, ShieldCheck, Shirt, SlidersHorizontal, Smartphone, Snowflake, Sparkles,
   Speaker, Star, Tag, User, Users, Wrench, X,
 } from "lucide-react";
 import { localeHome, type Locale } from "@/app/lib/i18n/config";
@@ -42,7 +42,7 @@ const ICONS = {
   Mail: lucide(Mail), SearchX: lucide(SearchX), Inbox: lucide(Inbox), LayoutGrid: lucide(LayoutGrid),
   ArrowUpDown: lucide(ArrowUpDown), SlidersHorizontal: lucide(SlidersHorizontal), Home: lucide(Home),
   Car: lucide(Car), Tag: lucide(Tag), Calendar: lucide(Calendar), MessageCircle: lucide(MessageCircle),
-  Info: lucide(Info), BadgeCheck: lucide(BadgeCheck), RefreshCcw: lucide(RefreshCcw),
+  Info: lucide(Info), BadgeCheck: lucide(BadgeCheck), RefreshCcw: lucide(RefreshCcw), Share2: lucide(Share2),
   MoreHorizontal: lucide(MoreHorizontal), ChevronRight: lucide(ChevronRight), Sparkles: lucide(Sparkles),
   Download: lucide(Download), Camera: lucide(Camera), Handshake: lucide(Handshake), Coins: lucide(Coins),
   Snowflake: lucide(Snowflake), Smartphone: lucide(Smartphone), Wrench: lucide(Wrench),

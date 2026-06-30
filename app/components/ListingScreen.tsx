@@ -24,7 +24,6 @@ import { useI18n } from "./I18nProvider";
 export function ListingScreen({ id }: { id: string }) {
   const { locale, dict } = useI18n();
   const router = useRouter();
-  const [saved, setSaved] = useState(false);
   const [shared, setShared] = useState(false);
   const [footerInView, setFooterInView] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
@@ -72,8 +71,10 @@ export function ListingScreen({ id }: { id: string }) {
   const category = listing.tags[0];
   const isNew = listing.ratingCount === 0;
 
-  // Transactional actions are Locked — they open the app-redirect modal.
-  const lockFav = () => { setSaved(true); openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody }); };
+  // Transactional actions are Locked — they open the app-redirect modal. Favoriting
+  // only persists in the app, so we do NOT fill the heart here (a "saved" state the
+  // web can't keep would be a false success signal); the modal is the feedback.
+  const lockFav = () => openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody });
   // Sharing is a real web action (not app-locked): use the native share sheet
   // where available, otherwise copy the URL and flash a transient "copied" state.
   const share = async () => {
@@ -101,13 +102,17 @@ export function ListingScreen({ id }: { id: string }) {
         <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel}
           items={detailCrumbs({ category, title: listing.title, categoriesLabel: dict.feed.crumbCategories, locale })} />
 
-        <ListingHeader listing={listing} saved={saved} shared={shared} onShare={share} onFav={lockFav} />
+        <ListingHeader listing={listing} shared={shared} onShare={share} onFav={lockFav} />
         <Gallery images={listing.images} title={listing.title} isNew={isNew} />
 
         <div className="nk-detail-grid">
           <DetailBody listing={listing} onContact={contact} />
           <aside className="nk-reserve">
-            <BookingPanel listing={listing} onReserve={reserve} onPickDates={pickDates} />
+            {/* The booking panel is replaced by the sticky reserve bar on mobile, but
+                the owner trust card must survive there (it's core social proof). */}
+            <div className="nk-reserve__booking">
+              <BookingPanel listing={listing} onReserve={reserve} onPickDates={pickDates} />
+            </div>
             {listing.owner && <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />}
           </aside>
         </div>

@@ -136,7 +136,7 @@ export function FeedScreen() {
     ? [{ label: t.crumbCategories, href: localePath(locale, "/kategorijos") }, { label: catTitle ?? params.cat }]
     : isSearch
       ? [{ label: t.crumbCategories, href: localePath(locale, "/kategorijos") }, { label: t.titleSearch }]
-      : [{ label: t.crumbCategories }];
+      : [{ label: t.titleAll }];
 
   const anyActive = !!params.q || isCat || !!params.city || params.delivery || params.sort !== "recommended";
   const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "recommended", delivery: false }); };

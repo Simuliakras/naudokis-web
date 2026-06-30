@@ -135,31 +135,6 @@ export function InterruptionBanner() {
   );
 }
 
-/* ---------------- Feature card (glass) ---------------- */
-export function FeatureCard({
-  icon = "ShieldCheck", title, body, className,
-}: {
-  icon?: IconName;
-  title: string;
-  body: string;
-  className?: string;
-}) {
-  return (
-    <div className={className ? `nk-feature ${className}` : "nk-feature"} style={{
-      flex: 1, borderRadius: "var(--nk-r-card)", background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", WebkitBackdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-glass-card-border)",
-      padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-stack-lg)", textAlign: "center",
-    }}>
-      <span style={{ width: "var(--nk-size-icon-lg)", height: "var(--nk-size-icon-lg)", borderRadius: "50%", background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Icon name={icon} size={36} color="var(--nk-yellow)" stroke={2} />
-      </span>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
-        <h3 className="nk-h-card" style={{ margin: 0 }}>{title}</h3>
-        <p className="nk-body" style={{ margin: 0 }}>{body}</p>
-      </div>
-    </div>
-  );
-}
-
 /* ---------------- Use-case card ----------------
    Honest social proof: a tinted icon disk + scenario title + supporting line.
    Deliberately NOT a named, star-rated "review" (those were placeholder copy —

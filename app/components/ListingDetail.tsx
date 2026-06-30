@@ -247,8 +247,8 @@ const headerBtn: React.CSSProperties = {
 const metaItem: React.CSSProperties = { display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", whiteSpace: "nowrap" };
 const Dot = () => <span style={{ width: 3, height: 3, borderRadius: 2, background: "var(--nk-text-muted)", flex: "none" }} />;
 
-export function ListingHeader({ listing, saved, shared, onShare, onFav }: {
-  listing: ListingDetail; saved: boolean; shared: boolean; onShare: () => void; onFav: () => void;
+export function ListingHeader({ listing, shared, onShare, onFav }: {
+  listing: ListingDetail; shared: boolean; onShare: () => void; onFav: () => void;
 }) {
   const { dict } = useI18n();
   const t = dict.detail;
@@ -279,8 +279,8 @@ export function ListingHeader({ listing, saved, shared, onShare, onFav }: {
         </div>
       </div>
       <div style={{ display: "flex", gap: "var(--nk-gap-sm)", flex: "none" }}>
-        <button className="nk-lfield" style={headerBtn} onClick={onShare}><Icon name="ArrowUpDown" size={17} stroke={2} color="var(--nk-text)" style={{ transform: "rotate(45deg)" }} /> {shared ? t.shareCopied : t.share}</button>
-        <button className="nk-lfield" style={headerBtn} onClick={onFav} aria-pressed={saved} title={dict.bridge.opensAppHint}><Icon name="Heart" size={17} stroke={2} color={saved ? "var(--nk-orange)" : "var(--nk-text)"} fill={saved ? "var(--nk-orange)" : "none"} /> {t.save}</button>
+        <button className="nk-lfield" style={headerBtn} onClick={onShare}><Icon name="Share2" size={17} stroke={2} color="var(--nk-text)" /> {shared ? t.shareCopied : t.share}</button>
+        <button className="nk-lfield" style={headerBtn} onClick={onFav} title={dict.bridge.opensAppHint}><Icon name="Heart" size={17} stroke={2} color="var(--nk-text)" fill="none" /> {t.save}</button>
       </div>
     </div>
   );
@@ -648,6 +648,19 @@ export function DetailBody({ listing, onContact }: {
   );
 }
 
+/* Quiet, centred trust line under the reserve CTA — kept as plain text (not a
+   pill) so the purple reserve button stays the single button-shaped action. */
+function PanelNote({ icon, iconColor, children }: {
+  icon: IconName; iconColor: string; children: React.ReactNode;
+}) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", textAlign: "center" }}>
+      <Icon name={icon} size={15} stroke={2} color={iconColor} />
+      <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)" }}>{children}</span>
+    </div>
+  );
+}
+
 /* ---------------- Sidebar: booking panel ----------------
    Sticky reserve card (desktop): price, app-confirmed booking facts, reserve CTA. */
 export function BookingPanel({ listing, onReserve, onPickDates }: {
@@ -699,14 +712,8 @@ export function BookingPanel({ listing, onReserve, onPickDates }: {
         style={{ width: "100%", padding: 16, fontSize: 17 }}>
         <Icon name="Smartphone" size={17} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
       </button>
-      <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", padding: "9px 12px", borderRadius: 11, background: "var(--nk-green-tint)" }}>
-        <Icon name="RefreshCcw" size={15} color="var(--nk-green)" stroke={2} />
-        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-green-text)", fontWeight: 500 }}>{t.cancellationNote(listing.cancellation)}</span>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", textAlign: "center" }}>
-        <Icon name="ShieldCheck" size={15} color="var(--nk-text-muted)" stroke={2} />
-        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)" }}>{t.escrowNote}</span>
-      </div>
+      <PanelNote icon="RefreshCcw" iconColor="var(--nk-green)">{t.cancellationNote(listing.cancellation)}</PanelNote>
+      <PanelNote icon="ShieldCheck" iconColor="var(--nk-text-muted)">{t.escrowNote}</PanelNote>
     </div>
   );
 }

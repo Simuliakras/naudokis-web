@@ -110,8 +110,8 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
         burgerRef.current?.focus();
       }
     };
-    // Click outside the drawer (and not on the burger toggle) closes it — same
-    // pattern as the FilterSelect popovers, no scrim element needed.
+    // Click outside the drawer (and not on the burger toggle) closes it — this
+    // also catches clicks on the dimming scrim, which sits behind the drawer.
     const onDown = (e: MouseEvent) => {
       const target = e.target as Node;
       if (drawerRef.current?.contains(target) || burgerRef.current?.contains(target)) {
@@ -145,134 +145,145 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   };
 
   return (
-    <header className={"nk-nav-bar" + (scrolled ? " nk-scrolled" : "")}>
-      <div className="nk-nav-inner nk-container">
-        <Logo priority />
-        <nav className="nk-nav-links" aria-label={dict.nav.primary}>
-          <Link
-            className="nk-nav nk-link"
-            href={localePath(locale, "/kategorijos")}
-            aria-current={isCategories ? "page" : undefined}
-          >
-            {dict.nav.category}
-          </Link>
-          <Link
-            className="nk-nav nk-link"
-            href={localePath(locale, "/skelbimai")}
-            aria-current={isListings ? "page" : undefined}
-          >
-            {dict.nav.listings}
-          </Link>
-          <Link
-            className="nk-nav nk-link"
-            href={localePath(locale, "/kaip-tai-veikia")}
-            aria-current={isHowItWorks ? "page" : undefined}
-          >
-            {dict.nav.howItWorks}
-          </Link>
-          <LocaleSwitcher />
-          <button
-            className="nk-btn nk-btn--primary"
-            style={{ padding: "10px 20px", fontSize: 15 }}
-            onClick={() =>
-              openRedirect({
-                title: dict.bridge.defaultTitle,
-                body: dict.bridge.defaultBody,
-              })
-            }
-          >
-            <Icon
-              name="Download"
-              size={17}
-              stroke={2.2}
-              color="var(--nk-text)"
-            />{" "}
-            {dict.nav.getApp}
-          </button>
-        </nav>
-        <button
-          ref={burgerRef}
-          className="nk-nav-burger"
-          aria-label={menuOpen ? dict.nav.closeMenu : dict.nav.openMenu}
-          aria-expanded={menuOpen}
-          aria-controls="nk-mobile-nav"
-          onClick={() => setMenuOpen((v) => !v)}
-        >
-          <Icon
-            name={menuOpen ? "X" : "Menu"}
-            size={22}
-            stroke={2.2}
-            color="var(--nk-text)"
-          />
-        </button>
-      </div>
+    <>
+      {/* Dims the page behind the open mobile drawer. Tapping it closes the
+          drawer (onClick); the same document mousedown handler also catches it.
+          Kept OUTSIDE the backdrop-filtered .nk-nav-bar so position:fixed resolves
+          against the viewport (a filtered ancestor would trap it to the header). */}
       <div
-        ref={drawerRef}
-        id="nk-mobile-nav"
-        className={"nk-nav-drawer" + (menuOpen ? " open" : "")}
-      >
-        <div className="nk-nav-drawer-inner">
-          <button className="nk-drawer-item" onClick={doSearch}>
-            <Icon name="Search" size={20} stroke={2.2} color="var(--nk-text)" />{" "}
-            {dict.nav.search}
-          </button>
-          <Link
-            className="nk-drawer-item"
-            href={localePath(locale, "/kategorijos")}
-            aria-current={isCategories ? "page" : undefined}
-            onClick={() => setMenuOpen(false)}
-          >
-            <Icon
-              name="LayoutGrid"
-              size={20}
-              stroke={2}
-              color="var(--nk-text)"
-            />{" "}
-            {dict.nav.category}
-          </Link>
-          <Link
-            className="nk-drawer-item"
-            href={localePath(locale, "/skelbimai")}
-            aria-current={isListings ? "page" : undefined}
-            onClick={() => setMenuOpen(false)}
-          >
-            <Icon name="Tag" size={20} stroke={2} color="var(--nk-text)" />{" "}
-            {dict.nav.listings}
-          </Link>
-          <Link
-            className="nk-drawer-item"
-            href={localePath(locale, "/kaip-tai-veikia")}
-            aria-current={isHowItWorks ? "page" : undefined}
-            onClick={() => setMenuOpen(false)}
-          >
-            <Icon name="Sparkles" size={20} stroke={2} color="var(--nk-text)" />{" "}
-            {dict.nav.howItWorks}
-          </Link>
-          <div className="nk-drawer-locale">
+        className={"nk-nav-scrim" + (menuOpen ? " open" : "")}
+        aria-hidden="true"
+        onClick={() => setMenuOpen(false)}
+      />
+      <header className={"nk-nav-bar" + (scrolled ? " nk-scrolled" : "")}>
+        <div className="nk-nav-inner nk-container">
+          <Logo priority />
+          <nav className="nk-nav-links" aria-label={dict.nav.primary}>
+            <Link
+              className="nk-nav nk-link"
+              href={localePath(locale, "/kategorijos")}
+              aria-current={isCategories ? "page" : undefined}
+            >
+              {dict.nav.category}
+            </Link>
+            <Link
+              className="nk-nav nk-link"
+              href={localePath(locale, "/skelbimai")}
+              aria-current={isListings ? "page" : undefined}
+            >
+              {dict.nav.listings}
+            </Link>
+            <Link
+              className="nk-nav nk-link"
+              href={localePath(locale, "/kaip-tai-veikia")}
+              aria-current={isHowItWorks ? "page" : undefined}
+            >
+              {dict.nav.howItWorks}
+            </Link>
             <LocaleSwitcher />
-          </div>
+            <button
+              className="nk-btn nk-btn--primary"
+              style={{ padding: "10px 20px", fontSize: 15 }}
+              onClick={() =>
+                openRedirect({
+                  title: dict.bridge.defaultTitle,
+                  body: dict.bridge.defaultBody,
+                })
+              }
+            >
+              <Icon
+                name="Download"
+                size={17}
+                stroke={2.2}
+                color="var(--nk-text)"
+              />{" "}
+              {dict.nav.getApp}
+            </button>
+          </nav>
           <button
-            className="nk-btn nk-btn--primary"
-            style={{ margin: "4px 12px 0", justifyContent: "center" }}
-            onClick={() => {
-              setMenuOpen(false);
-              openRedirect({
-                title: dict.bridge.defaultTitle,
-                body: dict.bridge.defaultBody,
-              });
-            }}
+            ref={burgerRef}
+            className="nk-nav-burger"
+            aria-label={menuOpen ? dict.nav.closeMenu : dict.nav.openMenu}
+            aria-expanded={menuOpen}
+            aria-controls="nk-mobile-nav"
+            onClick={() => setMenuOpen((v) => !v)}
           >
             <Icon
-              name="Download"
-              size={18}
+              name={menuOpen ? "X" : "Menu"}
+              size={22}
               stroke={2.2}
               color="var(--nk-text)"
-            />{" "}
-            {dict.nav.getApp}
+            />
           </button>
         </div>
-      </div>
-    </header>
+        <div
+          ref={drawerRef}
+          id="nk-mobile-nav"
+          className={"nk-nav-drawer" + (menuOpen ? " open" : "")}
+        >
+          <div className="nk-nav-drawer-inner">
+            <button className="nk-drawer-item" onClick={doSearch}>
+              <Icon name="Search" size={20} stroke={2.2} color="var(--nk-text)" />{" "}
+              {dict.nav.search}
+            </button>
+            <Link
+              className="nk-drawer-item"
+              href={localePath(locale, "/kategorijos")}
+              aria-current={isCategories ? "page" : undefined}
+              onClick={() => setMenuOpen(false)}
+            >
+              <Icon
+                name="LayoutGrid"
+                size={20}
+                stroke={2}
+                color="var(--nk-text)"
+              />{" "}
+              {dict.nav.category}
+            </Link>
+            <Link
+              className="nk-drawer-item"
+              href={localePath(locale, "/skelbimai")}
+              aria-current={isListings ? "page" : undefined}
+              onClick={() => setMenuOpen(false)}
+            >
+              <Icon name="Tag" size={20} stroke={2} color="var(--nk-text)" />{" "}
+              {dict.nav.listings}
+            </Link>
+            <Link
+              className="nk-drawer-item"
+              href={localePath(locale, "/kaip-tai-veikia")}
+              aria-current={isHowItWorks ? "page" : undefined}
+              onClick={() => setMenuOpen(false)}
+            >
+              <Icon name="Sparkles" size={20} stroke={2} color="var(--nk-text)" />{" "}
+              {dict.nav.howItWorks}
+            </Link>
+            <div className="nk-drawer-locale">
+              <LocaleSwitcher />
+            </div>
+            <button
+              className="nk-btn nk-btn--primary"
+              style={{ margin: "4px 12px 0", justifyContent: "center" }}
+              onClick={() => {
+                setMenuOpen(false);
+                openRedirect({
+                  title: dict.bridge.defaultTitle,
+                  body: dict.bridge.defaultBody,
+                });
+              }}
+            >
+              <Icon
+                name="Download"
+                size={18}
+                stroke={2.2}
+                color="var(--nk-text)"
+              />{" "}
+              {dict.nav.getApp}
+            </button>
+          </div>
+        </div>
+      </header>
+    </>
   );
 }
 
@@ -762,7 +773,7 @@ export function Faq() {
           </h2>
           <p
             className="nk-body"
-            style={{ margin: 0, maxWidth: 866, color: "var(--nk-yellow)" }}
+            style={{ margin: 0, maxWidth: 866, color: "var(--nk-text-2)" }}
           >
             {dict.faq.subheading}
           </p>

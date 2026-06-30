@@ -40,7 +40,7 @@
   --nk-cat-events:      #D45F9E;
   --nk-cat-clothing:    #DFA854;
   --nk-cat-health:      #E06A7E;
-  --nk-cat-other:       #7E8E90;
+  --nk-cat-other:       #7C78A6;  /* desaturated brand-purple — "Other" stays branded, not greyed-out/disabled */
 
   /* ---- Tonal tints (htw step tags / pills / phone-glows on dark) -------- */
   --nk-yellow-tint:   rgba(249,243,103,.14);  /* yellow tag / pill wash      */
@@ -159,7 +159,7 @@
   --nk-shadow-3:      0 22px 50px rgba(0,0,0,.45);           /* card hover / popovers */
   --nk-shadow-modal:  0 30px 80px rgba(0,0,0,.5);            /* dialogs */
   --nk-glow-accent:   0 4px 18px rgba(102,101,224,.22);      /* focused fields / primary hover */
-  --nk-glow-purple:   rgba(122,121,240,.40);                 /* ambient CTA radials */
+  --nk-glow-purple:   rgba(102,101,224,.40);                 /* ambient CTA radials — brand purple */
   --nk-shadow-phone-hero: drop-shadow(10px 15px 42px rgba(22,22,22,.50)); /* hero phone img */
   --nk-shadow-phone-cta:  drop-shadow(0 26px 50px rgba(0,0,0,.5));        /* CTA phone img  */
 
@@ -305,8 +305,8 @@ a,button,input,textarea,select{touch-action:manipulation}
 .nk-hero-pattern{right:0!important;width:min(1000px,100vw)!important}
 /* Branded background pattern — shared subtle opacity so every dark section
    matches the footer's texture; steps down on smaller viewports. */
-.nk-brand-pattern{opacity:.12}
-@media(max-width:1024px){.nk-brand-pattern{opacity:.08}}
+.nk-brand-pattern{opacity:.09}
+@media(max-width:1024px){.nk-brand-pattern{opacity:.07}}
 @media(max-width:560px){.nk-brand-pattern{opacity:.05}}
 
 /* ---- Logo ---- */
@@ -321,7 +321,7 @@ a,button,input,textarea,select{touch-action:manipulation}
 .nk-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
   font-family:var(--nk-font-display);font-weight:700;font-size:18px;line-height:1;
   border-radius:var(--nk-r-pill);padding:16px 28px;min-height:var(--nk-tap);
-  max-width:100%;text-align:center;overflow-wrap:anywhere;
+  max-width:100%;text-align:center;text-decoration:none;overflow-wrap:anywhere;
   transition:transform var(--nk-dur-fast) var(--nk-ease-spring),background .18s ease,border-color .18s ease,box-shadow .18s ease,opacity .18s ease;white-space:nowrap}
 .nk-btn:active{transform:scale(.97)}
 .nk-btn:disabled{opacity:.5;pointer-events:none}
@@ -524,9 +524,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-nav-burger:hover{background:var(--nk-surface-hover);border-color:var(--nk-border-strong)}
 .nk-nav-burger:active{transform:scale(.94)}
 .nk-nav-drawer{display:none}
+/* Page-dimming scrim behind the open mobile drawer. Sibling of the nav bar at
+   z-49 (just under the sticky nav's z-50) so it dims page content but sits below
+   the bar + drawer. */
+.nk-nav-scrim{position:fixed;inset:0;z-index:49;background:var(--nk-scrim);
+  opacity:0;pointer-events:none;transition:opacity var(--nk-dur-med) var(--nk-ease)}
 @media(max-width:1120px){
   .nk-nav-links{display:none}
   .nk-nav-burger{display:inline-flex}
+  .nk-nav-scrim.open{opacity:1;pointer-events:auto}
   .nk-nav-drawer{display:block;overflow:hidden;max-height:0;opacity:0;
     transition:max-height .32s var(--nk-ease),opacity .25s ease;border-top:1px solid transparent}
   .nk-nav-drawer.open{max-height:min(70vh,480px);opacity:1;border-top-color:var(--nk-hairline)}
@@ -744,7 +750,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-search__col{display:flex;flex-direction:column;min-width:0}
 .nk-search__label{display:none}
 .nk-search__input{border:0;outline:0;background:transparent;font-family:var(--nk-font-body);
-  font-size:18px;color:var(--nk-bg);width:100%;min-width:110px}
+  font-size:16px;color:var(--nk-bg);width:100%;min-width:110px;
+  text-overflow:ellipsis}
 
 /* ---- FAQ hover ---- */
 .nk-faq{transition:border-color .2s ease,background .2s ease,border-radius .2s ease}
@@ -876,6 +883,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-redirect-close:hover{background:var(--nk-surface-2)}
 .nk-redirect-close:active{transform:scale(.94)}
 .nk-redirect-qr{display:flex;align-items:center;gap:16px;padding-top:4px}
+/* Clickable store badges — the real path for desktop (where the /go link can't
+   resolve to a store) and an explicit choice on mobile. Just centres the inner
+   .nk-appbadges (which owns its own flex/gap via <AppBadges gap={12}/>). */
+.nk-redirect-stores{display:flex;justify-content:center}
 @media(max-width:560px){
   .nk-redirect-scrim{align-items:flex-end}
   .nk-redirect-panel{width:100%;border-radius:24px 24px 0 0;max-height:92vh;overflow:auto;
@@ -1054,7 +1065,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* keep the booking sidebar through landscape tablets; collapse to the bottom bar only on portrait tablets/phones */
 @media(max-width:980px){
   .nk-detail-grid{grid-template-columns:1fr;gap:40px}
-  .nk-reserve{display:none}
+  /* drop only the booking panel (the sticky bar replaces it); keep the owner
+     trust card in the single-column flow and stop it sticking */
+  .nk-reserve{position:static;top:auto}
+  .nk-reserve__booking{display:none}
   .nk-mbar{display:flex}
   body:has(.nk-mbar) .nk-page{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
   .nk-bento{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:clamp(150px,22vw,190px)}
