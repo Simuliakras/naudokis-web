@@ -111,6 +111,25 @@ function SkelSection({ first, titleW = 200, children }: { first?: boolean; title
 }
 export function ListingSkeleton() {
   const card: React.CSSProperties = { borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" };
+  // Booking card skeleton — rendered in the sticky sidebar (with the reserve
+  // button) and inline on mobile (facts-only), mirroring the real BookingPanel
+  // variants so neither breakpoint reflows when the content lands.
+  const bookingSkel = (withButton: boolean) => (
+    <div style={{ ...card, background: "var(--nk-surface)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><Skel w={130} h={32} r={9} /><Skel w={70} h={16} /></div>
+      <Skel h={52} r={13} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="55%" h={14} /><Skel w={48} h={14} /></div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="40%" h={14} /><Skel w={40} h={14} /></div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="50%" h={14} /><Skel w={48} h={14} /></div>
+        <span style={{ height: 1, background: "var(--nk-divider)", margin: "2px 0" }} />
+        <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="35%" h={17} /><Skel w={64} h={17} /></div>
+      </div>
+      <Skel h={16} r={8} w="85%" />
+      {withButton && <Skel h={52} r={25} />}
+      <Skel h={64} r={14} />
+    </div>
+  );
   return (
     <div aria-hidden="true" style={{ pointerEvents: "none" }}>
       {/* breadcrumb */}
@@ -130,6 +149,8 @@ export function ListingSkeleton() {
         <Skel r={16} h="100%" />
         <Skel h="100%" r={16} /><Skel h="100%" r={16} /><Skel h="100%" r={16} /><Skel h="100%" r={16} />
       </div>
+      {/* mobile inline booking facts (mirrors .nk-booking-inline in the real screen) */}
+      <div className="nk-booking-inline">{bookingSkel(false)}</div>
       {/* focus column + reserve sidebar */}
       <div className="nk-detail-grid">
         {/* DetailBody: description → specs → handover → terms → reviews (gap:0, divided by SkelSection) */}
@@ -203,20 +224,7 @@ export function ListingSkeleton() {
         </div>
         {/* reserve sidebar: booking panel + host card */}
         <div className="nk-reserve">
-          <div style={{ ...card, background: "var(--nk-surface)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><Skel w={130} h={32} r={9} /><Skel w={70} h={16} /></div>
-            <Skel h={52} r={13} />
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="55%" h={14} /><Skel w={48} h={14} /></div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="40%" h={14} /><Skel w={40} h={14} /></div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="50%" h={14} /><Skel w={48} h={14} /></div>
-              <span style={{ height: 1, background: "var(--nk-divider)", margin: "2px 0" }} />
-              <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="35%" h={17} /><Skel w={64} h={17} /></div>
-            </div>
-            <Skel h={52} r={25} />
-            <Skel h={36} r={11} w="90%" style={{ alignSelf: "center" }} />
-            <Skel h={16} r={8} w="70%" style={{ alignSelf: "center" }} />
-          </div>
+          <div className="nk-reserve__booking">{bookingSkel(true)}</div>
           <div style={{ ...card, padding: "var(--nk-card-pad-sm)", background: "var(--nk-surface)", border: "1px solid var(--nk-border)", boxShadow: "var(--nk-edge-top)" }}>
             <div style={{ display: "flex", gap: 15, alignItems: "center" }}><Skel w={58} h={58} r={29} /><div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 9 }}><Skel w="60%" h={18} /><Skel w={120} h={24} r={12} /></div></div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "var(--nk-hairline)", borderRadius: 14, overflow: "hidden" }}>
@@ -278,7 +286,7 @@ export function ListingHeader({ listing, shared, onShare, onFav }: {
           )}
         </div>
       </div>
-      <div style={{ display: "flex", gap: "var(--nk-gap-sm)", flex: "none" }}>
+      <div className="nk-lhead__actions" style={{ display: "flex", gap: "var(--nk-gap-sm)", flex: "none" }}>
         <button className="nk-lfield" style={headerBtn} onClick={onShare}><Icon name="Share2" size={17} stroke={2} color="var(--nk-text)" /> {shared ? t.shareCopied : t.share}</button>
         <button className="nk-lfield" style={headerBtn} onClick={onFav} title={dict.bridge.opensAppHint}><Icon name="Heart" size={17} stroke={2} color="var(--nk-text)" fill="none" /> {t.save}</button>
       </div>
@@ -294,31 +302,50 @@ export function Gallery({ images, title, isNew }: { images: string[]; title: str
   const { dict } = useI18n();
   const t = dict.detail;
   const [lightbox, setLightbox] = useState<number | null>(null);
-  const tiles = Array.from({ length: 5 }, (_, i) => images[i]);
-  const extra = images.length > 5 ? images.length - 5 : 0;
+  const count = images.length;
+  const shown = images.slice(0, 5); // render only real tiles — never empty placeholders
+  const extra = count > 5 ? count - 5 : 0;
   const alt = (i: number) => (i === 0 ? title : `${title} — ${i + 1}`);
-  const open = (i: number) => setLightbox(Math.min(i, images.length - 1));
+  const open = (i: number) => setLightbox(i);
+
+  const newPill = isNew ? (
+    <span style={{ position: "absolute", top: 16, left: 16 }}>
+      <Pill tone="yellow" icon="Sparkles">{t.newListingPill}</Pill>
+    </span>
+  ) : null;
+
+  // No photos on the wire → a single graceful hero placeholder with a caption,
+  // never a grid of grey boxes. (data-count="0" makes the bento a single tile.)
+  if (count === 0) {
+    return (
+      <div className="nk-bento" data-count="0">
+        <GalleryTile big>
+          {newPill}
+          <span style={{ position: "absolute", left: 0, right: 0, bottom: 16, textAlign: "center", pointerEvents: "none", fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)" }}>{t.noPhotos}</span>
+        </GalleryTile>
+      </div>
+    );
+  }
+
   return (
     <>
-      <div className="nk-bento">
-        <GalleryTile src={tiles[0]} alt={alt(0)} big onOpen={tiles[0] ? () => open(0) : undefined}>
-          {isNew && (
-            <span style={{ position: "absolute", top: 16, left: 16 }}>
-              <Pill tone="yellow" icon="Sparkles">{t.newListingPill}</Pill>
-            </span>
-          )}
-          <span className="nk-gtile__hint" style={{ position: "absolute", inset: 0, borderRadius: "var(--nk-r-tile)", background: "rgba(20,22,23,.18)" }} />
-        </GalleryTile>
-        <GalleryTile src={tiles[1]} alt={alt(1)} onOpen={tiles[1] ? () => open(1) : undefined} />
-        <GalleryTile src={tiles[2]} alt={alt(2)} onOpen={tiles[2] ? () => open(2) : undefined} />
-        <GalleryTile src={tiles[3]} alt={alt(3)} onOpen={tiles[3] ? () => open(3) : undefined} />
-        <GalleryTile src={tiles[4]} alt={alt(4)} onOpen={tiles[4] ? () => open(4) : undefined}>
-          {tiles[4] && (
-            <span className="nk-gtile__more">
-              <Icon name="LayoutGrid" size={16} color="var(--nk-text)" stroke={2} /> {extra > 0 ? t.galleryMore(extra) : t.galleryAll(images.length)}
-            </span>
-          )}
-        </GalleryTile>
+      {/* data-count drives count-aware grids (1..5); ≥5 gets the "+N more" overlay. */}
+      <div className="nk-bento" data-count={Math.min(count, 5)}>
+        {shown.map((src, i) => (
+          <GalleryTile key={i} src={src} alt={alt(i)} big={i === 0} onOpen={() => open(i)}>
+            {i === 0 && (
+              <>
+                {newPill}
+                <span className="nk-gtile__hint" style={{ position: "absolute", inset: 0, borderRadius: "var(--nk-r-tile)", background: "rgba(20,22,23,.18)" }} />
+              </>
+            )}
+            {i === shown.length - 1 && count >= 5 && (
+              <span className="nk-gtile__more">
+                <Icon name="LayoutGrid" size={16} color="var(--nk-text)" stroke={2} /> {extra > 0 ? t.galleryMore(extra) : t.galleryAll(count)}
+              </span>
+            )}
+          </GalleryTile>
+        ))}
       </div>
       {lightbox !== null && (
         <GalleryLightbox images={images} title={title} start={lightbox} onClose={() => setLightbox(null)} />
@@ -551,7 +578,7 @@ function TermsSection({ listing }: { listing: ListingDetail }) {
 
 // Rating summary (big average + per-star bars) followed by the review cards grid.
 // Rendered only when there are reviews; the empty state is handled by the caller.
-function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews, reviewCountLabel, showAllLabel, onContact }: {
+function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews, reviewCountLabel, showAllLabel, onShowReviews }: {
   rating?: string;
   ratingValue: number;
   ratingCount: number;
@@ -559,7 +586,7 @@ function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews
   reviews: ListingReview[];
   reviewCountLabel: string;
   showAllLabel: string;
-  onContact: () => void;
+  onShowReviews: () => void;
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xl)" }}>
@@ -609,14 +636,15 @@ function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews
           </div>
         ))}
       </div>
-      <button className="nk-btn nk-btn--ghost" style={{ alignSelf: "flex-start", borderColor: "var(--nk-border)" }} onClick={onContact}>
+      {/* Opens the reviews app-redirect (not the contact-owner one). */}
+      <button className="nk-btn nk-btn--ghost" style={{ alignSelf: "flex-start", borderColor: "var(--nk-border)" }} onClick={onShowReviews}>
         {showAllLabel} <Icon name="ArrowRight" size={16} stroke={2} color="var(--nk-text)" />
       </button>
     </div>
   );
 }
 
-function ReviewsSection({ listing, onContact }: { listing: ListingDetail; onContact: () => void }) {
+function ReviewsSection({ listing, onShowReviews }: { listing: ListingDetail; onShowReviews: () => void }) {
   const { dict } = useI18n();
   const t = dict.detail;
   return (
@@ -625,7 +653,7 @@ function ReviewsSection({ listing, onContact }: { listing: ListingDetail; onCont
         <ReviewsBreakdown rating={listing.rating} ratingValue={listing.ratingValue} ratingCount={listing.ratingCount}
           breakdown={listing.ratingBreakdown} reviews={listing.reviews}
           reviewCountLabel={dict.common.reviewCount(listing.ratingCount)} showAllLabel={t.reviewsInApp(listing.ratingCount)}
-          onContact={onContact} />
+          onShowReviews={onShowReviews} />
       ) : (
         <SectionEmpty icon="MessageCircle" title={t.reviewsEmptyTitle} subtitle={t.reviewsEmptyBody} />
       )}
@@ -634,8 +662,8 @@ function ReviewsSection({ listing, onContact }: { listing: ListingDetail; onCont
 }
 
 // The full focus column: description → specs → handover → terms → reviews.
-export function DetailBody({ listing, onContact }: {
-  listing: ListingDetail; onContact: () => void;
+export function DetailBody({ listing, onShowReviews }: {
+  listing: ListingDetail; onShowReviews: () => void;
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
@@ -643,30 +671,21 @@ export function DetailBody({ listing, onContact }: {
       {listing.attributes.length > 0 && <SpecsSection attributes={listing.attributes} />}
       <HandoverSection city={listing.city} delivery={listing.delivery} />
       <TermsSection listing={listing} />
-      <ReviewsSection listing={listing} onContact={onContact} />
-    </div>
-  );
-}
-
-/* Quiet, centred trust line under the reserve CTA — kept as plain text (not a
-   pill) so the purple reserve button stays the single button-shaped action. */
-function PanelNote({ icon, iconColor, children }: {
-  icon: IconName; iconColor: string; children: React.ReactNode;
-}) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", textAlign: "center" }}>
-      <Icon name={icon} size={15} stroke={2} color={iconColor} />
-      <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)" }}>{children}</span>
+      <ReviewsSection listing={listing} onShowReviews={onShowReviews} />
     </div>
   );
 }
 
 /* ---------------- Sidebar: booking panel ----------------
-   Sticky reserve card (desktop): price, app-confirmed booking facts, reserve CTA. */
-export function BookingPanel({ listing, onReserve, onPickDates }: {
+   Sticky reserve card (desktop): price, app-confirmed booking facts, reserve CTA.
+   variant="facts" drops the reserve button — used inline on mobile (≤980px), where
+   the sticky sidebar is hidden and the fixed MobileBar carries the reserve CTA, so
+   the price breakdown + payment-protection context still travel to phone users. */
+export function BookingPanel({ listing, onReserve, onPickDates, variant = "full" }: {
   listing: ListingDetail;
   onReserve: () => void;
   onPickDates: () => void;
+  variant?: "full" | "facts";
 }) {
   const { dict } = useI18n();
   const t = dict.detail;
@@ -707,13 +726,26 @@ export function BookingPanel({ listing, onReserve, onPickDates }: {
       <span style={{ display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-body)", fontSize: 12.5, lineHeight: "18px", color: "var(--nk-text-muted)" }}>
         <Icon name="Smartphone" size={14} stroke={2} color="var(--nk-purple-hover)" style={{ flex: "none", marginTop: 1 }} /> {t.appOnlyNote}
       </span>
-      <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}
-        data-nk-redirect data-nk-redirect-title={dict.bridge.reserveTitle} data-nk-redirect-body={dict.bridge.reserveBody}
-        style={{ width: "100%", padding: 16, fontSize: 17 }}>
-        <Icon name="Smartphone" size={17} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
-      </button>
-      <PanelNote icon="RefreshCcw" iconColor="var(--nk-green)">{t.cancellationNote(listing.cancellation)}</PanelNote>
-      <PanelNote icon="ShieldCheck" iconColor="var(--nk-text-muted)">{t.escrowNote}</PanelNote>
+      {variant !== "facts" && (
+        <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}
+          data-nk-redirect data-nk-redirect-title={dict.bridge.reserveTitle} data-nk-redirect-body={dict.bridge.reserveBody}
+          style={{ width: "100%", padding: 16, fontSize: 17 }}>
+          <Icon name="Smartphone" size={17} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
+        </button>
+      )}
+      {/* Payment protection promoted directly under the CTA — the strongest trust
+          signal on a 2026 rental marketplace. One elevated element; cancellation
+          stays a quiet line beneath it so the reserve button keeps sole button shape. */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)", padding: "var(--nk-card-pad-sm)", borderRadius: 14, background: "var(--nk-green-tint)", border: "1px solid var(--nk-green-soft)" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Icon name="ShieldCheck" size={16} stroke={2} color="var(--nk-green)" />
+          <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 13.5, color: "var(--nk-green-text)" }}>{t.protectedPayments}</span>
+        </span>
+        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 12.5, lineHeight: "18px", color: "var(--nk-text-muted)" }}>{t.escrowNote}</span>
+        <span style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)" }}>
+          <Icon name="RefreshCcw" size={14} stroke={2} color="var(--nk-green)" style={{ flex: "none" }} /> {t.cancellationNote(listing.cancellation)}
+        </span>
+      </div>
     </div>
   );
 }

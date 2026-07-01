@@ -1061,8 +1061,33 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-detail-h{margin:0 0 22px;font-family:var(--nk-font-display);font-weight:700;font-size:25px;line-height:30px;color:var(--nk-text)}
 .nk-bento{display:grid;grid-template-columns:1.55fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;height:clamp(380px,46vw,512px)}
 .nk-bento > :first-child{grid-row:1 / 3}
+/* Count-aware desktop layouts so a listing with 1–4 photos never shows empty grey
+   tiles. Scoped to >980px so the ≤980 mobile mosaic (higher-specificity attribute
+   rules would otherwise win over the in-media .nk-bento rule) still applies. Base
+   rule above is the 5-up bento (data-count 5). */
+@media(min-width:981px){
+  .nk-bento[data-count="0"],
+  .nk-bento[data-count="1"]{grid-template-columns:1fr;grid-template-rows:1fr}
+  .nk-bento[data-count="2"]{grid-template-columns:1fr 1fr;grid-template-rows:1fr}
+  .nk-bento[data-count="3"]{grid-template-columns:1.55fr 1fr;grid-template-rows:1fr 1fr}
+  .nk-bento[data-count="4"]{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+  /* the big-left row span (base .nk-bento > :first-child) only suits 3-up and 5-up */
+  .nk-bento[data-count="0"] > :first-child,
+  .nk-bento[data-count="1"] > :first-child,
+  .nk-bento[data-count="2"] > :first-child,
+  .nk-bento[data-count="4"] > :first-child{grid-row:auto}
+}
 /* sidebar is fluid so it never out-widths the content column on a ~1024px tablet */
 .nk-detail-grid{display:grid;grid-template-columns:1fr clamp(300px,32vw,372px);gap:clamp(36px,4vw,56px);margin-top:40px;align-items:start}
+/* Booking facts inline under the gallery on mobile, where the sticky sidebar
+   booking panel is hidden (≤980px). The fixed MobileBar stays the reserve CTA. */
+.nk-booking-inline{display:none}
+/* Listing header actions (Share / Save) — full-width 50/50 row under the title on
+   the narrowest phones so a long title + two buttons never crowd. */
+@media(max-width:430px){
+  .nk-lhead__actions{flex:1 1 100%}
+  .nk-lhead__actions .nk-lfield{flex:1 1 0;justify-content:center}
+}
 .nk-spec-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:48px;row-gap:0}
 .nk-tworow{display:grid;grid-template-columns:1.1fr 1fr;column-gap:48px}
 .nk-hl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--nk-gap-md)}
@@ -1134,10 +1159,13 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
      trust card in the single-column flow and stop it sticking */
   .nk-reserve{position:static;top:auto}
   .nk-reserve__booking{display:none}
+  .nk-booking-inline{display:block;margin-top:24px}
   .nk-mbar{display:flex}
   body:has(.nk-mbar) .nk-page{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
   .nk-bento{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:clamp(150px,22vw,190px)}
   .nk-bento > :first-child{grid-column:1 / -1;grid-row:auto;height:clamp(260px,34vw,320px)}
+  /* 0–2 photos: stack full-width, no lonely half-width tile in the 2-col mosaic */
+  .nk-bento[data-count="0"],.nk-bento[data-count="1"],.nk-bento[data-count="2"]{grid-template-columns:1fr}
   .nk-tworow{grid-template-columns:1fr}
   .nk-rev-grid{grid-template-columns:1fr!important}
 }
@@ -1361,9 +1389,18 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .htw-step__top h3{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:26px;line-height:30px;
   color:var(--nk-text-muted);transition:color .22s ease}
 .htw-step.is-active .htw-step__top h3{color:var(--nk-text)}
-.htw-step__text{margin:0;max-height:0;overflow:hidden;opacity:0;font-family:var(--nk-font-body);font-size:18px;
-  line-height:29px;color:var(--nk-text-2);transition:max-height .35s ease,opacity .3s ease,margin .3s ease}
-.htw-step.is-active .htw-step__text{max-height:200px;opacity:1;margin-top:8px}
+/* Body reveal via grid-rows (0fr→1fr) — animates true content height, so long LT
+   copy never clips (the old max-height:200px was a latent clip). transitionend on
+   grid-template-rows still fires, so StepList.measure() re-runs on collapse/expand. */
+.htw-step__reveal{display:grid;grid-template-rows:0fr;transition:grid-template-rows .34s ease}
+.htw-step.is-active .htw-step__reveal{grid-template-rows:1fr}
+.htw-step__revealclip{overflow:hidden;min-height:0}
+.htw-step__text{margin:0;padding-top:8px;font-family:var(--nk-font-body);font-size:18px;
+  line-height:29px;color:var(--nk-text-2);opacity:0;transition:opacity .3s ease}
+.htw-step.is-active .htw-step__text{opacity:1}
+/* Per-step inline device — hidden on desktop (the sticky .htw-right shows the
+   synced phone); revealed at ≤1280 so the active step owns its own app screen. */
+.htw-step__device{display:none}
 .htw-right{position:sticky;top:120px;display:flex;justify-content:center}
 .htw-phonewrap{position:relative}
 .htw-phonewrap__glow{position:absolute;inset:-40px;border-radius:60px;filter:blur(50px);opacity:.5;
@@ -1376,7 +1413,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   border:1px solid var(--nk-ps-frame);box-shadow:var(--nk-shadow-hero);padding:14px;flex:none}
 .htw-phone__notch{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:120px;height:28px;
   border-radius:16px;background:var(--nk-ps-bg);z-index:3}
-.htw-phone__screen{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;
+.htw-phone__screen{display:block;position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;
   background:linear-gradient(180deg,var(--nk-ps-screen-1),var(--nk-ps-screen-2))}
 .htw-ps-screen{position:absolute;inset:0;padding:54px 22px 24px;display:flex;flex-direction:column;gap:14px;
   animation:htw-fade .4s var(--nk-ease)}
@@ -1445,8 +1482,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .htw-cta__phone{position:absolute;right:0;top:-46px;height:620px;width:auto;max-width:50%;object-fit:cover;
   object-position:left top;filter:var(--nk-shadow-phone-cta)}
 .htw-cta__badges{position:absolute;left:var(--nk-panel-pad);top:var(--nk-panel-pad)}
-.htw-cta__copy{position:absolute;left:var(--nk-panel-pad);bottom:var(--nk-panel-pad);max-width:760px;display:flex;flex-direction:column;gap:18px}
-.htw-cta__copy h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:clamp(36px,5.4vw,64px);line-height:1.1;letter-spacing:0;color:var(--nk-text)}
+.htw-cta__copy{position:absolute;left:var(--nk-panel-pad);bottom:var(--nk-panel-pad);max-width:min(720px,50%);display:flex;flex-direction:column;gap:18px}
+.htw-cta__copy h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:clamp(36px,5.4vw,64px);line-height:1.1;letter-spacing:0;color:var(--nk-text);text-wrap:balance}
 .htw-cta__copy p{margin:0;max-width:600px;font-family:var(--nk-font-body);font-size:20px;line-height:32px;color:var(--nk-text-muted)}
 .htw-cta__qr{position:absolute;right:72px;bottom:var(--nk-panel-pad)}
 .htw-cta__spark span{position:absolute;width:12px;height:12px;border-radius:50%}
@@ -1456,25 +1493,28 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 
 @media(max-width:1280px){
   .htw-grid{grid-template-columns:1fr;gap:54px}
-  .htw-right{position:static;order:-1}
-  .htw-trust__grid{grid-template-columns:repeat(2,1fr)}
-  .htw-cta__phone{opacity:.18}
-  .htw-cta__qr{display:none}
+  /* hide the decoupled synced phone; the active step carries its own inline device */
+  .htw-right{display:none}
+  .htw-step__device{display:flex;justify-content:flex-start;margin-top:16px}
+  .htw-phone--inline{width:min(230px,100%);box-shadow:var(--nk-shadow-2)}
+  /* CTA: no ghost phone — go straight to the readable stacked panel, keep the scan
+     path (users scan with a second phone on tablet; badges are the path on phones). */
+  .htw-cta{min-height:0;display:flex;flex-direction:column;gap:28px;padding:var(--nk-panel-pad)}
+  .htw-cta__phone{display:none}
+  .htw-cta__spark{display:none}
+  .htw-cta__copy{position:static;left:auto;bottom:auto;max-width:none;order:1}
+  .htw-cta__badges{position:static;left:auto;top:auto;order:2}
+  .htw-cta__qr{position:static;right:auto;bottom:auto;order:3;display:block}
 }
-@media(max-width:768px){
+/* trust: 3-up down to 1024, then single full-width rows (no orphaned 2+1 at 1280) */
+@media(max-width:1024px){
   .htw-trust__grid{grid-template-columns:1fr}
 }
 @media(max-width:768px){
   .htw-step__num{width:54px;height:54px;font-size:20px}
   .htw-list::before,.htw-list__fill{left:26px}
   .htw-step__top h3{font-size:22px}
-  /* CTA: drop the absolute collage, switch to a single readable column
-     (same approach as the homepage .nk-cta at 980px) */
-  .htw-cta{min-height:0;display:flex;flex-direction:column;gap:28px;padding:var(--nk-panel-pad)}
-  .htw-cta__phone{display:none}
-  .htw-cta__badges{position:static;left:auto;top:auto;order:2}
-  .htw-cta__copy{position:static;left:auto;bottom:auto;max-width:none}
-  .htw-cta__spark{display:none}
+  .htw-cta__qr{display:none}   /* on a phone you can't scan your own screen — badges deep-link */
 }
 @media(max-width:560px){
   .htw-toggle__btn{padding:13px 24px;font-size:16px}
@@ -1482,7 +1522,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(max-width:360px){
   .htw-grid,.htw-left,.htw-toggle-row,.htw-list,.htw-right{width:100%;max-width:100%;min-width:0}
   .htw-toggle{width:100%;max-width:100%}
-  .htw-toggle__btn{flex:1;min-width:0;padding-inline:10px}
+  .htw-toggle__btn{flex:1;min-width:0;padding-inline:10px;font-size:15px}
   .htw-step{padding-right:0;gap:var(--nk-gap-md)}
   .htw-step__top{gap:var(--nk-gap-xs)}
   .htw-trust__grid{width:100%;max-width:calc(100vw - 40px)}

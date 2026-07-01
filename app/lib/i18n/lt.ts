@@ -403,11 +403,16 @@ export const lt: Dict = {
     appOnlyNote:
       "Pasirinkite datas, susirašykite su savininku, patvirtinkite užstatą ir saugiai sumokėkite programėlėje.",
     escrowNote: "Mokėjimus ir grąžinimus administruoja Naudokis per Stripe pagal taisykles",
+    protectedPayments: "Apsaugoti mokėjimai",
     loadErrorTitle: "Nepavyko įkelti nuomos pasiūlymo",
     loadErrorBody: "Patikrinkite ryšį ir bandykite dar kartą.",
+    goneTitle: "Šio skelbimo nebėra",
+    goneBody:
+      "Jis galėjo būti išnuomotas arba pašalintas. Peržiūrėkite kitus nuomos pasiūlymus.",
     backToListings: "Nuomojami daiktai",
     save: "Įsiminti",
     newListingPill: "Naujas daiktas",
+    noPhotos: "Nuotraukų nėra",
     galleryAll: (n) => `Visos ${n} nuotr.`,
     galleryViewLabel: "Nuotraukų galerija",
     galleryClose: "Uždaryti galeriją",
@@ -615,6 +620,9 @@ export const lt: Dict = {
     contactTitle: "Rašykite savininkui programėlėje",
     contactBody:
       "Nuomos žinutes ir rezervacijos informaciją laikykite vienoje vietoje.",
+    reviewsTitle: "Skaitykite visus atsiliepimus programėlėje",
+    reviewsBody:
+      "Visi patikrintų nuomų atsiliepimai matomi Naudokis programėlėje.",
     favoriteTitle: "Įsiminkite šį daiktą programėlėje",
     favoriteBody: "Įsiminti daiktai saugomi jūsų Naudokis paskyroje.",
     shareTitle: "Atidarykite šį daiktą programėlėje",

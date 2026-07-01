@@ -189,7 +189,7 @@ function StepList({
 
   // Re-measure whenever the list reflows — a ResizeObserver tracks size changes
   // directly (active body expand/collapse, viewport resize, font load), and
-  // transitionend catches the precise end of the max-height animation.
+  // transitionend catches the precise end of the grid-rows reveal animation.
   useLayoutEffect(() => {
     measure();
     const list = listRef.current;
@@ -224,7 +224,23 @@ function StepList({
               <h3>{s.title}</h3>
               <span className="htw-tag" style={{ color: TONE_FG[s.tone], background: TONE_BG[s.tone] }}>{s.tag}</span>
             </span>
-            <p className="htw-step__text">{s.body}</p>
+            {/* grid-rows reveal (auto height → no clip on long LT copy) */}
+            <span className="htw-step__reveal">
+              <span className="htw-step__revealclip">
+                <p className="htw-step__text">{s.body}</p>
+              </span>
+            </span>
+            {/* Mobile (≤1280): the synced sticky phone is hidden, so the active step
+                carries its own app screen inline — step and screen can't decouple.
+                Hidden on desktop (>1280), where .htw-right shows the synced phone. */}
+            {i === active && (
+              <span className="htw-step__device" aria-hidden="true">
+                <span className="htw-phone htw-phone--inline">
+                  <span className="htw-phone__notch" />
+                  <span className="htw-phone__screen"><PhoneScreen kind={s.screen} /></span>
+                </span>
+              </span>
+            )}
           </span>
         </button>
       ))}

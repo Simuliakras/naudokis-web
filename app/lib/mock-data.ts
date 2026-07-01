@@ -34,20 +34,44 @@ export type MockListing = {
   rating_count: number;
   category: string; // category id
   hasDelivery: boolean;
+  // Optional gallery photos for the detail bento (browse cards keep the design's
+  // grey placeholders). Varied counts exercise the count-aware gallery layout;
+  // most fixtures omit this and render the empty-gallery state.
+  images?: string[];
 };
+
+// Rotating stand-in photos (brand assets) used only to exercise the detail
+// gallery layout at different image counts — not representative product photos.
+const G = [
+  "/naudokis/hero-phone.png",
+  "/naudokis/download-phone.png",
+  "/naudokis/section-pattern.png",
+  "/naudokis/hero-pattern.png",
+  "/naudokis/footer-pattern.png",
+  "/naudokis/icon-512.png",
+];
 
 // First four match the home "Geriausi pasiūlymai" row (sections.jsx OFFERS).
 export const MOCK_LISTINGS: MockListing[] = [
-  { id: "dodge-ram-2016", title_lt: "Dodge RAM 2016", title_en: "Dodge RAM 2016", city: "Vilnius", price_per_day_cents: 5000, rating_average: 4.8, rating_count: 52, category: "transport", hasDelivery: false },
-  { id: "sony-a7-iii", title_lt: "Sony A7 III", title_en: "Sony A7 III", city: "Kaunas", price_per_day_cents: 2500, rating_average: 4.9, rating_count: 38, category: "photo_video", hasDelivery: true },
-  { id: "bosch-perforatorius", title_lt: "Bosch perforatorius", title_en: "Bosch rotary hammer", city: "Klaipėda", price_per_day_cents: 1200, rating_average: 4.7, rating_count: 21, category: "tools_construction", hasDelivery: true },
-  { id: "sup-irklente", title_lt: "SUP irklentė", title_en: "SUP paddleboard", city: "Palanga", price_per_day_cents: 1800, rating_average: 5.0, rating_count: 64, category: "sports_leisure", hasDelivery: false },
-  { id: "dji-mavic-3", title_lt: "DJI Mavic 3 dronas", title_en: "DJI Mavic 3 drone", city: "Vilnius", price_per_day_cents: 3500, rating_average: 4.9, rating_count: 27, category: "photo_video", hasDelivery: true },
+  { id: "dodge-ram-2016", title_lt: "Dodge RAM 2016", title_en: "Dodge RAM 2016", city: "Vilnius", price_per_day_cents: 5000, rating_average: 4.8, rating_count: 52, category: "transport", hasDelivery: false, images: G.slice(0, 4) },
+  { id: "sony-a7-iii", title_lt: "Sony A7 III", title_en: "Sony A7 III", city: "Kaunas", price_per_day_cents: 2500, rating_average: 4.9, rating_count: 38, category: "photo_video", hasDelivery: true, images: G.slice(0, 6) },
+  { id: "bosch-perforatorius", title_lt: "Bosch perforatorius", title_en: "Bosch rotary hammer", city: "Klaipėda", price_per_day_cents: 1200, rating_average: 4.7, rating_count: 21, category: "tools_construction", hasDelivery: true, images: G.slice(0, 2) },
+  { id: "sup-irklente", title_lt: "SUP irklentė", title_en: "SUP paddleboard", city: "Palanga", price_per_day_cents: 1800, rating_average: 5.0, rating_count: 64, category: "sports_leisure", hasDelivery: false, images: G.slice(0, 1) },
+  { id: "dji-mavic-3", title_lt: "DJI Mavic 3 dronas", title_en: "DJI Mavic 3 drone", city: "Vilnius", price_per_day_cents: 3500, rating_average: 4.9, rating_count: 27, category: "photo_video", hasDelivery: true, images: G.slice(0, 3) },
   { id: "karcher-plovykla", title_lt: "Kärcher aukšto slėgio plovykla", title_en: "Kärcher pressure washer", city: "Kaunas", price_per_day_cents: 1500, rating_average: 4.6, rating_count: 19, category: "tools_construction", hasDelivery: true },
   { id: "stalo-tenisas", title_lt: "Stalo teniso stalas", title_en: "Table tennis table", city: "Šiauliai", price_per_day_cents: 1000, rating_average: 4.8, rating_count: 12, category: "sports_leisure", hasDelivery: false },
   { id: "epson-projektorius", title_lt: "Projektorius Epson", title_en: "Epson projector", city: "Vilnius", price_per_day_cents: 2000, rating_average: 4.7, rating_count: 33, category: "electronics_tech", hasDelivery: true },
   { id: "iskylos-palapine", title_lt: "Iškylos palapinė 4 vietų", title_en: "4-person camping tent", city: "Klaipėda", price_per_day_cents: 800, rating_average: 4.9, rating_count: 41, category: "sports_leisure", hasDelivery: false },
+  // Zero-review fixture: exercises the "New item" gallery badge + empty-reviews state.
+  { id: "makita-suktuvas", title_lt: "Makita akumuliatorinis suktuvas", title_en: "Makita cordless drill", city: "Vilnius", price_per_day_cents: 900, rating_average: 0, rating_count: 0, category: "tools_construction", hasDelivery: true, images: G.slice(0, 3) },
 ];
+
+// Shared id lookup for the mock detail/meta fetchers. Returns undefined for an
+// unknown id so each caller can mirror the backend 404 in its own way (the detail
+// fetch throws ListingNotFoundError; the meta fetch returns null).
+export function findMockListing(id: string): MockListing | undefined {
+  return MOCK_LISTINGS.find((x) => x.id === id);
+}
 
 export type MockAttribute = { id: string; name_lt: string; name_en: string; value_lt: string; value_en: string };
 

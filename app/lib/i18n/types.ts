@@ -223,12 +223,16 @@ export type Dict = {
     reserveMobile: string;
     appOnlyNote: string; // sets expectation before the locked reserve tap
     escrowNote: string;
+    protectedPayments: string; // heading for the payment-protection trust strip under the reserve CTA
     loadErrorTitle: string;
     loadErrorBody: string;
+    goneTitle: string; // deleted/removed listing — client soft-404 (SPA / stale) message
+    goneBody: string;
     backToListings: string;
     // header actions + meta
     save: string; // "Įsiminti" header action
     newListingPill: string; // gallery "Naujas skelbimas" badge
+    noPhotos: string; // caption on the empty-gallery placeholder (no photos on the wire)
     galleryAll: (count: number) => string; // "Visos N nuotr."
     galleryViewLabel: string; // lightbox dialog aria-label
     galleryClose: string; // lightbox close-button aria-label
@@ -377,6 +381,8 @@ export type Dict = {
     datesBody: string;
     contactTitle: string;
     contactBody: string;
+    reviewsTitle: string; // "See all reviews" → reviews-specific app-redirect modal
+    reviewsBody: string;
     favoriteTitle: string;
     favoriteBody: string;
     shareTitle: string;

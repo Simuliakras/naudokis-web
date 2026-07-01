@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import type { Dict } from "@/app/lib/i18n/types";
@@ -6,7 +7,7 @@ import {
   pageMetadata, requireLocale, breadcrumbJsonLd, listingJsonLd, NOINDEX_FOLLOW,
 } from "@/app/lib/seo";
 import { makeQueryClient } from "@/app/lib/query";
-import { fetchListing, listingKey } from "@/app/lib/listings";
+import { fetchListing, listingKey, ListingNotFoundError, type ListingDetail } from "@/app/lib/listings";
 import { fetchListingMeta, type ListingMeta } from "@/app/lib/listing-seo";
 import { ListingScreen } from "@/app/components/ListingScreen";
 import { JsonLd } from "@/app/components/JsonLd";
@@ -80,13 +81,27 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
   const locale = requireLocale(lang);
   const { common, feed, detail } = getDictionary(locale);
 
-  // Prefetch the detail query so ListingScreen's useListing() hydrates from HTML;
-  // fetch the raw meta in parallel for the Product structured data.
+  // Fetch the detail (so ListingScreen's useListing() hydrates from HTML) and the
+  // raw meta (for the Product structured data) in parallel. Catch the detail so a
+  // 404 becomes a real HTTP 404 and a transient failure degrades to the client's
+  // retryable state rather than crashing the render.
   const qc = makeQueryClient();
-  const [, data] = await Promise.all([
-    qc.prefetchQuery({ queryKey: listingKey(id, locale), queryFn: () => fetchListing(id, locale) }),
+  const [detailResult, data] = await Promise.all([
+    fetchListing(id, locale)
+      .then((d) => ({ ok: true as const, d }))
+      .catch((e: unknown) => ({ ok: false as const, e })),
     fetchListingMeta(id, locale),
   ]);
+  if (!detailResult.ok) {
+    // Confirmed 404 → render app/[lang]/not-found.tsx (real 404 status; generateMetadata
+    // already sets NOINDEX_FOLLOW when meta is null). Transient 5xx/network: leave the
+    // cache unseeded so the client refetch shows the retryable error screen.
+    if (detailResult.e instanceof ListingNotFoundError) {
+      notFound();
+    }
+  } else {
+    qc.setQueryData<ListingDetail>(listingKey(id, locale), detailResult.d);
+  }
 
   const breadcrumb = breadcrumbJsonLd(locale, [
     { name: common.breadcrumbHome, path: "" },

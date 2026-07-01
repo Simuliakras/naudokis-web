@@ -4,7 +4,7 @@
 import type { Locale } from "@/app/lib/i18n/config";
 import { API_BASE, USE_MOCK } from "@/app/lib/api";
 import { LISTING_REVALIDATE, fetchReviewStats } from "@/app/lib/listings";
-import { MOCK_CATEGORIES, MOCK_DETAIL_EXTRA, MOCK_LISTINGS } from "@/app/lib/mock-data";
+import { MOCK_CATEGORIES, MOCK_DETAIL_EXTRA, findMockListing } from "@/app/lib/mock-data";
 
 export type ListingMeta = {
   title: string;
@@ -82,7 +82,12 @@ function conditionValue(l: RawListing, locale: Locale): string | undefined {
 
 export async function fetchListingMeta(id: string, locale: Locale): Promise<ListingMeta | null> {
   if (USE_MOCK) {
-    const l = MOCK_LISTINGS.find((x) => x.id === id) ?? MOCK_LISTINGS[0];
+    // Unknown id → null (mirrors the backend 404), so a deleted listing is
+    // noindexed and the page's notFound() path is exercised in mock/dev.
+    const l = findMockListing(id);
+    if (!l) {
+      return null;
+    }
     const cat = MOCK_CATEGORIES.find((c) => c.id === l.category);
     const condition = MOCK_DETAIL_EXTRA.attributes.find((a) => a.id === "condition");
     return {

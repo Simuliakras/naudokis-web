@@ -379,11 +379,16 @@ export const en: Dict = {
     appOnlyNote:
       "Choose dates, message the owner, confirm the deposit and pay securely in the app.",
     escrowNote: "Naudokis administers payments and refunds through Stripe under the applicable terms",
+    protectedPayments: "Protected payments",
     loadErrorTitle: "We couldn’t load this listing",
     loadErrorBody: "Check your connection and try again.",
+    goneTitle: "This listing is no longer available",
+    goneBody:
+      "It may have been rented out or removed. Browse other rentals instead.",
     backToListings: "Items to rent",
     save: "Save",
     newListingPill: "New item",
+    noPhotos: "No photos",
     galleryAll: (n) => `All ${n} photos`,
     galleryViewLabel: "Photo gallery",
     galleryClose: "Close gallery",
@@ -561,6 +566,9 @@ export const en: Dict = {
     contactTitle: "Message the owner in the app",
     contactBody:
       "Keep rental messages and booking details together in Naudokis.",
+    reviewsTitle: "Read all reviews in the app",
+    reviewsBody:
+      "All verified rental reviews are available in the Naudokis app.",
     favoriteTitle: "Save this item in the app",
     favoriteBody: "Saved items live in your Naudokis account.",
     shareTitle: "Open this item in the app",

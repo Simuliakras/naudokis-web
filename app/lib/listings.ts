@@ -2,7 +2,7 @@
 import { useQuery, useInfiniteQuery, keepPreviousData, skipToken } from "@tanstack/react-query";
 import type { Locale } from "./i18n/config";
 import { API_BASE, USE_MOCK } from "./api";
-import { MOCK_LISTINGS, MOCK_CATEGORIES, MOCK_DETAIL_EXTRA, type MockListing } from "./mock-data";
+import { MOCK_LISTINGS, MOCK_CATEGORIES, MOCK_DETAIL_EXTRA, findMockListing, type MockListing } from "./mock-data";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiImage = { url: string; blurhash?: string };
@@ -457,12 +457,27 @@ export function useListingsInfinite(locale: Locale, filters: ListingFilters = {}
   });
 }
 
-// GET /listings/{id} — the core detail document. Throws on a non-OK response so
-// the screen renders its error state; rating + reviews are layered on top from the
-// two review endpoints. Same `next` options as the detail page's raw-metadata fetch
-// so Next memoizes the same-URL server requests into one (ignored by browser fetch).
+// Distinct error for a genuinely-missing listing (HTTP 404) so callers can branch:
+// the server page renders a real 404 (notFound()), the client shows a "no longer
+// available" state (not a retry), and React Query skips its retries. A transient
+// 5xx/network failure stays a generic Error → the retryable error screen.
+export class ListingNotFoundError extends Error {
+  constructor(id: string) {
+    super(`Listing not found: ${id}`);
+    this.name = "ListingNotFoundError";
+  }
+}
+
+// GET /listings/{id} — the core detail document. Throws ListingNotFoundError on a
+// 404 (deleted/removed) and a generic Error on any other non-OK response, so the
+// screen renders its error state; rating + reviews are layered on top from the two
+// review endpoints. Same `next` options as the detail page's raw-metadata fetch so
+// Next memoizes the same-URL server requests into one (ignored by browser fetch).
 async function fetchListingDetailRaw(id: string): Promise<ApiListingDetail> {
   const res = await fetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } });
+  if (res.status === 404) {
+    throw new ListingNotFoundError(id);
+  }
   if (!res.ok) {
     throw new Error(`Failed to load listing ${id}: ${res.status}`);
   }
@@ -549,7 +564,12 @@ function mapDetailOwner(detail: ApiListingDetail, locale: Locale): ListingOwner 
 
 export async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> {
   if (USE_MOCK) {
-    const l = MOCK_LISTINGS.find((x) => x.id === id) ?? MOCK_LISTINGS[0];
+    // Mirror the backend's 404 for an unknown id so the deleted/removed listing
+    // state (server notFound() + client soft-404) is reachable in mock/dev.
+    const l = findMockListing(id);
+    if (!l) {
+      throw new ListingNotFoundError(id);
+    }
     const e = MOCK_DETAIL_EXTRA;
     const cat = MOCK_CATEGORIES.find((c) => c.id === l.category);
     return {
@@ -567,7 +587,9 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
       rating: ratingLabel(l.rating_average, l.rating_count, locale),
       ratingValue: l.rating_average,
       ratingCount: l.rating_count,
-      images: [],
+      // Per-fixture image sets exercise the count-aware gallery (see mock-data);
+      // most fixtures stay empty to keep the design's grey-placeholder look.
+      images: l.images ?? [],
       tags: cat ? [locale === "en" ? cat.name_en : cat.name_lt] : [],
       attributes: e.attributes.map((a) => ({
         id: a.id,
@@ -635,5 +657,8 @@ export function useListing(id: string | undefined, locale: Locale) {
     queryKey: listingKey(id, locale),
     // skipToken keeps the query idle until an id exists — no `as` cast, no `enabled` flag.
     queryFn: id ? () => fetchListing(id, locale) : skipToken,
+    // A 404 is terminal — don't burn retries on a listing that's gone; keep the
+    // default two retries for transient (5xx/network) failures.
+    retry: (count, error) => !(error instanceof ListingNotFoundError) && count < 2,
   });
 }

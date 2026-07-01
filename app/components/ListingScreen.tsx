@@ -14,7 +14,7 @@ import {
   ListingSkeleton, ListingHeader, Gallery, DetailBody,
   BookingPanel, HostCard, MobileBar, detailCrumbs,
 } from "./ListingDetail";
-import { useListing, useListings } from "@/app/lib/listings";
+import { useListing, useListings, ListingNotFoundError } from "@/app/lib/listings";
 import { useCategories } from "@/app/lib/categories";
 import { categoryIconFor } from "@/app/lib/category-style";
 import { lastFeedUrl } from "@/app/lib/search";
@@ -27,7 +27,7 @@ export function ListingScreen({ id }: { id: string }) {
   const [shared, setShared] = useState(false);
   const [footerInView, setFooterInView] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
-  const { data: listing, isLoading, isError, refetch } = useListing(id, locale);
+  const { data: listing, isLoading, isError, error, refetch } = useListing(id, locale);
 
   useEffect(() => {
     const footer = footerRef.current;
@@ -64,6 +64,23 @@ export function ListingScreen({ id }: { id: string }) {
       </div>,
     );
   }
+  // A gone/deleted listing (client soft-404: an SPA navigation or a background
+  // refetch that 404s). Server-side deletions already hard-404 via notFound() in
+  // page.tsx; this covers the client-only paths, where "browse others" — not a
+  // retry that can never succeed — is the right recovery.
+  if (error instanceof ListingNotFoundError) {
+    return shell(
+      <EmptyState
+        illustration="search"
+        title={dict.detail.goneTitle}
+        subtitle={dict.detail.goneBody}
+        actionLabel={dict.detail.backToListings}
+        actionPrimary
+        actionIcon="ArrowRight"
+        onAction={() => router.push(lastFeedUrl(locale) ?? localePath(locale, "/skelbimai"))}
+      />,
+    );
+  }
   if (isError || !listing) {
     return shell(<EmptyState illustration="error" tone="danger" title={dict.detail.loadErrorTitle} subtitle={dict.detail.loadErrorBody} actionLabel={dict.offers.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />);
   }
@@ -94,6 +111,7 @@ export function ListingScreen({ id }: { id: string }) {
   const reserve = () => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody });
   const pickDates = () => openRedirect({ title: dict.bridge.datesTitle, body: dict.bridge.datesBody });
   const contact = () => openRedirect({ title: dict.bridge.contactTitle, body: dict.bridge.contactBody });
+  const showReviews = () => openRedirect({ title: dict.bridge.reviewsTitle, body: dict.bridge.reviewsBody });
 
   return shell(
     <>
@@ -105,8 +123,16 @@ export function ListingScreen({ id }: { id: string }) {
         <ListingHeader listing={listing} shared={shared} onShare={share} onFav={lockFav} />
         <Gallery images={listing.images} title={listing.title} isNew={isNew} />
 
+        {/* The sticky sidebar booking panel is hidden on tablet/phone (≤980px);
+            surface the booking facts inline under the gallery so mobile keeps the
+            price breakdown, deposit and payment-protection context. The fixed
+            MobileBar remains the persistent reserve CTA. */}
+        <div className="nk-booking-inline">
+          <BookingPanel listing={listing} variant="facts" onReserve={reserve} onPickDates={pickDates} />
+        </div>
+
         <div className="nk-detail-grid">
-          <DetailBody listing={listing} onContact={contact} />
+          <DetailBody listing={listing} onShowReviews={showReviews} />
           <aside className="nk-reserve">
             {/* The booking panel is replaced by the sticky reserve bar on mobile, but
                 the owner trust card must survive there (it's core social proof). */}
