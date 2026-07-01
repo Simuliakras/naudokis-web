@@ -2,9 +2,8 @@
 // description and Product JSON-LD need (the full view model lives in listings.ts).
 // Kept out of the page component so generateMetadata/Page stay thin.
 import type { Locale } from "@/app/lib/i18n/config";
-import { API_BASE, USE_MOCK } from "@/app/lib/api";
+import { API_BASE } from "@/app/lib/api";
 import { LISTING_REVALIDATE, fetchReviewStats } from "@/app/lib/listings";
-import { MOCK_CATEGORIES, MOCK_DETAIL_EXTRA, findMockListing } from "@/app/lib/mock-data";
 
 export type ListingMeta = {
   title: string;
@@ -81,26 +80,6 @@ function conditionValue(l: RawListing, locale: Locale): string | undefined {
 }
 
 export async function fetchListingMeta(id: string, locale: Locale): Promise<ListingMeta | null> {
-  if (USE_MOCK) {
-    // Unknown id → null (mirrors the backend 404), so a deleted listing is
-    // noindexed and the page's notFound() path is exercised in mock/dev.
-    const l = findMockListing(id);
-    if (!l) {
-      return null;
-    }
-    const cat = MOCK_CATEGORIES.find((c) => c.id === l.category);
-    const condition = MOCK_DETAIL_EXTRA.attributes.find((a) => a.id === "condition");
-    return {
-      title: locale === "en" ? l.title_en : l.title_lt,
-      description: locale === "en" ? MOCK_DETAIL_EXTRA.description_en : MOCK_DETAIL_EXTRA.description_lt,
-      city: l.city,
-      categoryNames: cat ? [locale === "en" ? cat.name_en : cat.name_lt] : [],
-      priceCents: l.price_per_day_cents,
-      ratingAverage: l.rating_average,
-      ratingCount: l.rating_count,
-      itemCondition: schemaConditionFromValue(locale === "en" ? condition?.value_en : condition?.value_lt),
-    };
-  }
   try {
     // The detail doc (title/description/price/condition) plus the review-stats
     // endpoint, which owns the listing-level rating average + count the contract's

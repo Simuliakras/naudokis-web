@@ -1,7 +1,7 @@
 // Discovery-surface audit sweep: captures the Categories page and the Listings
 // feed (default + search + category landing + no-results + filtered) at the 8
 // audit widths, both a viewport crop and a full-page shot, plus an overflow log.
-// Usage: (dev server on :3000 with NEXT_PUBLIC_USE_MOCK=1)
+// Usage: (dev server on :3000; pages server-render live backend data)
 //        node scripts/discovery-audit-shots.mjs   [--base http://localhost:3000] [--en]
 // Output: screenshots/discovery-audit/<slug>-<vp|fp>-<locale>-<width>.png
 import { chromium, devices } from "playwright";
@@ -15,7 +15,7 @@ const OUT = "screenshots/discovery-audit";
 const WIDTHS = [320, 360, 390, 430, 768, 1024, 1280, 1440];
 const LOCALES = WITH_EN ? [{ name: "lt", prefix: "" }, { name: "en", prefix: "/en" }] : [{ name: "lt", prefix: "" }];
 
-// Each page: slug + path (query included). Mock ids come from app/lib/mock-data.ts.
+// Each page: slug + path (query included).
 const PAGES = [
   { slug: "cats", path: "/kategorijos" },
   { slug: "feed", path: "/skelbimai" },

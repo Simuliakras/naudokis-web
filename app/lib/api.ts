@@ -7,10 +7,3 @@ export const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.nau
 // map falls back to the decorative delivery-zone graphic, so local dev and
 // screenshot builds work without a key.
 export const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
-
-// Local-only escape hatch: serve mock fixtures instead of the live backend.
-// Enabled via NEXT_PUBLIC_USE_MOCK=1 in .env.local for design/screenshot work
-// (the public API blocks cross-origin browser requests from localhost). Hard-
-// gated to non-production so a leaked env var can never serve fixtures in prod.
-export const USE_MOCK =
-  process.env.NEXT_PUBLIC_USE_MOCK === "1" && process.env.NODE_ENV !== "production";

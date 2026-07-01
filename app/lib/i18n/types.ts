@@ -278,8 +278,6 @@ export type Dict = {
     perDay: string; // price unit on cards
     reviewCount: (count: number) => string; // localized, pluralized review count
     newListing: string; // card badge for listings with no reviews yet
-    sampleCity: string; // sample listing city
-    samplePrice: string; // sample listing price
     breadcrumbHome: string; // breadcrumb root label
     breadcrumbLabel: string; // accessible name for the breadcrumb <nav> landmark
     skipToContent: string; // skip-link label (first focusable element on the page)

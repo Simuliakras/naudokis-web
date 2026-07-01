@@ -477,8 +477,6 @@ export const lt: Dict = {
       return `${n} ${word}`;
     },
     newListing: "Naujas",
-    sampleCity: "Vilnius",
-    samplePrice: "50 €",
     breadcrumbHome: "Pagrindinis",
     breadcrumbLabel: "Naršymo kelias",
     skipToContent: "Pereiti prie turinio",

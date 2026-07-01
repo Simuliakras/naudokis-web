@@ -1,7 +1,7 @@
 // Home-screen audit sweep: captures the Home page at the 8 audit widths, both a
 // viewport crop (above-the-fold — sticky nav, hero framing, mobile safe area) and
 // a full-page shot (whole scroll), plus a horizontal-overflow log.
-// Usage: (dev server on :3000 with NEXT_PUBLIC_USE_MOCK=1)
+// Usage: (dev server on :3000; pages server-render live backend data)
 //        node scripts/home-audit-shots.mjs   [--base http://localhost:3000] [--en]
 // Output: screenshots/home-audit/home-<vp|fp>-<locale>-<width>.png
 import { chromium, devices } from "playwright";

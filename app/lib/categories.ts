@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { IconName } from "@/app/components/ui";
 import type { Locale } from "./i18n/config";
 import { getDictionary } from "./i18n/dictionaries";
-import { API_BASE, USE_MOCK } from "./api";
-import { MOCK_CATEGORIES } from "./mock-data";
+import { API_BASE } from "./api";
 import { categoryGlyph } from "./category-style";
 
 /* ---------------- Backend shapes ---------------- */
@@ -76,28 +75,8 @@ function toCategory(c: ApiCategory, locale: Locale): Category {
   };
 }
 
-export function fallbackCategories(locale: Locale): Category[] {
-  return MOCK_CATEGORIES.map((c) =>
-    toCategory(
-      { id: c.id, name_lt: c.name_lt, name_en: c.name_en, icon_name: c.icon_name, level: 0, display_order: 0 },
-      locale,
-    ),
-  );
-}
-
-export function mergeWithFallbackCategories(locale: Locale, categories: Category[]): Category[] {
-  const seen = new Set(categories.map((category) => category.id));
-  return [
-    ...categories,
-    ...fallbackCategories(locale).filter((category) => !seen.has(category.id)),
-  ];
-}
-
 // Exported so server components can prefetch the same data useCategories reads.
 export async function fetchCategories(locale: Locale): Promise<Category[]> {
-  if (USE_MOCK) {
-    return fallbackCategories(locale);
-  }
   // Categories change rarely — server-side fetches stay fresh for an hour
   // (matches the categories page's route revalidate). Browsers ignore `next`.
   const res = await fetch(`${API_BASE}/listings/categories`, { next: { revalidate: 3600 } });

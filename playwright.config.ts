@@ -1,8 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Smoke suite for the critical bridge-site flows. Runs against `next dev` with
-// the mock data layer (NEXT_PUBLIC_USE_MOCK) so CI never depends on the live
-// backend; the mock gate is dev-only, which is exactly what we want here.
+// Responsive/screenshot sweep for the bridge-site surfaces. Runs against
+// `next dev`, which server-renders live backend data (api.naudokis.lt), so the
+// runner needs network egress to the API for the feed/home captures.
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -21,6 +21,5 @@ export default defineConfig({
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
-    env: { NEXT_PUBLIC_USE_MOCK: "1" },
   },
 });

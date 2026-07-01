@@ -1,8 +1,7 @@
 // Listing data layer — browse listings + single-listing detail from the Naudokis backend.
 import { useQuery, useInfiniteQuery, keepPreviousData, skipToken } from "@tanstack/react-query";
 import type { Locale } from "./i18n/config";
-import { API_BASE, USE_MOCK } from "./api";
-import { MOCK_LISTINGS, MOCK_CATEGORIES, MOCK_DETAIL_EXTRA, findMockListing, type MockListing } from "./mock-data";
+import { API_BASE } from "./api";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiImage = { url: string; blurhash?: string };
@@ -116,7 +115,7 @@ type PublicReviewsResponse = {
 export type Offer = {
   id: string;
   title: string;
-  city: string;
+  city?: string; // absent when the backend listing has no city — the card hides the row
   price: string;
   img?: string;
   rating?: string; // formatted value, present only when ratingCount > 0
@@ -186,22 +185,8 @@ export type ListingDetail = {
   ratingBreakdown: RatingBucket[]; // [5★…1★] counts; empty when no reviews
 };
 
-// Plausible, deterministic star distribution for a given total review count
-// (used only for the mock detail; the real backend doesn't expose this yet).
-function mockRatingBreakdown(n: number): RatingBucket[] {
-  const five = Math.round(n * 0.8);
-  const four = Math.round(n * 0.13);
-  const three = Math.round(n * 0.05);
-  const two = Math.round(n * 0.01);
-  const one = Math.max(0, n - five - four - three - two);
-  return [
-    { stars: 5, count: five }, { stars: 4, count: four }, { stars: 3, count: three },
-    { stars: 2, count: two }, { stars: 1, count: one },
-  ];
-}
-
 /* ---------------- Formatting ---------------- */
-// Cents → localized price string, matching the sample format ("15 €" / "€15").
+// Cents → localized price string, in the "15 €" (lt) / "€15" (en) format.
 export function formatPrice(cents: number, locale: Locale): string {
   const euros = cents / 100;
   const n =
@@ -288,48 +273,6 @@ export function listingsInfiniteKey(locale: Locale, filters: ListingFilters = {}
   return ["listings-infinite", locale, q, city, category, sort] as const;
 }
 
-// Exported so server components can prefetch the same data the hooks consume
-// (identical queryKey + queryFn → the cache hydrates without a client refetch).
-// Map a mock fixture to the Offer view model (mirrors the real fetcher's shape).
-function mockToOffer(l: MockListing, locale: Locale): Offer {
-  return {
-    id: l.id,
-    title: locale === "en" ? l.title_en : l.title_lt,
-    city: l.city,
-    price: formatPrice(l.price_per_day_cents, locale),
-    img: undefined, // mirror the design's gray image placeholders
-    rating: ratingLabel(l.rating_average, l.rating_count, locale),
-    ratingCount: l.rating_count,
-    hasDelivery: l.hasDelivery,
-    category: l.category,
-  };
-}
-
-// Apply the mock filters/sort once, shared by the single-page and paginated
-// mock fetchers so they stay consistent.
-function filterMockListings(locale: Locale, filters: ListingFilters): MockListing[] {
-  let items = MOCK_LISTINGS.slice();
-  const q = filters.q?.trim().toLowerCase();
-  if (q) {
-    items = items.filter((l) =>
-      (locale === "en" ? l.title_en : l.title_lt).toLowerCase().includes(q) || l.city.toLowerCase().includes(q));
-  }
-  if (filters.city) {
-    items = items.filter((l) => l.city === filters.city);
-  }
-  if (filters.category) {
-    items = items.filter((l) => l.category === filters.category);
-  }
-  if (filters.sort === "price_asc") {
-    items.sort((a, b) => a.price_per_day_cents - b.price_per_day_cents);
-  } else if (filters.sort === "price_desc") {
-    items.sort((a, b) => b.price_per_day_cents - a.price_per_day_cents);
-  } else if (filters.sort === "rating_desc") {
-    items.sort((a, b) => b.rating_average - a.rating_average);
-  }
-  return items;
-}
-
 // Build the backend `/listings` query URL from the active filters. `limit` /
 // `next_token` (cursor) are appended by the paginated fetcher when present.
 function buildListingsUrl(filters: ListingFilters): URL {
@@ -355,7 +298,7 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
   return {
     id: l.id,
     title: l.title,
-    city: l.city ?? "",
+    city: l.city ?? undefined,
     price: formatPrice(l.price_per_day_cents, locale),
     img: l.images?.[0]?.url,
     rating: ratingLabel(l.rating_average, l.rating_count, locale),
@@ -370,9 +313,6 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
 }
 
 export async function fetchListings(locale: Locale, filters: ListingFilters): Promise<Offer[]> {
-  if (USE_MOCK) {
-    return filterMockListings(locale, filters).map((l) => mockToOffer(l, locale));
-  }
   const url = buildListingsUrl(filters);
   // Server-side (home/feed prefetch) the browse data stays fresh for the same
   // window as a single listing, and the route-level `revalidate = 300` on the
@@ -388,18 +328,11 @@ export async function fetchListings(locale: Locale, filters: ListingFilters): Pr
 // One page of browse results plus the cursor for the next page (null at the end).
 export type ListingsPage = { offers: Offer[]; nextToken: string | null; totalCount: number };
 
-// Cursor-paginated browse fetch backing the feed's infinite scroll. The mock
-// layer paginates by numeric offset; the backend uses an opaque `next_token`.
+// Cursor-paginated browse fetch backing the feed's infinite scroll. The backend
+// uses an opaque `next_token` cursor.
 export async function fetchListingsPage(
   locale: Locale, filters: ListingFilters, pageParam: string | null,
 ): Promise<ListingsPage> {
-  if (USE_MOCK) {
-    const all = filterMockListings(locale, filters).map((l) => mockToOffer(l, locale));
-    const start = pageParam ? Number(pageParam) : 0;
-    const offers = all.slice(start, start + LISTINGS_PAGE_SIZE);
-    const next = start + LISTINGS_PAGE_SIZE;
-    return { offers, nextToken: next < all.length ? String(next) : null, totalCount: all.length };
-  }
   const url = buildListingsUrl(filters);
   url.searchParams.set("limit", String(LISTINGS_PAGE_SIZE));
   if (pageParam) {
@@ -422,9 +355,6 @@ export async function fetchListingsPage(
 // minimal — this runs once per category/city candidate when building the sitemap
 // and to decide whether an empty landing page should be noindexed.
 export async function fetchListingsCount(locale: Locale, filters: ListingFilters = {}): Promise<number> {
-  if (USE_MOCK) {
-    return filterMockListings(locale, filters).length;
-  }
   const url = buildListingsUrl(filters);
   url.searchParams.set("limit", "1");
   const res = await fetch(url, { next: { revalidate: LISTING_REVALIDATE } });
@@ -563,57 +493,6 @@ function mapDetailOwner(detail: ApiListingDetail, locale: Locale): ListingOwner 
 }
 
 export async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> {
-  if (USE_MOCK) {
-    // Mirror the backend's 404 for an unknown id so the deleted/removed listing
-    // state (server notFound() + client soft-404) is reachable in mock/dev.
-    const l = findMockListing(id);
-    if (!l) {
-      throw new ListingNotFoundError(id);
-    }
-    const e = MOCK_DETAIL_EXTRA;
-    const cat = MOCK_CATEGORIES.find((c) => c.id === l.category);
-    return {
-      id: l.id,
-      title: locale === "en" ? l.title_en : l.title_lt,
-      city: l.city,
-      price: formatPrice(l.price_per_day_cents, locale),
-      priceCents: l.price_per_day_cents,
-      deposit: formatDeposit(e.deposit_amount_cents, locale),
-      minDays: e.minimum_rental_days,
-      maxDays: e.maximum_rental_days,
-      cancellation: e.cancellation_policy,
-      delivery: mapDelivery(e.delivery_methods),
-      description: locale === "en" ? e.description_en : e.description_lt,
-      rating: ratingLabel(l.rating_average, l.rating_count, locale),
-      ratingValue: l.rating_average,
-      ratingCount: l.rating_count,
-      // Per-fixture image sets exercise the count-aware gallery (see mock-data);
-      // most fixtures stay empty to keep the design's grey-placeholder look.
-      images: l.images ?? [],
-      tags: cat ? [locale === "en" ? cat.name_en : cat.name_lt] : [],
-      attributes: e.attributes.map((a) => ({
-        id: a.id,
-        label: locale === "en" ? a.name_en : a.name_lt,
-        value: locale === "en" ? a.value_en : a.value_lt,
-      })),
-      owner: {
-        name: e.owner.name,
-        verified: e.owner.verified,
-        listingsCount: e.owner.total_listings,
-        rating: ratingLabel(e.owner.rating_average, e.owner.rating_count, locale),
-        ratingCount: e.owner.rating_count,
-        avatar: null,
-      },
-      reviews: e.reviews.map((r) => ({
-        name: r.name,
-        date: locale === "en" ? r.date_en : r.date_lt,
-        stars: r.stars,
-        text: locale === "en" ? r.text_en : r.text_lt,
-        avatar: null,
-      })),
-      ratingBreakdown: l.rating_count > 0 ? mockRatingBreakdown(l.rating_count) : [],
-    };
-  }
   // The detail document plus its two review endpoints, fetched in parallel. Only
   // the detail fetch can reject (→ error screen); stats/reviews degrade gracefully.
   const [detail, stats, reviews] = await Promise.all([

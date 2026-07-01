@@ -12,9 +12,9 @@ import type { UseCaseItem } from "@/app/lib/i18n/types";
    Final design: price hierarchy + hairline divider, locked favorite (opens the
    app modal), and a stretched <Link> covering the card for real navigation. */
 export function OfferCard({
-  title = "Dodge RAM 2016", city, price, unit, rating, ratingCount, img, href, category, categoryIcon = "Tag", hasDelivery = false,
+  title, city, price, unit, rating, ratingCount, img, href, category, categoryIcon = "Tag", hasDelivery = false,
 }: {
-  title?: string;
+  title: string;
   city?: string;
   price?: string;
   unit?: string;
@@ -81,16 +81,20 @@ export function OfferCard({
             // No reviews yet — surface that as a "New" trust signal instead of a gap.
             <Pill tone="yellow" icon="Sparkles">{c.newListing}</Pill>
           )}
-          <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 16, color: "var(--nk-text-2)" }}>
-            <Icon name="MapPin" size={16} color="var(--nk-text)" fill="var(--nk-text)" stroke={2} /> {city ?? c.sampleCity}
-          </span>
+          {city && (
+            <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 16, color: "var(--nk-text-2)" }}>
+              <Icon name="MapPin" size={16} color="var(--nk-text)" fill="var(--nk-text)" stroke={2} /> {city}
+            </span>
+          )}
         </div>
         <div className="nk-offer__pricebar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: "var(--nk-gap-md)", borderTop: "1px solid var(--nk-border)" }}>
-          <span style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
-            <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price ?? c.samplePrice}</span>
-            <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
-          </span>
-          <span className="nk-round nk-round--solid" aria-hidden="true">
+          {price && (
+            <span style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
+              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price}</span>
+              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
+            </span>
+          )}
+          <span className="nk-round nk-round--solid" aria-hidden="true" style={{ marginLeft: "auto" }}>
             <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
           </span>
         </div>

@@ -6,7 +6,7 @@ import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collecti
 import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { makeQueryClient } from "@/app/lib/query";
 import { fetchListingsCount, fetchListingsPage, listingsInfiniteKey, LISTINGS_FIRST_CURSOR, parseSortKey, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
-import { fetchCategories, mergeWithFallbackCategories, categoriesKey, type Category } from "@/app/lib/categories";
+import { fetchCategories, categoriesKey, type Category } from "@/app/lib/categories";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 
@@ -30,7 +30,7 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
   const locale = requireLocale(lang);
   const { feed: t, meta } = getDictionary(locale);
   const sp = await searchParams;
-  const categories = mergeWithFallbackCategories(locale, await fetchCategories(locale).catch(() => []));
+  const categories = await fetchCategories(locale).catch(() => []);
   const landing = resolveListingLanding({
     catParam: firstValue(sp.cat) ?? "",
     cityParam: firstValue(sp.city) ?? "",
@@ -101,8 +101,8 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
   // Prefetch the category set (FeedScreen's heading + intro and the CollectionPage
   // node) and the first listings page (the feed + ItemList) concurrently — they're
   // independent, and both prefetch* swallow backend errors (the client just
-  // refetches), so the combined await never rejects and a hiccup degrades to the
-  // fallback categories / a client refetch instead of failing render.
+  // refetches), so the combined await never rejects and a hiccup degrades to an
+  // empty category set / a client refetch instead of failing render.
   await Promise.all([
     qc.prefetchQuery({ queryKey: categoriesKey(locale), queryFn: () => fetchCategories(locale) }),
     qc.prefetchInfiniteQuery({
@@ -114,7 +114,7 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
 
   // Resolve the landing from the cached categories for the CollectionPage node
   // (clean category landing only — a city filter keeps the synthesized templates).
-  const categories = mergeWithFallbackCategories(locale, qc.getQueryData<Category[]>(categoriesKey(locale)) ?? []);
+  const categories = qc.getQueryData<Category[]>(categoriesKey(locale)) ?? [];
   const landing = resolveListingLanding({ catParam: filters.category ?? "", cityParam: filters.city ?? "", categories });
   const collectionPage = landing.category && !landing.city
     ? collectionPageJsonLd({

@@ -80,12 +80,11 @@ app/
 │   ├── AppRedirect.tsx     # "Locked-mode" app-install bridge modal (real QR + store links)
 │   └── legal/              # Policy-center components
 └── lib/
-    ├── api.ts              # API_BASE (defaults to prod) + USE_MOCK gate
+    ├── api.ts              # API_BASE (defaults to prod)
     ├── query.ts            # Shared TanStack Query config + makeQueryClient() (Sentry onError)
     ├── categories.ts / listings.ts   # Data layer: fetchers + useCategories/useListings/useListing
     ├── seo.ts              # pageMetadata helper + JSON-LD builders
     ├── search.ts / cities.ts / contact.ts      # Feed URL helper, city list, contact constants
-    ├── mock.ts / mock-data.ts                  # Mock layer (non-production only)
     ├── use-debounced-value.ts / use-scroll-reveal.ts / use-online-status.ts
     ├── legal/              # Legal-doc manifest, loader, types + data/ JSON
     └── i18n/

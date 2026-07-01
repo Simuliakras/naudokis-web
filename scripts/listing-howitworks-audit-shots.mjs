@@ -2,13 +2,14 @@
 // widths (viewport crop + full page + overflow log), plus interactive/edge states
 // (deleted-listing 404, app-redirect modal via the mobile reserve bar, and the
 // How-it-works owner role / step-4 combination).
-// Usage: (server on :3000 with NEXT_PUBLIC_USE_MOCK=1 — prefer `yarn build && yarn start`
-//         so the Next dev-indicator badge is absent)
-//        node scripts/listing-howitworks-audit-shots.mjs   [--base http://localhost:3000] [--en]
+// Usage: (server on :3000 — prefer `yarn build && yarn start` so the Next
+//         dev-indicator badge is absent; pages server-render live backend data)
+//        node scripts/listing-howitworks-audit-shots.mjs   [--base http://localhost:3000] [--en] [--api https://api-dev.naudokis.lt]
 // Output: screenshots/listing-howitworks-audit/<slug>-<vp|fp>-<locale>-<width>.png
 //         screenshots/listing-howitworks-audit/state-*.png
 import { chromium, devices } from "playwright";
 import { mkdirSync } from "node:fs";
+import { pickListingIds, resolveApiBase } from "./_backend.mjs";
 
 const argBase = process.argv.indexOf("--base");
 const BASE = argBase !== -1 ? process.argv[argBase + 1] : (process.env.BASE ?? "http://localhost:3000");
@@ -18,13 +19,17 @@ const OUT = "screenshots/listing-howitworks-audit";
 const WIDTHS = [320, 360, 390, 430, 768, 1024, 1280, 1440];
 const LOCALES = WITH_EN ? [{ name: "lt", prefix: "" }, { name: "en", prefix: "/en" }] : [{ name: "lt", prefix: "" }];
 
-// Mock ids come from app/lib/mock-data.ts. sony-a7-iii has 6 photos + reviews;
-// makita-suktuvas has 3 photos + zero reviews (empty-reviews state + "New" badge).
+// Resolve real listing ids from the backend so captures never rely on hardcoded
+// ids: one with photos + reviews, one with zero reviews (empty state + "New" badge).
+const apiBase = resolveApiBase();
+const { withPhotosReviews, zeroReviews } = await pickListingIds(apiBase);
+console.log(`Listing ids (via ${apiBase}): full=${withPhotosReviews ?? "—"} noreviews=${zeroReviews ?? "—"}`);
+
 const PAGES = [
-  { slug: "listing", path: "/skelbimai/sony-a7-iii" },
-  { slug: "listing-noreviews", path: "/skelbimai/makita-suktuvas" },
+  withPhotosReviews && { slug: "listing", path: `/skelbimai/${withPhotosReviews}` },
+  zeroReviews && { slug: "listing-noreviews", path: `/skelbimai/${zeroReviews}` },
   { slug: "how", path: "/kaip-tai-veikia" },
-];
+].filter(Boolean);
 
 // Force scroll-reveal sections visible, freeze animation (no mid-transition shots),
 // and hide the Next dev-indicator badge so dev runs match prod shots.
@@ -109,10 +114,10 @@ for (const loc of LOCALES) {
 }
 
 // App-redirect modal opened from the mobile reserve bar (390 phone).
-{
+if (withPhotosReviews) {
   const ctx = await newCtx(390);
   const page = await ctx.newPage();
-  await page.goto(`${BASE}/skelbimai/sony-a7-iii`, { waitUntil: "networkidle", timeout: 60_000 });
+  await page.goto(`${BASE}/skelbimai/${withPhotosReviews}`, { waitUntil: "networkidle", timeout: 60_000 });
   await page.addStyleTag({ content: REVEAL_KILL });
   await page.waitForFunction(() => window.__nkBridgeReady === true, { timeout: 10_000 }).catch(() => {});
   await page.locator(".nk-mbar button.nk-btn--primary").click().catch(() => {});
@@ -122,6 +127,8 @@ for (const loc of LOCALES) {
   console.log("✓ state-redirect @390");
   count += 1;
   await ctx.close();
+} else {
+  console.log("↷ state-redirect skipped (no listing id available)");
 }
 
 // How-it-works: owner role + step 4 (the main sweep captures renter/step 1).

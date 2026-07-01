@@ -1,7 +1,10 @@
 // One-off: full-page screenshots of every route at three viewports.
-// Usage: node scripts/screenshot-all.mjs  (expects `yarn dev` on :3000 with NEXT_PUBLIC_USE_MOCK=1)
+// Usage: node scripts/screenshot-all.mjs  (expects `yarn dev` on :3000; pages
+// server-render live backend data, so the API must be reachable)
+//        [--resume] [--api https://api-dev.naudokis.lt]
 import { chromium } from "playwright";
 import { mkdirSync, existsSync } from "node:fs";
+import { pickListingIds, resolveApiBase } from "./_backend.mjs";
 
 // Resumable: pass --resume to skip shots that already exist on disk.
 const RESUME = process.argv.includes("--resume");
@@ -15,16 +18,22 @@ const VIEWPORTS = [
   { name: "mobile", width: 390, height: 844 },
 ];
 
+// Resolve a real listing id from the backend so the detail shot never 404s on a
+// stale hardcoded id; drop the detail page if no listing is available.
+const apiBase = resolveApiBase();
+const { withPhotosReviews } = await pickListingIds(apiBase);
+console.log(`Listing detail id (via ${apiBase}): ${withPhotosReviews ?? "— (skipping detail shot)"}`);
+
 const PAGES = [
   { slug: "home", path: "" },
   { slug: "skelbimai", path: "/skelbimai" },
-  { slug: "skelbimas-detail", path: "/skelbimai/dodge-ram-2016" },
+  withPhotosReviews && { slug: "skelbimas-detail", path: `/skelbimai/${withPhotosReviews}` },
   { slug: "kategorijos", path: "/kategorijos" },
   { slug: "kaip-tai-veikia", path: "/kaip-tai-veikia" },
   { slug: "naudojimosi-salygos", path: "/naudojimosi-salygos" },
   { slug: "privatumo-politika", path: "/privatumo-politika" },
   { slug: "paskyros-trynimas", path: "/paskyros-trynimas" },
-];
+].filter(Boolean);
 
 const LOCALES = [
   { name: "lt", prefix: "" },

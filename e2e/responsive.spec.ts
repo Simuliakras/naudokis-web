@@ -3,9 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 
 // Screenshot-driven responsive sweep. Captures every real bridge-site surface at
-// the full breakpoint list and asserts no horizontal overflow at any width. Runs
-// against the mock data layer (see playwright.config.ts). Output PNGs land in
-// e2e/__screens__/ so they can be reviewed visually.
+// the full breakpoint list and asserts no horizontal overflow at any width. Pages
+// server-render live backend data (see playwright.config.ts), so the runner needs
+// network access to the API. Output PNGs land in e2e/__screens__/ for review.
 //
 // Run a subset with: yarn test:e2e responsive --grep @home
 
@@ -21,8 +21,6 @@ type Surface = { name: string; tag: string; path: string };
 const SURFACES: Surface[] = [
   { name: "home", tag: "@home", path: "/" },
   { name: "feed", tag: "@feed", path: "/skelbimai" },
-  { name: "feed-search", tag: "@feed", path: "/skelbimai?q=Sony" },
-  { name: "listing", tag: "@listing", path: "/skelbimai/sony-a7-iii" },
   { name: "categories", tag: "@categories", path: "/kategorijos" },
   { name: "how", tag: "@how", path: "/kaip-tai-veikia" },
   { name: "terms", tag: "@legal", path: "/naudojimosi-salygos" },
@@ -30,7 +28,6 @@ const SURFACES: Surface[] = [
   { name: "notfound", tag: "@status", path: "/this-route-does-not-exist" },
   { name: "home-en", tag: "@home", path: "/en" },
   { name: "feed-en", tag: "@feed", path: "/en/skelbimai" },
-  { name: "listing-en", tag: "@listing", path: "/en/skelbimai/sony-a7-iii" },
 ];
 
 fs.mkdirSync(OUT, { recursive: true });
@@ -85,18 +82,7 @@ for (const s of SURFACES) {
   });
 }
 
-// Interactive states at a representative phone width (390) and tablet (768).
-test("states: app-redirect modal @state", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/skelbimai/sony-a7-iii", { waitUntil: "domcontentloaded" });
-  await settle(page);
-  await page.waitForFunction(() => (window as Window & { __nkBridgeReady?: boolean }).__nkBridgeReady === true);
-  await page.locator(".nk-mbar button.nk-btn--primary").click();
-  await expect(page.locator('[role="dialog"]')).toBeVisible();
-  await page.waitForTimeout(350);
-  await page.screenshot({ path: path.join(OUT, "state-redirect-390.png"), fullPage: false });
-});
-
+// Interactive states at a representative phone width (390).
 test("states: nav mobile drawer @state", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -107,17 +93,6 @@ test("states: nav mobile drawer @state", async ({ page }) => {
   await expect(page.locator(".nk-nav-drawer")).toHaveClass(/open/);
   await page.waitForTimeout(300);
   await page.screenshot({ path: path.join(OUT, "state-navdrawer-390.png"), fullPage: false });
-});
-
-// The mock listings carry no photos, so gallery tiles render as placeholders with
-// no lightbox trigger — this state needs the live backend (or a photo-bearing mock).
-test.skip("states: lightbox @state", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/skelbimai/sony-a7-iii", { waitUntil: "domcontentloaded" });
-  await settle(page);
-  await page.locator(".nk-gtile--btn").first().click();
-  await page.waitForTimeout(300);
-  await page.screenshot({ path: path.join(OUT, "state-lightbox-390.png"), fullPage: false });
 });
 
 test("states: legal mobile TOC drawer @state", async ({ page }) => {

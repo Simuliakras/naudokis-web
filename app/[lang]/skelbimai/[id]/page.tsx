@@ -24,7 +24,7 @@ function listingDescription(data: ListingMeta, fromDict: string): string {
   return clean.length >= 80 ? clean.slice(0, 200) : fromDict;
 }
 
-// Turn a slug-style id ("dodge-ram-2016") into a readable title ("Dodge Ram 2016")
+// Turn a slug-style id ("bosch-gsr-18v") into a readable title ("Bosch Gsr 18v")
 // for SEO fallbacks when the listing itself can't be fetched. Returns null for
 // opaque ids (UUIDs, pure hex/numeric) that carry no human-readable words — the
 // caller then uses the generic fallback title instead.

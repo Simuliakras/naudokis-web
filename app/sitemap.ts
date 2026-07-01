@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { locales, defaultLocale, localePrefix } from "@/app/lib/i18n/config";
-import { fetchCategories, mergeWithFallbackCategories } from "@/app/lib/categories";
+import { fetchCategories } from "@/app/lib/categories";
 import { LT_CITIES } from "@/app/lib/cities";
 import { fetchListingsCount } from "@/app/lib/listings";
 import { listingLandingPath, SITE_URL } from "@/app/lib/seo";
@@ -49,10 +49,7 @@ const STATIC_PATHS: [path: string, priority: number][] = [
 const COUNT_CONCURRENCY = 8;
 
 async function listingLandingPaths(): Promise<string[]> {
-  const categories = mergeWithFallbackCategories(
-    defaultLocale,
-    await fetchCategories(defaultLocale).catch(() => []),
-  );
+  const categories = await fetchCategories(defaultLocale).catch(() => []);
   type LandingCandidate = { path: string; category?: string; city?: string };
   const candidates: LandingCandidate[] = [
     ...categories.map((category) => ({ path: listingLandingPath({ category: category.id }), category: category.id })),

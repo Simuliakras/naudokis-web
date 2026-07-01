@@ -4,7 +4,7 @@
 // is validate-code. Everything here is fail-open: a bad / unknown / rate-limited
 // code must never dead-end the install funnel.
 import { useQuery, skipToken } from "@tanstack/react-query";
-import { API_BASE, USE_MOCK } from "./api";
+import { API_BASE } from "./api";
 
 /* ---------------- Backend shapes ---------------- */
 // POST /referrals/validate-code — public, no auth. Only the fields we read are
@@ -45,9 +45,6 @@ export function normalizeCode(raw: string | null | undefined): string | null {
 // categories.ts add `next: { revalidate }` for server-side ISR; this is a
 // client-triggered, uncached request, so it omits it.
 export async function fetchValidateCode(code: string): Promise<ValidateResult> {
-  if (USE_MOCK) {
-    return { valid: true, refereeRewardCents: 500 };
-  }
   try {
     const res = await fetch(`${API_BASE}/referrals/validate-code`, {
       method: "POST",

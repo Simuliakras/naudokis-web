@@ -445,8 +445,6 @@ export const en: Dict = {
     perDay: "per day",
     reviewCount: (n) => `${n} review${n === 1 ? "" : "s"}`,
     newListing: "New",
-    sampleCity: "Vilnius",
-    samplePrice: "€50",
     breadcrumbHome: "Home",
     breadcrumbLabel: "Breadcrumb",
     skipToContent: "Skip to content",

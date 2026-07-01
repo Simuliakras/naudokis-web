@@ -26,7 +26,6 @@ import {
 import {
   categoriesKey,
   fetchCategories,
-  mergeWithFallbackCategories,
   type Category,
 } from "@/app/lib/categories";
 import { FeedScreen } from "@/app/components/FeedScreen";
@@ -66,7 +65,7 @@ export async function listingLandingMetadata({
   filters: ListingFilters;
 }): Promise<Metadata> {
   const { feed: t, meta } = getDictionary(locale);
-  const categories = mergeWithFallbackCategories(locale, await fetchCategories(locale).catch(() => []));
+  const categories = await fetchCategories(locale).catch(() => []);
   const { landing, category, categoryLabel } = resolveLanding({ locale, filters, categories });
 
   // A clean category landing (no city) renders the taxonomy's authored, already
@@ -124,7 +123,7 @@ export async function ListingLandingPage({
     }),
   ]);
 
-  const categories = mergeWithFallbackCategories(locale, qc.getQueryData<Category[]>(categoriesKey(locale)) ?? []);
+  const categories = qc.getQueryData<Category[]>(categoriesKey(locale)) ?? [];
   const { landing, category, categoryLabel } = resolveLanding({ locale, filters, categories });
   const collectionName = category && !landing.city
     ? category.seoTitle
