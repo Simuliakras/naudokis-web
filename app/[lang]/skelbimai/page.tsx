@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { dehydrate, HydrationBoundary, type InfiniteData } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding } from "@/app/lib/seo";
+import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding, NOINDEX_FOLLOW } from "@/app/lib/seo";
+import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { makeQueryClient } from "@/app/lib/query";
-import { fetchListingsPage, listingsInfiniteKey, LISTINGS_FIRST_CURSOR, parseSortKey, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
+import { fetchListingsCount, fetchListingsPage, listingsInfiniteKey, LISTINGS_FIRST_CURSOR, parseSortKey, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
 import { fetchCategories, mergeWithFallbackCategories, categoriesKey, type Category } from "@/app/lib/categories";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
@@ -76,7 +77,15 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
     landing.hasInvalidCategory ||
     landing.hasInvalidCity
   ) {
-    md.robots = { index: false, follow: true };
+    md.robots = NOINDEX_FOLLOW;
+  } else {
+    const count = await fetchListingsCount(locale, {
+      category: landing.category?.id,
+      city: landing.city,
+    }).catch(() => 0);
+    if (count <= 0) {
+      md.robots = NOINDEX_FOLLOW;
+    }
   }
   return md;
 }
@@ -118,18 +127,24 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
 
   const cached = qc.getQueryData<InfiniteData<ListingsPage>>(key);
   const listings = cached?.pages.flatMap((p) => p.offers) ?? [];
+  const totalCount = cached?.pages[0]?.totalCount ?? listings.length;
 
-  const breadcrumb = breadcrumbJsonLd(locale, [
-    { name: common.breadcrumbHome, path: "" },
-    { name: t.titleAll, path: "/skelbimai" },
-  ]);
+  // Same canonical trail the visible FeedScreen breadcrumb renders (and the
+  // pretty-URL landing pages emit), so structured and visible data stay in step.
+  const breadcrumb = breadcrumbJsonLd(locale, listingBreadcrumbTrail({
+    homeLabel: common.breadcrumbHome,
+    feedLabel: t.titleAll,
+    categoryTitle: landing.category?.title,
+    category: landing.category?.id,
+    city: landing.city,
+  }));
   const itemList = itemListJsonLd(locale, listings.map((l) => ({ id: l.id, name: l.title })));
 
   return (
     <HydrationBoundary state={dehydrate(qc)}>
       <JsonLd data={breadcrumb} />
       {collectionPage && <JsonLd data={collectionPage} />}
-      <JsonLd data={itemList} />
+      {totalCount > 0 && listings.length > 0 && <JsonLd data={itemList} />}
       {/* FeedScreen reads ?q/?cat/?city/?sort/?delivery via useSearchParams, which
           requires a Suspense boundary on a prerendered route (Next.js 16). */}
       <Suspense>

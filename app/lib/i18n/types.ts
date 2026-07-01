@@ -18,9 +18,8 @@ export type HtwRole = {
 };
 export type HtwTrust = { icon: IconName; title: string; body: string };
 export type FooterLink = { label: string; href: string };
-// A footer category link: localized display `label` + a stable Lithuanian
-// search `q` (shared across locales, since listings are predominantly LT).
-export type FooterCategory = { label: string; q: string };
+// A footer category link: localized display `label` + stable backend category id.
+export type FooterCategory = { label: string; categoryId: string };
 // Homepage social-proof band: honest, non-attributed use-case cards (icon disk +
 // scenario title + supporting line). Deliberately NOT framed as named, star-rated
 // customer reviews — see the testimonials reframe note in the design audit.
@@ -33,6 +32,7 @@ export type LegalDict = {
   brandSub: string;        // header eyebrow label above the document title
   inThisDoc: string;       // sidebar TOC heading
   contents: string;        // drawer heading
+  closeContents: string;   // drawer close-button aria-label
   backTop: string;         // back-to-top aria/title
   openMenu: string;        // mobile FAB label
   readingProgress: string; // progress-bar aria
@@ -73,6 +73,8 @@ export type Dict = {
     badge: string;
     title: string;
     body: string;
+    ownerPrompt: string;
+    ownerCta: string;
     phoneAlt: string;
   };
   search: {
@@ -285,6 +287,7 @@ export type Dict = {
     title: string;
     body: string;
     searchPlaceholder: string;
+    searchLabel: string;
     submit: string;
     emptyTitle: string;
     emptySubtitle: (query: string) => string;
@@ -315,6 +318,7 @@ export type Dict = {
     loadingMore: string; // button label while the next page is loading
     clear: string;
     searchPlaceholder: string;
+    searchLabel: string;
     sortLabel: string;
     sortRecommended: string;
     sortPriceAsc: string;
@@ -370,6 +374,8 @@ export type Dict = {
     favoriteBody: string;
     shareTitle: string;
     shareBody: string;
+    listTitle: string;
+    listBody: string;
   };
   // Referral bridge (/invite) — validates a ?code, shows the reward and routes to
   // the app. Copy must stay honest: the reward lands AFTER the user verifies

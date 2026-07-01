@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LT_CITIES } from "@/app/lib/cities";
+import { trackEvent } from "@/app/lib/analytics";
 import { listingSearchHref } from "@/app/lib/search";
 import {
   focusListboxSelection,
@@ -115,6 +116,11 @@ export function SearchBar() {
   const [city, setCity] = useState("");
   const go = (e: React.FormEvent) => {
     e.preventDefault();
+    trackEvent("Hero Search Submit", {
+      locale,
+      hasQuery: Boolean(q.trim()),
+      ...(city ? { city } : {}),
+    });
     router.push(listingSearchHref({ q, city, locale }));
   };
   return (

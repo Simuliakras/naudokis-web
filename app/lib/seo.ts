@@ -8,10 +8,27 @@ import { CONTACT_EMAIL, CONTACT_PHONE, SOCIAL_LINKS, APP_STORE_URL, PLAY_STORE_U
 import type { FaqItem } from "@/app/lib/i18n/types";
 import { LT_CITIES, type City } from "@/app/lib/cities";
 import type { Category } from "@/app/lib/categories";
+import { listingLandingPath } from "@/app/lib/landing-routes";
+
+export {
+  categoryIdFromSlug,
+  categorySlugForId,
+  cityFromSlug,
+  citySlugFor,
+  listingFilterPath,
+  listingLandingPath,
+} from "@/app/lib/landing-routes";
+export type { ListingLandingFilters } from "@/app/lib/landing-routes";
 
 // Canonical production origin — the single source of truth for absolute URLs,
 // shared by the metadata builders here and the sitemap/robots routes.
 export const SITE_URL = "https://www.naudokis.lt";
+
+// `robots` value for pages we want crawled-through but kept out of the index —
+// empty category/city landings, a missing listing, LT-content served under /en.
+// `follow` so link equity still flows; `index:false` so the thin/duplicate URL
+// never ranks. Shared so every noindex site stays in lockstep.
+export const NOINDEX_FOLLOW: Metadata["robots"] = { index: false, follow: true };
 
 // Shared guard for `[lang]` routes: narrow the segment to a valid `Locale` or
 // 404. Use in both `generateMetadata` and the page component so invalid locales
@@ -34,20 +51,6 @@ export function enPath(path: string) {
 export function canonicalFor(locale: Locale, path: string) {
   const prefix = localePrefix(locale);
   return prefix ? `${prefix}${path}` : ltPath(path);
-}
-
-export type ListingLandingFilters = { category?: string; city?: string };
-
-export function listingLandingPath(filters: ListingLandingFilters = {}): string {
-  const params = new URLSearchParams();
-  if (filters.category) {
-    params.set("cat", filters.category);
-  }
-  if (filters.city) {
-    params.set("city", filters.city);
-  }
-  const query = params.toString();
-  return query ? `/skelbimai?${query}` : "/skelbimai";
 }
 
 // Resolve the ?cat / ?city feed filters to the canonical category/city landing
@@ -126,7 +129,7 @@ export function pageMetadata({
     description,
     applicationName: "Naudokis",
     // Keep the duplicate LT-content-under-/en URL out of the index.
-    robots: ltOnly && locale !== defaultLocale ? { index: false, follow: true } : undefined,
+    robots: ltOnly && locale !== defaultLocale ? NOINDEX_FOLLOW : undefined,
     alternates: {
       canonical,
       languages,
@@ -189,6 +192,8 @@ export function softwareApplicationJsonLd(): JsonLdNode {
     operatingSystem: "iOS, Android",
     applicationCategory: "LifestyleApplication",
     url: SITE_URL,
+    installUrl: `${SITE_URL}/go`,
+    downloadUrl: [APP_STORE_URL, PLAY_STORE_URL],
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
     sameAs: [APP_STORE_URL, PLAY_STORE_URL],
   };

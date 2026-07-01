@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useI18nOptional } from "./I18nProvider";
 import { localeHome } from "@/app/lib/i18n/config";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
+import { trackEvent } from "@/app/lib/analytics";
 // Icon / Pattern / QR / IconName are defined in the server-renderable visual.tsx
 // (single source of truth) and re-exported here so existing `from "./ui"` import
 // sites keep working unchanged.
@@ -20,7 +21,7 @@ export function Logo({ height = 36, priority = false }: { height?: number; prior
   return (
     <Link className="nk-logo" href={localeHome(locale)}>
       <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={287} height={64}
-        priority={priority} style={{ height, width: "auto" }} />
+        preload={priority} style={{ height, width: "auto" }} />
     </Link>
   );
 }
@@ -83,13 +84,14 @@ export function Dots({
    a link would be redundant. `href` overrides the destination — e.g. on /invite
    both badges point at the attribution (Branch) link, which auto-routes per OS. */
 export function StoreBadge({
-  store, height = 52, footer = false, interactive = true, href,
+  store, height = 52, footer = false, interactive = true, href, placement,
 }: {
   store: "google" | "apple";
   height?: number;
   footer?: boolean;
   interactive?: boolean;
   href?: string;
+  placement?: string;
 }) {
   const { dict } = useI18nOptional();
   const isGoogle = store === "google";
@@ -106,19 +108,20 @@ export function StoreBadge({
   }
   return (
     <a className="nk-badgebtn" href={href ?? (isGoogle ? PLAY_STORE_URL : APP_STORE_URL)}
-      target="_blank" rel="noopener noreferrer">
+      target="_blank" rel="noopener noreferrer"
+      onClick={() => trackEvent("App Store Click", { store, placement: placement ?? (footer ? "footer" : "page"), customHref: Boolean(href) })}>
       {img}
     </a>
   );
 }
 
-export function AppBadges({ gap = 20, height = 52, footer = false, interactive = true, href }: {
-  gap?: number; height?: number; footer?: boolean; interactive?: boolean; href?: string;
+export function AppBadges({ gap = 20, height = 52, footer = false, interactive = true, href, placement }: {
+  gap?: number; height?: number; footer?: boolean; interactive?: boolean; href?: string; placement?: string;
 }) {
   return (
     <div className="nk-appbadges" style={{ gap }}>
-      <StoreBadge store="google" height={height} footer={footer} interactive={interactive} href={href} />
-      <StoreBadge store="apple" height={height} footer={footer} interactive={interactive} href={href} />
+      <StoreBadge store="google" height={height} footer={footer} interactive={interactive} href={href} placement={placement} />
+      <StoreBadge store="apple" height={height} footer={footer} interactive={interactive} href={href} placement={placement} />
     </div>
   );
 }
@@ -255,6 +258,7 @@ export const NK_REDIRECT_EVENT = "nk:redirect";
 
 export function openRedirect(payload: RedirectPayload) {
   if (typeof window === "undefined") return;
+  trackEvent("App Bridge Open", { title: payload.title });
   window.dispatchEvent(new CustomEvent<RedirectPayload>(NK_REDIRECT_EVENT, { detail: payload }));
 }
 

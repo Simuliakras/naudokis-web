@@ -386,7 +386,7 @@ export async function fetchListings(locale: Locale, filters: ListingFilters): Pr
 }
 
 // One page of browse results plus the cursor for the next page (null at the end).
-export type ListingsPage = { offers: Offer[]; nextToken: string | null };
+export type ListingsPage = { offers: Offer[]; nextToken: string | null; totalCount: number };
 
 // Cursor-paginated browse fetch backing the feed's infinite scroll. The mock
 // layer paginates by numeric offset; the backend uses an opaque `next_token`.
@@ -398,7 +398,7 @@ export async function fetchListingsPage(
     const start = pageParam ? Number(pageParam) : 0;
     const offers = all.slice(start, start + LISTINGS_PAGE_SIZE);
     const next = start + LISTINGS_PAGE_SIZE;
-    return { offers, nextToken: next < all.length ? String(next) : null };
+    return { offers, nextToken: next < all.length ? String(next) : null, totalCount: all.length };
   }
   const url = buildListingsUrl(filters);
   url.searchParams.set("limit", String(LISTINGS_PAGE_SIZE));
@@ -413,7 +413,26 @@ export async function fetchListingsPage(
   return {
     offers: body.data.items.filter((l) => l.status === "active").map((l) => apiToOffer(l, locale)),
     nextToken: body.data.next_token ?? null,
+    totalCount: body.data.count ?? body.data.items.length,
   };
+}
+
+// Total number of listings matching `filters`. The backend returns the full match
+// `count` regardless of page size, so we request a single item to keep the payload
+// minimal — this runs once per category/city candidate when building the sitemap
+// and to decide whether an empty landing page should be noindexed.
+export async function fetchListingsCount(locale: Locale, filters: ListingFilters = {}): Promise<number> {
+  if (USE_MOCK) {
+    return filterMockListings(locale, filters).length;
+  }
+  const url = buildListingsUrl(filters);
+  url.searchParams.set("limit", "1");
+  const res = await fetch(url, { next: { revalidate: LISTING_REVALIDATE } });
+  if (!res.ok) {
+    throw new Error(`Failed to load listings count: ${res.status}`);
+  }
+  const body: ListingsResponse = await res.json();
+  return body.data.count ?? body.data.items.length;
 }
 
 export function useListings(locale: Locale, filters: ListingFilters = {}) {

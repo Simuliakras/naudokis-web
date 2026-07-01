@@ -62,7 +62,7 @@ function GalleryTile({ src, alt, big, onOpen, children }: {
   const inner = (
     <>
       {src && (
-        <Image src={src} alt={alt ?? ""} fill priority={big}
+        <Image src={src} alt={alt ?? ""} fill preload={big}
           sizes={big ? "(max-width: 980px) 100vw, 60vw" : "(max-width: 980px) 50vw, 20vw"}
           style={{ objectFit: "cover" }} />
       )}

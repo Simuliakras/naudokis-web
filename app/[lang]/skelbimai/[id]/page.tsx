@@ -3,7 +3,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import type { Dict } from "@/app/lib/i18n/types";
 import {
-  pageMetadata, requireLocale, breadcrumbJsonLd, listingJsonLd,
+  pageMetadata, requireLocale, breadcrumbJsonLd, listingJsonLd, NOINDEX_FOLLOW,
 } from "@/app/lib/seo";
 import { makeQueryClient } from "@/app/lib/query";
 import { fetchListing, listingKey } from "@/app/lib/listings";
@@ -65,10 +65,14 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/skelbimai/
   const description = data
     ? listingDescription(data, detail.seoDescription({ title: data.title, city: data.city, category: data.categoryNames[0] }))
     : detail.metaFallbackDescription;
-  return pageMetadata({
+  const metadata = pageMetadata({
     locale, path: `/skelbimai/${id}`, title, description,
     ogLocale: meta.ogLocale, ogImageAlt: data?.title ?? meta.ogImageAlt, image: data?.image,
   });
+  if (!data) {
+    metadata.robots = NOINDEX_FOLLOW;
+  }
+  return metadata;
 }
 
 export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]">) {

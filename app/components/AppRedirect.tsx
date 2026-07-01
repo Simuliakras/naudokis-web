@@ -7,6 +7,7 @@ import { Icon, QR, AppBadges, NK_REDIRECT_EVENT, type RedirectPayload } from "./
 import { useI18n } from "./I18nProvider";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { prefersReducedMotion } from "@/app/lib/motion";
+import { trackEvent } from "@/app/lib/analytics";
 
 // One buffer-frame past the .2s `nk-*-out` exit keyframes in globals.css, so the
 // dialog unmounts only after the animation has finished painting.
@@ -130,11 +131,12 @@ export function AppRedirect() {
             desktop visitors a real click target (the /go link only resolves to a
             store on a phone), so the modal is never a desktop dead-end. */}
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          <a className="nk-btn nk-btn--primary" href="/go" target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}>
+          <a className="nk-btn nk-btn--primary" href="/go" target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}
+            onClick={() => trackEvent("Smart App Link Click", { placement: "bridge_modal" })}>
             <Icon name="Download" size={18} stroke={2.2} color="var(--nk-text)" /> {dict.bridge.installCta}
           </a>
           <div className="nk-redirect-stores">
-            <AppBadges height={44} gap={12} />
+            <AppBadges height={44} gap={12} placement="bridge_modal" />
           </div>
         </div>
       </div>

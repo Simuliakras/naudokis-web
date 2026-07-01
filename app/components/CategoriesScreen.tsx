@@ -8,7 +8,7 @@ import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, InputClear } from "./ui";
 import { CategoryCard, CategoryCardSkeleton, EmptyState } from "./cards";
 import { useCategories } from "@/app/lib/categories";
-import { listingSearchHref } from "@/app/lib/search";
+import { listingLandingHref, listingSearchHref } from "@/app/lib/search";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { useI18n } from "./I18nProvider";
 
@@ -71,7 +71,7 @@ export function CategoriesScreen() {
             <div className="nk-grid-cats">
               {list.map((c) => (
                 <div key={c.id} className="nk-reveal" style={{ display: "grid" }}>
-                  <CategoryCard id={c.id} icon={c.icon} title={c.title} description={c.seoBody} href={listingSearchHref({ cat: c.id, locale })} />
+                  <CategoryCard id={c.id} icon={c.icon} title={c.title} description={c.seoBody} href={listingLandingHref({ category: c.id, locale })} />
                 </div>
               ))}
             </div>

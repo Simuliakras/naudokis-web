@@ -93,10 +93,13 @@ const nextConfig: NextConfig = {
     return [
       // Canonical host is www. Send the apex (naudokis.lt) to www permanently.
       // The host value is anchored so www.naudokis.lt doesn't match itself (loop).
+      // Exclude /.well-known/*: Apple and Android app-link verifiers require a
+      // direct 200 for association files and must not be sent through host
+      // canonicalization first.
       {
-        source: "/:path*",
+        source: "/:path((?!\\.well-known(?:/|$)).*)",
         has: [{ type: "host", value: "^naudokis\\.lt$" }],
-        destination: "https://www.naudokis.lt/:path*",
+        destination: "https://www.naudokis.lt/:path",
         permanent: true,
       },
       // Legal URLs that changed between the old site and this one. The old EN

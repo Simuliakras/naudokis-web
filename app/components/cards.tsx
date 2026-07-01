@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useId, useRef } from "react";
 import { Icon, IconName, IllusName, Illustration, Pill, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
+import { trackEvent } from "@/app/lib/analytics";
 import type { UseCaseItem } from "@/app/lib/i18n/types";
 
 /* ---------------- Offer / listing card ----------------
@@ -33,7 +34,14 @@ export function OfferCard({
   };
   return (
     <article className="nk-offer" style={{ position: "relative", background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
-      {href && <Link href={href} className="nk-stretch" aria-label={title} />}
+      {href && (
+        <Link
+          href={href}
+          className="nk-stretch"
+          aria-label={title}
+          onClick={() => trackEvent("Listing Click", { category, city })}
+        />
+      )}
       <div className={"nk-offer__media nk-imgph" + (img ? "" : " nk-offer__media--empty")}
         data-cat={img ? undefined : category} style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }}>
         {img && (

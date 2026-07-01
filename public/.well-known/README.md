@@ -1,7 +1,9 @@
 # `/.well-known/` — app deep-link association files
 
-These two files let the native Naudokis app claim the deep-link paths declared in
-`next.config.ts` (`appLinkPaths`). They are served verbatim from `public/`.
+These files let the native Naudokis app claim the deep-link paths declared in
+`next.config.ts` (`appLinkPaths`). iOS AASA is served verbatim from `public/`;
+Android Asset Links is served by `app/.well-known/assetlinks.json/route.ts` so
+the real Play Console fingerprints can be injected by deployment environment.
 
 ## `apple-app-site-association` (iOS universal links)
 
@@ -24,20 +26,14 @@ That is intentional, not an oversight:
   installed → the browser loads the bridge. Both work without any other config.
 - The app team must add an intent filter / route handler for `/invite` (confirm
   whether the app expects `/invite` or the existing `/ref/*`).
-- **Apex caveat:** the backend emits apex `naudokis.lt/invite?code=…`, but
-  `next.config.ts` 301-redirects apex→www for all paths (incl. `/.well-known`). iOS
-  does not follow redirects for AASA, so **apex** invite links won't open the app
-  (they fall through to the www bridge — acceptable; Branch still attributes). To
-  make installed-app direct-open work from the shared link, have the backend emit
-  `www.naudokis.lt/invite` or add a `/.well-known` exception to the apex redirect.
+- Apex and www must both serve this file with `200` and no redirect. The host
+  redirect in `next.config.ts` deliberately excludes `/.well-known/*`.
 
 ## `assetlinks.json` (Android App Links)
 
-> ⚠️ **LAUNCH BLOCKER — placeholder fingerprints.**
-> `sha256_cert_fingerprints` currently holds `PASTE_PLAY_APP_SIGNING_KEY_SHA256`
-> and `PASTE_UPLOAD_KEY_SHA256`. Until both are replaced with the real values,
-> Android App Links verification **fails** and `https://www.naudokis.lt/listing/…`
-> links open the browser fallback instead of the app.
+`/.well-known/assetlinks.json` is generated at runtime from
+`ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS`. If the variable is missing, the route
+returns `503` instead of a fake statement; this is an intentional release gate.
 
 Get the two SHA256 values from the **Google Play Console → your app → Setup →
 App integrity → App signing**:
@@ -45,9 +41,9 @@ App integrity → App signing**:
 1. **App signing key certificate** → "SHA-256 certificate fingerprint"
 2. **Upload key certificate** → "SHA-256 certificate fingerprint"
 
-Paste both (colon-separated hex, e.g. `AB:CD:…`) into the `sha256_cert_fingerprints`
-array, replacing the placeholders. Both are needed so links verify whether Play
-re-signs the app or not.
+Paste both (colon-separated hex, e.g. `AB:CD:…`) into
+`ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS`, separated by commas, semicolons or
+newlines. Both are needed so links verify whether Play re-signs the app or not.
 
 After updating, confirm the file is reachable at
 `https://www.naudokis.lt/.well-known/assetlinks.json` and validates in the

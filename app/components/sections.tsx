@@ -14,7 +14,7 @@ import {
 import { useListings } from "@/app/lib/listings";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
-import { listingSearchHref } from "@/app/lib/search";
+import { listingLandingHref } from "@/app/lib/search";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -58,7 +58,8 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   const isCategories = barePath(pathname) === "/kategorijos";
   const isHowItWorks = barePath(pathname) === "/kaip-tai-veikia";
   // Section-level match: highlights on both the feed and listing-detail pages.
-  const isListings = barePath(pathname).startsWith("/skelbimai");
+  const bare = barePath(pathname);
+  const isListings = bare.startsWith("/skelbimai") || bare.startsWith("/nuoma") || bare.startsWith("/miestai");
   // Condense the bar once the page scrolls — wired here (not per-page) so it
   // works on every screen that renders the Nav.
   useEffect(() => {
@@ -555,7 +556,7 @@ export function Categories() {
               id={c.id}
               icon={c.icon}
               title={c.title}
-              href={listingSearchHref({ cat: c.id, locale })}
+              href={listingLandingHref({ category: c.id, locale })}
             />
           ))}
         </div>

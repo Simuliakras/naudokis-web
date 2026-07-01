@@ -15,7 +15,7 @@ import { SearchBar } from "./HeroSearch";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, SOCIAL_PROFILES } from "@/app/lib/contact";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
-import { listingSearchHref } from "@/app/lib/search";
+import { listingLandingHref } from "@/app/lib/search";
 
 /* ---------------- Hero ---------------- */
 export function Hero({ locale }: { locale: Locale }) {
@@ -44,12 +44,12 @@ export function Hero({ locale }: { locale: Locale }) {
           </div>
           {/* right column — real app device + QR */}
           <div className="nk-hero-media" style={{ position: "relative", zIndex: 1 }}>
-            {/* LCP image: next/image serves responsive AVIF/WebP and `priority`
+            {/* LCP image: next/image serves responsive AVIF/WebP and `preload`
                 preloads it (replaces the manual fetchPriority hint). */}
-            {/* `priority` preloads the desktop LCP; the ≤560px candidate is tiny on
+            {/* `preload` preloads the desktop LCP; the ≤560px candidate is tiny on
                 purpose because the device mockup is `display:none` there (see globals),
                 so phones don't waste bandwidth preloading an image they never show. */}
-            <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} priority sizes="(max-width: 560px) 60px, (max-width: 1024px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
+            <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} preload sizes="(max-width: 560px) 60px, (max-width: 1024px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
             <div className="nk-hero-qr" style={{ position: "absolute", right: "clamp(16px, 2vw, 32px)", bottom: 0 }}><QR size={132} /></div>
           </div>
         </div>
@@ -62,7 +62,7 @@ export function Hero({ locale }: { locale: Locale }) {
 export function Features({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
-    <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
+    <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden", marginBlock: "var(--nk-section-y-lg)" }}>
       <Pattern name="section-pattern" className="nk-brand-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y-lg)" }}>
         <div className="nk-row">
@@ -208,9 +208,8 @@ function FooterCategories({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).footer;
   return (
     <div className="nk-footer__catgrid">
-      <Link href={localePath(locale, "/kategorijos")}>{t.allCategories}</Link>
       {t.categories.map((category) => (
-        <Link key={category.q} href={listingSearchHref({ q: category.q, locale })}>
+        <Link key={category.categoryId} href={listingLandingHref({ category: category.categoryId, locale })}>
           {category.label}
         </Link>
       ))}

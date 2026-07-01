@@ -1,4 +1,5 @@
 import { localePath, localePrefix, type Locale } from "@/app/lib/i18n/config";
+import { listingLandingPath, type ListingLandingFilters } from "@/app/lib/landing-routes";
 
 // Single source of truth for the listings-feed URL. The feed reads `q`
 // (free-text search), `city` (exact city name) and `cat` (category id) — see
@@ -29,6 +30,10 @@ export function listingSearchHref({
   const qs = params.toString();
   const path = locale ? localePath(locale, "/skelbimai") : "/skelbimai";
   return qs ? `${path}?${qs}` : path;
+}
+
+export function listingLandingHref(filters: ListingLandingFilters & { locale: Locale }): string {
+  return localePath(filters.locale, listingLandingPath(filters));
 }
 
 // The feed remembers its last URL (path + filters) per tab so other screens —

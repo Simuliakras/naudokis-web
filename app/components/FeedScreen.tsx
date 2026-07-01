@@ -3,24 +3,32 @@
 // Search / filter / sort are functional on the web; only transactional actions
 // (favorite/reserve/contact) are locked to the app.
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, FilterSelect, InputClear, Toggle, openRedirect, type SelectOption } from "./ui";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
-import { useCategories } from "@/app/lib/categories";
+import { useCategories, type Category } from "@/app/lib/categories";
 import { useListingsInfinite, parseSortKey } from "@/app/lib/listings";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
+import { trackEvent } from "@/app/lib/analytics";
 import { categoryIconFor } from "@/app/lib/category-style";
-import { rememberFeedUrl } from "@/app/lib/search";
+import { listingLandingHref, rememberFeedUrl } from "@/app/lib/search";
+import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { LT_CITIES } from "@/app/lib/cities";
 import { useI18n } from "./I18nProvider";
-import { localePath } from "@/app/lib/i18n/config";
+import { localePath, type Locale } from "@/app/lib/i18n/config";
+import type { ListingFilters } from "@/app/lib/listings";
 
-export function FeedScreen() {
+type FeedScreenProps = {
+  initialFilters?: ListingFilters & { delivery?: boolean };
+};
+
+export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
   const { locale, dict } = useI18n();
   const t = dict.feed;
   const sp = useSearchParams();
@@ -28,32 +36,58 @@ export function FeedScreen() {
   const router = useRouter();
   const online = useOnlineStatus();
 
-  const params = {
-    q: sp.get("q") ?? "",
-    cat: sp.get("cat") ?? "",
-    city: sp.get("city") ?? "",
-    sort: parseSortKey(sp.get("sort")),
-    delivery: sp.get("delivery") === "1",
-  };
+  const staticLanding = Boolean(initialFilters);
+  const params = initialFilters
+    ? {
+        q: initialFilters.q ?? "",
+        cat: initialFilters.category ?? "",
+        city: initialFilters.city ?? "",
+        sort: initialFilters.sort ?? "recommended",
+        delivery: initialFilters.delivery ?? false,
+      }
+    : {
+        q: sp.get("q") ?? "",
+        cat: sp.get("cat") ?? "",
+        city: sp.get("city") ?? "",
+        sort: parseSortKey(sp.get("sort")),
+        delivery: sp.get("delivery") === "1",
+      };
 
   const filterBarRef = useRef<HTMLDivElement>(null);
 
   function setParams(patch: Record<string, string | boolean>, replace = false) {
-    const next = new URLSearchParams(Array.from(sp.entries()));
+    const next = new URLSearchParams();
+    if (params.q) next.set("q", params.q);
+    if (params.cat) next.set("cat", params.cat);
+    if (params.city) next.set("city", params.city);
+    if (params.sort && params.sort !== "recommended") next.set("sort", params.sort);
+    if (params.delivery) next.set("delivery", "1");
     for (const [k, v] of Object.entries(patch)) {
       const isDefault = v === "" || v === false || v === "recommended";
       if (isDefault) next.delete(k);
       else next.set(k, v === true ? "1" : String(v));
     }
+    trackEvent("Listing Filter Change", {
+      locale,
+      patch: Object.keys(patch).join(","),
+      hasQuery: Boolean("q" in patch ? String(patch.q ?? "").trim() : params.q),
+      category: "cat" in patch ? String(patch.cat || "") : params.cat,
+      city: "city" in patch ? String(patch.city || "") : params.city,
+      delivery: "delivery" in patch ? Boolean(patch.delivery) : params.delivery,
+      sort: "sort" in patch ? String(patch.sort || "recommended") : params.sort,
+    });
     const qs = next.toString();
-    const url = qs ? `${pathname}?${qs}` : pathname;
+    const basePath = staticLanding ? localePath(locale, "/skelbimai") : pathname;
+    const url = qs ? `${basePath}?${qs}` : basePath;
     if (replace) {
       // replace = debounced typing into the search input — don't scroll under
       // the user's cursor on every keystroke.
-      window.history.replaceState(null, "", url);
+      if (staticLanding) router.replace(url, { scroll: false });
+      else window.history.replaceState(null, "", url);
       return;
     }
-    window.history.pushState(null, "", url);
+    if (staticLanding) router.push(url);
+    else window.history.pushState(null, "", url);
     // Explicit filter change: if the user has scrolled past the (sticky)
     // filter bar, bring the new result set into view — otherwise they're left
     // staring at stale cards below the fold. scroll-margin-top on
@@ -128,15 +162,32 @@ export function FeedScreen() {
   // (seoTitle/seoBody); the short name stays the breadcrumb/chip label.
   const cat = cats.find((c) => c.id === params.cat);
   const catTitle = cat?.title;
+  const categorySeoLabel = cat ? t.categorySeoLabel(cat.id, cat.title) : undefined;
   const isCat = !!params.cat;
   const isSearch = !!params.q && !isCat;
-  const heading = isCat ? (cat?.seoTitle ?? catTitle ?? t.titleAll) : isSearch ? t.titleSearch : t.titleAll;
-  const subtitle = isCat ? (cat?.seoBody ?? t.subtitleAll) : isSearch ? t.subtitleSearch(params.q) : t.subtitleAll;
-  const crumbs = isCat
-    ? [{ label: t.crumbCategories, href: localePath(locale, "/kategorijos") }, { label: catTitle ?? params.cat }]
-    : isSearch
-      ? [{ label: t.crumbCategories, href: localePath(locale, "/kategorijos") }, { label: t.titleSearch }]
-      : [{ label: t.titleAll }];
+  const heading = params.city
+    ? t.landingTitle({ category: categorySeoLabel, city: params.city })
+    : isCat ? (cat?.seoTitle ?? catTitle ?? t.titleAll) : isSearch ? t.titleSearch : t.titleAll;
+  const subtitle = params.city
+    ? t.landingDescription({ category: categorySeoLabel, city: params.city })
+    : isCat ? (cat?.seoBody ?? t.subtitleAll) : isSearch ? t.subtitleSearch(params.q) : t.subtitleAll;
+  // Home › Skelbimai › [category] › [city], mirroring the BreadcrumbList JSON-LD
+  // the feed + landing pages emit. A free-text search is the one non-landing state,
+  // so it hangs its own leaf off the feed root instead of using the trail.
+  const crumbs = isSearch
+    ? [
+        { label: t.titleAll, href: localePath(locale, "/skelbimai") },
+        { label: t.titleSearch },
+      ]
+    : listingBreadcrumbTrail({
+        homeLabel: dict.common.breadcrumbHome,
+        feedLabel: t.titleAll,
+        categoryTitle: params.cat ? (catTitle ?? params.cat) : undefined,
+        category: params.cat || undefined,
+        city: params.city || undefined,
+      })
+        .slice(1)
+        .map((c) => ({ label: c.name, href: localePath(locale, c.path) }));
 
   const anyActive = !!params.q || isCat || !!params.city || params.delivery || params.sort !== "recommended";
   const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "recommended", delivery: false }); };
@@ -303,11 +354,65 @@ export function FeedScreen() {
             <div style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: 16 }}>
               <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{t.seoHeading}</h2>
               <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{t.seoBody}</p>
+              <RelatedLandingLinks
+                locale={locale}
+                categories={cats}
+                currentCategory={params.cat}
+                currentCity={params.city}
+                allLabel={t.allCategories}
+              />
             </div>
           </section>
         </main>
         <Footer locale={locale} />
       </div>
     </Chrome>
+  );
+}
+
+function RelatedLandingLinks({
+  locale,
+  categories,
+  currentCategory,
+  currentCity,
+  allLabel,
+}: {
+  locale: Locale;
+  categories: Pick<Category, "id" | "title">[];
+  currentCategory: string;
+  currentCity: string;
+  allLabel: string;
+}) {
+  const topCategories = categories.slice(0, 6);
+  const links = currentCity
+    ? topCategories
+        .filter((category) => category.id !== currentCategory)
+        .map((category) => ({
+          label: `${category.title} · ${currentCity}`,
+          href: listingLandingHref({ locale, category: category.id, city: currentCity }),
+        }))
+    : currentCategory
+      ? LT_CITIES.slice(0, 6).map((city) => ({
+          label: city,
+          href: listingLandingHref({ locale, category: currentCategory, city }),
+        }))
+      : LT_CITIES.slice(0, 6).map((city) => ({
+          label: city,
+          href: listingLandingHref({ locale, city }),
+        }));
+  if (links.length === 0) {
+    return null;
+  }
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 10, paddingTop: 4 }}>
+      <Link href={localePath(locale, "/kategorijos")} className="nk-fchip nk-fchip--link">
+        <span>{allLabel}</span>
+      </Link>
+      {links.map((link) => (
+        <Link key={link.href} href={link.href} className="nk-fchip nk-fchip--link">
+          <span>{link.label}</span>
+        </Link>
+      ))}
+    </div>
   );
 }

@@ -34,9 +34,9 @@ async function fetchListingsPage(token?: string): Promise<SitemapListings["data"
 export async function fetchListingSitemapCount(): Promise<number> {
   try {
     const data = await fetchListingsPage();
-    return Math.max(1, Math.ceil((data?.count ?? data?.items?.length ?? 0) / LISTINGS_PER_SITEMAP));
+    return Math.ceil((data?.count ?? data?.items?.length ?? 0) / LISTINGS_PER_SITEMAP);
   } catch {
-    return 1;
+    return 0;
   }
 }
 
@@ -93,9 +93,12 @@ export function localizedListingSitemapEntries(entries: ListingEntry[]): Metadat
       changeFrequency: "weekly" as const,
       priority: locale === "lt" ? 0.5 : 0.3,
       alternates: {
-        languages: Object.fromEntries(
-          locales.map((l) => [l, `${SITE_URL}${localePrefix(l)}/skelbimai/${entry.id}`]),
-        ),
+        languages: {
+          ...Object.fromEntries(
+            locales.map((l) => [l, `${SITE_URL}${localePrefix(l)}/skelbimai/${entry.id}`]),
+          ),
+          "x-default": `${SITE_URL}/skelbimai/${entry.id}`,
+        },
       },
       ...(entry.lastModified ? { lastModified: entry.lastModified } : {}),
       ...(entry.images.length ? { images: entry.images } : {}),
