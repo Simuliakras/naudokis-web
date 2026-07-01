@@ -20,11 +20,12 @@
     { "t": "p", "md": "Naudokis – tai paslauga, kurią teikia MB „Naudokis“ (įmonės kodas 307423504), registracijos adresas Numėjos g. 6, LT-08402 Vilnius." },
 
     { "t": "h2", "id": "2-istrinkite-paskyra-programeleje", "text": "2. Ištrinkite paskyrą programėlėje" },
+    { "t": "callout", "variant": "warning", "md": "Per 30 dienų galite atšaukti trynimą paspaudę nuorodą mūsų atsiųstame el. laiške. **Pasibaigus šiam terminui, paskyra ištrinama negrįžtamai.**" },
     { "t": "ol", "items": [
       "Atidarykite Naudokis programėlę ir prisijunkite.",
       "Eikite į Paskyra → Ištrinti paskyrą.",
       "Patvirtinkite iš naujo prisijungdami (slaptažodžiu arba socialiniu prisijungimu).",
-      "Paskyra iškart išjungiama, o trynimas suplanuojamas. Per 30 dienų galite atšaukti trynimą paspaudę nuorodą mūsų atsiųstame el. laiške. Pasibaigus šiam terminui, paskyra ištrinama negrįžtamai."
+      "Paskyra iškart išjungiama, o trynimas suplanuojamas."
     ] },
 
     { "t": "h2", "id": "3-neturite-idiegtos-programeles", "text": "3. Neturite įdiegtos programėlės?" },

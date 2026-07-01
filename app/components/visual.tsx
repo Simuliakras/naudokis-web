@@ -2,12 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
 import {
-  ArrowLeft, ArrowRight, ArrowUpDown, Baby, BadgeCheck, Calendar, Camera, Car,
+  ArrowLeft, ArrowRight, ArrowUp, ArrowUpDown, Baby, BadgeCheck, Calendar, Camera, Car,
   ChevronDown, ChevronRight, Coins, Download, Dumbbell, Handshake, Heart, HeartPulse,
   Home, Image as ImageIcon, Inbox, Info, Laptop, LayoutGrid, type LucideIcon, Mail,
   MapPin, Menu, MessageCircle, MoreHorizontal, PartyPopper, Phone, RefreshCcw, Search,
   SearchX, Share2, ShieldCheck, Shirt, SlidersHorizontal, Smartphone, Snowflake, Sparkles,
-  Speaker, Star, Tag, User, Users, Wrench, X,
+  Speaker, Star, Tag, Truck, User, Users, Wrench, X,
 } from "lucide-react";
 import { localeHome, type Locale } from "@/app/lib/i18n/config";
 import { DynamicQR } from "./DynamicQR";
@@ -36,7 +36,7 @@ const glyph = (def: IconDef): IconEntry => ({ kind: "glyph", def });
 
 const ICONS = {
   Search: lucide(Search), MapPin: lucide(MapPin), Star: lucide(Star),
-  ArrowRight: lucide(ArrowRight), ArrowLeft: lucide(ArrowLeft), ChevronDown: lucide(ChevronDown),
+  ArrowRight: lucide(ArrowRight), ArrowLeft: lucide(ArrowLeft), ArrowUp: lucide(ArrowUp), ChevronDown: lucide(ChevronDown),
   Heart: lucide(Heart), Image: lucide(ImageIcon), User: lucide(User), Users: lucide(Users),
   ShieldCheck: lucide(ShieldCheck), X: lucide(X), Menu: lucide(Menu), Phone: lucide(Phone),
   Mail: lucide(Mail), SearchX: lucide(SearchX), Inbox: lucide(Inbox), LayoutGrid: lucide(LayoutGrid),
@@ -48,6 +48,7 @@ const ICONS = {
   Snowflake: lucide(Snowflake), Smartphone: lucide(Smartphone), Wrench: lucide(Wrench),
   PartyPopper: lucide(PartyPopper), Shirt: lucide(Shirt), Baby: lucide(Baby), Speaker: lucide(Speaker),
   Laptop: lucide(Laptop), Dumbbell: lucide(Dumbbell), HeartPulse: lucide(HeartPulse),
+  Truck: lucide(Truck),
 
   // Inline glyphs Lucide can't supply (brand marks + the solid Play triangle).
   Play:      glyph({ f: "M6 3v18l15-9z" }),

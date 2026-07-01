@@ -458,6 +458,7 @@ export const lt: Dict = {
   },
   common: {
     favorite: "Įsiminti",
+    delivery: "Pristatymas",
     perDay: "/ para",
     reviewCount: (n) => {
       const d = n % 10;
@@ -547,6 +548,7 @@ export const lt: Dict = {
             : "pasiūlymai";
       return `${n} ${word}`;
     },
+    resultCountAtLeast: (n) => `${n}+ pasiūlymų`,
     loadMore: "Rodyti daugiau",
     loadingMore: "Įkeliama daugiau…",
     clear: "Išvalyti",
@@ -561,6 +563,10 @@ export const lt: Dict = {
     allCategories: "Visos kategorijos",
     cityLabel: "Miestas",
     deliveryToggle: "Pristatymas galimas",
+    filtersButton: "Filtrai",
+    filtersTitle: "Filtrai",
+    filtersApply: "Rodyti rezultatus",
+    backToTop: "Į viršų",
     seoHeading: "Daiktų nuoma Lietuvoje",
     seoBody:
       "Naudokis.lt jungia žmones ir verslus, kuriems daikto reikia trumpam, su privačiais ir verslo savininkais visoje Lietuvoje. Naršykite pagal kategoriją, miestą ar kainą, o datas, žinutes, galutinę sumą ir mokėjimą valdykite programėlėje.",
@@ -661,6 +667,7 @@ export const lt: Dict = {
     onlyLt:
       "Šis dokumentas šiuo metu skelbiamas tik lietuvių kalba. Rodomas lietuviškas tekstas.",
     briefLabel: "Trumpai",
+    warnLabel: "Svarbu",
     anchorLabel: "Nuoroda į šį skyrių",
     relatedHeading: "Susiję dokumentai",
     docTermsTitle: "Naudojimosi sąlygos",

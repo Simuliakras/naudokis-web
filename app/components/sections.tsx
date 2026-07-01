@@ -14,6 +14,7 @@ import {
 import { useListings } from "@/app/lib/listings";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
+import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
 import { listingLandingHref } from "@/app/lib/search";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -76,16 +77,14 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close the drawer when the viewport grows past the tablet/mobile breakpoint
-  // (same 1120px query as the .nk-nav-drawer rules in globals.css).
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 1120px)");
-    const onChange = () => {
-      if (!mq.matches) setMenuOpen(false);
-    };
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
+  // Escape-to-close, focus-restore to the burger, and auto-close once the viewport
+  // grows past the tablet/mobile breakpoint (same 1120px query as the
+  // .nk-nav-drawer rules in globals.css). lockScroll is off — the drawer
+  // deliberately leaves the page scrollable behind it.
+  useDismissableLayer(menuOpen, () => setMenuOpen(false), {
+    lockScroll: false,
+    closeAt: "(min-width: 1121px)",
+  });
 
   // Close the drawer on navigation (the route — not just the hash — changed).
   // Tracking the previous path in state and adjusting during render is React's
@@ -98,19 +97,14 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
     }
   }
 
-  // While the drawer is open: move focus to its first item, close on Escape and
-  // return focus to the burger (matching the modal a11y in AppRedirect).
+  // While the drawer is open: move focus to its first item and close on a click
+  // outside it. (Escape, focus-restore to the burger, and the breakpoint close
+  // are owned by useDismissableLayer above.)
   useEffect(() => {
     if (!menuOpen) {
       return;
     }
     drawerRef.current?.querySelector<HTMLElement>("a, button")?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMenuOpen(false);
-        burgerRef.current?.focus();
-      }
-    };
     // Click outside the drawer (and not on the burger toggle) closes it — this
     // also catches clicks on the dimming scrim, which sits behind the drawer.
     const onDown = (e: MouseEvent) => {
@@ -120,10 +114,8 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
       }
       setMenuOpen(false);
     };
-    document.addEventListener("keydown", onKey);
     document.addEventListener("mousedown", onDown);
     return () => {
-      document.removeEventListener("keydown", onKey);
       document.removeEventListener("mousedown", onDown);
     };
   }, [menuOpen]);
@@ -639,11 +631,8 @@ export function Offers() {
               img={o.img}
               unit={dict.common.perDay}
               rating={o.rating}
-              count={
-                o.ratingCount > 0
-                  ? dict.common.reviewCount(o.ratingCount)
-                  : undefined
-              }
+              ratingCount={o.ratingCount}
+              hasDelivery={o.hasDelivery}
               category={o.category}
               categoryIcon={categoryIconFor(cats, o.category)}
               href={localePath(locale, `/skelbimai/${o.id}`)}

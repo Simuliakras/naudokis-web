@@ -34,15 +34,17 @@ export function CategoriesScreen() {
     <Chrome>
       <div className="nk-page">
         <Nav onSearch={focusSearch} />
-        <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px" }}>
+        {/* max-width caps the content column on ultrawide so 4-up tiles stay a
+            scannable ~300px rather than stretching to letterboxes near 1920 */}
+        <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px", maxWidth: 1520 }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={[{ label: t.crumb }]} />
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-8)" }}>
             <span className="nk-eyebrow">{t.eyebrow}</span>
             <h1 className="nk-h-page">{t.title}</h1>
             <p className="nk-body" style={{ margin: 0, maxWidth: 620 }}>{t.body}</p>
           </div>
 
-          <form onSubmit={(e) => e.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: 32 }}>
+          <form onSubmit={(e) => e.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-8)" }}>
             <span className="nk-searchfield" style={{ width: "100%", maxWidth: 560 }}>
               <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
               <input id="nk-cats-search-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.searchPlaceholder}
@@ -68,11 +70,9 @@ export function CategoriesScreen() {
             <EmptyState illustration="error" tone="danger" title={dict.categories.errorTitle} subtitle={dict.categories.errorSubtitle}
               actionLabel={dict.categories.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
           ) : list.length ? (
-            <div className="nk-grid-cats">
+            <div className="nk-grid-cats nk-reveal-grid">
               {list.map((c) => (
-                <div key={c.id} className="nk-reveal" style={{ display: "grid" }}>
-                  <CategoryCard id={c.id} icon={c.icon} title={c.title} description={c.seoBody} href={listingLandingHref({ category: c.id, locale })} />
-                </div>
+                <CategoryCard key={c.id} id={c.id} icon={c.icon} title={c.title} description={c.seoBody} href={listingLandingHref({ category: c.id, locale })} />
               ))}
             </div>
           ) : (

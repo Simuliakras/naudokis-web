@@ -589,24 +589,24 @@ This provision does not limit or remove mandatory Consumer rights or other right
 
 These additional rules form part of these Terms where they are referenced in these Terms, the App, or a specific Reservation flow, and apply to the extent they relate to a specific Platform function, Reservation, Listing, User role, or Dispute:
 
-23.1. [Payments, Fees, and Stripe Rules](naudokis-payments-fees-stripe-en-2026-06-01.md)
-23.2. [Deposit, Damage, Loss, and Dispute Rules](naudokis-deposits-damage-disputes-en-2026-06-01.md)
-23.3. [Cancellation, Refund, and Right of Withdrawal Rules](naudokis-cancellations-refunds-en-2026-06-01.md)
-23.4. [Business Users, Traders, and B2B Rules](naudokis-business-users-en-2026-06-01.md)
-23.5. [Moderation, Complaints, and DSA Rules](naudokis-moderation-dsa-en-2026-06-01.md)
-23.6. [Prohibited and Restricted Items Rules](naudokis-prohibited-restricted-items-en-2026-06-01.md)
+- 23.1. [Payments, Fees, and Stripe Rules](naudokis-payments-fees-stripe-en-2026-06-01.md)
+- 23.2. [Deposit, Damage, Loss, and Dispute Rules](naudokis-deposits-damage-disputes-en-2026-06-01.md)
+- 23.3. [Cancellation, Refund, and Right of Withdrawal Rules](naudokis-cancellations-refunds-en-2026-06-01.md)
+- 23.4. [Business Users, Traders, and B2B Rules](naudokis-business-users-en-2026-06-01.md)
+- 23.5. [Moderation, Complaints, and DSA Rules](naudokis-moderation-dsa-en-2026-06-01.md)
+- 23.6. [Prohibited and Restricted Items Rules](naudokis-prohibited-restricted-items-en-2026-06-01.md)
 
 The App may provide shorter summaries of these rules, icons, tables, or confirmation screens. Such summaries help understand the rules, but do not replace these Terms or additional rules, unless the App clearly states that a special term applies to the specific Reservation.
 
 ## 24. Contacts
 
-Operator: MB Naudokis
-Legal entity code: 307423504
-Registered address: Numėjos g. 6, LT-08402 Vilnius, Lithuania
-Support: info@naudokis.lt
-Privacy: info@naudokis.lt
-Product safety notices: info@naudokis.lt
-DSA and platform moderation contact point: info@naudokis.lt
+- **Operator:** MB Naudokis
+- **Legal entity code:** 307423504
+- **Registered address:** Numėjos g. 6, LT-08402 Vilnius, Lithuania
+- **Support:** info@naudokis.lt
+- **Privacy:** info@naudokis.lt
+- **Product safety notices:** info@naudokis.lt
+- **DSA and platform moderation contact point:** info@naudokis.lt
 
 ---
 

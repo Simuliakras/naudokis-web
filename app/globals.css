@@ -644,6 +644,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-offer:hover .nk-round--solid{background:var(--nk-purple-deep)}
 @media(hover:hover) and (pointer:fine){.nk-offer:hover .nk-round--solid{transform:translateX(3px)}}
 .nk-offer:focus-within,.nk-cat:focus-within{border-color:var(--nk-accent-border)}
+/* the stretched card link's own :focus-visible outline is clipped by the card's
+   overflow:hidden, so keyboard focus gets a real ring via the card's own
+   box-shadow (matches .nk-cat) — not clipped, unlike a descendant outline */
+.nk-offer:focus-within{box-shadow:var(--nk-edge-top),0 0 0 3px var(--nk-accent-border)}
 .nk-offer h3,.nk-cat h3{overflow-wrap:anywhere;hyphens:auto}
 .nk-offer__body,.nk-offer__pricebar{min-width:0}
 .nk-offer__pricebar{gap:var(--nk-gap-md)}
@@ -672,8 +676,16 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(hover:hover) and (pointer:fine){.nk-fav:hover{transform:scale(1.08)}}
 .nk-fav:active{transform:scale(.9)}
 
+/* ---- delivery badge (surfaces the delivery-available trust signal) ---- */
+.nk-offer__badge{position:absolute;top:16px;left:16px;z-index:2;display:inline-flex;align-items:center;gap:6px;
+  padding:6px 11px;border-radius:var(--nk-r-chip);max-width:calc(100% - 76px);
+  background:rgba(40,44,45,.46);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(14px);
+  box-shadow:var(--nk-edge-top),0 2px 8px rgba(0,0,0,.22);
+  font-family:var(--nk-font-body);font-weight:600;font-size:13px;line-height:1;color:var(--nk-text);white-space:nowrap}
+.nk-offer__badge svg{flex:none}
+
 /* ---- category card (editorial: icon top-left, title + count chip bottom) ---- */
-.nk-cat{position:relative;width:100%;height:248px;border-radius:var(--nk-r-card);overflow:hidden;text-align:left;cursor:pointer;
+.nk-cat{position:relative;width:100%;height:var(--nk-cat-h,248px);border-radius:var(--nk-r-card);overflow:hidden;text-align:left;cursor:pointer;
   display:flex;flex-direction:column;justify-content:flex-end;padding:22px;
   border:1px solid var(--nk-divider);box-shadow:var(--nk-edge-top);
   transition:transform .28s var(--nk-ease),box-shadow .28s ease,border-color .28s ease}
@@ -681,15 +693,23 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(hover:hover) and (pointer:fine){.nk-cat:hover{transform:translateY(-6px);box-shadow:var(--nk-edge-top),var(--nk-shadow-3)}}
 .nk-cat:focus-within{border-color:var(--nk-accent-border);box-shadow:var(--nk-edge-top),0 0 0 3px var(--nk-accent-border)}
 .nk-cat:active{transform:scale(.99)}
-/* shorter tiles on phones so more than one clears the fold (and the icon disk
-   scales down to keep the proportions) */
+/* compact 2-up tiles on phones: square-ish, smaller centred disk, title clamped
+   to two lines, arrow dropped (the whole tile is the tap target) */
 @media(max-width:560px){
   .nk-section__top{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-md)}
   .nk-cats-all{font-size:17px}
-  .nk-cat{height:184px;padding:18px}
-  .nk-cat__disk{width:72px;height:72px}
-  .nk-cat__content{align-items:flex-start}
-  .nk-cat__arrow{width:40px;height:40px}
+  .nk-cat{padding:14px}
+  /* both plain and --lead disks share the compact geometry (the intro line is
+     hidden below, so the lead tile needs no extra disk lift) */
+  .nk-cat__disk,.nk-cat--lead .nk-cat__disk{width:52px;height:52px;inset:0 0 40px}
+  .nk-cat__disk svg{width:24px;height:24px}
+  .nk-cat__content{align-items:flex-end}
+  .nk-cat h3{font-size:15px!important;line-height:18px!important}
+  /* the authored intro is a clipped 1-3 word fragment at ~148px — drop it so the
+     compact tile carries a clean disk + 2-line title. Extra specificity beats the
+     later base `.nk-cat__desc{display:-webkit-box}` (same 1-class specificity). */
+  .nk-cat .nk-cat__desc{display:none}
+  .nk-cat__arrow{display:none}
 }
 /* per-category gradient identity — accent blended strongly so each tile reads distinctly */
 .nk-cat__img{position:absolute;inset:0;z-index:0;
@@ -716,6 +736,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   display:flex;justify-content:space-between;align-items:center;gap:var(--nk-gap-sm)}
 /* title + optional intro stack; min-width:0 lets the clamp shrink inside the flex row */
 .nk-cat__text{display:flex;flex-direction:column;gap:6px;min-width:0}
+/* clamp the title to two lines at every width so long LT names (e.g. "Garsas,
+   muzika ir renginių technika") never push past the fixed tile height */
+.nk-cat__text h3{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* authored category intro — single line so the fixed-height tile never overflows */
 .nk-cat__desc{margin:0;font-family:var(--nk-font-body);font-size:14px;line-height:19px;color:var(--nk-text-muted);
   display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
@@ -728,6 +751,19 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-cat,.nk-cat__img,.nk-cat__disk,.nk-cat__arrow{transition:none}
   .nk-cat:hover{transform:none}
   .nk-cat:hover .nk-cat__img,.nk-cat:hover .nk-cat__disk,.nk-cat:hover .nk-cat__arrow{transform:none}}
+
+/* category skeleton — height comes from the shared --nk-cat-h token so it matches
+   the real tile at every breakpoint; inner shapes compact on phones to mirror the
+   compact tile skin (disk 52, no arrow chip) */
+.nk-cat-skel{height:var(--nk-cat-h,248px);border-radius:var(--nk-r-card);position:relative}
+.nk-cat-skel__disk{position:absolute;inset:0 0 44px;margin:auto;width:88px;height:88px;border-radius:50%;background:rgba(27,27,27,.3)}
+.nk-cat-skel__bar{position:absolute;left:22px;bottom:22px;width:55%;height:22px;border-radius:6px;background:rgba(27,27,27,.3)}
+.nk-cat-skel__chip{position:absolute;right:22px;bottom:22px;width:44px;height:44px;border-radius:22px;background:rgba(27,27,27,.3)}
+@media(max-width:560px){
+  .nk-cat-skel__disk{width:52px;height:52px;inset:0 0 34px}
+  .nk-cat-skel__bar{left:14px;bottom:14px;width:64%;height:14px}
+  .nk-cat-skel__chip{display:none}
+}
 
 /* ---- feature card hover ---- */
 .nk-feature{box-shadow:var(--nk-edge-top);transition:transform .28s ease,background .28s ease}
@@ -862,6 +898,30 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   transform:translateY(40px);transition:transform .28s var(--nk-ease-spring)}
 .nk-modal-scrim.open .nk-sheet{transform:none}
 
+/* ---- mobile filter sheet (built on .nk-modal-scrim / .nk-sheet) ---- */
+.nk-filtersheet-scrim{z-index:120}
+.nk-filtersheet{max-width:560px;padding:20px 20px 0;
+  display:flex;flex-direction:column;gap:20px}
+.nk-filtersheet__head{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nk-filtersheet__title{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:22px;line-height:26px;color:var(--nk-text)}
+.nk-filtersheet__group{display:flex;flex-direction:column;gap:10px}
+.nk-filtersheet__label{font-family:var(--nk-font-display);font-weight:700;font-size:12.5px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--nk-text-muted)}
+.nk-filtersheet__opts{display:flex;flex-wrap:wrap;gap:8px}
+.nk-filtersheet__opt{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--nk-r-pill);
+  border:1px solid var(--nk-border);background:var(--nk-surface);color:var(--nk-text);min-height:var(--nk-tap);
+  font-family:var(--nk-font-body);font-size:15.5px;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.nk-filtersheet__opt:hover{border-color:var(--nk-border-strong)}
+.nk-filtersheet__opt.is-selected{background:var(--nk-accent-bg);color:var(--nk-accent-text);border-color:var(--nk-accent-border)}
+.nk-filtersheet .nk-toggle{width:100%;justify-content:space-between}
+/* sticky so the apply/clear controls stay reachable past the long option lists */
+.nk-filtersheet__foot{position:sticky;bottom:0;display:flex;gap:12px;align-items:center;
+  background:var(--nk-bg);padding:14px 0 calc(16px + env(safe-area-inset-bottom));border-top:1px solid var(--nk-border-soft)}
+
+/* floating back-to-top (feed) — the feed has no bottom bar, so bottom-right is free */
+.nk-backtotop{position:fixed;right:clamp(16px,4vw,32px);bottom:calc(20px + env(safe-area-inset-bottom));z-index:60;
+  width:48px;height:48px;box-shadow:var(--nk-edge-top),var(--nk-shadow-2);animation:nk-pop-in .2s var(--nk-ease-spring) both}
+
 /* ============================================================
    Locked-mode app-redirect modal (desktop dialog / mobile sheet)
    ============================================================ */
@@ -920,13 +980,16 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-searchfield:focus-within{border-color:var(--nk-purple);box-shadow:var(--nk-glow-accent)}
 .nk-searchfield input{min-height:32px}
 
-/* category tile grid (all-categories page) */
-.nk-grid-cats{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--nk-grid-gap)}
-/* step the ladder down: 5 → 4 → wide-tablet 3 → portrait-tablet 2 → phone 1 */
-@media(max-width:1440px){.nk-grid-cats{grid-template-columns:repeat(4,1fr)}}
+/* category tile grid (all-categories page). --nk-cat-h is the single source of
+   truth for tile height so the real card AND its skeleton stay locked at every
+   breakpoint (no load-time layout shift). 4-up top tier: 12 categories tile
+   cleanly as 4/3/2/2 (no orphan row); a page-scoped max-width caps ultrawide. */
+.nk-grid-cats{--nk-cat-h:248px;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--nk-grid-gap)}
 @media(max-width:1280px){.nk-grid-cats{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:900px){.nk-grid-cats{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.nk-grid-cats{grid-template-columns:1fr}}
+/* phones: a dense 2-up category grid (was a single tall column — eight full-width
+   tiles made ~1500px of low-density scroll); tiles get a compact skin below */
+@media(max-width:560px){.nk-grid-cats{--nk-cat-h:138px;grid-template-columns:repeat(2,1fr)}}
 
 /* ============================================================
    Listings feed
@@ -934,24 +997,23 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* sticky filter bar — solid (not blurred) bg so popovers layer above cards */
 .nk-filterbar{position:sticky;top:var(--nk-nav-h-scrolled);z-index:40;margin-bottom:36px;scroll-margin-top:calc(var(--nk-nav-h-scrolled) + 24px);
   padding-block:16px;background:var(--nk-bg);border-bottom:1px solid var(--nk-border-soft)}
-/* filter controls collapse to full-width, comfortably tappable rows on phones —
-   the desktop layout relies on a flex spacer that reads awkwardly once wrapped */
+/* desktop shows the inline sort/category/city/delivery controls; on phones they
+   collapse into a bottom sheet (.nk-filtersheet) opened by .nk-filters-mobilebtn,
+   so the sticky bar keeps just search + a "Filters" button (reclaims ~200px) */
+.nk-filters-desktop{display:contents}
+.nk-filters-mobilebtn{display:none}
+.nk-filters-badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;
+  border-radius:999px;background:var(--nk-accent-text);color:var(--nk-accent-bg);
+  font-family:var(--nk-font-body);font-weight:700;font-size:12.5px;line-height:1}
 @media(max-width:560px){
-  .nk-filterbar{padding-block:8px 10px;margin-bottom:22px}
-  .nk-filter-row{display:grid!important;grid-template-columns:1fr 1fr;align-items:stretch;gap:8px}
-  .nk-filter-row:first-child{grid-template-columns:minmax(0,1fr) minmax(138px,40%)}
-  /* override the inline `flex:1 1 320px` (desktop row sizing) — in this column
-     layout a 320px flex-basis becomes a 320px-tall field; !important beats inline */
-  .nk-filter-row > .nk-searchfield{flex:1 1 auto!important;min-width:0;width:100%;padding:10px 14px}
-  .nk-filter-row > *{width:100%;min-width:0}
-  .nk-filter-row .nk-pillctl{width:100%;justify-content:space-between;min-height:var(--nk-tap)!important;padding:9px 12px!important;font-size:14.5px!important}
-  .nk-filter-row .nk-toggle{grid-column:1 / -1}
-  .nk-filter-row .nk-toggle__lead,.nk-filter-row .nk-pillctl__label{white-space:nowrap}
+  .nk-filterbar{padding-block:8px 10px;margin-bottom:20px}
+  .nk-filters-desktop{display:none}
+  .nk-filters-mobilebtn{display:inline-flex}
+  /* row 1 = search (grows) + Filters button; row 2 collapses to the meta line */
+  .nk-filter-row{gap:10px}
+  .nk-filter-row > .nk-searchfield{flex:1 1 auto;min-width:0;width:auto;padding:11px 16px}
   .nk-filter-spacer{display:none}
-  .nk-filter-meta{grid-column:1 / -1;justify-content:space-between;padding-top:0}
-}
-@media(max-width:420px){
-  .nk-filter-row:first-child{grid-template-columns:1fr}
+  .nk-filter-meta{width:100%;justify-content:space-between;padding-top:2px}
 }
 /* removable active-filter chip */
 .nk-fchip{display:inline-flex;align-items:center;gap:8px;border-radius:var(--nk-r-chip);padding:9px 12px 9px 16px;
@@ -966,10 +1028,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* link variant (related-landing links): no trailing X icon, so the base chip's
    left-heavy padding would look lopsided — pad symmetrically instead. */
 .nk-fchip--link{padding:9px 16px;text-decoration:none}
-.nk-grid-feed{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--nk-grid-row-gap) var(--nk-grid-gap)}
-/* column ladder mirrors .nk-grid-cats exactly so the feed and category grids step
-   together: 5-up → 4-up → 3-up → 2-up → single at 1440/1280/900/560 */
-@media(max-width:1440px){.nk-grid-feed{grid-template-columns:repeat(4,1fr)}}
+.nk-grid-feed{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--nk-grid-row-gap) var(--nk-grid-gap)}
+/* 5-up on ultrawide (the interruption banner sits between grids, so column count
+   never orphans a card), else 4 → 3 → 2 → single at 1680/1280/900/560 */
+@media(min-width:1680px){.nk-grid-feed{grid-template-columns:repeat(5,1fr)}}
 @media(max-width:1280px){.nk-grid-feed{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:900px){.nk-grid-feed{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.nk-grid-feed{grid-template-columns:1fr}}

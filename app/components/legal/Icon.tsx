@@ -13,6 +13,7 @@ const ICONS = {
   arrowRight: "M5 12h14M13 6l6 6-6 6",
   mail: "M3 6h18v12H3z M3 7l9 6 9-6",
   printer: "M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z",
+  alert: "M12 3.5L21 19H3z M12 10v4 M12 16.6v0.01",
 } as const;
 
 export type LegalIconName = keyof typeof ICONS;

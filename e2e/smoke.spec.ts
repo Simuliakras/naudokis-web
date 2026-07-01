@@ -6,7 +6,7 @@ import { test, expect } from "@playwright/test";
 
 test("home hero search routes to the feed with the query", async ({ page }) => {
   await page.goto("/");
-  const input = page.locator("#nk-hero-search input");
+  const input = page.locator(".nk-search__input");
   await input.fill("Sony");
   await input.press("Enter");
   await expect(page).toHaveURL(/\/skelbimai\?q=Sony/);

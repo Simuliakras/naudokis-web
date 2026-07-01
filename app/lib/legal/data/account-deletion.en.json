@@ -20,11 +20,12 @@
     { "t": "p", "md": "Naudokis is operated by MB “Naudokis” (company code 307423504), registered address Numėjos g. 6, LT-08402 Vilnius, Lithuania." },
 
     { "t": "h2", "id": "2-delete-your-account-in-the-app", "text": "2. Delete your account in the app" },
+    { "t": "callout", "variant": "warning", "md": "You have a 30-day grace period during which you can cancel the deletion using the link in the email we send you. **After the grace period, your account is permanently deleted.**" },
     { "t": "ol", "items": [
       "Open the Naudokis app and sign in.",
       "Go to Account → Delete account.",
       "Re-authenticate (your password or social login) to confirm.",
-      "Your account is disabled immediately and deletion is queued. You then have a 30-day grace period during which you can cancel the deletion using the link in the email we send you. After the grace period, your account is permanently deleted."
+      "Your account is disabled immediately and deletion is queued."
     ] },
 
     { "t": "h2", "id": "3-dont-have-the-app-installed", "text": "3. Don’t have the app installed?" },

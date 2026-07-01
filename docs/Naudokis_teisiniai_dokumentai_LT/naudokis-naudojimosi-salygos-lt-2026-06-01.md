@@ -589,24 +589,24 @@ Naudotojas negali perleisti savo teisių ar pareigų pagal šias Sąlygas be iš
 
 Šios papildomos taisyklės yra šių Sąlygų dalis, kai jos nurodytos šiose Sąlygose, Programėlėje arba konkrečios Rezervacijos eigoje, ir taikomos tiek, kiek jos susijusios su konkrečia Platformos funkcija, Rezervacija, Skelbimu, Naudotojo vaidmeniu ar ginču:
 
-23.1. [Mokėjimų, mokesčių ir Stripe taisyklės](naudokis-mokejimai-mokesciai-stripe-lt-2026-06-01.md)
-23.2. [Užstatų, žalos, praradimo ir ginčų taisyklės](naudokis-uzstatai-zala-gincai-lt-2026-06-01.md)
-23.3. [Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklės](naudokis-atsaukimai-grazinimai-lt-2026-06-01.md)
-23.4. [Verslo naudotojų, Prekiautojų ir B2B taisyklės](naudokis-verslo-naudotojai-lt-2026-06-01.md)
-23.5. [Moderavimo, skundų ir DSA taisyklės](naudokis-moderavimas-dsa-lt-2026-06-01.md)
-23.6. [Draudžiamų ir ribojamų daiktų taisyklės](naudokis-draudziami-ribojami-daiktai-lt-2026-06-01.md)
+- 23.1. [Mokėjimų, mokesčių ir Stripe taisyklės](naudokis-mokejimai-mokesciai-stripe-lt-2026-06-01.md)
+- 23.2. [Užstatų, žalos, praradimo ir ginčų taisyklės](naudokis-uzstatai-zala-gincai-lt-2026-06-01.md)
+- 23.3. [Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklės](naudokis-atsaukimai-grazinimai-lt-2026-06-01.md)
+- 23.4. [Verslo naudotojų, Prekiautojų ir B2B taisyklės](naudokis-verslo-naudotojai-lt-2026-06-01.md)
+- 23.5. [Moderavimo, skundų ir DSA taisyklės](naudokis-moderavimas-dsa-lt-2026-06-01.md)
+- 23.6. [Draudžiamų ir ribojamų daiktų taisyklės](naudokis-draudziami-ribojami-daiktai-lt-2026-06-01.md)
 
 Programėlėje gali būti pateikiamos trumpesnės šių taisyklių santraukos, piktogramos, lentelės ar patvirtinimo ekranai. Tokios santraukos padeda suprasti taisykles, bet nepakeičia šių Sąlygų ar papildomų taisyklių, nebent Programėlėje aiškiai nurodyta, kad konkrečiai Rezervacijai taikoma speciali sąlyga.
 
 ## 24. Kontaktai
 
-Operatorius: MB „Naudokis“
-Juridinio asmens kodas: 307423504
-Registruotas adresas: Numėjos g. 6, LT-08402 Vilnius, Lietuva
-Pagalba: info@naudokis.lt
-Privatumas: info@naudokis.lt
-Produktų saugos pranešimai: info@naudokis.lt
-DSA ir platformos moderavimo kontaktinis punktas: info@naudokis.lt
+- **Operatorius:** MB „Naudokis“
+- **Juridinio asmens kodas:** 307423504
+- **Registruotas adresas:** Numėjos g. 6, LT-08402 Vilnius, Lietuva
+- **Pagalba:** info@naudokis.lt
+- **Privatumas:** info@naudokis.lt
+- **Produktų saugos pranešimai:** info@naudokis.lt
+- **DSA ir platformos moderavimo kontaktinis punktas:** info@naudokis.lt
 
 ---
 

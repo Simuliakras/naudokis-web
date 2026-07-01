@@ -71,7 +71,7 @@ export function DocumentScreen({
               <div className="nk-lg-body">
                 {doc.toc.length > 0 && <TocSidebar toc={doc.toc} heading={t.inThisDoc} />}
                 <article className="nk-lg-article">
-                  <Blocks blocks={bodyBlocks} locale={usedLang} briefLabel={t.briefLabel} anchorLabel={t.anchorLabel} />
+                  <Blocks blocks={bodyBlocks} locale={usedLang} briefLabel={t.briefLabel} warnLabel={t.warnLabel} anchorLabel={t.anchorLabel} />
 
                   <nav className="nk-lg-related" aria-label={t.relatedHeading}>
                     <h2 className="nk-lg-related__h">{t.relatedHeading}</h2>

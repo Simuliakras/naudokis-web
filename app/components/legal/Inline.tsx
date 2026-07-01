@@ -51,7 +51,15 @@ export function Inline({ text, locale }: { text: string | undefined; locale: Loc
     } else if (m[5] != null) {
       nodes.push(<a key={key++} href={"mailto:" + m[5]}>{m[5]}</a>);
     } else if (m[6] != null) {
-      nodes.push(<a key={key++} href={m[6]} target="_blank" rel="noopener noreferrer">{m[6]}</a>);
+      // Bare URL. The greedy match can swallow trailing sentence punctuation
+      // (e.g. "https://x.lt/," → the comma), which would then take the link
+      // color and land in the href — strip it back out to plain text.
+      const raw = m[6];
+      const url = raw.replace(/[.,;:!?]+$/, "");
+      nodes.push(<a key={key++} href={url} target="_blank" rel="noopener noreferrer">{url}</a>);
+      if (url.length < raw.length) {
+        nodes.push(raw.slice(url.length));
+      }
     }
     last = re.lastIndex;
   }

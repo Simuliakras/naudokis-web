@@ -146,7 +146,7 @@ function SimilarRail({ currentId, category }: { currentId: string; category: str
         {items.map((o) => (
           <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
             <OfferCard title={o.title} city={o.city} price={o.price} unit={dict.common.perDay}
-              rating={o.rating} count={o.ratingCount > 0 ? dict.common.reviewCount(o.ratingCount) : undefined}
+              rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
               img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
               href={localePath(locale, `/skelbimai/${o.id}`)} />
           </div>

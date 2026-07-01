@@ -40,6 +40,7 @@ export type LegalDict = {
   updated: string;
   onlyLt: string;          // LT-only fallback notice
   briefLabel: string;      // callout label ("Trumpai" / "In brief")
+  warnLabel: string;       // warning-callout label ("Svarbu" / "Important")
   anchorLabel: string;     // h2 permalink aria-label ("Link to this section")
   relatedHeading: string;  // "See also" heading at the bottom of a doc
   docTermsTitle: string;   // sibling-link label → Terms of Use
@@ -269,6 +270,7 @@ export type Dict = {
   };
   common: {
     favorite: string; // aria-label on the heart button
+    delivery: string; // short card badge surfacing the delivery-available flag
     perDay: string; // price unit on cards
     reviewCount: (count: number) => string; // localized, pluralized review count
     newListing: string; // card badge for listings with no reviews yet
@@ -314,6 +316,7 @@ export type Dict = {
     subtitleAll: string;
     subtitleSearch: (query: string) => string;
     resultCount: (count: number) => string;
+    resultCountAtLeast: (count: number) => string; // "N+ …" — true total is unknowable under the client-side delivery filter
     loadMore: string; // "load more results" button
     loadingMore: string; // button label while the next page is loading
     clear: string;
@@ -328,6 +331,10 @@ export type Dict = {
     allCategories: string;
     cityLabel: string;
     deliveryToggle: string;
+    filtersButton: string; // mobile "Filters" trigger opening the filter sheet
+    filtersTitle: string; // filter sheet heading
+    filtersApply: string; // filter sheet apply/close button
+    backToTop: string; // floating back-to-top button label
     seoHeading: string;
     seoBody: string;
     // Zero-result empty states, split by reason (mirrors the design's L2/L3/L4).

@@ -31,11 +31,12 @@ function ListItems({ items, locale }: { items: ListItem[]; locale: Locale }) {
 }
 
 export function Blocks({
-  blocks, locale, briefLabel, anchorLabel,
+  blocks, locale, briefLabel, warnLabel, anchorLabel,
 }: {
   blocks: Block[];
   locale: Locale;
   briefLabel: string;
+  warnLabel: string;
   anchorLabel: string;
 }) {
   return (
@@ -60,13 +61,18 @@ export function Blocks({
             return <h4 key={i} className="nk-lg-h4"><Inline text={b.text} locale={locale} /></h4>;
           case "p":
             return <p key={i} className="nk-lg-p"><Inline text={b.md} locale={locale} /></p>;
-          case "callout":
+          case "callout": {
+            const warn = b.variant === "warning";
             return (
-              <aside key={i} className="nk-lg-callout">
-                <span className="nk-lg-callout__lbl">{briefLabel}</span>
+              <aside key={i} className={warn ? "nk-lg-callout nk-lg-callout--warn" : "nk-lg-callout"}>
+                <span className="nk-lg-callout__lbl">
+                  {warn && <Icon name="alert" size={14} />}
+                  {warn ? warnLabel : briefLabel}
+                </span>
                 <p className="nk-lg-callout__body"><Inline text={b.md} locale={locale} /></p>
               </aside>
             );
+          }
           case "quote":
             return <blockquote key={i} className="nk-lg-quote"><Inline text={b.md} locale={locale} /></blockquote>;
           case "hr":

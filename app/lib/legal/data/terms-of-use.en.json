@@ -361,16 +361,7 @@
         "\"**Reservation request**\" means a request submitted through the Platform for rental of a specific item on selected dates.",
         "\"**Reservation**\" means a Reservation request and the rental process carried out on its basis, including confirmation, performance, cancellation, or completion.",
         "\"**Rental Transaction**\" means the agreement between the Lessor and the Renter concerning item rental, concluded using Platform tools.",
-        "\"**Deposit**\" means the refundable amount stated in the App before payment confirmation."
-      ]
-    },
-    {
-      "t": "p",
-      "md": "During the launch period, it is usually included in the Stripe payment authorization together with the Reservation payment and captured only after Lessor acceptance and successful payment completion. After the rental, the Deposit may be refunded, partially refunded, or used to cover substantiated claims according to these Terms, evidence, Dispute outcome, payment-provider rules, and applicable law. The Deposit is not insurance, a guarantee, a limit on the Renter's liability, a separate banking deposit, client-funds or escrow account, and is not an interest-bearing account."
-    },
-    {
-      "t": "ul",
-      "items": [
+        "\"**Deposit**\" means the refundable amount stated in the App before payment confirmation. During the launch period, it is usually included in the Stripe payment authorization together with the Reservation payment and captured only after Lessor acceptance and successful payment completion. After the rental, the Deposit may be refunded, partially refunded, or used to cover substantiated claims according to these Terms, evidence, Dispute outcome, payment-provider rules, and applicable law. The Deposit is not insurance, a guarantee, a limit on the Renter's liability, a separate banking deposit, client-funds or escrow account, and is not an interest-bearing account.",
         "\"**Content**\" means Listings, photographs, descriptions, messages, reviews, evidence, profile information, business information, support requests, and other information submitted or created by Users through the Platform."
       ]
     },
@@ -1299,8 +1290,15 @@
       "md": "These additional rules form part of these Terms where they are referenced in these Terms, the App, or a specific Reservation flow, and apply to the extent they relate to a specific Platform function, Reservation, Listing, User role, or Dispute:"
     },
     {
-      "t": "p",
-      "md": "23.1. Payments, Fees, and Stripe Rules 23.2. Deposit, Damage, Loss, and Dispute Rules 23.3. Cancellation, Refund, and Right of Withdrawal Rules 23.4. Business Users, Traders, and B2B Rules 23.5. Moderation, Complaints, and DSA Rules 23.6. Prohibited and Restricted Items Rules"
+      "t": "ul",
+      "items": [
+        "23.1. Payments, Fees, and Stripe Rules",
+        "23.2. Deposit, Damage, Loss, and Dispute Rules",
+        "23.3. Cancellation, Refund, and Right of Withdrawal Rules",
+        "23.4. Business Users, Traders, and B2B Rules",
+        "23.5. Moderation, Complaints, and DSA Rules",
+        "23.6. Prohibited and Restricted Items Rules"
+      ]
     },
     {
       "t": "p",
@@ -1312,8 +1310,16 @@
       "text": "24. Contacts"
     },
     {
-      "t": "p",
-      "md": "Operator: MB Naudokis Legal entity code: 307423504 Registered address: Numėjos g. 6, LT-08402 Vilnius, Lithuania Support: info@naudokis.lt Privacy: info@naudokis.lt Product safety notices: info@naudokis.lt DSA and platform moderation contact point: info@naudokis.lt"
+      "t": "ul",
+      "items": [
+        "**Operator:** MB Naudokis",
+        "**Legal entity code:** 307423504",
+        "**Registered address:** Numėjos g. 6, LT-08402 Vilnius, Lithuania",
+        "**Support:** info@naudokis.lt",
+        "**Privacy:** info@naudokis.lt",
+        "**Product safety notices:** info@naudokis.lt",
+        "**DSA and platform moderation contact point:** info@naudokis.lt"
+      ]
     },
     {
       "t": "hr"

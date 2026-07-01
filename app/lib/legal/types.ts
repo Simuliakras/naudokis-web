@@ -35,7 +35,7 @@ export type Block =
   | { t: "h2"; text: string; id: string }
   | { t: "h3"; text: string }
   | { t: "h4"; text: string }
-  | { t: "callout"; md: string }
+  | { t: "callout"; md: string; variant?: "info" | "warning" }
   | { t: "quote"; md: string }
   | { t: "hr" }
   | { t: "ul"; items: ListItem[] }

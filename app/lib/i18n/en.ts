@@ -436,6 +436,7 @@ export const en: Dict = {
   },
   common: {
     favorite: "Save",
+    delivery: "Delivery",
     perDay: "per day",
     reviewCount: (n) => `${n} review${n === 1 ? "" : "s"}`,
     newListing: "New",
@@ -494,6 +495,7 @@ export const en: Dict = {
     subtitleAll: "Browse available rentals across Lithuania.",
     subtitleSearch: (q) => `Results for “${q}” across Lithuania.`,
     resultCount: (n) => `${n} rental${n === 1 ? "" : "s"}`,
+    resultCountAtLeast: (n) => `${n}+ rentals`,
     loadMore: "Show more rentals",
     loadingMore: "Loading more…",
     clear: "Clear",
@@ -508,6 +510,10 @@ export const en: Dict = {
     allCategories: "All categories",
     cityLabel: "City",
     deliveryToggle: "Delivery available",
+    filtersButton: "Filters",
+    filtersTitle: "Filters",
+    filtersApply: "Show results",
+    backToTop: "Back to top",
     seoHeading: "Item rental in Lithuania",
     seoBody:
       "Naudokis.lt connects people and businesses that need items for a short time with private and business owners across Lithuania. Browse by category, city or price, then manage dates, messages, the final amount and payment in the app.",
@@ -607,6 +613,7 @@ export const en: Dict = {
     onlyLt:
       "This document is currently published in Lithuanian only. Showing the Lithuanian text.",
     briefLabel: "In brief",
+    warnLabel: "Important",
     anchorLabel: "Link to this section",
     relatedHeading: "Related documents",
     docTermsTitle: "Terms of Use",

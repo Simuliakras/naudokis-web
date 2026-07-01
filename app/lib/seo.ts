@@ -267,6 +267,38 @@ export function collectionPageJsonLd({
   };
 }
 
+// The all-categories page as a CollectionPage whose mainEntity is an ItemList of
+// the category landings (name + canonical landing URL — both come from the
+// taxonomy, so nothing is fabricated). Aids entity understanding / sitelinks.
+export function categoriesCollectionJsonLd({
+  locale, name, description, path, items,
+}: {
+  locale: Locale;
+  name: string;
+  description: string;
+  path: string;
+  items: { name: string; path: string }[];
+}): JsonLdNode {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name,
+    description,
+    url: absoluteUrl(locale, path),
+    inLanguage: inLanguage(locale),
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: items.length,
+      itemListElement: items.map((item, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: item.name,
+        url: absoluteUrl(locale, item.path),
+      })),
+    },
+  };
+}
+
 // Listings → an ItemList of links to each detail page (category/search/city pages).
 export function itemListJsonLd(locale: Locale, items: { id: string; name: string }[]): JsonLdNode {
   return {

@@ -12,18 +12,19 @@ import type { UseCaseItem } from "@/app/lib/i18n/types";
    Final design: price hierarchy + hairline divider, locked favorite (opens the
    app modal), and a stretched <Link> covering the card for real navigation. */
 export function OfferCard({
-  title = "Dodge RAM 2016", city, price, unit, rating, count, img, href, category, categoryIcon = "Tag",
+  title = "Dodge RAM 2016", city, price, unit, rating, ratingCount, img, href, category, categoryIcon = "Tag", hasDelivery = false,
 }: {
   title?: string;
   city?: string;
   price?: string;
   unit?: string;
   rating?: string;
-  count?: string;
+  ratingCount?: number; // raw review count — shown compact "(52)", full phrase via aria-label
   img?: string;
   href?: string;
   category?: string; // top-level category id — tints the empty-photo placeholder
   categoryIcon?: IconName; // glyph for the empty-photo placeholder (from Category.icon)
+  hasDelivery?: boolean; // surfaces the delivery-available flag as a media badge
 }) {
   const { dict } = useI18n();
   const c = dict.common;
@@ -53,22 +54,28 @@ export function OfferCard({
           aria-label={`${c.favorite} (${dict.bridge.opensAppHint})`}>
           <Icon name="Heart" size={22} color="var(--nk-text)" fill="none" stroke={2} />
         </button>
+        {hasDelivery && (
+          <span className="nk-offer__badge">
+            <Icon name="Truck" size={14} color="var(--nk-text)" stroke={2} /> {c.delivery}
+          </span>
+        )}
         {!img && <Icon name={categoryIcon} size={56} stroke={1.5} className="nk-imgicon" />}
         {/* No carousel dots: the browse card carries a single photo, so paging
             dots would be a false affordance. The lightbox/gallery lives on the
             detail page where the full photo set is available. */}
       </div>
       <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
-        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
+        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", minHeight: 52, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
         {/* meta row: rating + count on the left, location pin + city on the right */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--nk-gap-sm)", flexWrap: "wrap" }}>
           {rating ? (
-            <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)" }}>
-              <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)" }}>
-                <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 16, color: "var(--nk-text-2)" }}>{rating}</b>
-                <Icon name="Star" size={16} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
-              </span>
-              {count && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>({count})</span>}
+            // Compact "4,8 ★ (52)" — the full pluralized phrase is kept for screen
+            // readers so the terse count stays scannable without wrapping the row.
+            <span aria-label={ratingCount ? `${rating}, ${c.reviewCount(ratingCount)}` : rating}
+              style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)" }}>
+              <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 16, color: "var(--nk-text-2)" }}>{rating}</b>
+              <Icon name="Star" size={16} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
+              {ratingCount ? <span aria-hidden style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>({ratingCount})</span> : null}
             </span>
           ) : (
             // No reviews yet — surface that as a "New" trust signal instead of a gap.
@@ -126,7 +133,7 @@ export function InterruptionBanner() {
   const { dict } = useI18n();
   const t = dict.feed;
   return (
-    <div className="nk-interrupt nk-grain" style={{ gridColumn: "1 / -1" }}>
+    <div className="nk-interrupt nk-grain">
       <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
       <Image src="/naudokis/icon.png" alt="" width={409} height={409}
         style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
@@ -224,14 +231,16 @@ export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
   );
 }
 
-/* ---------------- Skeleton category card ---------------- */
+/* ---------------- Skeleton category card ----------------
+   Height + inner shapes are driven by CSS (`.nk-cat-skel*`, via the shared
+   --nk-cat-h token) so the skeleton tracks the real tile at every breakpoint. */
 export function CategoryCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
   const cls = ghost ? "nk-ghost" : "nk-skel";
   return (
-    <div aria-hidden="true" className={cls} style={{ height: 248, borderRadius: "var(--nk-r-card)", position: "relative" }}>
-      <div className={cls} style={{ position: "absolute", inset: "0 0 44px", margin: "auto", width: 88, height: 88, borderRadius: "50%", background: "rgba(27,27,27,.3)" }} />
-      <div className={cls} style={{ position: "absolute", left: 22, bottom: 22, width: "55%", height: 22, background: "rgba(27,27,27,.3)" }} />
-      <div className={cls} style={{ position: "absolute", right: 22, bottom: 22, width: 44, height: 44, borderRadius: 22, background: "rgba(27,27,27,.3)" }} />
+    <div aria-hidden="true" className={`${cls} nk-cat-skel`}>
+      <div className={`${cls} nk-cat-skel__disk`} />
+      <div className={`${cls} nk-cat-skel__bar`} />
+      <div className={`${cls} nk-cat-skel__chip`} />
     </div>
   );
 }

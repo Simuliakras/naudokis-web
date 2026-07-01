@@ -5,6 +5,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useFocusTrap } from "@/app/lib/use-focus-trap";
+import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
@@ -54,6 +56,8 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
       };
 
   const filterBarRef = useRef<HTMLDivElement>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [showTop, setShowTop] = useState(false);
 
   function setParams(patch: Record<string, string | boolean>, replace = false) {
     const next = new URLSearchParams();
@@ -141,6 +145,18 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
   // show "scanning" skeletons instead of the empty state while the next page loads.
   const scanningMore = list.length === 0 && canLoadMore;
 
+  // Result count: the backend total (pages[0].totalCount) is the honest number —
+  // list.length only reflects the pages loaded so far (12/page infinite scroll).
+  // The delivery toggle is a client-side filter over loaded pages, so the backend
+  // total overstates it: show "N+" of what's matched while more pages can load,
+  // and the exact loaded-filtered count once the cursor is exhausted.
+  const totalCount = data?.pages?.[0]?.totalCount;
+  const countLabel = params.delivery
+    ? hasNextPage
+      ? t.resultCountAtLeast(list.length)
+      : t.resultCount(list.length)
+    : t.resultCount(totalCount ?? list.length);
+
   // Auto-load the next page when the sentinel scrolls into view; the visible
   // "load more" button is the keyboard / reduced-motion fallback.
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -157,6 +173,14 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
     io.observe(el);
     return () => io.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  // Floating "back to top" appears once the user has scrolled a couple of rows.
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 900);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // A category landing renders the taxonomy's authored heading + intro
   // (seoTitle/seoBody); the short name stays the breadcrumb/chip label.
@@ -191,6 +215,8 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
 
   const anyActive = !!params.q || isCat || !!params.city || params.delivery || params.sort !== "recommended";
   const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "recommended", delivery: false }); };
+  // Count of secondary (sheet) filters — badges the mobile "Filters" button.
+  const activeFilterCount = [params.cat, params.city, params.delivery, params.sort !== "recommended"].filter(Boolean).length;
 
   const sortOptions: SelectOption[] = [
     { value: "recommended", label: t.sortRecommended },
@@ -229,7 +255,7 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
     // grid-display wrapper so the card stretches to the row height
     <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
       <OfferCard title={o.title} city={o.city} price={o.price} unit={dict.common.perDay}
-        rating={o.rating} count={o.ratingCount > 0 ? dict.common.reviewCount(o.ratingCount) : undefined}
+        rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
         img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
         href={localePath(locale, `/skelbimai/${o.id}`)} />
     </div>
@@ -281,15 +307,26 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
                     style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text)" }} />
                   {qInput && <InputClear onClick={() => setQInput("")} label={t.clear} />}
                 </span>
-                <FilterSelect icon="ArrowUpDown" label={t.sortLabel} value={params.sort} defaultValue="recommended" options={sortOptions} onChange={(v) => setParams({ sort: v })} align="right" />
+                <span className="nk-filters-desktop">
+                  <FilterSelect icon="ArrowUpDown" label={t.sortLabel} value={params.sort} defaultValue="recommended" options={sortOptions} onChange={(v) => setParams({ sort: v })} align="right" />
+                </span>
+                {/* mobile-only: collapses sort/category/city/delivery into a sheet */}
+                <button type="button" className={"nk-pillctl nk-filters-mobilebtn" + (activeFilterCount ? " is-active" : "")} onClick={() => setFiltersOpen(true)}
+                  aria-haspopup="dialog" aria-expanded={filtersOpen} style={{ alignItems: "center", gap: 8, padding: "11px 16px", borderRadius: 999, minHeight: "var(--nk-tap)", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, cursor: "pointer", whiteSpace: "nowrap" }}>
+                  <Icon name="SlidersHorizontal" size={17} stroke={2} color="currentColor" />
+                  {t.filtersButton}
+                  {activeFilterCount > 0 && <span className="nk-filters-badge">{activeFilterCount}</span>}
+                </button>
               </div>
               <div className="nk-filter-row" style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                <FilterSelect icon="LayoutGrid" label={t.categoryLabel} value={params.cat} defaultValue="" options={catOptions} onChange={(v) => setParams({ cat: v })} />
-                <FilterSelect icon="MapPin" label={t.cityLabel} value={params.city} defaultValue="" options={cityOptions} heading={dict.cityPicker.heading} onChange={(v) => setParams({ city: v })} />
-                <Toggle icon="Car" on={params.delivery} onChange={(on) => setParams({ delivery: on })}>{t.deliveryToggle}</Toggle>
+                <span className="nk-filters-desktop">
+                  <FilterSelect icon="LayoutGrid" label={t.categoryLabel} value={params.cat} defaultValue="" options={catOptions} onChange={(v) => setParams({ cat: v })} />
+                  <FilterSelect icon="MapPin" label={t.cityLabel} value={params.city} defaultValue="" options={cityOptions} heading={dict.cityPicker.heading} onChange={(v) => setParams({ city: v })} align="right" />
+                  <Toggle icon="Car" on={params.delivery} onChange={(on) => setParams({ delivery: on })}>{t.deliveryToggle}</Toggle>
+                </span>
                 <span className="nk-filter-spacer" style={{ flex: 1 }} />
                 <div className="nk-filter-meta" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span aria-live="polite" className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.resultCount(list.length)}</span>
+                  <span aria-live="polite" className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", fontWeight: 600, whiteSpace: "nowrap" }}>{countLabel}</span>
                   {anyActive && (
                     <button onClick={reset} className="nk-clear" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 999, background: "transparent", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text-muted)" }}>
                       <Icon name="X" size={15} stroke={2.2} color="currentColor" /> {t.clear}
@@ -299,6 +336,33 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
               </div>
             </div>
           </div>
+
+          <FeedFilterSheet
+            open={filtersOpen}
+            onClose={() => setFiltersOpen(false)}
+            closeLabel={dict.bridge.close}
+            title={t.filtersTitle}
+            applyLabel={t.filtersApply}
+            clearLabel={t.clear}
+            anyActive={anyActive}
+            onReset={reset}
+            sortLabel={t.sortLabel}
+            sortValue={params.sort}
+            sortOptions={sortOptions}
+            onSort={(v) => setParams({ sort: v })}
+            categoryLabel={t.categoryLabel}
+            categoryValue={params.cat}
+            categoryOptions={catOptions}
+            onCategory={(v) => setParams({ cat: v })}
+            cityLabel={t.cityLabel}
+            cityValue={params.city}
+            cityHeading={dict.cityPicker.heading}
+            cityOptions={cityOptions}
+            onCity={(v) => setParams({ city: v })}
+            deliveryLabel={t.deliveryToggle}
+            delivery={params.delivery}
+            onDelivery={(on) => setParams({ delivery: on })}
+          />
 
           {activeChips.length > 0 && (
             <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--nk-gap-xs)", marginBottom: 28 }}>
@@ -315,7 +379,7 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
           {isLoading ? (
             <div className="nk-grid-feed" role="status" aria-live="polite">
               <span className="nk-sr-only">{dict.common.loading}</span>
-              {Array.from({ length: 6 }).map((_, i) => <OfferCardSkeleton key={i} />)}
+              {Array.from({ length: 8 }).map((_, i) => <OfferCardSkeleton key={i} />)}
             </div>
           ) : !online && (isError || loaded.length === 0) ? (
             <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body}
@@ -324,14 +388,21 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
             <EmptyState illustration="error" tone="danger" title={dict.offers.errorTitle} subtitle={dict.offers.errorSubtitle}
               actionLabel={dict.offers.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
           ) : list.length ? (
-            <div className="nk-grid-feed">
-              {head.map(card)}
+            // The interruption banner sits between two grids (not inside one) so no
+            // column count ever orphans a card — lets the grid go 5-up on ultrawide.
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-grid-row-gap)" }}>
+              <div className="nk-grid-feed">{head.map(card)}</div>
               {tail.length > 0 && <InterruptionBanner />}
-              {tail.map(card)}
+              {tail.length > 0 && <div className="nk-grid-feed">{tail.map(card)}</div>}
+              {isFetchingNextPage && (
+                <div className="nk-grid-feed" aria-hidden="true">
+                  {Array.from({ length: 4 }).map((_, i) => <OfferCardSkeleton key={`more-${i}`} />)}
+                </div>
+              )}
             </div>
           ) : scanningMore ? (
             <div className="nk-grid-feed">
-              {Array.from({ length: 6 }).map((_, i) => <OfferCardSkeleton key={i} />)}
+              {Array.from({ length: 8 }).map((_, i) => <OfferCardSkeleton key={i} />)}
             </div>
           ) : (
             renderEmpty()
@@ -364,6 +435,12 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
             </div>
           </section>
         </main>
+        {showTop && (
+          <button type="button" className="nk-round nk-round--solid nk-backtotop" aria-label={t.backToTop}
+            onClick={() => window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" })}>
+            <Icon name="ArrowUp" size={22} stroke={2.2} color="var(--nk-text)" />
+          </button>
+        )}
         <Footer locale={locale} />
       </div>
     </Chrome>
@@ -413,6 +490,123 @@ function RelatedLandingLinks({
           <span>{link.label}</span>
         </Link>
       ))}
+    </div>
+  );
+}
+
+/* ---------------- Mobile filter sheet ----------------
+   Collapses sort/category/city/delivery off the sticky bar into a bottom sheet
+   (the bar keeps just search + a "Filters" button), reclaiming ~200px of
+   above-the-fold space on phones. Filters apply live; the primary button just
+   closes. Options render inline (not nested popovers) — the 2026 mobile pattern
+   and clip-safe inside the sheet's own scroll container. */
+function FilterSheetGroup({
+  label, value, options, onChange, heading,
+}: {
+  label: string;
+  value: string;
+  options: SelectOption[];
+  onChange: (v: string) => void;
+  heading?: string;
+}) {
+  return (
+    <div className="nk-filtersheet__group">
+      <span className="nk-filtersheet__label">{heading ?? label}</span>
+      <div className="nk-filtersheet__opts" role="radiogroup" aria-label={label}>
+        {options.map((o) => {
+          const sel = o.value === value;
+          return (
+            <button key={o.value} type="button" role="radio" aria-checked={sel}
+              className={"nk-filtersheet__opt" + (sel ? " is-selected" : "")}
+              onClick={() => onChange(o.value)}>
+              <span>{o.label}</span>
+              {sel && <Icon name="BadgeCheck" size={18} color="var(--nk-accent-text)" stroke={2} />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function FeedFilterSheet({
+  open, onClose, closeLabel, title, applyLabel, clearLabel, anyActive, onReset,
+  sortLabel, sortValue, sortOptions, onSort,
+  categoryLabel, categoryValue, categoryOptions, onCategory,
+  cityLabel, cityValue, cityHeading, cityOptions, onCity,
+  deliveryLabel, delivery, onDelivery,
+}: {
+  open: boolean;
+  onClose: () => void;
+  closeLabel: string;
+  title: string;
+  applyLabel: string;
+  clearLabel: string;
+  anyActive: boolean;
+  onReset: () => void;
+  sortLabel: string;
+  sortValue: string;
+  sortOptions: SelectOption[];
+  onSort: (v: string) => void;
+  categoryLabel: string;
+  categoryValue: string;
+  categoryOptions: SelectOption[];
+  onCategory: (v: string) => void;
+  cityLabel: string;
+  cityValue: string;
+  cityHeading: string;
+  cityOptions: SelectOption[];
+  onCity: (v: string) => void;
+  deliveryLabel: string;
+  delivery: boolean;
+  onDelivery: (on: boolean) => void;
+}) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const [shown, setShown] = useState(false);
+  useFocusTrap(panelRef, open);
+  // Scroll-lock + Escape + focus-restore + focus-on-open, plus auto-close once the
+  // viewport grows past the mobile breakpoint (the trigger is mobile-only) so a
+  // resized desktop is never stuck behind the sheet.
+  useDismissableLayer(open, onClose, { initialFocus: closeRef, closeAt: "(min-width: 561px)" });
+  // Drive the slide-in: keyed on `open` alone so an in-sheet filter tap (which
+  // re-renders the parent) never restarts the entrance animation.
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const raf = requestAnimationFrame(() => setShown(true));
+    return () => {
+      cancelAnimationFrame(raf);
+      setShown(false);
+    };
+  }, [open]);
+  if (!open) {
+    return null;
+  }
+  return (
+    <div className={"nk-modal-scrim nk-filtersheet-scrim" + (shown ? " open" : "")} onClick={onClose}
+      role="dialog" aria-modal="true" aria-label={title}>
+      <div ref={panelRef} className="nk-sheet nk-filtersheet" onClick={(e) => e.stopPropagation()}>
+        <div className="nk-filtersheet__head">
+          <h2 className="nk-filtersheet__title">{title}</h2>
+          <button ref={closeRef} type="button" className="nk-round nk-round--outline" onClick={onClose} aria-label={closeLabel}>
+            <Icon name="X" size={20} stroke={2} color="var(--nk-text)" />
+          </button>
+        </div>
+        <FilterSheetGroup label={sortLabel} value={sortValue} options={sortOptions} onChange={onSort} />
+        <FilterSheetGroup label={categoryLabel} value={categoryValue} options={categoryOptions} onChange={onCategory} />
+        <FilterSheetGroup label={cityLabel} value={cityValue} options={cityOptions} onChange={onCity} heading={cityHeading} />
+        <div className="nk-filtersheet__group">
+          <Toggle icon="Car" on={delivery} onChange={onDelivery}>{deliveryLabel}</Toggle>
+        </div>
+        <div className="nk-filtersheet__foot">
+          {anyActive && (
+            <button type="button" className="nk-btn nk-btn--ghost" onClick={onReset}>{clearLabel}</button>
+          )}
+          <button type="button" className="nk-btn nk-btn--primary" style={{ flex: 1 }} onClick={onClose}>{applyLabel}</button>
+        </div>
+      </div>
     </div>
   );
 }

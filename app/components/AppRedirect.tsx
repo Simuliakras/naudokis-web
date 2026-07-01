@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Icon, QR, AppBadges, NK_REDIRECT_EVENT, type RedirectPayload } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
+import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { trackEvent } from "@/app/lib/analytics";
 
@@ -88,24 +89,9 @@ export function AppRedirect() {
   // While open: lock body scroll (released on close AND unmount — the component
   // remounts per page, so navigating away mid-dialog must not leave the page
   // unscrollable), move focus into the dialog, close on Escape. Tab-trapping is
-  // handled by useFocusTrap below.
-  useEffect(() => {
-    if (!state.open) {
-      return;
-    }
-    document.body.style.overflow = "hidden";
-    closeRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        close();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [state.open, close]);
+  // handled by useFocusTrap below. restoreFocus is off: the opener is refocused
+  // in finalize() after the exit animation, so the hook must not restore early.
+  useDismissableLayer(state.open, close, { initialFocus: closeRef, restoreFocus: false });
 
   useFocusTrap(panelRef, state.open);
 
