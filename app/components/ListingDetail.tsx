@@ -6,6 +6,7 @@
 // gallery, sticky in-page sub-nav, booking panel, trust-rich host card.
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Icon, IconName, Pill, openRedirect } from "./ui";
 import { SectionEmpty } from "./cards";
 import type { ListingDetail, ListingDelivery, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
@@ -15,6 +16,7 @@ import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
+import { CONTACT_EMAIL } from "@/app/lib/contact";
 import { useI18n } from "./I18nProvider";
 
 /* ---------------- Shared primitives ---------------- */
@@ -35,8 +37,8 @@ function Section({ id, title, sub, first, children }: {
 // Compact icon "fact card" used by the rental-terms grid.
 function FactCard({ icon, title, sub }: { icon: IconName; title: string; sub: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", padding: "var(--nk-card-pad-sm)", borderRadius: 16, background: "var(--nk-surface-glass)", border: "1px solid var(--nk-border)" }}>
-      <span style={{ width: 46, height: 46, borderRadius: 13, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div className="nk-fact" style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", padding: "var(--nk-card-pad-sm)", borderRadius: 16, background: "var(--nk-surface-glass)", border: "1px solid var(--nk-border)" }}>
+      <span className="nk-fact__disk" style={{ width: 46, height: 46, borderRadius: 13, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Icon name={icon} size={22} stroke={2} color="var(--nk-purple-hover)" />
       </span>
       <span style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)", minWidth: 0 }}>
@@ -264,7 +266,7 @@ export function ListingHeader({ listing, shared, onShare, onFav }: {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "var(--nk-gap-xl)", flexWrap: "wrap", marginBottom: "var(--nk-gap-xl)" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", minWidth: 0 }}>
-        <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 4vw, 50px)", lineHeight: 1.04, letterSpacing: 0, color: "var(--nk-text)", textWrap: "balance", overflowWrap: "anywhere", hyphens: "auto" }}>{listing.title}</h1>
+        <h1 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "clamp(34px, 4vw, 44px)", lineHeight: 1.04, letterSpacing: 0, color: "var(--nk-text)", textWrap: "balance", overflowWrap: "anywhere", hyphens: "auto" }}>{listing.title}</h1>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)", flexWrap: "wrap" }}>
           {listing.rating && (
             <>
@@ -340,6 +342,18 @@ export function Gallery({ images, title, isNew }: { images: string[]; title: str
               <>
                 {newPill}
                 <span className="nk-gtile__hint" style={{ position: "absolute", inset: 0, borderRadius: "var(--nk-r-tile)", background: "rgba(20,22,23,.18)" }} />
+                {/* Persistent lightbox affordance on the hero for small photo sets —
+                    counts ≥5 keep their "+N" chip on the last tile instead. */}
+                {count > 1 && count < 5 && (
+                  <span className="nk-gtile__more">
+                    <Icon name="LayoutGrid" size={16} color="var(--nk-text)" stroke={2} /> {t.galleryAll(count)}
+                  </span>
+                )}
+                {count === 1 && (
+                  <span className="nk-gtile__more" role="img" aria-label={t.galleryExpand}>
+                    <Icon name="Expand" size={16} color="var(--nk-text)" stroke={2} />
+                  </span>
+                )}
               </>
             )}
             {i === shown.length - 1 && count >= 5 && (
@@ -372,6 +386,11 @@ const LB_SIZES = "(min-width: 1200px) 1024px, 100vw";
 // onLoad flips the reveal, and a failed load swaps to a localized fallback rather
 // than a broken-image icon. fetchPriority high so the in-view photo wins over the
 // low-priority neighbour warmers.
+// Byte-identical to the big bento tile's `sizes`, so the browser reuses the
+// already-cached grid rendition as an instant low-res underlay while the
+// full-res LB_SIZES photo loads (Airbnb-style paint-what-you-had-then-swap).
+const LB_UNDERLAY_SIZES = "(max-width: 980px) 100vw, 60vw";
+
 function LightboxImage({ src, alt, errorLabel }: { src: string; alt: string; errorLabel: string }) {
   const [status, setStatus] = useState<"loading" | "loaded" | "error">("loading");
   const imgRef = useRef<HTMLImageElement>(null);
@@ -395,6 +414,12 @@ function LightboxImage({ src, alt, errorLabel }: { src: string; alt: string; err
             <Icon name="LoaderCircle" size={30} stroke={2} className="nk-imgicon nk-lightbox__spin" />
           )}
         </span>
+      )}
+      {/* Cached-rendition underlay: paints instantly on a cache hit and covers the
+          spinner; while it also loads, it's transparent and the spinner shows through. */}
+      {status === "loading" && (
+        <Image src={src} alt="" aria-hidden fill sizes={LB_UNDERLAY_SIZES} loading="eager" fetchPriority="low"
+          style={{ objectFit: "contain" }} />
       )}
       {status !== "error" && (
         <Image ref={imgRef} src={src} alt={alt} fill sizes={LB_SIZES} loading="eager" fetchPriority="high"
@@ -522,7 +547,13 @@ function GalleryLightbox({ images, title, start, onClose }: {
           </div>
         )}
         <div className="nk-lightbox__bar">
-          <span className="nk-lightbox__count" aria-live="polite">{i + 1} / {images.length}</span>
+          {/* "1 / 1" is dead chrome on single-photo sets — the empty span keeps the
+              reserve CTA right-aligned in the space-between bar. */}
+          {many ? (
+            <span className="nk-lightbox__count" aria-live="polite">{i + 1} / {images.length}</span>
+          ) : (
+            <span aria-hidden />
+          )}
           <button className="nk-btn nk-btn--primary nk-btn--sm" title={dict.bridge.opensAppHint}
             onClick={() => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody })}>
             <Icon name="Smartphone" size={16} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
@@ -535,11 +566,42 @@ function GalleryLightbox({ images, title, start, onClose }: {
 
 /* ---------------- Focus-column content sections ---------------- */
 function DescriptionSection({ description }: { description: string }) {
-  const { dict } = useI18n();
+  const { locale, dict } = useI18n();
   const t = dict.detail;
+  // Long owner text is clamped to ~6 lines on phones (see .nk-desc-clamp); the
+  // toggle renders only when the clamp actually hides content, and stays once
+  // expanded so the reader can always collapse back.
+  const [expanded, setExpanded] = useState(false);
+  const [overflowing, setOverflowing] = useState(false);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (expanded) {
+      return;
+    }
+    const el = bodyRef.current;
+    if (!el) {
+      return;
+    }
+    const measure = () => setOverflowing(el.scrollHeight > el.clientHeight + 1);
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [description, expanded]);
   return (
     <Section id="aprasymas" title={t.descHeading} first>
-      <div className="nk-prose" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxWidth: 720 }}><RichText html={description} /></div>
+      {/* Owner UGC stays Lithuanian on /en — disclose the original language rather
+          than render unlabelled foreign text (never machine-translate client-side). */}
+      {locale !== "lt" && (
+        <p style={{ margin: "0 0 var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>{t.descOriginalNote}</p>
+      )}
+      <div ref={bodyRef} className={"nk-prose" + (expanded ? "" : " nk-desc-clamp")} style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxWidth: 720 }}><RichText html={description} /></div>
+      {(overflowing || expanded) && (
+        <button type="button" onClick={() => setExpanded((v) => !v)} aria-expanded={expanded}
+          style={{ marginTop: "var(--nk-gap-xs)", padding: "10px 0", minHeight: "var(--nk-tap)", border: 0, background: "none", cursor: "pointer", alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-purple-hover)" }}>
+          {expanded ? t.descLess : t.descMore}
+          <Icon name="ChevronDown" size={16} stroke={2} color="var(--nk-purple-hover)" style={{ transform: expanded ? "rotate(180deg)" : undefined }} />
+        </button>
+      )}
     </Section>
   );
 }
@@ -606,10 +668,11 @@ function HandoverSection({ city, delivery }: { city: string; delivery: ListingDe
     ? `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(`${city}, Lietuva`)}&zoom=11&language=${locale}`
     : null;
   // A listing offers pickup, delivery, or both; show only the rows that apply,
-  // falling back to a plain location row when the data lists neither.
+  // falling back to a plain location row when the data lists neither. The subtitle
+  // gets the same flags so its copy never promises an option the rows don't show.
   const showPickup = delivery.pickup || !delivery.delivery;
   return (
-    <Section id="perdavimas" title={t.handoverHeading} sub={t.deliverySub(city)}>
+    <Section id="perdavimas" title={t.handoverHeading} sub={t.deliverySub(city, { pickup: showPickup, delivery: delivery.delivery })}>
       <div className="nk-tworow" style={{ alignItems: "stretch", gap: "var(--nk-gap-xl)" }}>
         {mapSrc ? (
           <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", minHeight: 200, border: "1px solid var(--nk-border)" }}>
@@ -640,6 +703,9 @@ function HandoverSection({ city, delivery }: { city: string; delivery: ListingDe
 function TermsSection({ listing }: { listing: ListingDetail }) {
   const { dict } = useI18n();
   const t = dict.detail;
+  // Quiet abuse-report path (mailto — the honest zero-infra option): prefilled
+  // subject carries the listing id + title so support can act on it.
+  const reportHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(t.reportSubject(listing.title, listing.id))}`;
   return (
     <Section id="salygos" title={t.termsHeading}>
       <div className="nk-hl-grid">
@@ -647,7 +713,16 @@ function TermsSection({ listing }: { listing: ListingDetail }) {
         <FactCard icon="ShieldCheck" title={listing.deposit ?? t.depositNone} sub={t.termDepositSub} />
         <FactCard icon="Calendar" title={t.durationRange(listing.minDays, listing.maxDays)} sub={t.termDurationSub} />
         <FactCard icon="RefreshCcw" title={t.cancellationLabel(listing.cancellation)} sub={t.termCancelSub} />
+        {/* Only when the wire's insurance_included attribute affirms it — a top
+            trust signal for vehicle rentals that was buried in the spec table. */}
+        {listing.insuranceIncluded && (
+          <FactCard icon="BadgeCheck" title={t.termInsuranceTitle} sub={t.termInsuranceSub} />
+        )}
       </div>
+      <a href={reportHref}
+        style={{ marginTop: "var(--nk-gap-md)", display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-muted)", textDecoration: "underline", textUnderlineOffset: 3, width: "fit-content" }}>
+        <Icon name="Flag" size={14} stroke={2} color="var(--nk-text-muted)" style={{ flex: "none" }} /> {t.reportListing}
+      </a>
     </Section>
   );
 }
@@ -720,7 +795,7 @@ function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews
   );
 }
 
-function ReviewsSection({ listing, onShowReviews }: { listing: ListingDetail; onShowReviews: () => void }) {
+export function ReviewsSection({ listing, onShowReviews }: { listing: ListingDetail; onShowReviews: () => void }) {
   const { dict } = useI18n();
   const t = dict.detail;
   return (
@@ -739,17 +814,16 @@ function ReviewsSection({ listing, onShowReviews }: { listing: ListingDetail; on
   );
 }
 
-// The full focus column: description → specs → handover → terms → reviews.
-export function DetailBody({ listing, onShowReviews }: {
-  listing: ListingDetail; onShowReviews: () => void;
-}) {
+// The focus column: description → specs → handover → terms. Reviews break out to
+// full width beneath the two-column grid (see ListingScreen) so the reviews module
+// never sits marooned in the narrow column with dead space under the sidebar.
+export function DetailBody({ listing }: { listing: ListingDetail }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
       <DescriptionSection description={listing.description} />
       {listing.attributes.length > 0 && <SpecsSection attributes={listing.attributes} />}
       <HandoverSection city={listing.city} delivery={listing.delivery} />
       <TermsSection listing={listing} />
-      <ReviewsSection listing={listing} onShowReviews={onShowReviews} />
     </div>
   );
 }
@@ -765,7 +839,7 @@ export function BookingPanel({ listing, onReserve, onPickDates, variant = "full"
   onPickDates: () => void;
   variant?: "full" | "facts";
 }) {
-  const { dict } = useI18n();
+  const { locale, dict } = useI18n();
   const t = dict.detail;
   return (
     <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
@@ -778,37 +852,37 @@ export function BookingPanel({ listing, onReserve, onPickDates, variant = "full"
           </span>
         )}
       </div>
-      <button type="button" onClick={onPickDates} className="nk-lfield" style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)", width: "100%", textAlign: "left", padding: "12px 15px", borderRadius: 13, background: "var(--nk-input-bg)", border: "1px solid var(--nk-border)" }}>
+      <button type="button" onClick={onPickDates} className="nk-lfield" style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)", width: "100%", textAlign: "left", padding: "14px 15px", borderRadius: 13, background: "var(--nk-input-bg)", border: "1px solid var(--nk-border)" }}>
         <Icon name="Calendar" size={18} color="var(--nk-purple-hover)" stroke={2} style={{ flex: "none" }} />
-        <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
-          <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15, color: "var(--nk-text)" }}>{t.chooseDates}</span>
-          <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)" }}>{t.dateInApp}</span>
-        </span>
+        <span style={{ flex: 1, minWidth: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15, color: "var(--nk-text)" }}>{t.chooseDates}</span>
         <Icon name="ChevronRight" size={16} color="var(--nk-text-muted)" stroke={2} style={{ flex: "none" }} />
       </button>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
-        {/* Platform fee is charged but shown later — render it neutral (not the
-            success-green used for genuinely-free values) so it never reads as €0/waived.
+        {/* Platform fee is charged but shown later — labels share one muted tone
+            (brightness lives on values only) and long i18n values wrap right-aligned
+            instead of clipping at the card edge. It never reads as €0/waived.
             The per-day line is dropped: it just restated the header price with no ×N math. */}
-        <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-2)" }}>
-          <span>{t.serviceFee}</span><span style={{ color: "var(--nk-text-2)", whiteSpace: "nowrap" }}>{t.serviceFeeFree}</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
+          <span>{t.serviceFee}</span><span style={{ color: "var(--nk-text-2)", textAlign: "right", minWidth: 0 }}>{t.serviceFeeFree}</span>
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
           <span>{t.depositReturnable}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.deposit ?? t.depositNone}</span>
         </div>
         <span style={{ height: 1, background: "var(--nk-divider)", margin: "2px 0" }} />
-        <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 17, color: "var(--nk-text)" }}>
-          <span style={{ whiteSpace: "nowrap" }}>{t.totalToday}</span><span style={{ whiteSpace: "nowrap" }}>{t.inAppValue}</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 17, color: "var(--nk-text)" }}>
+          <span style={{ whiteSpace: "nowrap" }}>{t.totalToday}</span><span style={{ textAlign: "right", minWidth: 0 }}>{t.inAppValue}</span>
         </div>
       </div>
       {/* Cost-transparency reassurance kept always-visible (was a hover-only title
-          tooltip, unreachable on the touch-first bridge audience). */}
+          tooltip, unreachable on the touch-first bridge audience), plus a real
+          link into the published fee terms — the only non-app fee source today. */}
       <span style={{ display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontSize: 12, lineHeight: "17px", color: "var(--nk-text-muted)" }}>
         <Icon name="Info" size={13} stroke={2} color="var(--nk-text-muted)" style={{ flex: "none", marginTop: 1 }} /> {t.serviceFeeHint}
       </span>
-      <span style={{ display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-body)", fontSize: 12.5, lineHeight: "18px", color: "var(--nk-text-muted)" }}>
-        <Icon name="Smartphone" size={14} stroke={2} color="var(--nk-purple-hover)" style={{ flex: "none", marginTop: 1 }} /> {t.appOnlyNote}
-      </span>
+      <Link href={localePath(locale, t.feePolicyHref)}
+        style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)", textDecoration: "underline", textUnderlineOffset: 3, width: "fit-content" }}>
+        {t.feePolicyLabel}
+      </Link>
       {variant !== "facts" && (
         <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}
           data-nk-redirect data-nk-redirect-title={dict.bridge.reserveTitle} data-nk-redirect-body={dict.bridge.reserveBody}
@@ -817,18 +891,20 @@ export function BookingPanel({ listing, onReserve, onPickDates, variant = "full"
         </button>
       )}
       {/* Payment protection promoted directly under the CTA — the strongest trust
-          signal on a 2026 rental marketplace. One elevated element; cancellation
-          stays a quiet line beneath it so the reserve button keeps sole button shape. */}
+          signal on a 2026 rental marketplace. The cancellation tier is a restriction,
+          not a protection, so it lives OUTSIDE the green callout as a neutral line
+          linking to the published cancellation terms (real content, no invented tiers). */}
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)", padding: "var(--nk-card-pad-sm)", borderRadius: 14, background: "var(--nk-green-tint)", border: "1px solid var(--nk-green-soft)" }}>
         <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Icon name="ShieldCheck" size={16} stroke={2} color="var(--nk-green)" />
+          <Icon name="ShieldCheck" size={16} stroke={2} color="var(--nk-green-text)" />
           <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 13.5, color: "var(--nk-green-text)" }}>{t.protectedPayments}</span>
         </span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 12.5, lineHeight: "18px", color: "var(--nk-text-muted)" }}>{t.escrowNote}</span>
-        <span style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)" }}>
-          <Icon name="RefreshCcw" size={14} stroke={2} color="var(--nk-green)" style={{ flex: "none" }} /> {t.cancellationNote(listing.cancellation)}
-        </span>
       </div>
+      <Link href={localePath(locale, t.cancellationHref)}
+        style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)", textDecoration: "underline", textUnderlineOffset: 3, width: "fit-content" }}>
+        <Icon name="RefreshCcw" size={13} stroke={2} color="var(--nk-text-muted)" style={{ flex: "none" }} /> {t.cancellationNote(listing.cancellation)}
+      </Link>
     </div>
   );
 }
@@ -876,7 +952,15 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
           </span>
         ))}
       </div>
-      <button className="nk-btn nk-btn--outline" onClick={onContact} title={dict.bridge.opensAppHint} style={{ width: "100%", padding: "13px 24px", fontSize: 15.5 }}>
+      {/* Tenure/responsiveness signals — the strongest pre-review trust facts. Only
+          rendered when the wire actually carries them (never fabricated). */}
+      {(owner.memberSinceYear !== undefined || owner.responseTimeHours != null) && (
+        <span style={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>
+          {owner.memberSinceYear !== undefined && <span>{t.hostMemberSince(owner.memberSinceYear)}</span>}
+          {owner.responseTimeHours != null && <span>{t.hostResponseTime(owner.responseTimeHours)}</span>}
+        </span>
+      )}
+      <button className="nk-btn nk-btn--outline" onClick={onContact} title={dict.bridge.opensAppHint} data-testid="nk-contact-owner" style={{ width: "100%", padding: "13px 24px", fontSize: 15.5 }}>
         <Icon name="MessageCircle" size={17} color="var(--nk-text)" stroke={2} /> {t.hostMessage}
       </button>
       {owner.verified && (
@@ -908,12 +992,14 @@ export function MobileBar({ price, hidden, onReserve }: { price: string; hidden?
 }
 
 /* ---------------- Breadcrumb items helper ----------------
-   Categories → (category search) → listing title. */
-export function detailCrumbs({ category, title, categoriesLabel, locale }: {
-  category?: string; title: string; categoriesLabel: string; locale: Locale;
+   Feed → (category search) → listing title. The feed parent matches the header's
+   active-nav section, the landing pages and the page's own BreadcrumbList JSON-LD,
+   so the site presents one canonical trail for a listing. */
+export function detailCrumbs({ category, title, feedLabel, locale }: {
+  category?: string; title: string; feedLabel: string; locale: Locale;
 }) {
   return [
-    { label: categoriesLabel, href: localePath(locale, "/kategorijos") },
+    { label: feedLabel, href: localePath(locale, "/skelbimai") },
     ...(category ? [{ label: category, href: listingSearchHref({ q: category, locale }) }] : []),
     { label: title },
   ];

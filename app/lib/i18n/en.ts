@@ -188,7 +188,7 @@ export const en: Dict = {
     trustTitle: "Clearer rentals for private and business users",
     trust: [
       {
-        icon: "Snowflake",
+        icon: "CreditCard",
         title: "Payments processed by Stripe",
         body: "The payment amount, platform fees and any refundable deposit are shown before confirmation.",
       },
@@ -354,9 +354,10 @@ export const en: Dict = {
     verifiedOwnerPill: "Verified profile",
     galleryMore: (n) => `+${n} photo${n === 1 ? "" : "s"}`,
     descHeading: "Description",
+    descOriginalNote: "Provided by the owner in their original language.",
+    descMore: "Show more",
+    descLess: "Show less",
     specsHeading: "Specifications",
-    ownerHeading: "Item owner",
-    contact: "Message owner",
     handoverHeading: "Item handover",
     mapTitle: (city) => `${city} on the map`,
     pickupLabel: "Pickup",
@@ -367,6 +368,7 @@ export const en: Dict = {
     termsHeading: "Rental terms",
     reviewsHeading: "Reviews",
     similarHeading: "Similar items",
+    moreItemsHeading: "More items to rent",
     reviewsEmptyTitle: "No reviews for this item yet",
     reviewsEmptyBody: "Be the first to rent it and help others decide.",
     reviewsInApp: (n) => `All ${n} reviews in the app`,
@@ -374,8 +376,6 @@ export const en: Dict = {
     depositReturnable: "Deposit (refundable)",
     reserve: "Reserve in the app",
     reserveMobile: "Reserve",
-    appOnlyNote:
-      "Choose dates, message the owner, confirm the deposit and pay securely in the app.",
     escrowNote: "Naudokis administers payments and refunds through Stripe under the applicable terms",
     protectedPayments: "Protected payments",
     loadErrorTitle: "We couldn’t load this listing",
@@ -388,35 +388,49 @@ export const en: Dict = {
     newListingPill: "New listing",
     noPhotos: "No photos",
     galleryAll: (n) => `All ${n} photos`,
+    galleryExpand: "Expand photo",
     galleryViewLabel: "Photo gallery",
     galleryClose: "Close gallery",
     galleryPrev: "Previous photo",
     galleryNext: "Next photo",
     galleryImageError: "Couldn't load this photo",
     perDayShort: "per day",
-    dateFrom: "From",
-    dateTo: "To",
-    dateInApp: "Choose in the app",
     chooseDates: "Choose dates",
     serviceFee: "Platform fees",
     serviceFeeHint:
-      "Any fees, delivery charge and refundable deposit for this booking are shown in the app before you confirm.",
-    serviceFeeFree: "Shown in the app",
-    inAppValue: "Calculated in the app",
+      "You’ll choose dates in the app — any fees, delivery charge and refundable deposit are shown there before you confirm.",
+    serviceFeeFree: "In the app",
+    inAppValue: "In the app",
     totalToday: "Final amount",
+    feePolicyLabel: "Fee policy — in the Terms of Use",
+    feePolicyHref: "/naudojimosi-salygos#10-payments-fees-and-stripe",
     cancellationNote: (tier) => {
       if (tier === "flexible") return "Flexible cancellation";
       if (tier === "moderate") return "Moderate cancellation";
       if (tier === "strict") return "Strict cancellation";
       return "Cancellation per policy";
     },
+    cancellationHref:
+      "/naudojimosi-salygos#12-cancellations-refunds-and-the-right-of-withdrawal",
     hostStatRating: "Rating",
     hostStatReviews: "Reviews",
     hostStatListings: "Items",
     hostMessage: "Message owner",
     hostVerifiedNote: "Naudokis has verified some details on this profile",
-    deliverySub: (city) =>
-      `Pick up for free or arrange delivery${city ? " in " + city : ""}.`,
+    hostMemberSince: (year) => `Member since ${year}`,
+    hostResponseTime: (hours) =>
+      hours <= 1
+        ? "Responds within an hour"
+        : `Responds within ~${Math.ceil(hours)} hours`,
+    ownerMoreHeading: "More from this owner",
+    reportListing: "Report this listing",
+    reportSubject: (title, id) => `Report listing: ${title} (${id})`,
+    deliverySub: (city, opts) => {
+      const where = city ? ` in ${city}` : "";
+      if (opts.delivery && !opts.pickup) return `Arrange delivery${where}.`;
+      if (!opts.delivery) return `Pick up for free${where}.`;
+      return `Pick up for free or arrange delivery${where}.`;
+    },
     deliveryZone: "≈20 km zone",
     deliveryZoneKm: (km) => `≈${km} km zone`,
     termRentSub: "Rental price per day",
@@ -434,7 +448,9 @@ export const en: Dict = {
       return "Standard";
     },
     termCancelSub: "Cancellation policy",
-    mobileBookingNote: "Dates & price in the app",
+    termInsuranceTitle: "Insurance included",
+    termInsuranceSub: "As listed by the owner",
+    mobileBookingNote: "Price — in the app",
   },
   common: {
     favorite: "Save",

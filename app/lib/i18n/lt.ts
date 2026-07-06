@@ -216,7 +216,7 @@ export const lt: Dict = {
     trustTitle: "Aiškesnė nuoma privatiems ir verslo naudotojams",
     trust: [
       {
-        icon: "Snowflake",
+        icon: "CreditCard",
         title: "Mokėjimai per Stripe",
         body: "Mokėjimo suma, Platformos mokesčiai ir grąžinamas užstatas parodomi prieš patvirtinant.",
       },
@@ -387,9 +387,10 @@ export const lt: Dict = {
       return `+${n} nuotraukos`;
     },
     descHeading: "Aprašymas",
+    descOriginalNote: "Aprašymą savininkas pateikė originalo kalba.",
+    descMore: "Rodyti daugiau",
+    descLess: "Rodyti mažiau",
     specsHeading: "Specifikacijos",
-    ownerHeading: "Daikto savininkas",
-    contact: "Rašyti savininkui",
     handoverHeading: "Daikto perdavimas",
     mapTitle: (city) => `${city} žemėlapyje`,
     pickupLabel: "Atsiėmimas",
@@ -400,6 +401,7 @@ export const lt: Dict = {
     termsHeading: "Nuomos sąlygos",
     reviewsHeading: "Atsiliepimai",
     similarHeading: "Panašūs daiktai",
+    moreItemsHeading: "Daugiau daiktų nuomai",
     reviewsEmptyTitle: "Šis daiktas dar neturi atsiliepimų",
     reviewsEmptyBody: "Išsinuomokite pirmi ir padėkite kitiems apsispręsti.",
     reviewsInApp: (n) => `Visi ${n} atsiliepimai programėlėje`,
@@ -407,8 +409,6 @@ export const lt: Dict = {
     depositReturnable: "Užstatas (grąžinamas)",
     reserve: "Rezervuoti programėlėje",
     reserveMobile: "Rezervuoti",
-    appOnlyNote:
-      "Pasirinkite datas, susirašykite su savininku, patvirtinkite užstatą ir saugiai sumokėkite programėlėje.",
     escrowNote: "Mokėjimus ir grąžinimus administruoja Naudokis per Stripe pagal taisykles",
     protectedPayments: "Apsaugoti mokėjimai",
     loadErrorTitle: "Nepavyko įkelti nuomos pasiūlymo",
@@ -421,35 +421,47 @@ export const lt: Dict = {
     newListingPill: "Naujas skelbimas",
     noPhotos: "Nuotraukų nėra",
     galleryAll: (n) => `Visos ${n} nuotr.`,
+    galleryExpand: "Padidinti nuotrauką",
     galleryViewLabel: "Nuotraukų galerija",
     galleryClose: "Uždaryti galeriją",
     galleryPrev: "Ankstesnė nuotrauka",
     galleryNext: "Kita nuotrauka",
     galleryImageError: "Nepavyko įkelti nuotraukos",
     perDayShort: "/ para",
-    dateFrom: "Nuo",
-    dateTo: "Iki",
-    dateInApp: "Pasirinksite programėlėje",
     chooseDates: "Pasirinkti datas",
     serviceFee: "Platformos mokesčiai",
     serviceFeeHint:
-      "Konkrečiai rezervacijai taikomi mokesčiai, pristatymo kaina ir grąžinamas užstatas parodomi programėlėje prieš patvirtinant.",
-    serviceFeeFree: "Rodoma programėlėje",
-    inAppValue: "Apskaičiuojama programėlėje",
+      "Datas pasirinksite programėlėje — mokesčiai, pristatymo kaina ir grąžinamas užstatas parodomi prieš patvirtinant.",
+    serviceFeeFree: "Programėlėje",
+    inAppValue: "Programėlėje",
     totalToday: "Galutinė suma",
+    feePolicyLabel: "Mokesčių tvarka — Naudojimosi sąlygose",
+    feePolicyHref: "/naudojimosi-salygos#10-mokejimai-mokesciai-ir-stripe",
     cancellationNote: (tier) => {
       if (tier === "flexible") return "Lanksčios atšaukimo sąlygos";
       if (tier === "moderate") return "Vidutinės atšaukimo sąlygos";
       if (tier === "strict") return "Griežtos atšaukimo sąlygos";
       return "Atšaukimo sąlygos pagal taisykles";
     },
+    cancellationHref:
+      "/naudojimosi-salygos#12-atsaukimai-grazinimai-ir-teise-atsisakyti-sutarties",
     hostStatRating: "Įvertinimas",
     hostStatReviews: "Atsiliepimai",
     hostStatListings: "Daiktai",
     hostMessage: "Rašyti savininkui",
     hostVerifiedNote: "Naudokis patvirtino dalį šio profilio duomenų",
-    deliverySub: (city) =>
-      `Atsiimkite nemokamai arba susitarkite dėl pristatymo ${city ? city + " mieste" : "savo mieste"}.`,
+    hostMemberSince: (year) => `Narys nuo ${year} m.`,
+    hostResponseTime: (hours) =>
+      hours <= 1 ? "Atsako per valandą" : `Atsako per ~${Math.ceil(hours)} val.`,
+    ownerMoreHeading: "Kiti šio savininko daiktai",
+    reportListing: "Pranešti apie skelbimą",
+    reportSubject: (title, id) => `Pranešimas apie skelbimą: ${title} (${id})`,
+    deliverySub: (city, opts) => {
+      const where = city ? cityLocativeLt(city) : "savo mieste";
+      if (opts.delivery && !opts.pickup) return `Susitarkite dėl pristatymo ${where}.`;
+      if (!opts.delivery) return `Atsiimkite nemokamai ${where}.`;
+      return `Atsiimkite nemokamai arba susitarkite dėl pristatymo ${where}.`;
+    },
     deliveryZone: "≈20 km zona",
     deliveryZoneKm: (km) => `≈${km} km zona`,
     termRentSub: "Nuomos kaina už parą",
@@ -465,7 +477,9 @@ export const lt: Dict = {
       return "Standartinė";
     },
     termCancelSub: "Atšaukimo politika",
-    mobileBookingNote: "Datos ir kaina programėlėje",
+    termInsuranceTitle: "Draudimas įskaičiuotas",
+    termInsuranceSub: "Nurodyta skelbime",
+    mobileBookingNote: "Kaina — programėlėje",
   },
   common: {
     favorite: "Įsiminti",

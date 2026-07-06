@@ -18,6 +18,7 @@ type ApiListing = {
   images: ApiImage[];
   delivery_types_available?: string[];
   category_path?: string[]; // [top-level id, ...subcategories] — not guaranteed on browse items
+  owner_id?: string; // groups a lister's items client-side (backend has no owner_id filter yet)
 };
 
 type ListingsResponse = {
@@ -42,6 +43,7 @@ type ApiAttributeDisplay = {
 // count (that lives only on the browse-card summary) — the host card uses
 // `total_listings` instead.
 type ApiOwner = {
+  id?: string;
   name: string;
   business_name?: string | null;
   is_business?: boolean;
@@ -50,6 +52,8 @@ type ApiOwner = {
   rating_count?: number;
   total_listings?: number;
   avatar?: string;
+  member_since?: string; // ISO date — host-card tenure line, rendered only when present
+  avg_response_time_hours?: number | null;
 };
 
 // A delivery option on the listing. Only the fields the handover section reads are
@@ -77,6 +81,7 @@ type ApiListingDetail = {
   delivery_methods?: ApiDeliveryMethod[];
   images?: ApiImage[];
   category_names: ApiCategoryName[];
+  category_path?: string[]; // [top-level id, ...subcategories] — drives the similar-items query
   attributes_display?: ApiAttributeDisplay[];
   owner?: ApiOwner;
   owner_name?: string;
@@ -122,6 +127,7 @@ export type Offer = {
   ratingCount: number; // raw count, for building the localized review label
   hasDelivery: boolean; // derived client-side from delivery_types_available — see note in fetchListings
   category?: string; // top-level category id — tints the empty-photo placeholder (optional on the wire)
+  ownerId?: string; // groups a lister's items client-side ("more from this owner" rail)
 };
 
 // Stable "photo safeguard" ordering — surface photo-bearing listings first so a feed
@@ -164,12 +170,15 @@ export type RatingBucket = { stars: number; count: number };
 export type ListingDelivery = { pickup: boolean; delivery: boolean; radiusKm: number | null };
 
 export type ListingOwner = {
+  id?: string; // wire owner id — keys the "more from this owner" rail (names aren't unique)
   name: string;
   verified: boolean;
   listingsCount: number; // owner.total_listings — host-card "listings" stat
   rating?: string;
   ratingCount: number;
   avatar: string | null;
+  memberSinceYear?: number; // from member_since — tenure trust line, only when on the wire
+  responseTimeHours?: number | null; // from avg_response_time_hours — only when non-null
 };
 
 export type ListingDetail = {
@@ -182,6 +191,8 @@ export type ListingDetail = {
   minDays: number;
   maxDays: number;
   cancellation: string; // policy tier id ("flexible" | "moderate" | "strict" | …)
+  insuranceIncluded: boolean; // derived from the insurance_included display attribute
+  categoryId?: string; // top-level category id (category_path[0]) — similar-items query key
   delivery: ListingDelivery;
   description: string;
   rating?: string; // localized display string ("4,9" / "4.9")
@@ -319,6 +330,7 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
     // The wire's `category` field is a leaf id (e.g. "cars"); the accent and
     // icon maps key on the top-level id, which leads category_path.
     category: l.category_path?.[0],
+    ownerId: l.owner_id,
   };
 }
 
@@ -415,7 +427,10 @@ export class ListingNotFoundError extends Error {
 // Next memoizes the same-URL server requests into one (ignored by browser fetch).
 async function fetchListingDetailRaw(id: string): Promise<ApiListingDetail> {
   const res = await fetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } });
-  if (res.status === 404) {
+  // The backend answers 400 ("Invalid UUID format") for malformed ids — as terminal
+  // as a 404, so both map to not-found: the server page can notFound() and the client
+  // shows the "no longer available" state instead of burning retries on it.
+  if (res.status === 404 || res.status === 400) {
     throw new ListingNotFoundError(id);
   }
   if (!res.ok) {
@@ -492,14 +507,34 @@ function mapDetailOwner(detail: ApiListingDetail, locale: Locale): ListingOwner 
     }
     return { name: detail.owner_name, verified: false, listingsCount: 0, ratingCount: 0, avatar: null };
   }
+  const memberSinceMs = o.member_since ? new Date(o.member_since).getTime() : Number.NaN;
   return {
+    id: o.id,
     name: o.business_name ?? o.name ?? detail.owner_name ?? "",
     verified: o.verified ?? false,
     listingsCount: o.total_listings ?? 0,
     rating: ratingLabel(o.rating_average ?? null, o.rating_count ?? 0, locale),
     ratingCount: o.rating_count ?? 0,
     avatar: o.avatar ?? null,
+    memberSinceYear: Number.isNaN(memberSinceMs) ? undefined : new Date(memberSinceMs).getFullYear(),
+    responseTimeHours: o.avg_response_time_hours ?? null,
   };
+}
+
+// R2-032 stopgap: the backend composes value_label_en from the raw LT unit word
+// ("25 metai"); re-render the known LT unit vocabulary in English until the wire
+// localizes units. Language-neutral units (km, l, kg, m…) pass through untouched,
+// and nothing is fabricated — only the unit word is re-spelled.
+const EN_UNIT_WORDS: Record<string, string> = { metai: "years" };
+function localizeUnitEn(value: string, unit: string | undefined): string {
+  if (!unit) {
+    return value;
+  }
+  const en = EN_UNIT_WORDS[unit];
+  if (!en || !value.endsWith(` ${unit}`)) {
+    return value;
+  }
+  return value.slice(0, -unit.length) + en;
 }
 
 export async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> {
@@ -520,6 +555,13 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
     minDays: detail.minimum_rental_days ?? 1,
     maxDays: detail.maximum_rental_days ?? 0,
     cancellation: detail.cancellation_policy ?? "",
+    // Real wire data only: the boolean mirrors the insurance_included display
+    // attribute (canonical LT value label). The spec-table row stays; the terms
+    // tile is additive emphasis for a top-3 vehicle-rental trust signal.
+    insuranceIncluded: (detail.attributes_display ?? []).some(
+      (a) => a.id === "insurance_included" && !a.orphan && a.value_label_lt === "Taip",
+    ),
+    categoryId: detail.category_path?.[0],
     delivery: mapDelivery(detail.delivery_methods),
     description: detail.description,
     rating: ratingLabel(stats.ratingAverage, stats.ratingCount, locale),
@@ -529,11 +571,14 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
     tags: detail.category_names.map((c) => (locale === "en" ? c.en : c.lt)),
     attributes: (detail.attributes_display ?? [])
       .filter((a) => !a.orphan)
-      .map((a) => ({
-        id: a.id,
-        label: locale === "en" ? a.name_en : a.name_lt,
-        value: (locale === "en" ? a.value_label_en : a.value_label_lt) ?? "",
-      }))
+      .map((a) => {
+        const raw = (locale === "en" ? a.value_label_en : a.value_label_lt) ?? "";
+        return {
+          id: a.id,
+          label: locale === "en" ? a.name_en : a.name_lt,
+          value: locale === "en" ? localizeUnitEn(raw, a.unit) : raw,
+        };
+      })
       .filter((a) => a.value),
     owner: mapDetailOwner(detail, locale),
     reviews,

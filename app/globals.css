@@ -1081,7 +1081,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    ============================================================ */
 .nk-detail{max-width:1340px;margin:0 auto}
 .nk-detail-h{margin:0 0 22px;font-family:var(--nk-font-display);font-weight:700;font-size:25px;line-height:30px;color:var(--nk-text)}
-.nk-bento{display:grid;grid-template-columns:1.55fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;height:clamp(380px,46vw,512px)}
+/* Height is viewport-aware so the booking card's price row clears a ~900px desktop
+   fold: 46vw drives normal scaling, the 100dvh term caps the hero on short windows
+   (~430px at 900px tall), and tall screens keep the 512px ceiling. */
+.nk-bento{display:grid;grid-template-columns:1.55fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;height:clamp(380px,min(46vw,calc(100dvh - 470px)),512px)}
 .nk-bento > :first-child{grid-row:1 / 3}
 /* Count-aware desktop layouts so a listing with 1–4 photos never shows empty grey
    tiles. Scoped to >980px so the ≤980 mobile mosaic (higher-specificity attribute
@@ -1106,8 +1109,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   border-radius:var(--nk-r-chip);background:var(--nk-overlay);
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:var(--nk-edge-top);
   font-family:var(--nk-font-body);font-weight:600;font-size:13px;line-height:1}
-/* sidebar is fluid so it never out-widths the content column on a ~1024px tablet */
-.nk-detail-grid{display:grid;grid-template-columns:1fr clamp(300px,32vw,372px);gap:clamp(36px,4vw,56px);margin-top:40px;align-items:start}
+/* sidebar is fluid so it never out-widths the content column on a ~1024px tablet;
+   the tighter top margin keeps the sidebar price above the desktop fold */
+.nk-detail-grid{display:grid;grid-template-columns:1fr clamp(300px,32vw,372px);gap:clamp(36px,4vw,56px);margin-top:28px;align-items:start}
 /* Booking facts inline under the gallery on mobile, where the sticky sidebar
    booking panel is hidden (≤980px). The fixed MobileBar stays the reserve CTA. */
 .nk-booking-inline{display:none}
@@ -1141,6 +1145,11 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* ---- Gallery lightbox (full-screen photo viewer) ---- */
 .nk-lightbox{position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;
   padding:clamp(12px,3vw,40px);background:rgba(10,11,12,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  /* safe-area guards: the close button must clear the notch/Dynamic-Island zone in
+     iOS standalone display (bottom inset is handled by the bar itself) */
+  padding-top:max(clamp(12px,3vw,40px),env(safe-area-inset-top));
+  padding-left:max(clamp(12px,3vw,40px),env(safe-area-inset-left));
+  padding-right:max(clamp(12px,3vw,40px),env(safe-area-inset-right));
   animation:nk-scrim-in .2s ease both}
 .nk-lightbox__panel{position:relative;width:min(1180px,100%);height:100%;display:flex;flex-direction:column;gap:14px}
 .nk-lightbox__close{position:absolute;top:0;right:0;z-index:2;width:44px;height:44px;border-radius:22px;flex:none;
@@ -1161,6 +1170,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    in — so paging never crossfades to an empty frame before the image arrives.
    .nk-lightbox__err is the graceful broken-image fallback. */
 .nk-lightbox__ph{position:absolute;inset:0;border-radius:12px}
+/* the default 28%-opacity placeholder icon is near-invisible in a ~1600px dark
+   panel — the lightbox spinner needs real presence */
+.nk-lightbox__ph .nk-imgicon{opacity:.6}
 .nk-lightbox__err{display:flex;flex-direction:column;align-items:center;gap:10px;
   font-family:var(--nk-font-body);font-size:14px;color:var(--nk-text-muted);text-align:center;padding:0 24px}
 .nk-lightbox__photo{opacity:0;transition:opacity .22s var(--nk-ease)}
@@ -1168,14 +1180,16 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @keyframes nk-spin{to{transform:rotate(360deg)}}
 .nk-lightbox__spin{animation:nk-spin .8s linear infinite}
 /* thumbnail scrubber — horizontal strip mapped to the active index */
-.nk-lightbox__thumbs{flex:none;display:flex;gap:8px;overflow-x:auto;padding:2px;scrollbar-width:none}
+/* 6px padding keeps the 3px-offset focus ring fully inside the scroll container */
+.nk-lightbox__thumbs{flex:none;display:flex;gap:8px;overflow-x:auto;padding:6px;scrollbar-width:none}
 .nk-lightbox__thumbs::-webkit-scrollbar{display:none}
 .nk-lightbox__thumb{position:relative;flex:none;width:64px;height:46px;border-radius:8px;overflow:hidden;cursor:pointer;
   border:2px solid transparent;opacity:.5;transition:opacity .15s ease,border-color .15s ease}
 .nk-lightbox__thumb:hover{opacity:.85}
 .nk-lightbox__thumb.is-active{opacity:1;border-color:var(--nk-purple)}
 @media(prefers-reduced-motion:reduce){.nk-lightbox__photo{transition:none}.nk-lightbox__spin{animation:none}}
-@media(max-width:560px){.nk-lightbox__nav{width:42px;height:42px}.nk-lightbox__thumb{width:54px;height:40px}}
+/* nav buttons keep the 44px+ tap floor on phones; thumbs stay ≥44px tall */
+@media(max-width:560px){.nk-lightbox__thumb{width:60px;height:44px}}
 /* content reveal after skeleton — a subtle opacity + rise. Fill-mode is `backwards`
    (NOT `both`/`forwards`): forwards would hold the final keyframe's transform as a
    matrix(1,…) forever, which — even though it's the identity — makes the wrapper a
@@ -1197,14 +1211,16 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* keep the booking sidebar through landscape tablets; collapse to the bottom bar only on portrait tablets/phones */
 @media(max-width:980px){
   .nk-detail-grid{grid-template-columns:1fr;gap:40px}
-  /* drop only the booking panel (the sticky bar replaces it); keep the owner
-     trust card in the single-column flow and stop it sticking */
-  .nk-reserve{position:static;top:auto}
-  .nk-reserve__booking{display:none}
+  /* the whole aside is replaced ≤980: the sticky bar carries reserve and the
+     booking-facts + owner cards render inline under the gallery instead — hiding
+     it here is what prevents the owner card appearing twice */
+  .nk-reserve{display:none}
   .nk-booking-inline{display:block;margin-top:24px}
   .nk-mbar{display:flex}
   body:has(.nk-mbar) .nk-page{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
-  .nk-bento{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:clamp(150px,22vw,190px)}
+  /* grid-template-rows:auto (not none) — row 1 must size to the oversized hero
+     tile, otherwise the hero paints over the inline booking card below the grid */
+  .nk-bento{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:auto;grid-auto-rows:clamp(150px,22vw,190px)}
   .nk-bento > :first-child{grid-column:1 / -1;grid-row:auto;height:clamp(260px,34vw,320px)}
   /* 0–2 photos: stack full-width, no lonely half-width tile in the 2-col mosaic */
   .nk-bento[data-count="0"],.nk-bento[data-count="1"],.nk-bento[data-count="2"]{grid-template-columns:1fr}
@@ -1218,9 +1234,22 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   /* full-bleed hero tile + a tidy 2-up thumbnail mosaic, not five stacked tiles */
   .nk-bento{grid-template-columns:1fr 1fr;grid-auto-rows:116px;gap:8px}
   .nk-bento > :first-child{grid-column:1 / -1;height:230px}
-  .nk-hl-grid{grid-template-columns:1fr}
+  /* four short facts stay a 2-up grid (a full-width stack cost ~640px of scroll);
+     compact fact-card chrome keeps the text column readable at ~165px (!important
+     — the card sets its roomy defaults as inline styles) */
+  .nk-hl-grid{gap:var(--nk-gap-sm)}
+  .nk-fact{padding:12px!important;gap:10px!important}
+  .nk-fact__disk{width:40px!important;height:40px!important}
   .nk-mbar{gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
   .nk-mbar .nk-btn{flex:0 0 auto;padding:12px 16px!important;font-size:14.5px!important}
+}
+/* the 2-up terms grid runs out of room only below ~360px */
+@media(max-width:359px){
+  .nk-hl-grid{grid-template-columns:1fr}
+}
+/* F-061: clamp long owner descriptions on phones; the Show-more toggle lifts it */
+@media(max-width:560px){
+  .nk-desc-clamp{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
 }
 /* rating breakdown — wide column gap reads as a void on small phones */
 .nk-ratebreak{row-gap:0;column-gap:44px}

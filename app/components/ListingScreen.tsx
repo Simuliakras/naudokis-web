@@ -5,13 +5,15 @@
 // the presentational pieces live in ./ListingDetail.
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
-import { Breadcrumb, openRedirect } from "./ui";
+import { Breadcrumb, Icon, openRedirect } from "./ui";
 import { EmptyState, OfferCard } from "./cards";
 import {
-  ListingSkeleton, ListingHeader, Gallery, DetailBody,
+  ListingSkeleton, ListingHeader, Gallery, DetailBody, ReviewsSection,
   BookingPanel, HostCard, MobileBar, detailCrumbs,
 } from "./ListingDetail";
 import { useListing, useListings, ListingNotFoundError } from "@/app/lib/listings";
@@ -118,32 +120,42 @@ export function ListingScreen({ id }: { id: string }) {
       {/* fade in over the skeleton; the fixed mobile bar stays outside the wrapper */}
       <div className="nk-fadecontent">
         <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel}
-          items={detailCrumbs({ category, title: listing.title, categoriesLabel: dict.feed.crumbCategories, locale })} />
+          items={detailCrumbs({ category, title: listing.title, feedLabel: dict.feed.titleAll, locale })} />
 
         <ListingHeader listing={listing} shared={shared} onShare={share} onFav={lockFav} />
         <Gallery images={listing.images} title={listing.title} isNew={isNew} />
 
         {/* The sticky sidebar booking panel is hidden on tablet/phone (≤980px);
-            surface the booking facts inline under the gallery so mobile keeps the
-            price breakdown, deposit and payment-protection context. The fixed
-            MobileBar remains the persistent reserve CTA. */}
+            surface the booking facts — and the owner trust card, otherwise ~8
+            screens deep — inline under the gallery so mobile keeps the price
+            breakdown, protection context and the human trust signal up top. The
+            fixed MobileBar remains the persistent reserve CTA; the aside copy of
+            both cards is hidden ≤980 so nothing renders twice. */}
         <div className="nk-booking-inline">
           <BookingPanel listing={listing} variant="facts" onReserve={reserve} onPickDates={pickDates} />
+          {listing.owner && (
+            <div style={{ marginTop: "var(--nk-gap-md)" }}>
+              <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />
+            </div>
+          )}
         </div>
 
         <div className="nk-detail-grid">
-          <DetailBody listing={listing} onShowReviews={showReviews} />
+          <DetailBody listing={listing} />
           <aside className="nk-reserve">
-            {/* The booking panel is replaced by the sticky reserve bar on mobile, but
-                the owner trust card must survive there (it's core social proof). */}
             <div className="nk-reserve__booking">
               <BookingPanel listing={listing} onReserve={reserve} onPickDates={pickDates} />
             </div>
             {listing.owner && <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />}
+            {listing.owner?.id && <OwnerMiniRail ownerId={listing.owner.id} currentId={listing.id} />}
           </aside>
         </div>
 
-        {category && <SimilarRail currentId={listing.id} category={category} />}
+        {/* Reviews break out to full width beneath the two-column area (the narrow
+            column left a dead region under the sidebar once reviews grow). */}
+        <ReviewsSection listing={listing} onShowReviews={showReviews} />
+
+        {listing.categoryId && <SimilarRail currentId={listing.id} categoryId={listing.categoryId} />}
       </div>
 
       <MobileBar price={listing.price} hidden={footerInView} onReserve={reserve} />
@@ -152,22 +164,23 @@ export function ListingScreen({ id }: { id: string }) {
 }
 
 /* ---------------- Similar-items cross-sell rail ----------------
-   The detail page's highest-leverage re-engagement surface — reuses the browse
-   feed (category text-search), drops the current listing, shows up to 4. Only
-   mounted when the listing has a category (see caller), so it never fires a broad
-   all-listings fetch nor mislabels arbitrary items as "similar"; hidden too when
-   fewer than two siblings surface, so it never renders a lonely single card. */
-function SimilarRail({ currentId, category }: { currentId: string; category: string }) {
+   The detail page's highest-leverage re-engagement surface — queries the browse
+   feed by the top-level category id (localized display names as free-text `q`
+   return zero matches on the live API, which silently killed the rail), drops the
+   current listing, shows up to 4. A single sibling still renders — under a broader
+   honest heading — so launch-size inventory isn't a dead end. */
+function SimilarRail({ currentId, categoryId }: { currentId: string; categoryId: string }) {
   const { locale, dict } = useI18n();
-  const { data } = useListings(locale, { q: category });
+  const { data } = useListings(locale, { category: categoryId });
   const cats = useCategories(locale).data ?? [];
   const items = (data ?? []).filter((o) => o.id !== currentId).slice(0, 4);
-  if (items.length < 2) {
+  if (items.length === 0) {
     return null;
   }
+  const heading = items.length >= 2 ? dict.detail.similarHeading : dict.detail.moreItemsHeading;
   return (
-    <section style={{ marginTop: 64 }} aria-label={dict.detail.similarHeading}>
-      <h2 style={{ margin: "0 0 24px", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text)" }}>{dict.detail.similarHeading}</h2>
+    <section style={{ marginTop: 64 }} aria-label={heading}>
+      <h2 style={{ margin: "0 0 24px", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text)" }}>{heading}</h2>
       <div className="nk-grid-4">
         {items.map((o) => (
           <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
@@ -179,5 +192,39 @@ function SimilarRail({ currentId, category }: { currentId: string; category: str
         ))}
       </div>
     </section>
+  );
+}
+
+/* ---------------- "More from this owner" mini-rail ----------------
+   Compact sidebar rows under the host card — the owner's other live items from the
+   already-fetched browse set, matched by owner id (names aren't unique). The
+   backend has no owner_id filter yet (tracked cross-team ask), so this filters
+   client-side; on a small marketplace an owner's items are a meaningful share of
+   all inventory, so the browse fetch is cheap and usually already cached. */
+function OwnerMiniRail({ ownerId, currentId }: { ownerId: string; currentId: string }) {
+  const { locale, dict } = useI18n();
+  const { data } = useListings(locale);
+  const items = (data ?? []).filter((o) => o.ownerId === ownerId && o.id !== currentId).slice(0, 3);
+  if (items.length === 0) {
+    return null;
+  }
+  return (
+    <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad-sm)", border: "1px solid var(--nk-border)", boxShadow: "var(--nk-edge-top)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
+      <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-text)" }}>{dict.detail.ownerMoreHeading}</span>
+      {items.map((o) => (
+        <Link key={o.id} href={localePath(locale, `/skelbimai/${o.id}`)} className="nk-lfield"
+          style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)", padding: 8, borderRadius: 12, background: "var(--nk-input-bg)", border: "1px solid var(--nk-border)" }}>
+          <span className="nk-imgph" style={{ width: 56, height: 44, borderRadius: 8, flex: "none", position: "relative", overflow: "hidden" }}>
+            {o.img && <Image src={o.img} alt="" fill sizes="56px" style={{ objectFit: "cover" }} />}
+            {!o.img && <Icon name="Image" size={18} stroke={1.5} className="nk-imgicon" />}
+          </span>
+          <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+            <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 14.5, color: "var(--nk-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{o.title}</span>
+            <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-2)" }}>{o.price} {dict.common.perDay}</span>
+          </span>
+          <Icon name="ChevronRight" size={16} color="var(--nk-text-muted)" stroke={2} style={{ flex: "none" }} />
+        </Link>
+      ))}
+    </div>
   );
 }

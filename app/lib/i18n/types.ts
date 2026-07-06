@@ -200,9 +200,10 @@ export type Dict = {
     verifiedOwnerPill: string;
     galleryMore: (count: number) => string;
     descHeading: string;
+    descOriginalNote: string; // shown on non-LT pages — owner text stays in its original language
+    descMore: string; // expands the phone-width description clamp
+    descLess: string;
     specsHeading: string;
-    ownerHeading: string;
-    contact: string;
     handoverHeading: string;
     mapTitle: (city: string) => string;
     pickupLabel: string;
@@ -216,11 +217,11 @@ export type Dict = {
     reviewsEmptyBody: string;
     reviewsInApp: (count: number) => string;
     similarHeading: string; // "Similar items" cross-sell rail at the page foot
+    moreItemsHeading: string; // honest rail heading when only a single sibling exists
     perDay: string;
     depositReturnable: string;
     reserve: string;
     reserveMobile: string;
-    appOnlyNote: string; // sets expectation before the locked reserve tap
     escrowNote: string;
     protectedPayments: string; // heading for the payment-protection trust strip under the reserve CTA
     loadErrorTitle: string;
@@ -233,31 +234,37 @@ export type Dict = {
     newListingPill: string; // gallery "Naujas skelbimas" badge
     noPhotos: string; // caption on the empty-gallery placeholder (no photos on the wire)
     galleryAll: (count: number) => string; // "Visos N nuotr."
+    galleryExpand: string; // aria-label on the single-photo hero expand chip
     galleryViewLabel: string; // lightbox dialog aria-label
     galleryClose: string; // lightbox close-button aria-label
     galleryPrev: string; // lightbox previous-photo aria-label
     galleryNext: string; // lightbox next-photo aria-label
     galleryImageError: string; // shown when a lightbox photo fails to load
-    perDayShort: string; // "/ d."
+    perDayShort: string; // "/ para"
     // booking panel
-    dateFrom: string;
-    dateTo: string;
-    dateInApp: string;
     chooseDates: string; // single booking-panel date affordance label
     serviceFee: string;
-    serviceFeeHint: string; // always-visible note that fees/deposit are shown in the app before confirming
-    serviceFeeFree: string; // fee-row value — "Rodoma programėlėje" (shown in the app), never a fake "free"
+    serviceFeeHint: string; // single merged footnote — dates picked + fees/deposit shown in the app before confirming
+    serviceFeeFree: string; // fee-row value — "Programėlėje" (shown in the app), never a fake "free"
     inAppValue: string;
     totalToday: string;
-    cancellationNote: (tier: string) => string; // booking-panel cancellation pill
+    feePolicyLabel: string; // quiet link into the terms' payments/fees section
+    feePolicyHref: string; // locale-correct terms path + section anchor
+    cancellationNote: (tier: string) => string; // cancellation tier line (links to the terms section)
+    cancellationHref: string; // locale-correct terms path + cancellations section anchor
     // host card
     hostStatRating: string;
     hostStatReviews: string;
     hostStatListings: string;
-    hostMessage: string; // "Rašyti žinutę"
+    hostMessage: string; // "Rašyti savininkui"
     hostVerifiedNote: string;
-    // delivery block
-    deliverySub: (city: string) => string;
+    hostMemberSince: (year: number) => string; // tenure line, only when member_since is on the wire
+    hostResponseTime: (hours: number) => string; // response line, only when avg_response_time is on the wire
+    ownerMoreHeading: string; // "more from this owner" mini-rail heading
+    reportListing: string; // quiet mailto report affordance
+    reportSubject: (title: string, id: string) => string; // prefilled report e-mail subject
+    // delivery block — copy must match the options the listing actually offers
+    deliverySub: (city: string, opts: { pickup: boolean; delivery: boolean }) => string;
     deliveryZone: string; // "≈20 km zona" fallback when radius unknown
     deliveryZoneKm: (km: number) => string; // "≈N km zona" graphic label
     // terms fact cards
@@ -268,6 +275,8 @@ export type Dict = {
     termDurationSub: string;
     cancellationLabel: (tier: string) => string; // policy tier name
     termCancelSub: string;
+    termInsuranceTitle: string; // insurance fact tile — only when the wire attribute says included
+    termInsuranceSub: string;
     mobileBookingNote: string;
   };
   common: {
