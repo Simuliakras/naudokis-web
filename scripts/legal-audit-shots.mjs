@@ -6,6 +6,19 @@
 import { chromium, devices } from "playwright";
 import { mkdirSync } from "node:fs";
 
+// Chromium clamps screenshot textures at 16384 device px — beyond that the
+// image tail renders as a dead dark band (audit F-012: mobile fullPage shots
+// lost the footer). For over-tall pages, capture at CSS-pixel scale instead of
+// the context's 2x so the whole scroll stays auditable.
+async function fullPageShot(page, path) {
+  const h = await page.evaluate(() => document.body.scrollHeight);
+  const opts = { path, fullPage: true };
+  if (h * 2 > 16384) {
+    opts.scale = "css";
+  }
+  await page.screenshot(opts);
+}
+
 const argBase = process.argv.indexOf("--base");
 const BASE = argBase !== -1 ? process.argv[argBase + 1] : (process.env.BASE ?? "http://localhost:3000");
 const OUT = "screenshots/legal-audit";
@@ -61,7 +74,7 @@ for (const w of WIDTHS) {
       await page.waitForTimeout(250);
 
       const file = `${OUT}/${p.slug}-${loc.name}-${String(w).padStart(4, "0")}.png`;
-      await page.screenshot({ path: file, fullPage: true });
+      await fullPageShot(page, file);
 
       const ov = await page.evaluate(() => {
         const el = document.scrollingElement || document.documentElement;

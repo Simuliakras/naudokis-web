@@ -1118,10 +1118,13 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-filters-desktop{display:none}
   .nk-filters-mobilebtn{display:inline-flex}
   /* row 1 = search (grows) + Filters button on ONE row; the desktop pill row
-     disappears entirely (its controls live in the sheet) */
+     disappears entirely (its controls live in the sheet — !important because
+     the row carries an inline display:flex) */
   .nk-filter-row{gap:10px}
-  .nk-filter-row > .nk-searchfield{flex:1 1 auto;min-width:0;width:auto;padding:11px 16px}
-  .nk-filter-row--desktop{display:none}
+  /* small explicit basis: flex-wrap breaks lines on BASE sizes, so a content/
+     320px basis pushed the Filters pill onto its own dead row at 390px */
+  .nk-filter-row > .nk-searchfield{flex:1 1 120px;min-width:0;width:auto;padding:11px 16px}
+  .nk-filter-row--desktop{display:none!important}
   .nk-filter-meta{width:100%;justify-content:space-between!important;padding-top:2px}
 }
 /* mobile category chip rail — the browse dimension on the page itself (≤560) */

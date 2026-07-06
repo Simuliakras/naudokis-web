@@ -11,6 +11,19 @@ import { chromium, devices } from "playwright";
 import { mkdirSync } from "node:fs";
 import { pickListingIds, resolveApiBase } from "./_backend.mjs";
 
+// Chromium clamps screenshot textures at 16384 device px — beyond that the
+// image tail renders as a dead dark band (audit F-012: mobile fullPage shots
+// lost the footer). For over-tall pages, capture at CSS-pixel scale instead of
+// the context's 2x so the whole scroll stays auditable.
+async function fullPageShot(page, path) {
+  const h = await page.evaluate(() => document.body.scrollHeight);
+  const opts = { path, fullPage: true };
+  if (h * 2 > 16384) {
+    opts.scale = "css";
+  }
+  await page.screenshot(opts);
+}
+
 const argBase = process.argv.indexOf("--base");
 const BASE = argBase !== -1 ? process.argv[argBase + 1] : (process.env.BASE ?? "http://localhost:3000");
 const WITH_EN = process.argv.includes("--en");
@@ -74,7 +87,7 @@ for (const w of WIDTHS) {
       await page.goto(`${BASE}${loc.prefix}${p.path}`, { waitUntil: "networkidle", timeout: 60_000 });
       await settle(page);
       await page.screenshot({ path: `${OUT}/${p.slug}-vp-${loc.name}-${pad(w)}.png`, fullPage: false });
-      await page.screenshot({ path: `${OUT}/${p.slug}-fp-${loc.name}-${pad(w)}.png`, fullPage: true });
+      await fullPageShot(page, `${OUT}/${p.slug}-fp-${loc.name}-${pad(w)}.png`);
       const ov = await page.evaluate(() => {
         const el = document.scrollingElement || document.documentElement;
         return el.scrollWidth - el.clientWidth;
@@ -106,7 +119,7 @@ for (const loc of LOCALES) {
     const page = await ctx.newPage();
     await page.goto(`${BASE}${loc.prefix}/skelbimai/does-not-exist-xyz`, { waitUntil: "networkidle", timeout: 60_000 });
     await settle(page);
-    await page.screenshot({ path: `${OUT}/state-404-${loc.name}-${pad(w)}.png`, fullPage: true });
+    await fullPageShot(page, `${OUT}/state-404-${loc.name}-${pad(w)}.png`);
     console.log(`✓ state-404 ${loc.name} @${w}`);
     count += 1;
     await ctx.close();
@@ -141,7 +154,7 @@ for (const w of [390, 768, 1280]) {
   await page.locator(".htw-step").nth(3).click().catch(() => {});
   await page.waitForTimeout(500);
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.screenshot({ path: `${OUT}/state-how-owner-s4-${pad(w)}.png`, fullPage: true });
+  await fullPageShot(page, `${OUT}/state-how-owner-s4-${pad(w)}.png`);
   console.log(`✓ state-how-owner-s4 @${w}`);
   count += 1;
   await ctx.close();
