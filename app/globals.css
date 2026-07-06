@@ -517,8 +517,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-nav-bar.nk-scrolled .nk-nav-inner{height:var(--nk-nav-h-scrolled)}
 .nk-nav-inner > .nk-logo{flex:none}
 /* nowrap keeps multi-word links ("How it works" / "Kaip tai veikia") on one line;
-   the gap tightens below ~1364px so the full nav still fits beside the search pill */
-.nk-nav-links{display:flex;align-items:center;gap:clamp(18px,3vw,52px);white-space:nowrap;min-width:0}
+   the gap tightens below ~1364px so the full nav still fits beside the search pill.
+   margin-left:auto hugs the link group to the right edge (the install CTA is a
+   separate sibling now, so it survives the mobile collapse). */
+.nk-nav-links{display:flex;align-items:center;gap:clamp(18px,3vw,52px);white-space:nowrap;min-width:0;margin-left:auto}
+/* Persistent install CTA in the sticky chrome — the site's one conversion action.
+   Full label ≥1121px, compact label beside the burger below. */
+.nk-nav-cta{flex:none;padding:10px 20px;font-size:15px;min-height:var(--nk-tap)}
+.nk-nav-cta__short{display:none}
 .nk-nav-burger{display:none;width:46px;height:46px;border-radius:14px;align-items:center;justify-content:center;
   background:var(--nk-surface-2);border:1px solid var(--nk-border);transition:background .15s ease,border-color .15s ease}
 .nk-nav-burger:hover{background:var(--nk-surface-hover);border-color:var(--nk-border-strong)}
@@ -532,6 +538,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 @media(max-width:1120px){
   .nk-nav-links{display:none}
   .nk-nav-burger{display:inline-flex}
+  .nk-nav-inner{gap:12px}
+  .nk-nav-cta{margin-left:auto;padding:9px 14px;font-size:14px}
+  .nk-nav-cta__full{display:none}
+  .nk-nav-cta__short{display:inline}
   .nk-nav-scrim.open{opacity:1;pointer-events:auto}
   .nk-nav-drawer{display:block;overflow:hidden;max-height:0;opacity:0;
     transition:max-height .32s var(--nk-ease),opacity .25s ease;border-top:1px solid transparent}
@@ -930,6 +940,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* sticky so the apply/clear controls stay reachable past the long option lists */
 .nk-filtersheet__foot{position:sticky;bottom:0;display:flex;gap:12px;align-items:center;
   background:var(--nk-bg);padding:14px 0 calc(16px + env(safe-area-inset-bottom));border-top:1px solid var(--nk-border-soft)}
+/* footer pair shares one height + radius so Clear never reads as a runt button */
+.nk-filtersheet__foot .nk-btn--ghost{padding-block:16px;border-radius:var(--nk-r-pill)}
 
 /* floating back-to-top (feed) — the feed has no bottom bar, so bottom-right is free */
 .nk-backtotop{position:fixed;right:clamp(16px,4vw,32px);bottom:calc(20px + env(safe-area-inset-bottom));z-index:60;
@@ -950,29 +962,48 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-redirect-panel{position:relative;width:min(480px,calc(100vw - 40px));background:var(--nk-bg);
   border:1px solid color-mix(in srgb,var(--nk-border) 50%,transparent);border-radius:24px;padding:36px;
   display:flex;flex-direction:column;gap:24px;box-shadow:var(--nk-edge-top),var(--nk-shadow-modal)}
-.nk-redirect-close{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:22px;
+/* Shared overlay close button (see ui.tsx CloseButton) — one dismiss affordance
+   across the redirect modal, filter sheet and legal drawer. */
+.nk-closebtn{width:44px;height:44px;border-radius:14px;flex:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;background:var(--nk-surface);
-  transition:background .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
-.nk-redirect-close:hover{background:var(--nk-surface-2)}
-.nk-redirect-close:active{transform:scale(.94)}
-/* bottom-sheet grabber pill signals the sheet is dismissible (2026 mobile-sheet
-   convention); desktop keeps just the corner X */
-.nk-redirect-grabber{display:none}
-.nk-redirect-qr{display:flex;align-items:center;gap:16px;padding-top:4px}
-/* Clickable store badges — the real path for desktop (where the /go link can't
-   resolve to a store) and an explicit choice on mobile. Just centres the inner
-   .nk-appbadges (which owns its own flex/gap via <AppBadges gap={12}/>). */
+  border:1px solid var(--nk-border);
+  transition:background .15s ease,border-color .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
+.nk-closebtn:hover{background:var(--nk-surface-2);border-color:var(--nk-border-strong)}
+.nk-closebtn:active{transform:scale(.94)}
+.nk-redirect-close{position:absolute;top:16px;right:16px}
+/* Bottom-sheet grabber pill + its padded drag zone (touch-action:none so the
+   swipe never fights sheet scrolling). Both sheets share this anatomy; the
+   drag-to-dismiss behaviour lives in app/lib/use-sheet-drag.ts. */
+.nk-sheet-grabzone{display:none}
+/* Desktop hero: the QR is the working handoff path (the /go smart link only
+   resolves to a store on a phone), so it reads as the primary action — carded,
+   large, with its own heading. */
+.nk-redirect-qr{display:flex;align-items:center;gap:18px;padding:16px;
+  background:var(--nk-surface);border:1px solid var(--nk-border);border-radius:16px}
+/* Clickable store badges — the desktop click path beside the QR. Just centres the
+   inner .nk-appbadges (which owns its own flex/gap via <AppBadges gap={12}/>). */
 .nk-redirect-stores{display:flex;justify-content:center}
+/* mobile-only quiet store text row (the /go CTA already routes the right store) */
+.nk-redirect-storestext{display:none}
+@media(min-width:561px){
+  /* the /go smart link 302s back to the homepage on desktop UAs — never show a
+     decoy primary there; the QR card + badges are the real desktop paths */
+  .nk-redirect-smartlink{display:none}
+}
 @media(max-width:560px){
   .nk-redirect-scrim{align-items:flex-end}
   .nk-redirect-panel{width:100%;border-radius:24px 24px 0 0;max-height:92vh;overflow:auto;
     padding-bottom:calc(36px + env(safe-area-inset-bottom));animation:nk-sheet-in .3s var(--nk-ease-spring) both}
   .nk-redirect-scrim.is-closing .nk-redirect-panel{animation:nk-sheet-out .2s var(--nk-ease) both}
-  .nk-redirect-grabber{display:block;width:36px;height:4px;border-radius:999px;
-    background:var(--nk-border-strong);margin:2px auto 4px}
-  /* scanning a QR with the same phone you're holding is impossible — the store
-     badges are the mobile path, so drop the QR block and reclaim sheet height */
+  .nk-sheet-grabzone{display:flex;justify-content:center;padding:6px 40px;margin:-14px 0 -10px;
+    touch-action:none;cursor:grab}
+  .nk-sheet-grabber{display:block;width:36px;height:4px;border-radius:999px;background:var(--nk-border-strong)}
+  /* scanning a QR with the same phone you're holding is impossible — the /go
+     smart CTA is the mobile path, so drop the QR card and reclaim sheet height */
   .nk-redirect-qr{display:none}
+  /* one primary tap on mobile: badges collapse to the quiet text row */
+  .nk-redirect-stores{display:none}
+  .nk-redirect-storestext{display:block}
 }
 @keyframes nk-sheet-in{from{transform:translateY(100%)}to{transform:none}}
 @keyframes nk-sheet-out{from{transform:none}to{transform:translateY(100%)}}

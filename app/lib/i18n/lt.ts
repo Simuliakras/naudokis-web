@@ -34,6 +34,7 @@ export const lt: Dict = {
     listings: "Nuomojami daiktai",
     howItWorks: "Kaip tai veikia",
     getApp: "Atsisiųsti programėlę",
+    getAppShort: "Programėlė",
     language: "Kalba",
     languageNames: { lt: "Lietuvių", en: "English" },
     primary: "Pagrindinė navigacija",
@@ -640,10 +641,16 @@ export const lt: Dict = {
   },
   bridge: {
     defaultTitle: "Atsisiųskite Naudokis ir tęskite programėlėje",
+    // DRAFT (marketing sign-off): role-neutral — covers both marketplace sides.
     defaultBody:
-      "Programėlėje pasirinksite datas, matysite galutinę kainą ir užstatą, susirašysite, mokėsite per Stripe ir valdysite rezervaciją.",
+      "Programėlėje išsinuomosite daiktus šalia — pasirinksite datas, matysite galutinę kainą ir mokėsite per Stripe — arba paskelbsite savo daiktą ir gausite išmokas.",
     qrHint: "Nuskenuokite QR kodą telefonu ir atidarykite Naudokis.",
+    qrTitle: "Nuskenuokite ir tęskite telefone",
     installCta: "Atsisiųsti programėlę",
+    keepBrowsing: "Toliau naršyti svetainėje",
+    emailSelf: "Nusiųsti nuorodą sau el. paštu",
+    emailSelfSubject: "Naudokis programėlės nuoroda",
+    storesAlso: "Taip pat:",
     close: "Uždaryti",
     opensAppHint: "Atsidarys programėlėje",
     googlePlayAlt: "Gaukite „Google Play“ parduotuvėje",

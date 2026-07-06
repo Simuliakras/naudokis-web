@@ -7,10 +7,11 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
+import { useSheetDrag } from "@/app/lib/use-sheet-drag";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
-import { Icon, Breadcrumb, FilterSelect, InputClear, Toggle, openRedirect, type SelectOption } from "./ui";
+import { Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, Toggle, openRedirect, type SelectOption } from "./ui";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { useCategories, type Category } from "@/app/lib/categories";
 import { useListingsInfinite, parseSortKey, photoFirst } from "@/app/lib/listings";
@@ -607,6 +608,7 @@ function FeedFilterSheet({
   onDelivery: (on: boolean) => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const grabRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const [shown, setShown] = useState(false);
   useFocusTrap(panelRef, open);
@@ -614,6 +616,8 @@ function FeedFilterSheet({
   // viewport grows past the mobile breakpoint (the trigger is mobile-only) so a
   // resized desktop is never stuck behind the sheet.
   useDismissableLayer(open, onClose, { initialFocus: closeRef, closeAt: "(min-width: 561px)" });
+  // Same sheet anatomy as the app-redirect sheet: grabber pill + swipe-to-dismiss.
+  useSheetDrag({ panelRef, handleRef: grabRef, enabled: open, onDismiss: onClose });
   // Drive the slide-in: keyed on `open` alone so an in-sheet filter tap (which
   // re-renders the parent) never restarts the entrance animation.
   useEffect(() => {
@@ -633,18 +637,20 @@ function FeedFilterSheet({
     <div className={"nk-modal-scrim nk-filtersheet-scrim" + (shown ? " open" : "")} onClick={onClose}
       role="dialog" aria-modal="true" aria-label={title}>
       <div ref={panelRef} className="nk-sheet nk-filtersheet" onClick={(e) => e.stopPropagation()}>
+        <div ref={grabRef} className="nk-sheet-grabzone" aria-hidden="true"><span className="nk-sheet-grabber" /></div>
         <div className="nk-filtersheet__head">
           <h2 className="nk-filtersheet__title">{title}</h2>
-          <button ref={closeRef} type="button" className="nk-round nk-round--outline" onClick={onClose} aria-label={closeLabel}>
-            <Icon name="X" size={20} stroke={2} color="var(--nk-text)" />
-          </button>
+          <CloseButton ref={closeRef} onClick={onClose} label={closeLabel} />
         </div>
-        <FilterSheetGroup label={sortLabel} value={sortValue} options={sortOptions} onChange={onSort} />
+        {/* Section order mirrors the desktop toolbar (category → city → delivery),
+            leading with the decision-critical dimensions; sort — a presentation
+            control, not a filter — goes last instead of eating the first screen. */}
         <FilterSheetGroup label={categoryLabel} value={categoryValue} options={categoryOptions} onChange={onCategory} />
         <FilterSheetGroup label={cityLabel} value={cityValue} options={cityOptions} onChange={onCity} heading={cityHeading} />
         <div className="nk-filtersheet__group">
-          <Toggle icon="Car" on={delivery} onChange={onDelivery}>{deliveryLabel}</Toggle>
+          <Toggle icon="Truck" on={delivery} onChange={onDelivery}>{deliveryLabel}</Toggle>
         </div>
+        <FilterSheetGroup label={sortLabel} value={sortValue} options={sortOptions} onChange={onSort} />
         <div className="nk-filtersheet__foot">
           {anyActive && (
             <button type="button" className="nk-btn nk-btn--ghost" onClick={onReset}>{clearLabel}</button>

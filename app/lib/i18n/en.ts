@@ -15,6 +15,7 @@ export const en: Dict = {
     listings: "Items to rent",
     howItWorks: "How it works",
     getApp: "Get the app",
+    getAppShort: "Get app",
     language: "Language",
     languageNames: { lt: "Lietuvių", en: "English" },
     primary: "Primary navigation",
@@ -577,10 +578,16 @@ export const en: Dict = {
   },
   bridge: {
     defaultTitle: "Get Naudokis to continue in the app",
+    // DRAFT (marketing sign-off): role-neutral — covers both marketplace sides.
     defaultBody:
-      "Choose dates, see the final price and deposit, message the owner, pay through Stripe and manage your booking in the app.",
+      "In the app you can rent items nearby — choose dates, see the final price and pay through Stripe — or list your own items and get paid.",
     qrHint: "Scan the QR code with your phone to open Naudokis.",
+    qrTitle: "Scan to continue on your phone",
     installCta: "Get the app",
+    keepBrowsing: "Keep browsing the site",
+    emailSelf: "Email yourself the link",
+    emailSelfSubject: "Your Naudokis app link",
+    storesAlso: "Also on:",
     close: "Close",
     opensAppHint: "Opens in the app",
     googlePlayAlt: "Get it on Google Play",

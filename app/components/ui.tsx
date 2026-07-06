@@ -253,13 +253,36 @@ export function Illustration({
    Locked-mode trigger — any component can call openRedirect(...)
    to open the shared <AppRedirect/> modal (mounted via <Chrome/>).
    ============================================================ */
-export type RedirectPayload = { title: string; body: string };
+// Optional listing context keeps the user's intent visible across the handoff
+// (compact item row in the modal). Real wire data only — title/thumb/price come
+// from the listing view models, never fabricated.
+export type RedirectListingContext = { title: string; thumb?: string; priceLabel?: string };
+export type RedirectPayload = { title: string; body: string; listing?: RedirectListingContext };
 export const NK_REDIRECT_EVENT = "nk:redirect";
 
 export function openRedirect(payload: RedirectPayload) {
   if (typeof window === "undefined") return;
   trackEvent("App Bridge Open", { title: payload.title });
   window.dispatchEvent(new CustomEvent<RedirectPayload>(NK_REDIRECT_EVENT, { detail: payload }));
+}
+
+/* ---------------- Shared overlay close button ----------------
+   One dismiss affordance for every overlay layer (redirect modal, filter sheet,
+   legal TOC drawer) so muscle memory transfers — 44px rounded square, surface
+   fill, hairline border. Callers pass their own localized aria-label; extra
+   classes only position it (e.g. the modal's absolute corner). */
+export function CloseButton({ label, onClick, className, ref }: {
+  label: string;
+  onClick: () => void;
+  className?: string;
+  ref?: React.Ref<HTMLButtonElement>;
+}) {
+  return (
+    <button ref={ref} type="button" className={"nk-closebtn" + (className ? " " + className : "")}
+      onClick={onClick} aria-label={label}>
+      <Icon name="X" size={20} color="var(--nk-text)" />
+    </button>
+  );
 }
 
 /* ---------------- Pill (active/selected accent) ---------------- */

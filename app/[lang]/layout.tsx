@@ -8,6 +8,7 @@ import { I18nProvider } from "../components/I18nProvider";
 import { ScrollToTop } from "../components/ScrollToTop";
 import { locales, isLocale, localeHome } from "@/app/lib/i18n/config";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
+import { APP_STORE_ID } from "@/app/lib/contact";
 import { SITE_URL } from "@/app/lib/seo";
 
 const archivo = Archivo({
@@ -39,6 +40,9 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
     description: meta.description,
     applicationName: "Naudokis",
     manifest: "/manifest.webmanifest",
+    // iOS Safari Smart App Banner — Apple's own trusted install strip on the
+    // highest-intent mobile segment; renders only in iOS Safari.
+    itunes: { appId: APP_STORE_ID },
     // Geo-targeting signals for Lithuania (Vilnius), carried over from the
     // previous site so regional intent isn't lost in the migration.
     other: {

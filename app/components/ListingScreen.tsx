@@ -93,7 +93,10 @@ export function ListingScreen({ id }: { id: string }) {
   // Transactional actions are Locked — they open the app-redirect modal. Favoriting
   // only persists in the app, so we do NOT fill the heart here (a "saved" state the
   // web can't keep would be a false success signal); the modal is the feedback.
-  const lockFav = () => openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody });
+  // Every trigger carries the listing context so the modal can keep the user's
+  // intent (item + price) visible across the install handoff.
+  const listingCtx = { title: listing.title, thumb: listing.images[0], priceLabel: `${listing.price} ${dict.detail.perDay}` };
+  const lockFav = () => openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody, listing: listingCtx });
   // Sharing is a real web action (not app-locked): use the native share sheet
   // where available, otherwise copy the URL and flash a transient "copied" state.
   const share = async () => {
@@ -110,10 +113,10 @@ export function ListingScreen({ id }: { id: string }) {
       // The user dismissed the share sheet (or clipboard was blocked) — keep state unchanged.
     }
   };
-  const reserve = () => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody });
-  const pickDates = () => openRedirect({ title: dict.bridge.datesTitle, body: dict.bridge.datesBody });
-  const contact = () => openRedirect({ title: dict.bridge.contactTitle, body: dict.bridge.contactBody });
-  const showReviews = () => openRedirect({ title: dict.bridge.reviewsTitle, body: dict.bridge.reviewsBody });
+  const reserve = () => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: listingCtx });
+  const pickDates = () => openRedirect({ title: dict.bridge.datesTitle, body: dict.bridge.datesBody, listing: listingCtx });
+  const contact = () => openRedirect({ title: dict.bridge.contactTitle, body: dict.bridge.contactBody, listing: listingCtx });
+  const showReviews = () => openRedirect({ title: dict.bridge.reviewsTitle, body: dict.bridge.reviewsBody, listing: listingCtx });
 
   return shell(
     <>

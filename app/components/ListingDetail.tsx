@@ -555,7 +555,7 @@ function GalleryLightbox({ images, title, start, onClose }: {
             <span aria-hidden />
           )}
           <button className="nk-btn nk-btn--primary nk-btn--sm" title={dict.bridge.opensAppHint}
-            onClick={() => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody })}>
+            onClick={() => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: { title, thumb: images[i] } })}>
             <Icon name="Smartphone" size={16} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
           </button>
         </div>
@@ -808,7 +808,7 @@ export function ReviewsSection({ listing, onShowReviews }: { listing: ListingDet
       ) : (
         <SectionEmpty icon="MessageCircle" title={t.reviewsEmptyTitle} subtitle={t.reviewsEmptyBody}
           actionLabel={t.reserve}
-          onAction={() => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody })} />
+          onAction={() => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: { title: listing.title, thumb: listing.images[0], priceLabel: `${listing.price} ${t.perDay}` } })} />
       )}
     </Section>
   );

@@ -177,25 +177,28 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
               {dict.nav.howItWorks}
             </Link>
             <LocaleSwitcher />
-            <button
-              className="nk-btn nk-btn--primary"
-              style={{ padding: "10px 20px", fontSize: 15 }}
-              onClick={() =>
-                openRedirect({
-                  title: dict.bridge.defaultTitle,
-                  body: dict.bridge.defaultBody,
-                })
-              }
-            >
-              <Icon
-                name="Download"
-                size={17}
-                stroke={2.2}
-                color="var(--nk-text)"
-              />{" "}
-              {dict.nav.getApp}
-            </button>
           </nav>
+          {/* Install CTA lives OUTSIDE the collapsible link group so the site's
+              single conversion action survives the ≤1120px collapse — full label
+              on desktop, compact label beside the burger on phones/tablets. */}
+          <button
+            className="nk-btn nk-btn--primary nk-nav-cta"
+            onClick={() =>
+              openRedirect({
+                title: dict.bridge.defaultTitle,
+                body: dict.bridge.defaultBody,
+              })
+            }
+          >
+            <Icon
+              name="Download"
+              size={17}
+              stroke={2.2}
+              color="var(--nk-text)"
+            />{" "}
+            <span className="nk-nav-cta__full">{dict.nav.getApp}</span>
+            <span className="nk-nav-cta__short">{dict.nav.getAppShort}</span>
+          </button>
           <button
             ref={burgerRef}
             className="nk-nav-burger"

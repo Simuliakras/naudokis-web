@@ -64,6 +64,7 @@ export type Dict = {
     listings: string; // "Items to rent" / "Nuomojami daiktai" link to the feed
     howItWorks: string; // "Kaip tai veikia" link
     getApp: string; // primary "Get the app" button
+    getAppShort: string; // compact install CTA in the ≤1120px sticky bar
     language: string; // language-picker trigger label ("Kalba" / "Language")
     languageNames: { lt: string; en: string }; // endonyms shown in the picker
     primary: string; // aria-label for the primary <nav> landmark
@@ -387,7 +388,12 @@ export type Dict = {
     defaultTitle: string;
     defaultBody: string;
     qrHint: string;
-    installCta: string; // primary install button in the bridge modal (→ /go smart link)
+    qrTitle: string; // desktop-modal hero heading over the QR ("scan to continue on your phone")
+    installCta: string; // primary install button in the bridge modal (mobile-only — /go resolves a store only on phones)
+    keepBrowsing: string; // explicit low-emphasis text dismiss ("keep browsing the site")
+    emailSelf: string; // desktop fallback — mailto with the smart-install link prefilled
+    emailSelfSubject: string;
+    storesAlso: string; // mobile lead-in for the quiet store text links ("Also on:")
     close: string;
     opensAppHint: string; // affordance hint on locked CTAs ("Opens in the app")
     googlePlayAlt: string; // store-badge image alt / button accessible name
