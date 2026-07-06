@@ -106,7 +106,7 @@ export const en: Dict = {
     },
     eyebrow: "How it works",
     title: "Rent what you need. Earn from what you own.",
-    lead: "Naudokis connects people and businesses that need an item for a short time with private or business owners ready to rent it out. Choose your role to see the full journey.",
+    lead: "Naudokis connects people who need an item for a short time with owners ready to rent it out. Choose your role to see the full journey.",
     renter: {
       label: "Renter",
       lead: "From search to return, here is how to rent for a day, a weekend or a project.",
@@ -159,7 +159,7 @@ export const en: Dict = {
           icon: "Camera",
           title: "Create a clear listing",
           tag: "Easy",
-          tone: "purple",
+          tone: "yellow",
           screen: "list",
           body: "Add photos, describe what is included and set your price and deposit.",
         },
@@ -175,7 +175,7 @@ export const en: Dict = {
           icon: "Handshake",
           title: "Hand over with confidence",
           tag: "Handed over",
-          tone: "green",
+          tone: "yellow",
           screen: "handover",
           body: "Meet at the agreed time, check the condition and hand over the item. Deposits and dispute support help protect both sides.",
         },
@@ -190,7 +190,7 @@ export const en: Dict = {
       ],
     },
     trustEyebrow: "Trust on both sides",
-    trustTitle: "Clearer rentals for private and business users",
+    trustTitle: "Clear, protected rentals for people and businesses",
     trust: [
       {
         icon: "CreditCard",
@@ -208,6 +208,8 @@ export const en: Dict = {
         body: "Clear deposit, damage and evidence rules, plus dispute support, help both sides handle problems.",
       },
     ],
+    browseCta: "Browse items",
+    ctaQrHint: "Scan with your phone",
     faqEyebrow: "More questions?",
     faqTitle: "Common questions",
     faq: [
@@ -228,6 +230,25 @@ export const en: Dict = {
         a: "Dates, final amounts, payments, messages, bookings and notifications are managed in the app. On the website you can browse and compare listings.",
       },
     ],
+    // DRAFT (marketing/legal sign-off): owner-side FAQ — mirrors the LT set.
+    faqOwner: [
+      {
+        q: "When do I get paid?",
+        a: "After the rental is completed and the payout conditions are met, your payout is sent through Stripe. Payouts follow the process set out in the Terms of Use.",
+      },
+      {
+        q: "How much does listing an item cost?",
+        a: "Listing an item is free. Any platform fees for a specific booking are shown upfront, before confirmation.",
+      },
+      {
+        q: "What if an item comes back damaged?",
+        a: "The refundable deposit and the dispute process help: you submit evidence in the app and Naudokis administers the dispute under the rules.",
+      },
+      {
+        q: "Do I have to accept every request?",
+        a: "No — you confirm or decline booking requests in the app, and you can message the renter first.",
+      },
+    ],
     ctaPhoneAlt: "Naudokis app",
     screen: {
       searchPlaceholder: "What do you need to rent?",
@@ -240,8 +261,10 @@ export const en: Dict = {
       listCta: "Publish",
       acceptCta: "Confirm booking",
       handoverCta: "Hand over item",
-      payoutAmount: "+ €50",
-      payoutLabel: "Payout sent",
+      // multi-day amount (≠ 1× the mock's daily price) + explicit after-fees
+      // qualifier, so the illustration can't read as a fee-free gross payout
+      payoutAmount: "+ €120",
+      payoutLabel: "Payout sent, after fees",
       completedPill: "Completed",
     },
   },

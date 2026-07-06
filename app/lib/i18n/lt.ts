@@ -133,8 +133,8 @@ export const lt: Dict = {
         "Sužinokite, kaip per Naudokis išsinuomoti arba išnuomoti daiktą: paieška, rezervacija, mokėjimas, perdavimas, grąžinimas ir išmoka.",
     },
     eyebrow: "Kaip tai veikia",
-    title: "Nuomokitės tai, ko reikia. Uždirbkite iš to, ką turite.",
-    lead: "Naudokis sujungia žmones ir verslus, kuriems daikto reikia trumpam, su privačiais ar verslo savininkais, pasirengusiais jį išnuomoti. Pasirinkite vaidmenį ir peržiūrėkite visą kelią.",
+    title: "Nuomokitės tai, ko reikia. Uždirbkite iš to, ką turite.",
+    lead: "Naudokis sujungia tuos, kam daikto reikia trumpam, su savininkais, pasirengusiais jį išnuomoti. Pasirinkite vaidmenį ir peržiūrėkite visą kelią.",
     renter: {
       label: "Nuomininkas",
       lead: "Nuo paieškos iki grąžinimo — taip išsinuomosite daiktą dienai, savaitgaliui ar projektui.",
@@ -187,7 +187,7 @@ export const lt: Dict = {
           icon: "Camera",
           title: "Sukurkite aiškų skelbimą",
           tag: "Lengva",
-          tone: "purple",
+          tone: "yellow",
           screen: "list",
           body: "Įkelkite nuotraukas, aprašykite komplektaciją ir nustatykite kainą bei užstatą.",
         },
@@ -203,7 +203,7 @@ export const lt: Dict = {
           icon: "Handshake",
           title: "Perduokite užtikrintai",
           tag: "Perduota",
-          tone: "green",
+          tone: "yellow",
           screen: "handover",
           body: "Susitikite sutartu laiku, patikrinkite būklę ir perduokite daiktą. Užstatas bei ginčų sprendimas padeda apsaugoti abi puses.",
         },
@@ -236,6 +236,8 @@ export const lt: Dict = {
         body: "Aiškios užstato, žalos ir įrodymų taisyklės bei pagalba ginčo atveju padeda abiem pusėms.",
       },
     ],
+    browseCta: "Naršyti daiktus",
+    ctaQrHint: "Nuskenuokite telefonu",
     faqEyebrow: "Dar klausimų?",
     faqTitle: "Dažniausi klausimai",
     faq: [
@@ -256,20 +258,45 @@ export const lt: Dict = {
         a: "Programėlėje pasirenkamos datos, rodomos galutinės sumos, tvarkomi mokėjimai, žinutės, rezervacijos ir pranešimai. Svetainėje galite patogiai naršyti ir palyginti pasiūlymus.",
       },
     ],
+    // DRAFT (marketing/legal sign-off): owner-side FAQ — payouts, fees, damage,
+    // requests. Only already-claimed facts (Stripe payouts, upfront fees, deposit
+    // + dispute process per the Terms); no numbers invented.
+    faqOwner: [
+      {
+        q: "Kada gaunu išmoką?",
+        a: "Užbaigus nuomą ir įvykdžius išmokos sąlygas, išmoka pervedama per Stripe. Išmokoms taikoma Naudojimosi sąlygose nurodyta tvarka.",
+      },
+      {
+        q: "Kiek kainuoja paskelbti daiktą?",
+        a: "Skelbti daiktą nemokama. Konkrečiai rezervacijai taikomi platformos mokesčiai parodomi iš anksto, prieš patvirtinant.",
+      },
+      {
+        q: "Kas, jei daiktas grąžinamas sugadintas?",
+        a: "Padeda grąžinamas užstatas ir ginčų procesas: pateikiate įrodymus programėlėje, o Naudokis administruoja ginčą pagal taisykles.",
+      },
+      {
+        q: "Ar privalau patvirtinti kiekvieną užklausą?",
+        a: "Ne — rezervacijų užklausas tvirtinate arba atmetate programėlėje, prieš tai galite susirašyti su nuomininku.",
+      },
+    ],
     ctaPhoneAlt: "Naudokis programėlė",
     screen: {
       searchPlaceholder: "Ką norite išsinuomoti?",
       reserveCta: "Rezervuoti",
-      frozenPill: "Rezervuota",
+      // hold-state (mirrors EN "Held") — "Rezervuota" contradicted the Reserve
+      // button right under it (completed state above the action that causes it)
+      frozenPill: "Laikoma jums",
       pickupCta: "Susitikti su savininku",
       reviewCta: "Palikti atsiliepimą",
       listUpload: "Įkelkite nuotraukas",
-      listPrice: "50 € / d.",
+      listPrice: "50 € / para",
       listCta: "Skelbti",
       acceptCta: "Patvirtinti rezervaciją",
       handoverCta: "Perduoti daiktą",
-      payoutAmount: "+ 50 €",
-      payoutLabel: "Išmoka pervesta",
+      // multi-day amount (≠ 1× the mock's daily price) + explicit after-fees
+      // qualifier, so the illustration can't read as a fee-free gross payout
+      payoutAmount: "+ 120 €",
+      payoutLabel: "Išmoka pervesta po mokesčių",
       completedPill: "Užbaigta",
     },
   },

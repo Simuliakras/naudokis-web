@@ -143,9 +143,12 @@ export type Dict = {
     trustEyebrow: string;
     trustTitle: string;
     trust: [HtwTrust, HtwTrust, HtwTrust];
+    browseCta: string; // mid-funnel exit into the live inventory ("Browse items")
+    ctaQrHint: string; // caption under the CTA-banner QR ("Scan with your phone")
     faqEyebrow: string;
     faqTitle: string;
-    faq: FaqItem[];
+    faq: FaqItem[]; // renter-slanted questions (shown for the renter role)
+    faqOwner: FaqItem[]; // owner-side questions (payouts, fees, damage) for the owner role
     ctaPhoneAlt: string;
     // micro-labels rendered inside the synced phone mock-ups
     screen: {
