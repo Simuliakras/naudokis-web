@@ -225,7 +225,7 @@ export type Dict = {
     metaFallbackDescription: string;
     // SEO <title> / description for a single listing. `city` is the raw city name
     // (LT locative applied inside the dictionary); `category` is the listing's
-    // primary category name. Both already include the " — Naudokis.lt" suffix.
+    // primary category name. Both already include the " | Naudokis.lt" suffix.
     seoTitle: (parts: { title: string; city?: string }) => string;
     seoDescription: (parts: { title: string; city?: string; category?: string }) => string;
     share: string; // aria-label on the gallery share/more button

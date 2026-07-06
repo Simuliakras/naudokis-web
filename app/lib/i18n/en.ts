@@ -1,11 +1,14 @@
 // English dictionary — launch-ready user-facing copy for the localized site.
+// EN style guide: "item" = the physical thing, "listing" = the ad/page,
+// "listings" is the one count noun for results, and "reserve" (never "book")
+// is the one verb for the conversion action.
 import type { Dict } from "./types";
 
 export const en: Dict = {
   meta: {
-    title: "Item rental in Lithuania from people and businesses | Naudokis.lt",
+    title: "Item rental in Lithuania | Naudokis.lt",
     description:
-      "Rent tools, vehicles, cameras and more from private or business owners in Lithuania. Compare online, then choose dates and book in the Naudokis app.",
+      "Rent tools, vehicles, cameras and more from private or business owners in Lithuania. Compare online, then choose dates and reserve in the Naudokis app.",
     ogLocale: "en_US",
     ogImageAlt: "Naudokis.lt",
   },
@@ -73,15 +76,15 @@ export const en: Dict = {
     eyebrow: "Browse",
     title: "The latest items to rent",
     all: "All items",
-    errorTitle: "We couldn’t load rentals",
+    errorTitle: "We couldn’t load listings",
     errorSubtitle:
       "We couldn’t show rentals right now. Check your connection and try again.",
     errorAction: "Try again",
-    emptyTitle: "No rentals match this search",
+    emptyTitle: "No listings match this search",
     emptySubtitle: (query) =>
-      `No rentals matched “${query}”. Try another keyword or city, or clear your search.`,
+      `No listings matched “${query}”. Try another keyword or city, or clear your search.`,
     emptyAction: "Clear search",
-    bandEmptyTitle: "No rentals yet",
+    bandEmptyTitle: "No listings yet",
     bandEmptyBody:
       "New items are added all the time. Check back later or start with the categories.",
     bandEmptyAction: "All categories",
@@ -340,7 +343,7 @@ export const en: Dict = {
     goToSlide: (i) => `Show example ${i + 1}`,
   },
   cta: {
-    title: "Find it online. Book it in the app.",
+    title: "Find it online. Reserve it in the app.",
     body: "Choose dates, review the final price and deposit, message the owner, pay through Stripe and manage the rental in one place.",
     phoneAlt: "Booking screen in the Naudokis app",
   },
@@ -414,16 +417,16 @@ export const en: Dict = {
     socialLabel: "Social media",
   },
   detail: {
-    metaFallbackTitle: "Item rental — Naudokis.lt",
+    metaFallbackTitle: "Item rental | Naudokis.lt",
     metaFallbackTitleForId: (readableId) =>
-      `${readableId} rental — Naudokis.lt`,
+      `${readableId} rental | Naudokis.lt`,
     metaFallbackDescription:
       "View this item’s rental price, location and terms on Naudokis.lt, then choose dates and confirm the final booking amount in the app.",
     seoTitle: ({ title, city }) =>
-      `${title} rental${city ? ` in ${city}` : ""} — Naudokis.lt`,
+      `${title} rental${city ? ` in ${city}` : ""} | Naudokis.lt`,
     seoDescription: ({ title, city, category }) => {
       const location = city ? ` in ${city}` : " in Lithuania";
-      const categoryText = category ? ` ${category.toLowerCase()}` : "";
+      const categoryText = category ? ` (${category.toLowerCase()})` : "";
       return `Rent ${title}${categoryText}${location} on Naudokis.lt. Review the daily price, owner profile and handover options, then choose dates and confirm the final amount in the app.`;
     },
     share: "Share",
@@ -453,13 +456,13 @@ export const en: Dict = {
     depositReturnable: "Deposit (refundable)",
     reserve: "Reserve in the app",
     reserveMobile: "Reserve",
-    escrowNote: "Naudokis administers payments and refunds through Stripe under the applicable terms",
+    escrowNote: "Naudokis administers payments and refunds through Stripe under the applicable terms.",
     protectedPayments: "Protected payments",
     loadErrorTitle: "We couldn’t load this listing",
     loadErrorBody: "Check your connection and try again.",
     goneTitle: "This listing is no longer available",
     goneBody:
-      "It may have been rented out or removed. Browse other rentals instead.",
+      "It may have been rented out or removed. Browse other listings instead.",
     backToListings: "Items to rent",
     save: "Save",
     newListingPill: "New listing",
@@ -470,7 +473,7 @@ export const en: Dict = {
     galleryClose: "Close gallery",
     galleryPrev: "Previous photo",
     galleryNext: "Next photo",
-    galleryImageError: "Couldn't load this photo",
+    galleryImageError: "Couldn’t load this photo",
     perDayShort: "per day",
     chooseDates: "Choose dates",
     serviceFee: "Platform fees",
@@ -493,7 +496,7 @@ export const en: Dict = {
     hostStatReviews: "Reviews",
     hostStatListings: "Items",
     hostMessage: "Message owner",
-    hostVerifiedNote: "Naudokis has verified some details on this profile",
+    hostVerifiedNote: "Naudokis has verified some details on this profile.",
     hostMemberSince: (year) => `Member since ${year}`,
     hostResponseTime: (hours) =>
       hours <= 1
@@ -606,9 +609,9 @@ export const en: Dict = {
     subtitleAll: "Browse available rentals across Lithuania.",
     subtitleSearch: (q) => `Results for “${q}” across Lithuania.`,
     subtitleSearchGeneric: "Search results across Lithuania.",
-    resultCount: (n) => `${n} rental${n === 1 ? "" : "s"}`,
-    resultCountAtLeast: (n) => `${n}+ rentals`,
-    loadMore: "Show more rentals",
+    resultCount: (n) => `${n} listing${n === 1 ? "" : "s"}`,
+    resultCountAtLeast: (n) => `${n}+ listings`,
+    loadMore: "Show more listings",
     loadingMore: "Loading more…",
     clear: "Clear",
     searchPlaceholder: "What do you need to rent?",
@@ -643,12 +646,12 @@ export const en: Dict = {
     seoBody:
       "Naudokis.lt connects people and businesses that need items for a short time with private and business owners across Lithuania. Browse by category, city or price, then manage dates, messages, the final amount and payment in the app.",
     empty: {
-      searchTitle: (q) => `No rentals found for “${q}”`,
+      searchTitle: (q) => `No listings found for “${q}”`,
       searchBody:
         "Try a different keyword, choose another city or clear your search.",
       searchAction: "Clear search",
-      filterTitle: "No rentals match these filters",
-      filterTitleCity: (city) => `No rentals match these filters in ${city}`,
+      filterTitle: "No listings match these filters",
+      filterTitleCity: (city) => `No listings match these filters in ${city}`,
       filterBody: (delivery) =>
         delivery
           ? "Try another city, choose a wider category or turn off delivery."
@@ -657,7 +660,7 @@ export const en: Dict = {
       cityTitle: (city) => `No listings in ${city} yet`,
       cityBody:
         "Explore other categories or list an item and be one of the first owners here.",
-      categoryTitle: "No rentals in this category yet",
+      categoryTitle: "No listings in this category yet",
       categoryBody:
         "Explore other categories or list an item and be one of the first owners here.",
       categoryActionPrimary: "List an item",

@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/privatumo-
   const { legal, meta } = getDictionary(locale);
   return pageMetadata({
     locale, path: "/privatumo-politika",
-    title: `${loaded.doc.meta.title} — Naudokis.lt`,
+    title: `${loaded.doc.meta.title} | Naudokis.lt`,
     description: legalBlurbDescription(DOC_ID, locale, legal.metaDescriptionFallback),
     ogLocale: meta.ogLocale, ogImageAlt: meta.ogImageAlt,
   });

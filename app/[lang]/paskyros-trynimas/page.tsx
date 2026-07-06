@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/paskyros-t
   const { legal, meta } = getDictionary(locale);
   return pageMetadata({
     locale, path: "/paskyros-trynimas",
-    title: `${loaded.doc.meta.title} — Naudokis.lt`,
+    title: `${loaded.doc.meta.title} | Naudokis.lt`,
     description: legalBlurbDescription(DOC_ID, locale, legal.metaDescriptionFallback),
     ogLocale: meta.ogLocale, ogImageAlt: meta.ogImageAlt,
   });

@@ -9,6 +9,7 @@ import {
 import { makeQueryClient } from "@/app/lib/query";
 import { fetchListing, listingKey, ListingNotFoundError, type ListingDetail } from "@/app/lib/listings";
 import { fetchListingMeta, type ListingMeta } from "@/app/lib/listing-seo";
+import { truncate } from "@/app/lib/legal/format";
 import { ListingScreen } from "@/app/components/ListingScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 
@@ -17,11 +18,16 @@ import { JsonLd } from "@/app/components/JsonLd";
 // LISTING_REVALIDATE, which the data-layer fetches use.)
 export const revalidate = 300;
 
-// Prefer the listing's own description (trimmed) when it's substantial; otherwise
-// fall back to the templated SEO description from the dictionary.
+// Prefer the listing's own description (de-tagged + trimmed) when it's
+// substantial; otherwise fall back to the templated SEO description from the
+// dictionary. Word-boundary truncation with an ellipsis (shared truncate()) —
+// a hard slice amputated SERP snippets mid-word.
+function cleanDescription(raw: string): string {
+  return raw.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
 function listingDescription(data: ListingMeta, fromDict: string): string {
-  const clean = data.description.trim().replace(/\s+/g, " ");
-  return clean.length >= 80 ? clean.slice(0, 200) : fromDict;
+  const clean = cleanDescription(data.description);
+  return clean.length >= 80 ? truncate(clean, 160) : fromDict;
 }
 
 // Turn a slug-style id ("bosch-gsr-18v") into a readable title ("Bosch Gsr 18v")
@@ -110,7 +116,7 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
   ]);
   const product = data
     ? listingJsonLd({
-        locale, id, name: data.title, description: data.description, image: data.image,
+        locale, id, name: data.title, description: cleanDescription(data.description), image: data.image,
         priceCents: data.priceCents, ratingAverage: data.ratingAverage, ratingCount: data.ratingCount,
         itemCondition: data.itemCondition,
       })
