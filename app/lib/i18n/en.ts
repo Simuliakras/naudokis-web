@@ -55,8 +55,8 @@ export const en: Dict = {
     bandEmptyTitle: "No categories yet",
     bandEmptyBody:
       "Categories will be updated shortly. Refresh the page or check back later.",
-    bandEmptyAction: "Refresh",
-    bandEmptySecondary: "Open in the app",
+    bandEmptyAppCta: "Open in the app",
+    bandEmptyRetry: "Refresh",
   },
   offers: {
     eyebrow: "Picked for you",
@@ -161,7 +161,7 @@ export const en: Dict = {
         {
           icon: "BadgeCheck",
           title: "Approve the booking",
-          tag: "Protected",
+          tag: "Approved",
           tone: "green",
           screen: "accept",
           body: "Review the request, confirm availability and keep messages in the app.",
@@ -169,7 +169,7 @@ export const en: Dict = {
         {
           icon: "Handshake",
           title: "Hand over with confidence",
-          tag: "Protected",
+          tag: "Handed over",
           tone: "green",
           screen: "handover",
           body: "Meet at the agreed time, check the condition and hand over the item. Deposits and dispute support help protect both sides.",
@@ -177,7 +177,7 @@ export const en: Dict = {
         {
           icon: "Coins",
           title: "Get paid",
-          tag: "Earn",
+          tag: "Paid out",
           tone: "purple",
           screen: "payout",
           body: "After the rental is completed and payout conditions are met, your payout is sent. Any platform fees are shown in advance.",
@@ -312,16 +312,18 @@ export const en: Dict = {
     tagline: "Item rental from private and business owners across Lithuania.",
     browseHeading: "Browse",
     allCategories: "All categories",
+    // Labels match the canonical backend/tile category names (name_en) so the same
+    // categoryId reads identically in the footer and the discovery grids.
     categories: [
-      { label: "Vehicles", categoryId: "transport" },
-      { label: "Photo & video gear", categoryId: "photo_video" },
-      { label: "Tools & construction", categoryId: "tools_construction" },
-      { label: "Leisure & sport", categoryId: "sports_leisure" },
-      { label: "Home & garden", categoryId: "home_garden" },
-      { label: "Electronics", categoryId: "electronics_tech" },
-      { label: "Audio & events", categoryId: "audio_music_events" },
-      { label: "Events & parties", categoryId: "events_parties" },
-      { label: "Clothing & accessories", categoryId: "clothing_accessories" },
+      { label: "Transport", categoryId: "transport" },
+      { label: "Photo & Video", categoryId: "photo_video" },
+      { label: "Tools & Construction", categoryId: "tools_construction" },
+      { label: "Sports & Leisure", categoryId: "sports_leisure" },
+      { label: "Home & Garden", categoryId: "home_garden" },
+      { label: "Electronics & Tech", categoryId: "electronics_tech" },
+      { label: "Audio, Music & Event Tech", categoryId: "audio_music_events" },
+      { label: "Events & Parties", categoryId: "events_parties" },
+      { label: "Clothing & Accessories", categoryId: "clothing_accessories" },
       { label: "Kids", categoryId: "kids" },
     ],
     helpHeading: "Help & policies",
@@ -332,7 +334,6 @@ export const en: Dict = {
       { label: "Account deletion", href: "/paskyros-trynimas" },
     ],
     copyright: "© 2026 Naudokis.lt. All rights reserved.",
-    secure: "Payments by Stripe",
     socialLabel: "Social media",
   },
   detail: {
@@ -351,13 +352,10 @@ export const en: Dict = {
     share: "Share",
     shareCopied: "Link copied",
     verifiedOwnerPill: "Verified profile",
-    galleryMore: (n) => `+${n} photos`,
+    galleryMore: (n) => `+${n} photo${n === 1 ? "" : "s"}`,
     descHeading: "Description",
     specsHeading: "Specifications",
     ownerHeading: "Item owner",
-    ownerVerified: "Verified profile",
-    ownerNewMember: "Unverified profile",
-    ownerListings: (n) => `${n} item${n === 1 ? "" : "s"}`,
     contact: "Message owner",
     handoverHeading: "Item handover",
     mapTitle: (city) => `${city} on the map`,
@@ -365,7 +363,7 @@ export const en: Dict = {
     pickupFree: "Free",
     deliveryLabel: "Delivery",
     deliveryByArrangement: "By arrangement",
-    deliveryRadius: (km) => `Delivery up to ${km} km`,
+    deliveryRadius: (km) => `Up to ${km} km`,
     termsHeading: "Rental terms",
     reviewsHeading: "Reviews",
     similarHeading: "Similar items",
@@ -375,7 +373,7 @@ export const en: Dict = {
     perDay: "per day",
     depositReturnable: "Deposit (refundable)",
     reserve: "Reserve in the app",
-    reserveMobile: "Open app",
+    reserveMobile: "Reserve",
     appOnlyNote:
       "Choose dates, message the owner, confirm the deposit and pay securely in the app.",
     escrowNote: "Naudokis administers payments and refunds through Stripe under the applicable terms",
@@ -387,19 +385,19 @@ export const en: Dict = {
       "It may have been rented out or removed. Browse other rentals instead.",
     backToListings: "Items to rent",
     save: "Save",
-    newListingPill: "New item",
+    newListingPill: "New listing",
     noPhotos: "No photos",
     galleryAll: (n) => `All ${n} photos`,
     galleryViewLabel: "Photo gallery",
     galleryClose: "Close gallery",
     galleryPrev: "Previous photo",
     galleryNext: "Next photo",
+    galleryImageError: "Couldn't load this photo",
     perDayShort: "per day",
     dateFrom: "From",
     dateTo: "To",
     dateInApp: "Choose in the app",
     chooseDates: "Choose dates",
-    pricePerDayLine: "Rental price per day",
     serviceFee: "Platform fees",
     serviceFeeHint:
       "Any fees, delivery charge and refundable deposit for this booking are shown in the app before you confirm.",
@@ -415,7 +413,6 @@ export const en: Dict = {
     hostStatRating: "Rating",
     hostStatReviews: "Reviews",
     hostStatListings: "Items",
-    hostStatStatus: "Status",
     hostMessage: "Message owner",
     hostVerifiedNote: "Naudokis has verified some details on this profile",
     deliverySub: (city) =>
@@ -437,7 +434,7 @@ export const en: Dict = {
       return "Standard";
     },
     termCancelSub: "Cancellation policy",
-    mobileBookingNote: "Dates and final amount in the app",
+    mobileBookingNote: "Dates & price in the app",
   },
   common: {
     favorite: "Save",
@@ -483,6 +480,11 @@ export const en: Dict = {
       if (category) return `${category} rental | Naudokis.lt`;
       return `Items to rent in ${city} | Naudokis.lt`;
     },
+    landingHeading: ({ category, city }) => {
+      if (category && city) return `${category} rental in ${city}`;
+      if (category) return `${category} rental`;
+      return `Items to rent in ${city}`;
+    },
     landingDescription: ({ category, city }) => {
       if (category && city) {
         return `Browse ${category.toLowerCase()} rentals in ${city}. Find trusted owners nearby, compare prices and reserve in the Naudokis app.`;
@@ -491,6 +493,17 @@ export const en: Dict = {
         return `Find ${category.toLowerCase()} to rent across Lithuania. Filter rentals by city and price, then reserve in the Naudokis app.`;
       }
       return `Browse item rentals in ${city}: tools, vehicles, photo gear, electronics and leisure equipment from trusted owners nearby.`;
+    },
+    landingSeoHeading: ({ category, city }) => {
+      if (category && city) return `${category} rental in ${city}`;
+      if (city) return `Item rental in ${city}`;
+      if (category) return `${category} rental in Lithuania`;
+      return "Item rental in Lithuania";
+    },
+    landingSeoBody: ({ category, city }) => {
+      const where = city ? `in ${city}` : "across Lithuania";
+      const what = category ? category.toLowerCase() : "items";
+      return `Naudokis.lt connects people and businesses that need ${what} for a short time with trusted private and business owners ${where}. Browse by category, city or price, then manage dates, messages, the final amount and payment in the app.`;
     },
     crumbCategories: "Categories",
     titleAll: "Items to rent",
@@ -584,7 +597,7 @@ export const en: Dict = {
     titleValid: (amount) =>
       `You’ve been invited to Naudokis! Get ${amount} on your first rental.`,
     titleUnknown: "You’ve been invited to Naudokis.",
-    titleGeneric: "Get the Naudokis app.",
+    titleGeneric: "Rent items from people nearby.",
     lead: "Naudokis is item rental from trusted people nearby. Get the app to start.",
     rewardExplainer:
       "Your reward is credited to your account once you verify your identity in the app. The friend who invited you is rewarded after your first completed rental.",
@@ -601,6 +614,7 @@ export const en: Dict = {
     notFoundBody:
       "The address may be wrong or the page may have moved. Go home or keep browsing rentals.",
     notFoundAction: "Go home",
+    notFoundBrowse: "Browse rentals",
     errorTitle: "We couldn’t load this page",
     errorBody:
       "Please try again. If the problem continues, come back a little later.",

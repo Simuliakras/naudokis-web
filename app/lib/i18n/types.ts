@@ -91,11 +91,13 @@ export type Dict = {
     title: string;
     all: string;
     // Generic page-intro fallback for a category landing when the backend has no
-    // authored seo/meta description yet (e.g. a brand-new, un-seeded node).
-    seoFallbackBody: (name: string) => string;
+    // authored seo/meta description yet (e.g. a brand-new, un-seeded node). The
+    // category `id` lets LT build the grammatically-correct genitive phrase
+    // instead of interpolating the nominative name; EN ignores it.
+    seoFallbackBody: (name: string, id?: string) => string;
     // Brand-suffixed <title> fallback for the same un-authored case — keeps the
     // site's "… | Naudokis.lt" convention out of the data layer.
-    metaTitleFallback: (name: string) => string;
+    metaTitleFallback: (name: string, id?: string) => string;
     errorTitle: string;
     errorSubtitle: string;
     errorAction: string;
@@ -103,10 +105,11 @@ export type Dict = {
     emptySubtitle: (query: string) => string;
     emptyAction: string;
     // Section-level empty band on the home page (S1 — no data, not a search).
+    // The productive app CTA leads; retrying an empty catalog is the secondary.
     bandEmptyTitle: string;
     bandEmptyBody: string;
-    bandEmptyAction: string;
-    bandEmptySecondary: string;
+    bandEmptyAppCta: string; // primary — opens the app-redirect modal
+    bandEmptyRetry: string; // secondary — refetches the categories query
   };
   offers: {
     eyebrow: string;
@@ -181,7 +184,6 @@ export type Dict = {
     helpHeading: string;
     help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
     copyright: string;
-    secure: string; // "Protected payments" badge by the payment marks
     socialLabel: string; // aria-label for the social-links group
   };
   detail: {
@@ -200,9 +202,6 @@ export type Dict = {
     descHeading: string;
     specsHeading: string;
     ownerHeading: string;
-    ownerVerified: string;
-    ownerNewMember: string;
-    ownerListings: (count: number) => string;
     contact: string;
     handoverHeading: string;
     mapTitle: (city: string) => string;
@@ -210,7 +209,7 @@ export type Dict = {
     pickupFree: string;
     deliveryLabel: string;
     deliveryByArrangement: string;
-    deliveryRadius: (km: number) => string; // "Pristatymas iki N km"
+    deliveryRadius: (km: number) => string; // "Iki N km" (the "Pristatymas" label carries the noun)
     termsHeading: string;
     reviewsHeading: string;
     reviewsEmptyTitle: string;
@@ -238,16 +237,16 @@ export type Dict = {
     galleryClose: string; // lightbox close-button aria-label
     galleryPrev: string; // lightbox previous-photo aria-label
     galleryNext: string; // lightbox next-photo aria-label
+    galleryImageError: string; // shown when a lightbox photo fails to load
     perDayShort: string; // "/ d."
     // booking panel
     dateFrom: string;
     dateTo: string;
     dateInApp: string;
     chooseDates: string; // single booking-panel date affordance label
-    pricePerDayLine: string;
     serviceFee: string;
-    serviceFeeHint: string; // tooltip explaining the free service fee
-    serviceFeeFree: string; // "Nemokama"
+    serviceFeeHint: string; // always-visible note that fees/deposit are shown in the app before confirming
+    serviceFeeFree: string; // fee-row value — "Rodoma programėlėje" (shown in the app), never a fake "free"
     inAppValue: string;
     totalToday: string;
     cancellationNote: (tier: string) => string; // booking-panel cancellation pill
@@ -255,7 +254,6 @@ export type Dict = {
     hostStatRating: string;
     hostStatReviews: string;
     hostStatListings: string;
-    hostStatStatus: string;
     hostMessage: string; // "Rašyti žinutę"
     hostVerifiedNote: string;
     // delivery block
@@ -277,7 +275,10 @@ export type Dict = {
     delivery: string; // short card badge surfacing the delivery-available flag
     perDay: string; // price unit on cards
     reviewCount: (count: number) => string; // localized, pluralized review count
-    newListing: string; // card badge for listings with no reviews yet
+    // Card badge for listings with no reviews yet. Deliberately compact ("Naujas"),
+    // NOT detail.newListingPill's longer phrase: the badge + city must share one
+    // meta-row line at 4-up card widths (~250px), and the long form wraps it.
+    newListing: string;
     breadcrumbHome: string; // breadcrumb root label
     breadcrumbLabel: string; // accessible name for the breadcrumb <nav> landmark
     skipToContent: string; // skip-link label (first focusable element on the page)
@@ -311,7 +312,16 @@ export type Dict = {
     // locale grammar (e.g. the LT locative) inside the dictionary.
     categorySeoLabel: (id: string, fallback: string) => string;
     landingTitle: (parts: { category?: string; city?: string }) => string;
+    // Suffix-free variant of `landingTitle` for the visible <h1> and the
+    // CollectionPage JSON-LD `name`. `landingTitle` keeps the " | Naudokis.lt"
+    // <title> suffix, which must never render inside a heading.
+    landingHeading: (parts: { category?: string; city?: string }) => string;
     landingDescription: (parts: { category?: string; city?: string }) => string;
+    // City/category-aware supporting block (bottom h2 + prose) for the pSEO
+    // landings, so ~100 combo pages don't all share one identical
+    // Lithuania-scoped paragraph. The plain feed keeps `seoHeading`/`seoBody`.
+    landingSeoHeading: (parts: { category?: string; city?: string }) => string;
+    landingSeoBody: (parts: { category?: string; city?: string }) => string;
     crumbCategories: string;
     titleAll: string;
     titleSearch: string;
@@ -413,6 +423,7 @@ export type Dict = {
     notFoundTitle: string;
     notFoundBody: string;
     notFoundAction: string; // back-home CTA
+    notFoundBrowse: string; // secondary CTA → listings feed (the body invites browsing)
     errorTitle: string;
     errorBody: string;
     errorAction: string; // retry CTA (calls reset())

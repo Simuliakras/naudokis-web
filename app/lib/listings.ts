@@ -124,6 +124,16 @@ export type Offer = {
   category?: string; // top-level category id — tints the empty-photo placeholder (optional on the wire)
 };
 
+// Stable "photo safeguard" ordering — surface photo-bearing listings first so a feed
+// page or band isn't a wall of category-icon placeholders. Apply per page (or to a
+// one-shot list), never across accumulated infinite-scroll pages: re-sorting the
+// full list would reshuffle cards the user has already scrolled past. Array.sort is
+// stable, so order within the has-photo / no-photo groups is preserved (the
+// placeholder stays the graceful fallback for the occasional no-photo item).
+export function photoFirst<T extends { img?: string | null }>(list: T[]): T[] {
+  return [...list].sort((a, b) => (a.img ? 0 : 1) - (b.img ? 0 : 1));
+}
+
 /* ---------------- Filters ---------------- */
 // Backend `/listings` accepts q, city, category_id and a sort key. "delivery" is
 // NOT a backend param, so the "Su pristatymu" toggle is applied client-side.

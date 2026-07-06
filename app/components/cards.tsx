@@ -64,7 +64,7 @@ export function OfferCard({
             dots would be a false affordance. The lightbox/gallery lives on the
             detail page where the full photo set is available. */}
       </div>
-      <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
+      <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
         <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", minHeight: 52, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
         {/* meta row: rating + count on the left, location pin + city on the right */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--nk-gap-sm)", flexWrap: "wrap" }}>
@@ -94,7 +94,10 @@ export function OfferCard({
               <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
             </span>
           )}
-          <span className="nk-round nk-round--solid" aria-hidden="true" style={{ marginLeft: "auto" }}>
+          {/* "View details" cue — outline (not solid) so the strongest --nk-purple
+              fill stays reserved for genuine primary actions; the whole card is
+              already a stretched <Link>, so this is decorative (aria-hidden). */}
+          <span className="nk-round nk-round--outline" aria-hidden="true" style={{ marginLeft: "auto" }}>
             <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
           </span>
         </div>
@@ -221,12 +224,20 @@ export function FaqRow({
 export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
   const cls = ghost ? "nk-ghost" : "nk-skel";
   return (
-    <article aria-hidden="true" style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+    <article aria-hidden="true" style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-divider)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <div className={cls} style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }} />
-      <div style={{ padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
-        <div className={cls} style={{ width: "70%", height: 26 }} />
-        <div className={cls} style={{ width: "48%", height: 18 }} />
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
+      <div style={{ padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
+        {/* Reserve two title lines (real title clamps to 2 / minHeight 52) so the
+            card doesn't grow taller when a 2-line title loads (avoids CLS). */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div className={cls} style={{ width: "92%", height: 22 }} />
+          <div className={cls} style={{ width: "58%", height: 22 }} />
+        </div>
+        {/* meta row placeholder at the real row's ~28px (rating pill height) */}
+        <div className={cls} style={{ width: "48%", height: 28 }} />
+        {/* Hairline above the price row mirrors OfferCard's --nk-border pricebar
+            (whose marginTop:auto resolves to 0 at intrinsic height — no extra margin). */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "var(--nk-gap-md)", borderTop: "1px solid var(--nk-border)" }}>
           <div className={cls} style={{ width: 130, height: 20 }} />
           <div className={cls} style={{ width: 44, height: 44, borderRadius: 22 }} />
         </div>
@@ -256,7 +267,7 @@ export function CategoryCardSkeleton({ ghost = false }: { ghost?: boolean } = {}
    optional outline `secondaryLabel` sits beside it (e.g. the empty-category L4
    "Išnuomoti daiktą" + "Visos kategorijos" pairing). */
 export function EmptyState({
-  illustration, icon = "SearchX", title, subtitle,
+  illustration, icon = "SearchX", title, subtitle, titleAs = "h3",
   actionLabel, onAction, actionPrimary = false, actionIcon,
   secondaryLabel, onSecondaryAction, tone = "default",
 }: {
@@ -264,6 +275,7 @@ export function EmptyState({
   icon?: IconName;
   title: string;
   subtitle: string;
+  titleAs?: "h1" | "h3"; // full-page status screens (404/error) render an <h1>; inline empties keep <h3>
   actionLabel?: string;
   onAction?: () => void;
   actionPrimary?: boolean;
@@ -273,6 +285,7 @@ export function EmptyState({
   tone?: "default" | "danger"; // danger tints the icon disk for error states
 }) {
   const danger = tone === "danger";
+  const TitleTag = titleAs;
   // On an error state (danger + a retry action), move focus to the retry button ONCE
   // so keyboard/SR users land on the recovery affordance. Guarded by a ref because
   // call sites pass an inline onAction (new identity each render) — without it the
@@ -293,7 +306,7 @@ export function EmptyState({
             <Icon name={icon} size={40} stroke={1.8} color={danger ? "var(--nk-danger)" : "var(--nk-text-muted)"} />
           </span>}
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", maxWidth: 460 }}>
-        <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", color: "var(--nk-text)" }}>{title}</h3>
+        <TitleTag style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", color: "var(--nk-text)" }}>{title}</TitleTag>
         <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "28px", color: "var(--nk-text-2)" }}>{subtitle}</p>
       </div>
       {(actionLabel || secondaryLabel) && (
@@ -378,7 +391,7 @@ export function SectionEmptyGrid({
         {Array.from({ length: ghostCount }).map((_, i) =>
           cats ? <CategoryCardSkeleton key={i} ghost /> : <OfferCardSkeleton key={i} ghost />)}
       </div>
-      <div className="nk-emptygrid__panel" role="status">
+      <div className="nk-emptygrid__panel" role={tone === "danger" ? "alert" : "status"}>
         <span className="nk-emptygrid__icon" style={{ background: c.bg }}>
           <Icon name={icon ?? fallbackIcon} size={28} color={c.fg} stroke={2} />
         </span>
@@ -386,7 +399,7 @@ export function SectionEmptyGrid({
           <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 23, lineHeight: "28px", color: "var(--nk-text)" }}>{title}</span>
           <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "24px", color: "var(--nk-text-2)" }}>{subtitle}</span>
         </div>
-        <div style={{ display: "flex", gap: "var(--nk-gap-sm)", flexWrap: "wrap", justifyContent: "center", marginTop: 4 }}>
+        <div className="nk-emptygrid__actions" style={{ display: "flex", gap: "var(--nk-gap-sm)", flexWrap: "wrap", justifyContent: "center", marginTop: 4 }}>
           <button className="nk-btn nk-btn--primary" onClick={onPrimary}>{primaryLabel}</button>
           {secondaryLabel && <button className="nk-btn nk-btn--outline" onClick={onSecondary}>{secondaryLabel}</button>}
         </div>

@@ -60,9 +60,18 @@ export const lt: Dict = {
     eyebrow: "Naršykite",
     title: "Populiarios nuomos kategorijos",
     all: "Visos kategorijos",
-    seoFallbackBody: (name) =>
-      `Naršykite ${name.toLowerCase()} nuomos pasiūlymus visoje Lietuvoje. Palyginkite kainas, vietą, savininko profilį ir rezervuokite programėlėje.`,
-    metaTitleFallback: (name) => `${name} nuoma Lietuvoje | Naudokis.lt`,
+    // Use the genitive category label (already inflected) so the copy reads as
+    // correct Lithuanian — interpolating the nominative name produces broken
+    // grammar ("Naršykite įrankiai ir statyba nuomos…"). Falls back to the plain
+    // name only for an unknown id.
+    seoFallbackBody: (name, id) => {
+      const label = (id && LT_CATEGORY_SEO_LABELS[id]) || name;
+      return `Naršykite ${label.toLowerCase()} nuomos pasiūlymus visoje Lietuvoje. Palyginkite kainas, vietą, savininko profilį ir rezervuokite programėlėje.`;
+    },
+    metaTitleFallback: (name, id) => {
+      const label = (id && LT_CATEGORY_SEO_LABELS[id]) || name;
+      return `${label} nuoma Lietuvoje | Naudokis.lt`;
+    },
     errorTitle: "Nepavyko įkelti kategorijų",
     errorSubtitle:
       "Kategorijų šiuo metu nepavyko parodyti. Patikrinkite ryšį ir bandykite dar kartą.",
@@ -74,8 +83,8 @@ export const lt: Dict = {
     bandEmptyTitle: "Kategorijų kol kas nėra",
     bandEmptyBody:
       "Kategorijas netrukus papildysime. Atnaujinkite puslapį arba užsukite vėliau.",
-    bandEmptyAction: "Atnaujinti",
-    bandEmptySecondary: "Atidaryti programėlėje",
+    bandEmptyAppCta: "Atidaryti programėlėje",
+    bandEmptyRetry: "Atnaujinti",
   },
   offers: {
     eyebrow: "Atrinkta jums",
@@ -180,7 +189,7 @@ export const lt: Dict = {
         {
           icon: "BadgeCheck",
           title: "Patvirtinkite rezervaciją",
-          tag: "Apsaugota",
+          tag: "Patvirtinta",
           tone: "green",
           screen: "accept",
           body: "Peržiūrėkite užklausą, patvirtinkite laiką ir visą susirašinėjimą laikykite programėlėje.",
@@ -188,7 +197,7 @@ export const lt: Dict = {
         {
           icon: "Handshake",
           title: "Perduokite užtikrintai",
-          tag: "Apsaugota",
+          tag: "Perduota",
           tone: "green",
           screen: "handover",
           body: "Susitikite sutartu laiku, patikrinkite būklę ir perduokite daiktą. Užstatas bei ginčų sprendimas padeda apsaugoti abi puses.",
@@ -196,7 +205,7 @@ export const lt: Dict = {
         {
           icon: "Coins",
           title: "Gaukite išmoką",
-          tag: "Uždirbk",
+          tag: "Išmokėta",
           tone: "purple",
           screen: "payout",
           body: "Užbaigus nuomą ir įvykdžius išmokos sąlygas, išmoka pervedama jums. Taikomi Platformos mokesčiai parodomi iš anksto.",
@@ -331,14 +340,16 @@ export const lt: Dict = {
     tagline: "Daiktų nuoma iš privačių ir verslo savininkų visoje Lietuvoje.",
     browseHeading: "Kategorijos",
     allCategories: "Visos kategorijos",
+    // Labels match the canonical backend/tile category names so the same
+    // categoryId reads identically in the footer and the discovery grids.
     categories: [
-      { label: "Transporto priemonės", categoryId: "transport" },
-      { label: "Foto ir vaizdo technika", categoryId: "photo_video" },
+      { label: "Transportas", categoryId: "transport" },
+      { label: "Fotografija ir video", categoryId: "photo_video" },
       { label: "Įrankiai ir statyba", categoryId: "tools_construction" },
-      { label: "Laisvalaikis ir sportas", categoryId: "sports_leisure" },
+      { label: "Sportas ir laisvalaikis", categoryId: "sports_leisure" },
       { label: "Namai ir sodas", categoryId: "home_garden" },
-      { label: "Elektronika", categoryId: "electronics_tech" },
-      { label: "Garsas ir renginiai", categoryId: "audio_music_events" },
+      { label: "Elektronika ir technologijos", categoryId: "electronics_tech" },
+      { label: "Garsas, muzika ir renginių technika", categoryId: "audio_music_events" },
       { label: "Renginiai ir šventės", categoryId: "events_parties" },
       { label: "Drabužiai ir aksesuarai", categoryId: "clothing_accessories" },
       { label: "Vaikams", categoryId: "kids" },
@@ -351,7 +362,6 @@ export const lt: Dict = {
       { label: "Paskyros ištrynimas", href: "/paskyros-trynimas" },
     ],
     copyright: "© 2026 Naudokis.lt. Visos teisės saugomos.",
-    secure: "Mokėjimai per Stripe",
     socialLabel: "Socialiniai tinklai",
   },
   detail: {
@@ -369,19 +379,16 @@ export const lt: Dict = {
     share: "Dalintis",
     shareCopied: "Nuoroda nukopijuota",
     verifiedOwnerPill: "Patvirtintas profilis",
-    galleryMore: (n) => `+${n} nuotraukų`,
+    galleryMore: (n) => {
+      const d = n % 10;
+      const dd = n % 100;
+      if ((dd >= 11 && dd <= 19) || d === 0) return `+${n} nuotraukų`;
+      if (d === 1) return `+${n} nuotrauka`;
+      return `+${n} nuotraukos`;
+    },
     descHeading: "Aprašymas",
     specsHeading: "Specifikacijos",
     ownerHeading: "Daikto savininkas",
-    ownerVerified: "Patvirtintas profilis",
-    ownerNewMember: "Profilis nepatvirtintas",
-    ownerListings: (n) => {
-      const d = n % 10;
-      const dd = n % 100;
-      if ((dd >= 11 && dd <= 19) || d === 0) return `${n} daiktų`;
-      if (d === 1) return `${n} daiktas`;
-      return `${n} daiktai`;
-    },
     contact: "Rašyti savininkui",
     handoverHeading: "Daikto perdavimas",
     mapTitle: (city) => `${city} žemėlapyje`,
@@ -389,7 +396,7 @@ export const lt: Dict = {
     pickupFree: "Nemokama",
     deliveryLabel: "Pristatymas",
     deliveryByArrangement: "Pagal susitarimą",
-    deliveryRadius: (km) => `Pristatymas iki ${km} km`,
+    deliveryRadius: (km) => `Iki ${km} km`,
     termsHeading: "Nuomos sąlygos",
     reviewsHeading: "Atsiliepimai",
     similarHeading: "Panašūs daiktai",
@@ -399,7 +406,7 @@ export const lt: Dict = {
     perDay: "/ para",
     depositReturnable: "Užstatas (grąžinamas)",
     reserve: "Rezervuoti programėlėje",
-    reserveMobile: "Atidaryti programėlę",
+    reserveMobile: "Rezervuoti",
     appOnlyNote:
       "Pasirinkite datas, susirašykite su savininku, patvirtinkite užstatą ir saugiai sumokėkite programėlėje.",
     escrowNote: "Mokėjimus ir grąžinimus administruoja Naudokis per Stripe pagal taisykles",
@@ -411,19 +418,19 @@ export const lt: Dict = {
       "Jis galėjo būti išnuomotas arba pašalintas. Peržiūrėkite kitus nuomos pasiūlymus.",
     backToListings: "Nuomojami daiktai",
     save: "Įsiminti",
-    newListingPill: "Naujas daiktas",
+    newListingPill: "Naujas skelbimas",
     noPhotos: "Nuotraukų nėra",
     galleryAll: (n) => `Visos ${n} nuotr.`,
     galleryViewLabel: "Nuotraukų galerija",
     galleryClose: "Uždaryti galeriją",
     galleryPrev: "Ankstesnė nuotrauka",
     galleryNext: "Kita nuotrauka",
+    galleryImageError: "Nepavyko įkelti nuotraukos",
     perDayShort: "/ para",
     dateFrom: "Nuo",
     dateTo: "Iki",
     dateInApp: "Pasirinksite programėlėje",
     chooseDates: "Pasirinkti datas",
-    pricePerDayLine: "Nuomos kaina už parą",
     serviceFee: "Platformos mokesčiai",
     serviceFeeHint:
       "Konkrečiai rezervacijai taikomi mokesčiai, pristatymo kaina ir grąžinamas užstatas parodomi programėlėje prieš patvirtinant.",
@@ -439,7 +446,6 @@ export const lt: Dict = {
     hostStatRating: "Įvertinimas",
     hostStatReviews: "Atsiliepimai",
     hostStatListings: "Daiktai",
-    hostStatStatus: "Būsena",
     hostMessage: "Rašyti savininkui",
     hostVerifiedNote: "Naudokis patvirtino dalį šio profilio duomenų",
     deliverySub: (city) =>
@@ -459,7 +465,7 @@ export const lt: Dict = {
       return "Standartinė";
     },
     termCancelSub: "Atšaukimo politika",
-    mobileBookingNote: "Datos ir galutinė suma programėlėje",
+    mobileBookingNote: "Datos ir kaina programėlėje",
   },
   common: {
     favorite: "Įsiminti",
@@ -525,6 +531,12 @@ export const lt: Dict = {
       if (category) return `${category} nuoma | Naudokis.lt`;
       return `Nuomojami daiktai ${locative} | Naudokis.lt`;
     },
+    landingHeading: ({ category, city }) => {
+      const locative = city ? cityLocativeLt(city) : "";
+      if (category && city) return `${category} nuoma ${locative}`;
+      if (category) return `${category} nuoma`;
+      return `Nuomojami daiktai ${locative}`;
+    },
     landingDescription: ({ category, city }) => {
       const locative = city ? cityLocativeLt(city) : "";
       if (category && city) {
@@ -534,6 +546,18 @@ export const lt: Dict = {
         return `Raskite ${category.toLowerCase()} nuomai visoje Lietuvoje. Filtruokite pasiūlymus pagal miestą ir kainą, tada rezervuokite Naudokis programėlėje.`;
       }
       return `Naršykite daiktų nuomos pasiūlymus ${locative}: įrankius, transportą, foto techniką, elektroniką ir laisvalaikio įrangą iš patikimų savininkų.`;
+    },
+    landingSeoHeading: ({ category, city }) => {
+      const locative = city ? cityLocativeLt(city) : "";
+      if (category && city) return `${category} nuoma ${locative}`;
+      if (city) return `Daiktų nuoma ${locative}`;
+      if (category) return `${category} nuoma Lietuvoje`;
+      return "Daiktų nuoma Lietuvoje";
+    },
+    landingSeoBody: ({ category, city }) => {
+      const where = city ? cityLocativeLt(city) : "visoje Lietuvoje";
+      const what = category ? category.toLowerCase() : "daiktų";
+      return `Naudokis.lt jungia žmones ir verslus, kuriems ${what} reikia trumpam, su patikimais privačiais ir verslo savininkais ${where}. Naršykite pagal kategoriją, miestą ar kainą, o datas, žinutes, galutinę sumą ir mokėjimą valdykite programėlėje.`;
     },
     crumbCategories: "Kategorijos",
     titleAll: "Nuomojami daiktai",
@@ -638,7 +662,7 @@ export const lt: Dict = {
     titleValid: (amount) =>
       `Jus pakvietė į Naudokis! Gaukite ${amount} pirmai nuomai.`,
     titleUnknown: "Jus pakvietė į Naudokis.",
-    titleGeneric: "Atsisiųskite Naudokis programėlę.",
+    titleGeneric: "Nuomokitės daiktus iš žmonių šalia.",
     lead: "Naudokis — daiktų nuoma iš patikimų žmonių šalia. Atsisiųskite programėlę, kad pradėtumėte.",
     rewardExplainer:
       "Premija įskaitoma jūsų paskyroje, kai programėlėje patvirtinsite tapatybę. Jus pakvietęs draugas premiją gauna po jūsų pirmos užbaigtos nuomos.",
@@ -655,6 +679,7 @@ export const lt: Dict = {
     notFoundBody:
       "Adresas gali būti neteisingas arba puslapis perkeltas. Grįžkite į pradžią arba toliau naršykite nuomos pasiūlymus.",
     notFoundAction: "Į pradžią",
+    notFoundBrowse: "Naršyti skelbimus",
     errorTitle: "Nepavyko parodyti puslapio",
     errorBody:
       "Pabandykite dar kartą. Jei problema kartosis, grįžkite šiek tiek vėliau.",

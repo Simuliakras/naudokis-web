@@ -21,10 +21,20 @@ function smoothScrollTo(id: string) {
 
 export function TocSidebar({ toc, heading }: { toc: TocItem[]; heading: string }) {
   const { activeId } = useLegalScroll();
+  const listRef = useRef<HTMLUListElement>(null);
+  // On long docs the sticky TOC overflows a laptop-height viewport, so scroll the
+  // active "you are here" link into view WITHIN the TOC's own scroll container as
+  // the reader moves through sections (block:nearest → doesn't move the page).
+  useEffect(() => {
+    if (!activeId || !listRef.current) {
+      return;
+    }
+    listRef.current.querySelector<HTMLElement>("a.is-active")?.scrollIntoView({ block: "nearest" });
+  }, [activeId]);
   return (
     <aside className="nk-lg-toc">
       <div className="nk-lg-toc__h">{heading}</div>
-      <ul className="nk-lg-toc__list">
+      <ul className="nk-lg-toc__list" ref={listRef}>
         {toc.map((s) => (
           <li key={s.id}>
             <a

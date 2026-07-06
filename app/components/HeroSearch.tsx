@@ -10,8 +10,27 @@ import {
   Icon,
   listboxKeyNav,
   listboxTriggerKeyNav,
+  openRedirect,
 } from "./ui";
 import { useI18n } from "./I18nProvider";
+
+/* Two-sided value prop: a muted owner prompt + a "list & earn" link under the
+   hero search. Client leaf (openRedirect is a client action) so it can live
+   inside the server-rendered Hero, like SearchBar. Reuses the already-authored
+   hero.ownerPrompt/ownerCta keys and the list-flow bridge modal. */
+export function HeroOwnerCta() {
+  const { dict } = useI18n();
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--nk-gap-2xs) var(--nk-gap-sm)" }}>
+      <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>{dict.hero.ownerPrompt}</span>
+      <button type="button" onClick={() => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody })}
+        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "transparent", padding: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-hover)", cursor: "pointer" }}>
+        {dict.hero.ownerCta}
+        <Icon name="ArrowRight" size={16} stroke={2.2} color="currentColor" />
+      </button>
+    </div>
+  );
+}
 
 function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: string) => void }) {
   const { dict } = useI18n();

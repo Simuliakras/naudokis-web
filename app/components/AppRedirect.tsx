@@ -99,6 +99,8 @@ export function AppRedirect() {
   return (
     <div className={state.closing ? "nk-redirect-scrim is-closing" : "nk-redirect-scrim"} onClick={close} role="dialog" aria-modal="true" aria-labelledby="nk-redirect-title" aria-describedby="nk-redirect-body">
       <div ref={panelRef} className={state.instant ? "nk-redirect-panel nk-redirect-panel--instant" : "nk-redirect-panel"} onClick={(e) => e.stopPropagation()}>
+        {/* dismissible-sheet affordance (mobile only, via CSS) */}
+        <span className="nk-redirect-grabber" aria-hidden="true" />
         <button ref={closeRef} onClick={close} aria-label={dict.bridge.close} className="nk-redirect-close">
           <Icon name="X" size={20} color="var(--nk-text)" />
         </button>

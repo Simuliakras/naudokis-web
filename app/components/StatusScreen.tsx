@@ -11,6 +11,7 @@ import type { IllusName } from "./ui";
 
 export function StatusScreen({
   illustration, title, body, actionLabel, onAction, tone = "default",
+  secondaryLabel, onSecondaryAction,
 }: {
   illustration: IllusName;
   title: string;
@@ -19,6 +20,10 @@ export function StatusScreen({
   // Defaults to navigating to the locale home — the right action for a 404. The
   // error boundary overrides it with reset() to retry the failed segment.
   onAction?: () => void;
+  // Optional second recovery route (e.g. the 404 offers "Browse rentals" beside
+  // "Go home"); the crash boundary intentionally stays a single retry.
+  secondaryLabel?: string;
+  onSecondaryAction?: () => void;
   // "danger" (crash boundary) makes EmptyState announce via role="alert" and
   // move focus to the retry action; 404 stays "default".
   tone?: "default" | "danger";
@@ -39,11 +44,14 @@ export function StatusScreen({
       >
         <EmptyState
           illustration={illustration}
+          titleAs="h1"
           title={title}
           subtitle={body}
           actionLabel={actionLabel}
           onAction={onAction ?? goHome}
           actionPrimary
+          secondaryLabel={secondaryLabel}
+          onSecondaryAction={onSecondaryAction}
           tone={tone}
         />
       </main>

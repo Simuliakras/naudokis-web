@@ -127,7 +127,7 @@ export async function ListingLandingPage({
   const { landing, category, categoryLabel } = resolveLanding({ locale, filters, categories });
   const collectionName = category && !landing.city
     ? category.seoTitle
-    : t.landingTitle({ category: categoryLabel, city: landing.city });
+    : t.landingHeading({ category: categoryLabel, city: landing.city });
   const collectionDescription = category && !landing.city
     ? category.metaDescription
     : t.landingDescription({ category: categoryLabel, city: landing.city });

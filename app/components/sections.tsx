@@ -11,7 +11,7 @@ import {
   locales,
   type Locale,
 } from "@/app/lib/i18n/config";
-import { useListings } from "@/app/lib/listings";
+import { useListings, photoFirst } from "@/app/lib/listings";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
@@ -130,8 +130,11 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
       onSearch();
       return;
     }
+    // On the home page there's no page-search input to focus, so take the user to
+    // the hero (id="top"), where the search field lives — matching the "Search"
+    // label — rather than jumping to the categories band below it.
     document
-      .getElementById("kategorijos")
+      .getElementById("top")
       ?.scrollIntoView({
         behavior: prefersReducedMotion() ? "auto" : "smooth",
       });
@@ -553,20 +556,22 @@ export function Categories() {
           ))}
         </div>
       ) : (
+        // Lead with a productive action (open the app) instead of a "Refresh"
+        // that returns the same empty catalog; refresh stays as the secondary.
         <SectionEmptyGrid
           variant="categories"
           icon="LayoutGrid"
           title={t.bandEmptyTitle}
           subtitle={t.bandEmptyBody}
-          primaryLabel={t.bandEmptyAction}
-          onPrimary={() => refetch()}
-          secondaryLabel={t.bandEmptySecondary}
-          onSecondary={() =>
+          primaryLabel={t.bandEmptyAppCta}
+          onPrimary={() =>
             openRedirect({
               title: dict.bridge.defaultTitle,
               body: dict.bridge.defaultBody,
             })
           }
+          secondaryLabel={t.bandEmptyRetry}
+          onSecondary={() => refetch()}
         />
       )}
     </section>
@@ -582,7 +587,9 @@ export function Offers() {
   // Already prefetched/cached for the Categories band — only read for the
   // empty-photo placeholder glyphs.
   const cats = useCategories(locale).data ?? [];
-  const list = (data ?? []).slice(0, 4);
+  // Photo safeguard: surface photo-bearing listings in the flagship "Popular
+  // items" band so it isn't 4 category-icon placeholders.
+  const list = photoFirst(data ?? []).slice(0, 4);
   return (
     <section
       id="skelbimai"

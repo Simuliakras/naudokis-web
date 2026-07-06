@@ -11,7 +11,7 @@ import {
 import {
   AppBadges,
 } from "./ui";
-import { SearchBar } from "./HeroSearch";
+import { SearchBar, HeroOwnerCta } from "./HeroSearch";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, SOCIAL_PROFILES } from "@/app/lib/contact";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
@@ -41,6 +41,7 @@ export function Hero({ locale }: { locale: Locale }) {
             <p className="nk-body" style={{ margin: 0, maxWidth: "min(100%, 540px)" }}>{dict.hero.body}</p>
             <SearchBar />
             <AppBadges />
+            <HeroOwnerCta />
           </div>
           {/* right column — real app device + QR */}
           <div className="nk-hero-media" style={{ position: "relative", zIndex: 1 }}>
@@ -62,7 +63,7 @@ export function Hero({ locale }: { locale: Locale }) {
 export function Features({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
-    <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden", marginBlock: "var(--nk-section-y-lg)" }}>
+    <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
       <Pattern name="section-pattern" className="nk-brand-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y-lg)" }}>
         <div className="nk-row">
@@ -90,7 +91,9 @@ function FeatureCard({
         <Icon name={icon} size={36} color="var(--nk-yellow)" stroke={2} />
       </span>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
-        <h3 className="nk-h-card" style={{ margin: 0 }}>{title}</h3>
+        {/* reserve ~2 lines so a card whose title wraps to 3 lines doesn't push its
+            body below the neighbours' — keeps the 3-up row's body baselines aligned */}
+        <h3 className="nk-h-card" style={{ margin: 0, minHeight: "2.3em", display: "flex", alignItems: "center", justifyContent: "center" }}>{title}</h3>
         <p className="nk-body" style={{ margin: 0 }}>{body}</p>
       </div>
     </div>
@@ -149,7 +152,7 @@ function AmbientGlow({ variant }: { variant: "cta" | "hero" }) {
 
 /* ---------------- Footer ----------------
    Multi-column marketplace sitemap: brand + Browse / Help columns, then a bottom
-   bar with copyright, a "secure payments" badge and the payment marks. */
+   bar with copyright and the payment marks. */
 const FOOTER_PAY: [string, string][] = [
   ["pay-visa", "Visa"], ["pay-apple", "Apple Pay"], ["pay-google", "Google Pay"], ["pay-mastercard", "Mastercard"],
 ];
@@ -192,7 +195,6 @@ export function Footer({ locale }: { locale: Locale }) {
         <div className="nk-footer__bottom">
           <span className="nk-footer__legal">{t.copyright}</span>
           <div className="nk-footer__pay">
-            <span className="nk-footer__secure"><Icon name="ShieldCheck" size={17} color="var(--nk-green)" stroke={2} /> {t.secure}</span>
             {FOOTER_PAY.map(([f, a]) => (
               <Image key={f} src={`/naudokis/${f}.png`} alt={a} width={100} height={52}
                 style={{ height: 30, width: "auto" }} />

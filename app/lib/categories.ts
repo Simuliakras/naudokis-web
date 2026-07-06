@@ -63,14 +63,14 @@ function toCategory(c: ApiCategory, locale: Locale): Category {
   const en = locale === "en";
   const title = en ? c.name_en : c.name_lt;
   const copy = getDictionary(locale).categories;
-  const fallbackBody = copy.seoFallbackBody(title);
+  const fallbackBody = copy.seoFallbackBody(title, c.id);
   return {
     id: c.id,
     title,
     icon: categoryGlyph(c.icon_name),
     seoTitle: (en ? c.seo_title_en : c.seo_title_lt) || title,
     seoBody: (en ? c.seo_description_en : c.seo_description_lt) || fallbackBody,
-    metaTitle: (en ? c.meta_title_en : c.meta_title_lt) || copy.metaTitleFallback(title),
+    metaTitle: (en ? c.meta_title_en : c.meta_title_lt) || copy.metaTitleFallback(title, c.id),
     metaDescription: (en ? c.meta_description_en : c.meta_description_lt) || fallbackBody,
   };
 }

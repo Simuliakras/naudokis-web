@@ -40,11 +40,16 @@ export function InviteScreen() {
     };
   }, [code]);
 
+  // Only an absolute Branch link carries { referral_code } across the install
+  // boundary; the /go fallback (relative) can't attribute the reward. Gate the
+  // reward promise on that so the page never advertises credit it can't deliver
+  // while Branch/consent is dormant — it degrades to the optimistic headline.
+  const attributable = installLink.startsWith("http");
   // Headline by validation state — never block install. While validating (or on a
   // network/429 `unknown`) we stay optimistic; only a confirmed-invalid or missing
   // code drops to the plain install headline.
   const reward =
-    result && "valid" in result && result.valid && result.refereeRewardCents > 0
+    attributable && result && "valid" in result && result.valid && result.refereeRewardCents > 0
       ? formatPrice(result.refereeRewardCents, locale)
       : null;
   const invalid = result !== undefined && "valid" in result && !result.valid;
@@ -54,9 +59,7 @@ export function InviteScreen() {
       ? t.titleGeneric
       : t.titleUnknown;
 
-  // Branch links are absolute (http…); the /go fallback is a relative path, for
-  // which the committed static QR (which encodes the absolute /go URL) is correct.
-  const attributionLink = installLink.startsWith("http") ? installLink : undefined;
+  const attributionLink = attributable ? installLink : undefined;
   const onInstall = () => {
     window.location.href = installLink;
   };
@@ -87,7 +90,10 @@ export function InviteScreen() {
                 <span className="invite-qr__hint">{t.qrHint}</span>
               </div>
 
-              {code && (
+              {/* Don't show the code chip when the code is confirmed invalid — a
+                  code chip next to a headline that no longer acknowledges an invite
+                  reads as a glitch. */}
+              {code && !invalid && (
                 <div className="invite-code">
                   <span className="invite-code__label">{t.codeLabel}</span>
                   <code className="invite-code__value">{code}</code>

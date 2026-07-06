@@ -13,6 +13,7 @@ import { RichText } from "@/app/lib/rich-text";
 import { listingSearchHref } from "@/app/lib/search";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
+import { prefersReducedMotion } from "@/app/lib/motion";
 import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
 import { useI18n } from "./I18nProvider";
 
@@ -21,7 +22,7 @@ function Section({ id, title, sub, first, children }: {
   id: string; title: string; sub?: string; first?: boolean; children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="nk-sec" style={{ marginTop: first ? 0 : 32, paddingTop: first ? 0 : 32, borderTop: first ? "none" : "1px solid var(--nk-hairline)" }}>
+    <section id={id} className="nk-sec" style={{ marginTop: first ? 0 : 32, paddingTop: first ? 0 : 32 }}>
       <div style={{ display: "flex", flexDirection: "column", gap: sub ? "var(--nk-gap-2xs)" : 0, marginBottom: "var(--nk-gap-xl)" }}>
         <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 25, lineHeight: "30px", color: "var(--nk-text)" }}>{title}</h2>
         {sub && <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>{sub}</p>}
@@ -98,12 +99,12 @@ function SkelLines({ rows = 3, gap = 12, last = "60%" }: { rows?: number; gap?: 
     </div>
   );
 }
-// Mirrors the real <Section> chrome (top hairline centered in a 32px-above / 32px-below
-// gutter on every section but the first, 25px-ish title with a 24px gap to the content)
-// so the focus column shares its exact rhythm.
+// Mirrors the real <Section> chrome (32px-above / 32px-below gutter on every
+// section but the first, 25px-ish title with a 24px gap to the content) so the
+// focus column shares its exact rhythm.
 function SkelSection({ first, titleW = 200, children }: { first?: boolean; titleW?: number | string; children: React.ReactNode }) {
   return (
-    <div style={{ marginTop: first ? 0 : 32, paddingTop: first ? 0 : 32, borderTop: first ? "none" : "1px solid var(--nk-hairline)" }}>
+    <div style={{ marginTop: first ? 0 : 32, paddingTop: first ? 0 : 32 }}>
       <Skel w={titleW} h={26} r={9} style={{ marginBottom: 24 }} />
       {children}
     </div>
@@ -153,7 +154,7 @@ export function ListingSkeleton() {
       <div className="nk-booking-inline">{bookingSkel(false)}</div>
       {/* focus column + reserve sidebar */}
       <div className="nk-detail-grid">
-        {/* DetailBody: description → specs → handover → terms → reviews (gap:0, divided by SkelSection) */}
+        {/* DetailBody: description → specs → handover → terms → reviews (gap:0, spaced by SkelSection) */}
         <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
           {/* description */}
           <SkelSection first titleW={170}>
@@ -308,9 +309,11 @@ export function Gallery({ images, title, isNew }: { images: string[]; title: str
   const alt = (i: number) => (i === 0 ? title : `${title} — ${i + 1}`);
   const open = (i: number) => setLightbox(i);
 
+  // Solid dark glass chip (not the translucent yellow-tint Pill) so the "New"
+  // badge stays legible on any hero photo — the tile's own scrim is hover-only.
   const newPill = isNew ? (
-    <span style={{ position: "absolute", top: 16, left: 16 }}>
-      <Pill tone="yellow" icon="Sparkles">{t.newListingPill}</Pill>
+    <span className="nk-chip-glass" style={{ position: "absolute", top: 16, left: 16, zIndex: 2, color: "var(--nk-yellow)" }}>
+      <Icon name="Sparkles" size={14} color="var(--nk-yellow)" stroke={2} /> {t.newListingPill}
     </span>
   ) : null;
 
@@ -356,6 +359,53 @@ export function Gallery({ images, title, isNew }: { images: string[]; title: str
 
 /* ---------------- Gallery lightbox ----------------
    Full-screen photo viewer: prev/next, Esc/arrow keys, focus trap, scroll lock. */
+
+// Shared by the main photo and the neighbour warmer so the optimizer URL (and
+// thus the cache key) is byte-identical. The panel caps at 1180px and the photo
+// is letterboxed by object-fit:contain, so a bare 100vw would over-fetch on wide
+// screens; declaring the real ~1024px slot lands DPR1 on the 1080 candidate and
+// DPR2 exactly on 2048 with no visible softening.
+const LB_SIZES = "(min-width: 1200px) 1024px, 100vw";
+
+// Main lightbox photo with a load/error state tied to the ACTUAL image load
+// (mounted with key={index} so it resets per navigation): a spinner shows until
+// onLoad flips the reveal, and a failed load swaps to a localized fallback rather
+// than a broken-image icon. fetchPriority high so the in-view photo wins over the
+// low-priority neighbour warmers.
+function LightboxImage({ src, alt, errorLabel }: { src: string; alt: string; errorLabel: string }) {
+  const [status, setStatus] = useState<"loading" | "loaded" | "error">("loading");
+  const imgRef = useRef<HTMLImageElement>(null);
+  // A cached image can already be `complete` before onLoad attaches; flip on mount
+  // so the spinner never sticks over an already-loaded photo.
+  useEffect(() => {
+    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+      setStatus("loaded");
+    }
+  }, []);
+  return (
+    <div className="nk-lightbox__img">
+      {status !== "loaded" && (
+        <span className="nk-imgph nk-lightbox__ph" aria-hidden={status !== "error"}>
+          {status === "error" ? (
+            <span className="nk-lightbox__err">
+              <Icon name="ImageOff" size={30} stroke={1.5} className="nk-imgicon" />
+              <span>{errorLabel}</span>
+            </span>
+          ) : (
+            <Icon name="LoaderCircle" size={30} stroke={2} className="nk-imgicon nk-lightbox__spin" />
+          )}
+        </span>
+      )}
+      {status !== "error" && (
+        <Image ref={imgRef} src={src} alt={alt} fill sizes={LB_SIZES} loading="eager" fetchPriority="high"
+          className="nk-lightbox__photo" data-loaded={status === "loaded"}
+          onLoad={() => setStatus("loaded")} onError={() => setStatus("error")}
+          style={{ objectFit: "contain" }} />
+      )}
+    </div>
+  );
+}
+
 function GalleryLightbox({ images, title, start, onClose }: {
   images: string[]; title: string; start: number; onClose: () => void;
 }) {
@@ -366,9 +416,15 @@ function GalleryLightbox({ images, title, start, onClose }: {
   const closeRef = useRef<HTMLButtonElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null); // restored when the lightbox closes
   const touchStartX = useRef<number | null>(null); // horizontal-swipe origin (touch paging)
+  const thumbsRef = useRef<HTMLDivElement>(null); // scrolls the active thumb into view
   const many = images.length > 1;
   const prev = useCallback(() => setI((v) => (v - 1 + images.length) % images.length), [images.length]);
   const next = useCallback(() => setI((v) => (v + 1) % images.length), [images.length]);
+  // Warm only the two neighbours (wrap-around, deduped) so prev/next is a cache
+  // hit; bounded to 2 fetches regardless of photo count.
+  const warm = many
+    ? [...new Set([(i - 1 + images.length) % images.length, (i + 1) % images.length])].filter((n) => n !== i)
+    : [];
 
   // Mount-only: lock body scroll, move focus into the dialog, and restore focus
   // to the opener on close. Kept separate from the keydown effect so a parent
@@ -404,6 +460,16 @@ function GalleryLightbox({ images, title, start, onClose }: {
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose, prev, next, many]);
 
+  // Keep the active thumbnail visible in the overflow-x strip as the index changes
+  // (arrow keys, nav buttons, swipe). block:"nearest" avoids nudging the scroll-locked page.
+  useEffect(() => {
+    if (!many) {
+      return;
+    }
+    const active = thumbsRef.current?.querySelector<HTMLElement>('[aria-current="true"]');
+    active?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", inline: "center", block: "nearest" });
+  }, [i, many]);
+
   useFocusTrap(panelRef, true);
 
   return (
@@ -425,17 +491,27 @@ function GalleryLightbox({ images, title, start, onClose }: {
               <Icon name="ArrowLeft" size={22} stroke={2} color="var(--nk-text)" />
             </button>
           )}
-          <div key={i} className="nk-lightbox__img nk-lightbox__imgfade">
-            <Image src={images[i]} alt={i === 0 ? title : `${title} — ${i + 1}`} fill sizes="100vw" style={{ objectFit: "contain" }} />
-          </div>
+          <LightboxImage key={i} src={images[i]} alt={i === 0 ? title : `${title} — ${i + 1}`} errorLabel={t.galleryImageError} />
           {many && (
             <button className="nk-lightbox__nav" onClick={next} aria-label={t.galleryNext}>
               <Icon name="ArrowRight" size={22} stroke={2} color="var(--nk-text)" />
             </button>
           )}
         </div>
+        {/* Off-screen, non-interactive prefetch of the adjacent photos (identical
+            optimizer params → cache hit on paging). fetchPriority low so it never
+            competes with the in-view photo. */}
+        {warm.length > 0 && (
+          <div aria-hidden style={{ position: "absolute", width: 0, height: 0, overflow: "hidden", pointerEvents: "none" }}>
+            {warm.map((n) => (
+              <span key={n} style={{ position: "relative", display: "block", width: 1, height: 1 }}>
+                <Image src={images[n]} alt="" fill sizes={LB_SIZES} loading="eager" fetchPriority="low" />
+              </span>
+            ))}
+          </div>
+        )}
         {many && (
-          <div className="nk-lightbox__thumbs">
+          <div ref={thumbsRef} className="nk-lightbox__thumbs">
             {images.map((src, idx) => (
               <button key={idx} type="button" onClick={() => setI(idx)} aria-current={idx === i}
                 aria-label={`${idx + 1} / ${images.length}`}
@@ -655,7 +731,9 @@ function ReviewsSection({ listing, onShowReviews }: { listing: ListingDetail; on
           reviewCountLabel={dict.common.reviewCount(listing.ratingCount)} showAllLabel={t.reviewsInApp(listing.ratingCount)}
           onShowReviews={onShowReviews} />
       ) : (
-        <SectionEmpty icon="MessageCircle" title={t.reviewsEmptyTitle} subtitle={t.reviewsEmptyBody} />
+        <SectionEmpty icon="MessageCircle" title={t.reviewsEmptyTitle} subtitle={t.reviewsEmptyBody}
+          actionLabel={t.reserve}
+          onAction={() => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody })} />
       )}
     </Section>
   );
@@ -709,11 +787,11 @@ export function BookingPanel({ listing, onReserve, onPickDates, variant = "full"
         <Icon name="ChevronRight" size={16} color="var(--nk-text-muted)" stroke={2} style={{ flex: "none" }} />
       </button>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
+        {/* Platform fee is charged but shown later — render it neutral (not the
+            success-green used for genuinely-free values) so it never reads as €0/waived.
+            The per-day line is dropped: it just restated the header price with no ×N math. */}
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-2)" }}>
-          <span>{t.pricePerDayLine}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.price}</span>
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-2)" }}>
-          <span title={t.serviceFeeHint} style={{ textDecoration: "underline dotted", textUnderlineOffset: 3, cursor: "help" }}>{t.serviceFee}</span><span style={{ color: "var(--nk-green-text)", fontWeight: 600, whiteSpace: "nowrap" }}>{t.serviceFeeFree}</span>
+          <span>{t.serviceFee}</span><span style={{ color: "var(--nk-text-2)", whiteSpace: "nowrap" }}>{t.serviceFeeFree}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
           <span>{t.depositReturnable}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.deposit ?? t.depositNone}</span>
@@ -723,6 +801,11 @@ export function BookingPanel({ listing, onReserve, onPickDates, variant = "full"
           <span style={{ whiteSpace: "nowrap" }}>{t.totalToday}</span><span style={{ whiteSpace: "nowrap" }}>{t.inAppValue}</span>
         </div>
       </div>
+      {/* Cost-transparency reassurance kept always-visible (was a hover-only title
+          tooltip, unreachable on the touch-first bridge audience). */}
+      <span style={{ display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontSize: 12, lineHeight: "17px", color: "var(--nk-text-muted)" }}>
+        <Icon name="Info" size={13} stroke={2} color="var(--nk-text-muted)" style={{ flex: "none", marginTop: 1 }} /> {t.serviceFeeHint}
+      </span>
       <span style={{ display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-body)", fontSize: 12.5, lineHeight: "18px", color: "var(--nk-text-muted)" }}>
         <Icon name="Smartphone" size={14} stroke={2} color="var(--nk-purple-hover)" style={{ flex: "none", marginTop: 1 }} /> {t.appOnlyNote}
       </span>
@@ -760,12 +843,17 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
 }) {
   const { dict } = useI18n();
   const t = dict.detail;
-  const stats: [string, string][] = [
-    [rating ?? "—", t.hostStatRating],
-    [String(ratingCount), t.hostStatReviews],
-    [t.ownerListings(owner.listingsCount), t.hostStatListings],
-    [owner.verified ? t.ownerVerified : t.ownerNewMember, t.hostStatStatus],
-  ];
+  // Three numeric stats. Verification is already shown by the green pill above,
+  // so the long "Verified profile" phrase is no longer shoehorned into a numeric
+  // slot; the items cell uses a bare count (its label carries the noun). On a
+  // zero-review listing, lead with the positive "items" cell rather than "— / 0".
+  type HostStat = { value: string; label: string; star?: boolean };
+  const ratingStat: HostStat = { value: rating ?? "—", label: t.hostStatRating, star: !!rating };
+  const reviewsStat: HostStat = { value: String(ratingCount), label: t.hostStatReviews };
+  const listingsStat: HostStat = { value: String(owner.listingsCount), label: t.hostStatListings };
+  const stats: HostStat[] = ratingCount === 0
+    ? [listingsStat, ratingStat, reviewsStat]
+    : [ratingStat, reviewsStat, listingsStat];
   return (
     <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad-sm)", border: "1px solid var(--nk-border)", boxShadow: "var(--nk-edge-top)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)" }}>
@@ -778,13 +866,13 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
           {owner.verified && <Pill tone="green" icon="BadgeCheck">{t.verifiedOwnerPill}</Pill>}
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1, background: "var(--nk-hairline)", borderRadius: 14, overflow: "hidden" }}>
-        {stats.map(([v, k], i) => (
-          <span key={k} style={{ background: "var(--nk-surface)", padding: "13px 14px", display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)", alignItems: "center" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 1, background: "var(--nk-hairline)", borderRadius: 14, overflow: "hidden" }}>
+        {stats.map((s) => (
+          <span key={s.label} style={{ background: "var(--nk-surface)", padding: "13px 10px", display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)", alignItems: "center" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 17, color: "var(--nk-text)", whiteSpace: "nowrap" }}>
-              {v}{i === 0 && rating && <Icon name="Star" size={13} color="var(--nk-yellow)" fill="var(--nk-yellow)" />}
+              {s.value}{s.star && <Icon name="Star" size={13} color="var(--nk-yellow)" fill="var(--nk-yellow)" />}
             </span>
-            <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 12, color: "var(--nk-text-muted)" }}>{k}</span>
+            <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 12, color: "var(--nk-text-muted)" }}>{s.label}</span>
           </span>
         ))}
       </div>

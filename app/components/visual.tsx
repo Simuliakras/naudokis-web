@@ -4,7 +4,7 @@ import type React from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUp, ArrowUpDown, Baby, BadgeCheck, Calendar, Camera, Car,
   ChevronDown, ChevronRight, Coins, Download, Dumbbell, Handshake, Heart, HeartPulse,
-  Home, Image as ImageIcon, Inbox, Info, Laptop, LayoutGrid, type LucideIcon, Mail,
+  Home, Image as ImageIcon, ImageOff, Inbox, Info, Laptop, LayoutGrid, LoaderCircle, type LucideIcon, Mail,
   MapPin, Menu, MessageCircle, MoreHorizontal, PartyPopper, Phone, RefreshCcw, Search,
   SearchX, Share2, ShieldCheck, Shirt, SlidersHorizontal, Smartphone, Snowflake, Sparkles,
   Speaker, Star, Tag, Truck, User, Users, Wrench, X,
@@ -48,7 +48,7 @@ const ICONS = {
   Snowflake: lucide(Snowflake), Smartphone: lucide(Smartphone), Wrench: lucide(Wrench),
   PartyPopper: lucide(PartyPopper), Shirt: lucide(Shirt), Baby: lucide(Baby), Speaker: lucide(Speaker),
   Laptop: lucide(Laptop), Dumbbell: lucide(Dumbbell), HeartPulse: lucide(HeartPulse),
-  Truck: lucide(Truck),
+  Truck: lucide(Truck), LoaderCircle: lucide(LoaderCircle), ImageOff: lucide(ImageOff),
 
   // Inline glyphs Lucide can't supply (brand marks + the solid Play triangle).
   Play:      glyph({ f: "M6 3v18l15-9z" }),

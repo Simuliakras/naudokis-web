@@ -13,7 +13,7 @@ import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, FilterSelect, InputClear, Toggle, openRedirect, type SelectOption } from "./ui";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { useCategories, type Category } from "@/app/lib/categories";
-import { useListingsInfinite, parseSortKey } from "@/app/lib/listings";
+import { useListingsInfinite, parseSortKey, photoFirst } from "@/app/lib/listings";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { trackEvent } from "@/app/lib/analytics";
@@ -56,6 +56,7 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
       };
 
   const filterBarRef = useRef<HTMLDivElement>(null);
+  const [gridRef, columns] = useColumnCount();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
 
@@ -132,7 +133,13 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
 
   useReloadOnReconnect({ online, isError, refetch });
 
-  const loaded = data?.pages.flatMap((p) => p.offers) ?? [];
+  // Photo safeguard: on the default "recommended" sort, order photo-bearing
+  // listings first so a first-time visitor isn't met with a wall of category-icon
+  // placeholders. Ranked per page (not across the accumulated list) so an
+  // infinite-scroll append never reshuffles cards already on screen; other sorts
+  // keep the backend's explicit ordering.
+  const loaded = data?.pages.flatMap((p) =>
+    params.sort === "recommended" ? photoFirst(p.offers) : p.offers) ?? [];
   // The "Su pristatymu" toggle is a client-side filter over the loaded pages
   // (the backend has no delivery param).
   const list = params.delivery ? loaded.filter((o) => o.hasDelivery) : loaded;
@@ -190,11 +197,17 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
   const isCat = !!params.cat;
   const isSearch = !!params.q && !isCat;
   const heading = params.city
-    ? t.landingTitle({ category: categorySeoLabel, city: params.city })
+    ? t.landingHeading({ category: categorySeoLabel, city: params.city })
     : isCat ? (cat?.seoTitle ?? catTitle ?? t.titleAll) : isSearch ? t.titleSearch : t.titleAll;
   const subtitle = params.city
     ? t.landingDescription({ category: categorySeoLabel, city: params.city })
     : isCat ? (cat?.seoBody ?? t.subtitleAll) : isSearch ? t.subtitleSearch(params.q) : t.subtitleAll;
+  // A category / city / category+city landing gets a city/category-aware
+  // supporting block; the plain feed + search keep the generic Lithuania-scoped
+  // copy so the ~100 programmatic combos aren't near-duplicate thin content.
+  const isLanding = !!params.city || isCat;
+  const seoHeading = isLanding ? t.landingSeoHeading({ category: categorySeoLabel, city: params.city }) : t.seoHeading;
+  const seoBody = isLanding ? t.landingSeoBody({ category: categorySeoLabel, city: params.city }) : t.seoBody;
   // Home › Skelbimai › [category] › [city], mirroring the BreadcrumbList JSON-LD
   // the feed + landing pages emit. A free-text search is the one non-landing state,
   // so it hangs its own leaf off the feed root instead of using the trail.
@@ -247,10 +260,14 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
   };
 
   // The full-width interruption banner breaks the card row it lands on, so it must
-  // sit on a clean row boundary in every grid width. 6 = LCM(3,2): a full set of
-  // rows in the 3-col, 2-col and 1-col layouts, so no card is ever left orphaned.
-  const head = list.slice(0, 6);
-  const tail = list.slice(6);
+  // sit on a real row boundary at every column count. Split at the whole number of
+  // rows closest to 6 cards for the live column count (measured from the grid), so
+  // e.g. 3-up→6 and 4-up→8 — never a ragged partial row before the banner. Until
+  // the first measurement lands (SSR + the loading pass) the split defaults to 6,
+  // so the banner may shift one row once the real count is read.
+  const splitAt = Math.max(columns, Math.round(6 / columns) * columns);
+  const head = list.slice(0, splitAt);
+  const tail = list.slice(splitAt);
   const card = (o: (typeof list)[number]) => (
     // grid-display wrapper so the card stretches to the row height
     <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
@@ -365,7 +382,10 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
           />
 
           {activeChips.length > 0 && (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--nk-gap-xs)", marginBottom: 28 }}>
+            // Mobile-only: ≥561px the filled sort/category/city dropdown pills
+            // already show each active value, so the removable chip row is
+            // duplicative (see .nk-fchips in globals.css).
+            <div className="nk-fchips" style={{ flexWrap: "wrap", gap: "var(--nk-gap-xs)", marginBottom: 28 }}>
               {activeChips.map((chip) => (
                 <button key={chip.key} type="button" className="nk-fchip" onClick={() => clearChip(chip.key)}
                   aria-label={`${t.clear}: ${chip.label}`}>
@@ -389,9 +409,9 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
               actionLabel={dict.offers.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
           ) : list.length ? (
             // The interruption banner sits between two grids (not inside one) so no
-            // column count ever orphans a card — lets the grid go 5-up on ultrawide.
+            // column count ever orphans a card, whatever width the grid steps to.
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-grid-row-gap)" }}>
-              <div className="nk-grid-feed">{head.map(card)}</div>
+              <div className="nk-grid-feed" ref={gridRef}>{head.map(card)}</div>
               {tail.length > 0 && <InterruptionBanner />}
               {tail.length > 0 && <div className="nk-grid-feed">{tail.map(card)}</div>}
               {isFetchingNextPage && (
@@ -423,8 +443,8 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
 
           <section style={{ paddingTop: "calc(var(--nk-section-y) * 0.55)", paddingBottom: "var(--nk-section-y)" }}>
             <div style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: 16 }}>
-              <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{t.seoHeading}</h2>
-              <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{t.seoBody}</p>
+              <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{seoHeading}</h2>
+              <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{seoBody}</p>
               <RelatedLandingLinks
                 locale={locale}
                 categories={cats}
@@ -445,6 +465,31 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
       </div>
     </Chrome>
   );
+}
+
+// Reads the live column count of a CSS grid (from its resolved
+// grid-template-columns tracks) so the interruption banner can split on a real
+// row boundary at every breakpoint instead of a fixed 6. Callback-ref (not a
+// ref object) because the grid only mounts once results render — an effect
+// keyed on a plain ref would run before it exists and never re-fire.
+function useColumnCount() {
+  const [el, setEl] = useState<HTMLDivElement | null>(null);
+  const [cols, setCols] = useState(1);
+  useEffect(() => {
+    if (!el) {
+      return;
+    }
+    const read = () => {
+      const tracks = getComputedStyle(el).gridTemplateColumns;
+      const n = tracks ? tracks.split(" ").filter((t) => t && t !== "0px").length : 1;
+      setCols(Math.max(1, n));
+    };
+    read();
+    const ro = new ResizeObserver(read);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [el]);
+  return [setEl, cols] as const;
 }
 
 function RelatedLandingLinks({

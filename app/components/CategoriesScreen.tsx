@@ -58,6 +58,9 @@ export function CategoriesScreen() {
             </span>
           </form>
 
+          {/* sr-only section heading so the outline is h1 → h2 → h3(tiles) instead
+              of skipping a level straight to the tile <h3>s */}
+          <h2 className="nk-sr-only">{t.crumb}</h2>
           {isLoading ? (
             <div className="nk-grid-cats" role="status" aria-live="polite">
               <span className="nk-sr-only">{dict.common.loading}</span>
