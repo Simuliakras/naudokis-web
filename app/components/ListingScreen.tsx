@@ -72,7 +72,7 @@ export function ListingScreen({ id }: { id: string }) {
   if (error instanceof ListingNotFoundError) {
     return shell(
       <EmptyState
-        illustration="search"
+        illustration="notFound"
         title={dict.detail.goneTitle}
         subtitle={dict.detail.goneBody}
         actionLabel={dict.detail.backToListings}

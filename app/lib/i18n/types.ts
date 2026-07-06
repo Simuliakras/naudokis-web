@@ -83,7 +83,10 @@ export type Dict = {
     placeholder: string;
     inputLabel: string; // accessible name for the hero search <input>
     where: string;
-    labelWhat: string; // micro-label above the hero search field (mobile)
+    suggestionsLabel: string; // aria-label for the focus-opened suggestion panel
+    suggestCategories: string; // suggestion-panel section heading (real backend categories)
+    suggestCities: string; // suggestion-panel section heading (picker cities)
+    labelWhat: string; // micro-label above the hero search field (mobile) — noun, the question lives in the placeholder
     labelWhere: string; // micro-label above the hero city field (mobile)
     submit: string;
   };
@@ -333,10 +336,12 @@ export type Dict = {
     landingSeoHeading: (parts: { category?: string; city?: string }) => string;
     landingSeoBody: (parts: { category?: string; city?: string }) => string;
     crumbCategories: string;
+    eyebrow: string; // static page eyebrow above the feed/landing H1 (header-anatomy parity)
     titleAll: string;
     titleSearch: string;
     subtitleAll: string;
     subtitleSearch: (query: string) => string;
+    subtitleSearchGeneric: string; // ≤560px search subtitle — the chip row already echoes the query there
     resultCount: (count: number) => string;
     resultCountAtLeast: (count: number) => string; // "N+ …" — true total is unknowable under the client-side delivery filter
     loadMore: string; // "load more results" button
@@ -352,10 +357,18 @@ export type Dict = {
     categoryLabel: string;
     allCategories: string;
     cityLabel: string;
+    priceLabel: string; // client-side price-band filter
+    priceAny: string; // the band list's "no price filter" option
+    priceBand: (min: number | null, max: number | null) => string; // band option label ("Iki 10 €" / "€10–30" / "Nuo 60 €")
     deliveryToggle: string;
     filtersButton: string; // mobile "Filters" trigger opening the filter sheet
     filtersTitle: string; // filter sheet heading
-    filtersApply: string; // filter sheet apply/close button
+    // Sheet apply button previews the outcome ("Show 3 results"); null while the
+    // count is loading, atLeast for the client-filtered "N+" case.
+    filtersApply: (count: number | null, atLeast?: boolean) => string;
+    introMore: string; // expands the phone-width landing-intro clamp
+    introLess: string;
+    relatedLinksLabel: string; // micro-label over the below-grid internal-link chips
     backToTop: string; // floating back-to-top button label
     seoHeading: string;
     seoBody: string;
@@ -365,9 +378,11 @@ export type Dict = {
       searchBody: string;
       searchAction: string;
       filterTitle: string; // L3 — active filters exclude everything
-      filterTitleCity: (city: string) => string; // L3 with a city filter — echoes the city
-      filterBody: string;
+      filterTitleCity: (city: string) => string; // L3 with a city filter — echoes the city (LT locative)
+      filterBody: (delivery: boolean) => string; // only suggests disabling toggles that are actually on
       filterAction: string;
+      cityTitle: (city: string) => string; // empty city landing — no filters were set, so no "filters" framing
+      cityBody: string;
       categoryTitle: string; // L4 — valid but empty category
       categoryBody: string;
       categoryActionPrimary: string;

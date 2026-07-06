@@ -31,10 +31,14 @@ export const en: Dict = {
     phoneAlt: "Item rental listings in the Naudokis app",
   },
   search: {
-    placeholder: "What do you need to rent?",
+    // Short enough to never clip at the 320px floor; inputLabel keeps the full name.
+    placeholder: "What do you need?",
     inputLabel: "Search items to rent",
     where: "Where?",
-    labelWhat: "What?",
+    suggestionsLabel: "Search suggestions",
+    suggestCategories: "Categories",
+    suggestCities: "Cities",
+    labelWhat: "Item",
     labelWhere: "City",
     submit: "Search",
   },
@@ -523,10 +527,13 @@ export const en: Dict = {
       return `Naudokis.lt connects people and businesses that need ${what} for a short time with trusted private and business owners ${where}. Browse by category, city or price, then manage dates, messages, the final amount and payment in the app.`;
     },
     crumbCategories: "Categories",
+    // DRAFT (marketing sign-off): static eyebrow — never duplicates the dynamic H1s.
+    eyebrow: "Rentals across Lithuania",
     titleAll: "Items to rent",
     titleSearch: "Search results",
     subtitleAll: "Browse available rentals across Lithuania.",
     subtitleSearch: (q) => `Results for “${q}” across Lithuania.`,
+    subtitleSearchGeneric: "Search results across Lithuania.",
     resultCount: (n) => `${n} rental${n === 1 ? "" : "s"}`,
     resultCountAtLeast: (n) => `${n}+ rentals`,
     loadMore: "Show more rentals",
@@ -542,10 +549,23 @@ export const en: Dict = {
     categoryLabel: "Category",
     allCategories: "All categories",
     cityLabel: "City",
+    priceLabel: "Price",
+    priceAny: "Any price",
+    priceBand: (min, max) => {
+      if (min === null) return `Up to €${max}`;
+      if (max === null) return `€${min}+`;
+      return `€${min}–${max}`;
+    },
     deliveryToggle: "Delivery available",
     filtersButton: "Filters",
     filtersTitle: "Filters",
-    filtersApply: "Show results",
+    filtersApply: (n, atLeast) =>
+      n === null
+        ? "Show results"
+        : `Show ${n}${atLeast ? "+" : ""} result${n === 1 ? "" : "s"}`,
+    introMore: "Show more",
+    introLess: "Show less",
+    relatedLinksLabel: "Popular searches",
     backToTop: "Back to top",
     seoHeading: "Item rental in Lithuania",
     seoBody:
@@ -557,9 +577,14 @@ export const en: Dict = {
       searchAction: "Clear search",
       filterTitle: "No rentals match these filters",
       filterTitleCity: (city) => `No rentals match these filters in ${city}`,
-      filterBody:
-        "Try another city, choose a wider category or turn off delivery.",
+      filterBody: (delivery) =>
+        delivery
+          ? "Try another city, choose a wider category or turn off delivery."
+          : "Try another city or choose a wider category.",
       filterAction: "Clear filters",
+      cityTitle: (city) => `No listings in ${city} yet`,
+      cityBody:
+        "Explore other categories or list an item and be one of the first owners here.",
       categoryTitle: "No rentals in this category yet",
       categoryBody:
         "Explore other categories or list an item and be one of the first owners here.",

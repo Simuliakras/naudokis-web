@@ -12,7 +12,7 @@ export default function NotFound() {
   // default. The body invites browsing, so offer a matching feed route too.
   return (
     <StatusScreen
-      illustration="search"
+      illustration="notFound"
       title={t.notFoundTitle}
       body={t.notFoundBody}
       actionLabel={t.notFoundAction}

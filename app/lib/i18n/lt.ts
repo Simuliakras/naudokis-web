@@ -50,10 +50,14 @@ export const lt: Dict = {
     phoneAlt: "Naudokis programėlėje rodomi daiktų nuomos pasiūlymai",
   },
   search: {
-    placeholder: "Ką norite išsinuomoti?",
+    // Short enough to never clip at the 320px floor; inputLabel keeps the full name.
+    placeholder: "Ko ieškote?",
     inputLabel: "Ieškoti daiktų nuomai",
     where: "Kur?",
-    labelWhat: "Ką?",
+    suggestionsLabel: "Paieškos pasiūlymai",
+    suggestCategories: "Kategorijos",
+    suggestCities: "Miestai",
+    labelWhat: "Daiktas",
     labelWhere: "Miestas",
     submit: "Ieškoti",
   },
@@ -527,7 +531,9 @@ export const lt: Dict = {
           : mod10 >= 2 && mod10 <= 9 && (mod100 < 11 || mod100 > 19)
             ? "kategorijos"
             : "kategorijų";
-      return `Rasta ${n} ${word}`;
+      // Bare count (no verb): the line renders on initial page load, where a
+      // "found N" reads as a search result before any query was typed.
+      return `${n} ${word}`;
     },
     searchItems: (query) => `Ieškoti „${query}“ tarp daiktų`,
     seoHeading: "Daiktų nuoma pagal kategorijas",
@@ -575,10 +581,13 @@ export const lt: Dict = {
       return `Naudokis.lt jungia žmones ir verslus, kuriems ${what} reikia trumpam, su patikimais privačiais ir verslo savininkais ${where}. Naršykite pagal kategoriją, miestą ar kainą, o datas, žinutes, galutinę sumą ir mokėjimą valdykite programėlėje.`;
     },
     crumbCategories: "Kategorijos",
+    // DRAFT (marketing sign-off): static eyebrow — never duplicates the dynamic H1s.
+    eyebrow: "Nuoma visoje Lietuvoje",
     titleAll: "Nuomojami daiktai",
     titleSearch: "Paieškos rezultatai",
     subtitleAll: "Naršykite nuomos pasiūlymus visoje Lietuvoje.",
     subtitleSearch: (q) => `Rezultatai pagal „${q}“ visoje Lietuvoje.`,
+    subtitleSearchGeneric: "Paieškos rezultatai visoje Lietuvoje.",
     resultCount: (n) => {
       const d = n % 10;
       const dd = n % 100;
@@ -594,7 +603,7 @@ export const lt: Dict = {
     loadMore: "Rodyti daugiau",
     loadingMore: "Įkeliama daugiau…",
     clear: "Išvalyti",
-    searchPlaceholder: "Ko norite išsinuomoti?",
+    searchPlaceholder: "Ką norite išsinuomoti?",
     searchLabel: "Ieškoti nuomojamų daiktų",
     sortLabel: "Rūšiuoti",
     sortRecommended: "Rekomenduojama",
@@ -604,10 +613,31 @@ export const lt: Dict = {
     categoryLabel: "Kategorija",
     allCategories: "Visos kategorijos",
     cityLabel: "Miestas",
+    priceLabel: "Kaina",
+    priceAny: "Bet kokia kaina",
+    priceBand: (min, max) => {
+      if (min === null) return `Iki ${max} €`;
+      if (max === null) return `Nuo ${min} €`;
+      return `${min}–${max} €`;
+    },
     deliveryToggle: "Pristatymas galimas",
     filtersButton: "Filtrai",
     filtersTitle: "Filtrai",
-    filtersApply: "Rodyti rezultatus",
+    filtersApply: (n, atLeast) => {
+      if (n === null) return "Rodyti rezultatus";
+      const d = n % 10;
+      const dd = n % 100;
+      const word =
+        (dd >= 11 && dd <= 19) || d === 0
+          ? "pasiūlymų"
+          : d === 1
+            ? "pasiūlymą"
+            : "pasiūlymus";
+      return `Rodyti ${n}${atLeast ? "+" : ""} ${word}`;
+    },
+    introMore: "Rodyti daugiau",
+    introLess: "Rodyti mažiau",
+    relatedLinksLabel: "Populiarios paieškos",
     backToTop: "Į viršų",
     seoHeading: "Daiktų nuoma Lietuvoje",
     seoBody:
@@ -619,10 +649,15 @@ export const lt: Dict = {
       searchAction: "Išvalyti paiešką",
       filterTitle: "Pagal šiuos filtrus nuomos pasiūlymų neradome",
       filterTitleCity: (city) =>
-        `Pagal šiuos filtrus mieste „${city}“ nuomos pasiūlymų neradome`,
-      filterBody:
-        "Pabandykite kitą miestą, platesnę kategoriją arba išjunkite pristatymą.",
+        `Pagal šiuos filtrus ${cityLocativeLt(city)} nuomos pasiūlymų neradome`,
+      filterBody: (delivery) =>
+        delivery
+          ? "Pabandykite kitą miestą, platesnę kategoriją arba išjunkite pristatymą."
+          : "Pabandykite kitą miestą arba platesnę kategoriją.",
       filterAction: "Išvalyti filtrus",
+      cityTitle: (city) => `${cityLocativeLt(city)} kol kas nuomos pasiūlymų nėra`,
+      cityBody:
+        "Naršykite kitas kategorijas arba įkelkite daiktą ir būkite vieni pirmųjų savininkų čia.",
       categoryTitle: "Šioje kategorijoje dar nėra nuomos pasiūlymų",
       categoryBody:
         "Peržiūrėkite kitas kategorijas arba įkelkite daiktą ir būkite vieni pirmųjų savininkų čia.",

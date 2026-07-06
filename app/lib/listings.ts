@@ -122,6 +122,7 @@ export type Offer = {
   title: string;
   city?: string; // absent when the backend listing has no city — the card hides the row
   price: string;
+  priceCents: number; // raw per-day price — the feed's client-side price bands filter on it
   img?: string;
   rating?: string; // formatted value, present only when ratingCount > 0
   ratingCount: number; // raw count, for building the localized review label
@@ -321,6 +322,7 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
     title: l.title,
     city: l.city ?? undefined,
     price: formatPrice(l.price_per_day_cents, locale),
+    priceCents: l.price_per_day_cents,
     img: l.images?.[0]?.url,
     rating: ratingLabel(l.rating_average, l.rating_count, locale),
     ratingCount: l.rating_count,

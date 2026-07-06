@@ -42,6 +42,7 @@
   --nk-cat-events:      #D45F9E;
   --nk-cat-clothing:    #DFA854;
   --nk-cat-health:      #E06A7E;
+  --nk-cat-kids:        #C0912F;  /* deeper amber than --nk-yellow-deep — the 32%-mix disk was washing out the white glyph */
   --nk-cat-other:       #7C78A6;  /* desaturated brand-purple — "Other" stays branded, not greyed-out/disabled */
 
   /* ---- Tonal tints (htw step tags / pills / phone-glows on dark) -------- */
@@ -144,6 +145,7 @@
 
   /* ---- Fixed element sizes ----------------------------------------------- */
   --nk-tap: 44px;           /* minimum interactive target (WCAG 2.5.8)              */
+  --nk-control-h: 52px;     /* shared toolbar control height (search field + filter pills) */
   --nk-nav-h: 76px;         /* nav bar at rest — sticky offsets derive from this    */
   --nk-nav-h-scrolled: 68px;/* condensed nav after scroll                           */
   --nk-size-icon-sm: 44px;  /* small icon/avatar container                          */
@@ -476,7 +478,7 @@ a,button,input,textarea,select{touch-action:manipulation}
 [data-cat="sports_leisure"]{--cat-accent:var(--nk-green)}
 [data-cat="events_parties"]{--cat-accent:var(--nk-cat-events)}
 [data-cat="clothing_accessories"]{--cat-accent:var(--nk-cat-clothing)}
-[data-cat="kids"]{--cat-accent:var(--nk-yellow-deep)}
+[data-cat="kids"]{--cat-accent:var(--nk-cat-kids)}
 [data-cat="health_medical"]{--cat-accent:var(--nk-cat-health)}
 [data-cat="other"]{--cat-accent:var(--nk-cat-other)}
 
@@ -1039,11 +1041,28 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* ============================================================
    Rounded search field (categories + feed)
    ============================================================ */
-.nk-searchfield{display:flex;align-items:center;gap:10px;background:var(--nk-surface);
-  border:1px solid var(--nk-border);border-radius:999px;padding:13px 20px;
+.nk-searchfield{position:relative;display:flex;align-items:center;gap:10px;background:var(--nk-surface);
+  border:1px solid var(--nk-border);border-radius:999px;padding:13px 20px;min-height:var(--nk-control-h);
   transition:border-color .15s ease,box-shadow .15s ease}
 .nk-searchfield:focus-within{border-color:var(--nk-purple);box-shadow:var(--nk-glow-accent)}
-.nk-searchfield input{min-height:32px}
+.nk-searchfield input{min-height:26px}
+/* feed toolbar geometry (was inline styles, which beat the ≤560 override and
+   wrapped the Filters pill onto its own dead row) */
+.nk-filter-row > .nk-searchfield{flex:1 1 320px;min-width:240px}
+
+/* focus-opened search suggestions (categories + cities — real data only) */
+.nk-suggest{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:45;
+  display:flex;flex-direction:column;gap:8px;padding:14px;
+  max-height:min(55vh,440px);overflow-y:auto;overscroll-behavior:contain;
+  background:var(--nk-surface);border:1px solid var(--nk-border);border-radius:16px;
+  box-shadow:var(--nk-shadow-3);text-align:left}
+.nk-suggest__h{font-family:var(--nk-font-display);font-weight:700;font-size:12px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--nk-text-muted);padding:4px 2px 0}
+.nk-suggest__row{display:flex;flex-wrap:wrap;gap:8px}
+.nk-suggest__opt{display:inline-flex;align-items:center;padding:9px 14px;border-radius:var(--nk-r-pill);
+  border:1px solid var(--nk-border);background:var(--nk-bg);color:var(--nk-text);cursor:pointer;
+  font-family:var(--nk-font-body);font-size:15px;transition:border-color .15s ease,background .15s ease}
+.nk-suggest__opt:hover{border-color:var(--nk-accent-border);background:var(--nk-purple-soft)}
 
 /* category tile grid (all-categories page). --nk-cat-h is the single source of
    truth for tile height so the real card AND its skeleton stay locked at every
@@ -1074,11 +1093,42 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-filterbar{padding-block:8px 10px;margin-bottom:20px}
   .nk-filters-desktop{display:none}
   .nk-filters-mobilebtn{display:inline-flex}
-  /* row 1 = search (grows) + Filters button; row 2 collapses to the meta line */
+  /* row 1 = search (grows) + Filters button on ONE row; the desktop pill row
+     disappears entirely (its controls live in the sheet) */
   .nk-filter-row{gap:10px}
   .nk-filter-row > .nk-searchfield{flex:1 1 auto;min-width:0;width:auto;padding:11px 16px}
-  .nk-filter-spacer{display:none}
-  .nk-filter-meta{width:100%;justify-content:space-between;padding-top:2px}
+  .nk-filter-row--desktop{display:none}
+  .nk-filter-meta{width:100%;justify-content:space-between!important;padding-top:2px}
+}
+/* mobile category chip rail — the browse dimension on the page itself (≤560) */
+.nk-catrail{display:none}
+@media(max-width:560px){
+  .nk-catrail{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+    margin:-6px calc(-1 * var(--nk-gutter)) 14px;padding:4px var(--nk-gutter)}
+  .nk-catrail::-webkit-scrollbar{display:none}
+  .nk-catrail__chip{flex:none;padding:9px 14px;border-radius:999px;min-height:38px;
+    font-family:var(--nk-font-display);font-weight:600;font-size:14px;white-space:nowrap;cursor:pointer}
+}
+/* landing header right-zone app-bridge card (≥1120 only — phones keep the column) */
+.nk-landing-aside{display:none}
+@media(min-width:1120px){
+  .nk-landing-aside{display:flex;flex-direction:column;gap:12px;flex:none;max-width:320px;
+    padding:16px 18px;background:var(--nk-surface);border:1px solid var(--nk-border);
+    border-radius:var(--nk-r-card);box-shadow:var(--nk-edge-top)}
+  .nk-landing-aside .nk-appbadges{flex-direction:column;align-items:flex-start}
+}
+/* persistent "you're offline" strip over cached results (never assert stale data silently) */
+.nk-offline-strip{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding:11px 16px;
+  border-radius:12px;border:1px solid var(--nk-hairline);
+  background:color-mix(in srgb, var(--nk-yellow) 8%, transparent);
+  font-family:var(--nk-font-display);font-weight:600;font-size:15px;color:var(--nk-text)}
+/* width-swapped copy variants (e.g. the search subtitle) */
+.nk-narrow-only{display:none}
+@media(max-width:560px){
+  .nk-wide-only{display:none}
+  .nk-narrow-only{display:inline}
+  /* long authored landing intros clamp to 3 lines on phones (toggle expands) */
+  .nk-intro-clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 }
 /* Active-filter chip row is mobile-only: ≥561px the filled sort/category/city
    dropdown pills already show each active value, so the removable chips are
@@ -1096,9 +1146,13 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-fchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
 .nk-fchip svg{color:var(--nk-text-muted);transition:color .15s ease}
 .nk-fchip:hover svg{color:var(--nk-text)}
-/* link variant (related-landing links): no trailing X icon, so the base chip's
-   left-heavy padding would look lopsided — pad symmetrically instead. */
-.nk-fchip--link{padding:9px 16px;text-decoration:none}
+/* link variant (related-landing links): navigation, not a removable control —
+   transparent + soft border + muted label so it never reads as a live filter
+   chip, and labels always render whole (crawlable link text must not truncate). */
+.nk-fchip--link{padding:9px 16px;text-decoration:none;background:transparent;
+  border-color:var(--nk-border-soft);color:var(--nk-text-2);box-shadow:none}
+.nk-fchip--link span{max-width:none;white-space:normal}
+.nk-fchip--link:hover{background:var(--nk-surface)}
 .nk-grid-feed{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--nk-grid-row-gap) var(--nk-grid-gap)}
 /* 4-up on desktop, stepping down 4 → 3 → 2 → single at 1280/900/560 */
 @media(max-width:1280px){.nk-grid-feed{grid-template-columns:repeat(3,1fr)}}

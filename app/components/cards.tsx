@@ -270,11 +270,12 @@ export function CategoryCardSkeleton({ ghost = false }: { ghost?: boolean } = {}
    optional outline `secondaryLabel` sits beside it (e.g. the empty-category L4
    "Išnuomoti daiktą" + "Visos kategorijos" pairing). */
 export function EmptyState({
-  illustration, icon = "SearchX", title, subtitle, titleAs = "h3",
+  illustration, illustrationIcon, icon = "SearchX", title, subtitle, titleAs = "h3",
   actionLabel, onAction, actionPrimary = false, actionIcon,
   secondaryLabel, onSecondaryAction, tone = "default",
 }: {
   illustration?: IllusName;
+  illustrationIcon?: IconName; // context glyph overlaid on the illustration (see Illustration)
   icon?: IconName;
   title: string;
   subtitle: string;
@@ -304,7 +305,7 @@ export function EmptyState({
   return (
     <div className="nk-empty" role={danger ? "alert" : undefined}>
       {illustration
-        ? <Illustration name={illustration} />
+        ? <Illustration name={illustration} icon={illustrationIcon} />
         : <span className="nk-empty__icon" style={danger ? { background: "var(--nk-danger-tint)" } : undefined}>
             <Icon name={icon} size={40} stroke={1.8} color={danger ? "var(--nk-danger)" : "var(--nk-text-muted)"} />
           </span>}

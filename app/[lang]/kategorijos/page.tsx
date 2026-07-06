@@ -29,10 +29,14 @@ export default async function Page({ params }: PageProps<"/[lang]/kategorijos">)
   // Fetch once, then seed the cache the same query useCategories() reads (so the
   // tiles are in the HTML) AND feed the JSON-LD from the identical list. Fail open
   // on a backend hiccup (matches the feed page) so an ISR revalidation can't error
-  // the whole route — the shell renders and the client query retries.
+  // the whole route — but seed the cache ONLY on success: hydrating a fake-empty
+  // list would render as a successful zero-category page instead of letting the
+  // client query fetch fresh (skeleton → data or the real error state).
   const qc = makeQueryClient();
-  const categories = await fetchCategories(locale).catch(() => []);
-  qc.setQueryData(categoriesKey(locale), categories);
+  const categories = await fetchCategories(locale).catch(() => null);
+  if (categories) {
+    qc.setQueryData(categoriesKey(locale), categories);
+  }
 
   const breadcrumb = breadcrumbJsonLd(locale, [
     { name: common.breadcrumbHome, path: "" },
@@ -41,7 +45,7 @@ export default async function Page({ params }: PageProps<"/[lang]/kategorijos">)
   // CollectionPage + ItemList of the category landings (name + canonical URL,
   // both from the taxonomy — nothing fabricated). Skipped if the fetch failed:
   // an empty ItemList would misrepresent the page.
-  const collection = categories.length
+  const collection = categories?.length
     ? categoriesCollectionJsonLd({
         locale,
         name: t.title,

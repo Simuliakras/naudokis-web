@@ -134,7 +134,7 @@ export function AppBadges({ gap = 20, height = 52, footer = false, interactive =
    presentation attributes, where --nk-* custom properties don't resolve (same
    constraint as NK_ICONS — see the Icon note above). #6665E0 == --nk-purple,
    #F9F367 == --nk-yellow. */
-export type IllusName = "search" | "listings" | "filter" | "error" | "offline";
+export type IllusName = "search" | "listings" | "filter" | "error" | "offline" | "notFound";
 
 const NK_ILLUS: Record<IllusName, React.ReactNode> = {
   search: (
@@ -231,21 +231,56 @@ const NK_ILLUS: Record<IllusName, React.ReactNode> = {
       <path d="M162 170L167 165M167 170L162 165" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
     </>
   ),
+  // Lost-place motif (map pin over a dashed path) — a 404 is "this address leads
+  // nowhere", not a failed search, so it gets its own anchor instead of reusing
+  // the magnifier (whose refresh glyph wrongly hints "retry").
+  notFound: (
+    <>
+      <circle cx="100" cy="100" r="85" fill="#6665E0" opacity=".08"/>
+      <circle cx="100" cy="96" r="58" fill="#6665E0" opacity=".13"/>
+      <path d="M30 150 Q70 120 100 142 Q130 164 170 138" fill="none" stroke="#F9F367" strokeWidth="3" strokeLinecap="round" strokeDasharray="2 10" opacity=".55"/>
+      <path d="M100 38c-19 0-34 15-34 34 0 25 34 60 34 60s34-35 34-60c0-19-15-34-34-34Z" fill="#6665E0" opacity=".18"/>
+      <path d="M100 38c-19 0-34 15-34 34 0 25 34 60 34 60s34-35 34-60c0-19-15-34-34-34Z" fill="none" stroke="#F9F367" strokeWidth="4" strokeLinejoin="round"/>
+      <circle cx="100" cy="72" r="12" fill="none" stroke="#F9F367" strokeWidth="4"/>
+      <path d="M87 155 L113 155" stroke="#F9F367" strokeWidth="3" strokeLinecap="round" opacity=".4"/>
+      <circle cx="35" cy="55" r="4" fill="#F9F367" opacity=".5"/>
+      <circle cx="170" cy="130" r="5" fill="#F9F367" opacity=".4"/>
+      <circle cx="30" cy="140" r="3" fill="#6665E0" opacity=".3"/>
+      <circle cx="175" cy="65" r="4" fill="#F9F367" opacity=".5"/>
+      <path d="M40 100L45 95M45 100L40 95" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+      <path d="M160 165L165 160M165 165L160 160" stroke="#F9F367" strokeWidth="2" strokeLinecap="round" opacity=".5"/>
+    </>
+  ),
 };
 
 export function Illustration({
-  name = "search", size = 148, className = "", style,
+  name = "search", size = 148, className = "", style, icon,
 }: {
   name?: IllusName;
   size?: number;
   className?: string;
   style?: React.CSSProperties;
+  icon?: IconName; // context glyph overlaid on the "listings" card area (e.g. the empty category's own icon)
 }) {
-  return (
+  const svg = (
     <svg className={"nk-empty__ill " + className} width={size} height={size} viewBox="0 0 200 200"
-      aria-hidden="true" focusable="false" style={style}>
+      aria-hidden="true" focusable="false" style={icon ? undefined : style}>
       {NK_ILLUS[name] ?? NK_ILLUS.search}
     </svg>
+  );
+  if (!icon) {
+    return svg;
+  }
+  // Overlay centred on the listings illustration's photo rect (x60 y58 w80 h45 in
+  // the 200-unit canvas) so the ~10 programmatic empty pages feel authored, not
+  // templated. Literal brand hex: raw-SVG constraint, same as NK_ILLUS.
+  return (
+    <span aria-hidden="true" style={{ position: "relative", display: "inline-flex", ...style }}>
+      {svg}
+      <span style={{ position: "absolute", left: "50%", top: "40%", transform: "translate(-50%, -50%)", color: "#F9F367", display: "inline-flex" }}>
+        <Icon name={icon} size={Math.round(size * 0.24)} stroke={1.8} color="#F9F367" />
+      </span>
+    </span>
   );
 }
 
@@ -481,7 +516,7 @@ export function FilterSelect({
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
         aria-haspopup="listbox" aria-expanded={open}
         aria-label={active && selected ? `${label}: ${selected.label}` : label} style={{
-        display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-tap)", cursor: "pointer", whiteSpace: "nowrap",
+        display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-control-h)", cursor: "pointer", whiteSpace: "nowrap",
         fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5,
       }}>
         {icon && <Icon name={icon} size={16} stroke={2} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />}
@@ -512,6 +547,43 @@ export function FilterSelect({
   );
 }
 
+/* ---------------- Search suggestions (focus-opened panel) ----------------
+   Guided-path suggestions built from REAL data only — the backend categories and
+   the picker cities (no fabricated "popular searches"). On a launch-size
+   inventory a blind free-text search usually returns nothing; a category/city
+   route always lands on a real result set. The caller owns open/close state and
+   positions the panel (render inside a position:relative field wrapper). */
+export function SearchSuggest({ categories, cities, headings, label, onCategory, onCity }: {
+  categories: { id: string; title: string }[];
+  cities: readonly string[];
+  headings: { categories: string; cities: string };
+  label: string;
+  onCategory: (id: string) => void;
+  onCity: (city: string) => void;
+}) {
+  return (
+    // mousedown preventDefault keeps focus in the input so the field's blur
+    // handler never closes the panel before the option's click lands
+    <div role="listbox" aria-label={label} className="nk-suggest" onKeyDown={listboxKeyNav}
+      onMouseDown={(e) => e.preventDefault()}>
+      <span className="nk-suggest__h">{headings.categories}</span>
+      <div className="nk-suggest__row">
+        {categories.map((c) => (
+          <button key={c.id} type="button" role="option" aria-selected={false} className="nk-suggest__opt"
+            onClick={() => onCategory(c.id)}>{c.title}</button>
+        ))}
+      </div>
+      <span className="nk-suggest__h">{headings.cities}</span>
+      <div className="nk-suggest__row">
+        {cities.map((city) => (
+          <button key={city} type="button" role="option" aria-selected={false} className="nk-suggest__opt"
+            onClick={() => onCity(city)}>{city}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ---------------- Toggle (pill, for "Su pristatymu") ---------------- */
 export function Toggle({
   icon, children, on, onChange,
@@ -523,7 +595,7 @@ export function Toggle({
 }) {
   return (
     <button type="button" className={"nk-pillctl nk-toggle" + (on ? " is-active" : "")} onClick={() => onChange(!on)} aria-pressed={on} style={{
-      display: "inline-flex", alignItems: "center", gap: 12, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-tap)", cursor: "pointer",
+      display: "inline-flex", alignItems: "center", gap: 12, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-control-h)", cursor: "pointer",
       fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, whiteSpace: "nowrap",
     }}>
       <span className="nk-toggle__lead" style={{ display: "inline-flex", alignItems: "center", gap: 9, minWidth: 0 }}>

@@ -56,6 +56,14 @@ export function categoriesKey(locale: Locale) {
   return ["categories", locale] as const;
 }
 
+// Backend seo_title_* values are authored WITH the "| Naudokis" meta-title suffix,
+// but seoTitle renders in the on-page H1 and CollectionPage JSON-LD name, where a
+// dangling brand pipe is a machine-generated-content tell. Strip it at the data
+// layer so every consumer is covered; metaTitle keeps its own suffix for <head>.
+function stripBrandSuffix(s: string | undefined): string {
+  return (s ?? "").replace(/\s*\|\s*Naudokis(\.lt)?\s*$/i, "").trim();
+}
+
 // Resolve a backend node into the locale-correct view model. Every SEO field
 // falls back to a name-derived value so a brand-new, un-authored category renders
 // real copy instead of `undefined`.
@@ -68,7 +76,7 @@ function toCategory(c: ApiCategory, locale: Locale): Category {
     id: c.id,
     title,
     icon: categoryGlyph(c.icon_name),
-    seoTitle: (en ? c.seo_title_en : c.seo_title_lt) || title,
+    seoTitle: stripBrandSuffix(en ? c.seo_title_en : c.seo_title_lt) || title,
     seoBody: (en ? c.seo_description_en : c.seo_description_lt) || fallbackBody,
     metaTitle: (en ? c.meta_title_en : c.meta_title_lt) || copy.metaTitleFallback(title, c.id),
     metaDescription: (en ? c.meta_description_en : c.meta_description_lt) || fallbackBody,
