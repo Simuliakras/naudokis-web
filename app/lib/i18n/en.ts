@@ -751,11 +751,9 @@ export const en: Dict = {
   },
   legal: {
     brandSub: "Legal center",
-    inThisDoc: "In this document",
     contents: "Contents",
     closeContents: "Close contents",
     backTop: "Back to top",
-    openMenu: "Sections",
     readingProgress: "Reading progress",
     effective: "Effective",
     updated: "Updated",
@@ -767,6 +765,9 @@ export const en: Dict = {
     relatedHeading: "Related documents",
     docTermsTitle: "Terms of Use",
     docPrivacyTitle: "Privacy Policy",
+    docDeleteTitle: "Account & Data Deletion",
+    hubTitle: "Legal Center",
+    hubLead: "All published Naudokis legal documents in one place.",
     questionsTitle: "Questions about this document?",
     questionsBody:
       "Contact us by email if you have questions about this document.",

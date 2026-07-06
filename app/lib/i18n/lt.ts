@@ -825,11 +825,9 @@ export const lt: Dict = {
   },
   legal: {
     brandSub: "Teisinės informacijos centras",
-    inThisDoc: "Šiame dokumente",
     contents: "Turinys",
     closeContents: "Uždaryti turinį",
     backTop: "Į viršų",
-    openMenu: "Skyriai",
     readingProgress: "Skaitymo eiga",
     effective: "Įsigalioja",
     updated: "Atnaujinta",
@@ -841,6 +839,9 @@ export const lt: Dict = {
     relatedHeading: "Susiję dokumentai",
     docTermsTitle: "Naudojimosi sąlygos",
     docPrivacyTitle: "Privatumo politika",
+    docDeleteTitle: "Paskyros ir duomenų trynimas",
+    hubTitle: "Teisinės informacijos centras",
+    hubLead: "Visi paskelbti Naudokis teisiniai dokumentai vienoje vietoje.",
     questionsTitle: "Turite klausimų dėl šio dokumento?",
     questionsBody:
       "Jei turite klausimų apie šį dokumentą, susisiekite su mumis el. paštu.",

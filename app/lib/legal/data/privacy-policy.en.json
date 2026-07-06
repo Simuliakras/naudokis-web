@@ -147,7 +147,7 @@
   "blocks": [
     {
       "t": "p",
-      "md": "This Privacy Policy explains how MB Naudokis (\"Naudokis\", \"we\", \"us\", \"our\") collects, uses, stores, discloses, and otherwise processes Personal Data."
+      "md": "This Privacy Policy explains how MB Naudokis (“Naudokis”, “we”, “us”, “our”) collects, uses, stores, discloses, and otherwise processes Personal Data."
     },
     {
       "t": "p",
@@ -332,7 +332,7 @@
     },
     {
       "t": "p",
-      "md": "These appendices form part of this Policy and must be interpreted together with the main Policy, taking into account the specific Platform function and vendors actually enabled."
+      "md": "These appendices form part of this Policy and must be interpreted together with the main Policy, taking into account the specific Platform function and vendors actually enabled. They are available in the Naudokis app."
     },
     {
       "t": "h2",
@@ -400,7 +400,7 @@
     },
     {
       "t": "p",
-      "md": "Data is not processed for \"all possible purposes\". It is used to the extent necessary for the specific function, legal obligation, contract performance, consent, legitimate interest, or User request."
+      "md": "Data is not processed for “all possible purposes”. It is used to the extent necessary for the specific function, legal obligation, contract performance, consent, legitimate interest, or User request."
     },
     {
       "t": "h2",
@@ -412,8 +412,13 @@
       "md": "The Controller for most Personal Data Processing described in this Policy is:"
     },
     {
-      "t": "p",
-      "md": "**MB Naudokis** Legal entity code: **307423504** Registered office address: **Numėjos g. 6, LT-08402 Vilnius, Lithuania** Privacy and support contact: **info@naudokis.lt**"
+      "t": "ul",
+      "items": [
+        "**MB Naudokis**",
+        "Legal entity code: **307423504**",
+        "Registered office address: **Numėjos g. 6, LT-08402 Vilnius, Lithuania**",
+        "Privacy and support contact: **info@naudokis.lt**"
+      ]
     },
     {
       "t": "p",
@@ -737,7 +742,7 @@
         [
           "Direct marketing",
           "email, telephone number, push-notification tokens, marketing choices",
-          "consent or applicable \"similar services\" exception if lawfully applicable; legitimate interest in maintaining marketing opt-out lists",
+          "consent or applicable “similar services” exception if lawfully applicable; legitimate interest in maintaining marketing opt-out lists",
           "marketing notices may be refused at any time"
         ],
         [
@@ -1071,11 +1076,11 @@
     },
     {
       "t": "p",
-      "md": "If we learn that an account was created by or the Platform is being used by a person under 18 years old, we reject such person's identity verification, restrict access to age-restricted functions, and initiate internal review. After such review, we may close the account and delete, anonymize, or restrict related Personal Data as described in Section 15 of this Policy and as required by legislation."
+      "md": "If we learn that an account was created by or the Platform is being used by a person under 18 years old, we reject such person’s identity verification, restrict access to age-restricted functions, and initiate internal review. After such review, we may close the account and delete, anonymize, or restrict related Personal Data as described in Section 15 of this Policy and as required by legislation."
     },
     {
       "t": "p",
-      "md": "Parents or guardians may contact us by email at **info@naudokis.lt** if they believe that a minor created an account. We will ask for sufficient information to verify the person's identity and relationship, and then promptly take appropriate action."
+      "md": "Parents or guardians may contact us by email at **info@naudokis.lt** if they believe that a minor created an account. We will ask for sufficient information to verify the person’s identity and relationship, and then promptly take appropriate action."
     },
     {
       "t": "h2",
@@ -1129,8 +1134,13 @@
       "md": "You may also submit a complaint to the Lithuanian State Data Protection Inspectorate (SDPI) or another competent EU data protection authority."
     },
     {
-      "t": "p",
-      "md": "**SDPI website:** https://vdai.lrv.lt/ **Address:** L. Sapiegos g. 17, LT-10312 Vilnius, Lithuania **Email:** ada@ada.lt (the current contact is always checked on the SDPI website) **E-delivery box:** 188607912, if this channel applies to you"
+      "t": "ul",
+      "items": [
+        "**SDPI website:** https://vdai.lrv.lt/",
+        "**Address:** L. Sapiegos g. 17, LT-10312 Vilnius, Lithuania",
+        "**Email:** ada@ada.lt (the current contact is always checked on the SDPI website)",
+        "**E-delivery box:** 188607912, if this channel applies to you"
+      ]
     },
     {
       "t": "h2",
@@ -1139,7 +1149,7 @@
     },
     {
       "t": "p",
-      "md": "These privacy appendices form part of this Policy and apply together with the main Policy:"
+      "md": "These privacy appendices form part of this Policy, apply together with the main Policy, and are available in the Naudokis app:"
     },
     {
       "t": "ul",
@@ -1158,8 +1168,12 @@
       "text": "23. Contacts"
     },
     {
-      "t": "p",
-      "md": "Privacy requests: **info@naudokis.lt** Support: **info@naudokis.lt** Operator: **MB Naudokis, legal entity code 307423504, registered office address Numėjos g. 6, LT-08402 Vilnius, Lithuania**"
+      "t": "ul",
+      "items": [
+        "Privacy requests: **info@naudokis.lt**",
+        "Support: **info@naudokis.lt**",
+        "Operator: **MB Naudokis, legal entity code 307423504, registered office address Numėjos g. 6, LT-08402 Vilnius, Lithuania**"
+      ]
     },
     {
       "t": "hr"

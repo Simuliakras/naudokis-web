@@ -12,6 +12,11 @@ export function getLegalDocMeta(id: string): LegalDocMeta | undefined {
   return MANIFEST.docs.find((d) => d.id === id);
 }
 
+// All published documents, in manifest order — drives the /teisine legal hub.
+export function legalDocs(): LegalDocMeta[] {
+  return MANIFEST.docs;
+}
+
 // The two legal documents keep their pretty top-level LT/EN routes.
 export const CANONICAL_PATHS: Record<string, string> = {
   "privacy-policy": "/privatumo-politika",

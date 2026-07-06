@@ -46,7 +46,7 @@
 .nk-lg-crumbs{ padding:clamp(22px,3vw,36px) 0 0; }
 .nk-lg-dochead{ padding:6px 0 0; }
 .nk-lg-title{ font-family:var(--nk-font-display); font-weight:700; letter-spacing:0;
-  color:var(--nk-text); margin:0; font-size:clamp(30px,4.6vw,50px); line-height:1.05; max-width:18ch;
+  color:var(--nk-text); margin:0; font-size:clamp(30px,4.6vw,50px); line-height:1.05; max-width:26ch;
   overflow-wrap:anywhere; text-wrap:balance; }
 .nk-lg-intro{ font-family:var(--nk-font-body); font-size:clamp(16px,1.5vw,19px); line-height:1.7;
   color:var(--nk-text-2); margin:20px 0 0; max-width:62ch; }
@@ -71,7 +71,12 @@
 
 /* table of contents (sidebar) */
 .nk-lg-toc{ position:sticky; top:calc(var(--nk-nav-h-scrolled) + 16px); align-self:start; max-height:calc(100vh - 110px);
-  overflow-y:auto; padding-right:6px; margin-bottom:64px; }
+  overflow-y:auto; padding-right:6px; margin-bottom:64px;
+  /* persistent thin scrollbar — macOS overlay bars gave no cue that items 17+ exist */
+  scrollbar-width:thin; scrollbar-color:var(--nk-border) transparent; }
+/* sticky bottom fade signals more content below the fold of the scroller */
+.nk-lg-toc::after{ content:""; position:sticky; bottom:0; display:block; height:36px; margin-top:-36px;
+  background:linear-gradient(to top, var(--nk-bg), transparent); pointer-events:none; }
 .nk-lg-toc__h{ font-family:var(--nk-font-display); font-weight:700; font-size:11px;
   letter-spacing:.16em; text-transform:uppercase; color:var(--nk-text-tertiary); margin:0 0 12px; }
 .nk-lg-toc__list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; }
@@ -100,7 +105,7 @@
   color:var(--nk-purple-light); font-variant-numeric:tabular-nums; flex:none; line-height:1.18; }
 /* The heading text is a flex child; without min-width:0 its min-content (the
    longest Lithuanian word) can't shrink and overflows the narrow-column measure. */
-.nk-lg-h2 > span:not(.nk-lg-h2__num){ min-width:0; overflow-wrap:anywhere; }
+.nk-lg-h2 > span:not(.nk-lg-h2__num){ min-width:0; overflow-wrap:anywhere; text-wrap:balance; }
 .nk-lg-h3{ font-family:var(--nk-font-display); font-weight:600; color:var(--nk-text);
   font-size:clamp(17px,1.7vw,20px); line-height:1.3; margin:34px 0 0; scroll-margin-top:calc(var(--nk-nav-h-scrolled) + 24px); }
 .nk-lg-h4{ font-family:var(--nk-font-display); font-weight:600; color:var(--nk-text-2);
@@ -210,6 +215,8 @@
   overflow-y:auto; transform:translateX(-100%); transition:transform .25s ease;
   display:flex; flex-direction:column; gap:6px; }
 .nk-lg-drawer.is-open .nk-lg-drawer__panel{ transform:none; }
+.nk-lg-drawer__panel::after{ content:""; position:sticky; bottom:0; display:block; flex:none; height:28px; margin-top:-28px;
+  background:linear-gradient(to bottom, transparent, var(--lg-elevated)); pointer-events:none; }
 .nk-lg-drawer__top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
 .nk-lg-drawer__top h3{ margin:0; font-family:var(--nk-font-display); font-weight:700; font-size:14px;
   letter-spacing:.14em; text-transform:uppercase; color:var(--nk-text-muted); }
@@ -226,10 +233,10 @@
 }
 /* Legal tables read as records once the reading column gets tight: each row
    becomes a card and every cell carries its original column heading via
-   data-label. Done at ≤1120px (not ≤680) because the 264px sidebar keeps the
-   article column under ~700px until ~1160px viewport, so a real multi-column
-   table would otherwise cram to one-word-per-line (worst at 1024). */
-@media (max-width:1120px){
+   data-label. ≤700px only — the simple 2-column wayfinding table fits real
+   tablet widths (the stacked cards tripled the section height at 768), and in
+   the 981–1120 sidebar band the .nk-lg-tablescroll wrapper absorbs any squeeze. */
+@media (max-width:700px){
   .nk-lg-tablewrap{ overflow:visible; border:0; background:transparent; }
   .nk-lg-tablescroll{ overflow:visible; }
   .nk-lg-table{ display:block; width:100%; min-width:0; border-collapse:separate; border-spacing:0; }

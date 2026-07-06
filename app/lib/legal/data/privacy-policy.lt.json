@@ -180,16 +180,31 @@
     },
     {
       "t": "table",
-      "head": ["Ieškote informacijos apie...", "Skaitykite"],
+      "head": [
+        "Ieškote informacijos apie...",
+        "Skaitykite"
+      ],
       "rows": [
-        ["Kas yra duomenų valdytojas ir kaip susisiekti", "1 ir 23 skyriuose"],
-        ["Trumpą privatumo paaiškinimą", "2 skyriuje"],
-        ["Kokius duomenis renkame", "6 skyriuje ir Duomenų kategorijų priede"],
+        [
+          "Kas yra duomenų valdytojas ir kaip susisiekti",
+          "1 ir 23 skyriuose"
+        ],
+        [
+          "Trumpą privatumo paaiškinimą",
+          "2 skyriuje"
+        ],
+        [
+          "Kokius duomenis renkame",
+          "6 skyriuje ir Duomenų kategorijų priede"
+        ],
         [
           "Kodėl naudojame duomenis ir kokiais teisiniais pagrindais remiamės",
           "8 skyriuje"
         ],
-        ["Kokie duomenys matomi kitiems Naudotojams", "9 skyriuje"],
+        [
+          "Kokie duomenys matomi kitiems Naudotojams",
+          "9 skyriuje"
+        ],
         [
           "Paslaugų teikėjus, gavėjus ir jų vaidmenis",
           "10 skyriuje ir Teikėjų, gavėjų, slapukų ir SDK priede"
@@ -198,7 +213,10 @@
           "Mokėjimus, tapatybės patvirtinimą ir Stripe arba Didit",
           "11 skyriuje ir Tapatybės patvirtinimo ir sukčiavimo prevencijos privatumo priede"
         ],
-        ["Tarptautinius duomenų perdavimus", "12 skyriuje"],
+        [
+          "Tarptautinius duomenų perdavimus",
+          "12 skyriuje"
+        ],
         [
           "DI, automatizuotas patikras ir žmogaus peržiūrą",
           "13 skyriuje ir DI ir automatizuotų patikrų priede"
@@ -207,7 +225,10 @@
           "Saugojimo terminus ir paskyros ištrynimą",
           "15 ir 16 skyriuose bei Saugojimo terminų ir ištrynimo priede"
         ],
-        ["Jūsų BDAR teises", "17 skyriuje"],
+        [
+          "Jūsų BDAR teises",
+          "17 skyriuje"
+        ],
         [
           "Slapukus, SDK, tiesioginius pranešimus ir mobiliąsias technologijas",
           "Teikėjų, gavėjų, slapukų ir SDK priedą"
@@ -391,8 +412,13 @@
       "md": "Daugumos šioje Politikoje aprašytų asmens duomenų tvarkymo veiksmų duomenų valdytojas yra:"
     },
     {
-      "t": "p",
-      "md": "**MB „Naudokis“** Juridinio asmens kodas: **307423504** Registruotos buveinės adresas: **Numėjos g. 6, LT-08402 Vilnius, Lietuva** Privatumo ir pagalbos kontaktas: **info@naudokis.lt**"
+      "t": "ul",
+      "items": [
+        "**MB „Naudokis“**",
+        "Juridinio asmens kodas: **307423504**",
+        "Registruotos buveinės adresas: **Numėjos g. 6, LT-08402 Vilnius, Lietuva**",
+        "Privatumo ir pagalbos kontaktas: **info@naudokis.lt**"
+      ]
     },
     {
       "t": "p",
@@ -508,7 +534,10 @@
     },
     {
       "t": "table",
-      "head": ["Duomenų grupė", "Pavyzdžiai"],
+      "head": [
+        "Duomenų grupė",
+        "Pavyzdžiai"
+      ],
       "rows": [
         [
           "Paskyros, autentifikavimo ir profilio duomenys",
@@ -584,7 +613,11 @@
     },
     {
       "t": "table",
-      "head": ["Tikslas", "Pavyzdžiai", "Teisinis pagrindas"],
+      "head": [
+        "Tikslas",
+        "Pavyzdžiai",
+        "Teisinis pagrindas"
+      ],
       "rows": [
         [
           "Teikti Platformos paslaugas",
@@ -760,7 +793,10 @@
     },
     {
       "t": "table",
-      "head": ["Etapas arba situacija", "Kitiems naudotojams matomi duomenys"],
+      "head": [
+        "Etapas arba situacija",
+        "Kitiems naudotojams matomi duomenys"
+      ],
       "rows": [
         [
           "Viešas Skelbimas prieš Rezervaciją",
@@ -1098,8 +1134,13 @@
       "md": "Taip pat galite pateikti skundą Valstybinei duomenų apsaugos inspekcijai (VDAI) arba kitai kompetentingai ES duomenų apsaugos institucijai."
     },
     {
-      "t": "p",
-      "md": "**VDAI svetainė:** https://vdai.lrv.lt/ **Adresas:** L. Sapiegos g. 17, LT-10312 Vilnius, Lietuva **El. paštas:** ada@ada.lt (aktualų kontaktą pasitikrinkite VDAI svetainėje) **E. pristatymo dėžutė:** 188607912, jei šis kanalas jums taikomas"
+      "t": "ul",
+      "items": [
+        "**VDAI svetainė:** https://vdai.lrv.lt/",
+        "**Adresas:** L. Sapiegos g. 17, LT-10312 Vilnius, Lietuva",
+        "**El. paštas:** ada@ada.lt (aktualų kontaktą pasitikrinkite VDAI svetainėje)",
+        "**E. pristatymo dėžutė:** 188607912, jei šis kanalas jums taikomas"
+      ]
     },
     {
       "t": "h2",
@@ -1127,8 +1168,12 @@
       "text": "23. Kontaktai"
     },
     {
-      "t": "p",
-      "md": "Privatumo prašymai: **info@naudokis.lt** Pagalba: **info@naudokis.lt** Operatorius: **MB „Naudokis“, juridinio asmens kodas 307423504, registruotos buveinės adresas – Numėjos g. 6, LT-08402 Vilnius, Lietuva**"
+      "t": "ul",
+      "items": [
+        "Privatumo prašymai: **info@naudokis.lt**",
+        "Pagalba: **info@naudokis.lt**",
+        "Operatorius: **MB „Naudokis“, juridinio asmens kodas 307423504, registruotos buveinės adresas – Numėjos g. 6, LT-08402 Vilnius, Lietuva**"
+      ]
     },
     {
       "t": "hr"

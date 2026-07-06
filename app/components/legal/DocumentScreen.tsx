@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { Locale } from "@/app/lib/i18n/config";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import type { LegalDocument } from "@/app/lib/legal/types";
-import { legalHref } from "@/app/lib/legal/manifest";
+import { CANONICAL_PATHS, getLegalDocMeta, legalHref, localizedBlurb } from "@/app/lib/legal/manifest";
 import { CONTACT_EMAIL, CONTACT_PRIVACY_EMAIL } from "@/app/lib/contact";
 import { Chrome } from "../Chrome";
 import { Nav } from "../sections";
@@ -30,18 +30,22 @@ export function DocumentScreen({
 }) {
   const { legal: t, common } = getDictionary(locale);
 
-  // Cross-link to the sibling legal document + a contact route.
-  const siblingId = docId === "terms-of-use" ? "privacy-policy" : "terms-of-use";
-  const siblingHref = legalHref(siblingId, locale);
-  const siblingTitle = siblingId === "privacy-policy" ? t.docPrivacyTitle : t.docTermsTitle;
+  // Cross-link to EVERY other published document (the single-sibling rail hid
+  // the most relevant neighbour, e.g. deletion → privacy) + a contact route.
+  const docTitle = (id: string) =>
+    id === "privacy-policy" ? t.docPrivacyTitle : id === "terms-of-use" ? t.docTermsTitle : t.docDeleteTitle;
+  const siblings = Object.keys(CANONICAL_PATHS).filter((id) => id !== docId);
   const contactEmail = docId === "privacy-policy" ? CONTACT_PRIVACY_EMAIL : CONTACT_EMAIL;
 
   // Only the document's FIRST block counts as the lede, and only when it's a
   // paragraph. Searching for the first `p` anywhere would hoist a paragraph that
   // sits under heading 1 (e.g. the account-deletion doc opens h2 → p), leaving
-  // section 1 rendered as an empty heading.
+  // section 1 rendered as an empty heading. Docs with no intro paragraph fall
+  // back to their manifest blurb so all three heroes share one anatomy.
   const intro = doc.blocks[0]?.t === "p" ? doc.blocks[0] : undefined;
   const bodyBlocks = intro ? doc.blocks.slice(1) : doc.blocks;
+  const docMeta = getLegalDocMeta(docId);
+  const ledeText = intro?.md ?? (docMeta ? localizedBlurb(docMeta, usedLang) : undefined);
 
   return (
     <Chrome>
@@ -60,8 +64,8 @@ export function DocumentScreen({
               <header className="nk-lg-dochead">
                 <p className="nk-eyebrow" style={{ margin: "0 0 8px" }}>{t.brandSub}</p>
                 <h1 className="nk-lg-title">{doc.meta.title}</h1>
-                {intro && intro.t === "p" && (
-                  <p className="nk-lg-intro"><Inline text={intro.md} locale={usedLang} /></p>
+                {ledeText && (
+                  <p className="nk-lg-intro"><Inline text={ledeText} locale={usedLang} /></p>
                 )}
                 <MetaChips meta={doc.meta} locale={usedLang} t={t} />
                 {fellBack && <div className="nk-lg-langnote">{t.onlyLt}</div>}
@@ -69,19 +73,25 @@ export function DocumentScreen({
               <hr className="nk-lg-headrule" />
 
               <div className="nk-lg-body">
-                {doc.toc.length > 0 && <TocSidebar toc={doc.toc} heading={t.inThisDoc} />}
+                {doc.toc.length > 0 && <TocSidebar toc={doc.toc} heading={t.contents} />}
                 <article className="nk-lg-article">
                   <Blocks blocks={bodyBlocks} locale={usedLang} briefLabel={t.briefLabel} warnLabel={t.warnLabel} anchorLabel={t.anchorLabel} />
 
                   <nav className="nk-lg-related" aria-label={t.relatedHeading}>
                     <h2 className="nk-lg-related__h">{t.relatedHeading}</h2>
                     <div className="nk-lg-related__grid">
-                      {siblingHref && (
-                        <Link href={siblingHref} className="nk-lg-related__doc">
-                          <span>{siblingTitle}</span>
-                          <Icon name="arrowRight" size={18} />
-                        </Link>
-                      )}
+                      {siblings.map((id) => {
+                        const href = legalHref(id, locale);
+                        if (!href) {
+                          return null;
+                        }
+                        return (
+                          <Link key={id} href={href} className="nk-lg-related__doc">
+                            <span>{docTitle(id)}</span>
+                            <Icon name="arrowRight" size={18} />
+                          </Link>
+                        );
+                      })}
                       <a href={"mailto:" + contactEmail} className="nk-lg-related__contact">
                         <span className="nk-lg-related__qh">{t.questionsTitle}</span>
                         <span className="nk-lg-related__qb">{t.questionsBody}</span>
@@ -97,7 +107,9 @@ export function DocumentScreen({
               toc={doc.toc}
               contents={t.contents}
               closeContents={t.closeContents}
-              openMenu={t.openMenu}
+              // one TOC name everywhere: the FAB announces the same word the
+              // drawer it opens is titled with
+              openMenu={t.contents}
               backTop={t.backTop}
               readingProgress={t.readingProgress}
             />

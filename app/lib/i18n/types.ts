@@ -30,11 +30,9 @@ export type UseCaseItem = { icon: IconName; title: string; body: string; tone: H
 export type LegalDict = {
   // doc-page chrome
   brandSub: string;        // header eyebrow label above the document title
-  inThisDoc: string;       // sidebar TOC heading
-  contents: string;        // drawer heading
+  contents: string;        // ONE name for the TOC everywhere: sidebar heading, FAB label, drawer heading
   closeContents: string;   // drawer close-button aria-label
   backTop: string;         // back-to-top aria/title
-  openMenu: string;        // mobile FAB label
   readingProgress: string; // progress-bar aria
   effective: string;
   updated: string;
@@ -45,6 +43,9 @@ export type LegalDict = {
   relatedHeading: string;  // "See also" heading at the bottom of a doc
   docTermsTitle: string;   // sibling-link label → Terms of Use
   docPrivacyTitle: string; // sibling-link label → Privacy Policy
+  docDeleteTitle: string;  // sibling-link label → Account & Data Deletion
+  hubTitle: string;        // /teisine legal-hub H1
+  hubLead: string;         // /teisine lede + meta description
   questionsTitle: string;  // contact card heading
   questionsBody: string;   // contact card body
   contactCta: string;      // contact card mailto label

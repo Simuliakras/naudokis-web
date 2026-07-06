@@ -228,53 +228,71 @@
     },
     {
       "t": "table",
-      "head": ["Ieškote informacijos apie...", "Skaitykite"],
+      "head": [
+        "Ieškote informacijos apie...",
+        "Skaitykite"
+      ],
       "rows": [
-        ["Kas yra „Naudokis“ ir kas yra Nuomos sandorio šalis", "3 skyriuje"],
-        ["Paskyrą, amžių ir tapatybės patvirtinimą", "4 ir 6 skyriuose"],
         [
-          "Skelbimus, draudžiamus daiktus ir rizikingas kategorijas",
-          "7 skyriuje ir Draudžiamų ir ribojamų daiktų taisyklėse"
+          "Kas yra „Naudokis“ ir kas yra Nuomos sandorio šalis",
+          "[3](#3-kas-yra-naudokis) skyriuje"
         ],
-        ["Rezervacijas ir Nuomos sandorio sudarymą", "9 skyriuje"],
+        [
+          "Paskyrą, amžių ir tapatybės patvirtinimą",
+          "[4](#4-tinkamumas-ir-paskyra) ir [6](#6-patvirtinimas-pasirengimas-ir-atitiktis) skyriuose"
+        ],
+        [
+          "Skelbimus, draudžiamus daiktus ir didesnės rizikos kategorijas",
+          "[7](#7-skelbimai-draudziami-daiktai-ir-aukstesnes-rizikos-kategorijos) skyriuje ir Draudžiamų ir ribojamų daiktų taisyklėse (Naudokis programėlėje)"
+        ],
+        [
+          "Rezervacijas ir Nuomos sandorio sudarymą",
+          "[9](#9-rezervacijos-ir-nuomos-sandorio-sudarymas) skyriuje"
+        ],
         [
           "Mokėjimus, mokesčius, Stripe ir informaciją prieš mokėjimą",
-          "10 skyriuje ir Mokėjimų, mokesčių ir Stripe taisyklėse"
+          "[10](#10-mokejimai-mokesciai-ir-stripe) skyriuje ir Mokėjimų, mokesčių ir Stripe taisyklėse (Naudokis programėlėje)"
         ],
         [
           "Užstatus, žalą, praradimą ir ginčus",
-          "11 ir 13 skyriuose bei Užstatų, žalos, praradimo ir ginčų taisyklėse"
+          "[11](#11-uzstatai) ir [13](#13-perdavimas-grazinimas-zala-ir-gincai) skyriuose bei Užstatų, žalos, praradimo ir ginčų taisyklėse (Naudokis programėlėje)"
         ],
         [
           "Atšaukimą, grąžinimus ir teisę atsisakyti sutarties",
-          "12 skyriuje ir Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklėse"
+          "[12](#12-atsaukimai-grazinimai-ir-teise-atsisakyti-sutarties) skyriuje ir Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklėse (Naudokis programėlėje)"
         ],
         [
           "Verslo naudotojus, Prekiautojus, PVM, VIES ir DAC7",
-          "15 skyriuje ir Verslo naudotojų, Prekiautojų ir B2B taisyklėse"
+          "[15](#15-verslo-naudotojai-skaidrumas-ir-paieska) skyriuje ir Verslo naudotojų, Prekiautojų ir B2B taisyklėse (Naudokis programėlėje)"
         ],
         [
           "Turinį, moderavimą, apeliacijas ir DSA pranešimus",
-          "16 ir 17 skyriuose bei Moderavimo, skundų ir DSA taisyklėse"
+          "[16](#16-naudotoju-turinys-draudziamas-elgesys-ir-saugumas) ir [17](#17-moderavimas-dsa-di-ir-paskyru-apribojimai) skyriuose bei Moderavimo, skundų ir DSA taisyklėse (Naudokis programėlėje)"
         ],
         [
           "Vartotojų skundus, institucijas ir ginčų sprendimą",
-          "18 ir 21 skyriuose"
+          "[18](#18-skundai-ir-vartotoju-teises) ir [21](#21-pakeitimai-nutraukimas-ir-taikoma-teise) skyriuose"
         ],
         [
           "Rezervacijos būsenas, perdavimo ir užbaigimo procesą",
-          "Rezervacijos, perdavimo ir užbaigimo proceso taisykles"
+          "Rezervacijos, perdavimo ir užbaigimo proceso taisykles (Naudokis programėlėje)"
         ],
         [
           "Tapatybės, rizikos ir pasitikėjimo priemones",
-          "Pasitikėjimo, patikrų ir apsaugos priemonių standartą"
+          "Pasitikėjimo, patikrų ir apsaugos priemonių standartą (Naudokis programėlėje)"
         ],
         [
           "Atsiliepimus, paiešką ir reitingavimą",
-          "Atsiliepimų, paieškos ir reitingavimo taisykles"
+          "Atsiliepimų, paieškos ir reitingavimo taisykles (Naudokis programėlėje)"
         ],
-        ["Visų teisinių dokumentų žemėlapį", "Taisyklių centrą"],
-        ["„Naudokis“ kontaktus", "24 skyriuje"]
+        [
+          "Visų teisinių dokumentų žemėlapį",
+          "[Teisinės informacijos centre](/teisine)"
+        ],
+        [
+          "„Naudokis“ kontaktus",
+          "[24](#24-kontaktai) skyriuje"
+        ]
       ]
     },
     {
