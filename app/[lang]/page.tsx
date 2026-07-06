@@ -6,7 +6,7 @@ import { fetchCategories, categoriesKey } from "@/app/lib/categories";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { Chrome } from "../components/Chrome";
 import { Nav, Categories, Offers, Faq, UseCases } from "../components/sections";
-import { Hero, Features, CtaBanner, Footer } from "../components/sections-home";
+import { Hero, Features, HowItWorksStrip, OwnerBand, CtaBanner, Footer } from "../components/sections-home";
 import { JsonLd } from "../components/JsonLd";
 
 // Regenerate the static home pages so the prefetched featured listings /
@@ -42,8 +42,13 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
             <Hero locale={locale} />
             <Categories />
             <Offers />
+            {/* 1-2-3 model strip right after the product rows — answers "why
+                can't I book here?" without opening the How-It-Works page */}
+            <HowItWorksStrip locale={locale} />
             <Features locale={locale} />
             <UseCases />
+            {/* supply-side band before the closing renter CTA */}
+            <OwnerBand locale={locale} />
             <CtaBanner locale={locale} />
             <Faq />
           </main>

@@ -171,7 +171,9 @@ const USECASE_TONES: Record<UseCaseItem["tone"], { bg: string; fg: string }> = {
   green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green)" },
 };
 
-export function UseCaseCard({ icon, title, body, tone }: UseCaseItem) {
+export function UseCaseCard({ icon, title, body, tone, cta }: Omit<UseCaseItem, "cta"> & {
+  cta?: { label: string; href: string }; // foot link — every earn-framed surface must lead somewhere
+}) {
   const c = USECASE_TONES[tone];
   return (
     <div className="nk-quote nk-usecase" style={{ flex: 1, borderRadius: "var(--nk-r-md)", padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)" }}>
@@ -182,6 +184,11 @@ export function UseCaseCard({ icon, title, body, tone }: UseCaseItem) {
         <h3 className="nk-h-row" style={{ margin: 0 }}>{title}</h3>
         <p className="nk-body" style={{ margin: 0 }}>{body}</p>
       </div>
+      {cta && (
+        <Link href={cta.href} style={{ marginTop: "auto", display: "inline-flex", alignItems: "center", gap: 7, minHeight: "var(--nk-tap)", width: "fit-content", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-bright)", textDecoration: "none" }}>
+          {cta.label} <Icon name="ArrowRight" size={16} stroke={2.2} color="currentColor" />
+        </Link>
+      )}
     </div>
   );
 }

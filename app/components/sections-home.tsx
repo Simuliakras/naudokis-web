@@ -9,9 +9,9 @@ import {
   Icon, type IconName, LogoMark, QR, Pattern,
 } from "./visual";
 import {
-  AppBadges,
+  AppBadges, SectionHead,
 } from "./ui";
-import { SearchBar, HeroOwnerCta } from "./HeroSearch";
+import { SearchBar, HeroOwnerCta, OwnerAppCta } from "./HeroSearch";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, SOCIAL_PROFILES } from "@/app/lib/contact";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
@@ -51,7 +51,7 @@ export function Hero({ locale }: { locale: Locale }) {
                 purpose because the device mockup is `display:none` there (see globals),
                 so phones don't waste bandwidth preloading an image they never show. */}
             <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} preload sizes="(max-width: 560px) 60px, (max-width: 1024px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
-            <div className="nk-hero-qr" style={{ position: "absolute", right: "clamp(16px, 2vw, 32px)", bottom: 0 }}><QR size={132} /></div>
+            <div className="nk-hero-qr" style={{ position: "absolute", right: "clamp(16px, 2vw, 32px)", bottom: 0 }}><QR size={132} caption={dict.hero.qrCaption} /></div>
           </div>
         </div>
       </div>
@@ -66,8 +66,70 @@ export function Features({ locale }: { locale: Locale }) {
     <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
       <Pattern name="section-pattern" className="nk-brand-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y-lg)" }}>
+        {/* the page's strongest trust content gets the sitewide eyebrow+H2 anatomy
+            instead of floating unlabelled */}
+        <SectionHead eyebrow={dict.featuresHead.eyebrow} title={dict.featuresHead.title} />
         <div className="nk-row">
           {dict.features.map((f) => <FeatureCard key={f.title} {...f} className="nk-reveal" />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- 3-step model explainer ----------------
+   "Browse here → get the app → reserve in the app" as a scannable strip — most
+   visitors never open the How-It-Works page, and the bridge model is unusual
+   enough to pre-empt the "why can't I book here?" question right on the home. */
+export function HowItWorksStrip({ locale }: { locale: Locale }) {
+  const dict = getDictionary(locale);
+  const t = dict.homeSteps;
+  const hrefs = ["/skelbimai", "/go", "/kaip-tai-veikia"];
+  return (
+    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y) 0" }}>
+      <SectionHead eyebrow={t.eyebrow} title={t.title} />
+      <div className="nk-homesteps nk-reveal-grid">
+        {t.steps.map((s, i) => (
+          <Link key={s.title} href={hrefs[i] === "/go" ? "/go" : localePath(locale, hrefs[i])} className="nk-homesteps__card nk-reveal">
+            <span className="nk-homesteps__num">{i + 1}</span>
+            <span style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
+              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 19, color: "var(--nk-text)" }}>{s.title}</span>
+              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, lineHeight: "24px", color: "var(--nk-text-muted)" }}>{s.body}</span>
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- Owner band ----------------
+   The supply-side pitch gets a real homepage module (it was one muted hero
+   line): truthful benefit bullets + a deep link into the owner journey, with
+   the app-list modal as the secondary action (client leaf). */
+export function OwnerBand({ locale }: { locale: Locale }) {
+  const dict = getDictionary(locale);
+  const t = dict.ownerBand;
+  const icons: IconName[] = ["Coins", "ShieldCheck", "BadgeCheck"];
+  return (
+    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y) 0" }}>
+      <div className="nk-ownerband nk-reveal nk-grain nk-gborder">
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)", minWidth: 0 }}>
+          <span className="nk-eyebrow">{t.eyebrow}</span>
+          <h2 className="nk-h-section" style={{ margin: 0, maxWidth: "18ch", textWrap: "balance" }}>{t.title}</h2>
+          <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
+            {t.bullets.map((b, i) => (
+              <li key={b} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontFamily: "var(--nk-font-body)", fontSize: 16.5, lineHeight: "26px", color: "var(--nk-text-2)" }}>
+                <Icon name={icons[i]} size={19} stroke={2} color="var(--nk-green-text)" style={{ flex: "none", marginTop: 3 }} /> {b}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="nk-ownerband__actions">
+          <Link className="nk-btn nk-btn--primary" href={localePath(locale, "/kaip-tai-veikia") + "?role=owner"}>
+            {t.cta} <Icon name="ArrowRight" size={17} stroke={2.2} color="var(--nk-text)" />
+          </Link>
+          <OwnerAppCta />
         </div>
       </div>
     </section>
@@ -92,8 +154,9 @@ function FeatureCard({
       </span>
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
         {/* reserve ~2 lines so a card whose title wraps to 3 lines doesn't push its
-            body below the neighbours' — keeps the 3-up row's body baselines aligned */}
-        <h3 className="nk-h-card" style={{ margin: 0, minHeight: "2.3em", display: "flex", alignItems: "center", justifyContent: "center" }}>{title}</h3>
+            body below the neighbours' — flex-start keeps 1-line titles on the SAME
+            first baseline as 2-line neighbours (centred slots jogged up-down-up) */}
+        <h3 className="nk-h-card" style={{ margin: 0, minHeight: "2.3em", display: "flex", alignItems: "flex-start", justifyContent: "center" }}>{title}</h3>
         <p className="nk-body" style={{ margin: 0 }}>{body}</p>
       </div>
     </div>
@@ -112,12 +175,16 @@ export function CtaBanner({ locale }: { locale: Locale }) {
         <AmbientGlow variant="cta" />
         {/* phone bleeding from the top, filling the right half down to the bottom edge */}
         <Image className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "var(--nk-shadow-phone-cta)" }} />
-        <div className="nk-cta__badges" style={{ position: "absolute", left: "var(--nk-panel-pad)", top: "var(--nk-panel-pad)" }}><AppBadges /></div>
+        {/* badges AFTER the body in source order — the stacked ≤900px layout must
+            read promise → ask, never action-first (desktop keeps them positioned) */}
         <div className="nk-cta__body" style={{ position: "absolute", left: "var(--nk-panel-pad)", bottom: "var(--nk-panel-pad)", maxWidth: 808, display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)" }}>
           <h2 className="nk-h-cta">{dict.cta.title}</h2>
           <p style={{ margin: 0, maxWidth: 640, fontFamily: "var(--nk-font-body)", fontSize: 20, lineHeight: "32px", color: "var(--nk-text-muted)" }}>{dict.cta.body}</p>
         </div>
-        <div className="nk-cta__media" style={{ position: "absolute", right: 80, bottom: "var(--nk-panel-pad)" }}><QR size={168} /></div>
+        <div className="nk-cta__badges" style={{ position: "absolute", left: "var(--nk-panel-pad)", top: "var(--nk-panel-pad)" }}><AppBadges /></div>
+        {/* right:36 keeps the QR card in the bezel zone, clear of the app icon +
+            wordmark the phone artwork is showcasing */}
+        <div className="nk-cta__media" style={{ position: "absolute", right: 36, bottom: "var(--nk-panel-pad)" }}><QR size={160} caption={dict.hero.qrCaption} /></div>
       </div>
     </section>
   );

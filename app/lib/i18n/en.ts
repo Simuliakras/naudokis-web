@@ -24,11 +24,15 @@ export const en: Dict = {
   },
   hero: {
     badge: "Item rental from people and businesses across Lithuania",
-    title: "Find the item you need to rent nearby.",
-    body: "Rent tools, vehicles, cameras, electronics and leisure gear only when you need them. Browse online, then manage dates, messages, the final price and payment in the Naudokis app.",
+    // DRAFT (marketing sign-off): de-calqued — the LT-mirroring phrasing parsed
+    // as an obligation ("you need to rent").
+    title: "Rent what you need, from people nearby.",
+    // DRAFT (marketing sign-off): tightened — mirrors the LT trim.
+    body: "Rent tools, vehicles, cameras or leisure gear only when you need them. Browse online, then complete your booking and payment in the Naudokis app.",
     ownerPrompt: "Have idle items or run a rental business?",
     ownerCta: "List an item and earn",
     phoneAlt: "Item rental listings in the Naudokis app",
+    qrCaption: "Scan to get the app",
   },
   search: {
     // Short enough to never clip at the 320px floor; inputLabel keeps the full name.
@@ -64,8 +68,10 @@ export const en: Dict = {
     bandEmptyRetry: "Refresh",
   },
   offers: {
-    eyebrow: "Picked for you",
-    title: "Popular items to rent nearby",
+    // DRAFT (marketing sign-off): recency framing — "picked for you"/"popular"/
+    // "nearby" had no personalization, review or geo signal behind them.
+    eyebrow: "Browse",
+    title: "The latest items to rent",
     all: "All items",
     errorTitle: "We couldn’t load rentals",
     errorSubtitle:
@@ -93,11 +99,46 @@ export const en: Dict = {
       body: "The final rental price, platform fees and any refundable deposit are shown before you confirm payment.",
     },
     {
-      icon: "MapPin",
+      icon: "ScrollText",
       title: "Clear rules and support",
       body: "Booking, handover, cancellation, damage and dispute rules are kept in one place for both sides.",
     },
   ],
+  // DRAFT (marketing sign-off): section header for the trust band.
+  featuresHead: {
+    eyebrow: "Why Naudokis",
+    title: "Transparent rentals for both sides",
+  },
+  // DRAFT (marketing sign-off): 3-step model explainer.
+  homeSteps: {
+    eyebrow: "How it works",
+    title: "Three steps to a rental",
+    steps: [
+      {
+        title: "Find it on the site",
+        body: "Browse and compare rental listings online.",
+      },
+      {
+        title: "Get the app",
+        body: "The free Naudokis app for iOS and Android.",
+      },
+      {
+        title: "Reserve in the app",
+        body: "Dates, Stripe payment and messages in one place.",
+      },
+    ],
+  },
+  // DRAFT (marketing sign-off): owner band — only already-claimed facts.
+  ownerBand: {
+    eyebrow: "For owners",
+    title: "Have idle items? Earn from them.",
+    bullets: [
+      "Stripe payouts after the rental is completed",
+      "A refundable deposit and dispute process protect your item",
+      "Platform fees are shown before you confirm",
+    ],
+    cta: "How it works for owners",
+  },
   howItWorks: {
     meta: {
       title: "How item rental and listing work | Naudokis.lt",
@@ -286,6 +327,7 @@ export const en: Dict = {
         tone: "yellow",
         title: "Tools that can earn",
         body: "Put idle tools to work between projects. Payments, deposits and messages are handled in the app.",
+        cta: "owner",
       },
       {
         icon: "Coins",
@@ -294,14 +336,16 @@ export const en: Dict = {
         body: "Need something once or want to test it first? Find one nearby and avoid a purchase you may not need.",
       },
     ],
+    ownerCtaLabel: "See how earning works",
     goToSlide: (i) => `Show example ${i + 1}`,
   },
   cta: {
-    title: "Find it online. Book it in the app.",
+    title: "Find it online. Book it in the app.",
     body: "Choose dates, review the final price and deposit, message the owner, pay through Stripe and manage the rental in one place.",
     phoneAlt: "Booking screen in the Naudokis app",
   },
   faq: {
+    eyebrow: "Questions?",
     heading: "Frequently asked questions",
     subheading:
       "Quick answers about prices, reservations, deposits, payments and renting through the app.",
@@ -357,6 +401,7 @@ export const en: Dict = {
     helpHeading: "Help & policies",
     help: [
       { label: "How it works", href: "/kaip-tai-veikia" },
+      { label: "For owners", href: "/kaip-tai-veikia?role=owner" },
       { label: "Privacy policy", href: "/privatumo-politika" },
       { label: "Terms of use", href: "/naudojimosi-salygos" },
       { label: "Account deletion", href: "/paskyros-trynimas" },

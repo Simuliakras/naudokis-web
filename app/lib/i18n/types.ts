@@ -23,7 +23,7 @@ export type FooterCategory = { label: string; categoryId: string };
 // Homepage social-proof band: honest, non-attributed use-case cards (icon disk +
 // scenario title + supporting line). Deliberately NOT framed as named, star-rated
 // customer reviews — see the testimonials reframe note in the design audit.
-export type UseCaseItem = { icon: IconName; title: string; body: string; tone: HtwTone };
+export type UseCaseItem = { icon: IconName; title: string; body: string; tone: HtwTone; cta?: "owner" };
 
 // Legal Policy Center — UI chrome strings only. The document content itself
 // comes from app/lib/legal/data/*.json, not the dictionaries.
@@ -78,6 +78,7 @@ export type Dict = {
     ownerPrompt: string;
     ownerCta: string;
     phoneAlt: string;
+    qrCaption: string; // one-liner on the white QR card ("Scan to get the app")
   };
   search: {
     placeholder: string;
@@ -132,6 +133,26 @@ export type Dict = {
     bandEmptySecondary: string;
   };
   features: [FeatureItem, FeatureItem, FeatureItem];
+  featuresHead: { eyebrow: string; title: string }; // section header over the trust-features band
+  // Homepage 3-step model explainer (browse here → get the app → reserve in app)
+  // — pre-empts "why can't I book here?" without opening the HIW page.
+  homeSteps: {
+    eyebrow: string;
+    title: string;
+    steps: [
+      { title: string; body: string },
+      { title: string; body: string },
+      { title: string; body: string },
+    ];
+  };
+  // Homepage owner/supply band — truthful benefit bullets only (Stripe payouts,
+  // deposit + disputes, upfront fees); never earnings figures.
+  ownerBand: {
+    eyebrow: string;
+    title: string;
+    bullets: [string, string, string];
+    cta: string; // deep link into the owner journey (/kaip-tai-veikia?role=owner)
+  };
   // Standalone "Kaip tai veikia" page (/kaip-tai-veikia).
   howItWorks: {
     meta: { title: string; description: string };
@@ -171,6 +192,7 @@ export type Dict = {
     eyebrow: string;
     title: string;
     items: [UseCaseItem, UseCaseItem, UseCaseItem];
+    ownerCtaLabel: string; // foot link on the earn-framed card → owner journey
     goToSlide: (index: number) => string; // aria-label for carousel dot (0-based index)
   };
   cta: {
@@ -179,6 +201,7 @@ export type Dict = {
     phoneAlt: string;
   };
   faq: {
+    eyebrow: string; // section eyebrow — the FAQ joins the sitewide header anatomy
     heading: string;
     subheading: string;
     items: FaqItem[];

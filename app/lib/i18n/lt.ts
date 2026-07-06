@@ -44,10 +44,13 @@ export const lt: Dict = {
   hero: {
     badge: "Daiktų nuoma iš žmonių ir verslų visoje Lietuvoje",
     title: "Raskite reikalingą daiktą nuomai netoliese.",
-    body: "Nuomokitės įrankius, transportą, foto techniką, elektroniką ir laisvalaikio įrangą tik tada, kai jų reikia. Pasiūlymus naršykite internete, o datas, žinutes, galutinę kainą ir mokėjimą valdykite Naudokis programėlėje.",
+    // DRAFT (marketing sign-off): tightened — the long lede pushed the search
+    // card ~2 screens down at phone widths.
+    body: "Nuomokitės įrankius, transportą, foto techniką ar laisvalaikio įrangą tik tada, kai jų reikia. Naršykite internete, o rezervaciją ir mokėjimą užbaikite Naudokis programėlėje.",
     ownerPrompt: "Turite nenaudojamų daiktų ar nuomos verslą?",
     ownerCta: "Skelbti daiktą ir uždirbti",
     phoneAlt: "Naudokis programėlėje rodomi daiktų nuomos pasiūlymai",
+    qrCaption: "Nuskenuokite — atsisiųskite programėlę",
   },
   search: {
     // Short enough to never clip at the 320px floor; inputLabel keeps the full name.
@@ -92,8 +95,10 @@ export const lt: Dict = {
     bandEmptyRetry: "Atnaujinti",
   },
   offers: {
-    eyebrow: "Atrinkta jums",
-    title: "Populiarūs daiktai nuomai netoliese",
+    // DRAFT (marketing sign-off): recency framing — "picked for you"/"popular"/
+    // "nearby" had no personalization, review or geo signal behind them.
+    eyebrow: "Naršykite",
+    title: "Naujausi daiktai nuomai",
     all: "Visi daiktai",
     errorTitle: "Nepavyko įkelti nuomos pasiūlymų",
     errorSubtitle:
@@ -121,11 +126,46 @@ export const lt: Dict = {
       body: "Galutinė nuomos kaina, Platformos mokesčiai ir grąžinamas užstatas parodomi prieš patvirtinant mokėjimą.",
     },
     {
-      icon: "MapPin",
+      icon: "ScrollText",
       title: "Aiškios taisyklės ir pagalba",
       body: "Rezervacijos, perdavimo, atšaukimo, žalos ir ginčų taisyklės vienoje vietoje abiem nuomos pusėms.",
     },
   ],
+  // DRAFT (marketing sign-off): section header for the trust band.
+  featuresHead: {
+    eyebrow: "Kodėl Naudokis",
+    title: "Skaidri nuoma abiem pusėms",
+  },
+  // DRAFT (marketing sign-off): 3-step model explainer.
+  homeSteps: {
+    eyebrow: "Kaip tai veikia",
+    title: "Trys žingsniai iki nuomos",
+    steps: [
+      {
+        title: "Raskite svetainėje",
+        body: "Naršykite ir palyginkite nuomos pasiūlymus internete.",
+      },
+      {
+        title: "Atsisiųskite programėlę",
+        body: "Nemokama programėlė iOS ir Android įrenginiams.",
+      },
+      {
+        title: "Rezervuokite programėlėje",
+        body: "Datos, mokėjimas per Stripe ir žinutės — vienoje vietoje.",
+      },
+    ],
+  },
+  // DRAFT (marketing sign-off): owner band — only already-claimed facts.
+  ownerBand: {
+    eyebrow: "Savininkams",
+    title: "Turite nenaudojamų daiktų? Uždirbkite iš jų.",
+    bullets: [
+      "Išmokos per Stripe užbaigus nuomą",
+      "Grąžinamas užstatas ir ginčų procesas saugo jūsų daiktą",
+      "Platformos mokesčiai parodomi prieš patvirtinant",
+    ],
+    cta: "Kaip tai veikia savininkams",
+  },
   howItWorks: {
     meta: {
       title: "Kaip veikia daiktų nuoma ir skelbimas | Naudokis.lt",
@@ -318,6 +358,7 @@ export const lt: Dict = {
         tone: "yellow",
         title: "Įranga, kuri gali uždirbti",
         body: "Įdarbinkite tarp projektų nenaudojamus įrankius. Mokėjimai, užstatai ir žinutės tvarkomi programėlėje.",
+        cta: "owner",
       },
       {
         icon: "Coins",
@@ -326,6 +367,7 @@ export const lt: Dict = {
         body: "Reikia tik kartą arba norite pirma išbandyti? Raskite daiktą netoliese ir išvenkite nereikalingo pirkinio.",
       },
     ],
+    ownerCtaLabel: "Sužinokite, kaip uždirbti",
     goToSlide: (i) => `Rodyti ${i + 1} pavyzdį`,
   },
   cta: {
@@ -334,6 +376,7 @@ export const lt: Dict = {
     phoneAlt: "Naudokis programėlės rezervacijos ekranas",
   },
   faq: {
+    eyebrow: "Dar klausimų?",
     heading: "Dažniausiai užduodami klausimai",
     subheading:
       "Trumpi atsakymai apie kainas, rezervacijas, užstatus, mokėjimus ir nuomą programėlėje.",
@@ -389,6 +432,7 @@ export const lt: Dict = {
     helpHeading: "Pagalba ir taisyklės",
     help: [
       { label: "Kaip tai veikia", href: "/kaip-tai-veikia" },
+      { label: "Savininkams", href: "/kaip-tai-veikia?role=owner" },
       { label: "Privatumo politika", href: "/privatumo-politika" },
       { label: "Naudojimosi sąlygos", href: "/naudojimosi-salygos" },
       { label: "Paskyros ištrynimas", href: "/paskyros-trynimas" },

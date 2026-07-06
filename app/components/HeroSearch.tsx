@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LT_CITIES } from "@/app/lib/cities";
 import { trackEvent } from "@/app/lib/analytics";
-import { listingSearchHref } from "@/app/lib/search";
+import { listingLandingHref, listingSearchHref } from "@/app/lib/search";
+import { useCategories } from "@/app/lib/categories";
 import {
   closeListbox,
   focusListboxSelection,
@@ -12,6 +13,7 @@ import {
   listboxKeyNav,
   listboxTriggerKeyNav,
   openRedirect,
+  SearchSuggest,
 } from "./ui";
 import { useI18n } from "./I18nProvider";
 
@@ -33,6 +35,19 @@ export function HeroOwnerCta() {
         <Icon name="ArrowRight" size={16} stroke={2.2} color="currentColor" />
       </button>
     </div>
+  );
+}
+
+/* Owner-band secondary action: opens the list-your-item bridge modal. A separate
+   client leaf so the server-rendered OwnerBand section can compose it. */
+export function OwnerAppCta() {
+  const { dict } = useI18n();
+  return (
+    <button type="button" className="nk-btn nk-btn--outline"
+      title={dict.bridge.opensAppHint}
+      onClick={() => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody })}>
+      <Icon name="Smartphone" size={17} stroke={2} color="var(--nk-text)" /> {dict.hero.ownerCta}
+    </button>
   );
 }
 
@@ -149,6 +164,11 @@ export function SearchBar() {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [city, setCity] = useState("");
+  // Focus-opened guided suggestions (real categories + picker cities) — on a
+  // launch-size inventory a blind free-text search usually returns nothing.
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const cats = useCategories(locale).data ?? [];
   const go = (e: React.FormEvent) => {
     e.preventDefault();
     trackEvent("Hero Search Submit", {
@@ -160,9 +180,23 @@ export function SearchBar() {
   };
   return (
     <form
+      ref={formRef}
       className="nk-search"
       onSubmit={go}
+      onBlur={(e) => {
+        if (!(e.relatedTarget instanceof Node) || !formRef.current?.contains(e.relatedTarget)) {
+          setSuggestOpen(false);
+        }
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") { setSuggestOpen(false); return; }
+        if (e.key === "ArrowDown" && suggestOpen) {
+          e.preventDefault();
+          formRef.current?.querySelector<HTMLElement>('[role="option"]')?.focus();
+        }
+      }}
       style={{
+        position: "relative",
         display: "flex",
         alignItems: "center",
         gap: 8,
@@ -180,7 +214,8 @@ export function SearchBar() {
           <span className="nk-search__label">{dict.search.labelWhat}</span>
           <input
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => { setQ(e.target.value); setSuggestOpen(false); }}
+            onFocus={() => { if (!q) setSuggestOpen(true); }}
             placeholder={dict.search.placeholder}
             aria-label={dict.search.inputLabel}
             className="nk-search__input"
@@ -192,6 +227,16 @@ export function SearchBar() {
       <button type="submit" className="nk-btn nk-btn--primary" style={{ padding: "16px 36px" }}>
         {dict.search.submit}
       </button>
+      {suggestOpen && cats.length > 0 && (
+        <SearchSuggest
+          categories={cats}
+          cities={LT_CITIES}
+          headings={{ categories: dict.search.suggestCategories, cities: dict.search.suggestCities }}
+          label={dict.search.suggestionsLabel}
+          onCategory={(id) => { setSuggestOpen(false); router.push(listingLandingHref({ category: id, locale })); }}
+          onCity={(c) => { setSuggestOpen(false); router.push(listingLandingHref({ city: c, locale })); }}
+        />
+      )}
     </form>
   );
 }

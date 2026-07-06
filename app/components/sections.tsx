@@ -602,6 +602,22 @@ export function Offers() {
               href={localePath(locale, `/skelbimai/${o.id}`)}
             />
           ))}
+          {/* Launch-size inventory: a ghost browse-all tile fills the trailing
+              cell so a 3-item row never reads as a failed load — and converts. */}
+          {list.length < 4 && (
+            <Link
+              href={localePath(locale, "/skelbimai")}
+              className="nk-ghost-tile nk-reveal"
+            >
+              {t.all}{" "}
+              <Icon
+                name="ArrowRight"
+                size={20}
+                stroke={2.2}
+                color="currentColor"
+              />
+            </Link>
+          )}
         </div>
       ) : (
         <SectionEmptyGrid
@@ -629,7 +645,7 @@ export function Offers() {
    with navigation dots. The active dot tracks the real scroll position via an
    IntersectionObserver (same idiom as ScrollReveal). */
 export function UseCases() {
-  const { dict } = useI18n();
+  const { locale, dict } = useI18n();
   const t = dict.useCases;
   const items = t.items;
   const [active, setActive] = useState(0);
@@ -685,6 +701,15 @@ export function UseCases() {
               title={item.title}
               body={item.body}
               tone={item.tone}
+              // the earn-framed card must lead into the owner journey, not dead-end
+              cta={
+                item.cta === "owner"
+                  ? {
+                      label: t.ownerCtaLabel,
+                      href: localePath(locale, "/kaip-tai-veikia") + "?role=owner",
+                    }
+                  : undefined
+              }
             />
           </div>
         ))}
@@ -711,27 +736,20 @@ export function Faq() {
         className="nk-container"
         style={{ paddingBlock: "var(--nk-section-y-lg)", maxWidth: 1320 }}
       >
-        <div
-          className="nk-reveal"
+        {/* same eyebrow+H2 anatomy as every other home section (the centred,
+            eyebrow-less block was the page's one divergent header grammar); the
+            subheading tucks under the head by offsetting its section margin */}
+        <SectionHead eyebrow={dict.faq.eyebrow} title={dict.faq.heading} />
+        <p
+          className="nk-body nk-reveal"
           style={{
-            textAlign: "center",
-            display: "flex",
-            flexDirection: "column",
-            gap: "var(--nk-gap-md)",
-            alignItems: "center",
-            marginBottom: "var(--nk-section-head)",
+            margin: "calc(16px - var(--nk-section-head)) 0 var(--nk-section-head)",
+            maxWidth: 720,
+            color: "var(--nk-text-2)",
           }}
         >
-          <h2 className="nk-h-section" style={{ margin: 0 }}>
-            {dict.faq.heading}
-          </h2>
-          <p
-            className="nk-body"
-            style={{ margin: 0, maxWidth: 866, color: "var(--nk-text-2)" }}
-          >
-            {dict.faq.subheading}
-          </p>
-        </div>
+          {dict.faq.subheading}
+        </p>
         <div
           className="nk-reveal"
           style={{
