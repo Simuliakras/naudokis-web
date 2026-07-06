@@ -415,6 +415,7 @@ export const lt: Dict = {
     tagline: "Daiktų nuoma iš privačių ir verslo savininkų visoje Lietuvoje.",
     browseHeading: "Kategorijos",
     allCategories: "Visos kategorijos",
+    citiesHeading: "Miestai",
     // Labels match the canonical backend/tile category names so the same
     // categoryId reads identically in the footer and the discovery grids.
     categories: [
@@ -438,6 +439,7 @@ export const lt: Dict = {
       { label: "Paskyros ištrynimas", href: "/paskyros-trynimas" },
     ],
     copyright: "© 2026 Naudokis.lt. Visos teisės saugomos.",
+    secure: "Mokėjimai per Stripe",
     socialLabel: "Socialiniai tinklai",
   },
   detail: {
@@ -790,9 +792,18 @@ export const lt: Dict = {
       `Jus pakvietė į Naudokis! Gaukite ${amount} pirmai nuomai.`,
     titleUnknown: "Jus pakvietė į Naudokis.",
     titleGeneric: "Nuomokitės daiktus iš žmonių šalia.",
-    lead: "Naudokis — daiktų nuoma iš patikimų žmonių šalia. Atsisiųskite programėlę, kad pradėtumėte.",
+    // DRAFT (marketing sign-off): "šalia" no longer echoes the headline's line.
+    lead: "Naudokis — patikima daiktų nuoma iš privačių ir verslo savininkų. Atsisiųskite programėlę, kad pradėtumėte.",
     rewardExplainer:
       "Premija įskaitoma jūsų paskyroje, kai programėlėje patvirtinsite tapatybę. Jus pakvietęs draugas premiją gauna po jūsų pirmos užbaigtos nuomos.",
+    invalidNote:
+      "Šis pakvietimo kodas nebegalioja, tačiau programėle galite naudotis įprastai.",
+    // DRAFT (marketing sign-off): truthful value bullets — already-claimed facts only.
+    benefits: [
+      "Mokėjimai ir užstatai — saugiai per Stripe",
+      "Patvirtinti savininkų profiliai ir atsiliepimai",
+      "Aiškios rezervacijos, atšaukimo ir ginčų taisyklės",
+    ],
     ctaInstall: "Atsisiųsti programėlę",
     qrHint: "Nuskenuokite telefonu",
     codeLabel: "Jūsų pakvietimo kodas",

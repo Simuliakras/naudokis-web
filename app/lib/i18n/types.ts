@@ -211,9 +211,11 @@ export type Dict = {
     browseHeading: string;
     allCategories: string;
     categories: FooterCategory[]; // curated category links (label + stable LT search query)
+    citiesHeading: string; // city-landing links column ("Miestai" / "Cities")
     helpHeading: string;
     help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
     copyright: string;
+    secure: string; // caption framing the payment marks ("Payments by Stripe") — bare card logos read as clutter
     socialLabel: string; // aria-label for the social-links group
   };
   detail: {
@@ -466,6 +468,8 @@ export type Dict = {
     titleGeneric: string; // invalid / missing code → plain install
     lead: string;
     rewardExplainer: string; // the honest "when do I get it" note
+    invalidNote: string; // confirmed-invalid/expired code — say so instead of silently ignoring it
+    benefits: [string, string, string]; // truthful value bullets (the funnel was bare headline → button)
     ctaInstall: string;
     qrHint: string;
     codeLabel: string; // label above the on-page code (manual-entry fallback)

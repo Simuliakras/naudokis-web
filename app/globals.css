@@ -759,6 +759,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* clamp the title to two lines at every width so long LT names (e.g. "Garsas,
    muzika ir renginių technika") never push past the fixed tile height */
 .nk-cat__text h3{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* 1-line titles reserve the full 2-line slot so text-block tops and the arrow
+   chip stay level across a row where neighbours wrap (F-009) */
+@media(min-width:561px){.nk-cat__text h3{min-height:2.4em}}
 /* smallest phones (below the 360 CSS floor): allow a 3rd line so a long name like
    "Garsas, muzika ir renginių technika" keeps its last word at 320px */
 @media(max-width:400px){.nk-cat__text h3{-webkit-line-clamp:3}}
@@ -878,10 +881,21 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__pattern{position:absolute;right:0;top:0;width:1053px;max-width:62%;height:100%;object-fit:cover;object-position:right;opacity:.12;pointer-events:none;
   -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.45) 38%,#000 100%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.45) 38%,#000 100%)}
 .nk-footer .nk-container{position:relative}
-.nk-footer__top{display:grid;grid-template-columns:1.5fr 1.4fr 1fr;gap:48px 64px;padding-block:72px 56px;align-items:start}
+.nk-footer__top{display:grid;grid-template-columns:1.4fr 1.3fr .8fr 1fr;gap:48px 56px;padding-block:72px 56px;align-items:start}
 /* category links: single column by default; column-major into two columns only on wide desktop */
 .nk-footer__catgrid{display:grid;grid-auto-flow:row;grid-template-columns:1fr;gap:var(--nk-s-4) 44px;align-content:start}
-@media(min-width:1280px){.nk-footer__catgrid{grid-auto-flow:column;grid-template-columns:none;grid-template-rows:repeat(5,auto)}}
+/* multicol lets each column flow independently — row-paired grid heights left
+   irregular vertical gaps whenever a two-line label stretched its row */
+@media(min-width:1280px){
+  .nk-footer__catgrid{display:block;columns:2;column-gap:44px}
+  .nk-footer__catgrid a{display:block;break-inside:avoid;margin-bottom:var(--nk-s-4)}
+}
+/* phones: a 2-up link grid halves ~400px of dead footer scroll */
+@media(max-width:560px){
+  .nk-footer__catgrid{grid-template-columns:1fr 1fr;gap:var(--nk-s-4) var(--nk-gap-lg)}
+  .nk-footer__catgrid .nk-footer__all{grid-column:1 / -1}
+}
+.nk-footer__all{display:inline-flex;align-items:center;gap:6px;color:var(--nk-purple-hover)!important}
 .nk-footer__brand{display:flex;flex-direction:column;gap:var(--nk-gap-xl);max-width:380px}
 .nk-footer__tagline{margin:0;font-family:var(--nk-font-body);font-size:18px;line-height:28px;color:var(--nk-text-muted);max-width:340px}
 .nk-footer__contact{display:flex;flex-direction:column;gap:var(--nk-gap-sm)}
@@ -912,6 +926,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   padding-block:26px;border-top:1px solid var(--nk-border-soft)}
 .nk-footer__legal{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-muted)}
 .nk-footer__pay{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.nk-footer__secure{display:inline-flex;align-items:center;gap:7px;font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2);
+  padding-right:16px;border-right:1px solid var(--nk-border-soft)}
 @media(max-width:1024px){
   .nk-footer__top{grid-template-columns:1fr 1fr;gap:var(--nk-s-10) var(--nk-s-12);padding-block:56px 44px}
   .nk-footer__brand{grid-column:1 / -1;max-width:none}
@@ -923,7 +939,12 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-footer__brand{gap:var(--nk-gap-lg)}
   .nk-footer__bottom{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-md);padding-block:22px}
   .nk-footer__pay{gap:var(--nk-gap-md) var(--nk-gap-lg)}
+  .nk-footer__secure{border-right:none;padding-right:0;flex-basis:100%}
   .nk-footer__pattern{opacity:.05}
+}
+
+@media(max-width:360px){
+  .nk-footer__pay{gap:var(--nk-gap-md) 12px}
 }
 
 /* ============================================================
@@ -1787,8 +1808,25 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   --hero-lead-mw:620px;--hero-lead:20px;--hero-lead-lh:32px}
 .invite-reward{margin:0;max-width:560px;font-family:var(--nk-font-body);font-size:15px;line-height:24px;
   color:var(--nk-text-muted)}
+/* truthful value bullets between the lead and the install actions */
+.invite-benefits{margin:4px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;align-items:center}
+.invite-benefits li{display:flex;align-items:flex-start;gap:9px;font-family:var(--nk-font-body);
+  font-size:15.5px;line-height:24px;color:var(--nk-text-2);text-align:left}
+.invite-benefits .nk-ico{flex:none;margin-top:3px}
 .invite-actions{display:flex;flex-direction:column;align-items:center;gap:20px;margin-top:8px}
 .invite-qr{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:8px}
+/* ≥1120px: split funnel — copy/actions left, QR + code right; below that the
+   original centred column stack applies */
+.invite-cols__main,.invite-cols__aside{display:flex;flex-direction:column;align-items:center;gap:var(--hero-gap,24px)}
+@media(min-width:1120px){
+  .invite-cols{display:grid;grid-template-columns:1.25fr .75fr;gap:56px;align-items:center;text-align:left}
+  .invite-cols__main{align-items:flex-start;text-align:left}
+  .invite-cols__main h1{text-align:left}
+  .invite-cols__aside{align-items:center;justify-content:center;padding:28px;
+    background:var(--nk-surface-glass);border:1px solid var(--nk-border);border-radius:var(--nk-r-card)}
+  .invite-benefits{align-items:flex-start}
+  .invite-actions{flex-direction:row;align-items:center}
+}
 .invite-qr__hint{font-family:var(--nk-font-display);font-weight:600;font-size:14px;color:var(--nk-text-muted)}
 /* you can't scan a QR on the same phone you're holding — drop it ≤560 (the install
    CTA + store badges are the mobile path), mirroring the home-hero/HIW convention */

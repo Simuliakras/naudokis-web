@@ -71,34 +71,52 @@ export function InviteScreen() {
         <main id="nk-main">
           <section className="nk-hero-band invite-hero">
             <Pattern name="hero-pattern" priority className="nk-hero-band__pattern nk-brand-pattern" />
-            <div className="nk-container nk-hero-band__inner">
-              <span className="nk-eyebrow">{t.eyebrow}</span>
-              <h1>{headline}</h1>
-              <p className="nk-hero-band__lead">{t.lead}</p>
-              {reward && <p className="invite-reward">{t.rewardExplainer}</p>}
+            {/* ≥1120px: copy/actions left, QR/code right (see .invite-cols) — the
+                centred phone column blown up to 1440 wasted the whole width */}
+            <div className="nk-container nk-hero-band__inner invite-cols">
+              <div className="invite-cols__main">
+                <span className="nk-eyebrow">{t.eyebrow}</span>
+                <h1>{headline}</h1>
+                <p className="nk-hero-band__lead">{t.lead}</p>
+                {reward && <p className="invite-reward">{t.rewardExplainer}</p>}
+                {/* confirmed-invalid/expired: say so — silently dropping the code
+                    the visitor clicked through with reads as a glitch */}
+                {invalid && <p className="invite-reward">{t.invalidNote}</p>}
 
-              <div className="invite-actions">
-                <button type="button" className="nk-btn nk-btn--primary" onClick={onInstall}>
-                  <Icon name="Download" size={18} stroke={2.2} />
-                  {t.ctaInstall}
-                </button>
-                <AppBadges height={50} href={attributionLink} />
-              </div>
+                {/* truthful value bullets — the funnel was headline → button → footer */}
+                <ul className="invite-benefits">
+                  {t.benefits.map((b) => (
+                    <li key={b}>
+                      <Icon name="BadgeCheck" size={18} stroke={2} color="var(--nk-green-text)" /> {b}
+                    </li>
+                  ))}
+                </ul>
 
-              <div className="invite-qr">
-                <QR value={attributionLink} size={172} />
-                <span className="invite-qr__hint">{t.qrHint}</span>
-              </div>
-
-              {/* Don't show the code chip when the code is confirmed invalid — a
-                  code chip next to a headline that no longer acknowledges an invite
-                  reads as a glitch. */}
-              {code && !invalid && (
-                <div className="invite-code">
-                  <span className="invite-code__label">{t.codeLabel}</span>
-                  <code className="invite-code__value">{code}</code>
+                <div className="invite-actions">
+                  <button type="button" className="nk-btn nk-btn--primary" onClick={onInstall}>
+                    <Icon name="Download" size={18} stroke={2.2} />
+                    {t.ctaInstall}
+                  </button>
+                  <AppBadges height={50} href={attributionLink} />
                 </div>
-              )}
+              </div>
+
+              <div className="invite-cols__aside">
+                <div className="invite-qr">
+                  <QR value={attributionLink} size={172} />
+                  <span className="invite-qr__hint">{t.qrHint}</span>
+                </div>
+
+                {/* Don't show the code chip when the code is confirmed invalid — a
+                    code chip next to a headline that no longer acknowledges an invite
+                    reads as a glitch. */}
+                {code && !invalid && (
+                  <div className="invite-code">
+                    <span className="invite-code__label">{t.codeLabel}</span>
+                    <code className="invite-code__value">{code}</code>
+                  </div>
+                )}
+              </div>
             </div>
           </section>
         </main>

@@ -382,8 +382,11 @@ export const en: Dict = {
   },
   footer: {
     tagline: "Item rental from private and business owners across Lithuania.",
-    browseHeading: "Browse",
+    // content-descriptive column head (matches LT "Kategorijos"; "Browse" already
+    // labels the home categories eyebrow — one word must not name two nav tiers)
+    browseHeading: "Categories",
     allCategories: "All categories",
+    citiesHeading: "Cities",
     // Labels match the canonical backend/tile category names (name_en) so the same
     // categoryId reads identically in the footer and the discovery grids.
     categories: [
@@ -407,6 +410,7 @@ export const en: Dict = {
       { label: "Account deletion", href: "/paskyros-trynimas" },
     ],
     copyright: "© 2026 Naudokis.lt. All rights reserved.",
+    secure: "Payments by Stripe",
     socialLabel: "Social media",
   },
   detail: {
@@ -714,9 +718,18 @@ export const en: Dict = {
       `You’ve been invited to Naudokis! Get ${amount} on your first rental.`,
     titleUnknown: "You’ve been invited to Naudokis.",
     titleGeneric: "Rent items from people nearby.",
-    lead: "Naudokis is item rental from trusted people nearby. Get the app to start.",
+    // DRAFT (marketing sign-off): "nearby" no longer echoes the headline's line.
+    lead: "Naudokis is trusted item rental from private and business owners. Get the app to start.",
     rewardExplainer:
       "Your reward is credited to your account once you verify your identity in the app. The friend who invited you is rewarded after your first completed rental.",
+    invalidNote:
+      "This invite code is no longer valid, but you can use the app as usual.",
+    // DRAFT (marketing sign-off): truthful value bullets — already-claimed facts only.
+    benefits: [
+      "Payments and deposits handled securely through Stripe",
+      "Verified owner profiles and reviews",
+      "Clear booking, cancellation and dispute rules",
+    ],
     ctaInstall: "Get the app",
     qrHint: "Scan with your phone",
     codeLabel: "Your invite code",

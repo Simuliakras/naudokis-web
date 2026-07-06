@@ -5,6 +5,14 @@
 // either language. Inlined colors mirror --nk-* tokens; keep in sync.
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Archivo, Sora } from "next/font/google";
+import { CONTACT_EMAIL } from "@/app/lib/contact";
+
+// Standalone page (outside the [lang] layout) — load the brand fonts directly so
+// the 404 doesn't fall back to system-ui on the most jarring surface to go
+// off-brand. Same families/weights as the root layout.
+const archivo = Archivo({ subsets: ["latin", "latin-ext"], weight: ["600", "700"] });
+const sora = Sora({ subsets: ["latin", "latin-ext"], weight: ["400", "600"] });
 
 export const metadata: Metadata = {
   title: "Šio puslapio neradome | Page not found",
@@ -63,9 +71,6 @@ export default function NotFound() {
         .nf-cta:active { transform: scale(.98); }
         .nf-get:hover { color: #FFFFFF; }
         @media (max-width: 640px) {
-          .nf-header {
-            justify-content: center !important;
-          }
           .nf-nav {
             display: none !important;
           }
@@ -77,8 +82,8 @@ export default function NotFound() {
           background:
             "radial-gradient(circle at 78% 18%, rgba(102,101,224,.30), transparent 34%), radial-gradient(circle at 18% 82%, rgba(16,185,129,.18), transparent 30%), #282C2D",
           color: "#FFFFFF",
-          fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
         }}
+        className={sora.className}
       >
         <header
           className="nf-header"
@@ -113,17 +118,24 @@ export default function NotFound() {
               <Link
                 key={link.href}
                 href={link.href}
+                className={archivo.className}
                 style={{
                   color: "#FFFFFF",
                   textDecoration: "none",
                   fontSize: 16,
-                  fontWeight: 650,
+                  fontWeight: 600,
                 }}
               >
                 {link.label}
               </Link>
             ))}
           </nav>
+          {/* the site's one conversion action stays in the chrome even here;
+              /go is a redirect route handler, so a plain <a> is correct */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <a href="/go" className={"nf-cta " + archivo.className} style={{ ...primaryCta, minHeight: 44, padding: "0 20px", fontSize: 15, flex: "none" }}>
+            Atsisiųsti programėlę
+          </a>
         </header>
 
         <section
@@ -160,11 +172,13 @@ export default function NotFound() {
               404
             </p>
             <h1
+              className={archivo.className}
               style={{
                 margin: 0,
                 fontSize: "clamp(34px, 7vw, 64px)",
                 lineHeight: 1.04,
                 letterSpacing: 0,
+                fontWeight: 700,
               }}
             >
               Šio puslapio neradome
@@ -201,10 +215,10 @@ export default function NotFound() {
               }}
             >
               <Link href="/" className="nf-cta" style={primaryCta}>
-                Į pradžią
+                Į pradžią / Home
               </Link>
               <Link href="/skelbimai" className="nf-cta" style={secondaryCta}>
-                Naršyti nuomą
+                Naršyti nuomą / Browse rentals
               </Link>
             </div>
             {/* minimal install affordance — /go is a redirect route handler (sniffs
@@ -215,6 +229,23 @@ export default function NotFound() {
             </a>
           </div>
         </section>
+
+        <footer
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+            flexWrap: "wrap",
+            padding: "18px clamp(20px, 6vw, 82px)",
+            borderTop: "1px solid rgba(255,255,255,.08)",
+            color: "rgba(255,255,255,.6)",
+            fontSize: 14,
+          }}
+        >
+          <span>© {new Date().getFullYear()} Naudokis.lt</span>
+          <a href={"mailto:" + CONTACT_EMAIL} style={{ color: "rgba(255,255,255,.6)", textDecoration: "underline", textUnderlineOffset: 3 }}>{CONTACT_EMAIL}</a>
+        </footer>
       </main>
     </>
   );

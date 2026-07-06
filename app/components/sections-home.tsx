@@ -13,6 +13,7 @@ import {
 } from "./ui";
 import { SearchBar, HeroOwnerCta, OwnerAppCta } from "./HeroSearch";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, SOCIAL_PROFILES } from "@/app/lib/contact";
+import { LT_CITIES } from "@/app/lib/cities";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { listingLandingHref } from "@/app/lib/search";
@@ -257,6 +258,12 @@ export function Footer({ locale }: { locale: Locale }) {
             <FooterCategories locale={locale} />
           </nav>
 
+          {/* city landings — internal-link equity + the H1's own "nearby" promise */}
+          <nav className="nk-footer__col" aria-label={t.citiesHeading}>
+            <h2>{t.citiesHeading}</h2>
+            <FooterCities locale={locale} />
+          </nav>
+
           <nav className="nk-footer__col" aria-label={t.helpHeading}>
             <h2>{t.helpHeading}</h2>
             <FooterHelpLinks locale={locale} />
@@ -266,6 +273,9 @@ export function Footer({ locale }: { locale: Locale }) {
         <div className="nk-footer__bottom">
           <span className="nk-footer__legal">{t.copyright}</span>
           <div className="nk-footer__pay">
+            {/* caption ties the marks to the platform's escrow story — bare card
+                logos on a site that takes no web payments read as clutter */}
+            <span className="nk-footer__secure"><Icon name="ShieldCheck" size={17} color="var(--nk-green)" stroke={2} /> {t.secure}</span>
             {FOOTER_PAY.map(([f, a]) => (
               <Image key={f} src={`/naudokis/${f}.png`} alt={a} width={100} height={52}
                 style={{ height: 30, width: "auto" }} />
@@ -286,7 +296,21 @@ function FooterCategories({ locale }: { locale: Locale }) {
           {category.label}
         </Link>
       ))}
+      {/* the curated list shows 10 of 12 — close it with the hub link */}
+      <Link href={localePath(locale, "/kategorijos")} className="nk-footer__all">
+        {t.allCategories} <Icon name="ArrowRight" size={15} stroke={2.2} color="currentColor" />
+      </Link>
     </div>
+  );
+}
+
+function FooterCities({ locale }: { locale: Locale }) {
+  return (
+    <>
+      {LT_CITIES.slice(0, 6).map((city) => (
+        <Link key={city} href={listingLandingHref({ city, locale })}>{city}</Link>
+      ))}
+    </>
   );
 }
 
