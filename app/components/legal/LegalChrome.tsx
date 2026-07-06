@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { TocItem } from "@/app/lib/legal/types";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
+import { CloseButton } from "../ui";
 import { useLegalScroll } from "./LegalScroll";
 import { Icon } from "./Icon";
 
@@ -53,10 +54,11 @@ export function TocSidebar({ toc, heading }: { toc: TocItem[]; heading: string }
 }
 
 export function LegalChrome({
-  toc, contents, openMenu, backTop, readingProgress,
+  toc, contents, closeContents, openMenu, backTop, readingProgress,
 }: {
   toc: TocItem[];
   contents: string;
+  closeContents: string; // close-button accessible name — must NOT repeat the panel title
   openMenu: string;
   backTop: string;
   readingProgress: string;
@@ -114,9 +116,8 @@ export function LegalChrome({
         <nav ref={panelRef} className="nk-lg-drawer__panel" role="dialog" aria-modal="true" aria-label={contents}>
           <div className="nk-lg-drawer__top">
             <h3>{contents}</h3>
-            <button ref={closeRef} className="nk-lg-iconbtn" style={{ display: "flex" }} onClick={() => setDrawer(false)} aria-label={contents}>
-              <Icon name="x" size={18} />
-            </button>
+            {/* shared overlay close primitive; named "Close", not the panel title */}
+            <CloseButton ref={closeRef} onClick={() => setDrawer(false)} label={closeContents} />
           </div>
           {toc.map((s) => (
             <a

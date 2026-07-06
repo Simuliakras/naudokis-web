@@ -171,23 +171,27 @@ export function Footer({ locale }: { locale: Locale }) {
               <a href={CONTACT_PHONE_TEL}><Icon name="Phone" size={17} stroke={2} color="currentColor" /> {CONTACT_PHONE}</a>
               <a href={"mailto:" + CONTACT_EMAIL}><Icon name="Mail" size={17} stroke={2} color="currentColor" /> {CONTACT_EMAIL}</a>
             </div>
-            <div className="nk-footer__social" aria-label={t.socialLabel}>
+            {/* <nav>: aria-label does nothing on a bare div (role=generic), and
+                these ARE navigation links — matches the sibling footer columns. */}
+            <nav className="nk-footer__social" aria-label={t.socialLabel}>
               {SOCIAL_PROFILES.map((profile) => (
                 <a key={profile.id} href={profile.href} target="_blank" rel="noopener noreferrer" aria-label={profile.label}>
                   <Icon name={profile.icon} size={20} color="currentColor" />
                 </a>
               ))}
-            </div>
+            </nav>
             <AppBadges footer={true} height={46} />
           </div>
 
+          {/* h2 (visually sized by the .nk-footer__col heading rule): hardcoded h4s
+              produced h1→h4 outline jumps on pages with no h2/h3 (404, /invite). */}
           <nav className="nk-footer__col" aria-label={t.browseHeading}>
-            <h4>{t.browseHeading}</h4>
+            <h2>{t.browseHeading}</h2>
             <FooterCategories locale={locale} />
           </nav>
 
           <nav className="nk-footer__col" aria-label={t.helpHeading}>
-            <h4>{t.helpHeading}</h4>
+            <h2>{t.helpHeading}</h2>
             <FooterHelpLinks locale={locale} />
           </nav>
         </div>

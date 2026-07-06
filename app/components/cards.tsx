@@ -69,9 +69,10 @@ export function OfferCard({
         {/* meta row: rating + count on the left, location pin + city on the right */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--nk-gap-sm)", flexWrap: "wrap" }}>
           {rating ? (
-            // Compact "4,8 ★ (52)" — the full pluralized phrase is kept for screen
-            // readers so the terse count stays scannable without wrapping the row.
-            <span aria-label={ratingCount ? `${rating}, ${c.reviewCount(ratingCount)}` : rating}
+            // Compact "4,8 ★ (52)" — role="img" (the APG composite-rating pattern)
+            // makes the aria-label real: on a bare generic span many AT pairs
+            // ignore it and would announce only "4,8" with the count hidden.
+            <span role="img" aria-label={ratingCount ? `${rating}, ${c.reviewCount(ratingCount)}` : rating}
               style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)" }}>
               <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 16, color: "var(--nk-text-2)" }}>{rating}</b>
               <Icon name="Star" size={16} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
@@ -145,7 +146,9 @@ export function InterruptionBanner() {
       <Image src="/naudokis/icon.png" alt="" width={409} height={409}
         style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
       <div style={{ position: "relative", flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
-        <h3 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{t.interruptTitle}</h3>
+        {/* CTA banner, not a document section — a <p> keeps the feed's heading
+            outline clean (an h3 here landed before the page's first h2). */}
+        <p style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{t.interruptTitle}</p>
         <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "26px", color: "var(--nk-text-2)", maxWidth: 520 }}>{t.interruptBody}</p>
       </div>
       <button className="nk-btn nk-btn--primary" style={{ position: "relative", padding: "16px 28px" }}

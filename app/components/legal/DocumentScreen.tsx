@@ -96,6 +96,7 @@ export function DocumentScreen({
             <LegalChrome
               toc={doc.toc}
               contents={t.contents}
+              closeContents={t.closeContents}
               openMenu={t.openMenu}
               backTop={t.backTop}
               readingProgress={t.readingProgress}

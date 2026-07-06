@@ -311,9 +311,12 @@ export function Pill({
 /* ---------------- Breadcrumb (home icon + active pill) ---------------- */
 export type Crumb = { label: string; href?: string };
 export function Breadcrumb({ items, homeLabel, label }: { items: Crumb[]; homeLabel: string; label: string }) {
-  const all: Crumb[] = [{ label: homeLabel, href: "/" }, ...items];
+  // Locale-prefixed home crumb (mirrors Logo) — a bare "/" would silently switch
+  // an /en visitor back to the Lithuanian homepage.
+  const { locale } = useI18nOptional();
+  const all: Crumb[] = [{ label: homeLabel, href: localeHome(locale) }, ...items];
   return (
-    <nav aria-label={label} className="nk-crumbs" style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap", marginBottom: 22 }}>
+    <nav aria-label={label} className="nk-crumbs" style={{ display: "flex", alignItems: "center", gap: "6px 4px", flexWrap: "wrap", marginBottom: 22 }}>
       {all.map((c, i) => {
         const last = i === all.length - 1;
         const home = i === 0;
@@ -322,13 +325,15 @@ export function Breadcrumb({ items, homeLabel, label }: { items: Crumb[]; homeLa
             <span key={i} aria-current="page" style={{ padding: "6px 10px", borderRadius: 9, fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text)", background: "var(--nk-surface)" }}>{c.label}</span>
           );
         }
+        // Crumb + its separator wrap as one unit — a chevron must never orphan at
+        // a line end when the trail wraps on small phones.
         return (
-          <React.Fragment key={i}>
-            <Link href={c.href ?? "/"} className="nk-crumb" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "6px 10px", borderRadius: 9, fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", textDecoration: "none" }}>
+          <span key={i} className="nk-crumbs__seg" style={{ display: "inline-flex", alignItems: "center", gap: 4, whiteSpace: "nowrap" }}>
+            <Link href={c.href ?? localeHome(locale)} className="nk-crumb" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "6px 10px", borderRadius: 9, fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", textDecoration: "none" }}>
               {home && <Icon name="Home" size={16} stroke={2} color="currentColor" />} {c.label}
             </Link>
-            <Icon name="ChevronRight" size={14} stroke={2.4} color="var(--nk-text-muted)" />
-          </React.Fragment>
+            <Icon name="ChevronRight" size={14} stroke={2.4} color="var(--nk-text-muted)" className="nk-crumbs__sep" />
+          </span>
         );
       })}
     </nav>
@@ -383,6 +388,45 @@ export function focusListboxSelection(panel: HTMLElement | null) {
     ?? panel?.querySelector<HTMLElement>('[role="option"]'))?.focus();
 }
 
+/* Close a listbox and restore keyboard focus to its trigger. Focus moved INTO the
+   panel on open, so unmounting it on Escape/select would otherwise drop focus to
+   <body> and restart Tab from the top of the document. Restores only when focus
+   is actually inside `container` (never steals focus from elsewhere). */
+export function closeListbox(
+  setOpen: (open: boolean) => void,
+  trigger: React.RefObject<HTMLButtonElement | null>,
+  container: React.RefObject<HTMLElement | null>,
+) {
+  setOpen(false);
+  if (container.current && document.activeElement && container.current.contains(document.activeElement)) {
+    trigger.current?.focus();
+  }
+}
+
+/* Generic roving-focus step (APG radio-group / toolbar pattern): Arrow/Home/End
+   move focus across `selector` matches inside e.currentTarget. Returns the newly
+   focused element so radio groups can also move SELECTION on arrows, or null when
+   the key wasn't handled. */
+export function rovingKeyNav(e: React.KeyboardEvent, selector: string): HTMLElement | null {
+  if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) {
+    return null;
+  }
+  const options = Array.from(e.currentTarget.querySelectorAll<HTMLElement>(selector));
+  if (options.length === 0) {
+    return null;
+  }
+  e.preventDefault();
+  const i = options.indexOf(document.activeElement as HTMLElement);
+  const forward = e.key === "ArrowDown" || e.key === "ArrowRight";
+  const next =
+    e.key === "Home" ? 0
+    : e.key === "End" ? options.length - 1
+    : forward ? (i + 1) % options.length
+    : i < 0 ? options.length - 1 : (i - 1 + options.length) % options.length;
+  options[next].focus();
+  return options[next];
+}
+
 /* ---------------- FilterSelect (custom popover dropdown) ----------------
    Dark pill trigger + option list. Replaces native <select> on the feed.
    `direction="up"` opens above the trigger (used by the hero city picker). */
@@ -403,10 +447,13 @@ export function FilterSelect({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
+    // Escape closes AND restores focus to the trigger (focus lives inside the
+    // panel while open); an outside click just closes — the user is elsewhere.
     const onDoc = (e: MouseEvent) => { if (ref.current && e.target instanceof Node && !ref.current.contains(e.target)) setOpen(false); };
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeListbox(setOpen, triggerRef, ref); };
     document.addEventListener("mousedown", onDoc);
     document.addEventListener("keydown", onKey);
     return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
@@ -423,10 +470,17 @@ export function FilterSelect({
     ? { bottom: "calc(100% + 10px)" }
     : { top: "calc(100% + 10px)" };
   return (
-    <span ref={ref} style={{ position: "relative", display: "inline-flex" }}>
-      <button type="button" className={"nk-pillctl" + (active ? " is-active" : "")} onClick={() => setOpen((v) => !v)}
+    <span ref={ref} style={{ position: "relative", display: "inline-flex" }}
+      onBlur={(e) => {
+        // Tabbing out of an open panel closes it (WAI-ARIA listbox pattern).
+        if (open && e.relatedTarget instanceof Node && ref.current && !ref.current.contains(e.relatedTarget)) {
+          setOpen(false);
+        }
+      }}>
+      <button ref={triggerRef} type="button" className={"nk-pillctl" + (active ? " is-active" : "")} onClick={() => setOpen((v) => !v)}
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
-        aria-haspopup="listbox" aria-expanded={open} style={{
+        aria-haspopup="listbox" aria-expanded={open}
+        aria-label={active && selected ? `${label}: ${selected.label}` : label} style={{
         display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-tap)", cursor: "pointer", whiteSpace: "nowrap",
         fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5,
       }}>
@@ -435,15 +489,19 @@ export function FilterSelect({
         <Icon name="ChevronDown" size={15} stroke={2.4} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
       </button>
       {open && (
-        <span ref={panelRef} role="listbox" aria-label={label} onKeyDown={listboxKeyNav} style={{ position: "absolute", ...panelPos, [align]: 0, minWidth: 230, maxWidth: "calc(100vw - 2*var(--nk-gutter))", background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 16, padding: 7, display: "flex", flexDirection: "column", gap: 2, boxShadow: "var(--nk-shadow-3)", zIndex: 50 }}>
+        <span ref={panelRef} role="listbox" aria-label={label} onKeyDown={listboxKeyNav}
+          style={{ position: "absolute", ...panelPos, [align]: 0, minWidth: 230, maxWidth: "calc(100vw - 2*var(--nk-gutter))",
+            maxHeight: "min(60vh, 480px)", overflowY: "auto", overscrollBehavior: "contain",
+            background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 16, padding: 7, display: "flex", flexDirection: "column", gap: 2, boxShadow: "var(--nk-shadow-3)", zIndex: 50 }}>
           {heading && <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--nk-text-muted)", padding: "8px 12px 6px" }}>{heading}</span>}
           {options.map((o) => {
             const sel = o.value === value;
             return (
-              <button key={o.value} type="button" role="option" aria-selected={sel} onClick={() => { onChange(o.value); setOpen(false); }}
+              <button key={o.value} type="button" role="option" aria-selected={sel}
+                onClick={() => { onChange(o.value); closeListbox(setOpen, triggerRef, ref); }}
                 className={"nk-selopt" + (sel ? " is-selected" : "")}
                 style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, padding: "11px 13px", borderRadius: 10, cursor: "pointer", textAlign: "left",
-                  fontFamily: "var(--nk-font-body)", fontSize: 16 }}>
+                  fontFamily: "var(--nk-font-body)", fontSize: 16, flex: "none" }}>
                 {o.label}{sel && <Icon name="BadgeCheck" size={17} color="var(--nk-accent-text)" stroke={2} />}
               </button>
             );

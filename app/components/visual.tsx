@@ -92,10 +92,12 @@ export function Icon({
   }
 
   // Inline glyph: filled (`f`) path, or stroke (`s`) children for Instagram.
+  // aria-hidden/focusable match the Lucide branch's effective output (it auto-adds
+  // aria-hidden) so the brand glyphs never announce as unnamed "image" noise.
   const def = entry.def;
   if (def.f && (!def.s || wantFill)) {
     return (
-      <svg className={cls} xmlns="http://www.w3.org/2000/svg"
+      <svg className={cls} xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
         width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none"
         style={tone}>
         <path d={def.f} />
@@ -103,7 +105,7 @@ export function Icon({
     );
   }
   return (
-    <svg className={cls} xmlns="http://www.w3.org/2000/svg"
+    <svg className={cls} xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
       width={size} height={size} viewBox="0 0 24 24" fill={wantFill ? "currentColor" : "none"} stroke="currentColor"
       strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round"
       style={tone}>

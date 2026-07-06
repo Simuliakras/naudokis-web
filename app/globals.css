@@ -11,7 +11,9 @@
      app source — it overrides the earlier #807FFE / #9263FF guesses. */
   --nk-purple:        #6665E0;   /* PRIMARY — buttons, links, accents (app)   */
   --nk-purple-deep:   #5756C6;   /* primaryDark — border / pressed            */
-  --nk-purple-hover:  #8A89FF;   /* primaryText — hover / on-dark links       */
+  --nk-purple-hover:  #8A89FF;   /* primaryText — hover / on-dark links (4.8:1 on flat --nk-bg only) */
+  --nk-purple-bright: #A8A7FF;   /* accent text over glass/tinted surfaces — ≥4.5:1 on the lightest hero glass */
+  --nk-purple-tag-text:#A3A2FF;  /* 14px text on --nk-purple-tag washes (≈5.3:1) — -hover fails there */
   --nk-purple-tint:   rgba(102,101,224,.20);  /* faint decorative tint        */
   --nk-purple-soft:   rgba(102,101,224,.12);  /* outline button hover wash    */
   --nk-accent-bg:     #5756C6;   /* active/selected control fill — SOLID      */
@@ -805,10 +807,18 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-search__input{border:0;outline:0;background:transparent;font-family:var(--nk-font-body);
   font-size:16px;color:var(--nk-bg);width:100%;min-width:110px;
   text-overflow:ellipsis}
+/* --nk-text-slate exists precisely for this (7.2:1 on --nk-light-field); without
+   it Chrome's UA darkgray placeholder computes to ~2.2:1 — and above 560px the
+   placeholder is the field's ONLY visible hint (the micro-label is hidden) */
+.nk-search__input::placeholder{color:var(--nk-text-slate);opacity:1}
 
-/* ---- FAQ hover ---- */
+/* ---- FAQ hover + keyboard focus ---- */
 .nk-faq{transition:border-color .2s ease,background .2s ease,border-radius .2s ease}
 .nk-faq:hover{background:var(--nk-faq-hover)}
+/* The row clips overflow (rounded hover bg), which swallows the global outside
+   outline — mirror the offer/category cards' :focus-within ring instead. */
+.nk-faq:focus-within{box-shadow:0 0 0 3px var(--nk-purple-hover)}
+.nk-faq button:focus-visible{outline:none}
 
 /* ---- skeleton / shimmer ---- */
 .nk-skel{position:relative;overflow:hidden;background:var(--nk-ps-card);border-radius:6px}
@@ -885,7 +895,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__social a:active{transform:scale(.94)}
 .nk-footer__col{display:flex;flex-direction:column;gap:var(--nk-gap-lg)}
 @media(min-width:1025px){.nk-footer__brand{padding-top:4px}.nk-footer__col{padding-top:63px}}
-.nk-footer__col h4{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:19px;color:var(--nk-text);letter-spacing:.01em}
+.nk-footer__col h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:19px;color:var(--nk-text);letter-spacing:.01em}
 .nk-footer__col a{position:relative;font-family:var(--nk-font-body);font-size:18px;line-height:1.25;color:var(--nk-text-muted);text-decoration:none;
   transition:color .15s ease;width:fit-content}
 .nk-footer__col a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--nk-purple);transition:right .25s ease}
@@ -1017,6 +1027,12 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-crumb{min-height:var(--nk-tap);transition:color .15s ease,background .15s ease}
 .nk-crumb:hover{color:var(--nk-text);background:var(--nk-surface)}
 .nk-crumbs{min-width:0}
+/* Small phones: the current-page chip repeats the H1 directly below it — drop it
+   (and the chevron of the segment that precedes it) so the trail stays one row. */
+@media(max-width:680px){
+  .nk-crumbs [aria-current="page"]{display:none}
+  .nk-crumbs .nk-crumbs__seg:has(+ [aria-current="page"]) .nk-crumbs__sep{display:none}
+}
 .nk-crumbs > *{min-width:0}
 .nk-crumbs [aria-current="page"]{max-width:100%;overflow-wrap:anywhere}
 
@@ -1071,7 +1087,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-fchips{display:flex}
 @media(min-width:561px){.nk-fchips{display:none}}
 /* removable active-filter chip */
-.nk-fchip{display:inline-flex;align-items:center;gap:8px;border-radius:var(--nk-r-chip);padding:9px 12px 9px 16px;
+.nk-fchip{display:inline-flex;align-items:center;gap:8px;border-radius:var(--nk-r-chip);padding:9px 12px 9px 16px;min-height:var(--nk-tap);
   background:var(--nk-surface);border:1px solid var(--nk-border);box-shadow:var(--nk-edge-top);
   font-family:var(--nk-font-display);font-weight:600;font-size:15px;color:var(--nk-text);
   transition:background .15s ease,border-color .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
@@ -1234,8 +1250,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-mbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;
   background:rgba(27,30,31,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--nk-border);
   align-items:center;justify-content:space-between;gap:16px;padding:14px 20px calc(14px + env(safe-area-inset-bottom));
-  transition:transform .22s var(--nk-ease),opacity .18s ease}
-.nk-mbar.is-hidden{opacity:0;transform:translateY(calc(100% + env(safe-area-inset-bottom)));pointer-events:none}
+  transition:transform .22s var(--nk-ease),opacity .18s ease,visibility .22s}
+/* visibility (a discrete transition step) removes the hidden bar's Reserve button
+   from the Tab order once the slide-out finishes — opacity alone left it focusable */
+.nk-mbar.is-hidden{opacity:0;transform:translateY(calc(100% + env(safe-area-inset-bottom)));pointer-events:none;visibility:hidden}
 .nk-mbar > *{min-width:0}
 .nk-mbar > span{overflow:hidden}
 .nk-mbar > span span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1398,7 +1416,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-hero-badge__label{font-size:13.5px;line-height:16px}
   /* store badges as one scaled row (no wrap to two lines at 344px) */
   .nk-appbadges{flex-wrap:nowrap!important;gap:10px!important;width:100%}
-  .nk-appbadges .nk-badgebtn{flex:1 1 0;min-width:0}
+  /* min-height keeps the tap target at the house 44px floor while the badge
+     artwork stays capped at 40px — these are the primary mobile install CTAs */
+  .nk-appbadges .nk-badgebtn{flex:1 1 0;min-width:0;min-height:var(--nk-tap);align-items:center}
   .nk-appbadges .nk-badgebtn img{width:100%!important;height:auto!important;max-height:40px;object-fit:contain;object-position:left}
   .nk-search{width:100%;max-width:100%!important;flex-direction:column!important;align-items:stretch!important;padding:6px!important;border-radius:22px!important;gap:0!important;border-color:var(--nk-light-divider)!important}
   .nk-search > span:first-child{flex:1 1 auto!important;min-width:0;width:100%;padding:8px 12px!important;gap:12px!important}

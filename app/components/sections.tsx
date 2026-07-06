@@ -30,6 +30,7 @@ import {
 } from "./cards";
 import { useI18n } from "./I18nProvider";
 import {
+  closeListbox,
   Dots,
   focusListboxSelection,
   Icon,
@@ -219,6 +220,10 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
           ref={drawerRef}
           id="nk-mobile-nav"
           className={"nk-nav-drawer" + (menuOpen ? " open" : "")}
+          // Closed, the drawer is only visually collapsed (max-height/opacity) so
+          // the exit animation can play — inert removes its six interactive
+          // descendants from the Tab order and the accessibility tree.
+          inert={!menuOpen}
         >
           <div className="nk-nav-drawer-inner">
             <button className="nk-drawer-item" onClick={doSearch}>
@@ -258,7 +263,9 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
               {dict.nav.howItWorks}
             </Link>
             <div className="nk-drawer-locale">
-              <LocaleSwitcher />
+              {/* In-flow expansion: a floating panel here clipped at the viewport
+                  edge and covered the install CTA below (F-110). */}
+              <LocaleSwitcher inflow />
             </div>
             <button
               className="nk-btn nk-btn--primary"
@@ -286,88 +293,18 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   );
 }
 
-/* Mini flag glyphs (LT tricolor / EN union jack) used by the language picker. */
-function Flag({ code }: { code: Locale }) {
-  if (code === "lt") {
-    return (
-      <span
-        style={{
-          width: 20,
-          height: 14,
-          borderRadius: 2,
-          overflow: "hidden",
-          display: "inline-flex",
-          flexDirection: "column",
-          flex: "none",
-        }}
-      >
-        <i style={{ flex: 1, background: "#FDB913" }} />
-        <i style={{ flex: 1, background: "#006A44" }} />
-        <i style={{ flex: 1, background: "#C1272D" }} />
-      </span>
-    );
-  }
-  return (
-    <span
-      style={{
-        width: 20,
-        height: 14,
-        borderRadius: 2,
-        overflow: "hidden",
-        display: "inline-flex",
-        position: "relative",
-        flex: "none",
-        background: "#012169",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <span
-        style={{
-          position: "absolute",
-          width: "140%",
-          height: 2,
-          background: "#fff",
-          transform: "rotate(34deg)",
-        }}
-      />
-      <span
-        style={{
-          position: "absolute",
-          width: "140%",
-          height: 2,
-          background: "#fff",
-          transform: "rotate(-34deg)",
-        }}
-      />
-      <span
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: 4,
-          background: "#C8102E",
-        }}
-      />
-      <span
-        style={{
-          position: "absolute",
-          width: 4,
-          height: "100%",
-          background: "#C8102E",
-        }}
-      />
-    </span>
-  );
-}
-
-// Language picker — flag + "Kalba"/"Language" + chevron trigger opening a listbox
-// of endonym options. Matches the design's LangPicker; options are Next <Link>s
-// to the per-locale path (default locale unprefixed) so it keeps you on-page.
-function LocaleSwitcher() {
+// Language picker — globe + "Kalba"/"Language" + chevron trigger opening a listbox
+// of endonym options (a globe, not flags: flags denote countries, not languages).
+// Options are Next <Link>s to the per-locale path (default locale unprefixed) so it
+// keeps you on-page. `inflow` renders the options as an in-flow expansion instead of
+// a floating panel — used inside the mobile drawer, where an absolutely-positioned
+// panel clipped at the viewport edge and occluded the install CTA.
+function LocaleSwitcher({ inflow = false }: { inflow?: boolean }) {
   const { locale, dict } = useI18n();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -378,8 +315,9 @@ function LocaleSwitcher() {
       )
         setOpen(false);
     };
+    // Escape restores focus to the trigger (focus lives inside the open panel).
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") closeListbox(setOpen, triggerRef, ref);
     };
     document.addEventListener("mousedown", onDoc);
     document.addEventListener("keydown", onKey);
@@ -402,19 +340,31 @@ function LocaleSwitcher() {
   return (
     <span
       ref={ref}
-      style={{
-        position: "relative",
-        display: "inline-flex",
-        marginInline: -10,
+      style={
+        inflow
+          ? { display: "flex", flexDirection: "column", alignItems: "stretch" }
+          : { position: "relative", display: "inline-flex", marginInline: -10 }
+      }
+      onBlur={(e) => {
+        if (
+          open &&
+          e.relatedTarget instanceof Node &&
+          ref.current &&
+          !ref.current.contains(e.relatedTarget)
+        ) {
+          setOpen(false);
+        }
       }}
     >
       <button
+        ref={triggerRef}
         type="button"
         className="nk-locale-trigger"
         onClick={() => setOpen((v) => !v)}
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-label={`${dict.nav.language}: ${dict.nav.languageNames[locale]}`}
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -424,7 +374,7 @@ function LocaleSwitcher() {
           cursor: "pointer",
         }}
       >
-        <Flag code={locale} />
+        <Icon name="Globe" size={17} stroke={2} color="var(--nk-text-muted)" />
         <span className="nk-nav">{dict.nav.language}</span>
         <Icon
           name="ChevronDown"
@@ -444,11 +394,17 @@ function LocaleSwitcher() {
           aria-label={dict.nav.language}
           onKeyDown={listboxKeyNav}
           style={{
-            position: "absolute",
-            top: "calc(100% + 8px)",
-            right: 0,
-            minWidth: 160,
-            maxWidth: "calc(100vw - 2*var(--nk-gutter))",
+            ...(inflow
+              ? { marginTop: 6 }
+              : {
+                  position: "absolute",
+                  top: "calc(100% + 8px)",
+                  right: 0,
+                  minWidth: 160,
+                  maxWidth: "calc(100vw - 2*var(--nk-gutter))",
+                  boxShadow: "0 16px 40px rgba(0,0,0,.4)",
+                  zIndex: 60,
+                }),
             background: "var(--nk-surface)",
             border: "1px solid var(--nk-border)",
             borderRadius: 12,
@@ -456,8 +412,6 @@ function LocaleSwitcher() {
             display: "flex",
             flexDirection: "column",
             gap: 2,
-            boxShadow: "0 16px 40px rgba(0,0,0,.4)",
-            zIndex: 60,
           }}
         >
           {locales.map((l) => {
@@ -468,7 +422,7 @@ function LocaleSwitcher() {
                 href={href(l)}
                 role="option"
                 aria-selected={active}
-                onClick={() => setOpen(false)}
+                onClick={() => closeListbox(setOpen, triggerRef, ref)}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -484,7 +438,7 @@ function LocaleSwitcher() {
                   fontSize: 15,
                 }}
               >
-                <Flag code={l} /> {dict.nav.languageNames[l]}
+                {dict.nav.languageNames[l]}
                 {active && (
                   <Icon
                     name="BadgeCheck"

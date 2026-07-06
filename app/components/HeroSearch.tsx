@@ -6,6 +6,7 @@ import { LT_CITIES } from "@/app/lib/cities";
 import { trackEvent } from "@/app/lib/analytics";
 import { listingSearchHref } from "@/app/lib/search";
 import {
+  closeListbox,
   focusListboxSelection,
   Icon,
   listboxKeyNav,
@@ -20,11 +21,14 @@ import { useI18n } from "./I18nProvider";
    hero.ownerPrompt/ownerCta keys and the list-flow bridge modal. */
 export function HeroOwnerCta() {
   const { dict } = useI18n();
+  // --nk-purple-bright (not -hover): the CTA sits on the translucent hero glass
+  // over the purple-glow photo, where -hover's 4.8:1-on-flat-bg drops below AA.
+  // min-height keeps a real coarse-pointer target on the sole owner entry point.
   return (
     <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--nk-gap-2xs) var(--nk-gap-sm)" }}>
       <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>{dict.hero.ownerPrompt}</span>
       <button type="button" onClick={() => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody })}
-        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "transparent", padding: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-hover)", cursor: "pointer" }}>
+        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "transparent", padding: "10px 0", minHeight: "var(--nk-tap)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-bright)", cursor: "pointer" }}>
         {dict.hero.ownerCta}
         <Icon name="ArrowRight" size={16} stroke={2.2} color="currentColor" />
       </button>
@@ -36,6 +40,7 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: s
   const { dict } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -44,8 +49,9 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: s
         setOpen(false);
       }
     };
+    // Escape restores focus to the trigger (focus lives inside the open panel).
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") closeListbox(setOpen, triggerRef, ref);
     };
     document.addEventListener("mousedown", onDoc);
     document.addEventListener("keydown", onKey);
@@ -67,14 +73,24 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: s
   );
 
   return (
-    <span ref={ref} className="nk-citypick nk-citypick--hero">
+    <span
+      ref={ref}
+      className="nk-citypick nk-citypick--hero"
+      onBlur={(e) => {
+        if (open && e.relatedTarget instanceof Node && ref.current && !ref.current.contains(e.relatedTarget)) {
+          setOpen(false);
+        }
+      }}
+    >
       <button
+        ref={triggerRef}
         type="button"
         className="nk-citypick__trigger"
         onClick={() => setOpen((v) => !v)}
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-label={`${dict.search.labelWhere}: ${value || dict.cityPicker.all}`}
       >
         <Icon name="MapPin" size={20} stroke={2} color="var(--nk-bg)" />
         <span className="nk-search__col" style={{ flex: 1 }}>
@@ -110,7 +126,7 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: s
                 aria-selected={active}
                 onClick={() => {
                   onChange(val);
-                  setOpen(false);
+                  closeListbox(setOpen, triggerRef, ref);
                 }}
                 className={"nk-citypick__opt" + (active ? " is-active" : "")}
               >

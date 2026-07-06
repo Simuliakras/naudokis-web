@@ -183,13 +183,15 @@
   font-family:var(--nk-font-display); font-weight:600; font-size:13.5px; color:var(--nk-purple-light); }
 @media (max-width:560px){ .nk-lg-related__grid{ grid-template-columns:1fr; } }
 
-/* back to top */
+/* back to top — visibility keeps the invisible control out of the Tab order
+   (opacity alone left it focusable from page load) without killing the fade */
 .nk-lg-totop{ position:fixed; right:24px; bottom:24px; z-index:70; width:46px; height:46px;
   border-radius:14px; border:1px solid var(--lg-rule); background:var(--lg-float-bg);
   backdrop-filter:blur(10px); color:var(--nk-text); cursor:pointer; display:flex;
   align-items:center; justify-content:center; opacity:0; transform:translateY(10px) scale(.94);
-  pointer-events:none; transition:opacity .22s, transform .22s, background .15s; }
-.nk-lg-totop.is-on{ opacity:1; transform:none; pointer-events:auto; }
+  visibility:hidden; pointer-events:none;
+  transition:opacity .22s, transform .22s, background .15s, visibility .22s; }
+.nk-lg-totop.is-on{ opacity:1; transform:none; pointer-events:auto; visibility:visible; }
 .nk-lg-totop:hover{ background:var(--nk-purple); border-color:var(--nk-purple); }
 
 /* floating TOC button (mobile) */

@@ -49,6 +49,9 @@ export function ListingScreen({ id }: { id: string }) {
         {/* Return to the feed with the user's last filters intact (deep links fall back to the bare feed). */}
         <Nav onSearch={() => router.push(lastFeedUrl(locale) ?? localePath(locale, "/skelbimai"))} />
         <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 120px" }}>
+          {/* Persistent live region (mounted before its content changes — a live
+              region born WITH content announces nothing on most SR/browser pairs). */}
+          <span role="status" className="nk-sr-only">{isLoading ? dict.common.loading : ""}</span>
           <div className="nk-detail">{children}</div>
         </main>
         <div ref={footerRef}>
@@ -59,12 +62,8 @@ export function ListingScreen({ id }: { id: string }) {
   );
 
   if (isLoading) {
-    return shell(
-      <div role="status" aria-live="polite">
-        <span className="nk-sr-only">{dict.common.loading}</span>
-        <ListingSkeleton />
-      </div>,
-    );
+    // Purely visual — the persistent status region in the shell announces loading.
+    return shell(<ListingSkeleton />);
   }
   // A gone/deleted listing (client soft-404: an SPA navigation or a background
   // refetch that 404s). Server-side deletions already hard-404 via notFound() in
