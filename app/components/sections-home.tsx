@@ -78,32 +78,6 @@ export function Features({ locale }: { locale: Locale }) {
   );
 }
 
-/* ---------------- 3-step model explainer ----------------
-   "Browse here → get the app → reserve in the app" as a scannable strip — most
-   visitors never open the How-It-Works page, and the bridge model is unusual
-   enough to pre-empt the "why can't I book here?" question right on the home. */
-export function HowItWorksStrip({ locale }: { locale: Locale }) {
-  const dict = getDictionary(locale);
-  const t = dict.homeSteps;
-  const hrefs = ["/skelbimai", "/go", "/kaip-tai-veikia"];
-  return (
-    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y)" }}>
-      <SectionHead eyebrow={t.eyebrow} title={t.title} />
-      <div className="nk-homesteps nk-reveal-grid">
-        {t.steps.map((s, i) => (
-          <Link key={s.title} href={hrefs[i] === "/go" ? "/go" : localePath(locale, hrefs[i])} className="nk-homesteps__card nk-reveal">
-            <span className="nk-homesteps__num">{i + 1}</span>
-            <span style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 19, color: "var(--nk-text)" }}>{s.title}</span>
-              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, lineHeight: "24px", color: "var(--nk-text-muted)" }}>{s.body}</span>
-            </span>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function FeatureCard({
   icon = "ShieldCheck", title, body, className,
 }: {
@@ -273,10 +247,13 @@ function FooterCategories({ locale }: { locale: Locale }) {
 }
 
 function FooterCities({ locale }: { locale: Locale }) {
+  const t = getDictionary(locale).footer;
   return (
     <>
       {LT_CITIES.slice(0, 5).map((city) => (
-        <Link key={city} href={listingLandingHref({ city, locale })}>{city}</Link>
+        <Link key={city} href={listingLandingHref({ city, locale })}>
+          {t.cityLink(city)}
+        </Link>
       ))}
     </>
   );

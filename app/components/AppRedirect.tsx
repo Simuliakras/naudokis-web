@@ -103,6 +103,9 @@ export function AppRedirect() {
 
   if (!state.open) return null;
   const emailHref = `mailto:?subject=${encodeURIComponent(dict.bridge.emailSelfSubject)}&body=${encodeURIComponent(SMART_INSTALL_URL)}`;
+  // Same string as the mobile "Also on:" row, minus the trailing colon so it sits
+  // cleanly as a centred divider label (both locales end in ":").
+  const storeLabel = dict.bridge.storesAlso.replace(/[:：]+\s*$/, "");
   return (
     <div className={state.closing ? "nk-redirect-scrim is-closing" : "nk-redirect-scrim"} onClick={close} role="dialog" aria-modal="true" aria-labelledby="nk-redirect-title" aria-describedby="nk-redirect-body">
       <div ref={panelRef} className={state.instant ? "nk-redirect-panel nk-redirect-panel--instant" : "nk-redirect-panel"} onClick={(e) => e.stopPropagation()}>
@@ -112,13 +115,13 @@ export function AppRedirect() {
         <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={287} height={64}
           style={{ height: 32, width: "auto", alignSelf: "flex-start" }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <h2 id="nk-redirect-title" style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{state.title}</h2>
+          <h2 id="nk-redirect-title" style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", letterSpacing: "-0.01em", color: "var(--nk-text)" }}>{state.title}</h2>
           <p id="nk-redirect-body" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "26px", color: "var(--nk-text-2)" }}>{state.body}</p>
         </div>
         {/* Intent preservation: the item the user was acting on stays visible
             across the handoff (real listing data passed by the trigger). */}
         {state.listing && (
-          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 10, borderRadius: "var(--nk-r-tile)", background: "var(--nk-surface)", border: "1px solid var(--nk-border)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 12, borderRadius: "var(--nk-r-md)", background: "var(--nk-surface-2)", border: "1px solid var(--nk-glass-card-border)", boxShadow: "var(--nk-edge-top)" }}>
             <span className="nk-imgph" style={{ width: 56, height: 44, borderRadius: 8, flex: "none", position: "relative", overflow: "hidden" }}>
               {state.listing.thumb && <Image src={state.listing.thumb} alt="" fill sizes="56px" style={{ objectFit: "cover" }} />}
               {!state.listing.thumb && <Icon name="Image" size={18} stroke={1.5} className="nk-imgicon" />}
@@ -133,7 +136,13 @@ export function AppRedirect() {
             resolves to a store on a phone), so it gets the card + heading and the
             mailto fallback for visitors who can't scan. Hidden ≤560px. */}
         <div className="nk-redirect-qr">
-          <QR size={128} />
+          <span className="nk-qr-frame">
+            <QR size={128} />
+            <span className="nk-qr-frame__corner nk-qr-frame__corner--tl" aria-hidden="true" />
+            <span className="nk-qr-frame__corner nk-qr-frame__corner--tr" aria-hidden="true" />
+            <span className="nk-qr-frame__corner nk-qr-frame__corner--bl" aria-hidden="true" />
+            <span className="nk-qr-frame__corner nk-qr-frame__corner--br" aria-hidden="true" />
+          </span>
           <span style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
             <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 17, lineHeight: "22px", color: "var(--nk-text)" }}>{dict.bridge.qrTitle}</span>
             <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, lineHeight: "20px", color: "var(--nk-text-muted)" }}>{dict.bridge.qrHint}</span>
@@ -143,6 +152,8 @@ export function AppRedirect() {
             </a>
           </span>
         </div>
+        {/* Desktop: separate the scan handoff from the store click-path. Hidden ≤560px. */}
+        <div className="nk-redirect-divider" aria-hidden="true"><span>{storeLabel}</span></div>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Mobile primary: one-tap smart link that sniffs the OS. Hidden >560px,
               where it would only 302 back to the homepage (a decoy CTA). */}

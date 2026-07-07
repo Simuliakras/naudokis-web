@@ -111,25 +111,6 @@ export const en: Dict = {
     eyebrow: "Why Naudokis",
     title: "Transparent rentals for both sides",
   },
-  // DRAFT (marketing sign-off): 3-step model explainer.
-  homeSteps: {
-    eyebrow: "How it works",
-    title: "Three steps to a rental",
-    steps: [
-      {
-        title: "Find it on the site",
-        body: "Browse and compare rental listings online.",
-      },
-      {
-        title: "Get the app",
-        body: "The free Naudokis app for iOS and Android.",
-      },
-      {
-        title: "Reserve in the app",
-        body: "Dates, Stripe payment and messages in one place.",
-      },
-    ],
-  },
   howItWorks: {
     meta: {
       title: "How item rental and listing work | Naudokis.lt",
@@ -318,7 +299,6 @@ export const en: Dict = {
         tone: "yellow",
         title: "Tools that can earn",
         body: "Put idle tools to work between projects. Payments, deposits and messages are handled in the app.",
-        cta: "owner",
       },
       {
         icon: "Coins",
@@ -327,7 +307,6 @@ export const en: Dict = {
         body: "Need something once or want to test it first? Find one nearby and avoid a purchase you may not need.",
       },
     ],
-    ownerCtaLabel: "See how earning works",
     goToSlide: (i) => `Show example ${i + 1}`,
   },
   cta: {
@@ -373,10 +352,11 @@ export const en: Dict = {
   },
   footer: {
     tagline: "Item rental from private and business owners across Lithuania.",
-    // content-descriptive column head (matches LT "Kategorijos"; "Browse" already
-    // labels the home categories eyebrow — one word must not name two nav tiers)
-    browseHeading: "Categories",
+    // content-descriptive column head (matches LT "Daiktų kategorijos"; "Browse"
+    // already labels the home categories eyebrow — one word must not name two nav tiers)
+    browseHeading: "Item categories",
     citiesHeading: "Cities",
+    cityLink: (city) => `Rentals in ${city}`,
     // Labels match the canonical backend/tile category names (name_en) so the same
     // categoryId reads identically in the footer and the discovery grids.
     categories: [
@@ -416,7 +396,7 @@ export const en: Dict = {
     },
     share: "Share",
     shareCopied: "Link copied",
-    verifiedOwnerPill: "Verified profile",
+    verifiedOwnerPill: "Verified identity",
     galleryMore: (n) => `+${n} photo${n === 1 ? "" : "s"}`,
     descHeading: "Description",
     descOriginalNote: "Provided by the owner in their original language.",
@@ -438,11 +418,8 @@ export const en: Dict = {
     reviewsEmptyBody: "Be the first to rent it and help others decide.",
     reviewsInApp: (n) => `All ${n} reviews in the app`,
     perDay: "per day",
-    depositReturnable: "Deposit (refundable)",
     reserve: "Reserve in the app",
     reserveMobile: "Reserve",
-    escrowNote: "Naudokis administers payments and refunds through Stripe under the applicable terms.",
-    protectedPayments: "Protected payments",
     loadErrorTitle: "We couldn’t load this listing",
     loadErrorBody: "Check your connection and try again.",
     goneTitle: "This listing is no longer available",
@@ -460,36 +437,16 @@ export const en: Dict = {
     galleryNext: "Next photo",
     galleryImageError: "Couldn’t load this photo",
     perDayShort: "per day",
-    chooseDates: "Choose dates",
-    serviceFee: "Platform fees",
-    serviceFeeHint:
-      "You’ll choose dates in the app — any fees, delivery charge and refundable deposit are shown there before you confirm.",
-    serviceFeeFree: "In the app",
-    inAppValue: "In the app",
-    totalToday: "Final amount",
-    feePolicyLabel: "Fee policy — in the Terms of Use",
-    feePolicyHref: "/naudojimosi-salygos#10-payments-fees-and-stripe",
-    cancellationNote: (tier) => {
-      if (tier === "flexible") return "Flexible cancellation";
-      if (tier === "moderate") return "Moderate cancellation";
-      if (tier === "strict") return "Strict cancellation";
-      return "Cancellation per policy";
-    },
-    cancellationHref:
-      "/naudojimosi-salygos#12-cancellations-refunds-and-the-right-of-withdrawal",
+    confirmInApp: "You’ll confirm dates and the final price in the app.",
     hostStatRating: "Rating",
     hostStatReviews: "Reviews",
     hostStatListings: "Items",
     hostMessage: "Message owner",
-    hostVerifiedNote: "Naudokis has verified some details on this profile.",
-    hostMemberSince: (year) => `Member since ${year}`,
+    hostMemberSince: (label) => `Member since ${label}`,
     hostResponseTime: (hours) =>
       hours <= 1
         ? "Responds within an hour"
         : `Responds within ~${Math.ceil(hours)} hours`,
-    ownerMoreHeading: "More from this owner",
-    reportListing: "Report this listing",
-    reportSubject: (title, id) => `Report listing: ${title} (${id})`,
     deliverySub: (city, opts) => {
       const where = city ? ` in ${city}` : "";
       if (opts.delivery && !opts.pickup) return `Arrange delivery${where}.`;
@@ -680,8 +637,6 @@ export const en: Dict = {
     reserveTitle: "Reserve in the app",
     reserveBody:
       "Choose dates, review the final price, applicable fees and deposit, then confirm your booking in the app.",
-    datesTitle: "Choose dates in the app",
-    datesBody: "Availability and final pricing are shown in Naudokis.",
     contactTitle: "Message the owner in the app",
     contactBody:
       "Keep rental messages and booking details together in Naudokis.",

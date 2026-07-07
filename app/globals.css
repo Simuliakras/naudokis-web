@@ -345,7 +345,7 @@ a,button,input,textarea,select{touch-action:manipulation}
 
 /* round arrow button */
 .nk-round{width:44px;height:44px;border-radius:var(--nk-r-icon);display:inline-flex;align-items:center;justify-content:center;
-  transition:transform var(--nk-dur-fast) var(--nk-ease-spring),background .18s ease;flex:none}
+  transition:transform var(--nk-dur-fast) var(--nk-ease-spring),background .18s ease,border-color .18s ease;flex:none}
 .nk-round:active{transform:scale(.94)}
 .nk-round--solid{background:var(--nk-purple)}
 .nk-round--solid:hover{background:var(--nk-purple-deep)}
@@ -658,12 +658,15 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-offer__media:has(.nk-zoom)::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(180deg,rgba(0,0,0,.10) 0%,transparent 16% 70%,rgba(0,0,0,.22) 100%)}
 .nk-offer:hover .nk-round--solid{background:var(--nk-purple-deep)}
-@media(hover:hover) and (pointer:fine){.nk-offer:hover .nk-round--solid{transform:translateX(3px)}}
-.nk-offer:focus-within,.nk-cat:focus-within{border-color:var(--nk-accent-border)}
+/* browse-card arrow mirrors the category card: fills purple + slides on card hover */
+.nk-offer:hover .nk-round--outline{background:var(--nk-purple);border-color:var(--nk-purple)}
+@media(hover:hover) and (pointer:fine){.nk-offer:hover .nk-round--solid,.nk-offer:hover .nk-round--outline{transform:translateX(3px)}}
+.nk-offer:has(:focus-visible),.nk-cat:focus-within{border-color:var(--nk-accent-border)}
 /* the stretched card link's own :focus-visible outline is clipped by the card's
    overflow:hidden, so keyboard focus gets a real ring via the card's own
-   box-shadow (matches .nk-cat) — not clipped, unlike a descendant outline */
-.nk-offer:focus-within{box-shadow:var(--nk-edge-top),0 0 0 3px var(--nk-purple-hover)}
+   box-shadow (matches .nk-cat) — not clipped, unlike a descendant outline.
+   Gated on :has(:focus-visible) so a mouse click doesn't leave the ring behind. */
+.nk-offer:has(:focus-visible){box-shadow:var(--nk-edge-top),0 0 0 3px var(--nk-purple-hover)}
 .nk-offer h3,.nk-cat h3{overflow-wrap:anywhere;hyphens:auto}
 .nk-offer__body,.nk-offer__pricebar{min-width:0}
 .nk-offer__pricebar{gap:var(--nk-gap-md)}
@@ -887,10 +890,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__pattern{position:absolute;right:0;top:0;width:1053px;max-width:62%;height:100%;object-fit:cover;object-position:right;opacity:.12;pointer-events:none;
   -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.45) 38%,#000 100%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.45) 38%,#000 100%)}
 .nk-footer .nk-container{position:relative}
-.nk-footer__top{display:grid;grid-template-columns:1.4fr 1.3fr .8fr 1fr;gap:48px 56px;padding-block:72px 56px;align-items:start}
+.nk-footer__top{display:grid;grid-template-columns:1.4fr 1.75fr .7fr .85fr;gap:48px 56px;padding-block:72px 56px;align-items:start}
 /* category links: two fixed columns of five. Independent flex columns keep an even
    vertical rhythm — a two-line label only pushes its own column, never its neighbour */
-.nk-footer__catgrid{display:flex;gap:var(--nk-s-4) 44px}
+.nk-footer__catgrid{display:flex;gap:var(--nk-s-4) 36px}
 .nk-footer__catcol{display:flex;flex-direction:column;gap:var(--nk-s-4);min-width:0}
 /* phones: tighten the inter-column gap so both columns fit narrow screens */
 @media(max-width:560px){
@@ -996,9 +999,16 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @keyframes nk-scrim-out{from{opacity:1}to{opacity:0}}
 @keyframes nk-pop-in{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
 @keyframes nk-pop-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(8px) scale(.985)}}
-.nk-redirect-panel{position:relative;width:min(480px,calc(100vw - 40px));background:var(--nk-bg);
+.nk-redirect-panel{position:relative;width:min(480px,calc(100vw - 40px));
+  background:radial-gradient(130% 78% at 50% -14%,var(--nk-purple-soft),transparent 60%),var(--nk-bg);
   border:1px solid color-mix(in srgb,var(--nk-border) 50%,transparent);border-radius:24px;padding:36px;
   display:flex;flex-direction:column;gap:24px;box-shadow:var(--nk-edge-top),var(--nk-shadow-modal)}
+/* lit gradient hairline — catches light at the crown, warms to a hint of brand
+   purple at the foot (same mask-composite recipe as .nk-gborder) */
+.nk-redirect-panel::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:1;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.02) 42%,color-mix(in srgb,var(--nk-purple) 34%,transparent));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude}
 /* Shared overlay close button (see ui.tsx CloseButton) — one dismiss affordance
    across the redirect modal, filter sheet and legal drawer. */
 .nk-closebtn{width:44px;height:44px;border-radius:14px;flex:none;cursor:pointer;
@@ -1007,7 +1017,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   transition:background .15s ease,border-color .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
 .nk-closebtn:hover{background:var(--nk-surface-2);border-color:var(--nk-border-strong)}
 .nk-closebtn:active{transform:scale(.94)}
-.nk-redirect-close{position:absolute;top:16px;right:16px}
 /* Bottom-sheet grabber pill + its padded drag zone (touch-action:none so the
    swipe never fights sheet scrolling). Both sheets share this anatomy; the
    drag-to-dismiss behaviour lives in app/lib/use-sheet-drag.ts. */
@@ -1015,13 +1024,40 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* Desktop hero: the QR is the working handoff path (the /go smart link only
    resolves to a store on a phone), so it reads as the primary action — carded,
    large, with its own heading. */
-.nk-redirect-qr{display:flex;align-items:center;gap:18px;padding:16px;
-  background:var(--nk-surface);border:1px solid var(--nk-border);border-radius:16px}
+.nk-redirect-qr{display:flex;align-items:center;gap:18px;padding:18px;
+  background:var(--nk-surface-2);border:1px solid var(--nk-glass-card-border);border-radius:var(--nk-r-md);
+  box-shadow:var(--nk-edge-top)}
 /* Clickable store badges — the desktop click path beside the QR. Just centres the
    inner .nk-appbadges (which owns its own flex/gap via <AppBadges gap={12}/>). */
 .nk-redirect-stores{display:flex;justify-content:center}
 /* mobile-only quiet store text row (the /go CTA already routes the right store) */
 .nk-redirect-storestext{display:none}
+/* Scanner-viewfinder reticle framing the white QR tile — the signature element.
+   Four brand-purple corner brackets outset just past the tile; each grows from
+   its own corner on open, like a scanner locking on. */
+.nk-qr-frame{position:relative;display:inline-flex;flex:none}
+.nk-qr-frame__corner{position:absolute;width:15px;height:15px;border:2px solid var(--nk-purple-bright);
+  pointer-events:none;animation:nk-reticle-in .45s var(--nk-ease-spring) both}
+.nk-qr-frame__corner--tl{top:-5px;left:-5px;border-right:0;border-bottom:0;border-top-left-radius:9px;transform-origin:top left}
+.nk-qr-frame__corner--tr{top:-5px;right:-5px;border-left:0;border-bottom:0;border-top-right-radius:9px;transform-origin:top right}
+.nk-qr-frame__corner--bl{bottom:-5px;left:-5px;border-right:0;border-top:0;border-bottom-left-radius:9px;transform-origin:bottom left}
+.nk-qr-frame__corner--br{bottom:-5px;right:-5px;border-left:0;border-top:0;border-bottom-right-radius:9px;transform-origin:bottom right}
+@keyframes nk-reticle-in{from{opacity:0;transform:scale(.35)}to{opacity:1;transform:none}}
+/* repeat opens (session frequency cap) skip the lock-on, matching the panel */
+.nk-redirect-panel--instant .nk-qr-frame__corner{animation:none}
+@media (prefers-reduced-motion: reduce){.nk-qr-frame__corner{animation:none}}
+/* "Also on" hairline divider separating the QR handoff from the store click-path
+   (desktop only; the label reuses dict.bridge.storesAlso) */
+.nk-redirect-divider{display:flex;align-items:center;gap:14px}
+.nk-redirect-divider::before,.nk-redirect-divider::after{content:"";flex:1;height:1px;background:var(--nk-divider)}
+.nk-redirect-divider>span{font-family:var(--nk-font-display);font-weight:700;font-size:12px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--nk-text-muted)}
+/* Redirect modal pins the shared close button to the top-right corner and dresses
+   it as a translucent glass circle — scoped here so the filter sheet / legal
+   drawer keep the default inline square. */
+.nk-redirect-close{position:absolute;top:16px;right:16px;border-radius:var(--nk-r-pill);
+  background:var(--nk-glass-strong);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.nk-redirect-close:hover{background:var(--nk-surface-hover-glass);border-color:var(--nk-border-strong)}
 @media(min-width:561px){
   /* the /go smart link 302s back to the homepage on desktop UAs — never show a
      decoy primary there; the QR card + badges are the real desktop paths */
@@ -1029,6 +1065,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 }
 @media(max-width:560px){
   .nk-redirect-scrim{align-items:flex-end}
+  /* the sheet can scroll, where an inset hairline would drift with the content;
+     drop it and the desktop-only store divider */
+  .nk-redirect-panel::before{content:none}
+  .nk-redirect-divider{display:none}
   .nk-redirect-panel{width:100%;border-radius:24px 24px 0 0;max-height:92vh;overflow:auto;
     padding-bottom:calc(36px + env(safe-area-inset-bottom));animation:nk-sheet-in .3s var(--nk-ease-spring) both}
   .nk-redirect-scrim.is-closing .nk-redirect-panel{animation:nk-sheet-out .2s var(--nk-ease) both}
@@ -1438,16 +1478,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   font-family:var(--nk-font-display);font-weight:700;font-size:17px;color:var(--nk-text-2);text-decoration:none;
   transition:border-color .15s ease,color .15s ease,background .15s ease}
 .nk-ghost-tile:hover{border-color:var(--nk-accent-border);color:var(--nk-text);background:var(--nk-surface)}
-
-/* homepage 3-step model strip */
-.nk-homesteps{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--nk-grid-gap)}
-@media(max-width:900px){.nk-homesteps{grid-template-columns:1fr}}
-.nk-homesteps__card{display:flex;align-items:flex-start;gap:var(--nk-gap-md);padding:clamp(20px,2.4vw,28px);
-  border-radius:var(--nk-r-card);background:var(--nk-surface-glass);border:1px solid var(--nk-border);
-  text-decoration:none;transition:border-color .15s ease,background .15s ease}
-.nk-homesteps__card:hover{border-color:var(--nk-accent-border);background:var(--nk-surface)}
-.nk-homesteps__num{width:40px;height:40px;border-radius:20px;flex:none;display:flex;align-items:center;justify-content:center;
-  background:var(--nk-purple);color:var(--nk-text);font-family:var(--nk-font-display);font-weight:700;font-size:18px}
 
 /* 4-up card grid (offers) — full ladder kept together: 4 → wide-tablet 3 →
    portrait-tablet 2 → phone 1 (was a sparse 4→2 jump at 1100) */

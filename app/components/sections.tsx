@@ -591,6 +591,7 @@ export function Offers() {
               key={o.id}
               title={o.title}
               city={o.city}
+              subdivision={o.subdivision}
               price={o.price}
               img={o.img}
               unit={dict.common.perDay}
@@ -645,7 +646,7 @@ export function Offers() {
    with navigation dots. The active dot tracks the real scroll position via an
    IntersectionObserver (same idiom as ScrollReveal). */
 export function UseCases() {
-  const { locale, dict } = useI18n();
+  const { dict } = useI18n();
   const t = dict.useCases;
   const items = t.items;
   const [active, setActive] = useState(0);
@@ -701,15 +702,6 @@ export function UseCases() {
               title={item.title}
               body={item.body}
               tone={item.tone}
-              // the earn-framed card must lead into the owner journey, not dead-end
-              cta={
-                item.cta === "owner"
-                  ? {
-                      label: t.ownerCtaLabel,
-                      href: localePath(locale, "/kaip-tai-veikia") + "?role=owner",
-                    }
-                  : undefined
-              }
             />
           </div>
         ))}

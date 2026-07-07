@@ -323,7 +323,7 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
     // grid-display wrapper so the card stretches to the row height; listitem role
     // pairs with the grids' role="list" so AT gets "list, N items" + position
     <div key={o.id} className="nk-reveal" role="listitem" style={{ display: "grid" }}>
-      <OfferCard title={o.title} city={o.city} price={o.price} unit={dict.common.perDay}
+      <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
         rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
         img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
         href={localePath(locale, `/skelbimai/${o.id}`)} />

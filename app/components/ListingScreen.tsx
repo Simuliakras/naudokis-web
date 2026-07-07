@@ -5,12 +5,10 @@
 // the presentational pieces live in ./ListingDetail.
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
-import { Breadcrumb, Icon, openRedirect } from "./ui";
+import { Breadcrumb, openRedirect } from "./ui";
 import { EmptyState, OfferCard } from "./cards";
 import {
   ListingSkeleton, ListingHeader, Gallery, DetailBody, ReviewsSection,
@@ -120,7 +118,6 @@ export function ListingScreen({ id }: { id: string }) {
     }
   };
   const reserve = () => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: listingCtx });
-  const pickDates = () => openRedirect({ title: dict.bridge.datesTitle, body: dict.bridge.datesBody, listing: listingCtx });
   const contact = () => openRedirect({ title: dict.bridge.contactTitle, body: dict.bridge.contactBody, listing: listingCtx });
   const showReviews = () => openRedirect({ title: dict.bridge.reviewsTitle, body: dict.bridge.reviewsBody, listing: listingCtx });
 
@@ -143,7 +140,7 @@ export function ListingScreen({ id }: { id: string }) {
             fixed MobileBar remains the persistent reserve CTA; the aside copy of
             both cards is hidden ≤980 so nothing renders twice. */}
         <div className="nk-booking-inline">
-          <BookingPanel listing={listing} variant="facts" onReserve={reserve} onPickDates={pickDates} />
+          <BookingPanel listing={listing} variant="facts" onReserve={reserve} />
           {listing.owner && (
             <div style={{ marginTop: "var(--nk-gap-md)" }}>
               <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />
@@ -155,10 +152,9 @@ export function ListingScreen({ id }: { id: string }) {
           <DetailBody listing={listing} />
           <aside className="nk-reserve">
             <div className="nk-reserve__booking">
-              <BookingPanel listing={listing} onReserve={reserve} onPickDates={pickDates} />
+              <BookingPanel listing={listing} onReserve={reserve} />
             </div>
             {listing.owner && <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />}
-            {listing.owner?.id && <OwnerMiniRail ownerId={listing.owner.id} currentId={listing.id} />}
           </aside>
         </div>
 
@@ -195,7 +191,7 @@ function SimilarRail({ currentId, categoryId }: { currentId: string; categoryId:
       <div className="nk-grid-4">
         {items.map((o) => (
           <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
-            <OfferCard title={o.title} city={o.city} price={o.price} unit={dict.common.perDay}
+            <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
               rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
               img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
               href={localePath(locale, `/skelbimai/${o.id}`)} />
@@ -206,36 +202,3 @@ function SimilarRail({ currentId, categoryId }: { currentId: string; categoryId:
   );
 }
 
-/* ---------------- "More from this owner" mini-rail ----------------
-   Compact sidebar rows under the host card — the owner's other live items from the
-   already-fetched browse set, matched by owner id (names aren't unique). The
-   backend has no owner_id filter yet (tracked cross-team ask), so this filters
-   client-side; on a small marketplace an owner's items are a meaningful share of
-   all inventory, so the browse fetch is cheap and usually already cached. */
-function OwnerMiniRail({ ownerId, currentId }: { ownerId: string; currentId: string }) {
-  const { locale, dict } = useI18n();
-  const { data } = useListings(locale);
-  const items = (data ?? []).filter((o) => o.ownerId === ownerId && o.id !== currentId).slice(0, 3);
-  if (items.length === 0) {
-    return null;
-  }
-  return (
-    <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad-sm)", border: "1px solid var(--nk-border)", boxShadow: "var(--nk-edge-top)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
-      <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-text)" }}>{dict.detail.ownerMoreHeading}</span>
-      {items.map((o) => (
-        <Link key={o.id} href={localePath(locale, `/skelbimai/${o.id}`)} className="nk-lfield"
-          style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)", padding: 8, borderRadius: 12, background: "var(--nk-input-bg)", border: "1px solid var(--nk-border)" }}>
-          <span className="nk-imgph" style={{ width: 56, height: 44, borderRadius: 8, flex: "none", position: "relative", overflow: "hidden" }}>
-            {o.img && <Image src={o.img} alt="" fill sizes="56px" style={{ objectFit: "cover" }} />}
-            {!o.img && <Icon name="Image" size={18} stroke={1.5} className="nk-imgicon" />}
-          </span>
-          <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-            <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 14.5, color: "var(--nk-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{o.title}</span>
-            <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-2)" }}>{o.price} {dict.common.perDay}</span>
-          </span>
-          <Icon name="ChevronRight" size={16} color="var(--nk-text-muted)" stroke={2} style={{ flex: "none" }} />
-        </Link>
-      ))}
-    </div>
-  );
-}

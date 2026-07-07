@@ -23,7 +23,7 @@ export type FooterCategory = { label: string; categoryId: string };
 // Homepage social-proof band: honest, non-attributed use-case cards (icon disk +
 // scenario title + supporting line). Deliberately NOT framed as named, star-rated
 // customer reviews — see the testimonials reframe note in the design audit.
-export type UseCaseItem = { icon: IconName; title: string; body: string; tone: HtwTone; cta?: "owner" };
+export type UseCaseItem = { icon: IconName; title: string; body: string; tone: HtwTone };
 
 // Legal Policy Center — UI chrome strings only. The document content itself
 // comes from app/lib/legal/data/*.json, not the dictionaries.
@@ -134,17 +134,6 @@ export type Dict = {
   };
   features: [FeatureItem, FeatureItem, FeatureItem];
   featuresHead: { eyebrow: string; title: string }; // section header over the trust-features band
-  // Homepage 3-step model explainer (browse here → get the app → reserve in app)
-  // — pre-empts "why can't I book here?" without opening the HIW page.
-  homeSteps: {
-    eyebrow: string;
-    title: string;
-    steps: [
-      { title: string; body: string },
-      { title: string; body: string },
-      { title: string; body: string },
-    ];
-  };
   // Standalone "Kaip tai veikia" page (/kaip-tai-veikia).
   howItWorks: {
     meta: { title: string; description: string };
@@ -184,7 +173,6 @@ export type Dict = {
     eyebrow: string;
     title: string;
     items: [UseCaseItem, UseCaseItem, UseCaseItem];
-    ownerCtaLabel: string; // foot link on the earn-framed card → owner journey
     goToSlide: (index: number) => string; // aria-label for carousel dot (0-based index)
   };
   cta: {
@@ -203,6 +191,10 @@ export type Dict = {
     browseHeading: string;
     categories: FooterCategory[]; // curated category links (label + stable LT search query)
     citiesHeading: string; // city-landing links column ("Miestai" / "Cities")
+    // Descriptive anchor text for a city-landing link — reinforces the target
+    // page's own keyword ("Nuoma Vilniuje" / "Rentals in Vilnius") instead of a
+    // bare city name. LT applies the locative case; EN keeps the nominative.
+    cityLink: (city: string) => string;
     helpHeading: string;
     help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
     copyright: string;
@@ -241,11 +233,8 @@ export type Dict = {
     similarHeading: string; // "Similar items" cross-sell rail at the page foot
     moreItemsHeading: string; // honest rail heading when only a single sibling exists
     perDay: string;
-    depositReturnable: string;
     reserve: string;
     reserveMobile: string;
-    escrowNote: string;
-    protectedPayments: string; // heading for the payment-protection trust strip under the reserve CTA
     loadErrorTitle: string;
     loadErrorBody: string;
     goneTitle: string; // deleted/removed listing — client soft-404 (SPA / stale) message
@@ -262,29 +251,16 @@ export type Dict = {
     galleryPrev: string; // lightbox previous-photo aria-label
     galleryNext: string; // lightbox next-photo aria-label
     galleryImageError: string; // shown when a lightbox photo fails to load
-    perDayShort: string; // "/ para"
+    perDayShort: string; // "/ diena"
     // booking panel
-    chooseDates: string; // single booking-panel date affordance label
-    serviceFee: string;
-    serviceFeeHint: string; // single merged footnote — dates picked + fees/deposit shown in the app before confirming
-    serviceFeeFree: string; // fee-row value — "Programėlėje" (shown in the app), never a fake "free"
-    inAppValue: string;
-    totalToday: string;
-    feePolicyLabel: string; // quiet link into the terms' payments/fees section
-    feePolicyHref: string; // locale-correct terms path + section anchor
-    cancellationNote: (tier: string) => string; // cancellation tier line (links to the terms section)
-    cancellationHref: string; // locale-correct terms path + cancellations section anchor
+    confirmInApp: string; // one-line reassurance — dates + final price confirmed in the app
     // host card
     hostStatRating: string;
     hostStatReviews: string;
     hostStatListings: string;
     hostMessage: string; // "Rašyti savininkui"
-    hostVerifiedNote: string;
-    hostMemberSince: (year: number) => string; // tenure line, only when member_since is on the wire
+    hostMemberSince: (label: string) => string; // tenure line; label is a pre-localized "month year"
     hostResponseTime: (hours: number) => string; // response line, only when avg_response_time is on the wire
-    ownerMoreHeading: string; // "more from this owner" mini-rail heading
-    reportListing: string; // quiet mailto report affordance
-    reportSubject: (title: string, id: string) => string; // prefilled report e-mail subject
     // delivery block — copy must match the options the listing actually offers
     deliverySub: (city: string, opts: { pickup: boolean; delivery: boolean }) => string;
     deliveryZone: string; // "≈20 km zona" fallback when radius unknown
@@ -433,8 +409,6 @@ export type Dict = {
     appStoreAlt: string;
     reserveTitle: string;
     reserveBody: string;
-    datesTitle: string;
-    datesBody: string;
     contactTitle: string;
     contactBody: string;
     reviewsTitle: string; // "See all reviews" → reviews-specific app-redirect modal

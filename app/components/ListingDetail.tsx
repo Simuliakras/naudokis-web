@@ -6,9 +6,9 @@
 // gallery, sticky in-page sub-nav, booking panel, trust-rich host card.
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Icon, IconName, Pill, openRedirect } from "./ui";
 import { SectionEmpty } from "./cards";
+import { formatLocation } from "@/app/lib/listings";
 import type { ListingDetail, ListingDelivery, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
 import { RichText } from "@/app/lib/rich-text";
 import { listingSearchHref } from "@/app/lib/search";
@@ -16,7 +16,6 @@ import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
-import { CONTACT_EMAIL } from "@/app/lib/contact";
 import { useI18n } from "./I18nProvider";
 
 /* ---------------- Shared primitives ---------------- */
@@ -42,8 +41,8 @@ function FactCard({ icon, title, sub }: { icon: IconName; title: string; sub: st
         <Icon name={icon} size={22} stroke={2} color="var(--nk-purple-hover)" />
       </span>
       <span style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)", minWidth: 0 }}>
+        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)" }}>{sub}</span>
         <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{title}</span>
-        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-muted)" }}>{sub}</span>
       </span>
     </div>
   );
@@ -115,22 +114,18 @@ function SkelSection({ first, titleW = 200, children }: { first?: boolean; title
 export function ListingSkeleton() {
   const card: React.CSSProperties = { borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" };
   // Booking card skeleton — rendered in the sticky sidebar (with the reserve
-  // button) and inline on mobile (facts-only), mirroring the real BookingPanel
-  // variants so neither breakpoint reflows when the content lands.
+  // button) and inline on mobile (facts-only, no button), mirroring the real
+  // BookingPanel in order and height — price header → confirmInApp reassurance
+  // line → reserve CTA — so neither breakpoint reflows when the content lands.
   const bookingSkel = (withButton: boolean) => (
     <div style={{ ...card, background: "var(--nk-surface)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><Skel w={130} h={32} r={9} /><Skel w={70} h={16} /></div>
-      <Skel h={52} r={13} />
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="55%" h={14} /><Skel w={48} h={14} /></div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="40%" h={14} /><Skel w={40} h={14} /></div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="50%" h={14} /><Skel w={48} h={14} /></div>
-        <span style={{ height: 1, background: "var(--nk-divider)", margin: "2px 0" }} />
-        <div style={{ display: "flex", justifyContent: "space-between" }}><Skel w="35%" h={17} /><Skel w={64} h={17} /></div>
+      {/* the muted confirmInApp line — one sentence that wraps to ~2 lines */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+        <Skel w="100%" h={13} r={7} />
+        <Skel w="55%" h={13} r={7} />
       </div>
-      <Skel h={16} r={8} w="85%" />
       {withButton && <Skel h={52} r={25} />}
-      <Skel h={64} r={14} />
     </div>
   );
   return (
@@ -278,7 +273,7 @@ export function ListingHeader({ listing, shared, onShare, onFav }: {
           )}
           {listing.city && (
             <>
-              <span style={metaItem}><Icon name="MapPin" size={16} color="var(--nk-text-muted)" stroke={2} /> {listing.city}</span>
+              <span style={metaItem}><Icon name="MapPin" size={16} color="var(--nk-text-muted)" stroke={2} /> {formatLocation(listing.city, listing.subdivision)}</span>
               {listing.owner?.verified && <Dot />}
             </>
           )}
@@ -592,7 +587,7 @@ function DescriptionSection({ description }: { description: string }) {
       {locale !== "lt" && (
         <p style={{ margin: "0 0 var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>{t.descOriginalNote}</p>
       )}
-      <div ref={bodyRef} className={"nk-prose" + (expanded ? "" : " nk-desc-clamp")} style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty", maxWidth: 720 }}><RichText html={description} /></div>
+      <div ref={bodyRef} className={"nk-prose" + (expanded ? "" : " nk-desc-clamp")} style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty" }}><RichText html={description} /></div>
       {(overflowing || expanded) && (
         <button type="button" onClick={() => setExpanded((v) => !v)} aria-expanded={expanded}
           style={{ marginTop: "var(--nk-gap-xs)", padding: "10px 0", minHeight: "var(--nk-tap)", border: 0, background: "none", cursor: "pointer", alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-purple-hover)" }}>
@@ -659,9 +654,13 @@ function HandoverRow({ icon, label, value, pill }: { icon: IconName; label: stri
   );
 }
 
-function HandoverSection({ city, delivery }: { city: string; delivery: ListingDelivery }) {
+function HandoverSection({ city, subdivision, delivery }: { city: string; subdivision?: string; delivery: ListingDelivery }) {
   const { locale, dict } = useI18n();
   const t = dict.detail;
+  // The embedded map geocodes on the city alone — subdivisions don't reliably
+  // resolve in the Maps Embed API, so keep the query coarse and show the finer
+  // "City, Subdivision" only as the human-readable pickup location.
+  const pickupLocation = formatLocation(city, subdivision);
   const mapSrc = GOOGLE_MAPS_API_KEY && city
     ? `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(`${city}, Lietuva`)}&zoom=11&language=${locale}`
     : null;
@@ -687,7 +686,7 @@ function HandoverSection({ city, delivery }: { city: string; delivery: ListingDe
         )}
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "var(--nk-gap-md)" }}>
           {showPickup && (
-            <HandoverRow icon="MapPin" label={t.pickupLabel} value={city || "—"} pill={<Pill tone="green">{t.pickupFree}</Pill>} />
+            <HandoverRow icon="MapPin" label={t.pickupLabel} value={pickupLocation || "—"} pill={<Pill tone="green">{t.pickupFree}</Pill>} />
           )}
           {delivery.delivery && (
             <HandoverRow icon="Car" label={t.deliveryLabel} value={delivery.radiusKm ? t.deliveryRadius(delivery.radiusKm) : t.deliveryByArrangement} />
@@ -701,9 +700,6 @@ function HandoverSection({ city, delivery }: { city: string; delivery: ListingDe
 function TermsSection({ listing }: { listing: ListingDetail }) {
   const { dict } = useI18n();
   const t = dict.detail;
-  // Quiet abuse-report path (mailto — the honest zero-infra option): prefilled
-  // subject carries the listing id + title so support can act on it.
-  const reportHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(t.reportSubject(listing.title, listing.id))}`;
   return (
     <Section id="salygos" title={t.termsHeading}>
       <div className="nk-hl-grid">
@@ -717,10 +713,6 @@ function TermsSection({ listing }: { listing: ListingDetail }) {
           <FactCard icon="BadgeCheck" title={t.termInsuranceTitle} sub={t.termInsuranceSub} />
         )}
       </div>
-      <a href={reportHref}
-        style={{ marginTop: "var(--nk-gap-md)", display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-muted)", textDecoration: "underline", textUnderlineOffset: 3, width: "fit-content" }}>
-        <Icon name="Flag" size={14} stroke={2} color="var(--nk-text-muted)" style={{ flex: "none" }} /> {t.reportListing}
-      </a>
     </Section>
   );
 }
@@ -820,24 +812,25 @@ export function DetailBody({ listing }: { listing: ListingDetail }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
       <DescriptionSection description={listing.description} />
       {listing.attributes.length > 0 && <SpecsSection attributes={listing.attributes} />}
-      <HandoverSection city={listing.city} delivery={listing.delivery} />
+      <HandoverSection city={listing.city} subdivision={listing.subdivision} delivery={listing.delivery} />
       <TermsSection listing={listing} />
     </div>
   );
 }
 
 /* ---------------- Sidebar: booking panel ----------------
-   Sticky reserve card (desktop): price, app-confirmed booking facts, reserve CTA.
+   Sticky reserve card (desktop): per-day price, one honest in-app reassurance line
+   (nothing transacts on the bridge — dates + final price are confirmed in the app),
+   and the reserve CTA.
    variant="facts" drops the reserve button — used inline on mobile (≤980px), where
    the sticky sidebar is hidden and the fixed MobileBar carries the reserve CTA, so
-   the price breakdown + payment-protection context still travel to phone users. */
-export function BookingPanel({ listing, onReserve, onPickDates, variant = "full" }: {
+   the price + reassurance line still travel to phone users. */
+export function BookingPanel({ listing, onReserve, variant = "full" }: {
   listing: ListingDetail;
   onReserve: () => void;
-  onPickDates: () => void;
   variant?: "full" | "facts";
 }) {
-  const { locale, dict } = useI18n();
+  const { dict } = useI18n();
   const t = dict.detail;
   return (
     <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
@@ -850,37 +843,10 @@ export function BookingPanel({ listing, onReserve, onPickDates, variant = "full"
           </span>
         )}
       </div>
-      <button type="button" onClick={onPickDates} className="nk-lfield" style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)", width: "100%", textAlign: "left", padding: "14px 15px", borderRadius: 13, background: "var(--nk-input-bg)", border: "1px solid var(--nk-border)" }}>
-        <Icon name="Calendar" size={18} color="var(--nk-purple-hover)" stroke={2} style={{ flex: "none" }} />
-        <span style={{ flex: 1, minWidth: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15, color: "var(--nk-text)" }}>{t.chooseDates}</span>
-        <Icon name="ChevronRight" size={16} color="var(--nk-text-muted)" stroke={2} style={{ flex: "none" }} />
-      </button>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
-        {/* Platform fee is charged but shown later — labels share one muted tone
-            (brightness lives on values only) and long i18n values wrap right-aligned
-            instead of clipping at the card edge. It never reads as €0/waived.
-            The per-day line is dropped: it just restated the header price with no ×N math. */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
-          <span>{t.serviceFee}</span><span style={{ color: "var(--nk-text-2)", textAlign: "right", minWidth: 0 }}>{t.serviceFeeFree}</span>
-        </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
-          <span>{t.depositReturnable}</span><span style={{ color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.deposit ?? t.depositNone}</span>
-        </div>
-        <span style={{ height: 1, background: "var(--nk-divider)", margin: "2px 0" }} />
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "var(--nk-gap-sm)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 17, color: "var(--nk-text)" }}>
-          <span style={{ whiteSpace: "nowrap" }}>{t.totalToday}</span><span style={{ textAlign: "right", minWidth: 0 }}>{t.inAppValue}</span>
-        </div>
-      </div>
-      {/* Cost-transparency reassurance kept always-visible (was a hover-only title
-          tooltip, unreachable on the touch-first bridge audience), plus a real
-          link into the published fee terms — the only non-app fee source today. */}
-      <span style={{ display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontSize: 12, lineHeight: "17px", color: "var(--nk-text-muted)" }}>
-        <Icon name="Info" size={13} stroke={2} color="var(--nk-text-muted)" style={{ flex: "none", marginTop: 1 }} /> {t.serviceFeeHint}
-      </span>
-      <Link href={localePath(locale, t.feePolicyHref)}
-        style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)", textDecoration: "underline", textUnderlineOffset: 3, width: "fit-content" }}>
-        {t.feePolicyLabel}
-      </Link>
+      {/* One honest line: nothing transacts on the bridge — dates and the final
+          price are confirmed in the app. Replaces the old fee "table" whose every
+          value just read "Programėlėje". */}
+      <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, lineHeight: "18px", color: "var(--nk-text-muted)" }}>{t.confirmInApp}</span>
       {variant !== "facts" && (
         <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}
           data-nk-redirect data-nk-redirect-title={dict.bridge.reserveTitle} data-nk-redirect-body={dict.bridge.reserveBody}
@@ -888,21 +854,6 @@ export function BookingPanel({ listing, onReserve, onPickDates, variant = "full"
           <Icon name="Smartphone" size={17} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
         </button>
       )}
-      {/* Payment protection promoted directly under the CTA — the strongest trust
-          signal on a 2026 rental marketplace. The cancellation tier is a restriction,
-          not a protection, so it lives OUTSIDE the green callout as a neutral line
-          linking to the published cancellation terms (real content, no invented tiers). */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)", padding: "var(--nk-card-pad-sm)", borderRadius: 14, background: "var(--nk-green-tint)", border: "1px solid var(--nk-green-soft)" }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Icon name="ShieldCheck" size={16} stroke={2} color="var(--nk-green-text)" />
-          <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 13.5, color: "var(--nk-green-text)" }}>{t.protectedPayments}</span>
-        </span>
-        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 12.5, lineHeight: "18px", color: "var(--nk-text-muted)" }}>{t.escrowNote}</span>
-      </div>
-      <Link href={localePath(locale, t.cancellationHref)}
-        style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-body)", fontSize: 12.5, color: "var(--nk-text-muted)", textDecoration: "underline", textUnderlineOffset: 3, width: "fit-content" }}>
-        <Icon name="RefreshCcw" size={13} stroke={2} color="var(--nk-text-muted)" style={{ flex: "none" }} /> {t.cancellationNote(listing.cancellation)}
-      </Link>
     </div>
   );
 }
@@ -937,12 +888,20 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
         </span>
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)", minWidth: 0 }}>
           <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 19, color: "var(--nk-text)" }}>{owner.name}</span>
-          {owner.verified && <Pill tone="green" icon="BadgeCheck">{t.verifiedOwnerPill}</Pill>}
+          {owner.verified && <Pill tone="green" icon="BadgeCheck" size="sm">{t.verifiedOwnerPill}</Pill>}
         </div>
       </div>
+      {/* Tenure/responsiveness signals — the strongest pre-review trust facts. Only
+          rendered when the wire actually carries them (never fabricated). */}
+      {(owner.memberSince || owner.responseTimeHours != null) && (
+        <span style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "4px 14px", fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)", textAlign: "center" }}>
+          {owner.memberSince && <span>{t.hostMemberSince(owner.memberSince)}</span>}
+          {owner.responseTimeHours != null && <span>{t.hostResponseTime(owner.responseTimeHours)}</span>}
+        </span>
+      )}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 1, background: "var(--nk-hairline)", borderRadius: 14, overflow: "hidden" }}>
         {stats.map((s) => (
-          <span key={s.label} style={{ background: "var(--nk-surface)", padding: "13px 10px", display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)", alignItems: "center" }}>
+          <span key={s.label} style={{ background: "var(--nk-surface)", padding: "20px 10px", display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)", alignItems: "center" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 17, color: "var(--nk-text)", whiteSpace: "nowrap" }}>
               {s.value}{s.star && <Icon name="Star" size={13} color="var(--nk-yellow)" fill="var(--nk-yellow)" />}
             </span>
@@ -950,22 +909,9 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
           </span>
         ))}
       </div>
-      {/* Tenure/responsiveness signals — the strongest pre-review trust facts. Only
-          rendered when the wire actually carries them (never fabricated). */}
-      {(owner.memberSinceYear !== undefined || owner.responseTimeHours != null) && (
-        <span style={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>
-          {owner.memberSinceYear !== undefined && <span>{t.hostMemberSince(owner.memberSinceYear)}</span>}
-          {owner.responseTimeHours != null && <span>{t.hostResponseTime(owner.responseTimeHours)}</span>}
-        </span>
-      )}
       <button className="nk-btn nk-btn--outline" onClick={onContact} title={dict.bridge.opensAppHint} data-testid="nk-contact-owner" style={{ width: "100%", padding: "13px 24px", fontSize: 15.5 }}>
         <Icon name="MessageCircle" size={17} color="var(--nk-text)" stroke={2} /> {t.hostMessage}
       </button>
-      {owner.verified && (
-        <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", justifyContent: "center", fontFamily: "var(--nk-font-body)", fontSize: 12, color: "var(--nk-text-muted)", textAlign: "center" }}>
-          <Icon name="Info" size={14} color="var(--nk-purple-hover)" stroke={2} /> {t.hostVerifiedNote}
-        </span>
-      )}
     </div>
   );
 }

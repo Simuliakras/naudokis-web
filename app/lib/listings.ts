@@ -12,6 +12,7 @@ type ApiListing = {
   id: string;
   title: string;
   city: string | null;
+  subdivision?: string | null; // district/neighbourhood within the city (e.g. "Žvėrynas")
   price_per_day_cents: number;
   rating_average: number | null;
   rating_count: number;
@@ -74,6 +75,7 @@ type ApiListingDetail = {
   title: string;
   description: string;
   city?: string;
+  subdivision?: string | null; // district/neighbourhood within the city (e.g. "Žvėrynas")
   price_per_day_cents: number;
   deposit_amount_cents?: number | null;
   minimum_rental_days?: number;
@@ -122,6 +124,7 @@ export type Offer = {
   id: string;
   title: string;
   city?: string; // absent when the backend listing has no city — the card hides the row
+  subdivision?: string; // district within the city, appended to the location line when present
   price: string;
   priceCents: number; // raw per-day price — the feed's client-side price bands filter on it
   img?: string;
@@ -179,7 +182,7 @@ export type ListingOwner = {
   rating?: string;
   ratingCount: number;
   avatar: string | null;
-  memberSinceYear?: number; // from member_since — tenure trust line, only when on the wire
+  memberSince?: string; // localized "month year" from member_since — tenure trust line, only when on the wire
   responseTimeHours?: number | null; // from avg_response_time_hours — only when non-null
 };
 
@@ -187,6 +190,7 @@ export type ListingDetail = {
   id: string;
   title: string;
   city: string;
+  subdivision?: string; // district within the city, appended to the location line when present
   price: string;
   priceCents: number; // raw per-day price, for the booking-panel breakdown math
   deposit: string | null; // formatted refundable deposit; null when the listing takes none
@@ -221,6 +225,12 @@ export function formatPrice(cents: number, locale: Locale): string {
 
 export function formatRating(average: number, locale: Locale): string {
   return average.toFixed(1).replace(".", locale === "lt" ? "," : ".");
+}
+
+// Location line: city with its subdivision (district) appended when present —
+// "Vilnius, Žvėrynas". Either part may be missing, so filter before joining.
+export function formatLocation(city?: string, subdivision?: string): string {
+  return [city, subdivision].filter(Boolean).join(", ");
 }
 
 function ratingLabel(average: number | null, count: number, locale: Locale): string | undefined {
@@ -322,6 +332,7 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
     id: l.id,
     title: l.title,
     city: l.city ?? undefined,
+    subdivision: l.subdivision ?? undefined,
     price: formatPrice(l.price_per_day_cents, locale),
     priceCents: l.price_per_day_cents,
     img: cdnImage(l.images?.[0]?.url),
@@ -510,7 +521,6 @@ function mapDetailOwner(detail: ApiListingDetail, locale: Locale): ListingOwner 
     }
     return { name: detail.owner_name, verified: false, listingsCount: 0, ratingCount: 0, avatar: null };
   }
-  const memberSinceMs = o.member_since ? new Date(o.member_since).getTime() : Number.NaN;
   return {
     id: o.id,
     name: o.business_name ?? o.name ?? detail.owner_name ?? "",
@@ -519,9 +529,31 @@ function mapDetailOwner(detail: ApiListingDetail, locale: Locale): ListingOwner 
     rating: ratingLabel(o.rating_average ?? null, o.rating_count ?? 0, locale),
     ratingCount: o.rating_count ?? 0,
     avatar: cdnImage(o.avatar) ?? null,
-    memberSinceYear: Number.isNaN(memberSinceMs) ? undefined : new Date(memberSinceMs).getFullYear(),
+    memberSince: o.member_since ? formatMemberSince(o.member_since, locale) : undefined,
     responseTimeHours: o.avg_response_time_hours ?? null,
   };
+}
+
+// Lithuanian genitive month names — the grammatically correct form after "nuo"
+// ("Narys nuo 2026 m. birželio"); Intl's LT month is nominative ("birželis").
+const LT_GENITIVE_MONTHS = [
+  "sausio", "vasario", "kovo", "balandžio", "gegužės", "birželio",
+  "liepos", "rugpjūčio", "rugsėjo", "spalio", "lapkričio", "gruodžio",
+];
+
+// Localized "month year" tenure label. Returns "" for an unparseable date so the
+// caller can drop the line rather than render a broken string. Read in UTC — a
+// date-only member_since parses as UTC midnight, so local getters could roll it
+// back a month for viewers behind UTC.
+function formatMemberSince(iso: string, locale: Locale): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+  if (locale === "lt") {
+    return `${date.getUTCFullYear()} m. ${LT_GENITIVE_MONTHS[date.getUTCMonth()]}`;
+  }
+  return date.toLocaleDateString(locale, { year: "numeric", month: "long", timeZone: "UTC" });
 }
 
 // R2-032 stopgap: the backend composes value_label_en from the raw LT unit word
@@ -552,6 +584,7 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
     id: detail.id,
     title: detail.title,
     city: detail.city ?? "",
+    subdivision: detail.subdivision ?? undefined,
     price: formatPrice(detail.price_per_day_cents, locale),
     priceCents: detail.price_per_day_cents,
     deposit: formatDeposit(detail.deposit_amount_cents, locale),

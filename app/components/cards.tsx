@@ -6,16 +6,18 @@ import { useEffect, useId, useRef } from "react";
 import { Icon, IconName, IllusName, Illustration, Pill, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { trackEvent } from "@/app/lib/analytics";
+import { formatLocation } from "@/app/lib/listings";
 import type { UseCaseItem } from "@/app/lib/i18n/types";
 
 /* ---------------- Offer / listing card ----------------
    Final design: price hierarchy + hairline divider, locked favorite (opens the
    app modal), and a stretched <Link> covering the card for real navigation. */
 export function OfferCard({
-  title, city, price, unit, rating, ratingCount, img, href, category, categoryIcon = "Tag", hasDelivery = false,
+  title, city, subdivision, price, unit, rating, ratingCount, img, href, category, categoryIcon = "Tag", hasDelivery = false,
 }: {
   title: string;
   city?: string;
+  subdivision?: string; // district within the city, appended after the city on the location line
   price?: string;
   unit?: string;
   rating?: string;
@@ -84,7 +86,7 @@ export function OfferCard({
           )}
           {city && (
             <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 16, color: "var(--nk-text-2)" }}>
-              <Icon name="MapPin" size={16} color="var(--nk-text)" stroke={2} /> {city}
+              <Icon name="MapPin" size={16} color="var(--nk-text)" stroke={2} /> {formatLocation(city, subdivision)}
             </span>
           )}
         </div>
@@ -171,9 +173,7 @@ const USECASE_TONES: Record<UseCaseItem["tone"], { bg: string; fg: string }> = {
   green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green)" },
 };
 
-export function UseCaseCard({ icon, title, body, tone, cta }: Omit<UseCaseItem, "cta"> & {
-  cta?: { label: string; href: string }; // foot link — every earn-framed surface must lead somewhere
-}) {
+export function UseCaseCard({ icon, title, body, tone }: UseCaseItem) {
   const c = USECASE_TONES[tone];
   return (
     <div className="nk-quote nk-usecase" style={{ flex: 1, borderRadius: "var(--nk-r-md)", padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)" }}>
@@ -184,11 +184,6 @@ export function UseCaseCard({ icon, title, body, tone, cta }: Omit<UseCaseItem, 
         <h3 className="nk-h-row" style={{ margin: 0 }}>{title}</h3>
         <p className="nk-body" style={{ margin: 0 }}>{body}</p>
       </div>
-      {cta && (
-        <Link href={cta.href} style={{ marginTop: "auto", display: "inline-flex", alignItems: "center", gap: 7, minHeight: "var(--nk-tap)", width: "fit-content", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-bright)", textDecoration: "none" }}>
-          {cta.label} <Icon name="ArrowRight" size={16} stroke={2.2} color="currentColor" />
-        </Link>
-      )}
     </div>
   );
 }

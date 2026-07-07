@@ -322,11 +322,12 @@ export function CloseButton({ label, onClick, className, ref }: {
 
 /* ---------------- Pill (active/selected accent) ---------------- */
 export function Pill({
-  children, tone = "accent", icon,
+  children, tone = "accent", icon, size = "md",
 }: {
   children: React.ReactNode;
   tone?: "accent" | "yellow" | "green" | "purple";
   icon?: IconName;
+  size?: "sm" | "md";
 }) {
   const tones: Record<string, { bg: string; fg: string }> = {
     accent: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
@@ -335,9 +336,10 @@ export function Pill({
     green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green-text)" },
   };
   const c = tones[tone] ?? tones.accent;
+  const sm = size === "sm";
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: c.bg, color: c.fg, borderRadius: 999, padding: "7px 14px", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15, lineHeight: 1, whiteSpace: "nowrap" }}>
-      {icon && <Icon name={icon} size={15} color={c.fg} stroke={2} />}
+    <span style={{ display: "inline-flex", alignItems: "center", gap: sm ? 5 : 6, background: c.bg, color: c.fg, borderRadius: 999, padding: sm ? "5px 9px" : "7px 14px", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: sm ? 13 : 15, lineHeight: 1, whiteSpace: "nowrap" }}>
+      {icon && <Icon name={icon} size={sm ? 13 : 15} color={c.fg} stroke={2} />}
       {children}
     </span>
   );
