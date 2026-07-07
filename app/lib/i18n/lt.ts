@@ -248,6 +248,8 @@ export const lt: Dict = {
     browseCta: "Naršyti daiktus",
     faqEyebrow: "Dar klausimų?",
     faqTitle: "Dažniausi klausimai",
+    faqSubheading:
+      "Trumpi atsakymai apie rezervacijas, mokėjimus, užstatus ir nuomą programėlėje.",
     faq: [
       {
         q: "Ar naršymas nemokamas?",
@@ -356,7 +358,6 @@ export const lt: Dict = {
       },
     },
     ctaLabel: "Peržiūrėti visą procesą",
-    hint: "Kaip veikia nuoma nuo A iki Z — saugumas, mokėjimai, grąžinimas.",
   },
   cta: {
     title: "Raskite internete. Rezervuokite programėlėje.",
@@ -401,7 +402,7 @@ export const lt: Dict = {
   },
   footer: {
     tagline: "Daiktų nuoma iš privačių ir verslo savininkų visoje Lietuvoje.",
-    browseHeading: "Daiktų kategorijos",
+    browseHeading: "Kategorijos",
     citiesHeading: "Miestai",
     cityLink: (city) => `Nuoma ${cityLocativeLt(city)}`,
     // Labels match the canonical backend/tile category names so the same

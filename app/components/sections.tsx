@@ -11,6 +11,7 @@ import {
   locales,
   type Locale,
 } from "@/app/lib/i18n/config";
+import type { FaqItem } from "@/app/lib/i18n/types";
 import { useListings, photoFirst } from "@/app/lib/listings";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
@@ -37,8 +38,8 @@ import {
   listboxTriggerKeyNav,
   Logo,
   openRedirect,
-  SectionHead,
 } from "./ui";
+import { Section, SectionHead } from "./headers";
 
 /* ---------------- Nav ----------------
    Translucent sticky bar that condenses on scroll; on tablet/mobile (≤1120px)
@@ -461,13 +462,9 @@ export function Categories() {
   const { locale, dict } = useI18n();
   const t = dict.categories;
   const { data, isLoading, isError, refetch } = useCategories(locale);
-  const list = (data ?? []).slice(0, 8);
+  const list = (data ?? []).slice(0, 10);
   return (
-    <section
-      id="kategorijos"
-      className="nk-container"
-      style={{ paddingBlock: "var(--nk-section-y) var(--nk-section-head)" }}
-    >
+    <Section id="kategorijos" contained bottom="head">
       <SectionHead
         eyebrow={t.eyebrow}
         title={t.title}
@@ -485,7 +482,7 @@ export function Categories() {
       />
       {isLoading ? (
         <div className="nk-grid-cats">
-          {Array.from({ length: 8 }).map((_, i) => (
+          {Array.from({ length: 10 }).map((_, i) => (
             <CategoryCardSkeleton key={i} />
           ))}
         </div>
@@ -530,7 +527,7 @@ export function Categories() {
           onSecondary={() => refetch()}
         />
       )}
-    </section>
+    </Section>
   );
 }
 
@@ -547,11 +544,7 @@ export function Offers() {
   // items" band so it isn't 4 category-icon placeholders.
   const list = photoFirst(data ?? []).slice(0, 4);
   return (
-    <section
-      id="skelbimai"
-      className="nk-container"
-      style={{ paddingBlock: "var(--nk-section-head) var(--nk-section-y)" }}
-    >
+    <Section id="skelbimai" contained top="head">
       <SectionHead
         eyebrow={t.eyebrow}
         title={t.title}
@@ -636,7 +629,7 @@ export function Offers() {
           }
         />
       )}
-    </section>
+    </Section>
   );
 }
 
@@ -664,16 +657,25 @@ export function HowItWorks() {
   const icons = STEP_ICONS[role];
 
   return (
-    <section
-      className="nk-container"
-      style={{ paddingBlock: "var(--nk-section-y)" }}
+    // extra bottom breathing room below the stepper before the FAQ band
+    <Section
+      contained
+      top="section"
+      style={{ paddingBottom: "calc(var(--nk-section-y) + clamp(32px,4vw,64px))" }}
     >
-      <div className="nk-hiw-head nk-reveal">
-        <div className="nk-hiw-hl">
-          <span className="nk-hiw-eyebrow">{t.eyebrow}</span>
-          <h2 className="nk-hiw-title">{t.title}</h2>
-          <p className="nk-hiw-lead">{t.lead}</p>
-        </div>
+      <SectionHead
+        eyebrow={t.eyebrow}
+        title={t.title}
+        subtitle={t.lead}
+        action={
+          <Link className="nk-cats-all" href={localePath(locale, "/kaip-tai-veikia")}>
+            {t.ctaLabel}{" "}
+            <Icon name="ArrowRight" size={24} stroke={2.4} color="currentColor" />
+          </Link>
+        }
+      />
+
+      <div className="nk-hiw-togrow nk-reveal">
         <div className="nk-hiw-tog" role="group" aria-label={t.toggleAria}>
           <span
             className="nk-hiw-thumb"
@@ -702,7 +704,7 @@ export function HowItWorks() {
               <span className="nk-hiw-node">
                 <Icon
                   name={icons[i]}
-                  size={26}
+                  size={32}
                   stroke={2}
                   color={STEP_ACCENTS[i]}
                 />
@@ -717,47 +719,34 @@ export function HowItWorks() {
           ))}
         </div>
       </div>
-
-      <div className="nk-hiw-foot nk-reveal">
-        <Link
-          className="nk-hiw-cta"
-          href={localePath(locale, "/kaip-tai-veikia")}
-        >
-          <span>{t.ctaLabel}</span>
-          <span className="nk-hiw-cta__a" aria-hidden="true">
-            <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
-          </span>
-        </Link>
-        <span className="nk-hiw-hint">{t.hint}</span>
-      </div>
-    </section>
+    </Section>
   );
 }
 
-/* ---------------- FAQ ---------------- */
-export function Faq() {
-  const { dict } = useI18n();
+/* ---------------- FAQ ----------------
+   Shared FAQ section, used by both the home page (general questions) and the
+   How-It-Works page (role-aware renter/owner sets). Prop-driven so callers own
+   the content; owns its single-open accordion state. The subheading is optional
+   — omit it for a tighter head. Reset the open row across content swaps by
+   remounting with a `key` (How-It-Works passes `key={role}`). */
+export function Faq({
+  eyebrow,
+  heading,
+  subheading,
+  items,
+}: {
+  eyebrow: string;
+  heading: string;
+  subheading?: string;
+  items: readonly FaqItem[];
+}) {
   const [open, setOpen] = useState(0);
   return (
     <section style={{ background: "var(--nk-bg)" }}>
-      <div
-        className="nk-container"
-        style={{ paddingBlock: "var(--nk-section-y-lg)", maxWidth: 1320 }}
-      >
-        {/* same eyebrow+H2 anatomy as every other home section (the centred,
-            eyebrow-less block was the page's one divergent header grammar); the
-            subheading tucks under the head by offsetting its section margin */}
-        <SectionHead eyebrow={dict.faq.eyebrow} title={dict.faq.heading} />
-        <p
-          className="nk-body nk-reveal"
-          style={{
-            margin: "calc(16px - var(--nk-section-head)) 0 var(--nk-section-head)",
-            maxWidth: 720,
-            color: "var(--nk-text-2)",
-          }}
-        >
-          {dict.faq.subheading}
-        </p>
+      <Section as="div" contained top="section-lg" bottom="section-lg" style={{ maxWidth: 1320 }}>
+        {/* same eyebrow+H2 anatomy as every other home section, centred; the
+            optional subheading rides in the head's subtitle slot */}
+        <SectionHead eyebrow={eyebrow} title={heading} subtitle={subheading} center />
         <div
           className="nk-reveal"
           style={{
@@ -766,7 +755,7 @@ export function Faq() {
             gap: "var(--nk-gap-lg)",
           }}
         >
-          {dict.faq.items.map((f, i) => (
+          {items.map((f, i) => (
             <FaqRow
               key={i}
               q={f.q}
@@ -776,7 +765,7 @@ export function Faq() {
             />
           ))}
         </div>
-      </div>
+      </Section>
     </section>
   );
 }

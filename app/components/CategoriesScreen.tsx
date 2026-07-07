@@ -6,6 +6,7 @@ import { Nav } from "./sections";
 import { CtaBanner, Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, InputClear } from "./ui";
+import { PageHead, SeoNote } from "./headers";
 import { CategoryCard, CategoryCardSkeleton, EmptyState } from "./cards";
 import { useCategories } from "@/app/lib/categories";
 import { listingLandingHref, listingSearchHref } from "@/app/lib/search";
@@ -49,11 +50,13 @@ export function CategoriesScreen() {
             scannable ~300px rather than stretching to letterboxes near 1920 */}
         <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px", maxWidth: 1520 }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={[{ label: t.crumb }]} />
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-8)" }}>
-            <span className="nk-eyebrow">{t.eyebrow}</span>
-            <h1 className="nk-h-page">{t.title}</h1>
-            <p className="nk-body" style={{ margin: 0, maxWidth: 620 }}>{t.body}</p>
-          </div>
+          <PageHead
+            eyebrow={t.eyebrow}
+            title={t.title}
+            subtitle={t.body}
+            subtitleMaxWidth={620}
+            marginBottom="var(--nk-s-8)"
+          />
 
           <form onSubmit={(e) => e.preventDefault()} role="search" style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-8)" }}>
             <span className="nk-searchfield" style={{ width: "100%", maxWidth: 560 }}>
@@ -103,13 +106,7 @@ export function CategoriesScreen() {
               secondaryLabel={t.emptyAction} onSecondaryAction={() => setQ("")} />
           )}
 
-          <section style={{ paddingTop: "calc(var(--nk-section-y) * 0.55)", paddingBottom: "var(--nk-section-y)" }}>
-            <div style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: 16 }}>
-              <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{t.seoHeading}</h2>
-              {/* 65ch: same reading measure as the feed's twin SEO block */}
-              <p style={{ margin: 0, maxWidth: "65ch", fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{t.seoBody}</p>
-            </div>
-          </section>
+          <SeoNote heading={t.seoHeading} body={t.seoBody} />
         </main>
         {/* The categories hub is a core discovery surface on an install-bridge
             site — close it with the shared conversion banner, not bare SEO copy. */}

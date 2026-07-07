@@ -17,6 +17,7 @@ export const revalidate = 300;
 export default async function Page({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
   const locale = requireLocale(lang);
+  const dict = getDictionary(locale);
 
   // Prefetch the same queries the Offers/Categories home sections read so the
   // featured cards are present in the initial HTML.
@@ -34,7 +35,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
       <JsonLd data={organizationJsonLd()} />
       <JsonLd data={softwareApplicationJsonLd()} />
       <JsonLd data={webSiteJsonLd(locale)} />
-      <JsonLd data={faqJsonLd(getDictionary(locale).faq.items)} />
+      <JsonLd data={faqJsonLd(dict.faq.items)} />
       <Chrome>
         <div className="nk-page">
           <Nav />
@@ -45,7 +46,12 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
             <Features locale={locale} />
             <HowItWorks />
             <CtaBanner locale={locale} />
-            <Faq />
+            <Faq
+              eyebrow={dict.faq.eyebrow}
+              heading={dict.faq.heading}
+              subheading={dict.faq.subheading}
+              items={dict.faq.items}
+            />
           </main>
           <Footer locale={locale} />
         </div>

@@ -149,6 +149,7 @@ export type Dict = {
     browseCta: string; // mid-funnel exit into the live inventory ("Browse items")
     faqEyebrow: string;
     faqTitle: string;
+    faqSubheading: string;
     faq: FaqItem[]; // renter-slanted questions (shown for the renter role)
     faqOwner: FaqItem[]; // owner-side questions (payouts, fees, damage) for the owner role
     ctaPhoneAlt: string;
@@ -181,7 +182,6 @@ export type Dict = {
       owner: { label: string; steps: [HomeStep, HomeStep, HomeStep] };
     };
     ctaLabel: string; // funnel exit into the full /kaip-tai-veikia walkthrough
-    hint: string; // supporting line beside the CTA
   };
   cta: {
     title: string;

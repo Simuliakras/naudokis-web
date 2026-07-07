@@ -6,13 +6,13 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Nav } from "./sections";
+import { Nav, Faq } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
-import { FaqRow } from "./cards";
 import { AppCtaBanner } from "./AppCtaBanner";
 import { FeatureBand } from "./FeatureBand";
 import { Icon, AppBadges, Breadcrumb, Pattern, type IconName } from "./ui";
+import { PageHead } from "./headers";
 import { useI18n } from "./I18nProvider";
 import { localePath } from "@/app/lib/i18n/config";
 import type { HtwScreen, HtwStep } from "@/app/lib/i18n/types";
@@ -26,7 +26,6 @@ export function HowItWorksScreen() {
 
   const [role, setRole] = useState<Role>("renter");
   const [active, setActive] = useState(0);
-  const [openFaq, setOpenFaq] = useState(0);
 
   // ?role=owner deep link (from the homepage earn card) — read on mount from
   // location so the page stays statically generated (useSearchParams would force
@@ -44,7 +43,7 @@ export function HowItWorksScreen() {
   const steps = data.steps;
   const current = steps[active];
 
-  const switchRole = (r: Role) => { setRole(r); setActive(0); setOpenFaq(0); };
+  const switchRole = (r: Role) => { setRole(r); setActive(0); };
 
   return (
     <Chrome>
@@ -52,23 +51,21 @@ export function HowItWorksScreen() {
         <Nav onSearch={() => router.push(localePath(locale, "/kategorijos"))} />
         <main id="nk-main">
 
-          {/* Breadcrumb parity with the other top-nav destinations (feed, cats) */}
-          <div className="nk-container" style={{ paddingTop: 20 }}>
-            <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={[{ label: t.eyebrow }]} />
-          </div>
-
-          {/* HERO */}
+          {/* HERO — breadcrumb overlays the pattern-backed band (parity with the
+              other top-nav destinations: feed, cats) */}
           <section className="nk-hero-band">
             <Pattern name="hero-pattern" priority className="nk-hero-band__pattern nk-brand-pattern" />
+            <div className="nk-container nk-hero-band__crumbs">
+              <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={[{ label: t.eyebrow }]} />
+            </div>
             <div className="nk-container nk-hero-band__inner">
-              <span className="htw-hero__eyebrow nk-eyebrow">{t.eyebrow}</span>
-              <h1>{t.title}</h1>
-              <p className="nk-hero-band__lead">{t.lead}</p>
-              {/* the first screen of an install-bridge explainer must offer an
-                  action — the store badges are the zero-new-copy one */}
-              <div className="htw-hero__actions">
-                <AppBadges height={44} placement="hiw_hero" />
-              </div>
+              <PageHead size="band" eyebrow={t.eyebrow} title={t.title} subtitle={t.lead}>
+                {/* the first screen of an install-bridge explainer must offer an
+                    action — the store badges are the zero-new-copy one */}
+                <div className="htw-hero__actions">
+                  <AppBadges height={44} placement="hiw_hero" />
+                </div>
+              </PageHead>
             </div>
           </section>
 
@@ -124,20 +121,16 @@ export function HowItWorksScreen() {
           {/* CTA (green) */}
           <AppCtaBanner title={data.ctaTitle} body={data.ctaBody} phoneAlt={t.ctaPhoneAlt} placement="hiw_cta" />
 
-          {/* MINI-FAQ */}
-          <section className="nk-container htw-faq" id="duk">
-            <div className="htw-faq__head nk-reveal">
-              <span className="nk-eyebrow">{t.faqEyebrow}</span>
-              <h2>{t.faqTitle}</h2>
-            </div>
-            <div className="htw-faq__list nk-reveal">
-              {/* role-aware: the owner tab gets owner questions (payouts, fees,
-                  damage) instead of the renter-slanted set */}
-              {(role === "owner" ? t.faqOwner : t.faq).map((f, i) => (
-                <FaqRow key={role + i} q={f.q} a={f.a} open={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? -1 : i)} />
-              ))}
-            </div>
-          </section>
+          {/* FAQ — shared home-page section; role-aware content (the owner tab
+              gets owner questions: payouts, fees, damage). `key={role}` remounts
+              on role switch so the open row resets to the first question. */}
+          <Faq
+            key={role}
+            eyebrow={t.faqEyebrow}
+            heading={t.faqTitle}
+            subheading={t.faqSubheading}
+            items={role === "owner" ? t.faqOwner : t.faq}
+          />
         </main>
 
         <Footer locale={locale} />

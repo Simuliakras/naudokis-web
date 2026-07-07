@@ -11,7 +11,7 @@ export function AppCtaBanner({ title, body, phoneAlt, placement }: { title: stri
       <div className="nk-appcta nk-reveal nk-grain">
         <Image className="nk-appcta__phone" src="/naudokis/download-phone.png" alt={phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" />
         <div className="nk-appcta__spark" aria-hidden="true">
-          <span style={{ left: "45%", top: "16%" }} /><span style={{ left: "60%", top: "26%" }} /><span style={{ left: "40%", top: "40%" }} /><span style={{ left: "53%", top: "52%" }} /><span style={{ left: "44%", top: "68%" }} />
+          <span style={{ left: "45%", top: "16%" }} /><span style={{ left: "60%", top: "26%" }} /><span style={{ left: "40%", top: "40%" }} /><span style={{ left: "53%", top: "52%" }} /><span style={{ left: "44%", top: "68%" }} /><span style={{ left: "84%", top: "7%" }} />
         </div>
         {/* copy leads, actions follow (badges live INSIDE the copy column so
             desktop reads headline → body → install, never action-first) */}
@@ -21,7 +21,7 @@ export function AppCtaBanner({ title, body, phoneAlt, placement }: { title: stri
           <div className="nk-appcta__badges"><AppBadges height={50} placement={placement} /></div>
         </div>
         <div className="nk-appcta__qr">
-          <QR size={180} />
+          <QR size={148} />
         </div>
       </div>
     </section>

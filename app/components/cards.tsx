@@ -129,9 +129,6 @@ export function CategoryCard({
           <h3 className="nk-h-row" style={{ margin: 0, fontSize: 22, lineHeight: "26px" }}>{title}</h3>
           {description && <p className="nk-cat__desc">{description}</p>}
         </div>
-        <span className="nk-cat__arrow nk-round nk-round--outline" style={{ flex: "none" }} aria-hidden="true">
-          <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
-        </span>
       </div>
     </div>
   );
@@ -233,7 +230,6 @@ export function CategoryCardSkeleton({ ghost = false }: { ghost?: boolean } = {}
     <div aria-hidden="true" className={`${cls} nk-cat-skel`}>
       <div className={`${cls} nk-cat-skel__disk`} />
       <div className={`${cls} nk-cat-skel__bar`} />
-      <div className={`${cls} nk-cat-skel__chip`} />
     </div>
   );
 }
@@ -363,7 +359,7 @@ export function SectionEmptyGrid({
   const c = SECTION_EMPTY_TONES[tone];
   const cats = variant === "categories";
   const fallbackIcon: IconName = cats ? "LayoutGrid" : "Tag";
-  const ghostCount = 4;
+  const ghostCount = cats ? 5 : 4;
   return (
     <div className="nk-emptygrid">
       <div className={"nk-emptygrid__ghost " + (cats ? "nk-grid-cats" : "nk-grid-4")} aria-hidden="true">

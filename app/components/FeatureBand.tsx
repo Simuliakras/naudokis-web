@@ -3,7 +3,7 @@
 // Presentational (no directive, no hooks) so it renders in both the home server
 // tree and the "Kaip tai veikia" client tree; each call site passes its own copy.
 import { Icon, type IconName, Pattern } from "./visual";
-import { SectionHead } from "./ui";
+import { SectionHead } from "./headers";
 
 export function FeatureBand({ eyebrow, title, items }: {
   eyebrow: string;

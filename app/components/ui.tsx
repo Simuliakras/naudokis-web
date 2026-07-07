@@ -26,28 +26,8 @@ export function Logo({ height = 36, priority = false }: { height?: number; prior
   );
 }
 
-/* ---------------- Eyebrow + section head ---------------- */
-export function SectionHead({
-  eyebrow, title, action,
-}: {
-  eyebrow?: string;
-  title: string;
-  action?: React.ReactNode;
-}) {
-  return (
-    <div className="nk-section__top nk-reveal">
-      <div className="nk-head">
-        {(eyebrow || action) && (
-          <div className="nk-head__top">
-            {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
-            {action}
-          </div>
-        )}
-        <h2>{title}</h2>
-      </div>
-    </div>
-  );
-}
+/* Header + section-spacing primitives (Section / SectionHead / PageHead / SeoNote)
+   live in the server-safe ./headers — import them from there directly. */
 
 /* ---------------- App-store badges ----------------
    Each badge links straight to its store listing (apple → App Store, google →

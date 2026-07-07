@@ -10,6 +10,7 @@ import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Icon, AppBadges, QR, Pattern } from "./ui";
+import { PageHead } from "./headers";
 import { useI18n } from "./I18nProvider";
 import { localePath } from "@/app/lib/i18n/config";
 import { formatPrice } from "@/app/lib/listings";
@@ -65,9 +66,7 @@ export function InviteScreen() {
                 centred phone column blown up to 1440 wasted the whole width */}
             <div className="nk-container nk-hero-band__inner invite-cols">
               <div className="invite-cols__main">
-                <span className="nk-eyebrow">{t.eyebrow}</span>
-                <h1>{headline}</h1>
-                <p className="nk-hero-band__lead">{t.lead}</p>
+                <PageHead size="band" eyebrow={t.eyebrow} title={headline} subtitle={t.lead} />
                 {reward && <p className="invite-reward">{t.rewardExplainer}</p>}
                 {/* confirmed-invalid/expired: say so — silently dropping the code
                     the visitor clicked through with reads as a glitch */}

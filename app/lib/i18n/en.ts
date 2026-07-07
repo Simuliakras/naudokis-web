@@ -224,6 +224,8 @@ export const en: Dict = {
     browseCta: "Browse items",
     faqEyebrow: "More questions?",
     faqTitle: "Common questions",
+    faqSubheading:
+      "Quick answers about reservations, payments, deposits and renting through the app.",
     faq: [
       {
         q: "Is browsing free?",
@@ -329,7 +331,6 @@ export const en: Dict = {
       },
     },
     ctaLabel: "See the whole process",
-    hint: "How renting works from A to Z — safety, payments, returns.",
   },
   cta: {
     title: "Find it online. Reserve it in the app.",

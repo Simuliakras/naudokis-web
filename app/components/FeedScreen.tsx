@@ -12,6 +12,7 @@ import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, SearchSuggest, Toggle, openRedirect, rovingKeyNav, type SelectOption } from "./ui";
+import { PageHead, SeoNote } from "./headers";
 import { HeroOwnerCta } from "./HeroSearch";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { useCategories, type Category } from "@/app/lib/categories";
@@ -377,23 +378,20 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={crumbs} />
           {/* 65ch caps the line length so a long authored category intro (seoBody,
               up to ~600 chars) stays readable; short browse/search subtitles never
-              reach it. Matches the .nk-prose measure used elsewhere. Section-scale
-              H1 + gap-token margins keep the first price row near the desktop fold
-              (the feed is a utility surface, not a marketing page). */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-gap-lg)", maxWidth: "65ch" }}>
-            <span className="nk-eyebrow">{t.eyebrow}</span>
-            <h1 className="nk-h-section" style={{ margin: 0 }}>{heading}</h1>
+              reach it. Matches the .nk-prose measure used elsewhere. The subtitle
+              branches (search echo vs clamped landing intro) ride in PageHead's
+              children slot below the shared eyebrow + H1. */}
+          <PageHead eyebrow={t.eyebrow} title={heading} maxWidth="65ch">
             {isSearch ? (
               // ≤560 the chip row already echoes the query — a generic line there
               // avoids four echoes of the same string in one screen.
-              <p className="nk-feed-sub" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 19, lineHeight: "28px", color: "var(--nk-text-muted)" }}>
+              <p className="nk-subtitle">
                 <span className="nk-wide-only">{subtitle}</span>
                 <span className="nk-narrow-only">{t.subtitleSearchGeneric}</span>
               </p>
             ) : (
               <>
-                <p className={"nk-feed-sub" + (isLanding && subtitle.length > 200 && !introOpen ? " nk-intro-clamp" : "")}
-                  style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 19, lineHeight: "28px", color: "var(--nk-text-muted)" }}>
+                <p className={"nk-subtitle" + (isLanding && subtitle.length > 200 && !introOpen ? " nk-intro-clamp" : "")}>
                   {subtitle}
                 </p>
                 {isLanding && subtitle.length > 200 && (
@@ -405,7 +403,7 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
                 )}
               </>
             )}
-          </div>
+          </PageHead>
 
           {/* sticky filter bar — pins only the controls (search + filters); the
               result-count meta is context, not a control, so it scrolls with the
@@ -617,21 +615,16 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
             </div>
           )}
 
-          <section style={{ paddingTop: "calc(var(--nk-section-y) * 0.55)", paddingBottom: "var(--nk-section-y)" }}>
-            <div style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: 16 }}>
-              <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text-2)" }}>{seoHeading}</h2>
-              {/* 65ch matches the header intro's reading measure (900px ≈ 110ch read as filler) */}
-              <p style={{ margin: 0, maxWidth: "65ch", fontFamily: "var(--nk-font-body)", fontSize: 16, lineHeight: "26px", color: "var(--nk-text-muted)" }}>{seoBody}</p>
-              <RelatedLandingLinks
-                locale={locale}
-                categories={cats}
-                currentCategory={params.cat}
-                currentCity={params.city}
-                allLabel={t.allCategories}
-                heading={t.relatedLinksLabel}
-              />
-            </div>
-          </section>
+          <SeoNote heading={seoHeading} body={seoBody}>
+            <RelatedLandingLinks
+              locale={locale}
+              categories={cats}
+              currentCategory={params.cat}
+              currentCity={params.city}
+              allLabel={t.allCategories}
+              heading={t.relatedLinksLabel}
+            />
+          </SeoNote>
         </main>
         {showTop && (
           <button type="button" className="nk-round nk-round--solid nk-backtotop" aria-label={t.backToTop}

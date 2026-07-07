@@ -211,6 +211,23 @@
   --nk-grid-gap:      clamp(20px, 2.4vw, 32px); /* responsive grid gap (feed/cats/etc) */
   --nk-grid-row-gap:  clamp(28px, 3vw, 48px);   /* feed row gap, collapses on mobile   */
   --nk-r-tile:        16px;                      /* unified gallery tile radius */
+
+  /* ---- Font-size scale ---------------------------------------------------
+     One numeric token per type role so the ramp classes below (and any inline
+     size) resolve to a single source of truth instead of the scattered literals
+     the same role used to carry. Values match today's ramp exactly — pure
+     naming; retargeting the classes is a zero-visual-change indirection. */
+  --nk-fs-hero:       clamp(44px, 7.2vw, 92px); /* .nk-h-hero                       */
+  --nk-fs-band-h1:    clamp(42px, 6.4vw, 76px); /* .nk-hero-band h1 (page hero)     */
+  --nk-fs-h1:         clamp(34px, 5vw, 52px);   /* .nk-h-page (feed / cats / status)*/
+  --nk-fs-h2:         clamp(30px, 3.4vw, 40px); /* .nk-h-section / .nk-head h2       */
+  --nk-fs-card:       28px;   /* .nk-h-card                                          */
+  --nk-fs-row:        24px;   /* .nk-h-row + shared 24px section titles (similar/SEO)*/
+  --nk-fs-eyebrow:    18px;   /* .nk-eyebrow                                         */
+  --nk-fs-body:       20px;   /* .nk-body                                            */
+  --nk-fs-body-sm:    18px;   /* .nk-body-sm / .nk-meta                              */
+  --nk-fs-subtitle:   18px;   /* .nk-subtitle — page / section subtitles            */
+  --nk-fs-sm:         16px;   /* small body (SEO copy, inputs)                       */
 }
 
 /* ============================================================================
@@ -218,35 +235,35 @@
    ========================================================================== */
 .nk-eyebrow {                       /* accent label above section titles     */
   font-family: var(--nk-font-body);
-  font-weight: 600; font-size: 18px; line-height: 22px;
+  font-weight: 600; font-size: var(--nk-fs-eyebrow); line-height: 22px;
   color: var(--nk-yellow);
   text-transform: uppercase; letter-spacing: .12em;
 }
 .nk-h-hero {                        /* hero headline (fluid)                 */
   font-family: var(--nk-font-display);
-  font-weight: 700; font-size: clamp(44px, 7.2vw, 92px); line-height: 1.08;
+  font-weight: 700; font-size: var(--nk-fs-hero); line-height: 1.08;
   color: var(--nk-text); letter-spacing: 0;
   text-wrap: balance; overflow-wrap: anywhere;
 }
 .nk-h-section {                     /* section heading (fluid)               */
   font-family: var(--nk-font-display);
-  font-weight: 700; font-size: clamp(30px, 3.4vw, 40px); line-height: 1.1; color: var(--nk-text);
+  font-weight: 700; font-size: var(--nk-fs-h2); line-height: 1.1; color: var(--nk-text);
 }
 .nk-h-page {                        /* page H1 (feed / categories / status)  */
   font-family: var(--nk-font-display);
-  font-weight: 700; font-size: clamp(34px, 5vw, 52px); line-height: 1.05; letter-spacing: 0; color: var(--nk-text); margin: 0;
+  font-weight: 700; font-size: var(--nk-fs-h1); line-height: 1.05; letter-spacing: 0; color: var(--nk-text); margin: 0;
 }
 .nk-h-card {                        /* card / offer title                    */
   font-family: var(--nk-font-display);
-  font-weight: 700; font-size: 28px; line-height: 32px; color: var(--nk-text);
+  font-weight: 700; font-size: var(--nk-fs-card); line-height: 32px; color: var(--nk-text);
 }
 .nk-h-row {                         /* FAQ / use-case / row title            */
   font-family: var(--nk-font-display);
-  font-weight: 700; font-size: 24px; line-height: 28px; color: var(--nk-text);
+  font-weight: 700; font-size: var(--nk-fs-row); line-height: 28px; color: var(--nk-text);
 }
 .nk-body {                          /* body copy                             */
   font-family: var(--nk-font-body);
-  font-weight: 400; font-size: 20px; line-height: 32px; color: var(--nk-text-2);
+  font-weight: 400; font-size: var(--nk-fs-body); line-height: 32px; color: var(--nk-text-2);
 }
 .nk-prose { max-width: 65ch }       /* line-length cap for long-form copy    */
 .nk-prose > :first-child { margin-top: 0 }
@@ -260,16 +277,22 @@
 .nk-prose li { margin: .25em 0 }
 .nk-body-sm {                       /* small body / chip text                */
   font-family: var(--nk-font-body);
-  font-weight: 400; font-size: 18px; line-height: 26px; color: var(--nk-text-2);
+  font-weight: 400; font-size: var(--nk-fs-body-sm); line-height: 26px; color: var(--nk-text-2);
 }
 .nk-meta {                          /* review counts, secondary meta         */
   font-family: var(--nk-font-body);
-  font-weight: 400; font-size: 18px; line-height: 26px; color: var(--nk-text-muted);
+  font-weight: 400; font-size: var(--nk-fs-body-sm); line-height: 26px; color: var(--nk-text-muted);
   font-variant-numeric: tabular-nums;   /* aligned figures — counts/ratings don't jitter on refetch */
+}
+/* page / section subtitle lede — one class for the leads that used to be
+   nk-feed-sub / inline fontSize:19 / bespoke <p>s under a PageHead. */
+.nk-subtitle {
+  font-family: var(--nk-font-body);
+  font-weight: 400; font-size: var(--nk-fs-subtitle); line-height: 28px; color: var(--nk-text-muted); margin: 0;
 }
 .nk-price {                         /* price line                            */
   font-family: var(--nk-font-body);
-  font-weight: 400; font-size: 20px; line-height: 24px; color: var(--nk-text);
+  font-weight: 400; font-size: var(--nk-fs-body); line-height: 24px; color: var(--nk-text);
   font-variant-numeric: tabular-nums;
 }
 /* tabular-figure utility for inline-styled numeric spans (prices, totals, rating
@@ -361,11 +384,21 @@ a,button,input,textarea,select{touch-action:manipulation}
 /* ---- Heading block (eyebrow defined in the type ramp above) ---- */
 .nk-head{display:flex;flex-direction:column;gap:var(--nk-gap-2xs);width:100%}
 .nk-head__top{display:flex;align-items:center;justify-content:space-between;gap:var(--nk-gap-xl)}
-.nk-head h2{font-family:var(--nk-font-display);font-weight:700;font-size:clamp(30px,3.4vw,40px);line-height:1.1;color:var(--nk-text);margin:0}
+.nk-head h2{font-family:var(--nk-font-display);font-weight:700;font-size:var(--nk-fs-h2);line-height:1.1;color:var(--nk-text);margin:0}
+/* optional lede under a SectionHead title (Faq subheading, home HowItWorks lead) */
+.nk-head__sub{margin:var(--nk-gap-xs) 0 0;max-width:60ch;font-family:var(--nk-font-body);font-size:var(--nk-fs-body);line-height:32px;color:var(--nk-text-2)}
 
 /* ---- Section scaffolding ---- */
 .nk-section{padding-block:var(--nk-section-y)}
 .nk-section__top{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--nk-gap-xl);margin-bottom:var(--nk-section-head)}
+/* full-screen page head cluster (eyebrow + H1 + subtitle) — <PageHead size="page"> */
+.nk-pagehead{display:flex;flex-direction:column;gap:var(--nk-gap-sm)}
+/* centered head variant — <SectionHead center> (Faq): mirror the row/head onto
+   its cross axis. Single-class rules only touch justify/align, so the ≤560
+   stacking overrides above keep working untouched. */
+.nk-section__top--center{justify-content:center}
+.nk-head--center{align-items:center;text-align:center}
+.nk-head--center .nk-head__top{justify-content:center}
 /* section "view all" arrow link (Categories / Offers heads) */
 .nk-cats-all{display:inline-flex;align-items:center;gap:10px;flex:none;white-space:nowrap;
   font-family:var(--nk-font-display);font-weight:600;font-size:clamp(18px,1.4vw,22px);color:var(--nk-purple-hover);
@@ -699,7 +732,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-cat:focus-within{border-color:var(--nk-accent-border);box-shadow:var(--nk-edge-top),0 0 0 3px var(--nk-purple-hover)}
 .nk-cat:active{transform:scale(.99)}
 /* compact 2-up tiles on phones: square-ish, smaller centred disk, title clamped
-   to two lines, arrow dropped (the whole tile is the tap target) */
+   to two lines (the whole tile is the tap target) */
 @media(max-width:560px){
   .nk-section__top{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-md)}
   /* SectionHead's eyebrow + "view all" link row: stack on phones so the trailing
@@ -717,7 +750,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
      compact tile carries a clean disk + 2-line title. Extra specificity beats the
      later base `.nk-cat__desc{display:-webkit-box}` (same 1-class specificity). */
   .nk-cat .nk-cat__desc{display:none}
-  .nk-cat__arrow{display:none}
 }
 /* per-category gradient identity — accent blended strongly so each tile reads distinctly */
 .nk-cat__img{position:absolute;inset:0;z-index:0;
@@ -740,18 +772,19 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   box-shadow:var(--nk-edge-top);
   transition:transform .28s var(--nk-ease),box-shadow .28s ease}
 @media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__disk{transform:translateY(-2px);box-shadow:var(--nk-edge-top),0 8px 20px rgba(0,0,0,.28)}}
-.nk-cat__content{position:relative;z-index:1;margin-inline:-8px;
-  display:flex;justify-content:space-between;align-items:center;gap:var(--nk-gap-sm)}
-/* title + optional intro stack; min-width:0 lets the clamp shrink inside the flex row */
-.nk-cat__text{display:flex;flex-direction:column;gap:6px;min-width:0}
+.nk-cat__content{position:relative;z-index:1;
+  display:flex;justify-content:center;align-items:center;gap:var(--nk-gap-sm)}
+/* title + optional intro stack, centred horizontally under the disk; min-width:0
+   lets the clamp shrink inside the flex row, flex:1 + text-align keep the lines
+   centred across the full tile width */
+.nk-cat__text{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;text-align:center}
 /* clamp the title to two lines at every width so long LT names (e.g. "Garsas,
    muzika ir renginių technika") never push past the fixed tile height */
 .nk-cat__text h3{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-/* Reserve the full 2-line slot so the arrow chips stay level across a row where
-   a neighbour wraps (F-009). Plain tiles reserve it on the flex text block and
-   centre the (1- or 2-line) title inside it, so a single-line name lines up with
-   the arrow chip's vertical centre; --lead tiles keep the reservation on the
-   title so the stacked title + intro clears the disk. */
+/* Reserve the full 2-line slot so titles stay level across a row where a neighbour
+   wraps (F-009). Plain tiles reserve it on the flex text block and centre the
+   (1- or 2-line) title inside it; --lead tiles keep the reservation on the title
+   so the stacked title + intro clears the disk. */
 @media(min-width:561px){
   .nk-cat--lead .nk-cat__text h3{min-height:2.4em}
   .nk-cat:not(.nk-cat--lead) .nk-cat__text{min-height:52px;justify-content:center}
@@ -765,25 +798,20 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* a described tile lifts its centred disk so the two-line intro clears it */
 .nk-cat--lead .nk-cat__disk{inset:0 0 84px}
-.nk-cat__arrow{transition:background .2s ease,border-color .2s ease,transform .2s ease}
-.nk-cat:hover .nk-cat__arrow{background:var(--nk-purple);border-color:var(--nk-purple)}
-@media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__arrow{transform:translateX(3px)}}
 @media(prefers-reduced-motion:reduce){
-  .nk-cat,.nk-cat__img,.nk-cat__disk,.nk-cat__arrow{transition:none}
+  .nk-cat,.nk-cat__img,.nk-cat__disk{transition:none}
   .nk-cat:hover{transform:none}
-  .nk-cat:hover .nk-cat__img,.nk-cat:hover .nk-cat__disk,.nk-cat:hover .nk-cat__arrow{transform:none}}
+  .nk-cat:hover .nk-cat__img,.nk-cat:hover .nk-cat__disk{transform:none}}
 
 /* category skeleton — height comes from the shared --nk-cat-h token so it matches
    the real tile at every breakpoint; inner shapes compact on phones to mirror the
-   compact tile skin (disk 52, no arrow chip) */
-.nk-cat-skel{height:var(--nk-cat-h,248px);border-radius:var(--nk-r-card);position:relative}
+   compact tile skin (disk 52) */
+.nk-cat-skel{height:var(--nk-cat-h,208px);border-radius:var(--nk-r-card);position:relative}
 .nk-cat-skel__disk{position:absolute;inset:0 0 44px;margin:auto;width:88px;height:88px;border-radius:50%;background:rgba(27,27,27,.3)}
 .nk-cat-skel__bar{position:absolute;left:22px;bottom:22px;width:55%;height:22px;border-radius:6px;background:rgba(27,27,27,.3)}
-.nk-cat-skel__chip{position:absolute;right:22px;bottom:22px;width:44px;height:44px;border-radius:22px;background:rgba(27,27,27,.3)}
 @media(max-width:560px){
   .nk-cat-skel__disk{width:52px;height:52px;inset:0 0 34px}
   .nk-cat-skel__bar{left:14px;bottom:14px;width:64%;height:14px}
-  .nk-cat-skel__chip{display:none}
 }
 
 /* ---- feature card hover ---- */
@@ -1113,15 +1141,17 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   font-family:var(--nk-font-body);font-size:15px;transition:border-color .15s ease,background .15s ease}
 .nk-suggest__opt:hover{border-color:var(--nk-accent-border);background:var(--nk-purple-soft)}
 
-/* category tile grid (all-categories page). --nk-cat-h is the single source of
-   truth for tile height so the real card AND its skeleton stay locked at every
-   breakpoint (no load-time layout shift). 4-up top tier: 12 categories tile
-   cleanly as 4/3/2/2 (no orphan row); a page-scoped max-width caps ultrawide. */
-.nk-grid-cats{--nk-cat-h:248px;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--nk-grid-gap)}
-@media(max-width:1280px){.nk-grid-cats{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:900px){.nk-grid-cats{grid-template-columns:repeat(2,1fr)}}
-/* phones: a dense 2-up category grid (was a single tall column — eight full-width
-   tiles made ~1500px of low-density scroll); tiles get a compact skin below */
+/* category tile grid (home strip + all-categories page). --nk-cat-h is the single
+   source of truth for tile height so the real card AND its skeleton stay locked at
+   every breakpoint (no load-time layout shift). Dense 5-up top tier (compact,
+   arrow-less tiles) cascading 5 → 4 → 3 → 2; a page-scoped max-width caps
+   ultrawide on the categories page. */
+.nk-grid-cats{--nk-cat-h:208px;display:grid;grid-template-columns:repeat(5,1fr);gap:var(--nk-grid-gap)}
+@media(max-width:1280px){.nk-grid-cats{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:1024px){.nk-grid-cats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.nk-grid-cats{grid-template-columns:repeat(2,1fr)}}
+/* phones: a dense 2-up category grid (was a single tall column — full-width tiles
+   made ~1500px of low-density scroll); tiles get a compact skin below */
 @media(max-width:560px){.nk-grid-cats{--nk-cat-h:138px;grid-template-columns:repeat(2,1fr)}}
 
 /* ============================================================
@@ -1432,35 +1462,29 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    Three steps on a purple→yellow→green connector line + a renter/owner toggle.
    The section shell (container width, section-y rhythm) comes from .nk-container;
    these rules reproduce the handoff's inner composition on the --nk-* tokens. */
-.nk-hiw-head{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;margin-bottom:clamp(34px,3.4vw,46px)}
-.nk-hiw-hl{max-width:600px}
-.nk-hiw-eyebrow{font-family:var(--nk-font-body);font-weight:600;font-size:14px;line-height:1;letter-spacing:.16em;text-transform:uppercase;color:var(--nk-yellow)}
-.nk-hiw-title{font-family:var(--nk-font-display);font-weight:700;font-size:clamp(28px,2.7vw,40px);line-height:1.05;letter-spacing:-.02em;color:var(--nk-text);margin:16px 0 0;max-width:16ch}
-.nk-hiw-lead{font-family:var(--nk-font-body);font-size:16px;line-height:26px;color:var(--nk-text-muted);margin:14px 0 0;max-width:46ch}
+/* head is the shared <SectionHead> (eyebrow + title + view-all action + lead);
+   the toggle sits on its own row, centred, between the head and the timeline.
+   The head→toggle gap is owned by .nk-section__top's margin-bottom, so togrow
+   only carries its margin to the timeline below. */
+.nk-hiw-togrow{display:flex;justify-content:center;margin-bottom:clamp(64px,6.4vw,88px)}
 /* role toggle */
-.nk-hiw-tog{position:relative;display:inline-flex;padding:5px;border-radius:999px;background:var(--nk-surface);border:1px solid var(--nk-border);flex:none}
-.nk-hiw-tb{position:relative;z-index:2;padding:11px 24px;border-radius:999px;font-family:var(--nk-font-display);font-weight:700;font-size:15px;color:var(--nk-text-muted);transition:color .25s ease;white-space:nowrap;background:transparent;border:0;cursor:pointer}
+.nk-hiw-tog{position:relative;display:inline-flex;padding:6px;border-radius:999px;background:var(--nk-surface);border:1px solid var(--nk-border);flex:none}
+.nk-hiw-tb{position:relative;z-index:2;padding:13px 40px;border-radius:999px;font-family:var(--nk-font-display);font-weight:700;font-size:18px;color:var(--nk-text-muted);transition:color .25s ease;white-space:nowrap;background:transparent;border:0;cursor:pointer}
 .nk-hiw-tb.is-active{color:#fff}
 .nk-hiw-tb:not(.is-active):hover{color:var(--nk-text)}
-.nk-hiw-thumb{position:absolute;z-index:1;top:5px;bottom:5px;left:5px;width:calc(50% - 5px);border-radius:999px;background:var(--nk-purple);border:1px solid var(--nk-purple-deep);transition:transform .34s cubic-bezier(.2,.8,.2,1)}
+.nk-hiw-thumb{position:absolute;z-index:1;top:6px;bottom:6px;left:6px;width:calc(50% - 6px);border-radius:999px;background:var(--nk-purple);border:1px solid var(--nk-purple-deep);transition:transform .34s cubic-bezier(.2,.8,.2,1)}
 /* track + connector line + grid */
 .nk-hiw-track{position:relative}
-.nk-hiw-line{position:absolute;top:31px;left:31px;right:31px;height:2px;background:linear-gradient(90deg,var(--nk-purple) 0%,var(--nk-yellow) 52%,var(--nk-green) 100%);opacity:.4}
-.nk-hiw-grid{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:34px}
-.nk-hiw-step{display:flex;flex-direction:column;gap:18px}
-.nk-hiw-node{position:relative;z-index:2;width:62px;height:62px;border-radius:31px;background:var(--nk-surface);border:1.5px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center}
-.nk-hiw-idx{display:flex;align-items:center;gap:9px;font-family:var(--nk-font-body);font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--nk-text-muted)}
-.nk-hiw-idx b{font-family:var(--nk-font-display);font-weight:700;font-size:15px}
-.nk-hiw-h{font-family:var(--nk-font-display);font-weight:700;font-size:23px;line-height:1.12;color:var(--nk-text);margin:0}
-.nk-hiw-p{font-family:var(--nk-font-body);font-size:15px;line-height:24px;color:var(--nk-text-muted);margin:0;max-width:32ch}
-/* footer CTA + hint */
-.nk-hiw-foot{margin-top:clamp(30px,3vw,44px);display:flex;align-items:center;gap:22px;flex-wrap:wrap}
-.nk-hiw-cta{display:inline-flex;align-items:center;gap:14px;text-decoration:none;font-family:var(--nk-font-display);font-weight:700;font-size:16px;color:var(--nk-text)}
-.nk-hiw-cta__a{width:46px;height:46px;border-radius:23px;background:var(--nk-purple);display:flex;align-items:center;justify-content:center;color:#fff;transition:background .18s ease,transform .18s ease}
-.nk-hiw-cta:hover .nk-hiw-cta__a{background:var(--nk-purple-hover);transform:translateX(3px)}
-.nk-hiw-hint{font-family:var(--nk-font-body);font-size:13.5px;color:var(--nk-text-tertiary);max-width:26ch;line-height:1.4}
+.nk-hiw-line{position:absolute;top:38px;left:38px;right:38px;height:2px;background:linear-gradient(90deg,var(--nk-purple) 0%,var(--nk-yellow) 52%,var(--nk-green) 100%);opacity:.4}
+.nk-hiw-grid{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.nk-hiw-step{display:flex;flex-direction:column;gap:22px}
+.nk-hiw-node{position:relative;z-index:2;width:76px;height:76px;border-radius:38px;background:var(--nk-surface);border:1.5px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center}
+.nk-hiw-idx{display:flex;align-items:center;gap:11px;font-family:var(--nk-font-body);font-size:var(--nk-fs-sm);font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--nk-text-muted)}
+.nk-hiw-idx b{font-family:var(--nk-font-display);font-weight:700;font-size:19px}
+.nk-hiw-h{font-family:var(--nk-font-display);font-weight:700;font-size:var(--nk-fs-card);line-height:1.12;color:var(--nk-text);margin:0}
+.nk-hiw-p{font-family:var(--nk-font-body);font-size:var(--nk-fs-body);line-height:29px;color:var(--nk-text-muted);margin:0;max-width:32ch}
 @media(max-width:900px){
-  .nk-hiw-grid{display:flex;flex-direction:column;gap:16px}
+  .nk-hiw-grid{display:flex;flex-direction:column;gap:20px}
   .nk-hiw-line{display:none}
 }
 
@@ -1597,13 +1621,18 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-hero-band{position:relative;overflow:hidden;background:var(--nk-bg-deep)}
 .nk-hero-band__pattern{position:absolute;right:-80px;top:0;height:100%;width:1000px;object-fit:cover;
   object-position:right top;pointer-events:none}
+/* Breadcrumb overlaying the pattern-backed band — layers above the absolute
+   pattern and hugs the top of the band (How-it-works). */
+.nk-hero-band__crumbs{position:relative;z-index:1;padding-top:20px}
 .nk-hero-band__inner{position:relative;padding-block:var(--nk-section-y-lg);display:flex;flex-direction:column;
   align-items:center;text-align:center;gap:var(--hero-gap,32px)}
-.nk-hero-band h1{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:var(--hero-title,clamp(42px,6.4vw,76px));
+/* The breadcrumb now occupies the band top, so trim the inner's top padding here
+   (scoped — /invite keeps the shared symmetric padding). */
+.htw-page .nk-hero-band__inner{padding-top:clamp(28px,4vw,52px)}
+.nk-hero-band h1{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:var(--hero-title,var(--nk-fs-band-h1));
   line-height:var(--hero-title-lh,1.05);letter-spacing:0;color:var(--nk-text);max-width:var(--hero-title-mw,1100px);text-wrap:balance}
 .nk-hero-band__lead{margin:0;max-width:var(--hero-lead-mw,680px);font-family:var(--nk-font-body);
   font-size:var(--hero-lead,21px);line-height:var(--hero-lead-lh,33px);color:var(--nk-text-2)}
-.htw-hero__eyebrow{display:inline-flex;align-items:center;gap:10px}
 .htw-hero__actions{display:flex;justify-content:center;margin-top:6px}
 
 /* White rounded QR card shared by the static <QR/> and the dynamic <DynamicQR/>. */
@@ -1717,17 +1746,11 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .htw-ps-amt span{font-family:var(--nk-font-display);font-weight:700;font-size:34px;color:var(--nk-green)}
 .htw-ps-amt i{font-family:var(--nk-font-body);font-style:normal;font-size:14px;color:var(--nk-text-2)}
 
-/* ---- mini-FAQ head ---- */
-.htw-faq{padding-block:var(--nk-section-y-lg);max-width:1280px}
-.htw-faq__head{display:flex;flex-direction:column;gap:var(--nk-gap-xs);align-items:center;text-align:center;margin-bottom:var(--nk-section-head)}
-.htw-faq__head h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:clamp(30px,4vw,44px);line-height:1.1;color:var(--nk-text)}
-.htw-faq__list{display:flex;flex-direction:column;gap:var(--nk-gap-lg)}
-
 /* ---- App-download CTA banner (gradient) ----
    Shared by the home page and the How-It-Works page (see AppCtaBanner). Overrides
    for this family live in the breakpoint blocks below, beside the htw- rules. */
 .nk-appcta-wrap{padding-block:clamp(20px,3vw,40px) var(--nk-section-y-lg)}
-.nk-appcta{position:relative;border-radius:20px;overflow:hidden;min-height:560px;
+.nk-appcta{position:relative;border-radius:20px;overflow:hidden;min-height:660px;
   border:1px solid var(--nk-border-strong);
   background:
     radial-gradient(680px 680px at -6% -18%, var(--nk-glow-purple), transparent 66%),
@@ -1736,7 +1759,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
     linear-gradient(120deg, color-mix(in srgb, var(--nk-purple) 12%, transparent) 0%, transparent 58%),
     linear-gradient(180deg, rgba(0,0,0,0) 46%, rgba(0,0,0,0.30) 100%),
     linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)}
-.nk-appcta__phone{position:absolute;right:-20px;top:24px;height:620px;width:auto;max-width:50%;object-fit:cover;
+.nk-appcta__phone{position:absolute;right:-20px;top:96px;height:620px;width:auto;max-width:50%;object-fit:cover;
   object-position:left top;filter:var(--nk-shadow-phone-cta)}
 .nk-appcta__badges{margin-top:4px}
 .nk-appcta__copy{position:absolute;left:var(--nk-panel-pad);top:50%;transform:translateY(-50%);max-width:min(720px,50%);display:flex;flex-direction:column;gap:18px}
@@ -1749,6 +1772,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-appcta__spark span:nth-child(3){width:8px;height:8px;background:var(--nk-green)}
 .nk-appcta__spark span:nth-child(4){width:6px;height:6px;background:rgba(255,255,255,.32)}
 .nk-appcta__spark span:nth-child(5){width:7px;height:7px;background:var(--nk-yellow)}
+.nk-appcta__spark span:nth-child(6){width:9px;height:9px;background:var(--nk-green)}
 
 @media(max-width:1120px){
   .htw-grid{grid-template-columns:1fr;gap:54px}
