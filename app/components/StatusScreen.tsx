@@ -39,8 +39,7 @@ export function StatusScreen({
       <Nav onSearch={goHome} />
       <main
         id="nk-main"
-        className="nk-container"
-        style={{ minHeight: "62vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "120px 0" }}
+        className="nk-container nk-statusmain"
       >
         <EmptyState
           illustration={illustration}

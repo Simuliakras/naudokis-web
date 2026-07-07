@@ -2,7 +2,7 @@
 // Naudokis UI kit — card components.
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Icon, IconName, IllusName, Illustration, Pill, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { trackEvent } from "@/app/lib/analytics";
@@ -13,6 +13,7 @@ import { formatLocation } from "@/app/lib/listings";
    app modal), and a stretched <Link> covering the card for real navigation. */
 export function OfferCard({
   title, city, subdivision, price, unit, rating, ratingCount, img, href, category, categoryIcon = "Tag", hasDelivery = false,
+  imageLoading = "lazy",
 }: {
   title: string;
   city?: string;
@@ -26,9 +27,12 @@ export function OfferCard({
   category?: string; // top-level category id — tints the empty-photo placeholder
   categoryIcon?: IconName; // glyph for the empty-photo placeholder (from Category.icon)
   hasDelivery?: boolean; // surfaces the delivery-available flag as a media badge
+  imageLoading?: "eager" | "lazy"; // above-fold landing/feed cards can opt into eager LCP loading
 }) {
   const { dict } = useI18n();
   const c = dict.common;
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const showPhoto = Boolean(img && failedSrc !== img);
   const lockFav = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
@@ -44,11 +48,16 @@ export function OfferCard({
           onClick={() => trackEvent("Listing Click", { category, city })}
         />
       )}
-      <div className={"nk-offer__media nk-imgph" + (img ? "" : " nk-offer__media--empty")}
-        data-cat={img ? undefined : category} style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }}>
-        {img && (
+      <div className={"nk-offer__media nk-imgph" + (showPhoto ? "" : " nk-offer__media--empty")}
+        data-cat={showPhoto ? undefined : category} style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }}>
+        {img && failedSrc !== img && (
           <Image src={img} alt={title} fill className="nk-zoom"
+            loading={imageLoading}
             sizes="(max-width: 760px) 92vw, (max-width: 1100px) 46vw, 416px"
+            onError={(event) => {
+              event.currentTarget.style.visibility = "hidden";
+              setFailedSrc(img);
+            }}
             style={{ objectFit: "cover" }} />
         )}
         <button className="nk-fav" onClick={lockFav} title={dict.bridge.opensAppHint}
@@ -60,7 +69,7 @@ export function OfferCard({
             <Icon name="Truck" size={14} color="var(--nk-text)" stroke={2} /> {c.delivery}
           </span>
         )}
-        {!img && <Icon name={categoryIcon} size={56} stroke={1.5} className="nk-imgicon" />}
+        {!showPhoto && <Icon name={categoryIcon} size={56} stroke={1.5} className="nk-imgicon" />}
         {/* No carousel dots: the browse card carries a single photo, so paging
             dots would be a false affordance. The lightbox/gallery lives on the
             detail page where the full photo set is available. */}

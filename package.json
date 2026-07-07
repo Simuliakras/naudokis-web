@@ -9,6 +9,8 @@
     "lint": "eslint",
     "type-check": "tsc --noEmit",
     "test:e2e": "playwright test",
+    "responsive:audit": "node scripts/responsive-audit.mjs",
+    "responsive:audit:quick": "node scripts/responsive-audit.mjs --quick",
     "legal:json": "node scripts/legal-md-to-json.mjs",
     "legal:shots": "node scripts/legal-audit-shots.mjs",
     "gen:qr": "node scripts/generate-install-qr.mjs"

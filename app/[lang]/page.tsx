@@ -16,6 +16,7 @@ export const revalidate = 300;
 
 export default async function Page({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
+  // Invalid locale → real 404 via requireLocale (renders app/[lang]/not-found.tsx).
   const locale = requireLocale(lang);
   const dict = getDictionary(locale);
 

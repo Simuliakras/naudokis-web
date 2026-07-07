@@ -469,7 +469,7 @@ export function FilterSelect({
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
         aria-haspopup="listbox" aria-expanded={open}
         aria-label={active && selected ? `${label}: ${selected.label}` : label} style={{
-        display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-control-h)", cursor: "pointer", whiteSpace: "nowrap",
+        display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-control-h)", cursor: "pointer", whiteSpace: "normal",
         fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5,
       }}>
         {icon && <Icon name={icon} size={16} stroke={2} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />}
@@ -549,7 +549,7 @@ export function Toggle({
   return (
     <button type="button" className={"nk-pillctl nk-toggle" + (on ? " is-active" : "")} onClick={() => onChange(!on)} aria-pressed={on} style={{
       display: "inline-flex", alignItems: "center", gap: 12, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-control-h)", cursor: "pointer",
-      fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, whiteSpace: "nowrap",
+      fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, whiteSpace: "normal",
     }}>
       <span className="nk-toggle__lead" style={{ display: "inline-flex", alignItems: "center", gap: 9, minWidth: 0 }}>
         {icon && <Icon name={icon} size={16} stroke={2} color={on ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />} {children}

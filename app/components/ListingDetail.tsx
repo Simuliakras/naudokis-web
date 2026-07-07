@@ -61,19 +61,25 @@ function Stars({ value, size = 14 }: { value: number; size?: number }) {
 function GalleryTile({ src, alt, big, onOpen, children }: {
   src?: string; alt?: string; big?: boolean; onOpen?: () => void; children?: React.ReactNode;
 }) {
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const showPhoto = Boolean(src && failedSrc !== src);
   const inner = (
     <>
-      {src && (
+      {src && failedSrc !== src && (
         <Image src={src} alt={alt ?? ""} fill preload={big}
           sizes={big ? "(max-width: 980px) 100vw, 60vw" : "(max-width: 980px) 50vw, 20vw"}
+          onError={(event) => {
+            event.currentTarget.style.visibility = "hidden";
+            setFailedSrc(src);
+          }}
           style={{ objectFit: "cover" }} />
       )}
-      {!src && <Icon name="Image" size={big ? 64 : 34} stroke={1.4} className="nk-imgicon" />}
-      {children}
+      {!showPhoto && <Icon name={src ? "ImageOff" : "Image"} size={big ? 64 : 34} stroke={1.4} className="nk-imgicon" />}
+      {(showPhoto || !src) && children}
     </>
   );
   // A tile with a photo opens the lightbox; the empty-state placeholder stays a plain div.
-  if (onOpen) {
+  if (onOpen && showPhoto) {
     return (
       <button type="button" onClick={onOpen} className="nk-imgph nk-gtile nk-gtile--btn" style={{ borderRadius: "var(--nk-r-tile)", position: "relative" }}>
         {inner}

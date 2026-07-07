@@ -446,6 +446,27 @@ export type Dict = {
     qrHint: string;
     codeLabel: string; // label above the on-page code (manual-entry fallback)
   };
+  // Account-deletion cancel bridge (/cancel-deletion) — the desktop / no-app path
+  // for a GDPR-critical action. The ?token in the URL authorizes a public backend
+  // call; the page confirms, then reports success / invalid / already-processed /
+  // transient-error honestly (a hard delete is irreversible, so never dead-end).
+  cancelDeletion: {
+    meta: { title: string; description: string };
+    title: string; // confirm-card heading
+    body: string; // confirm-card explainer
+    confirm: string; // primary action — POSTs the token
+    successTitle: string;
+    successBody: string;
+    successCta: string; // → open the app / home
+    invalidTitle: string; // 400 — bad / expired / tampered link
+    invalidBody: string;
+    alreadyTitle: string; // 409 — already processed or canceled
+    alreadyBody: string;
+    errorTitle: string; // network / 5xx — retryable
+    errorBody: string;
+    retry: string;
+    correlationLabel: string; // label before the copyable support correlation id
+  };
   cityPicker: {
     heading: string; // dropdown header, e.g. "Pasirinkite miestą"
     all: string; // "Visi miestai" / "All cities"

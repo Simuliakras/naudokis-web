@@ -60,10 +60,17 @@ const securityHeaders = [
 // noindex). Carried over from the previous site so existing app links keep
 // working after the migration.
 //
-// CANONICAL list of deep-link paths. The same set is mirrored, by hand, in two
-// places that can't import it: the `proxy.ts` matcher exclusion regex, and the
-// `paths` array in public/.well-known/apple-app-site-association. Keep all three
-// in sync when adding/removing a path (see public/.well-known/README.md).
+// CANONICAL list of the APP-ONLY deep-link paths (auth-gated screens the web can't
+// render) that rewrite to the static deep-link.html interstitial. The same set is
+// mirrored, by hand, in two places that can't import it: the `proxy.ts` matcher
+// exclusion regex, and the `paths` array in
+// public/.well-known/apple-app-site-association. Keep all three in sync when
+// adding/removing a path (see public/.well-known/README.md).
+//
+// NOTE: /invite and /cancel-deletion are DELIBERATELY absent here — each has a real
+// localized page that IS its own app-not-installed fallback. They still appear in
+// the AASA `paths` (app-installed users open the app), but must NOT rewrite to
+// deep-link.html or be excluded from the proxy, or their pages would never render.
 const appLinkPaths = [
   "/listing/:path*",
   "/profile/:path*",
@@ -74,12 +81,14 @@ const appLinkPaths = [
   "/my-profile",
   "/rewards",
   "/ref/:path*",
-  "/cancel-deletion",
   "/reset-password",
   "/verify-email",
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    globalNotFound: true,
+  },
   // NOTE: typedRoutes is deliberately OFF. Public URLs are the proxy-rewritten
   // unprefixed forms (/kategorijos, /skelbimai/[id]) which don't exist in the
   // typed /[lang]/... route tree, so every href would need an `as Route` cast.

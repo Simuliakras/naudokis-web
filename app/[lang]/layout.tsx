@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Archivo, Sora } from "next/font/google";
-import { notFound } from "next/navigation";
 import "../globals.css";
 import { Providers } from "../providers";
 import { I18nProvider } from "../components/I18nProvider";
 import { ScrollToTop } from "../components/ScrollToTop";
-import { locales, isLocale, localeHome } from "@/app/lib/i18n/config";
+import { defaultLocale, locales, isLocale, localeHome } from "@/app/lib/i18n/config";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { APP_STORE_ID } from "@/app/lib/contact";
 import { SITE_URL } from "@/app/lib/seo";
@@ -131,12 +130,10 @@ const bridgeBootstrap = `
 
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
-  if (!isLocale(lang)) {
-    notFound();
-  }
-  const dict = getDictionary(lang);
+  const locale = isLocale(lang) ? lang : defaultLocale;
+  const dict = getDictionary(locale);
   return (
-    <html lang={lang} className={`${archivo.variable} ${sora.variable}`} data-scroll-behavior="smooth">
+    <html lang={locale} className={`${archivo.variable} ${sora.variable}`} data-scroll-behavior="smooth">
       {/* suppressHydrationWarning: browser extensions (Grammarly, dark-reader, …)
           inject attributes onto <body> before React hydrates; this silences the
           resulting one-level attribute mismatch without hiding it for children. */}
@@ -152,7 +149,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
         <script id="nk-bridge-bootstrap" dangerouslySetInnerHTML={{ __html: bridgeBootstrap }} />
         <a href="#nk-main" className="nk-skip">{dict.common.skipToContent}</a>
         <Providers>
-          <I18nProvider locale={lang}>
+          <I18nProvider locale={locale}>
             <ScrollToTop />
             {children}
           </I18nProvider>

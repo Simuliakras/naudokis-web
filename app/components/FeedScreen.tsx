@@ -27,6 +27,7 @@ import { prefersReducedMotion } from "@/app/lib/motion";
 import { LT_CITIES } from "@/app/lib/cities";
 import { useI18n } from "./I18nProvider";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
+import { useMeasuredColumns } from "./useMeasuredColumns";
 import type { ListingFilters } from "@/app/lib/listings";
 
 type FeedScreenProps = {
@@ -74,7 +75,7 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
       };
 
   const filterBarRef = useRef<HTMLDivElement>(null);
-  const [gridRef, columns] = useColumnCount();
+  const [gridRef, columns] = useMeasuredColumns<HTMLDivElement>();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
   // Phone-width landing-intro clamp (long authored SEO intros pushed the results
@@ -320,13 +321,14 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
   const splitAt = Math.max(columns, Math.round(6 / columns) * columns);
   const head = list.slice(0, splitAt);
   const tail = list.slice(splitAt);
-  const card = (o: (typeof list)[number]) => (
+  const card = (o: (typeof list)[number], index = 0, eager = false) => (
     // grid-display wrapper so the card stretches to the row height; listitem role
     // pairs with the grids' role="list" so AT gets "list, N items" + position
     <div key={o.id} className="nk-reveal" role="listitem" style={{ display: "grid" }}>
       <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
         rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
         img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
+        imageLoading={eager && index < Math.max(1, columns) ? "eager" : "lazy"}
         href={localePath(locale, `/skelbimai/${o.id}`)} />
     </div>
   );
@@ -568,9 +570,9 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
             // While placeholder pages back a CHANGED query, the grid dims so the
             // previous results are never presented as the new query's answer.
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-grid-row-gap)", opacity: isPlaceholderData ? 0.55 : undefined, transition: "opacity .2s ease" }}>
-              <div className="nk-grid-feed" role="list" ref={gridRef}>{head.map(card)}</div>
+              <div className="nk-grid-feed" role="list" ref={gridRef}>{head.map((o, i) => card(o, i, true))}</div>
               <InterruptionBanner />
-              {tail.length > 0 && <div className="nk-grid-feed" role="list">{tail.map(card)}</div>}
+              {tail.length > 0 && <div className="nk-grid-feed" role="list">{tail.map((o, i) => card(o, i))}</div>}
               {isFetchingNextPage && (
                 <div className="nk-grid-feed" aria-hidden="true">
                   {Array.from({ length: 4 }).map((_, i) => <OfferCardSkeleton key={`more-${i}`} />)}
@@ -636,31 +638,6 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
       </div>
     </Chrome>
   );
-}
-
-// Reads the live column count of a CSS grid (from its resolved
-// grid-template-columns tracks) so the interruption banner can split on a real
-// row boundary at every breakpoint instead of a fixed 6. Callback-ref (not a
-// ref object) because the grid only mounts once results render — an effect
-// keyed on a plain ref would run before it exists and never re-fire.
-function useColumnCount() {
-  const [el, setEl] = useState<HTMLDivElement | null>(null);
-  const [cols, setCols] = useState(1);
-  useEffect(() => {
-    if (!el) {
-      return;
-    }
-    const read = () => {
-      const tracks = getComputedStyle(el).gridTemplateColumns;
-      const n = tracks ? tracks.split(" ").filter((t) => t && t !== "0px").length : 1;
-      setCols(Math.max(1, n));
-    };
-    read();
-    const ro = new ResizeObserver(read);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [el]);
-  return [setEl, cols] as const;
 }
 
 function RelatedLandingLinks({

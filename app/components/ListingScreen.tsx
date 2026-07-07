@@ -201,4 +201,3 @@ function SimilarRail({ currentId, categoryId }: { currentId: string; categoryId:
     </section>
   );
 }
-

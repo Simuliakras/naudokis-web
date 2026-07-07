@@ -700,6 +700,27 @@ export const en: Dict = {
     qrHint: "Scan with your phone",
     codeLabel: "Your invite code",
   },
+  // DRAFT (marketing sign-off): account-deletion cancel bridge copy.
+  cancelDeletion: {
+    meta: {
+      title: "Cancel account deletion — Naudokis",
+      description: "Changed your mind? Cancel your account deletion and keep using Naudokis.",
+    },
+    title: "Keep your account?",
+    body: "You asked to delete your Naudokis account. To keep it, confirm below before the grace period ends.",
+    confirm: "Cancel deletion",
+    successTitle: "Account deletion canceled",
+    successBody: "Your account is safe. You can log in again in the app.",
+    successCta: "Open the app",
+    invalidTitle: "Link not valid",
+    invalidBody: "This link is invalid or has expired. Contact us if you need help.",
+    alreadyTitle: "Link no longer valid",
+    alreadyBody: "This link is no longer valid — the deletion was already processed or canceled.",
+    errorTitle: "Couldn’t cancel",
+    errorBody: "Something went wrong. Please try again or contact us.",
+    retry: "Try again",
+    correlationLabel: "Reference ID",
+  },
   cityPicker: {
     heading: "Choose a city",
     all: "All cities",

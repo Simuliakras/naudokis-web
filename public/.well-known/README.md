@@ -11,19 +11,23 @@ the real Play Console fingerprints can be injected by deployment environment.
 - Must be served as `application/json` (enforced by the `headers()` rule in `next.config.ts`).
 - `appID` is `<TeamID>.<bundleID>`; `paths` mirrors `appLinkPaths` in `next.config.ts`.
 
-### `/invite` is a dual-purpose path — handle it differently
+### `/invite` and `/cancel-deletion` are dual-purpose paths — handle them differently
 
-`/invite` (the referral bridge) is listed in `paths` here **but deliberately NOT**
-in `appLinkPaths` (`next.config.ts`) **nor** in the `proxy.ts` matcher exclusion.
-That is intentional, not an oversight:
+`/invite` (the referral bridge) and `/cancel-deletion` (the account-deletion cancel
+bridge) are listed in `paths` here **but deliberately NOT** in `appLinkPaths`
+(`next.config.ts`) **nor** in the `proxy.ts` matcher exclusion. That is intentional,
+not an oversight:
 
 - The other paths (`/listing/*`, `/booking-request/*`, …) are app-only and rewrite
-  to the static `deep-link.html` fallback. `/invite` instead has a **real localized
-  web page** (`app/[lang]/invite/page.tsx`) that **is** its own fallback — adding it
-  to `appLinkPaths` would rewrite it to `deep-link.html` and the bridge would never
+  to the static `deep-link.html` interstitial. `/invite` and `/cancel-deletion`
+  instead each have a **real localized web page** (`app/[lang]/invite/page.tsx`,
+  `app/[lang]/cancel-deletion/page.tsx`) that **is** its own fallback — adding either
+  to `appLinkPaths` would rewrite it to `deep-link.html` and the page would never
   render; excluding it from the proxy would break its `/lt` locale rewrite.
-- So for `/invite`: app installed → iOS opens the app via this AASA entry; app not
-  installed → the browser loads the bridge. Both work without any other config.
+- So for both: app installed → the OS opens the app via this AASA entry; app not
+  installed → the browser loads the real page. `/cancel-deletion` is special — it is
+  the desktop / no-app path for a **GDPR-critical** action and completes the cancel
+  on the web (public signed-token endpoint, no login), so it must work standalone.
 - The app handles `/invite` (primary) via its intent filter; `/ref/*` remains a
   legacy universal-link fallback the app still routes (`app/ref/[code].tsx`).
 - Apex and www must both serve this file with `200` and no redirect. The host

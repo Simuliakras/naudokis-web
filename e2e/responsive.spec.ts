@@ -12,8 +12,9 @@ import path from "node:path";
 const OUT = path.join(process.cwd(), "e2e", "__screens__");
 
 const WIDTHS = [
-  320, 340, 360, 375, 390, 400, 414, 430, 480, 540, 640, 720,
-  768, 820, 900, 1024, 1120, 1200, 1280, 1366, 1440,
+  320, 344, 360, 375, 390, 393, 412, 430, 480, 540, 560, 600, 640, 700,
+  744, 768, 820, 834, 900, 980, 1024, 1112, 1120, 1180, 1200, 1280,
+  1366, 1440, 1536, 1728, 1920, 2560,
 ];
 
 type Surface = { name: string; tag: string; path: string };
@@ -55,6 +56,29 @@ async function overflowAt(page: Page): Promise<number> {
   });
 }
 
+async function clippedKnownControls(page: Page) {
+  return page.evaluate(() => {
+    const visible = (el: Element) => {
+      const r = el.getBoundingClientRect();
+      const cs = getComputedStyle(el);
+      return r.width > 0 && r.height > 0 && cs.display !== "none" && cs.visibility !== "hidden";
+    };
+    return [...document.querySelectorAll(".nk-pillctl__label,.nk-toggle__lead")]
+      .filter(visible)
+      .filter((el) => el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1)
+      .map((el) => ({ text: el.textContent?.trim(), className: el.className, rect: el.getBoundingClientRect().toJSON?.() }));
+  });
+}
+
+test("proxy: default-locale rewrites do not loop @proxy", async ({ request }) => {
+  await expect((await request.get("/", { maxRedirects: 5 })).status()).toBe(200);
+  await expect((await request.get("/skelbimai", { maxRedirects: 5 })).status()).toBe(200);
+  await expect((await request.get("/en", { maxRedirects: 5 })).status()).toBe(200);
+  const defaultPrefixed = await request.get("/lt/skelbimai", { maxRedirects: 0 });
+  expect(defaultPrefixed.status()).toBe(308);
+  expect(defaultPrefixed.headers().location).toBe("/skelbimai");
+});
+
 for (const s of SURFACES) {
   test(`sweep ${s.name} ${s.tag}`, async ({ page }) => {
     test.setTimeout(180_000);
@@ -72,6 +96,8 @@ for (const s of SURFACES) {
       if (px > 1) {
         overflows.push({ width, px });
       }
+      const clipped = await clippedKnownControls(page);
+      expect(clipped, `${s.name} clipped known controls at ${width}: ${JSON.stringify(clipped)}`).toEqual([]);
       await page.screenshot({
         path: path.join(OUT, `${s.name}-${String(width).padStart(4, "0")}.png`),
         fullPage: true,
@@ -103,4 +129,14 @@ test("states: legal mobile TOC drawer @state", async ({ page }) => {
   await page.locator(".nk-lg-fab-toc").click();
   await page.waitForTimeout(300);
   await page.screenshot({ path: path.join(OUT, "state-legaldrawer-390.png"), fullPage: false });
+});
+
+test("states: filter sheet controls are readable @state", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/skelbimai", { waitUntil: "domcontentloaded" });
+  await settle(page);
+  await page.locator(".nk-filters-mobilebtn").click();
+  await page.waitForTimeout(300);
+  await expect.poll(() => clippedKnownControls(page)).toEqual([]);
+  await page.screenshot({ path: path.join(OUT, "state-filtersheet-390.png"), fullPage: false });
 });

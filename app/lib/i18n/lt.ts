@@ -783,6 +783,27 @@ export const lt: Dict = {
     qrHint: "Nuskenuokite telefonu",
     codeLabel: "Jūsų pakvietimo kodas",
   },
+  // DRAFT (marketing sign-off): account-deletion cancel bridge copy.
+  cancelDeletion: {
+    meta: {
+      title: "Atšaukti paskyros ištrynimą — Naudokis",
+      description: "Persigalvojote? Atšaukite paskyros ištrynimą ir toliau naudokitės Naudokis.",
+    },
+    title: "Norite išsaugoti paskyrą?",
+    body: "Pateikėte prašymą ištrinti Naudokis paskyrą. Norėdami ją išsaugoti, patvirtinkite žemiau, kol nesibaigė laikinasis laikotarpis.",
+    confirm: "Atšaukti ištrynimą",
+    successTitle: "Paskyros ištrynimas atšauktas",
+    successBody: "Jūsų paskyra išsaugota. Vėl galite prisijungti programėlėje.",
+    successCta: "Atidaryti programėlę",
+    invalidTitle: "Nuoroda negalioja",
+    invalidBody: "Ši nuoroda negalioja arba jos galiojimas baigėsi. Jei reikia pagalbos, susisiekite su mumis.",
+    alreadyTitle: "Nuoroda nebegalioja",
+    alreadyBody: "Ši nuoroda nebegalioja — ištrynimas jau įvykdytas arba atšauktas.",
+    errorTitle: "Nepavyko atšaukti",
+    errorBody: "Įvyko laikina klaida. Bandykite dar kartą arba susisiekite su mumis.",
+    retry: "Bandyti dar kartą",
+    correlationLabel: "Užklausos ID",
+  },
   cityPicker: {
     heading: "Pasirinkite miestą",
     all: "Visi miestai",

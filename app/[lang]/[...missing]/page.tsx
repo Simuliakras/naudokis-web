@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import { requireLocale } from "@/app/lib/seo";
+import { defaultLocale, isLocale } from "@/app/lib/i18n/config";
+import NotFound from "../not-found";
 
 type MissingPageProps = {
   params: Promise<{ lang: string; missing: string[] }>;
@@ -9,7 +9,7 @@ type MissingPageProps = {
 
 export async function generateMetadata({ params }: MissingPageProps): Promise<Metadata> {
   const { lang } = await params;
-  const locale = requireLocale(lang);
+  const locale = isLocale(lang) ? lang : defaultLocale;
   const { errors } = getDictionary(locale);
 
   return {
@@ -22,8 +22,11 @@ export async function generateMetadata({ params }: MissingPageProps): Promise<Me
   };
 }
 
-export default async function MissingPage({ params }: MissingPageProps) {
-  const { lang } = await params;
-  requireLocale(lang);
-  notFound();
+export default function MissingPage() {
+  // Soft-404 by design (200 + robots:noindex from generateMetadata). We CANNOT call
+  // notFound() here: default-locale paths reach this catch-all via a proxy.ts rewrite
+  // to the /lt segment, and notFound() on a middleware-rewritten path loops under
+  // experimental `globalNotFound` (rewrite → 404 → redirect → rewrite). So we render
+  // the same localized not-found UI as app/[lang]/not-found.tsx — shared, not duplicated.
+  return <NotFound />;
 }
