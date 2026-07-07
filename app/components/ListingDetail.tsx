@@ -134,11 +134,9 @@ export function ListingSkeleton() {
     </div>
   );
   return (
+    // Content-only: the breadcrumb is real, known-before-fetch chrome — the
+    // caller (ListingScreen / the route loading.tsx) renders it above this.
     <div aria-hidden="true" style={{ pointerEvents: "none" }}>
-      {/* breadcrumb */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 22 }}>
-        <Skel w={90} h={14} /><Skel w={80} h={14} /><Skel w={130} h={14} />
-      </div>
       {/* header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 24, flexWrap: "wrap", marginBottom: 22 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 16, flex: 1, minWidth: 240 }}>
@@ -995,11 +993,18 @@ export function MobileBar({ price, hidden, onReserve }: { price: string; hidden?
    Feed → (category search) → listing title. The feed parent matches the header's
    active-nav section, the landing pages and the page's own BreadcrumbList JSON-LD,
    so the site presents one canonical trail for a listing. */
+// The feed-root crumb on its own — what the loading states show before the
+// listing (and its category leaf) are known. Keeps the /skelbimai href in one
+// place so the detail trail and both loading skeletons can't drift.
+export function feedCrumbItems({ feedLabel, locale }: { feedLabel: string; locale: Locale }) {
+  return [{ label: feedLabel, href: localePath(locale, "/skelbimai") }];
+}
+
 export function detailCrumbs({ category, title, feedLabel, locale }: {
   category?: string; title: string; feedLabel: string; locale: Locale;
 }) {
   return [
-    { label: feedLabel, href: localePath(locale, "/skelbimai") },
+    ...feedCrumbItems({ feedLabel, locale }),
     ...(category ? [{ label: category, href: listingSearchHref({ q: category, locale }) }] : []),
     { label: title },
   ];

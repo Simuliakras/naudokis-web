@@ -141,9 +141,14 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
           inject attributes onto <body> before React hydrates; this silences the
           resulting one-level attribute mismatch without hiding it for children. */}
       <body suppressHydrationWarning>
-        {/* Raw server-rendered <script> (not next/script): emitted into the SSR HTML and
-            hydrated rather than client-created, so it runs synchronously at parse time —
-            before hydration — and avoids React 19's "script tag in component" warning. */}
+        {/* Raw server-rendered <script>, deliberately NOT next/script: it must be a real
+            inline tag in the SSR HTML so it executes synchronously at parse time, before
+            hydration. next/script's `beforeInteractive` does NOT do this for inline content
+            in the App Router — it renders the script as a client-component reference with no
+            parse-time tag, which silently breaks the pre-hydration contract above (verified).
+            React's dev-only "script tag in component" warning does NOT fire on a clean render
+            or in production; it only appears when a browser extension mutates <body> and
+            forces React to client-render this subtree. Leave this as a raw <script>. */}
         <script id="nk-bridge-bootstrap" dangerouslySetInnerHTML={{ __html: bridgeBootstrap }} />
         <a href="#nk-main" className="nk-skip">{dict.common.skipToContent}</a>
         <Providers>

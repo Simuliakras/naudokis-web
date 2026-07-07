@@ -1,10 +1,10 @@
 "use client";
 // Referral bridge (/invite) — reads the ?code, validates it (fail-open), shows
 // the reward honestly and routes the visitor to the right store. The code is
-// carried across the install boundary by a per-code Branch attribution link
-// (buildInstallLink); when Branch is disabled it degrades to the /go smart link
-// and the static install QR. Browsing/transacting still happens in the app.
-import { useEffect, useState } from "react";
+// carried across the install boundary by a per-code AppsFlyer OneLink attribution
+// link (buildInstallLink); when OneLink is unconfigured it degrades to the /go
+// smart link and the static install QR. Browsing/transacting still happens in the app.
+import { useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
@@ -14,7 +14,7 @@ import { useI18n } from "./I18nProvider";
 import { localePath } from "@/app/lib/i18n/config";
 import { formatPrice } from "@/app/lib/listings";
 import { normalizeCode, useValidateCode } from "@/app/lib/referrals";
-import { buildInstallLink, INSTALL_FALLBACK } from "@/app/lib/branch";
+import { buildInstallLink } from "@/app/lib/onelink";
 
 export function InviteScreen() {
   const { locale, dict } = useI18n();
@@ -25,25 +25,15 @@ export function InviteScreen() {
 
   const { data: result } = useValidateCode(code);
 
-  // Resolve the install link once per code: a Branch link carrying
-  // { referral_code }, or the /go fallback when Branch is off / unavailable.
-  const [installLink, setInstallLink] = useState<string>(INSTALL_FALLBACK);
-  useEffect(() => {
-    let active = true;
-    buildInstallLink(code).then((link) => {
-      if (active) {
-        setInstallLink(link);
-      }
-    });
-    return () => {
-      active = false;
-    };
-  }, [code]);
+  // Resolve the install link once per code: an absolute OneLink URL carrying the
+  // referral code, or the /go fallback when OneLink is unconfigured. Pure string
+  // construction, so no effect/state needed.
+  const installLink = useMemo(() => buildInstallLink(code), [code]);
 
-  // Only an absolute Branch link carries { referral_code } across the install
+  // Only an absolute OneLink URL carries the referral code across the install
   // boundary; the /go fallback (relative) can't attribute the reward. Gate the
   // reward promise on that so the page never advertises credit it can't deliver
-  // while Branch/consent is dormant — it degrades to the optimistic headline.
+  // while OneLink is unconfigured — it degrades to the optimistic headline.
   const attributable = installLink.startsWith("http");
   // Headline by validation state — never block install. While validating (or on a
   // network/429 `unknown`) we stay optimistic; only a confirmed-invalid or missing

@@ -35,7 +35,6 @@ export const en: Dict = {
     ownerPrompt: "Have idle items or run a rental business?",
     ownerCta: "List an item and earn",
     phoneAlt: "Item rental listings in the Naudokis app",
-    qrCaption: "Scan to get the app",
   },
   search: {
     // Short enough to never clip at the 320px floor; inputLabel keeps the full name.
@@ -130,17 +129,6 @@ export const en: Dict = {
         body: "Dates, Stripe payment and messages in one place.",
       },
     ],
-  },
-  // DRAFT (marketing sign-off): owner band — only already-claimed facts.
-  ownerBand: {
-    eyebrow: "For owners",
-    title: "Have idle items? Earn from them.",
-    bullets: [
-      "Stripe payouts after the rental is completed",
-      "A refundable deposit and dispute process protect your item",
-      "Platform fees are shown before you confirm",
-    ],
-    cta: "How it works for owners",
   },
   howItWorks: {
     meta: {
@@ -388,7 +376,6 @@ export const en: Dict = {
     // content-descriptive column head (matches LT "Kategorijos"; "Browse" already
     // labels the home categories eyebrow — one word must not name two nav tiers)
     browseHeading: "Categories",
-    allCategories: "All categories",
     citiesHeading: "Cities",
     // Labels match the canonical backend/tile category names (name_en) so the same
     // categoryId reads identically in the footer and the discovery grids.
@@ -407,13 +394,11 @@ export const en: Dict = {
     helpHeading: "Help & policies",
     help: [
       { label: "How it works", href: "/kaip-tai-veikia" },
-      { label: "For owners", href: "/kaip-tai-veikia?role=owner" },
       { label: "Privacy policy", href: "/privatumo-politika" },
       { label: "Terms of use", href: "/naudojimosi-salygos" },
       { label: "Account deletion", href: "/paskyros-trynimas" },
     ],
     copyright: "© 2026 Naudokis.lt. All rights reserved.",
-    secure: "Payments by Stripe",
     socialLabel: "Social media",
   },
   detail: {

@@ -1,13 +1,10 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
-
 // Listing photos / owner avatars come from the backend's CloudFront
-// distributions, allowlisted per host (shared by image remotePatterns and the
-// CSP img-src so the two can't drift). Add the prod distribution here once it
-// exists (and tighten the pathname to /listings/** if the key layout allows).
-const imageCdnHosts = [
-  "https://d720uc9idaijs.cloudfront.net", // dev
-];
+// distributions, allowlisted per host. The same list feeds the image
+// remotePatterns, the CSP img-src, and the runtime cdnImage() guard so the three
+// can't drift. Add the prod distribution in that module once it exists.
+import { IMAGE_CDN_HOSTS } from "./app/lib/image-hosts";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -20,7 +17,7 @@ const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://plausible.io`,
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: blob: ${imageCdnHosts.join(" ")}`,
+  `img-src 'self' data: blob: ${IMAGE_CDN_HOSTS.join(" ")}`,
   "font-src 'self' data:",
   "object-src 'none'",
   "media-src 'self' data: blob:",
@@ -28,9 +25,9 @@ const csp = [
   "manifest-src 'self'",
   // Google Maps Embed API iframe on the listing-detail page.
   "frame-src 'self' https://www.google.com",
-  // Branch (api2/api3.branch.io) backs the /invite referral bridge's deferred
-  // attribution. Expand here if Branch integration testing surfaces more hosts.
-  "connect-src 'self' https://api.naudokis.lt https://api-dev.naudokis.lt https://api2.branch.io https://api3.branch.io https://plausible.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
+  // Referral/install attribution is via AppsFlyer OneLink URLs, which are
+  // navigations / QR values (not fetch/XHR), so connect-src needs no OneLink host.
+  "connect-src 'self' https://api.naudokis.lt https://api-dev.naudokis.lt https://plausible.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
   "frame-ancestors 'self'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -51,8 +48,10 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   // Send origin only on cross-origin navigations.
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  // No site code needs these powerful features.
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
+  // No site code needs these powerful features. (browsing-topics is omitted: this
+  // ad-tech-free site gains nothing from opting out, and the token only logs an
+  // "Unrecognized feature" console error in browsers without the Topics API.)
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
 
 // Mobile-app universal-link / deep-link paths. The app claims these via
@@ -67,11 +66,17 @@ const securityHeaders = [
 // in sync when adding/removing a path (see public/.well-known/README.md).
 const appLinkPaths = [
   "/listing/:path*",
+  "/profile/:path*",
   "/booking-request/:path*",
+  "/billing-documents/:path*",
   "/review/:path*",
   "/chat/:path*",
   "/my-profile",
+  "/rewards",
   "/ref/:path*",
+  "/cancel-deletion",
+  "/reset-password",
+  "/verify-email",
 ];
 
 const nextConfig: NextConfig = {
@@ -123,9 +128,9 @@ const nextConfig: NextConfig = {
   // pre-encoded to .avif/.webp and served via <picture>, so they skip the optimizer.
   images: {
     formats: ["image/avif", "image/webp"],
-    // Per-host CDN allowlist (see imageCdnHosts) so arbitrary CloudFront
+    // Per-host CDN allowlist (see IMAGE_CDN_HOSTS) so arbitrary CloudFront
     // content can't be routed through our optimizer.
-    remotePatterns: imageCdnHosts.map((host) => new URL(`${host}/**`)),
+    remotePatterns: IMAGE_CDN_HOSTS.map((host) => new URL(`${host}/**`)),
   },
 };
 

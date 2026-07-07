@@ -14,7 +14,7 @@ import { Breadcrumb, Icon, openRedirect } from "./ui";
 import { EmptyState, OfferCard } from "./cards";
 import {
   ListingSkeleton, ListingHeader, Gallery, DetailBody, ReviewsSection,
-  BookingPanel, HostCard, MobileBar, detailCrumbs,
+  BookingPanel, HostCard, MobileBar, detailCrumbs, feedCrumbItems,
 } from "./ListingDetail";
 import { useListing, useListings, ListingNotFoundError } from "@/app/lib/listings";
 import { useCategories } from "@/app/lib/categories";
@@ -62,8 +62,15 @@ export function ListingScreen({ id }: { id: string }) {
   );
 
   if (isLoading) {
-    // Purely visual — the persistent status region in the shell announces loading.
-    return shell(<ListingSkeleton />);
+    // Known-before-fetch chrome (breadcrumb) renders immediately; only the
+    // listing body below shimmers. The shell's status region announces loading.
+    return shell(
+      <>
+        <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel}
+          items={feedCrumbItems({ feedLabel: dict.feed.titleAll, locale })} />
+        <ListingSkeleton />
+      </>,
+    );
   }
   // A gone/deleted listing (client soft-404: an SPA navigation or a background
   // refetch that 404s). Server-side deletions already hard-404 via notFound() in
@@ -119,11 +126,13 @@ export function ListingScreen({ id }: { id: string }) {
 
   return shell(
     <>
+      {/* Breadcrumb sits OUTSIDE .nk-fadecontent: it's persistent chrome shown
+          during load too, so it must not re-animate when the body lands — only
+          its leaf (category + title) extends past the static Home › Skelbimai prefix. */}
+      <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel}
+        items={detailCrumbs({ category, title: listing.title, feedLabel: dict.feed.titleAll, locale })} />
       {/* fade in over the skeleton; the fixed mobile bar stays outside the wrapper */}
       <div className="nk-fadecontent">
-        <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel}
-          items={detailCrumbs({ category, title: listing.title, feedLabel: dict.feed.titleAll, locale })} />
-
         <ListingHeader listing={listing} shared={shared} onShare={share} onFav={lockFav} />
         <Gallery images={listing.images} title={listing.title} isNew={isNew} />
 

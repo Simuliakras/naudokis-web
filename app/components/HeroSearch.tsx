@@ -38,19 +38,6 @@ export function HeroOwnerCta() {
   );
 }
 
-/* Owner-band secondary action: opens the list-your-item bridge modal. A separate
-   client leaf so the server-rendered OwnerBand section can compose it. */
-export function OwnerAppCta() {
-  const { dict } = useI18n();
-  return (
-    <button type="button" className="nk-btn nk-btn--outline"
-      title={dict.bridge.opensAppHint}
-      onClick={() => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody })}>
-      <Icon name="Smartphone" size={17} stroke={2} color="var(--nk-text)" /> {dict.hero.ownerCta}
-    </button>
-  );
-}
-
 function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: string) => void }) {
   const { dict } = useI18n();
   const [open, setOpen] = useState(false);

@@ -50,7 +50,6 @@ export const lt: Dict = {
     ownerPrompt: "Turite nenaudojamų daiktų ar nuomos verslą?",
     ownerCta: "Skelbti daiktą ir uždirbti",
     phoneAlt: "Naudokis programėlėje rodomi daiktų nuomos pasiūlymai",
-    qrCaption: "Nuskenuokite — atsisiųskite programėlę",
   },
   search: {
     // Short enough to never clip at the 320px floor; inputLabel keeps the full name.
@@ -154,17 +153,6 @@ export const lt: Dict = {
         body: "Datos, mokėjimas per Stripe ir žinutės — vienoje vietoje.",
       },
     ],
-  },
-  // DRAFT (marketing sign-off): owner band — only already-claimed facts.
-  ownerBand: {
-    eyebrow: "Savininkams",
-    title: "Turite nenaudojamų daiktų? Uždirbkite iš jų.",
-    bullets: [
-      "Išmokos per Stripe užbaigus nuomą",
-      "Grąžinamas užstatas ir ginčų procesas saugo jūsų daiktą",
-      "Platformos mokesčiai parodomi prieš patvirtinant",
-    ],
-    cta: "Kaip tai veikia savininkams",
   },
   howItWorks: {
     meta: {
@@ -414,7 +402,6 @@ export const lt: Dict = {
   footer: {
     tagline: "Daiktų nuoma iš privačių ir verslo savininkų visoje Lietuvoje.",
     browseHeading: "Kategorijos",
-    allCategories: "Visos kategorijos",
     citiesHeading: "Miestai",
     // Labels match the canonical backend/tile category names so the same
     // categoryId reads identically in the footer and the discovery grids.
@@ -433,13 +420,11 @@ export const lt: Dict = {
     helpHeading: "Pagalba ir taisyklės",
     help: [
       { label: "Kaip tai veikia", href: "/kaip-tai-veikia" },
-      { label: "Savininkams", href: "/kaip-tai-veikia?role=owner" },
       { label: "Privatumo politika", href: "/privatumo-politika" },
       { label: "Naudojimosi sąlygos", href: "/naudojimosi-salygos" },
       { label: "Paskyros ištrynimas", href: "/paskyros-trynimas" },
     ],
     copyright: "© 2026 Naudokis.lt. Visos teisės saugomos.",
-    secure: "Mokėjimai per Stripe",
     socialLabel: "Socialiniai tinklai",
   },
   detail: {

@@ -82,7 +82,7 @@ export function Dots({
    Each badge links straight to its store listing (apple → App Store, google →
    Play). `interactive={false}` renders a plain image for the rare context where
    a link would be redundant. `href` overrides the destination — e.g. on /invite
-   both badges point at the attribution (Branch) link, which auto-routes per OS. */
+   both badges point at the attribution (OneLink) link, which auto-routes per OS. */
 export function StoreBadge({
   store, height = 52, footer = false, interactive = true, href, placement,
 }: {
@@ -254,7 +254,7 @@ const NK_ILLUS: Record<IllusName, React.ReactNode> = {
 };
 
 export function Illustration({
-  name = "search", size = 148, className = "", style, icon,
+  name = "search", size = 224, className = "", style, icon,
 }: {
   name?: IllusName;
   size?: number;

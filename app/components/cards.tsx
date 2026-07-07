@@ -84,7 +84,7 @@ export function OfferCard({
           )}
           {city && (
             <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 16, color: "var(--nk-text-2)" }}>
-              <Icon name="MapPin" size={16} color="var(--nk-text)" fill="var(--nk-text)" stroke={2} /> {city}
+              <Icon name="MapPin" size={16} color="var(--nk-text)" stroke={2} /> {city}
             </span>
           )}
         </div>

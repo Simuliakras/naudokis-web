@@ -27,7 +27,7 @@ export function HowItWorksScreen() {
   const [active, setActive] = useState(0);
   const [openFaq, setOpenFaq] = useState(0);
 
-  // ?role=owner deep link (homepage owner band, earn card) — read on mount from
+  // ?role=owner deep link (from the homepage earn card) — read on mount from
   // location so the page stays statically generated (useSearchParams would force
   // a Suspense/dynamic boundary for a one-shot read). Deliberately an effect, not
   // a lazy initializer: the prerendered HTML is always the renter role, so

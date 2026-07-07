@@ -907,6 +907,7 @@
         "OpenAI or other AI service providers where AI functions are used;",
         "Google server-side address autocomplete through Google Places API;",
         "Expo push notifications;",
+        "AppsFlyer install attribution and deep-linking measurement, where you have consented;",
         "social login services, including Apple, Google, and Facebook;",
         "reverse geocoding through OpenStreetMap Nominatim, operated by the OpenStreetMap Foundation. In such case, only coordinates are transferred, without direct identifiers."
       ]

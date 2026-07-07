@@ -79,7 +79,6 @@ export type Dict = {
     ownerPrompt: string;
     ownerCta: string;
     phoneAlt: string;
-    qrCaption: string; // one-liner on the white QR card ("Scan to get the app")
   };
   search: {
     placeholder: string;
@@ -146,14 +145,6 @@ export type Dict = {
       { title: string; body: string },
     ];
   };
-  // Homepage owner/supply band — truthful benefit bullets only (Stripe payouts,
-  // deposit + disputes, upfront fees); never earnings figures.
-  ownerBand: {
-    eyebrow: string;
-    title: string;
-    bullets: [string, string, string];
-    cta: string; // deep link into the owner journey (/kaip-tai-veikia?role=owner)
-  };
   // Standalone "Kaip tai veikia" page (/kaip-tai-veikia).
   howItWorks: {
     meta: { title: string; description: string };
@@ -210,13 +201,11 @@ export type Dict = {
   footer: {
     tagline: string;
     browseHeading: string;
-    allCategories: string;
     categories: FooterCategory[]; // curated category links (label + stable LT search query)
     citiesHeading: string; // city-landing links column ("Miestai" / "Cities")
     helpHeading: string;
     help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
     copyright: string;
-    secure: string; // caption framing the payment marks ("Payments by Stripe") — bare card logos read as clutter
     socialLabel: string; // aria-label for the social-links group
   };
   detail: {

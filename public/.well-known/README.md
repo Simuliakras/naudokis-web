@@ -24,8 +24,8 @@ That is intentional, not an oversight:
   render; excluding it from the proxy would break its `/lt` locale rewrite.
 - So for `/invite`: app installed → iOS opens the app via this AASA entry; app not
   installed → the browser loads the bridge. Both work without any other config.
-- The app team must add an intent filter / route handler for `/invite` (confirm
-  whether the app expects `/invite` or the existing `/ref/*`).
+- The app handles `/invite` (primary) via its intent filter; `/ref/*` remains a
+  legacy universal-link fallback the app still routes (`app/ref/[code].tsx`).
 - Apex and www must both serve this file with `200` and no redirect. The host
   redirect in `next.config.ts` deliberately excludes `/.well-known/*`.
 

@@ -11,7 +11,7 @@ import { useSheetDrag } from "@/app/lib/use-sheet-drag";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
-import { AppBadges, Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, QR, SearchSuggest, Toggle, openRedirect, rovingKeyNav, type SelectOption } from "./ui";
+import { Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, SearchSuggest, Toggle, openRedirect, rovingKeyNav, type SelectOption } from "./ui";
 import { HeroOwnerCta } from "./HeroSearch";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { useCategories, type Category } from "@/app/lib/categories";
@@ -380,7 +380,6 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
               reach it. Matches the .nk-prose measure used elsewhere. Section-scale
               H1 + gap-token margins keep the first price row near the desktop fold
               (the feed is a utility surface, not a marketing page). */}
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 32 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-gap-lg)", maxWidth: "65ch" }}>
             <span className="nk-eyebrow">{t.eyebrow}</span>
             <h1 className="nk-h-section" style={{ margin: 0 }}>{heading}</h1>
@@ -406,18 +405,6 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
                 )}
               </>
             )}
-          </div>
-          {/* Landing header right zone (≥1120px): a compact app-bridge card fills
-              the otherwise-dead right half — real QR + real store links only. */}
-          {isLanding && (
-            <aside className="nk-landing-aside">
-              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, lineHeight: "21px", color: "var(--nk-text)" }}>{dict.bridge.qrTitle}</span>
-              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <QR size={84} />
-                <AppBadges height={36} gap={8} placement="landing_header" />
-              </div>
-            </aside>
-          )}
           </div>
 
           {/* sticky filter bar — pins only the controls (search + filters); the

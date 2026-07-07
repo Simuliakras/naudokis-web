@@ -2,6 +2,7 @@
 import { useQuery, useInfiniteQuery, keepPreviousData, skipToken } from "@tanstack/react-query";
 import type { Locale } from "./i18n/config";
 import { API_BASE } from "./api";
+import { cdnImage } from "./image-hosts";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiImage = { url: string; blurhash?: string };
@@ -323,7 +324,7 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
     city: l.city ?? undefined,
     price: formatPrice(l.price_per_day_cents, locale),
     priceCents: l.price_per_day_cents,
-    img: l.images?.[0]?.url,
+    img: cdnImage(l.images?.[0]?.url),
     rating: ratingLabel(l.rating_average, l.rating_count, locale),
     ratingCount: l.rating_count,
     // Backend has no `delivery=` filter; it exposes the per-item delivery types
@@ -480,7 +481,7 @@ async function fetchReviews(id: string, locale: Locale): Promise<ListingReview[]
       date: formatReviewDate(r.created_at, locale),
       stars: r.rating,
       text: r.comment,
-      avatar: r.reviewer_photo_url ?? null,
+      avatar: cdnImage(r.reviewer_photo_url) ?? null,
     }));
   } catch {
     return [];
@@ -517,7 +518,7 @@ function mapDetailOwner(detail: ApiListingDetail, locale: Locale): ListingOwner 
     listingsCount: o.total_listings ?? 0,
     rating: ratingLabel(o.rating_average ?? null, o.rating_count ?? 0, locale),
     ratingCount: o.rating_count ?? 0,
-    avatar: o.avatar ?? null,
+    avatar: cdnImage(o.avatar) ?? null,
     memberSinceYear: Number.isNaN(memberSinceMs) ? undefined : new Date(memberSinceMs).getFullYear(),
     responseTimeHours: o.avg_response_time_hours ?? null,
   };
@@ -569,7 +570,9 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
     rating: ratingLabel(stats.ratingAverage, stats.ratingCount, locale),
     ratingValue: stats.ratingAverage ?? 0,
     ratingCount: stats.ratingCount,
-    images: (detail.images ?? []).map((im) => im.url),
+    images: (detail.images ?? [])
+      .map((im) => cdnImage(im.url))
+      .filter((url): url is string => !!url),
     tags: detail.category_names.map((c) => (locale === "en" ? c.en : c.lt)),
     attributes: (detail.attributes_display ?? [])
       .filter((a) => !a.orphan)

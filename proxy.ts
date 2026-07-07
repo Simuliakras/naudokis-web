@@ -42,5 +42,5 @@ export const config = {
   // public files — must not be rewritten into the /lt segment).
   // The deep-link path segments below mirror `appLinkPaths` in next.config.ts
   // (the canonical list) — keep them in sync when that list changes.
-  matcher: ["/((?!api|go|_next/static|_next/image|naudokis|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|listings/sitemap|\\.well-known|listing|booking-request|review|chat|my-profile|ref|deep-link\\.html).*)"],
+  matcher: ["/((?!api|go|_next/static|_next/image|naudokis|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|listings/sitemap|\\.well-known|listing|profile|booking-request|billing-documents|review|chat|my-profile|rewards|ref|cancel-deletion|reset-password|verify-email|deep-link\\.html).*)"],
 };

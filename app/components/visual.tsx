@@ -146,23 +146,18 @@ export function LogoMark({ locale, height = 36 }: { locale: Locale; height?: num
 // matrix public/naudokis/install-qr.svg (built via scripts/generate-install-qr.mjs ·
 // `yarn gen:qr`), encoding the smart-install URL https://www.naudokis.lt/go which
 // sniffs the OS and routes to the right store. Pass a `value` (e.g. a per-code
-// Branch link on /invite) to encode it at runtime via <DynamicQR/> instead.
+// OneLink link on /invite) to encode it at runtime via <DynamicQR/> instead.
 // Decorative for AT (a QR can only be scanned visually) — the adjacent install
 // CTA + store badges are the non-visual path.
-export function QR({ size = 152, value, caption }: { size?: number; value?: string; caption?: string }) {
+export function QR({ size = 152, value }: { size?: number; value?: string }) {
   if (value) {
     return <DynamicQR value={value} size={size} />;
   }
-  // Optional one-line caption ON the white card — uncaptioned QR codes get
-  // ignored on desktop; the caption doubles as the visible+accessible label.
   return (
-    <span className="nk-qr-card" style={caption ? { display: "flex", flexDirection: "column", alignItems: "center", gap: 6 } : undefined}>
+    <span className="nk-qr-card">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/naudokis/install-qr.svg" alt="" aria-hidden="true" width={size} height={size}
         style={{ display: "block", width: size, height: size }} />
-      {caption && (
-        <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 12, lineHeight: "16px", color: "var(--nk-bg)", textAlign: "center", maxWidth: size }}>{caption}</span>
-      )}
     </span>
   );
 }

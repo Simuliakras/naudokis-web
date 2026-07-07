@@ -6,12 +6,18 @@
         "appID": "U2NZQ56A8W.com.naudokislt.naudokis",
         "paths": [
           "/invite",
+          "/listing/*",
+          "/profile/*",
           "/booking-request/*",
+          "/billing-documents/*",
           "/review/*",
           "/chat/*",
-          "/listing/*",
           "/my-profile",
-          "/ref/*"
+          "/rewards",
+          "/ref/*",
+          "/cancel-deletion",
+          "/reset-password",
+          "/verify-email"
         ]
       }
     ]

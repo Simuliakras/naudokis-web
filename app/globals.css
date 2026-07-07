@@ -71,7 +71,6 @@
   --nk-glass-nav:     rgba(26,26,26,0.72);     /* glassBackdrop — nav over page */
   --nk-surface-glass: rgba(255,255,255,0.03);  /* surfaceElevated             */
   --nk-input-bg:      rgba(255,255,255,0.04);  /* inputBackground — ghost btn / listing fields */
-  --nk-surface-wash:  rgba(48,53,54,0.40);     /* screen-level empty-state bg */
   --nk-overlay:       rgba(20,22,23,0.62);     /* dark glass scrim — gallery / map chips */
   --nk-ink:           #121212;   /* app-store badge / deepest ink             */
 
@@ -759,9 +758,15 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* clamp the title to two lines at every width so long LT names (e.g. "Garsas,
    muzika ir renginių technika") never push past the fixed tile height */
 .nk-cat__text h3{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-/* 1-line titles reserve the full 2-line slot so text-block tops and the arrow
-   chip stay level across a row where neighbours wrap (F-009) */
-@media(min-width:561px){.nk-cat__text h3{min-height:2.4em}}
+/* Reserve the full 2-line slot so the arrow chips stay level across a row where
+   a neighbour wraps (F-009). Plain tiles reserve it on the flex text block and
+   centre the (1- or 2-line) title inside it, so a single-line name lines up with
+   the arrow chip's vertical centre; --lead tiles keep the reservation on the
+   title so the stacked title + intro clears the disk. */
+@media(min-width:561px){
+  .nk-cat--lead .nk-cat__text h3{min-height:2.4em}
+  .nk-cat:not(.nk-cat--lead) .nk-cat__text{min-height:52px;justify-content:center}
+}
 /* smallest phones (below the 360 CSS floor): allow a 3rd line so a long name like
    "Garsas, muzika ir renginių technika" keeps its last word at 320px */
 @media(max-width:400px){.nk-cat__text h3{-webkit-line-clamp:3}}
@@ -839,14 +844,15 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(prefers-reduced-motion:reduce){.nk-skel::after{animation:none}}
 
 /* ---- empty state (screen-level: floating brand illustration) ---- */
-.nk-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(16px,2vw,24px);
-  padding:clamp(48px,7vw,80px) 32px;border:1px dashed var(--nk-border);border-radius:16px;background:var(--nk-surface-wash);
-  /* cap + centre so the no-results state reads as an intentional card, not a
-     full-width dashed dropzone with big empty margins on wide/ultrawide screens */
-  max-width:680px;margin-inline:auto}
+.nk-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(20px,2.4vw,32px);
+  padding:clamp(32px,5vw,56px) 24px;
+  /* No card chrome by design: an illustrated empty/error/404 state reads as an
+     open, centred composition on the page ground — not a dashed dropzone boxed
+     off from it. Cap + centre only keep the text column from stretching wide. */
+  max-width:640px;margin-inline:auto}
 .nk-empty__icon{width:88px;height:88px;border-radius:44px;background:var(--nk-surface);
   display:flex;align-items:center;justify-content:center}
-.nk-empty__ill{width:clamp(120px,16vw,156px);height:auto;display:block;will-change:transform;
+.nk-empty__ill{width:clamp(180px,20vw,232px);height:auto;display:block;will-change:transform;
   animation:nk-float 3.8s ease-in-out infinite}
 @keyframes nk-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 @media(prefers-reduced-motion:reduce){.nk-empty__ill{animation:none}}
@@ -882,20 +888,15 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.45) 38%,#000 100%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.45) 38%,#000 100%)}
 .nk-footer .nk-container{position:relative}
 .nk-footer__top{display:grid;grid-template-columns:1.4fr 1.3fr .8fr 1fr;gap:48px 56px;padding-block:72px 56px;align-items:start}
-/* category links: single column by default; column-major into two columns only on wide desktop */
-.nk-footer__catgrid{display:grid;grid-auto-flow:row;grid-template-columns:1fr;gap:var(--nk-s-4) 44px;align-content:start}
-/* multicol lets each column flow independently — row-paired grid heights left
-   irregular vertical gaps whenever a two-line label stretched its row */
-@media(min-width:1280px){
-  .nk-footer__catgrid{display:block;columns:2;column-gap:44px}
-  .nk-footer__catgrid a{display:block;break-inside:avoid;margin-bottom:var(--nk-s-4)}
-}
-/* phones: a 2-up link grid halves ~400px of dead footer scroll */
+/* category links: two fixed columns of five. Independent flex columns keep an even
+   vertical rhythm — a two-line label only pushes its own column, never its neighbour */
+.nk-footer__catgrid{display:flex;gap:var(--nk-s-4) 44px}
+.nk-footer__catcol{display:flex;flex-direction:column;gap:var(--nk-s-4);min-width:0}
+/* phones: tighten the inter-column gap so both columns fit narrow screens */
 @media(max-width:560px){
-  .nk-footer__catgrid{grid-template-columns:1fr 1fr;gap:var(--nk-s-4) var(--nk-gap-lg)}
-  .nk-footer__catgrid .nk-footer__all{grid-column:1 / -1}
+  .nk-footer__catgrid{gap:var(--nk-s-4) var(--nk-gap-lg)}
+  .nk-footer__catcol{flex:1}
 }
-.nk-footer__all{display:inline-flex;align-items:center;gap:6px;color:var(--nk-purple-hover)!important}
 .nk-footer__brand{display:flex;flex-direction:column;gap:var(--nk-gap-xl);max-width:380px}
 .nk-footer__tagline{margin:0;font-family:var(--nk-font-body);font-size:18px;line-height:28px;color:var(--nk-text-muted);max-width:340px}
 .nk-footer__contact{display:flex;flex-direction:column;gap:var(--nk-gap-sm)}
@@ -913,7 +914,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(hover:hover) and (pointer:fine){.nk-footer__social a:hover{transform:translateY(-2px)}}
 .nk-footer__social a:active{transform:scale(.94)}
 .nk-footer__col{display:flex;flex-direction:column;gap:var(--nk-gap-lg)}
-@media(min-width:1025px){.nk-footer__brand{padding-top:4px}.nk-footer__col{padding-top:63px}}
+@media(min-width:1025px){.nk-footer__brand{padding-top:4px}.nk-footer__col{padding-top:63px}
+  /* narrow single-word city list sat far from Help — center it in its track so
+     the slack splits evenly between the Categories block and the Help column */
+  .nk-footer__col--center{justify-self:center}}
 .nk-footer__col h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:19px;color:var(--nk-text);letter-spacing:.01em}
 .nk-footer__col a{position:relative;font-family:var(--nk-font-body);font-size:18px;line-height:1.25;color:var(--nk-text-muted);text-decoration:none;
   transition:color .15s ease;width:fit-content}
@@ -926,8 +930,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   padding-block:26px;border-top:1px solid var(--nk-border-soft)}
 .nk-footer__legal{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-muted)}
 .nk-footer__pay{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.nk-footer__secure{display:inline-flex;align-items:center;gap:7px;font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2);
-  padding-right:16px;border-right:1px solid var(--nk-border-soft)}
 @media(max-width:1024px){
   .nk-footer__top{grid-template-columns:1fr 1fr;gap:var(--nk-s-10) var(--nk-s-12);padding-block:56px 44px}
   .nk-footer__brand{grid-column:1 / -1;max-width:none}
@@ -939,7 +941,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-footer__brand{gap:var(--nk-gap-lg)}
   .nk-footer__bottom{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-md);padding-block:22px}
   .nk-footer__pay{gap:var(--nk-gap-md) var(--nk-gap-lg)}
-  .nk-footer__secure{border-right:none;padding-right:0;flex-basis:100%}
   .nk-footer__pattern{opacity:.05}
 }
 
@@ -1135,14 +1136,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-catrail::-webkit-scrollbar{display:none}
   .nk-catrail__chip{flex:none;padding:9px 14px;border-radius:999px;min-height:38px;
     font-family:var(--nk-font-display);font-weight:600;font-size:14px;white-space:nowrap;cursor:pointer}
-}
-/* landing header right-zone app-bridge card (≥1120 only — phones keep the column) */
-.nk-landing-aside{display:none}
-@media(min-width:1120px){
-  .nk-landing-aside{display:flex;flex-direction:column;gap:12px;flex:none;max-width:320px;
-    padding:16px 18px;background:var(--nk-surface);border:1px solid var(--nk-border);
-    border-radius:var(--nk-r-card);box-shadow:var(--nk-edge-top)}
-  .nk-landing-aside .nk-appbadges{flex-direction:column;align-items:flex-start}
 }
 /* persistent "you're offline" strip over cached results (never assert stale data silently) */
 .nk-offline-strip{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding:11px 16px;
@@ -1455,17 +1448,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-homesteps__card:hover{border-color:var(--nk-accent-border);background:var(--nk-surface)}
 .nk-homesteps__num{width:40px;height:40px;border-radius:20px;flex:none;display:flex;align-items:center;justify-content:center;
   background:var(--nk-purple);color:var(--nk-text);font-family:var(--nk-font-display);font-weight:700;font-size:18px}
-
-/* homepage owner/supply band */
-.nk-ownerband{position:relative;display:flex;align-items:center;justify-content:space-between;gap:clamp(28px,4vw,56px);
-  flex-wrap:wrap;border-radius:var(--nk-r-lg);padding:var(--nk-panel-pad);
-  background:linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 60%, var(--nk-bg-deep) 100%)}
-.nk-ownerband__actions{display:flex;flex-direction:column;gap:var(--nk-gap-sm);flex:none;align-items:stretch}
-@media(max-width:768px){
-  .nk-ownerband{flex-direction:column;align-items:stretch}
-  .nk-ownerband__actions{align-items:stretch}
-  .nk-ownerband__actions .nk-btn{justify-content:center}
-}
 
 /* 4-up card grid (offers) — full ladder kept together: 4 → wide-tablet 3 →
    portrait-tablet 2 → phone 1 (was a sparse 4→2 jump at 1100) */

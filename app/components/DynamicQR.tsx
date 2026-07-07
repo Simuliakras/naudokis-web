@@ -1,5 +1,5 @@
 "use client";
-// Runtime QR — encodes an arbitrary `value` (e.g. the per-code Branch attribution
+// Runtime QR — encodes an arbitrary `value` (e.g. the per-code OneLink attribution
 // link on /invite) into a scannable matrix client-side via the `qrcode` lib's
 // browser `toDataURL`. The lib is dynamically imported so its chunk loads only
 // where a dynamic QR is actually rendered, never in the shared bundle. Mirrors the
