@@ -634,27 +634,21 @@ export function Offers() {
 }
 
 /* ---------------- How it works (numbered stepper) ----------------
-   Handoff Option 1a: three steps on a purple→yellow→green connector line, with a
-   renter/owner segmented toggle that swaps the steps. Icons and the step number
-   are positional design constants; the dictionary carries the copy only. */
-type StepRole = "renter" | "owner";
+   Three role-neutral steps on a purple→yellow→green connector line. Icons and
+   the step number are positional design constants; the dictionary carries the
+   copy only. */
 
 // Per-step accent, positional: each index maps to the matching stop on the
 // connector-line gradient (purple → yellow → green).
 const STEP_ACCENTS = ["var(--nk-purple-hover)", "var(--nk-yellow)", "var(--nk-green)"] as const;
 
-// Per-role icons, positional (mirror the handoff SVGs step-for-step).
-const STEP_ICONS: Record<StepRole, [IconName, IconName, IconName]> = {
-  renter: ["Search", "ShieldCheck", "Package"],
-  owner: ["Camera", "BadgeCheck", "Euro"],
-};
+// Per-step icons, positional (find → secure → use).
+const STEP_ICONS: [IconName, IconName, IconName] = ["Search", "ShieldCheck", "Package"];
 
 export function HowItWorks() {
   const { locale, dict } = useI18n();
   const t = dict.homeSteps;
-  const [role, setRole] = useState<StepRole>("renter");
-  const steps = t.roles[role].steps;
-  const icons = STEP_ICONS[role];
+  const steps = t.steps;
 
   return (
     // extra bottom breathing room below the stepper before the FAQ band
@@ -675,27 +669,6 @@ export function HowItWorks() {
         }
       />
 
-      <div className="nk-hiw-togrow nk-reveal">
-        <div className="nk-hiw-tog" role="group" aria-label={t.toggleAria}>
-          <span
-            className="nk-hiw-thumb"
-            aria-hidden="true"
-            style={{ transform: role === "owner" ? "translateX(100%)" : "none" }}
-          />
-          {(["renter", "owner"] as StepRole[]).map((r) => (
-            <button
-              key={r}
-              type="button"
-              className={"nk-hiw-tb" + (role === r ? " is-active" : "")}
-              aria-pressed={role === r}
-              onClick={() => setRole(r)}
-            >
-              {t.roles[r].label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <div className="nk-hiw-track nk-reveal">
         <span className="nk-hiw-line" aria-hidden="true" />
         <div className="nk-hiw-grid">
@@ -703,7 +676,7 @@ export function HowItWorks() {
             <div key={step.title} className="nk-hiw-step">
               <span className="nk-hiw-node">
                 <Icon
-                  name={icons[i]}
+                  name={STEP_ICONS[i]}
                   size={32}
                   stroke={2}
                   color={STEP_ACCENTS[i]}
@@ -744,9 +717,9 @@ export function Faq({
   return (
     <section style={{ background: "var(--nk-bg)" }}>
       <Section as="div" contained top="section-lg" bottom="section-lg" style={{ maxWidth: 1320 }}>
-        {/* same eyebrow+H2 anatomy as every other home section, centred; the
-            optional subheading rides in the head's subtitle slot */}
-        <SectionHead eyebrow={eyebrow} title={heading} subtitle={subheading} center />
+        {/* same eyebrow+H2 anatomy as every other home section, left-aligned to
+            match them; the optional subheading rides in the head's subtitle slot */}
+        <SectionHead eyebrow={eyebrow} title={heading} subtitle={subheading} />
         <div
           className="nk-reveal"
           style={{

@@ -289,9 +289,9 @@ export function EmptyState({
         : <span className="nk-empty__icon" style={danger ? { background: "var(--nk-danger-tint)" } : undefined}>
             <Icon name={icon} size={40} stroke={1.8} color={danger ? "var(--nk-danger)" : "var(--nk-text-muted)"} />
           </span>}
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", maxWidth: 460 }}>
-        <TitleTag style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, lineHeight: "30px", color: "var(--nk-text)" }}>{title}</TitleTag>
-        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "28px", color: "var(--nk-text-2)" }}>{subtitle}</p>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-gap-sm)" }}>
+        <TitleTag className="nk-empty__title">{title}</TitleTag>
+        <p style={{ margin: 0, maxWidth: 460, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "28px", color: "var(--nk-text-2)" }}>{subtitle}</p>
       </div>
       {(actionLabel || secondaryLabel) && (
         <div style={{ display: "flex", gap: "var(--nk-gap-sm)", flexWrap: "wrap", justifyContent: "center" }}>

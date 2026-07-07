@@ -47,8 +47,8 @@ export const lt: Dict = {
     // DRAFT (marketing sign-off): tightened — the long lede pushed the search
     // card ~2 screens down at phone widths.
     body: "Nuomokitės įrankius, transportą, foto techniką ar laisvalaikio įrangą tik tada, kai jų reikia. Naršykite internete, o rezervaciją ir mokėjimą užbaikite Naudokis programėlėje.",
-    ownerPrompt: "Turite nenaudojamų daiktų ar nuomos verslą?",
-    ownerCta: "Skelbti daiktą ir uždirbti",
+    ownerPrompt: "Turite nenaudojamų daiktų?",
+    ownerCta: "Įkelkite skelbimą",
     phoneAlt: "Naudokis programėlėje rodomi daiktų nuomos pasiūlymai",
   },
   search: {
@@ -56,9 +56,6 @@ export const lt: Dict = {
     placeholder: "Ko ieškote?",
     inputLabel: "Ieškoti daiktų nuomai",
     where: "Kur?",
-    suggestionsLabel: "Paieškos pasiūlymai",
-    suggestCategories: "Kategorijos",
-    suggestCities: "Miestai",
     labelWhat: "Daiktas",
     labelWhere: "Miestas",
     submit: "Ieškoti",
@@ -314,49 +311,23 @@ export const lt: Dict = {
     eyebrow: "Kaip tai veikia",
     title: "Viskas telpa į tris žingsnius",
     lead: "Nesvarbu, ar nuomojiesi, ar nuomoji — pradedi vos per kelias minutes.",
-    toggleAria: "Pasirink, ar nuomojiesi, ar nuomoji",
-    roles: {
-      renter: {
-        label: "Nuomojuosi",
-        steps: [
-          {
-            kicker: "Paieška",
-            title: "Atrask",
-            body: "Ieškok tarp tūkstančių daiktų šalia ir rask būtent tai, ko reikia.",
-          },
-          {
-            kicker: "Saugu",
-            title: "Rezervuok",
-            body: "Pasirink datas ir rezervuok. Mokėjimas užšaldomas iki sėkmingos nuomos.",
-          },
-          {
-            kicker: "Gatava",
-            title: "Naudokis",
-            body: "Pasiimk, naudokis ir grąžink. Jokių įsipareigojimų, jokių pirkinių.",
-          },
-        ],
+    steps: [
+      {
+        kicker: "Pradžia",
+        title: "Atrask arba paskelbk",
+        body: "Naršyk tūkstančius daiktų šalia arba per kelias minutes paskelbk savo.",
       },
-      owner: {
-        label: "Nuomoju",
-        steps: [
-          {
-            kicker: "Skelbimas",
-            title: "Įkelk",
-            body: "Nufotografuok daiktą ir paskelbk per kelias minutes. Kainą nustatai pats.",
-          },
-          {
-            kicker: "Užsakymas",
-            title: "Priimk",
-            body: "Gauk rezervaciją ir patvirtink. Užstatas saugiai laikomas programėlėje.",
-          },
-          {
-            kicker: "Pelnas",
-            title: "Uždirbk",
-            body: "Perduok daiktą ir gauk pinigus. Nenaudojama technika pradeda uždirbti.",
-          },
-        ],
+      {
+        kicker: "Saugu",
+        title: "Susitark",
+        body: "Datos, kaina ir užstatas suderinami ir saugiai tvarkomi programėlėje.",
       },
-    },
+      {
+        kicker: "Gatava",
+        title: "Naudokis",
+        body: "Pasiimk ir naudokis — arba perduok daiktą ir uždirbk.",
+      },
+    ],
     ctaLabel: "Peržiūrėti visą procesą",
   },
   cta: {

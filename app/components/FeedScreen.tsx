@@ -11,7 +11,7 @@ import { useSheetDrag } from "@/app/lib/use-sheet-drag";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
-import { Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, SearchSuggest, Toggle, openRedirect, rovingKeyNav, type SelectOption } from "./ui";
+import { Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, Toggle, openRedirect, rovingKeyNav, type SelectOption } from "./ui";
 import { PageHead, SeoNote } from "./headers";
 import { HeroOwnerCta } from "./HeroSearch";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
@@ -81,8 +81,6 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
   // Phone-width landing-intro clamp (long authored SEO intros pushed the results
   // ~13 lines down); the toggle lifts it, full text stays SSR'd for crawlers.
   const [introOpen, setIntroOpen] = useState(false);
-  // Focus-opened search suggestions (guided category/city paths — see SearchSuggest).
-  const [suggestOpen, setSuggestOpen] = useState(false);
 
   function setParams(patch: Record<string, string | boolean>, replace = false) {
     const next = new URLSearchParams();
@@ -413,39 +411,13 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
           <div ref={filterBarRef} className="nk-filterbar">
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
               <div className="nk-filter-row" style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-                <span className="nk-searchfield"
-                  onBlur={(e) => {
-                    if (!(e.relatedTarget instanceof Node) || !e.currentTarget.contains(e.relatedTarget)) {
-                      setSuggestOpen(false);
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Escape") { setSuggestOpen(false); return; }
-                    if (e.key === "ArrowDown" && suggestOpen) {
-                      e.preventDefault();
-                      e.currentTarget.querySelector<HTMLElement>('[role="option"]')?.focus();
-                    }
-                  }}>
+                <span className="nk-searchfield">
                   <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
                   <input id="nk-feed-search-input" type="search" value={qInput}
-                    onChange={(e) => { setQInput(e.target.value); setSuggestOpen(false); }}
-                    onFocus={() => { if (!qInput) setSuggestOpen(true); }}
+                    onChange={(e) => setQInput(e.target.value)}
                     placeholder={t.searchPlaceholder} aria-label={t.searchLabel}
                     style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text)" }} />
                   {qInput && <InputClear onClick={() => setQInput("")} label={t.clear} />}
-                  {/* Guided paths from real data — on a small inventory a blind
-                      free-text search usually returns nothing; a category/city
-                      route always lands on a real result set. */}
-                  {suggestOpen && (
-                    <SearchSuggest
-                      categories={cats}
-                      cities={LT_CITIES}
-                      headings={{ categories: dict.search.suggestCategories, cities: dict.search.suggestCities }}
-                      label={dict.search.suggestionsLabel}
-                      onCategory={(id) => { setSuggestOpen(false); setParams({ cat: id }); }}
-                      onCity={(city) => { setSuggestOpen(false); setParams({ city }); }}
-                    />
-                  )}
                 </span>
                 <span className="nk-filters-desktop">
                   <FilterSelect icon="ArrowUpDown" label={t.sortLabel} value={params.sort} defaultValue="recommended" options={sortOptions} onChange={(v) => setParams({ sort: v })} align="right" />

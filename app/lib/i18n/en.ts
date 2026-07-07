@@ -41,9 +41,6 @@ export const en: Dict = {
     placeholder: "What do you need?",
     inputLabel: "Search items to rent",
     where: "Where?",
-    suggestionsLabel: "Search suggestions",
-    suggestCategories: "Categories",
-    suggestCities: "Cities",
     labelWhat: "Item",
     labelWhere: "City",
     submit: "Search",
@@ -287,49 +284,23 @@ export const en: Dict = {
     eyebrow: "How it works",
     title: "It all comes down to three steps",
     lead: "Whether you're renting or lending, you're set up in just a few minutes.",
-    toggleAria: "Choose whether you're renting or lending",
-    roles: {
-      renter: {
-        label: "Renting",
-        steps: [
-          {
-            kicker: "Search",
-            title: "Discover",
-            body: "Search thousands of items nearby and find exactly what you need.",
-          },
-          {
-            kicker: "Secure",
-            title: "Reserve",
-            body: "Pick your dates and reserve. Payment is held until the rental goes through.",
-          },
-          {
-            kicker: "Ready",
-            title: "Use it",
-            body: "Pick it up, use it and return it. No commitments, no purchases.",
-          },
-        ],
+    steps: [
+      {
+        kicker: "Start",
+        title: "Find or list",
+        body: "Browse thousands of items nearby, or list your own in just a few minutes.",
       },
-      owner: {
-        label: "Lending",
-        steps: [
-          {
-            kicker: "Listing",
-            title: "List it",
-            body: "Photograph your item and list it in minutes. You set the price.",
-          },
-          {
-            kicker: "Request",
-            title: "Accept",
-            body: "Get a booking and confirm it. The deposit is held safely in the app.",
-          },
-          {
-            kicker: "Payout",
-            title: "Earn",
-            body: "Hand over the item and get paid. Idle gear starts earning.",
-          },
-        ],
+      {
+        kicker: "Secure",
+        title: "Agree",
+        body: "Dates, price and deposit are arranged and handled safely in the app.",
       },
-    },
+      {
+        kicker: "Ready",
+        title: "Use it",
+        body: "Pick it up and use it — or hand yours over and earn.",
+      },
+    ],
     ctaLabel: "See the whole process",
   },
   cta: {

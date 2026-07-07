@@ -500,43 +500,6 @@ export function FilterSelect({
   );
 }
 
-/* ---------------- Search suggestions (focus-opened panel) ----------------
-   Guided-path suggestions built from REAL data only — the backend categories and
-   the picker cities (no fabricated "popular searches"). On a launch-size
-   inventory a blind free-text search usually returns nothing; a category/city
-   route always lands on a real result set. The caller owns open/close state and
-   positions the panel (render inside a position:relative field wrapper). */
-export function SearchSuggest({ categories, cities, headings, label, onCategory, onCity }: {
-  categories: { id: string; title: string }[];
-  cities: readonly string[];
-  headings: { categories: string; cities: string };
-  label: string;
-  onCategory: (id: string) => void;
-  onCity: (city: string) => void;
-}) {
-  return (
-    // mousedown preventDefault keeps focus in the input so the field's blur
-    // handler never closes the panel before the option's click lands
-    <div role="listbox" aria-label={label} className="nk-suggest" onKeyDown={listboxKeyNav}
-      onMouseDown={(e) => e.preventDefault()}>
-      <span className="nk-suggest__h">{headings.categories}</span>
-      <div className="nk-suggest__row">
-        {categories.map((c) => (
-          <button key={c.id} type="button" role="option" aria-selected={false} className="nk-suggest__opt"
-            onClick={() => onCategory(c.id)}>{c.title}</button>
-        ))}
-      </div>
-      <span className="nk-suggest__h">{headings.cities}</span>
-      <div className="nk-suggest__row">
-        {cities.map((city) => (
-          <button key={city} type="button" role="option" aria-selected={false} className="nk-suggest__opt"
-            onClick={() => onCity(city)}>{city}</button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ---------------- Toggle (pill, for "Su pristatymu") ---------------- */
 export function Toggle({
   icon, children, on, onChange,

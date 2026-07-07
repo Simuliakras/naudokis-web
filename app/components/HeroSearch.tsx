@@ -4,8 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LT_CITIES } from "@/app/lib/cities";
 import { trackEvent } from "@/app/lib/analytics";
-import { listingLandingHref, listingSearchHref } from "@/app/lib/search";
-import { useCategories } from "@/app/lib/categories";
+import { listingSearchHref } from "@/app/lib/search";
 import {
   closeListbox,
   focusListboxSelection,
@@ -13,7 +12,6 @@ import {
   listboxKeyNav,
   listboxTriggerKeyNav,
   openRedirect,
-  SearchSuggest,
 } from "./ui";
 import { useI18n } from "./I18nProvider";
 
@@ -151,11 +149,6 @@ export function SearchBar() {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [city, setCity] = useState("");
-  // Focus-opened guided suggestions (real categories + picker cities) — on a
-  // launch-size inventory a blind free-text search usually returns nothing.
-  const [suggestOpen, setSuggestOpen] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
-  const cats = useCategories(locale).data ?? [];
   const go = (e: React.FormEvent) => {
     e.preventDefault();
     trackEvent("Hero Search Submit", {
@@ -167,21 +160,8 @@ export function SearchBar() {
   };
   return (
     <form
-      ref={formRef}
       className="nk-search"
       onSubmit={go}
-      onBlur={(e) => {
-        if (!(e.relatedTarget instanceof Node) || !formRef.current?.contains(e.relatedTarget)) {
-          setSuggestOpen(false);
-        }
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Escape") { setSuggestOpen(false); return; }
-        if (e.key === "ArrowDown" && suggestOpen) {
-          e.preventDefault();
-          formRef.current?.querySelector<HTMLElement>('[role="option"]')?.focus();
-        }
-      }}
       style={{
         position: "relative",
         display: "flex",
@@ -201,8 +181,7 @@ export function SearchBar() {
           <span className="nk-search__label">{dict.search.labelWhat}</span>
           <input
             value={q}
-            onChange={(e) => { setQ(e.target.value); setSuggestOpen(false); }}
-            onFocus={() => { if (!q) setSuggestOpen(true); }}
+            onChange={(e) => setQ(e.target.value)}
             placeholder={dict.search.placeholder}
             aria-label={dict.search.inputLabel}
             className="nk-search__input"
@@ -214,16 +193,6 @@ export function SearchBar() {
       <button type="submit" className="nk-btn nk-btn--primary" style={{ padding: "16px 36px" }}>
         {dict.search.submit}
       </button>
-      {suggestOpen && cats.length > 0 && (
-        <SearchSuggest
-          categories={cats}
-          cities={LT_CITIES}
-          headings={{ categories: dict.search.suggestCategories, cities: dict.search.suggestCities }}
-          label={dict.search.suggestionsLabel}
-          onCategory={(id) => { setSuggestOpen(false); router.push(listingLandingHref({ category: id, locale })); }}
-          onCity={(c) => { setSuggestOpen(false); router.push(listingLandingHref({ city: c, locale })); }}
-        />
-      )}
     </form>
   );
 }

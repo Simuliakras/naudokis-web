@@ -388,15 +388,15 @@ a,button,input,textarea,select{touch-action:manipulation}
   font-family:var(--nk-font-body);font-size:16px;line-height:1;color:var(--nk-light-meta);border-radius:var(--nk-r-sm)}
 
 /* ---- Heading block (eyebrow defined in the type ramp above) ---- */
-.nk-head{display:flex;flex-direction:column;gap:var(--nk-gap-2xs);width:100%}
-.nk-head__top{display:flex;align-items:center;justify-content:space-between;gap:var(--nk-gap-xl)}
+.nk-head{display:flex;flex-direction:column;gap:var(--nk-gap-2xs);flex:1 1 auto;min-width:0}
+.nk-head__action{flex:none}
 .nk-head h2{font-family:var(--nk-font-display);font-weight:700;font-size:var(--nk-fs-h2);line-height:1.1;color:var(--nk-text);margin:0}
 /* optional lede under a SectionHead title (Faq subheading, home HowItWorks lead) */
 .nk-head__sub{margin:var(--nk-gap-xs) 0 0;max-width:60ch;font-family:var(--nk-font-body);font-size:var(--nk-fs-body);line-height:32px;color:var(--nk-text-2)}
 
 /* ---- Section scaffolding ---- */
 .nk-section{padding-block:var(--nk-section-y)}
-.nk-section__top{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--nk-gap-xl);margin-bottom:var(--nk-section-head)}
+.nk-section__top{display:flex;justify-content:space-between;align-items:center;gap:var(--nk-gap-xl);margin-bottom:var(--nk-section-head)}
 /* full-screen page head cluster (eyebrow + H1 + subtitle) — <PageHead size="page"> */
 .nk-pagehead{display:flex;flex-direction:column;gap:var(--nk-gap-sm)}
 /* centered head variant — <SectionHead center> (Faq): mirror the row/head onto
@@ -404,7 +404,6 @@ a,button,input,textarea,select{touch-action:manipulation}
    stacking overrides above keep working untouched. */
 .nk-section__top--center{justify-content:center}
 .nk-head--center{align-items:center;text-align:center}
-.nk-head--center .nk-head__top{justify-content:center}
 /* section "view all" arrow link (Categories / Offers heads) */
 .nk-cats-all{display:inline-flex;align-items:center;gap:10px;flex:none;white-space:nowrap;
   font-family:var(--nk-font-display);font-weight:600;font-size:clamp(18px,1.4vw,22px);color:var(--nk-purple-hover);
@@ -586,6 +585,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
   .nk-drawer-item[aria-current="page"]{color:var(--nk-purple-hover)}
   .nk-drawer-locale{padding:12px 12px 4px}
 }
+/* Phones: drop the CTA label entirely — icon-only square primary button. */
+@media(max-width:560px){
+  .nk-nav-cta__short{display:none}
+  .nk-nav-cta{width:var(--nk-tap);min-width:var(--nk-tap);padding:0;gap:0}
+}
 
 /* ---- nav links + underline (purple) ----
    text uses --nk-purple-hover (#8A89FF, ≥4.5:1 on bg); the underline keeps brand purple */
@@ -740,10 +744,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* compact 2-up tiles on phones: square-ish, smaller centred disk, title clamped
    to two lines (the whole tile is the tap target) */
 @media(max-width:560px){
-  .nk-section__top{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-md)}
-  /* SectionHead's eyebrow + "view all" link row: stack on phones so the trailing
+  /* SectionHead stacks head → "view all" action on phones so the trailing
      "Visos kategorijos →" arrow can't clip/overflow at the 320px floor */
-  .nk-head__top{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-sm)}
+  .nk-section__top{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-md)}
+  .nk-head__action{min-height:var(--nk-tap);display:inline-flex;align-items:center}
   .nk-cats-all{font-size:17px}
   .nk-cat{padding:14px}
   /* both plain and --lead disks share the compact geometry (the intro line is
@@ -877,6 +881,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
      open, centred composition on the page ground — not a dashed dropzone boxed
      off from it. Cap + centre only keep the text column from stretching wide. */
   max-width:640px;margin-inline:auto}
+.nk-empty__title{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:26px;line-height:30px;color:var(--nk-text)}
+/* Title stays on one line where there's room; wraps only on narrow screens. */
+@media(min-width:561px){.nk-empty__title{white-space:nowrap}}
 .nk-empty__icon{width:88px;height:88px;border-radius:44px;background:var(--nk-surface);
   display:flex;align-items:center;justify-content:center}
 .nk-empty__ill{width:clamp(180px,20vw,232px);height:auto;display:block;will-change:transform;
@@ -1139,20 +1146,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    wrapped the Filters pill onto its own dead row) */
 .nk-filter-row > .nk-searchfield{flex:1 1 320px;min-width:240px}
 
-/* focus-opened search suggestions (categories + cities — real data only) */
-.nk-suggest{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:45;
-  display:flex;flex-direction:column;gap:8px;padding:14px;
-  max-height:min(55vh,440px);overflow-y:auto;overscroll-behavior:contain;
-  background:var(--nk-surface);border:1px solid var(--nk-border);border-radius:16px;
-  box-shadow:var(--nk-shadow-3);text-align:left}
-.nk-suggest__h{font-family:var(--nk-font-display);font-weight:700;font-size:12px;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--nk-text-muted);padding:4px 2px 0}
-.nk-suggest__row{display:flex;flex-wrap:wrap;gap:8px}
-.nk-suggest__opt{display:inline-flex;align-items:center;padding:9px 14px;border-radius:var(--nk-r-pill);
-  border:1px solid var(--nk-border);background:var(--nk-bg);color:var(--nk-text);cursor:pointer;
-  font-family:var(--nk-font-body);font-size:15px;transition:border-color .15s ease,background .15s ease}
-.nk-suggest__opt:hover{border-color:var(--nk-accent-border);background:var(--nk-purple-soft)}
-
 /* category tile grid (home strip + all-categories page). --nk-cat-h is the single
    source of truth for tile height so the real card AND its skeleton stay locked at
    every breakpoint (no load-time layout shift). Dense 5-up top tier (compact,
@@ -1242,9 +1235,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   border-color:var(--nk-border-soft);color:var(--nk-text-2);box-shadow:none}
 .nk-fchip--link span{max-width:none;white-space:normal}
 .nk-fchip--link:hover{background:var(--nk-surface)}
-.nk-grid-feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,var(--nk-card-min)),1fr));gap:var(--nk-grid-row-gap) var(--nk-grid-gap);max-width:var(--nk-content-cap)}
-@media(min-width:1441px){.nk-grid-feed{--nk-card-min:300px}}
-@media(min-width:1024px) and (max-width:1366px){.nk-grid-feed{--nk-card-min:280px}}
+.nk-grid-feed{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--nk-grid-row-gap) var(--nk-grid-gap);max-width:var(--nk-content-cap)}
+@media(min-width:1025px) and (max-width:1280px){.nk-grid-feed{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:701px) and (max-width:1024px){.nk-grid-feed{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:561px) and (max-width:700px){.nk-grid-feed{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.nk-grid-feed{grid-template-columns:1fr}}
 .nk-clear{transition:color .15s ease}
 .nk-clear:hover{color:var(--nk-text)}
@@ -1478,23 +1472,14 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-search .nk-citypick__trigger > .nk-ico:first-child{transform:translateY(7px)}
 }
 
-/* ---- home "Kaip tai veikia" numbered stepper (handoff Option 1a) ----
-   Three steps on a purple→yellow→green connector line + a renter/owner toggle.
-   The section shell (container width, section-y rhythm) comes from .nk-container;
-   these rules reproduce the handoff's inner composition on the --nk-* tokens. */
-/* head is the shared <SectionHead> (eyebrow + title + view-all action + lead);
-   the toggle sits on its own row, centred, between the head and the timeline.
-   The head→toggle gap is owned by .nk-section__top's margin-bottom, so togrow
-   only carries its margin to the timeline below. */
-.nk-hiw-togrow{display:flex;justify-content:center;margin-bottom:clamp(64px,6.4vw,88px)}
-/* role toggle */
-.nk-hiw-tog{position:relative;display:inline-flex;padding:6px;border-radius:999px;background:var(--nk-surface);border:1px solid var(--nk-border);flex:none}
-.nk-hiw-tb{position:relative;z-index:2;padding:13px 40px;border-radius:999px;font-family:var(--nk-font-display);font-weight:700;font-size:18px;color:var(--nk-text-muted);transition:color .25s ease;white-space:nowrap;background:transparent;border:0;cursor:pointer}
-.nk-hiw-tb.is-active{color:#fff}
-.nk-hiw-tb:not(.is-active):hover{color:var(--nk-text)}
-.nk-hiw-thumb{position:absolute;z-index:1;top:6px;bottom:6px;left:6px;width:calc(50% - 6px);border-radius:999px;background:var(--nk-purple);border:1px solid var(--nk-purple-deep);transition:transform .34s cubic-bezier(.2,.8,.2,1)}
-/* track + connector line + grid */
-.nk-hiw-track{position:relative}
+/* ---- home "Kaip tai veikia" numbered stepper ----
+   Three role-neutral steps on a purple→yellow→green connector line. The section
+   shell (container width, section-y rhythm) comes from .nk-container; these rules
+   reproduce the handoff's inner composition on the --nk-* tokens. Head is the
+   shared <SectionHead> (eyebrow + title + view-all action + lead). */
+/* track + connector line + grid — the top margin restores the head→timeline gap
+   the removed role-toggle row used to carry */
+.nk-hiw-track{position:relative;margin-top:clamp(40px,5vw,72px)}
 .nk-hiw-line{position:absolute;top:38px;left:38px;right:38px;height:2px;background:linear-gradient(90deg,var(--nk-purple) 0%,var(--nk-yellow) 52%,var(--nk-green) 100%);opacity:.4}
 .nk-hiw-grid{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
 .nk-hiw-step{display:flex;flex-direction:column;gap:22px}
@@ -1533,8 +1518,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 
 /* 4-up card grid (offers) — full ladder kept together: 4 → wide-tablet 3 →
    portrait-tablet 2 → phone 1 (was a sparse 4→2 jump at 1100) */
-.nk-grid-4{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,var(--nk-offer-min)),1fr));gap:var(--nk-grid-gap);max-width:var(--nk-content-cap)}
-@media(min-width:1367px){.nk-grid-4{--nk-offer-min:260px}}
+.nk-grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--nk-grid-gap);max-width:var(--nk-content-cap)}
+@media(min-width:701px) and (max-width:1024px){.nk-grid-4{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:561px) and (max-width:700px){.nk-grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.nk-grid-4{grid-template-columns:1fr}}
 
 @media(max-width:1024px){
@@ -1576,12 +1562,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 }
 /* tighter, app-like type density on phones — headings stay fluid (clamp) */
 @media(max-width:560px){
-  /* eyebrow → title → action: promote .nk-head__top's children into the column
-     flex and order them, so the "view all" link never interrupts the header */
-  .nk-head__top{display:contents}
-  .nk-head .nk-eyebrow{order:0}
-  .nk-head h2{order:1}
-  .nk-head .nk-head__top > *:not(.nk-eyebrow){order:2;min-height:var(--nk-tap);display:inline-flex;align-items:center}
   .nk-btn{white-space:normal}
   /* hero is much shorter without the phone — drop the desktop-scale section padding */
   #top > .nk-container{padding-block:8px 16px!important}
@@ -1768,9 +1748,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* ---- App-download CTA banner (gradient) ----
    Shared by the home page and the How-It-Works page (see AppCtaBanner). Overrides
    for this family live in the breakpoint blocks below, beside the htw- rules. */
-.nk-appcta-wrap{padding-block:clamp(20px,3vw,40px) var(--nk-section-y-lg)}
+.nk-appcta-wrap{padding-block:clamp(12px,2vw,24px) var(--nk-section-y)}
+/* HIW: the CTA follows the trust band — give it a fuller breather above. */
+.htw-page .nk-appcta-wrap{padding-top:var(--nk-section-y)}
 .nk-appcta{position:relative;border-radius:20px;overflow:hidden;min-height:660px;
-  border:1px solid var(--nk-border-strong);
   background:
     radial-gradient(680px 680px at -6% -18%, var(--nk-glow-purple), transparent 66%),
     radial-gradient(620px 620px at 84% 8%, color-mix(in srgb, var(--nk-purple-hover) 30%, transparent), transparent 70%),

@@ -46,7 +46,8 @@ export function Section({
 /* ---------------- Section head ----------------
    The sitewide eyebrow + H2 anatomy for in-page sections. `subtitle` renders a
    lede under the title (replaces the Faq negative-margin hack + the home
-   HowItWorks lead); `action` sits on the eyebrow row (Categories/Offers view-all). */
+   HowItWorks lead); `action` (Categories/Offers/HowItWorks view-all) rides in its
+   own column, vertically centred against the eyebrow+title+lede block. */
 export function SectionHead({
   eyebrow, title, subtitle, action, center = false,
 }: {
@@ -59,15 +60,11 @@ export function SectionHead({
   return (
     <div className={"nk-section__top nk-reveal" + (center ? " nk-section__top--center" : "")}>
       <div className={"nk-head" + (center ? " nk-head--center" : "")}>
-        {(eyebrow || action) && (
-          <div className="nk-head__top">
-            {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
-            {action}
-          </div>
-        )}
+        {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
         <h2>{title}</h2>
         {subtitle && <p className="nk-head__sub">{subtitle}</p>}
       </div>
+      {action && <div className="nk-head__action">{action}</div>}
     </div>
   );
 }

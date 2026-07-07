@@ -85,9 +85,6 @@ export type Dict = {
     placeholder: string;
     inputLabel: string; // accessible name for the hero search <input>
     where: string;
-    suggestionsLabel: string; // aria-label for the focus-opened suggestion panel
-    suggestCategories: string; // suggestion-panel section heading (real backend categories)
-    suggestCities: string; // suggestion-panel section heading (picker cities)
     labelWhat: string; // micro-label above the hero search field (mobile) — noun, the question lives in the placeholder
     labelWhere: string; // micro-label above the hero city field (mobile)
     submit: string;
@@ -170,17 +167,14 @@ export type Dict = {
       completedPill: string;
     };
   };
-  // Homepage numbered-stepper band (handoff Option 1a). A renter/owner toggle
-  // swaps the three steps; icons/tones/numbers are component-side constants.
+  // Homepage numbered-stepper band. One fixed, role-neutral set of three steps
+  // that speaks to both renting and lending; icons/tones/numbers are
+  // component-side constants.
   homeSteps: {
     eyebrow: string;
     title: string;
     lead: string;
-    toggleAria: string; // accessible name for the renter/owner role group
-    roles: {
-      renter: { label: string; steps: [HomeStep, HomeStep, HomeStep] };
-      owner: { label: string; steps: [HomeStep, HomeStep, HomeStep] };
-    };
+    steps: [HomeStep, HomeStep, HomeStep];
     ctaLabel: string; // funnel exit into the full /kaip-tai-veikia walkthrough
   };
   cta: {
