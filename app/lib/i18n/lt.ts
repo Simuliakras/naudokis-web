@@ -246,7 +246,6 @@ export const lt: Dict = {
       },
     ],
     browseCta: "Naršyti daiktus",
-    ctaQrHint: "Nuskenuokite telefonu",
     faqEyebrow: "Dar klausimų?",
     faqTitle: "Dažniausi klausimai",
     faq: [
@@ -309,33 +308,55 @@ export const lt: Dict = {
       completedPill: "Užbaigta",
     },
   },
-  // NOTE: reframed from placeholder customer "reviews" to honest, non-attributed
-  // use-case cards (no invented names / stars). Copy is illustrative — review with
-  // marketing before launch.
-  useCases: {
-    eyebrow: "Kasdienė nauda",
-    title: "Naudokitės daugiau. Pirkite mažiau.",
-    items: [
-      {
-        icon: "Camera",
-        tone: "purple",
-        title: "Technika trumpam projektui",
-        body: "Išsinuomokite fotoaparatą, objektyvą ar apšvietimą savaitgaliui, užuot pirkę retai naudojamą įrangą.",
+  homeSteps: {
+    eyebrow: "Kaip tai veikia",
+    title: "Viskas telpa į tris žingsnius",
+    lead: "Nesvarbu, ar nuomojiesi, ar nuomoji — pradedi vos per kelias minutes.",
+    toggleAria: "Pasirink, ar nuomojiesi, ar nuomoji",
+    roles: {
+      renter: {
+        label: "Nuomojuosi",
+        steps: [
+          {
+            kicker: "Paieška",
+            title: "Atrask",
+            body: "Ieškok tarp tūkstančių daiktų šalia ir rask būtent tai, ko reikia.",
+          },
+          {
+            kicker: "Saugu",
+            title: "Rezervuok",
+            body: "Pasirink datas ir rezervuok. Mokėjimas užšaldomas iki sėkmingos nuomos.",
+          },
+          {
+            kicker: "Gatava",
+            title: "Naudokis",
+            body: "Pasiimk, naudokis ir grąžink. Jokių įsipareigojimų, jokių pirkinių.",
+          },
+        ],
       },
-      {
-        icon: "Wrench",
-        tone: "yellow",
-        title: "Įranga, kuri gali uždirbti",
-        body: "Įdarbinkite tarp projektų nenaudojamus įrankius. Mokėjimai, užstatai ir žinutės tvarkomi programėlėje.",
+      owner: {
+        label: "Nuomoju",
+        steps: [
+          {
+            kicker: "Skelbimas",
+            title: "Įkelk",
+            body: "Nufotografuok daiktą ir paskelbk per kelias minutes. Kainą nustatai pats.",
+          },
+          {
+            kicker: "Užsakymas",
+            title: "Priimk",
+            body: "Gauk rezervaciją ir patvirtink. Užstatas saugiai laikomas programėlėje.",
+          },
+          {
+            kicker: "Pelnas",
+            title: "Uždirbk",
+            body: "Perduok daiktą ir gauk pinigus. Nenaudojama technika pradeda uždirbti.",
+          },
+        ],
       },
-      {
-        icon: "Coins",
-        tone: "green",
-        title: "Išbandykite prieš pirkdami",
-        body: "Reikia tik kartą arba norite pirma išbandyti? Raskite daiktą netoliese ir išvenkite nereikalingo pirkinio.",
-      },
-    ],
-    goToSlide: (i) => `Rodyti ${i + 1}-ą pavyzdį`,
+    },
+    ctaLabel: "Peržiūrėti visą procesą",
+    hint: "Kaip veikia nuoma nuo A iki Z — saugumas, mokėjimai, grąžinimas.",
   },
   cta: {
     title: "Raskite internete. Rezervuokite programėlėje.",

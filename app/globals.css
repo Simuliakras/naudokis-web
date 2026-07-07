@@ -88,6 +88,7 @@
   --nk-text:          #FFFFFF;            /* textPrimary                      */
   --nk-text-2:        rgba(255,255,255,0.85);  /* textSecondary             */
   --nk-text-muted:    rgba(255,255,255,0.70);  /* textMuted                 */
+  --nk-text-tertiary: rgba(255,255,255,0.55);  /* dimmest readable text tier on dark (hints) — 5.3:1 on --nk-bg */
   --nk-text-slate:    #455759;   /* placeholder text in light search field   */
   --nk-avatar-icon:   #5b6163;   /* placeholder user glyph on tinted avatars */
 
@@ -226,11 +227,6 @@
   font-weight: 700; font-size: clamp(44px, 7.2vw, 92px); line-height: 1.08;
   color: var(--nk-text); letter-spacing: 0;
   text-wrap: balance; overflow-wrap: anywhere;
-}
-.nk-h-cta {                         /* CTA banner headline (fluid)           */
-  font-family: var(--nk-font-display);
-  font-weight: 700; font-size: clamp(36px, 5.6vw, 80px); line-height: 1.1;
-  color: var(--nk-text); letter-spacing: 0; margin: 0;
 }
 .nk-h-section {                     /* section heading (fluid)               */
   font-family: var(--nk-font-display);
@@ -387,16 +383,6 @@ a,button,input,textarea,select{touch-action:manipulation}
 .nk-imgph::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(145deg, rgba(255,255,255,.055), transparent 42% 62%, rgba(0,0,0,.18))}
 .nk-imgph .nk-imgicon{position:relative;z-index:1}
-.nk-dots{display:flex;align-items:center;gap:8px}
-/* button dots carry their own 18px hit padding, so drop the visual gap */
-.nk-dots:has(.nk-dot--btn){gap:0}
-.nk-dot{width:8px;height:8px;border-radius:50%;background:rgba(249,249,249,.55)}
-.nk-dot--on{background:var(--nk-text);width:9px;height:9px}
-/* keep the 8px visual dot but pad the button to a 44px hit area
-   (background-clip keeps only the content box painted) */
-.nk-dot--btn{box-sizing:content-box;padding:18px;background-clip:content-box;border:none;cursor:pointer;
-  appearance:none;-webkit-appearance:none;transition:transform .18s ease,background .18s ease}
-@media(hover:hover) and (pointer:fine){.nk-dot--btn:hover{transform:scale(1.3);background-color:var(--nk-text)}}
 
 @media(max-width:1024px){
   .nk-logo span{font-size:22px}
@@ -811,8 +797,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-quote::before{content:"\201C";position:absolute;top:6px;right:26px;pointer-events:none;
   font-family:var(--nk-font-display);font-weight:700;font-size:120px;line-height:1;
   color:var(--nk-purple);opacity:.80}
-/* use-case variant: honest social proof, not a quote — drop the quote-mark flourish */
-.nk-quote.nk-usecase::before{content:none}
 
 /* ---- search bar focus ---- */
 .nk-search{transition:box-shadow .2s ease,border-color .2s ease}
@@ -1444,17 +1428,41 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-search .nk-citypick__trigger > .nk-ico:first-child{transform:translateY(7px)}
 }
 
-/* use-case carousel: desktop 3-up like .nk-row; ≤1024px a scroll-snap slider with dots */
-.nk-carousel{display:flex;gap:var(--nk-gap-lg)}
-.nk-carousel > *{flex:1 1 0;min-width:0;display:flex}
-.nk-carousel-dots{display:none}
+/* ---- home "Kaip tai veikia" numbered stepper (handoff Option 1a) ----
+   Three steps on a purple→yellow→green connector line + a renter/owner toggle.
+   The section shell (container width, section-y rhythm) comes from .nk-container;
+   these rules reproduce the handoff's inner composition on the --nk-* tokens. */
+.nk-hiw-head{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;margin-bottom:clamp(34px,3.4vw,46px)}
+.nk-hiw-hl{max-width:600px}
+.nk-hiw-eyebrow{font-family:var(--nk-font-body);font-weight:600;font-size:14px;line-height:1;letter-spacing:.16em;text-transform:uppercase;color:var(--nk-yellow)}
+.nk-hiw-title{font-family:var(--nk-font-display);font-weight:700;font-size:clamp(28px,2.7vw,40px);line-height:1.05;letter-spacing:-.02em;color:var(--nk-text);margin:16px 0 0;max-width:16ch}
+.nk-hiw-lead{font-family:var(--nk-font-body);font-size:16px;line-height:26px;color:var(--nk-text-muted);margin:14px 0 0;max-width:46ch}
+/* role toggle */
+.nk-hiw-tog{position:relative;display:inline-flex;padding:5px;border-radius:999px;background:var(--nk-surface);border:1px solid var(--nk-border);flex:none}
+.nk-hiw-tb{position:relative;z-index:2;padding:11px 24px;border-radius:999px;font-family:var(--nk-font-display);font-weight:700;font-size:15px;color:var(--nk-text-muted);transition:color .25s ease;white-space:nowrap;background:transparent;border:0;cursor:pointer}
+.nk-hiw-tb.is-active{color:#fff}
+.nk-hiw-tb:not(.is-active):hover{color:var(--nk-text)}
+.nk-hiw-thumb{position:absolute;z-index:1;top:5px;bottom:5px;left:5px;width:calc(50% - 5px);border-radius:999px;background:var(--nk-purple);border:1px solid var(--nk-purple-deep);transition:transform .34s cubic-bezier(.2,.8,.2,1)}
+/* track + connector line + grid */
+.nk-hiw-track{position:relative}
+.nk-hiw-line{position:absolute;top:31px;left:31px;right:31px;height:2px;background:linear-gradient(90deg,var(--nk-purple) 0%,var(--nk-yellow) 52%,var(--nk-green) 100%);opacity:.4}
+.nk-hiw-grid{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:34px}
+.nk-hiw-step{display:flex;flex-direction:column;gap:18px}
+.nk-hiw-node{position:relative;z-index:2;width:62px;height:62px;border-radius:31px;background:var(--nk-surface);border:1.5px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center}
+.nk-hiw-idx{display:flex;align-items:center;gap:9px;font-family:var(--nk-font-body);font-size:12.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--nk-text-muted)}
+.nk-hiw-idx b{font-family:var(--nk-font-display);font-weight:700;font-size:15px}
+.nk-hiw-h{font-family:var(--nk-font-display);font-weight:700;font-size:23px;line-height:1.12;color:var(--nk-text);margin:0}
+.nk-hiw-p{font-family:var(--nk-font-body);font-size:15px;line-height:24px;color:var(--nk-text-muted);margin:0;max-width:32ch}
+/* footer CTA + hint */
+.nk-hiw-foot{margin-top:clamp(30px,3vw,44px);display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.nk-hiw-cta{display:inline-flex;align-items:center;gap:14px;text-decoration:none;font-family:var(--nk-font-display);font-weight:700;font-size:16px;color:var(--nk-text)}
+.nk-hiw-cta__a{width:46px;height:46px;border-radius:23px;background:var(--nk-purple);display:flex;align-items:center;justify-content:center;color:#fff;transition:background .18s ease,transform .18s ease}
+.nk-hiw-cta:hover .nk-hiw-cta__a{background:var(--nk-purple-hover);transform:translateX(3px)}
+.nk-hiw-hint{font-family:var(--nk-font-body);font-size:13.5px;color:var(--nk-text-tertiary);max-width:26ch;line-height:1.4}
 @media(max-width:900px){
-  .nk-carousel{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .nk-carousel::-webkit-scrollbar{display:none}
-  .nk-carousel > *{flex:0 0 80%;scroll-snap-align:center}
-  .nk-carousel-dots{display:flex;justify-content:center;margin-top:var(--nk-stack-lg)}
+  .nk-hiw-grid{display:flex;flex-direction:column;gap:16px}
+  .nk-hiw-line{display:none}
 }
-@media(prefers-reduced-motion:reduce){.nk-carousel{scroll-behavior:auto}}
 
 /* hero panel layout (visual skin stays inline in <Hero>) — fluid min-height avoids a forced-tall 2-col on landscape tablets */
 .nk-hero-panel{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,4vw,40px);padding:var(--nk-panel-pad);min-height:clamp(560px,64vw,700px)}
@@ -1492,12 +1500,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   /* stacked hero follows DOM order (badge → headline → body → search → store badges);
      the JSX leads with the value prop, so no `order` remap is needed */
   .nk-detail{grid-template-columns:1fr!important;gap:32px!important}
-  /* CTA banner: drop the absolute phone/QR, switch to a single readable column.
-     Source order is body → badges, so the stack reads promise → ask. */
-  .nk-cta{min-height:0!important}
-  .nk-cta__media{display:none!important}
-  .nk-cta__body{position:static!important;max-width:none!important;padding:48px 32px 0!important}
-  .nk-cta__badges{position:static!important;padding:24px 32px 48px!important}
 }
 @media(min-width:901px) and (max-width:1024px){
   .nk-hero-panel{grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:28px;padding:36px;min-height:clamp(500px,58vw,590px)}
@@ -1511,12 +1513,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-hero-panel .nk-search .nk-citypick,
   .nk-hero-panel .nk-search > span:nth-child(2){display:none!important}
   .nk-hero-panel .nk-search .nk-btn{padding-inline:24px!important}
-  .nk-cta{min-height:560px!important}
-  .nk-cta__media{display:block!important}
-  img.nk-cta__media{right:-28px!important;top:48px!important;height:520px!important;max-width:50%!important;object-fit:contain!important;object-position:center bottom!important;z-index:1}
-  div.nk-cta__media{right:40px!important;bottom:36px!important;z-index:3}
-  .nk-cta__body{position:absolute!important;left:var(--nk-panel-pad)!important;bottom:var(--nk-panel-pad)!important;max-width:min(46%,440px)!important;padding:0!important}
-  .nk-cta__badges{position:absolute!important;left:var(--nk-panel-pad)!important;top:var(--nk-panel-pad)!important;padding:0!important}
 }
 @media(min-width:1025px) and (max-width:1280px){
   /* keep clear air between the copy column and the device bezel */
@@ -1555,7 +1551,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   /* denser left-column rhythm than the desktop --nk-stack-lg gap */
   .nk-hero-panel .nk-hero-intro{gap:12px!important}
   .nk-h-hero{font-size:clamp(32px,9.6vw,38px);line-height:1.03}
-  .nk-h-cta{font-size:clamp(32px,10vw,44px);overflow-wrap:anywhere;text-wrap:balance}
   .nk-hero-badge{max-width:100%;gap:8px!important;padding:5px 12px 5px 5px!important}
   .nk-hero-badge > span:first-child{width:26px!important;height:26px!important}
   .nk-hero-badge__label{font-size:13.5px;line-height:16px}
@@ -1722,32 +1717,17 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .htw-ps-amt span{font-family:var(--nk-font-display);font-weight:700;font-size:34px;color:var(--nk-green)}
 .htw-ps-amt i{font-family:var(--nk-font-body);font-style:normal;font-size:14px;color:var(--nk-text-2)}
 
-/* ---- trust strip ---- */
-.htw-trust{position:relative;overflow:hidden;background:var(--nk-bg-deep)}
-.htw-trust__pattern{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
-.htw-trust__inner{position:relative;padding-block:var(--nk-section-y)}
-.htw-trust__head{display:flex;flex-direction:column;gap:var(--nk-gap-xs);margin-bottom:var(--nk-section-head);max-width:760px}
-.htw-trust__head h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:clamp(30px,4vw,44px);line-height:1.1;color:var(--nk-text)}
-.htw-trust__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--nk-grid-gap)}
-.htw-trust__card{display:flex;gap:var(--nk-gap-xl);align-items:flex-start;padding:clamp(28px,3vw,36px);border-radius:16px;
-  background:var(--nk-glass-strong);backdrop-filter:var(--nk-blur);border:1px solid var(--nk-hairline);
-  transition:transform .28s ease,background .28s ease}
-.htw-trust__card:hover{background:var(--nk-surface-hover-glass)}
-@media(hover:hover) and (pointer:fine){.htw-trust__card:hover{transform:translateY(-4px)}}
-.htw-trust__ico{width:62px;height:62px;border-radius:31px;flex:none;background:var(--nk-surface);
-  display:flex;align-items:center;justify-content:center}
-.htw-trust__card h3{margin:0 0 8px;font-family:var(--nk-font-display);font-weight:700;font-size:23px;line-height:27px;color:var(--nk-text)}
-.htw-trust__card p{margin:0;font-family:var(--nk-font-body);font-size:17px;line-height:27px;color:var(--nk-text-2)}
-
 /* ---- mini-FAQ head ---- */
 .htw-faq{padding-block:var(--nk-section-y-lg);max-width:1280px}
 .htw-faq__head{display:flex;flex-direction:column;gap:var(--nk-gap-xs);align-items:center;text-align:center;margin-bottom:var(--nk-section-head)}
 .htw-faq__head h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:clamp(30px,4vw,44px);line-height:1.1;color:var(--nk-text)}
 .htw-faq__list{display:flex;flex-direction:column;gap:var(--nk-gap-lg)}
 
-/* ---- CTA (gradient) ---- */
-.htw-cta-wrap{padding-block:clamp(20px,3vw,40px) var(--nk-section-y-lg)}
-.htw-cta{position:relative;border-radius:20px;overflow:hidden;min-height:560px;
+/* ---- App-download CTA banner (gradient) ----
+   Shared by the home page and the How-It-Works page (see AppCtaBanner). Overrides
+   for this family live in the breakpoint blocks below, beside the htw- rules. */
+.nk-appcta-wrap{padding-block:clamp(20px,3vw,40px) var(--nk-section-y-lg)}
+.nk-appcta{position:relative;border-radius:20px;overflow:hidden;min-height:560px;
   border:1px solid var(--nk-border-strong);
   background:
     radial-gradient(680px 680px at -6% -18%, var(--nk-glow-purple), transparent 66%),
@@ -1756,18 +1736,19 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
     linear-gradient(120deg, color-mix(in srgb, var(--nk-purple) 12%, transparent) 0%, transparent 58%),
     linear-gradient(180deg, rgba(0,0,0,0) 46%, rgba(0,0,0,0.30) 100%),
     linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)}
-.htw-cta__phone{position:absolute;right:0;top:-46px;height:620px;width:auto;max-width:50%;object-fit:cover;
+.nk-appcta__phone{position:absolute;right:-20px;top:24px;height:620px;width:auto;max-width:50%;object-fit:cover;
   object-position:left top;filter:var(--nk-shadow-phone-cta)}
-.htw-cta__badges{margin-top:4px}
-.htw-cta__copy{position:absolute;left:var(--nk-panel-pad);bottom:var(--nk-panel-pad);max-width:min(720px,50%);display:flex;flex-direction:column;gap:18px}
-.htw-cta__copy h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:clamp(36px,5.4vw,56px);line-height:1.1;letter-spacing:0;color:var(--nk-text);text-wrap:balance}
-.htw-cta__copy p{margin:0;max-width:600px;font-family:var(--nk-font-body);font-size:20px;line-height:32px;color:var(--nk-text-muted)}
-.htw-cta__qr{position:absolute;right:72px;bottom:var(--nk-panel-pad);display:flex;flex-direction:column;align-items:center;gap:10px}
-.htw-cta__qrhint{font-family:var(--nk-font-display);font-weight:600;font-size:14px;color:var(--nk-text-muted);text-align:center}
-.htw-cta__spark span{position:absolute;width:12px;height:12px;border-radius:50%}
-.htw-cta__spark span:nth-child(1){background:var(--nk-yellow)}
-.htw-cta__spark span:nth-child(2){background:var(--nk-purple-deep)}
-.htw-cta__spark span:nth-child(3){background:var(--nk-light-field);width:9px;height:9px}
+.nk-appcta__badges{margin-top:4px}
+.nk-appcta__copy{position:absolute;left:var(--nk-panel-pad);top:50%;transform:translateY(-50%);max-width:min(720px,50%);display:flex;flex-direction:column;gap:18px}
+.nk-appcta__copy h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:clamp(36px,5.4vw,56px);line-height:1.1;letter-spacing:0;color:var(--nk-text);text-wrap:balance}
+.nk-appcta__copy p{margin:0;max-width:600px;font-family:var(--nk-font-body);font-size:20px;line-height:32px;color:var(--nk-text-muted)}
+.nk-appcta__qr{position:absolute;right:72px;bottom:calc(var(--nk-panel-pad) - 20px);display:flex;flex-direction:column;align-items:center;gap:10px}
+.nk-appcta__spark span{position:absolute;border-radius:50%}
+.nk-appcta__spark span:nth-child(1){width:13px;height:13px;background:var(--nk-yellow)}
+.nk-appcta__spark span:nth-child(2){width:10px;height:10px;background:var(--nk-purple-deep)}
+.nk-appcta__spark span:nth-child(3){width:8px;height:8px;background:var(--nk-green)}
+.nk-appcta__spark span:nth-child(4){width:6px;height:6px;background:rgba(255,255,255,.32)}
+.nk-appcta__spark span:nth-child(5){width:7px;height:7px;background:var(--nk-yellow)}
 
 @media(max-width:1120px){
   .htw-grid{grid-template-columns:1fr;gap:54px}
@@ -1783,21 +1764,17 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .htw-phone--inline .htw-ps-cta{font-size:13.5px;padding:12px 8px;white-space:nowrap}
   /* CTA: no ghost phone — go straight to the readable stacked panel, keep the scan
      path (users scan with a second phone on tablet; badges are the path on phones). */
-  .htw-cta{min-height:0;display:flex;flex-direction:column;gap:28px;padding:var(--nk-panel-pad)}
-  .htw-cta__phone{display:none}
-  .htw-cta__spark{display:none}
-  .htw-cta__copy{position:static;left:auto;bottom:auto;max-width:none;order:1}
-  .htw-cta__qr{position:static;right:auto;bottom:auto;order:2;display:flex;align-items:flex-start}
-}
-/* trust: 3-up down to 1024, then single full-width rows (no orphaned 2+1 at 1280) */
-@media(max-width:1024px){
-  .htw-trust__grid{grid-template-columns:1fr}
+  .nk-appcta{min-height:0;display:flex;flex-direction:column;gap:28px;padding:var(--nk-panel-pad)}
+  .nk-appcta__phone{display:none}
+  .nk-appcta__spark{display:none}
+  .nk-appcta__copy{position:static;left:auto;top:auto;transform:none;bottom:auto;max-width:none;order:1}
+  .nk-appcta__qr{position:static;right:auto;bottom:auto;order:2;display:flex;align-items:flex-start}
 }
 @media(max-width:768px){
   .htw-step__num{width:54px;height:54px;font-size:20px}
   .htw-list::before,.htw-list__fill{left:26px}
   .htw-step__top h3{font-size:22px}
-  .htw-cta__qr{display:none}   /* on a phone you can't scan your own screen — badges deep-link */
+  .nk-appcta__qr{display:none}   /* on a phone you can't scan your own screen — badges deep-link */
 }
 @media(max-width:560px){
   .htw-toggle__btn{padding:13px 24px;font-size:16px}
@@ -1808,8 +1785,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .htw-toggle__btn{flex:1;min-width:0;padding-inline:10px;font-size:15px}
   .htw-step{padding-right:0;gap:var(--nk-gap-md)}
   .htw-step__top{gap:var(--nk-gap-xs)}
-  .htw-trust__grid{width:100%;max-width:calc(100vw - 40px)}
-  .htw-trust__card{padding:22px}
 }
 
 /* ============================================================
@@ -1862,7 +1837,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    rule near the top of this file, and the reveal runs on a compositor-only
    view() timeline, so there is nothing extra to disable here.) */
 @media(max-width:560px){
-  .nk-hero-panel,.nk-feature,.htw-trust__card{
+  .nk-hero-panel,.nk-feature{
     backdrop-filter:none;
     -webkit-backdrop-filter:none;
   }

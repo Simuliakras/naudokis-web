@@ -26,14 +26,13 @@ import {
   OfferCard,
   OfferCardSkeleton,
   SectionEmptyGrid,
-  UseCaseCard,
 } from "./cards";
 import { useI18n } from "./I18nProvider";
 import {
   closeListbox,
-  Dots,
   focusListboxSelection,
   Icon,
+  IconName,
   listboxKeyNav,
   listboxTriggerKeyNav,
   Logo,
@@ -641,78 +640,95 @@ export function Offers() {
   );
 }
 
-/* ---------------- Use cases ----------------
-   Desktop shows all use-case cards 3-up; ≤1024px becomes a scroll-snap slider
-   with navigation dots. The active dot tracks the real scroll position via an
-   IntersectionObserver (same idiom as ScrollReveal). */
-export function UseCases() {
-  const { dict } = useI18n();
-  const t = dict.useCases;
-  const items = t.items;
-  const [active, setActive] = useState(0);
-  const trackRef = useRef<HTMLDivElement>(null);
+/* ---------------- How it works (numbered stepper) ----------------
+   Handoff Option 1a: three steps on a purple→yellow→green connector line, with a
+   renter/owner segmented toggle that swaps the steps. Icons and the step number
+   are positional design constants; the dictionary carries the copy only. */
+type StepRole = "renter" | "owner";
 
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) {
-      return;
-    }
-    const slides = Array.from(
-      track.querySelectorAll<HTMLElement>("[data-idx]"),
-    );
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const idx = Number((entry.target as HTMLElement).dataset.idx);
-            if (!Number.isNaN(idx)) {
-              setActive(idx);
-            }
-          }
-        }
-      },
-      { root: track, threshold: 0.6 },
-    );
-    slides.forEach((slide) => observer.observe(slide));
-    return () => observer.disconnect();
-  }, [items.length]);
+// Per-step accent, positional: each index maps to the matching stop on the
+// connector-line gradient (purple → yellow → green).
+const STEP_ACCENTS = ["var(--nk-purple-hover)", "var(--nk-yellow)", "var(--nk-green)"] as const;
 
-  const goTo = (i: number) => {
-    const slide = trackRef.current?.querySelector<HTMLElement>(
-      `[data-idx="${i}"]`,
-    );
-    slide?.scrollIntoView({
-      inline: "nearest",
-      block: "nearest",
-      behavior: prefersReducedMotion() ? "auto" : "smooth",
-    });
-  };
+// Per-role icons, positional (mirror the handoff SVGs step-for-step).
+const STEP_ICONS: Record<StepRole, [IconName, IconName, IconName]> = {
+  renter: ["Search", "ShieldCheck", "Package"],
+  owner: ["Camera", "BadgeCheck", "Euro"],
+};
+
+export function HowItWorks() {
+  const { locale, dict } = useI18n();
+  const t = dict.homeSteps;
+  const [role, setRole] = useState<StepRole>("renter");
+  const steps = t.roles[role].steps;
+  const icons = STEP_ICONS[role];
 
   return (
     <section
       className="nk-container"
       style={{ paddingBlock: "var(--nk-section-y)" }}
     >
-      <SectionHead eyebrow={t.eyebrow} title={t.title} />
-      <div ref={trackRef} className="nk-reveal nk-carousel">
-        {items.map((item, i) => (
-          <div key={item.title} data-idx={i}>
-            <UseCaseCard
-              icon={item.icon}
-              title={item.title}
-              body={item.body}
-              tone={item.tone}
-            />
-          </div>
-        ))}
+      <div className="nk-hiw-head nk-reveal">
+        <div className="nk-hiw-hl">
+          <span className="nk-hiw-eyebrow">{t.eyebrow}</span>
+          <h2 className="nk-hiw-title">{t.title}</h2>
+          <p className="nk-hiw-lead">{t.lead}</p>
+        </div>
+        <div className="nk-hiw-tog" role="group" aria-label={t.toggleAria}>
+          <span
+            className="nk-hiw-thumb"
+            aria-hidden="true"
+            style={{ transform: role === "owner" ? "translateX(100%)" : "none" }}
+          />
+          {(["renter", "owner"] as StepRole[]).map((r) => (
+            <button
+              key={r}
+              type="button"
+              className={"nk-hiw-tb" + (role === r ? " is-active" : "")}
+              aria-pressed={role === r}
+              onClick={() => setRole(r)}
+            >
+              {t.roles[r].label}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="nk-carousel-dots">
-        <Dots
-          n={items.length}
-          active={active}
-          onSelect={goTo}
-          label={t.goToSlide}
-        />
+
+      <div className="nk-hiw-track nk-reveal">
+        <span className="nk-hiw-line" aria-hidden="true" />
+        <div className="nk-hiw-grid">
+          {steps.map((step, i) => (
+            <div key={step.title} className="nk-hiw-step">
+              <span className="nk-hiw-node">
+                <Icon
+                  name={icons[i]}
+                  size={26}
+                  stroke={2}
+                  color={STEP_ACCENTS[i]}
+                />
+              </span>
+              <span className="nk-hiw-idx">
+                <b style={{ color: STEP_ACCENTS[i] }}>{`0${i + 1}`}</b>
+                {step.kicker}
+              </span>
+              <h3 className="nk-hiw-h">{step.title}</h3>
+              <p className="nk-hiw-p">{step.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="nk-hiw-foot nk-reveal">
+        <Link
+          className="nk-hiw-cta"
+          href={localePath(locale, "/kaip-tai-veikia")}
+        >
+          <span>{t.ctaLabel}</span>
+          <span className="nk-hiw-cta__a" aria-hidden="true">
+            <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
+          </span>
+        </Link>
+        <span className="nk-hiw-hint">{t.hint}</span>
       </div>
     </section>
   );

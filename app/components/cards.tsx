@@ -7,7 +7,6 @@ import { Icon, IconName, IllusName, Illustration, Pill, openRedirect, Pattern } 
 import { useI18n } from "./I18nProvider";
 import { trackEvent } from "@/app/lib/analytics";
 import { formatLocation } from "@/app/lib/listings";
-import type { UseCaseItem } from "@/app/lib/i18n/types";
 
 /* ---------------- Offer / listing card ----------------
    Final design: price hierarchy + hairline divider, locked favorite (opens the
@@ -158,32 +157,6 @@ export function InterruptionBanner() {
         <Icon name="Download" size={17} stroke={2.2} color="var(--nk-text)" />{" "}
         {t.interruptCta}
       </button>
-    </div>
-  );
-}
-
-/* ---------------- Use-case card ----------------
-   Honest social proof: a tinted icon disk + scenario title + supporting line.
-   Deliberately NOT a named, star-rated "review" (those were placeholder copy —
-   see the design audit). Reuses the glass `.nk-quote` skin; `.nk-usecase`
-   suppresses its decorative quote-mark. */
-const USECASE_TONES: Record<UseCaseItem["tone"], { bg: string; fg: string }> = {
-  purple: { bg: "var(--nk-purple-tag)", fg: "var(--nk-purple-hover)" },
-  yellow: { bg: "var(--nk-yellow-tint)", fg: "var(--nk-yellow)" },
-  green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green)" },
-};
-
-export function UseCaseCard({ icon, title, body, tone }: UseCaseItem) {
-  const c = USECASE_TONES[tone];
-  return (
-    <div className="nk-quote nk-usecase" style={{ flex: 1, borderRadius: "var(--nk-r-md)", padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)" }}>
-      <span style={{ width: "var(--nk-size-icon-lg)", height: "var(--nk-size-icon-lg)", borderRadius: "50%", flex: "none", background: c.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Icon name={icon} size={32} color={c.fg} stroke={2} />
-      </span>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)" }}>
-        <h3 className="nk-h-row" style={{ margin: 0 }}>{title}</h3>
-        <p className="nk-body" style={{ margin: 0 }}>{body}</p>
-      </div>
     </div>
   );
 }

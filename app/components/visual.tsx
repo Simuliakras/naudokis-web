@@ -3,10 +3,10 @@ import Link from "next/link";
 import type React from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUp, ArrowUpDown, Baby, BadgeCheck, Calendar, Camera, Car,
-  ChevronDown, ChevronRight, Coins, CreditCard, Download, Dumbbell, Expand, Flag, Globe,
+  ChevronDown, ChevronRight, Coins, CreditCard, Download, Dumbbell, Euro, Expand, Flag, Globe,
   Handshake, Heart, HeartPulse,
   Home, Image as ImageIcon, ImageOff, Inbox, Info, Laptop, LayoutGrid, LoaderCircle, type LucideIcon, Mail,
-  MapPin, Menu, MessageCircle, MoreHorizontal, PartyPopper, Phone, RefreshCcw, ScrollText, Search,
+  MapPin, Menu, MessageCircle, MoreHorizontal, Package, PartyPopper, Phone, RefreshCcw, ScrollText, Search,
   SearchX, Share2, ShieldCheck, Shirt, SlidersHorizontal, Smartphone, Sparkles,
   Speaker, Star, Tag, Truck, User, Users, Wrench, X,
 } from "lucide-react";
@@ -51,7 +51,7 @@ const ICONS = {
   Laptop: lucide(Laptop), Dumbbell: lucide(Dumbbell), HeartPulse: lucide(HeartPulse),
   Truck: lucide(Truck), LoaderCircle: lucide(LoaderCircle), ImageOff: lucide(ImageOff),
   CreditCard: lucide(CreditCard), ScrollText: lucide(ScrollText), Globe: lucide(Globe),
-  Flag: lucide(Flag), Expand: lucide(Expand),
+  Flag: lucide(Flag), Expand: lucide(Expand), Package: lucide(Package), Euro: lucide(Euro),
 
   // Inline glyphs Lucide can't supply (brand marks + the solid Play triangle).
   Play:      glyph({ f: "M6 3v18l15-9z" }),

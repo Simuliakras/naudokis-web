@@ -20,10 +20,11 @@ export type HtwTrust = { icon: IconName; title: string; body: string };
 export type FooterLink = { label: string; href: string };
 // A footer category link: localized display `label` + stable backend category id.
 export type FooterCategory = { label: string; categoryId: string };
-// Homepage social-proof band: honest, non-attributed use-case cards (icon disk +
-// scenario title + supporting line). Deliberately NOT framed as named, star-rated
-// customer reviews — see the testimonials reframe note in the design audit.
-export type UseCaseItem = { icon: IconName; title: string; body: string; tone: HtwTone };
+// Homepage "Kaip tai veikia" numbered-stepper band (handoff Option 1a). One step
+// = an uppercase kicker word + heading + supporting line. The icon, tone and step
+// number are positional design constants held in the component, so the dictionary
+// carries strings only.
+export type HomeStep = { kicker: string; title: string; body: string };
 
 // Legal Policy Center — UI chrome strings only. The document content itself
 // comes from app/lib/legal/data/*.json, not the dictionaries.
@@ -146,7 +147,6 @@ export type Dict = {
     trustTitle: string;
     trust: [HtwTrust, HtwTrust, HtwTrust];
     browseCta: string; // mid-funnel exit into the live inventory ("Browse items")
-    ctaQrHint: string; // caption under the CTA-banner QR ("Scan with your phone")
     faqEyebrow: string;
     faqTitle: string;
     faq: FaqItem[]; // renter-slanted questions (shown for the renter role)
@@ -169,11 +169,19 @@ export type Dict = {
       completedPill: string;
     };
   };
-  useCases: {
+  // Homepage numbered-stepper band (handoff Option 1a). A renter/owner toggle
+  // swaps the three steps; icons/tones/numbers are component-side constants.
+  homeSteps: {
     eyebrow: string;
     title: string;
-    items: [UseCaseItem, UseCaseItem, UseCaseItem];
-    goToSlide: (index: number) => string; // aria-label for carousel dot (0-based index)
+    lead: string;
+    toggleAria: string; // accessible name for the renter/owner role group
+    roles: {
+      renter: { label: string; steps: [HomeStep, HomeStep, HomeStep] };
+      owner: { label: string; steps: [HomeStep, HomeStep, HomeStep] };
+    };
+    ctaLabel: string; // funnel exit into the full /kaip-tai-veikia walkthrough
+    hint: string; // supporting line beside the CTA
   };
   cta: {
     title: string;

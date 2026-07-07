@@ -49,35 +49,6 @@ export function SectionHead({
   );
 }
 
-/* ---------------- Dots ---------------- */
-// Decorative by default; pass `onSelect` to make each dot a focusable nav button.
-export function Dots({
-  n = 4, active = 0, onSelect, label,
-}: {
-  n?: number;
-  active?: number;
-  onSelect?: (i: number) => void;
-  label?: (i: number) => string;
-}) {
-  if (onSelect) {
-    return (
-      <div className="nk-dots">
-        {Array.from({ length: n }).map((_, i) => (
-          <button key={i} type="button" onClick={() => onSelect(i)} aria-label={label?.(i)}
-            aria-current={i === active} className={"nk-dot nk-dot--btn" + (i === active ? " nk-dot--on" : "")} />
-        ))}
-      </div>
-    );
-  }
-  return (
-    <div className="nk-dots">
-      {Array.from({ length: n }).map((_, i) => (
-        <span key={i} className={"nk-dot" + (i === active ? " nk-dot--on" : "")} />
-      ))}
-    </div>
-  );
-}
-
 /* ---------------- App-store badges ----------------
    Each badge links straight to its store listing (apple → App Store, google →
    Play). `interactive={false}` renders a plain image for the rare context where

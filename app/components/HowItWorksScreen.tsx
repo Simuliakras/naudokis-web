@@ -4,14 +4,15 @@
 // mock-up, a trust strip, a mini-FAQ and the green app-download CTA. Ported from
 // the design bundle's kaip-tai-veikia prototype to the nk- design system.
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { FaqRow } from "./cards";
-import { Icon, AppBadges, Breadcrumb, QR, Pattern, type IconName } from "./ui";
+import { AppCtaBanner } from "./AppCtaBanner";
+import { FeatureBand } from "./FeatureBand";
+import { Icon, AppBadges, Breadcrumb, Pattern, type IconName } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { localePath } from "@/app/lib/i18n/config";
 import type { HtwScreen, HtwStep } from "@/app/lib/i18n/types";
@@ -118,51 +119,10 @@ export function HowItWorksScreen() {
           </section>
 
           {/* TRUST STRIP */}
-          <section className="htw-trust">
-            <Pattern name="section-pattern" className="htw-trust__pattern nk-brand-pattern" />
-            <div className="nk-container htw-trust__inner">
-              <div className="htw-trust__head nk-reveal">
-                <span className="nk-eyebrow">{t.trustEyebrow}</span>
-                <h2>{t.trustTitle}</h2>
-              </div>
-              <div className="htw-trust__grid nk-reveal">
-                {t.trust.map((c) => (
-                  <div key={c.title} className="htw-trust__card">
-                    <span className="htw-trust__ico"><Icon name={c.icon} size={30} color="var(--nk-yellow)" stroke={1.8} /></span>
-                    <div>
-                      <h3>{c.title}</h3>
-                      <p>{c.body}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+          <FeatureBand eyebrow={t.trustEyebrow} title={t.trustTitle} items={t.trust} />
 
           {/* CTA (green) */}
-          <section className="nk-container htw-cta-wrap">
-            <div className="htw-cta nk-reveal nk-grain">
-              <Image className="htw-cta__phone" src="/naudokis/download-phone.png" alt={t.ctaPhoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" />
-              <div className="htw-cta__spark" aria-hidden="true">
-                <span style={{ left: "46%", top: "18%" }} /><span style={{ left: "58%", top: "30%" }} /><span style={{ left: "40%", top: "40%" }} />
-              </div>
-              {/* copy leads, actions follow (badges live INSIDE the copy column so
-                  desktop reads headline → body → install, never action-first) */}
-              <div className="htw-cta__copy">
-                <h2>{data.ctaTitle}</h2>
-                <p>{data.ctaBody}</p>
-                <div className="htw-cta__badges"><AppBadges height={50} placement="hiw_cta" /></div>
-                <Link href={localePath(locale, "/skelbimai")}
-                  style={{ display: "inline-flex", alignItems: "center", gap: 7, width: "fit-content", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, color: "var(--nk-text-2)", textDecoration: "underline", textUnderlineOffset: 3 }}>
-                  {t.browseCta} <Icon name="ArrowRight" size={15} stroke={2} color="currentColor" />
-                </Link>
-              </div>
-              <div className="htw-cta__qr">
-                <QR size={180} />
-                <span className="htw-cta__qrhint">{t.ctaQrHint}</span>
-              </div>
-            </div>
-          </section>
+          <AppCtaBanner title={data.ctaTitle} body={data.ctaBody} phoneAlt={t.ctaPhoneAlt} placement="hiw_cta" />
 
           {/* MINI-FAQ */}
           <section className="nk-container htw-faq" id="duk">

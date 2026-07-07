@@ -222,7 +222,6 @@ export const en: Dict = {
       },
     ],
     browseCta: "Browse items",
-    ctaQrHint: "Scan with your phone",
     faqEyebrow: "More questions?",
     faqTitle: "Common questions",
     faq: [
@@ -281,33 +280,56 @@ export const en: Dict = {
       completedPill: "Completed",
     },
   },
-  // NOTE: reframed from placeholder customer "reviews" to honest, non-attributed
-  // use-case cards (no invented names / stars). Copy is illustrative — review with
-  // marketing before launch.
-  useCases: {
-    eyebrow: "Everyday uses",
-    title: "Use more. Own less.",
-    items: [
-      {
-        icon: "Camera",
-        tone: "purple",
-        title: "Gear for a short project",
-        body: "Rent a camera, lens or light kit for the weekend instead of buying equipment you rarely use.",
+  // Copy is illustrative — review with marketing before launch.
+  homeSteps: {
+    eyebrow: "How it works",
+    title: "It all comes down to three steps",
+    lead: "Whether you're renting or lending, you're set up in just a few minutes.",
+    toggleAria: "Choose whether you're renting or lending",
+    roles: {
+      renter: {
+        label: "Renting",
+        steps: [
+          {
+            kicker: "Search",
+            title: "Discover",
+            body: "Search thousands of items nearby and find exactly what you need.",
+          },
+          {
+            kicker: "Secure",
+            title: "Reserve",
+            body: "Pick your dates and reserve. Payment is held until the rental goes through.",
+          },
+          {
+            kicker: "Ready",
+            title: "Use it",
+            body: "Pick it up, use it and return it. No commitments, no purchases.",
+          },
+        ],
       },
-      {
-        icon: "Wrench",
-        tone: "yellow",
-        title: "Tools that can earn",
-        body: "Put idle tools to work between projects. Payments, deposits and messages are handled in the app.",
+      owner: {
+        label: "Lending",
+        steps: [
+          {
+            kicker: "Listing",
+            title: "List it",
+            body: "Photograph your item and list it in minutes. You set the price.",
+          },
+          {
+            kicker: "Request",
+            title: "Accept",
+            body: "Get a booking and confirm it. The deposit is held safely in the app.",
+          },
+          {
+            kicker: "Payout",
+            title: "Earn",
+            body: "Hand over the item and get paid. Idle gear starts earning.",
+          },
+        ],
       },
-      {
-        icon: "Coins",
-        tone: "green",
-        title: "Rent before you buy",
-        body: "Need something once or want to test it first? Find one nearby and avoid a purchase you may not need.",
-      },
-    ],
-    goToSlide: (i) => `Show example ${i + 1}`,
+    },
+    ctaLabel: "See the whole process",
+    hint: "How renting works from A to Z — safety, payments, returns.",
   },
   cta: {
     title: "Find it online. Reserve it in the app.",

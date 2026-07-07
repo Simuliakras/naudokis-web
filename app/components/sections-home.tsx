@@ -6,12 +6,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Icon, type IconName, LogoMark, QR, Pattern,
+  Icon, LogoMark, QR, Pattern,
 } from "./visual";
 import {
-  AppBadges, SectionHead,
+  AppBadges,
 } from "./ui";
 import { SearchBar, HeroOwnerCta } from "./HeroSearch";
+import { AppCtaBanner } from "./AppCtaBanner";
+import { FeatureBand } from "./FeatureBand";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, SOCIAL_PROFILES } from "@/app/lib/contact";
 import { LT_CITIES } from "@/app/lib/cities";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
@@ -29,7 +31,7 @@ export function Hero({ locale }: { locale: Locale }) {
         {/* grid columns / padding / min-height live on .nk-hero-panel in globals.css
             so the 980px stack doesn't need !important overrides */}
         <div className="nk-hero-panel nk-grain nk-gborder" style={{ position: "relative", borderRadius: "var(--nk-r-lg)", background: "var(--nk-glass)", backdropFilter: "blur(35px)" }}>
-          <AmbientGlow variant="hero" />
+          <AmbientGlow />
           {/* left column */}
           <div className="nk-hero-intro" style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", gap: "var(--nk-stack-lg)", justifyContent: "center", maxWidth: "min(100%, 680px)" }}>
             <span className="nk-hero-badge" style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: "var(--nk-r-pill)", padding: "6px 18px 6px 6px", boxShadow: "var(--nk-edge-top)" }}>
@@ -60,101 +62,33 @@ export function Hero({ locale }: { locale: Locale }) {
   );
 }
 
-/* ---------------- Features band ---------------- */
+/* ---------------- Features band ----------------
+   Shared trust-features band (see FeatureBand); the home page keeps its own
+   dict.features copy. */
 export function Features({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
-  return (
-    <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
-      <Pattern name="section-pattern" className="nk-brand-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-      <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y-lg)" }}>
-        {/* the page's strongest trust content gets the sitewide eyebrow+H2 anatomy
-            instead of floating unlabelled */}
-        <SectionHead eyebrow={dict.featuresHead.eyebrow} title={dict.featuresHead.title} />
-        <div className="nk-row">
-          {dict.features.map((f) => <FeatureCard key={f.title} {...f} className="nk-reveal" />)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FeatureCard({
-  icon = "ShieldCheck", title, body, className,
-}: {
-  icon?: IconName;
-  title: string;
-  body: string;
-  className?: string;
-}) {
-  return (
-    <div className={className ? `nk-feature ${className}` : "nk-feature"} style={{
-      flex: 1, borderRadius: "var(--nk-r-card)", background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", WebkitBackdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-1)",
-      padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-stack-lg)", textAlign: "center",
-    }}>
-      <span style={{ width: "var(--nk-size-icon-lg)", height: "var(--nk-size-icon-lg)", borderRadius: "50%", background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Icon name={icon} size={36} color="var(--nk-yellow)" stroke={2} />
-      </span>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
-        {/* reserve ~2 lines so a card whose title wraps to 3 lines doesn't push its
-            body below the neighbours' — flex-start keeps 1-line titles on the SAME
-            first baseline as 2-line neighbours (centred slots jogged up-down-up) */}
-        <h3 className="nk-h-card" style={{ margin: 0, minHeight: "2.3em", display: "flex", alignItems: "flex-start", justifyContent: "center" }}>{title}</h3>
-        <p className="nk-body" style={{ margin: 0 }}>{body}</p>
-      </div>
-    </div>
-  );
+  return <FeatureBand eyebrow={dict.featuresHead.eyebrow} title={dict.featuresHead.title} items={dict.features} />;
 }
 
 /* ---------------- CTA banner ----------------
-   Background ported from the design's AiGenerateHeroPanel: a diagonal brand
-   gradient (cardGradient → near-black) with an ambient glow + hairline border
-   and a sparkle eyebrow pill — replaces the old flat-green fill + X confetti. */
+   App-download banner shared with the "Kaip tai veikia" page (see AppCtaBanner);
+   the home page keeps its own dict.cta copy. */
 export function CtaBanner({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
-  return (
-    <section className="nk-container" style={{ paddingBlock: "var(--nk-section-y-lg)" }}>
-      <div className="nk-reveal nk-cta nk-grain nk-gborder" style={{ position: "relative", borderRadius: "var(--nk-r-lg)", overflow: "hidden", minHeight: 620, background: "linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%)" }}>
-        <AmbientGlow variant="cta" />
-        {/* phone bleeding from the top, filling the right half down to the bottom edge */}
-        <Image className="nk-cta__media" src="/naudokis/download-phone.png" alt={dict.cta.phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" style={{ position: "absolute", right: 0, top: -56, height: 680, width: "auto", maxWidth: "52%", objectFit: "cover", objectPosition: "left top", filter: "var(--nk-shadow-phone-cta)" }} />
-        {/* badges AFTER the body in source order — the stacked ≤900px layout must
-            read promise → ask, never action-first (desktop keeps them positioned) */}
-        <div className="nk-cta__body" style={{ position: "absolute", left: "var(--nk-panel-pad)", bottom: "var(--nk-panel-pad)", maxWidth: 808, display: "flex", flexDirection: "column", gap: "var(--nk-gap-lg)" }}>
-          <h2 className="nk-h-cta">{dict.cta.title}</h2>
-          <p style={{ margin: 0, maxWidth: 640, fontFamily: "var(--nk-font-body)", fontSize: 20, lineHeight: "32px", color: "var(--nk-text-muted)" }}>{dict.cta.body}</p>
-        </div>
-        <div className="nk-cta__badges" style={{ position: "absolute", left: "var(--nk-panel-pad)", top: "var(--nk-panel-pad)" }}><AppBadges /></div>
-        {/* right:36 keeps the QR card in the bezel zone, clear of the app icon +
-            wordmark the phone artwork is showcasing */}
-        <div className="nk-cta__media" style={{ position: "absolute", right: 36, bottom: "var(--nk-panel-pad)" }}><QR size={160} /></div>
-      </div>
-    </section>
-  );
+  return <AppCtaBanner title={dict.cta.title} body={dict.cta.body} phoneAlt={dict.cta.phoneAlt} placement="home_cta" />;
 }
 
-/* Ambient glow layer — purple + yellow radial glows, a diagonal sheen and a
-   vignette. The "cta" variant keys the glow to the bottom-left copy; the "hero"
-   variant concentrates it behind the device on the right so the phone pops.
-   The wrapper is clipped to the panel's rounded rect (the phone itself
-   overflows it as a later sibling). */
-function AmbientGlow({ variant }: { variant: "cta" | "hero" }) {
-  if (variant === "hero") {
-    return (
-      <div style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", borderRadius: "inherit" }}>
-        <div style={{ position: "absolute", top: "50%", right: "-10%", width: 720, height: 720, borderRadius: "50%", transform: "translateY(-50%)", background: "radial-gradient(circle, var(--nk-glow-purple) 0%, transparent 66%)" }} />
-        <div style={{ position: "absolute", top: "-14%", right: "8%", width: 520, height: 520, borderRadius: "50%", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-purple-hover) 26%, transparent) 0%, transparent 70%)" }} />
-        <div style={{ position: "absolute", bottom: "-8%", right: "14%", width: 380, height: 380, borderRadius: "50%", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-yellow) 14%, transparent) 0%, transparent 64%)" }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(120deg, color-mix(in srgb, var(--nk-purple) 10%, transparent) 0%, transparent 52%)" }} />
-      </div>
-    );
-  }
+/* Ambient glow layer for the hero panel — purple + yellow radial glows and a
+   diagonal sheen, concentrated behind the device on the right so the phone pops.
+   The wrapper is clipped to the panel's rounded rect (the phone itself overflows
+   it as a later sibling). */
+function AmbientGlow() {
   return (
     <div style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", borderRadius: "inherit" }}>
-      <div style={{ position: "absolute", top: "-16%", left: "-8%", width: 680, height: 680, borderRadius: "50%", background: "radial-gradient(circle, var(--nk-glow-purple) 0%, transparent 68%)" }} />
-      <div style={{ position: "absolute", top: "6%", right: "16%", width: 620, height: 620, borderRadius: "50%", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-purple-hover) 30%, transparent) 0%, transparent 70%)" }} />
-      <div style={{ position: "absolute", top: "44%", right: "3%", width: 420, height: 420, borderRadius: "50%", transform: "translateY(-50%)", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-yellow) 16%, transparent) 0%, transparent 66%)" }} />
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(120deg, color-mix(in srgb, var(--nk-purple) 12%, transparent) 0%, transparent 58%)" }} />
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 46%, rgba(0,0,0,0.30) 100%)" }} />
+      <div style={{ position: "absolute", top: "50%", right: "-10%", width: 720, height: 720, borderRadius: "50%", transform: "translateY(-50%)", background: "radial-gradient(circle, var(--nk-glow-purple) 0%, transparent 66%)" }} />
+      <div style={{ position: "absolute", top: "-14%", right: "8%", width: 520, height: 520, borderRadius: "50%", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-purple-hover) 26%, transparent) 0%, transparent 70%)" }} />
+      <div style={{ position: "absolute", bottom: "-8%", right: "14%", width: 380, height: 380, borderRadius: "50%", background: "radial-gradient(circle, color-mix(in srgb, var(--nk-yellow) 14%, transparent) 0%, transparent 64%)" }} />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(120deg, color-mix(in srgb, var(--nk-purple) 10%, transparent) 0%, transparent 52%)" }} />
     </div>
   );
 }
