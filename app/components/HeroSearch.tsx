@@ -27,8 +27,8 @@ export function HeroOwnerCta() {
   return (
     <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--nk-gap-2xs) var(--nk-gap-sm)" }}>
       <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>{dict.hero.ownerPrompt}</span>
-      <button type="button" onClick={() => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody })}
-        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "transparent", padding: "10px 0", minHeight: "var(--nk-tap)", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-bright)", cursor: "pointer" }}>
+      <button type="button" className="nk-cats-all" onClick={() => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody })}
+        style={{ background: "transparent", padding: "10px 0", minHeight: "var(--nk-tap)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-bright)", cursor: "pointer", gap: 6 }}>
         {dict.hero.ownerCta}
         <Icon name="ArrowRight" size={16} stroke={2.2} color="currentColor" />
       </button>

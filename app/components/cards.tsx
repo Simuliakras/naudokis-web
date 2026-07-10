@@ -9,10 +9,12 @@ import { trackEvent } from "@/app/lib/analytics";
 import { formatLocation } from "@/app/lib/listings";
 
 /* ---------------- Offer / listing card ----------------
-   Final design: price hierarchy + hairline divider, locked favorite (opens the
-   app modal), and a stretched <Link> covering the card for real navigation. */
+   "Aperture" 2026 design: photo-forward 4:3 frame, a category eyebrow for scent,
+   location on its own line, and a bottom row where the price is the anchor and
+   the rating (or "New" pill) sits opposite. No arrow cue — the whole card is a
+   stretched <Link>. Favorite is locked (opens the app modal). */
 export function OfferCard({
-  title, city, subdivision, price, unit, rating, ratingCount, img, href, category, categoryIcon = "Tag", hasDelivery = false,
+  title, city, subdivision, price, unit, rating, ratingCount, img, href, category, categoryName, categoryIcon = "Tag", hasDelivery = false,
   imageLoading = "lazy",
 }: {
   title: string;
@@ -24,7 +26,8 @@ export function OfferCard({
   ratingCount?: number; // raw review count — shown compact "(52)", full phrase via aria-label
   img?: string;
   href?: string;
-  category?: string; // top-level category id — tints the empty-photo placeholder
+  category?: string; // top-level category id — drives the eyebrow accent + empty-photo tint (via data-cat)
+  categoryName?: string; // localized top-level category label — surfaced as the eyebrow
   categoryIcon?: IconName; // glyph for the empty-photo placeholder (from Category.icon)
   hasDelivery?: boolean; // surfaces the delivery-available flag as a media badge
   imageLoading?: "eager" | "lazy"; // above-fold landing/feed cards can opt into eager LCP loading
@@ -39,7 +42,7 @@ export function OfferCard({
     openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody });
   };
   return (
-    <article className="nk-offer" style={{ position: "relative", background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
+    <article className="nk-offer" data-cat={category} style={{ position: "relative", background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
       {href && (
         <Link
           href={href}
@@ -49,7 +52,7 @@ export function OfferCard({
         />
       )}
       <div className={"nk-offer__media nk-imgph" + (showPhoto ? "" : " nk-offer__media--empty")}
-        data-cat={showPhoto ? undefined : category} style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }}>
+        style={{ aspectRatio: "4 / 3", borderRadius: "var(--nk-r-card) var(--nk-r-card) 0 0" }}>
         {img && failedSrc !== img && (
           <Image src={img} alt={title} fill className="nk-zoom"
             loading={imageLoading}
@@ -74,43 +77,40 @@ export function OfferCard({
             dots would be a false affordance. The lightbox/gallery lives on the
             detail page where the full photo set is available. */}
       </div>
-      <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
-        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", minHeight: 52, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
-        {/* meta row: rating + count on the left, location pin + city on the right */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--nk-gap-sm)", flexWrap: "wrap" }}>
+      <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
+        {/* Category eyebrow — scent for the eye, tinted with the house per-category accent. */}
+        {categoryName && <span className="nk-offer__eyebrow">{categoryName}</span>}
+        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, lineHeight: "25px", minHeight: 50, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
+        {/* Location on its own line (no longer sharing a row with the rating). */}
+        {city && (
+          <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 14.5, color: "var(--nk-text-2)" }}>
+            <Icon name="MapPin" size={15} color="var(--nk-text-2)" stroke={2} /> {formatLocation(city, subdivision)}
+          </span>
+        )}
+        {/* Bottom row: price is the anchor, rating (or "New" pill) sits opposite.
+            Wraps so the longer "New" pill drops to its own right-aligned line at
+            narrow (4-/5-up) column widths instead of clipping past the card edge. */}
+        <div className="nk-offer__pricebar" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", rowGap: "var(--nk-gap-xs)", marginTop: "auto", paddingTop: "var(--nk-gap-sm)" }}>
+          {price && (
+            <span style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
+              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 800, fontSize: 27, letterSpacing: "-.01em", color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price}</span>
+              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
+            </span>
+          )}
           {rating ? (
             // Compact "4,8 ★ (52)" — role="img" (the APG composite-rating pattern)
             // makes the aria-label real: on a bare generic span many AT pairs
             // ignore it and would announce only "4,8" with the count hidden.
             <span role="img" aria-label={ratingCount ? `${rating}, ${c.reviewCount(ratingCount)}` : rating}
-              style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)" }}>
-              <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 16, color: "var(--nk-text-2)" }}>{rating}</b>
+              style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)", marginLeft: "auto" }}>
               <Icon name="Star" size={16} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
-              {ratingCount ? <span aria-hidden style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>({ratingCount})</span> : null}
+              <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 14.5, color: "var(--nk-text-2)" }}>{rating}</b>
+              {ratingCount ? <span aria-hidden style={{ fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>({ratingCount})</span> : null}
             </span>
           ) : (
             // No reviews yet — surface that as a "New" trust signal instead of a gap.
-            <Pill tone="yellow" icon="Sparkles">{c.newListing}</Pill>
+            <span style={{ marginLeft: "auto" }}><Pill tone="yellow" icon="Sparkles">{c.newListing}</Pill></span>
           )}
-          {city && (
-            <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 16, color: "var(--nk-text-2)" }}>
-              <Icon name="MapPin" size={16} color="var(--nk-text)" stroke={2} /> {formatLocation(city, subdivision)}
-            </span>
-          )}
-        </div>
-        <div className="nk-offer__pricebar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: "var(--nk-gap-md)", borderTop: "1px solid var(--nk-border)" }}>
-          {price && (
-            <span style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
-              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 26, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price}</span>
-              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
-            </span>
-          )}
-          {/* "View details" cue — outline (not solid) so the strongest --nk-purple
-              fill stays reserved for genuine primary actions; the whole card is
-              already a stretched <Link>, so this is decorative (aria-hidden). */}
-          <span className="nk-round nk-round--outline" aria-hidden="true" style={{ marginLeft: "auto" }}>
-            <Icon name="ArrowRight" size={20} stroke={2} color="var(--nk-text)" />
-          </span>
         </div>
       </div>
     </article>
@@ -209,21 +209,22 @@ export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
   const cls = ghost ? "nk-ghost" : "nk-skel";
   return (
     <article aria-hidden="true" style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-divider)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-      <div className={cls} style={{ aspectRatio: "5 / 4", borderRadius: "24px 24px 0 0" }} />
-      <div style={{ padding: "var(--nk-card-pad) var(--nk-card-pad) calc(var(--nk-card-pad) * 0.6)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
-        {/* Reserve two title lines (real title clamps to 2 / minHeight 52) so the
+      <div className={cls} style={{ aspectRatio: "4 / 3", borderRadius: "var(--nk-r-card) var(--nk-r-card) 0 0" }} />
+      <div style={{ padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
+        {/* Eyebrow bar (mirrors the category label). */}
+        <div className={cls} style={{ width: "34%", height: 12 }} />
+        {/* Reserve two title lines (real title clamps to 2 / minHeight 50) so the
             card doesn't grow taller when a 2-line title loads (avoids CLS). */}
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <div className={cls} style={{ width: "92%", height: 22 }} />
-          <div className={cls} style={{ width: "58%", height: 22 }} />
+          <div className={cls} style={{ width: "92%", height: 20 }} />
+          <div className={cls} style={{ width: "58%", height: 20 }} />
         </div>
-        {/* meta row placeholder at the real row's ~28px (rating pill height) */}
-        <div className={cls} style={{ width: "48%", height: 28 }} />
-        {/* Hairline above the price row mirrors OfferCard's --nk-border pricebar
-            (whose marginTop:auto resolves to 0 at intrinsic height — no extra margin). */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "var(--nk-gap-md)", borderTop: "1px solid var(--nk-border)" }}>
-          <div className={cls} style={{ width: 130, height: 20 }} />
-          <div className={cls} style={{ width: 44, height: 44, borderRadius: 22 }} />
+        {/* Location line placeholder. */}
+        <div className={cls} style={{ width: "48%", height: 18 }} />
+        {/* Bottom row: price (left) vs rating (right) — no hairline, no round arrow. */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "var(--nk-gap-2xs)", paddingTop: "var(--nk-gap-sm)" }}>
+          <div className={cls} style={{ width: 96, height: 24 }} />
+          <div className={cls} style={{ width: 64, height: 18 }} />
         </div>
       </div>
     </article>
@@ -368,7 +369,7 @@ export function SectionEmptyGrid({
   const c = SECTION_EMPTY_TONES[tone];
   const cats = variant === "categories";
   const fallbackIcon: IconName = cats ? "LayoutGrid" : "Tag";
-  const ghostCount = cats ? 5 : 4;
+  const ghostCount = 5;
   return (
     <div className="nk-emptygrid">
       <div className={"nk-emptygrid__ghost " + (cats ? "nk-grid-cats" : "nk-grid-4")} aria-hidden="true">

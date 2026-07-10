@@ -9,6 +9,7 @@ import {
 import { makeQueryClient } from "@/app/lib/query";
 import { fetchListing, listingKey, ListingNotFoundError, type ListingDetail } from "@/app/lib/listings";
 import { fetchListingMeta, type ListingMeta } from "@/app/lib/listing-seo";
+import { listingDetailPath, listingIdFromParam } from "@/app/lib/listing-url";
 import { truncate } from "@/app/lib/legal/format";
 import { ListingScreen } from "@/app/components/ListingScreen";
 import { JsonLd } from "@/app/components/JsonLd";
@@ -67,13 +68,17 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/skelbimai/
   const { lang, id } = await params;
   const locale = requireLocale(lang);
   const { detail, meta } = getDictionary(locale);
-  const data = await fetchListingMeta(id, locale);
+  const listingId = listingIdFromParam(id);
+  const data = await fetchListingMeta(listingId, locale);
   const title = data ? detail.seoTitle({ title: data.title.trim(), city: data.city }) : listingFallbackTitle(id, detail);
   const description = data
     ? listingDescription(data, detail.seoDescription({ title: data.title, city: data.city, category: data.categoryNames[0] }))
     : detail.metaFallbackDescription;
   const metadata = pageMetadata({
-    locale, path: `/skelbimai/${id}`, title, description,
+    locale,
+    path: data ? listingDetailPath({ id: listingId, title: data.title, city: data.city }) : `/skelbimai/${id}`,
+    title,
+    description,
     ogLocale: meta.ogLocale, ogImageAlt: data?.title ?? meta.ogImageAlt, image: data?.image,
   });
   if (!data) {
@@ -86,6 +91,7 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
   const { lang, id } = await params;
   const locale = requireLocale(lang);
   const { common, feed, detail } = getDictionary(locale);
+  const listingId = listingIdFromParam(id);
 
   // Fetch the detail (so ListingScreen's useListing() hydrates from HTML) and the
   // raw meta (for the Product structured data) in parallel. Catch the detail so a
@@ -93,10 +99,10 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
   // retryable state rather than crashing the render.
   const qc = makeQueryClient();
   const [detailResult, data] = await Promise.all([
-    fetchListing(id, locale)
+    fetchListing(listingId, locale)
       .then((d) => ({ ok: true as const, d }))
       .catch((e: unknown) => ({ ok: false as const, e })),
-    fetchListingMeta(id, locale),
+    fetchListingMeta(listingId, locale),
   ]);
   if (!detailResult.ok) {
     // Confirmed 404 → render app/[lang]/not-found.tsx (real 404 status; generateMetadata
@@ -106,17 +112,18 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
       notFound();
     }
   } else {
-    qc.setQueryData<ListingDetail>(listingKey(id, locale), detailResult.d);
+    qc.setQueryData<ListingDetail>(listingKey(listingId, locale), detailResult.d);
   }
+  const canonicalPath = data ? listingDetailPath({ id: listingId, title: data.title, city: data.city }) : `/skelbimai/${id}`;
 
   const breadcrumb = breadcrumbJsonLd(locale, [
     { name: common.breadcrumbHome, path: "" },
     { name: feed.titleAll, path: "/skelbimai" },
-    { name: data?.title ?? listingFallbackTitle(id, detail), path: `/skelbimai/${id}` },
+    { name: data?.title ?? listingFallbackTitle(id, detail), path: canonicalPath },
   ]);
   const product = data
     ? listingJsonLd({
-        locale, id, name: data.title, description: cleanDescription(data.description), image: data.image,
+        locale, id: listingId, path: canonicalPath, name: data.title, description: cleanDescription(data.description), image: data.image,
         priceCents: data.priceCents, ratingAverage: data.ratingAverage, ratingCount: data.ratingCount,
         itemCondition: data.itemCondition,
       })
@@ -126,7 +133,7 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
     <HydrationBoundary state={dehydrate(qc)}>
       <JsonLd data={breadcrumb} />
       {product && <JsonLd data={product} />}
-      <ListingScreen id={id} />
+      <ListingScreen id={listingId} />
     </HydrationBoundary>
   );
 }

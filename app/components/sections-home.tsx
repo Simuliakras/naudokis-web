@@ -34,17 +34,23 @@ export function Hero({ locale }: { locale: Locale }) {
           <AmbientGlow />
           {/* left column */}
           <div className="nk-hero-intro" style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", gap: "var(--nk-stack-lg)", justifyContent: "center", maxWidth: "min(100%, 680px)" }}>
-            <span className="nk-hero-badge" style={{ display: "inline-flex", alignSelf: "flex-start", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: "var(--nk-r-pill)", padding: "6px 18px 6px 6px", boxShadow: "var(--nk-edge-top)" }}>
-              <span style={{ width: 32, height: 32, borderRadius: 16, background: "var(--nk-bg)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
-                <Icon name="Users" size={18} color="var(--nk-text)" stroke={1.8} />
+            {/* badge + h1 share a tighter sub-stack than the column rhythm, so the
+                badge reads as the headline's kicker rather than a separate block */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "var(--nk-gap-lg)" }}>
+              <span className="nk-hero-badge" style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "var(--nk-green)", borderRadius: "var(--nk-r-pill)", padding: "6px 18px 6px 6px", boxShadow: "var(--nk-edge-top)" }}>
+                <span style={{ width: 32, height: 32, borderRadius: 16, background: "var(--nk-bg)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
+                  <Icon name="Users" size={18} color="var(--nk-text)" stroke={1.8} />
+                </span>
+                <b className="nk-hero-badge__label" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, color: "var(--nk-bg)" }}>{dict.hero.badge}</b>
               </span>
-              <b className="nk-hero-badge__label" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, color: "var(--nk-bg)" }}>{dict.hero.badge}</b>
-            </span>
-            <h1 className="nk-h-hero" style={{ margin: 0 }}>{dict.hero.title}</h1>
-            <p className="nk-body" style={{ margin: 0, maxWidth: "min(100%, 540px)" }}>{dict.hero.body}</p>
-            <SearchBar />
+              <h1 className="nk-h-hero" style={{ margin: 0 }}>{dict.hero.title}</h1>
+            </div>
+            <p className="nk-body" style={{ margin: 0, maxWidth: "min(100%, 662px)" }}>{dict.hero.body}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginTop: "var(--nk-gap-sm)" }}>
+              <SearchBar />
+              <HeroOwnerCta />
+            </div>
             <AppBadges />
-            <HeroOwnerCta />
           </div>
           {/* right column — real app device + QR */}
           <div className="nk-hero-media" style={{ position: "relative", zIndex: 1 }}>
@@ -67,7 +73,13 @@ export function Hero({ locale }: { locale: Locale }) {
    dict.features copy. */
 export function Features({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
-  return <FeatureBand eyebrow={dict.featuresHead.eyebrow} title={dict.featuresHead.title} items={dict.features} />;
+  // Full-bleed band; add outer rhythm so it floats clear of the neighbouring
+  // Offers / HowItWorks sections instead of butting straight against them.
+  return (
+    <div style={{ marginBlock: "var(--nk-section-y)" }}>
+      <FeatureBand eyebrow={dict.featuresHead.eyebrow} title={dict.featuresHead.title} items={dict.features} />
+    </div>
+  );
 }
 
 /* ---------------- CTA banner ----------------
@@ -75,7 +87,7 @@ export function Features({ locale }: { locale: Locale }) {
    the home page keeps its own dict.cta copy. */
 export function CtaBanner({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
-  return <AppCtaBanner title={dict.cta.title} body={dict.cta.body} phoneAlt={dict.cta.phoneAlt} placement="home_cta" />;
+  return <AppCtaBanner eyebrow={dict.cta.eyebrow} title={dict.cta.title} body={dict.cta.body} phoneAlt={dict.cta.phoneAlt} placement="home_cta" />;
 }
 
 /* Ambient glow layer for the hero panel — purple + yellow radial glows and a

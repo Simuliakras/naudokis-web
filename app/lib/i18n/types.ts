@@ -149,6 +149,7 @@ export type Dict = {
     faqSubheading: string;
     faq: FaqItem[]; // renter-slanted questions (shown for the renter role)
     faqOwner: FaqItem[]; // owner-side questions (payouts, fees, damage) for the owner role
+    ctaEyebrow: string;
     ctaPhoneAlt: string;
     // micro-labels rendered inside the synced phone mock-ups
     screen: {
@@ -178,6 +179,7 @@ export type Dict = {
     ctaLabel: string; // funnel exit into the full /kaip-tai-veikia walkthrough
   };
   cta: {
+    eyebrow: string;
     title: string;
     body: string;
     phoneAlt: string;
@@ -365,6 +367,25 @@ export type Dict = {
     introMore: string; // expands the phone-width landing-intro clamp
     introLess: string;
     relatedLinksLabel: string; // micro-label over the below-grid internal-link chips
+    paginationLabel: string;
+    previousPage: string;
+    nextPage: string;
+    pageStatus: (page: number, totalPages: number) => string;
+    pageStatusShort: (page: number) => string;
+    // Landing-insights band (category/city landings). Tiles derive from the
+    // first result page only, so every claim is stable and page-scoped.
+    insightsEyebrow: string; // micro-label above the landing-insights heading
+    insightsHeading: (parts: { category?: string; city?: string }) => string;
+    insightsInventory: (count: number, parts: { category?: string; city?: string }) => string;
+    insightsPriceRange: (minCents: number, maxCents: number) => string;
+    insightsNeighborhoods: (neighborhoods: string[]) => string;
+    insightsUseCases: (parts: { category?: string; city?: string }) => string;
+    insightsChecks: string;
+    insightsDeposit: string;
+    insightsPickupDelivery: (hasDelivery: boolean) => string;
+    insightsSubcategories: (subcategories: string[]) => string;
+    insightsTrust: string;
+    insightsCta: string;
     backToTop: string; // floating back-to-top button label
     seoHeading: string;
     seoBody: string;

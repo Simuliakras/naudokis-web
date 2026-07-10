@@ -5,7 +5,7 @@
 import Image from "next/image";
 import { AppBadges, QR } from "./ui";
 
-export function AppCtaBanner({ title, body, phoneAlt, placement }: { title: string; body: string; phoneAlt: string; placement: string }) {
+export function AppCtaBanner({ eyebrow, title, body, phoneAlt, placement }: { eyebrow?: string; title: string; body: string; phoneAlt: string; placement: string }) {
   return (
     <section className="nk-container nk-appcta-wrap">
       <div className="nk-appcta nk-reveal nk-grain">
@@ -16,7 +16,12 @@ export function AppCtaBanner({ title, body, phoneAlt, placement }: { title: stri
         {/* copy leads, actions follow (badges live INSIDE the copy column so
             desktop reads headline → body → install, never action-first) */}
         <div className="nk-appcta__copy">
-          <h2>{title}</h2>
+          {/* eyebrow hugs the headline (SectionHead's 4px anatomy), tighter than
+              the copy column's own rhythm */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)" }}>
+            {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
+            <h2>{title}</h2>
+          </div>
           <p>{body}</p>
           <div className="nk-appcta__badges"><AppBadges height={50} placement={placement} /></div>
         </div>

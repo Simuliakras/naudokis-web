@@ -44,3 +44,10 @@ export function categoryGlyph(iconName?: string): IconName {
 export function categoryIconFor(cats: { id: string; icon: IconName }[], id?: string): IconName {
   return cats.find((c) => c.id === id)?.icon ?? "Tag";
 }
+
+// Localized display name for a listing's top-level category — surfaced as the
+// browse card's eyebrow. Returns undefined when the id isn't in the loaded set
+// (the card then simply omits the eyebrow).
+export function categoryNameFor(cats: { id: string; title: string }[], id?: string): string | undefined {
+  return cats.find((c) => c.id === id)?.title;
+}

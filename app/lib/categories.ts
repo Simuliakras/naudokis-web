@@ -41,6 +41,8 @@ type CategoriesResponse = {
 export type Category = {
   id: string;
   title: string;
+  parentId?: string;
+  level: number;
   icon: IconName; // resolved from the wire's icon_name (Tag fallback)
   // Authored SEO copy, locale-resolved with a name-based fallback so consumers
   // never branch on undefined. seo* render in the page body, meta* in <head>.
@@ -75,6 +77,8 @@ function toCategory(c: ApiCategory, locale: Locale): Category {
   return {
     id: c.id,
     title,
+    parentId: c.parent_id,
+    level: c.level,
     icon: categoryGlyph(c.icon_name),
     seoTitle: stripBrandSuffix(en ? c.seo_title_en : c.seo_title_lt) || title,
     seoBody: (en ? c.seo_description_en : c.seo_description_lt) || fallbackBody,
@@ -83,19 +87,47 @@ function toCategory(c: ApiCategory, locale: Locale): Category {
   };
 }
 
-// Exported so server components can prefetch the same data useCategories reads.
-export async function fetchCategories(locale: Locale): Promise<Category[]> {
-  // Categories change rarely — server-side fetches stay fresh for an hour
-  // (matches the categories page's route revalidate). Browsers ignore `next`.
+// The raw category list from the backend, shared by the two shaped views below.
+// Categories change rarely — server-side fetches stay fresh for an hour (matches
+// the categories page's route revalidate). Browsers ignore `next`.
+async function fetchRawCategories(): Promise<ApiCategory[]> {
   const res = await fetch(`${API_BASE}/listings/categories`, { next: { revalidate: 3600 } });
   if (!res.ok) {
     throw new Error(`Failed to load categories: ${res.status}`);
   }
   const body: CategoriesResponse = await res.json();
-  return body.data.categories
+  return body.data.categories;
+}
+
+// Top-level (level 0) categories only — what useCategories and most prefetches read.
+export async function fetchCategories(locale: Locale): Promise<Category[]> {
+  const raw = await fetchRawCategories();
+  return raw
     .filter((c) => c.level === 0)
     .sort((a, b) => a.display_order - b.display_order)
     .map((c) => toCategory(c, locale));
+}
+
+// Every level (parents + subcategories), ordered shallow-to-deep. Used by the
+// subcategory landing routes, which need the parent/child relationship.
+export async function fetchAllCategories(locale: Locale): Promise<Category[]> {
+  const raw = await fetchRawCategories();
+  return raw
+    .sort((a, b) => a.level - b.level || a.display_order - b.display_order)
+    .map((c) => toCategory(c, locale));
+}
+
+// Merge category lists from several sources (top-level + landing extras),
+// keeping the first occurrence of each id.
+export function dedupeById<T extends { id: string }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    if (seen.has(item.id)) {
+      return false;
+    }
+    seen.add(item.id);
+    return true;
+  });
 }
 
 export function useCategories(locale: Locale) {

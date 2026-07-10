@@ -159,11 +159,30 @@ export function parseSortKey(value: string | null | undefined): SortKey {
   return "recommended";
 }
 
+// Hard ceiling on ?page=N. Because the backend paginates by opaque cursor,
+// reaching page N means walking N-1 cursors server-side (see fetchListingsPage),
+// so an unbounded `?page=` would let a crawler chain arbitrarily many fetches.
+// The pager stops offering deeper pages well before this; the cap is a safety net.
+export const LISTINGS_MAX_PAGE = 20;
+
+// Narrow an untrusted `?page=` value to a positive integer in [1, LISTINGS_MAX_PAGE].
+// Single source of truth shared by the feed, the /skelbimai page and landing pages.
+export function parsePageParam(value: string | number | null | undefined): number {
+  const n = typeof value === "number" ? value : Number(value);
+  if (!Number.isInteger(n) || n <= 1) {
+    return 1;
+  }
+  return Math.min(n, LISTINGS_MAX_PAGE);
+}
+
 export type ListingFilters = {
   q?: string;
   city?: string;
   category?: string; // category id == backend category_id (also the URL slug)
   sort?: SortKey;
+  // SEO-friendly paginated result pages. The backend uses opaque cursors, so this
+  // is translated by walking cursors server/client-side when page > 1.
+  page?: number;
 };
 
 export type ListingAttribute = { id: string; label: string; value: string };
@@ -285,8 +304,8 @@ export const LISTING_REVALIDATE = 300;
 // server components prefetching into the same cache slot, so they can't diverge.
 // listingsKey applies the same empty-filter defaults the hook does.
 export function listingsKey(locale: Locale, filters: ListingFilters = {}) {
-  const { q = "", city = "", category = "", sort = "recommended" } = filters;
-  return ["listings", locale, q, city, category, sort] as const;
+  const { q = "", city = "", category = "", sort = "recommended", page = 1 } = filters;
+  return ["listings", locale, q, city, category, sort, page] as const;
 }
 
 export function listingKey(id: string | undefined, locale: Locale) {
@@ -302,8 +321,8 @@ export const LISTINGS_PAGE_SIZE = 12;
 export const LISTINGS_FIRST_CURSOR: string | null = null;
 
 export function listingsInfiniteKey(locale: Locale, filters: ListingFilters = {}) {
-  const { q = "", city = "", category = "", sort = "recommended" } = filters;
-  return ["listings-infinite", locale, q, city, category, sort] as const;
+  const { q = "", city = "", category = "", sort = "recommended", page = 1 } = filters;
+  return ["listings-infinite", locale, q, city, category, sort, page] as const;
 }
 
 // Build the backend `/listings` query URL from the active filters. `limit` /
@@ -371,8 +390,38 @@ export async function fetchListingsPage(
 ): Promise<ListingsPage> {
   const url = buildListingsUrl(filters);
   url.searchParams.set("limit", String(LISTINGS_PAGE_SIZE));
-  if (pageParam) {
-    url.searchParams.set("next_token", pageParam);
+  let token = pageParam;
+  // Clamped so the cursor walk below can never exceed LISTINGS_MAX_PAGE-1 fetches,
+  // regardless of what a caller passes in filters.page.
+  const targetPage = parsePageParam(filters.page);
+
+  // `pageParam === null` is the first page for this React Query result set. If
+  // the URL asks for ?page=N, walk backend cursors to N before fetching the
+  // visible page. Later infinite-scroll appends use the opaque nextToken directly.
+  if (!token && targetPage > 1) {
+    for (let current = 1; current < targetPage; current++) {
+      const cursorUrl = buildListingsUrl(filters);
+      cursorUrl.searchParams.set("limit", String(LISTINGS_PAGE_SIZE));
+      if (token) {
+        cursorUrl.searchParams.set("next_token", token);
+      }
+      const cursorRes = await fetch(cursorUrl, { next: { revalidate: LISTING_REVALIDATE } });
+      if (!cursorRes.ok) {
+        throw new Error(`Failed to advance listings cursor: ${cursorRes.status}`);
+      }
+      const cursorBody: ListingsResponse = await cursorRes.json();
+      token = cursorBody.data.next_token ?? null;
+      if (!cursorBody.data.has_more || !token) {
+        return {
+          offers: [],
+          nextToken: null,
+          totalCount: cursorBody.data.count ?? 0,
+        };
+      }
+    }
+  }
+  if (token) {
+    url.searchParams.set("next_token", token);
   }
   const res = await fetch(url, { next: { revalidate: LISTING_REVALIDATE } });
   if (!res.ok) {
@@ -402,10 +451,10 @@ export async function fetchListingsCount(locale: Locale, filters: ListingFilters
 }
 
 export function useListings(locale: Locale, filters: ListingFilters = {}) {
-  const { q = "", city = "", category = "", sort = "recommended" } = filters;
+  const { q = "", city = "", category = "", sort = "recommended", page = 1 } = filters;
   return useQuery({
-    queryKey: listingsKey(locale, { q, city, category, sort }),
-    queryFn: () => fetchListings(locale, { q, city, category, sort }),
+    queryKey: listingsKey(locale, { q, city, category, sort, page }),
+    queryFn: () => fetchListings(locale, { q, city, category, sort, page }),
     placeholderData: keepPreviousData,
   });
 }
@@ -413,10 +462,10 @@ export function useListings(locale: Locale, filters: ListingFilters = {}) {
 // Feed hook: cursor-paginated browse with infinite scroll. keepPreviousData
 // keeps the prior result set on screen while a filter change refetches page 1.
 export function useListingsInfinite(locale: Locale, filters: ListingFilters = {}) {
-  const { q = "", city = "", category = "", sort = "recommended" } = filters;
+  const { q = "", city = "", category = "", sort = "recommended", page = 1 } = filters;
   return useInfiniteQuery({
-    queryKey: listingsInfiniteKey(locale, { q, city, category, sort }),
-    queryFn: ({ pageParam }) => fetchListingsPage(locale, { q, city, category, sort }, pageParam),
+    queryKey: listingsInfiniteKey(locale, { q, city, category, sort, page }),
+    queryFn: ({ pageParam }) => fetchListingsPage(locale, { q, city, category, sort, page }, pageParam),
     initialPageParam: LISTINGS_FIRST_CURSOR,
     getNextPageParam: (lastPage) => lastPage.nextToken,
     placeholderData: keepPreviousData,

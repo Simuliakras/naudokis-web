@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
         { url: "/naudokis/icon-192.png", sizes: "192x192", type: "image/png" },
         { url: "/naudokis/icon-512.png", sizes: "512x512", type: "image/png" },
       ],
-      apple: { url: "/naudokis/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      apple: { url: "/naudokis/icon-192.png", sizes: "192x192", type: "image/png" },
     },
     alternates: {
       canonical: localeHome(lang),

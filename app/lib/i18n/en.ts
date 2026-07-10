@@ -8,7 +8,7 @@ export const en: Dict = {
   meta: {
     title: "Item rental in Lithuania | Naudokis.lt",
     description:
-      "Rent tools, vehicles, cameras and more from private or business owners in Lithuania. Compare online, then choose dates and reserve in the Naudokis app.",
+      "Find tools, vehicles, cameras and other items to rent from private and business owners in Lithuania. Compare online, then choose dates and reserve in the Naudokis app.",
     ogLocale: "en_US",
     ogImageAlt: "Naudokis.lt",
   },
@@ -26,19 +26,19 @@ export const en: Dict = {
     closeMenu: "Close menu",
   },
   hero: {
-    badge: "Item rental from people and businesses across Lithuania",
+    badge: "Item rental from private and business owners across Lithuania",
     // DRAFT (marketing sign-off): de-calqued — the LT-mirroring phrasing parsed
     // as an obligation ("you need to rent").
-    title: "Rent what you need, from people nearby.",
+    title: "Need it for a day? Rent it instead of buying.",
     // DRAFT (marketing sign-off): tightened — mirrors the LT trim.
-    body: "Rent tools, vehicles, cameras or leisure gear only when you need them. Browse online, then complete your booking and payment in the Naudokis app.",
-    ownerPrompt: "Have idle items or run a rental business?",
-    ownerCta: "List an item and earn",
+    body: "Find tools, vehicles, cameras or leisure gear from owners in Lithuania. Compare online, then confirm dates, final amount and payment in the Naudokis app.",
+    ownerPrompt: "Have an item sitting idle?",
+    ownerCta: "List it for rent",
     phoneAlt: "Item rental listings in the Naudokis app",
   },
   search: {
     // Short enough to never clip at the 320px floor; inputLabel keeps the full name.
-    placeholder: "What do you need?",
+    placeholder: "What would you like to rent?",
     inputLabel: "Search items to rent",
     where: "Where?",
     labelWhat: "Item",
@@ -50,7 +50,7 @@ export const en: Dict = {
     title: "Popular rental categories",
     all: "All categories",
     seoFallbackBody: (name) =>
-      `Browse ${name.toLowerCase()} rentals across Lithuania. Compare prices, locations, owner profiles and continue your booking in the app.`,
+      `Browse ${name.toLowerCase()} rentals across Lithuania. Compare prices, locations, owner profiles and continue your reservation in the app.`,
     metaTitleFallback: (name) => `${name} rental in Lithuania | Naudokis.lt`,
     errorTitle: "We couldn’t load categories",
     errorSubtitle:
@@ -86,33 +86,34 @@ export const en: Dict = {
     bandEmptyAction: "All categories",
     bandEmptySecondary: "Open in the app",
   },
+  // DRAFT (marketing sign-off): mirrors the new LT trust-band messaging.
   features: [
     {
       icon: "Users",
-      title: "More context before you book",
-      body: "Profile verification badges, reviews from previous rentals and clear terms help you choose.",
+      title: "A community you can trust",
+      body: "Both renters and owners verify their identity, so every rental starts with more confidence.",
     },
     {
       icon: "ShieldCheck",
-      title: "Payments processed by Stripe",
-      body: "The final rental price, platform fees and any refundable deposit are shown before you confirm payment.",
+      title: "No surprise fees",
+      body: "The full amount is shown before you pay: rent, platform fee and deposit — no side deals in messages.",
     },
     {
       icon: "ScrollText",
-      title: "Clear rules and support",
-      body: "Booking, handover, cancellation, damage and dispute rules are kept in one place for both sides.",
+      title: "Help when things are unclear",
+      body: "If questions or misunderstandings come up during a rental, the Naudokis team helps you understand the situation and find a clear next step.",
     },
   ],
   // DRAFT (marketing sign-off): section header for the trust band.
   featuresHead: {
     eyebrow: "Why Naudokis",
-    title: "Transparent rentals for both sides",
+    title: "Rentals that don't feel risky",
   },
   howItWorks: {
     meta: {
       title: "How item rental and listing work | Naudokis.lt",
       description:
-        "Learn how to rent or list an item on Naudokis: search, booking, payment, handover, return and owner payout.",
+        "Learn how to rent or list an item on Naudokis: search, reservation, payment, handover, return and owner payout.",
     },
     eyebrow: "How it works",
     title: "Rent what you need. Earn from what you own.",
@@ -122,7 +123,7 @@ export const en: Dict = {
       lead: "From search to return, here is how to rent for a day, a weekend or a project.",
       ctaTitle: "Ready to reserve? Continue in the app",
       ctaBody:
-        "Choose dates, message the owner, confirm any deposit and pay securely in one place.",
+        "Choose dates, message the owner, review any deposit and pay through Stripe in one place.",
       steps: [
         {
           icon: "Search",
@@ -134,11 +135,11 @@ export const en: Dict = {
         },
         {
           icon: "Calendar",
-          title: "Reserve securely in the app",
-          tag: "Protected",
+          title: "Reserve in the app",
+          tag: "In-app",
           tone: "green",
           screen: "reserve",
-          body: "Choose dates, review the final price and deposit, and pay in the app through Stripe.",
+          body: "Choose dates, review the final amount, fees and deposit, and pay in the app through Stripe.",
         },
         {
           icon: "Handshake",
@@ -146,7 +147,7 @@ export const en: Dict = {
           tag: "Nearby",
           tone: "yellow",
           screen: "pickup",
-          body: "Meet at the agreed place, check the item and use it for the booked time.",
+          body: "Meet at the agreed place, check the item and use it for the agreed rental period.",
         },
         {
           icon: "Star",
@@ -175,7 +176,7 @@ export const en: Dict = {
         },
         {
           icon: "BadgeCheck",
-          title: "Approve the booking",
+          title: "Approve the reservation",
           tag: "Approved",
           tone: "green",
           screen: "accept",
@@ -187,7 +188,7 @@ export const en: Dict = {
           tag: "Handed over",
           tone: "yellow",
           screen: "handover",
-          body: "Meet at the agreed time, check the condition and hand over the item. Deposits and dispute support help protect both sides.",
+          body: "Meet at the agreed time, check the condition and hand over the item. Deposits and evidence rules give both sides a clear process if something goes wrong.",
         },
         {
           icon: "Coins",
@@ -200,7 +201,7 @@ export const en: Dict = {
       ],
     },
     trustEyebrow: "Trust on both sides",
-    trustTitle: "Clear, protected rentals for people and businesses",
+    trustTitle: "Clear rentals for people and businesses",
     trust: [
       {
         icon: "CreditCard",
@@ -226,10 +227,10 @@ export const en: Dict = {
     faq: [
       {
         q: "Is browsing free?",
-        a: "Yes. Searching and viewing listings on the website is free. Any fees and deposit for a specific booking are shown in the app before you confirm.",
+        a: "Yes. Searching and viewing listings on the website is free. Any fees and deposit for a specific reservation are shown in the app before you confirm.",
       },
       {
-        q: "How are payments protected?",
+        q: "How are payments handled?",
         a: "In-app payments are processed by Stripe. The rental price, applicable fees and refundable deposit are shown before confirmation; payouts follow the conditions in the Terms of Use.",
       },
       {
@@ -238,7 +239,7 @@ export const en: Dict = {
       },
       {
         q: "Why do I have to reserve in the app?",
-        a: "Dates, final amounts, payments, messages, bookings and notifications are managed in the app. On the website you can browse and compare listings.",
+        a: "Dates, final amounts, payments, messages, reservations and notifications are managed in the app. On the website you can browse and compare listings.",
       },
     ],
     // DRAFT (marketing/legal sign-off): owner-side FAQ — mirrors the LT set.
@@ -249,7 +250,7 @@ export const en: Dict = {
       },
       {
         q: "How much does listing an item cost?",
-        a: "Listing an item is free. Any platform fees for a specific booking are shown upfront, before confirmation.",
+        a: "Listing an item is free. Any platform fees for a specific reservation are shown upfront, before confirmation.",
       },
       {
         q: "What if an item comes back damaged?",
@@ -257,9 +258,10 @@ export const en: Dict = {
       },
       {
         q: "Do I have to accept every request?",
-        a: "No — you confirm or decline booking requests in the app, and you can message the renter first.",
+        a: "No — you confirm or decline reservation requests in the app, and you can message the renter first.",
       },
     ],
+    ctaEyebrow: "The app",
     ctaPhoneAlt: "Naudokis app",
     screen: {
       searchPlaceholder: "What do you need to rent?",
@@ -270,7 +272,7 @@ export const en: Dict = {
       listUpload: "Add photos",
       listPrice: "€50 / day",
       listCta: "Publish",
-      acceptCta: "Confirm booking",
+      acceptCta: "Confirm reservation",
       handoverCta: "Hand over item",
       // multi-day amount (≠ 1× the mock's daily price) + explicit after-fees
       // qualifier, so the illustration can't read as a fee-free gross payout
@@ -282,44 +284,45 @@ export const en: Dict = {
   // Copy is illustrative — review with marketing before launch.
   homeSteps: {
     eyebrow: "How it works",
-    title: "It all comes down to three steps",
-    lead: "Whether you're renting or lending, you're set up in just a few minutes.",
+    title: "How each rental works",
+    lead: "Three clear steps from search or listing to handover and return.",
     steps: [
       {
         kicker: "Start",
-        title: "Find or list",
-        body: "Browse thousands of items nearby, or list your own in just a few minutes.",
+        title: "Find or list an item",
+        body: "Browse items nearby, or list your own in just a few minutes.",
       },
       {
-        kicker: "Secure",
-        title: "Agree",
-        body: "Dates, price and deposit are arranged and handled safely in the app.",
+        kicker: "Clear",
+        title: "Set the terms",
+        body: "Dates, price, fees and deposit are shown before confirmation in the app.",
       },
       {
         kicker: "Ready",
         title: "Use it",
-        body: "Pick it up and use it — or hand yours over and earn.",
+        body: "Pick it up and use it — or hand yours over and receive a payout after completion.",
       },
     ],
     ctaLabel: "See the whole process",
   },
   cta: {
-    title: "Find it online. Reserve it in the app.",
-    body: "Choose dates, review the final price and deposit, message the owner, pay through Stripe and manage the rental in one place.",
-    phoneAlt: "Booking screen in the Naudokis app",
+    eyebrow: "The app",
+    title: "Browse online. Reserve in the app.",
+    body: "In the app you can choose dates, review the final amount, fees, deposit and cancellation terms, message the owner, pay through Stripe and manage the rental in one place.",
+    phoneAlt: "Reservation screen in the Naudokis app",
   },
   faq: {
     eyebrow: "Questions?",
-    heading: "Frequently asked questions",
+    heading: "What to know before renting",
     subheading:
       "Quick answers about prices, reservations, deposits, payments and renting through the app.",
     items: [
       {
         q: "Is browsing free?",
-        a: "Yes. Searching and viewing listings on the website is free. Any fees and deposit for a specific booking are shown in the app before you confirm.",
+        a: "Yes. Searching and viewing listings on the website is free. Any fees and deposit for a specific reservation are shown in the app before you confirm.",
       },
       {
-        q: "How are payments protected?",
+        q: "How are payments handled?",
         a: "Payments are processed by Stripe. The rental price, applicable platform fees and refundable deposit are shown before confirmation; payouts follow the conditions in the Terms of Use.",
       },
       {
@@ -336,11 +339,11 @@ export const en: Dict = {
       },
       {
         q: "Can private people and businesses list items?",
-        a: "Yes. Private and business owners can list items. When an owner acts as a business, that status should be shown in the profile or booking flow, and mandatory consumer rights apply.",
+        a: "Yes. Private and business owners can list items. When an owner acts as a business, that status should be shown in the profile or reservation flow, and mandatory consumer rights apply.",
       },
       {
         q: "Why do reservations happen in the app?",
-        a: "The app keeps dates, messages, payments, deposits, notifications and reviews together in one secure place.",
+        a: "Messages, dates, payment details, deposits, notifications and reviews stay together in the app.",
       },
     ],
   },
@@ -380,7 +383,7 @@ export const en: Dict = {
     metaFallbackTitleForId: (readableId) =>
       `${readableId} rental | Naudokis.lt`,
     metaFallbackDescription:
-      "View this item’s rental price, location and terms on Naudokis.lt, then choose dates and confirm the final booking amount in the app.",
+      "View this item’s rental price, location and terms on Naudokis.lt, then choose dates and confirm the final amount in the app.",
     seoTitle: ({ title, city }) =>
       `${title} rental${city ? ` in ${city}` : ""} | Naudokis.lt`,
     seoDescription: ({ title, city, category }) => {
@@ -390,7 +393,7 @@ export const en: Dict = {
     },
     share: "Share",
     shareCopied: "Link copied",
-    verifiedOwnerPill: "Verified identity",
+    verifiedOwnerPill: "Identity checked",
     galleryMore: (n) => `+${n} photo${n === 1 ? "" : "s"}`,
     descHeading: "Description",
     descOriginalNote: "Provided by the owner in their original language.",
@@ -409,7 +412,7 @@ export const en: Dict = {
     similarHeading: "Similar items",
     moreItemsHeading: "More items to rent",
     reviewsEmptyTitle: "No reviews for this item yet",
-    reviewsEmptyBody: "Be the first to rent it and help others decide.",
+    reviewsEmptyBody: "No reviews yet. Review the owner profile and terms before reserving.",
     reviewsInApp: (n) => `All ${n} reviews in the app`,
     perDay: "per day",
     reserve: "Reserve in the app",
@@ -431,11 +434,11 @@ export const en: Dict = {
     galleryNext: "Next photo",
     galleryImageError: "Couldn’t load this photo",
     perDayShort: "per day",
-    confirmInApp: "You’ll confirm dates and the final price in the app.",
+    confirmInApp: "Dates, fees, deposit and the final amount are shown before you pay in the app.",
     hostStatRating: "Rating",
     hostStatReviews: "Reviews",
     hostStatListings: "Items",
-    hostMessage: "Message owner",
+    hostMessage: "Ask the owner",
     hostMemberSince: (label) => `Member since ${label}`,
     hostResponseTime: (hours) =>
       hours <= 1
@@ -451,7 +454,7 @@ export const en: Dict = {
     deliveryZoneKm: (km) => `≈${km} km zone`,
     termRentSub: "Rental price per day",
     depositNone: "No deposit",
-    termDepositSub: "Refundable deposit",
+    termDepositSub: "Refundable if claim-free",
     durationRange: (min, max) =>
       !max || max <= min
         ? `From ${min} day${min === 1 ? "" : "s"}`
@@ -464,9 +467,9 @@ export const en: Dict = {
       return "Standard";
     },
     termCancelSub: "Cancellation policy",
-    termInsuranceTitle: "Insurance included",
-    termInsuranceSub: "As listed by the owner",
-    mobileBookingNote: "Price — in the app",
+    termInsuranceTitle: "Insurance noted by owner",
+    termInsuranceSub: "Details in listing terms",
+    mobileBookingNote: "Final amount in the app",
   },
   common: {
     favorite: "Save",
@@ -486,7 +489,7 @@ export const en: Dict = {
     crumb: "Categories",
     eyebrow: "Browse",
     title: "All rental categories",
-    body: "Choose a category to discover items nearby, compare prices and continue your reservation in the app.",
+    body: "Choose a category, compare prices, locations and owner profiles, then complete your reservation in the app.",
     searchPlaceholder: "Search categories",
     searchLabel: "Search item rental categories",
     submit: "Search",
@@ -503,7 +506,7 @@ export const en: Dict = {
   feed: {
     metaTitle: "Items to rent in Lithuania | Naudokis.lt",
     metaDescription:
-      "Browse items to rent across Lithuania by category, city and price. Find trusted owners nearby and reserve securely in the Naudokis app.",
+      "Browse items to rent across Lithuania by category, city and price. Compare owner profiles and reserve in the Naudokis app.",
     // EN uses the plain category title and city name (no grammatical inflection).
     categorySeoLabel: (_id, fallback) => fallback,
     landingTitle: ({ category, city }) => {
@@ -519,12 +522,12 @@ export const en: Dict = {
     },
     landingDescription: ({ category, city }) => {
       if (category && city) {
-        return `Browse ${category.toLowerCase()} rentals in ${city}. Find trusted owners nearby, compare prices and reserve in the Naudokis app.`;
+        return `Browse ${category.toLowerCase()} rentals in ${city}. Compare owner profiles, prices and handover options, then reserve in the Naudokis app.`;
       }
       if (category) {
         return `Find ${category.toLowerCase()} to rent across Lithuania. Filter rentals by city and price, then reserve in the Naudokis app.`;
       }
-      return `Browse item rentals in ${city}: tools, vehicles, photo gear, electronics and leisure equipment from trusted owners nearby.`;
+      return `Browse item rentals in ${city}: tools, vehicles, photo gear, electronics and leisure equipment from private and business owners nearby.`;
     },
     landingSeoHeading: ({ category, city }) => {
       if (category && city) return `${category} rental in ${city}`;
@@ -535,14 +538,14 @@ export const en: Dict = {
     landingSeoBody: ({ category, city }) => {
       const where = city ? `in ${city}` : "across Lithuania";
       const what = category ? category.toLowerCase() : "items";
-      return `Naudokis.lt connects people and businesses that need ${what} for a short time with trusted private and business owners ${where}. Browse by category, city or price, then manage dates, messages, the final amount and payment in the app.`;
+      return `Naudokis.lt connects people and businesses that need ${what} for a short time with private and business owners ${where}. Browse by category, city or price, then manage dates, messages, the final amount and payment in the app.`;
     },
     crumbCategories: "Categories",
     // DRAFT (marketing sign-off): static eyebrow — never duplicates the dynamic H1s.
     eyebrow: "Rentals across Lithuania",
     titleAll: "Items to rent",
     titleSearch: "Search results",
-    subtitleAll: "Browse available rentals across Lithuania.",
+    subtitleAll: "Compare prices, locations, handover options and owner profiles across Lithuania.",
     subtitleSearch: (q) => `Results for “${q}” across Lithuania.`,
     subtitleSearchGeneric: "Search results across Lithuania.",
     resultCount: (n) => `${n} listing${n === 1 ? "" : "s"}`,
@@ -553,10 +556,10 @@ export const en: Dict = {
     searchPlaceholder: "What do you need to rent?",
     searchLabel: "Search items to rent",
     sortLabel: "Sort",
-    sortRecommended: "Recommended",
+    sortRecommended: "Relevant first",
     sortPriceAsc: "Lowest price",
     sortPriceDesc: "Highest price",
-    sortRatingBest: "Best rated",
+    sortRatingBest: "Highest rated",
     categoryLabel: "Category",
     allCategories: "All categories",
     cityLabel: "City",
@@ -577,6 +580,48 @@ export const en: Dict = {
     introMore: "Show more",
     introLess: "Show less",
     relatedLinksLabel: "Popular searches",
+    paginationLabel: "Rental listing pages",
+    previousPage: "Previous page",
+    nextPage: "Next page",
+    pageStatus: (page, totalPages) => `Page ${page} of ${totalPages}`,
+    pageStatusShort: (page) => `Page ${page}`,
+    insightsEyebrow: "Local rental",
+    insightsHeading: ({ category, city }) => {
+      const where = city ? `in ${city}` : "in Lithuania";
+      const what = category ? category.toLowerCase() : "item";
+      return `What to know about ${what} rental ${where}`;
+    },
+    insightsInventory: (count, { category, city }) => {
+      const where = city ? `in ${city}` : "in Lithuania";
+      const what = category ? `${category.toLowerCase()} listing${count === 1 ? "" : "s"}` : `rental listing${count === 1 ? "" : "s"}`;
+      return `Currently showing ${count} ${what} ${where}; new items appear as owners publish listings.`;
+    },
+    insightsPriceRange: (minCents, maxCents) => {
+      const min = Math.round(minCents / 100);
+      const max = Math.round(maxCents / 100);
+      return min === max
+        ? `Listings visible on this page are around €${min} per day.`
+        : `Listings visible on this page range from €${min} to €${max} per day.`;
+    },
+    insightsNeighborhoods: (neighborhoods) => `Visible neighborhoods and areas: ${neighborhoods.join(", ")}.`,
+    insightsUseCases: ({ category, city }) => {
+      const what = category ? category.toLowerCase() : "items";
+      const where = city ? `in ${city}` : "in Lithuania";
+      return `Common use cases include a short project, weekend trip, event, repair job or one-off need where renting ${what} ${where} is easier than buying.`;
+    },
+    insightsChecks:
+      "Before reserving, check what is included, item condition, rental duration, cancellation terms, handover location and whether extra accessories are needed.",
+    insightsDeposit:
+      "Deposit expectations depend on the specific item value and owner terms; the deposit is shown before you confirm the reservation in the app.",
+    insightsPickupDelivery: (hasDelivery) =>
+      hasDelivery
+        ? "Pickup and delivery depend on the listing: some visible offers can be arranged with delivery, while others are picked up at an agreed location."
+        : "Pickup at an agreed location is the most common handover method; if delivery matters, use the delivery filter or review the listing terms.",
+    insightsSubcategories: (subcategories) => `Popular related subcategories: ${subcategories.join(", ")}.`,
+    insightsTrust:
+      "Before reserving, review the owner profile, verification badges, reviews, deposit and handover terms.",
+    insightsCta:
+      "Compare listings on the website, then confirm dates, messages, final amount and payment in the app.",
     backToTop: "Back to top",
     seoHeading: "Item rental in Lithuania",
     seoBody:
@@ -595,16 +640,16 @@ export const en: Dict = {
       filterAction: "Clear filters",
       cityTitle: (city) => `No listings in ${city} yet`,
       cityBody:
-        "Explore other categories or list an item and be one of the first owners here.",
+        "Explore other categories or list an item to help start this category.",
       categoryTitle: "No listings in this category yet",
       categoryBody:
-        "Explore other categories or list an item and be one of the first owners here.",
+        "Explore other categories or list an item to help start this category.",
       categoryActionPrimary: "List an item",
       categoryActionSecondary: "All categories",
     },
-    interruptTitle: "Reserve securely in the app",
+    interruptTitle: "Reserve in the app with the final amount shown first",
     interruptBody:
-      "Choose dates, message owners, review the final amount and pay through Stripe in one place.",
+      "Choose dates, message owners, review fees, deposit and the final amount, then pay through Stripe.",
     interruptCta: "Get the app",
   },
   offline: {
@@ -613,14 +658,14 @@ export const en: Dict = {
     retry: "Try again",
   },
   bridge: {
-    defaultTitle: "Get Naudokis to continue in the app",
+    defaultTitle: "Continue this rental in the app",
     // DRAFT (marketing sign-off): role-neutral — covers both marketplace sides.
     defaultBody:
-      "In the app you can rent items nearby — choose dates, see the final price and pay through Stripe — or list your own items and get paid.",
+      "Use the app to choose dates, message the owner, see fees, deposit and the final amount, then pay through Stripe.",
     qrHint: "Scan the QR code with your phone to open Naudokis.",
     qrTitle: "Scan to continue on your phone",
     installCta: "Get the app",
-    keepBrowsing: "Keep browsing the site",
+    keepBrowsing: "Keep browsing",
     emailSelf: "Email yourself the link",
     emailSelfSubject: "Your Naudokis app link",
     storesAlso: "Also on:",
@@ -630,42 +675,42 @@ export const en: Dict = {
     appStoreAlt: "Download on the App Store",
     reserveTitle: "Reserve in the app",
     reserveBody:
-      "Choose dates, review the final price, applicable fees and deposit, then confirm your booking in the app.",
-    contactTitle: "Message the owner in the app",
+      "Choose dates, review the final amount, fees, deposit and cancellation terms, then confirm your reservation in the app.",
+    contactTitle: "Ask the owner in the app",
     contactBody:
-      "Keep rental messages and booking details together in Naudokis.",
+      "Messages, dates and reservation details stay together in Naudokis.",
     reviewsTitle: "Read all reviews in the app",
     reviewsBody:
       "All verified rental reviews are available in the Naudokis app.",
     favoriteTitle: "Save this item in the app",
-    favoriteBody: "Saved items live in your Naudokis account.",
+    favoriteBody: "Saved items are kept in your Naudokis account.",
     shareTitle: "Open this item in the app",
     shareBody: "Download Naudokis to open this item on your phone.",
-    listTitle: "List your item in the app",
-    listBody: "Add photos, describe the item, set the price and deposit, and manage requests in one place.",
+    listTitle: "List your item for rent",
+    listBody: "Add photos, describe the condition and what is included, set the price and deposit. You approve each request.",
   },
   invite: {
     meta: {
       title: "You’ve been invited to Naudokis — get the app",
       description:
-        "A friend invited you to try Naudokis — rent items from trusted people nearby. Get the app to start.",
+        "A friend invited you to try Naudokis — rent items from private and business owners. Get the app to start.",
     },
     eyebrow: "Invitation",
     titleValid: (amount) =>
       `You’ve been invited to Naudokis! Get ${amount} on your first rental.`,
     titleUnknown: "You’ve been invited to Naudokis.",
-    titleGeneric: "Rent items from people nearby.",
+    titleGeneric: "Rent items from people and businesses nearby.",
     // DRAFT (marketing sign-off): "nearby" no longer echoes the headline's line.
-    lead: "Naudokis is trusted item rental from private and business owners. Get the app to start.",
+    lead: "Naudokis helps you rent items from private and business owners. Get the app to start.",
     rewardExplainer:
       "Your reward is credited to your account once you verify your identity in the app. The friend who invited you is rewarded after your first completed rental.",
     invalidNote:
       "This invite code is no longer valid, but you can use the app as usual.",
     // DRAFT (marketing sign-off): truthful value bullets — already-claimed facts only.
     benefits: [
-      "Payments and deposits handled securely through Stripe",
-      "Verified owner profiles and reviews",
-      "Clear booking, cancellation and dispute rules",
+      "Payments are processed through Stripe; deposits are shown before confirmation",
+      "Owner profiles, verification badges and reviews",
+      "Clear reservation, cancellation and dispute rules",
     ],
     ctaInstall: "Get the app",
     qrHint: "Scan with your phone",
@@ -681,7 +726,7 @@ export const en: Dict = {
     body: "You asked to delete your Naudokis account. To keep it, confirm below before the grace period ends.",
     confirm: "Cancel deletion",
     successTitle: "Account deletion canceled",
-    successBody: "Your account is safe. You can log in again in the app.",
+    successBody: "Your account deletion has been canceled. You can log in again in the app.",
     successCta: "Open the app",
     invalidTitle: "Link not valid",
     invalidBody: "This link is invalid or has expired. Contact us if you need help.",
@@ -708,7 +753,7 @@ export const en: Dict = {
     errorAction: "Try again",
   },
   legal: {
-    brandSub: "Legal center",
+    brandSub: "Rules & privacy",
     contents: "Contents",
     closeContents: "Close contents",
     backTop: "Back to top",
@@ -724,11 +769,11 @@ export const en: Dict = {
     docTermsTitle: "Terms of Use",
     docPrivacyTitle: "Privacy Policy",
     docDeleteTitle: "Account & Data Deletion",
-    hubTitle: "Legal Center",
-    hubLead: "All published Naudokis legal documents in one place.",
-    questionsTitle: "Questions about this document?",
+    hubTitle: "Rules & privacy",
+    hubLead: "The main Naudokis rules, privacy information and account data controls in one place.",
+    questionsTitle: "Questions about how this applies to your rental?",
     questionsBody:
-      "Contact us by email if you have questions about this document.",
+      "Contact us by email if you have questions about a rule, payment or dispute.",
     contactCta: "Email us",
     metaDescriptionFallback:
       "Read this Naudokis legal document together with the Terms of Use and Privacy Policy.",

@@ -3,7 +3,7 @@
 // presentational homepage sections live in sections-home.tsx so the home page
 // can render them as server components.
 import { useCategories } from "@/app/lib/categories";
-import { categoryIconFor } from "@/app/lib/category-style";
+import { categoryIconFor, categoryNameFor } from "@/app/lib/category-style";
 import {
   barePath,
   localePath,
@@ -17,6 +17,7 @@ import { prefersReducedMotion } from "@/app/lib/motion";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
 import { listingLandingHref } from "@/app/lib/search";
+import { listingDetailPath } from "@/app/lib/listing-url";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -462,7 +463,7 @@ export function Categories() {
   const { locale, dict } = useI18n();
   const t = dict.categories;
   const { data, isLoading, isError, refetch } = useCategories(locale);
-  const list = (data ?? []).slice(0, 10);
+  const list = (data ?? []).slice(0, 5);
   return (
     <Section id="kategorijos" contained bottom="head">
       <SectionHead
@@ -482,7 +483,7 @@ export function Categories() {
       />
       {isLoading ? (
         <div className="nk-grid-cats">
-          {Array.from({ length: 10 }).map((_, i) => (
+          {Array.from({ length: 5 }).map((_, i) => (
             <CategoryCardSkeleton key={i} />
           ))}
         </div>
@@ -541,8 +542,8 @@ export function Offers() {
   // empty-photo placeholder glyphs.
   const cats = useCategories(locale).data ?? [];
   // Photo safeguard: surface photo-bearing listings in the flagship "Popular
-  // items" band so it isn't 4 category-icon placeholders.
-  const list = photoFirst(data ?? []).slice(0, 4);
+  // items" band so it isn't a row of category-icon placeholders.
+  const list = photoFirst(data ?? []).slice(0, 5);
   return (
     <Section id="skelbimai" contained top="head">
       <SectionHead
@@ -562,7 +563,7 @@ export function Offers() {
       />
       {isLoading ? (
         <div className="nk-grid-4">
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 5 }).map((_, i) => (
             <OfferCardSkeleton key={i} />
           ))}
         </div>
@@ -591,26 +592,11 @@ export function Offers() {
               ratingCount={o.ratingCount}
               hasDelivery={o.hasDelivery}
               category={o.category}
+              categoryName={categoryNameFor(cats, o.category)}
               categoryIcon={categoryIconFor(cats, o.category)}
-              href={localePath(locale, `/skelbimai/${o.id}`)}
+              href={localePath(locale, listingDetailPath({ id: o.id, title: o.title, city: o.city }))}
             />
           ))}
-          {/* Launch-size inventory: a ghost browse-all tile fills the trailing
-              cell so a 3-item row never reads as a failed load — and converts. */}
-          {list.length < 4 && (
-            <Link
-              href={localePath(locale, "/skelbimai")}
-              className="nk-ghost-tile nk-reveal"
-            >
-              {t.all}{" "}
-              <Icon
-                name="ArrowRight"
-                size={20}
-                stroke={2.2}
-                color="currentColor"
-              />
-            </Link>
-          )}
         </div>
       ) : (
         <SectionEmptyGrid
@@ -677,7 +663,7 @@ export function HowItWorks() {
               <span className="nk-hiw-node">
                 <Icon
                   name={STEP_ICONS[i]}
-                  size={32}
+                  size={38}
                   stroke={2}
                   color={STEP_ACCENTS[i]}
                 />

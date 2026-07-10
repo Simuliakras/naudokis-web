@@ -46,13 +46,16 @@ export function StoreBadge({
 }) {
   const { dict } = useI18nOptional();
   const isGoogle = store === "google";
-  const suffix = footer ? "-footer" : "";
-  const width = footer ? 214 : 183;
-  const naturalHeight = footer ? 66 : 56;
+  // The official badge art carries more internal padding than the retired custom
+  // assets; ×1.1 keeps the optical size the existing call-site heights were tuned to.
+  const renderedHeight = Math.round(height * 1.1);
+  // Intrinsic PNG dimensions (next/image needs them to reserve layout space).
+  const width = isGoogle ? 478 : 813;
+  const naturalHeight = isGoogle ? 142 : 272;
   const img = (
-    <Image src={isGoogle ? `/naudokis/btn-google-play${suffix}.png` : `/naudokis/btn-app-store${suffix}.png`}
+    <Image src={isGoogle ? "/naudokis/google-play.png" : "/naudokis/app-store.png"}
       alt={isGoogle ? dict.bridge.googlePlayAlt : dict.bridge.appStoreAlt}
-      width={width} height={naturalHeight} style={{ height, width: "auto" }} />
+      width={width} height={naturalHeight} style={{ height: renderedHeight, width: "auto" }} />
   );
   if (!interactive) {
     return <span style={{ display: "inline-flex" }}>{img}</span>;

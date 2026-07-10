@@ -25,11 +25,43 @@ import {
 } from "@/app/lib/listings";
 import {
   categoriesKey,
+  dedupeById,
   fetchCategories,
+  fetchAllCategories,
   type Category,
 } from "@/app/lib/categories";
+import {
+  hasNonCanonicalLandingSearch,
+  pageFromLandingSearch,
+  type LandingSearchParams,
+} from "@/app/lib/landing-params";
+import { categoryIdFromSlug, subcategoryIdFromSlug } from "@/app/lib/landing-routes";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
+
+// Resolve a /nuoma/[category]/[subcategory][/city] pair to its backend level-1
+// category, validating that the sub is a real child of the parent. Shared by the
+// city and city-less subcategory routes so they can't diverge on what 404s.
+export async function resolveSubcategory({
+  locale,
+  categorySlug,
+  subcategorySlug,
+}: {
+  locale: Locale;
+  categorySlug: string;
+  subcategorySlug: string;
+}): Promise<{ categories: Category[]; subcategory: Category }> {
+  const parentId = categoryIdFromSlug(categorySlug);
+  const subcategoryId = subcategoryIdFromSlug(subcategorySlug);
+  const categories = await fetchAllCategories(locale).catch(() => []);
+  const subcategory = categories.find(
+    (c) => c.id === subcategoryId && c.parentId === parentId,
+  );
+  if (!parentId || !subcategory) {
+    notFound();
+  }
+  return { categories, subcategory };
+}
 
 // Resolve + validate a landing from an already-loaded category set and derive its
 // SEO label. Shared by the metadata pass and the render pass so the invalid-slug
@@ -60,13 +92,18 @@ function resolveLanding({
 export async function listingLandingMetadata({
   locale,
   filters,
+  searchParams,
+  categoriesOverride,
 }: {
   locale: Locale;
   filters: ListingFilters;
+  searchParams?: LandingSearchParams;
+  categoriesOverride?: Category[];
 }): Promise<Metadata> {
   const { feed: t, meta } = getDictionary(locale);
-  const categories = await fetchCategories(locale).catch(() => []);
+  const categories = categoriesOverride ?? await fetchCategories(locale).catch(() => []);
   const { landing, category, categoryLabel } = resolveLanding({ locale, filters, categories });
+  const page = pageFromLandingSearch(searchParams);
 
   // A clean category landing (no city) renders the taxonomy's authored, already
   // brand-suffixed copy; city-only and category+city combos use the synthesized
@@ -90,12 +127,16 @@ export async function listingLandingMetadata({
 
   const metadata = pageMetadata({
     locale,
-    path: landing.path,
+    path: page > 1 ? `${landing.path}?page=${page}` : landing.path,
     title,
     description,
     ogLocale: meta.ogLocale,
     ogImageAlt: meta.ogImageAlt,
   });
+  if (hasNonCanonicalLandingSearch(searchParams)) {
+    metadata.robots = NOINDEX_FOLLOW;
+    return metadata;
+  }
   // An empty landing is a thin page: keep it crawlable-through but out of the index.
   if (count <= 0) {
     metadata.robots = NOINDEX_FOLLOW;
@@ -106,24 +147,32 @@ export async function listingLandingMetadata({
 export async function ListingLandingPage({
   locale,
   filters,
+  searchParams,
+  extraCategory,
 }: {
   locale: Locale;
   filters: ListingFilters;
+  searchParams?: LandingSearchParams;
+  extraCategory?: Category;
 }) {
   const { common, feed: t } = getDictionary(locale);
   const qc = makeQueryClient();
-  const key = listingsInfiniteKey(locale, filters);
+  const page = pageFromLandingSearch(searchParams);
+  const resolvedFilters = { ...filters, page };
+  const key = listingsInfiniteKey(locale, resolvedFilters);
 
   await Promise.all([
     qc.prefetchQuery({ queryKey: categoriesKey(locale), queryFn: () => fetchCategories(locale) }),
     qc.prefetchInfiniteQuery({
       queryKey: key,
-      queryFn: ({ pageParam }) => fetchListingsPage(locale, filters, pageParam),
+      queryFn: ({ pageParam }) => fetchListingsPage(locale, resolvedFilters, pageParam),
       initialPageParam: LISTINGS_FIRST_CURSOR,
     }),
   ]);
 
-  const categories = qc.getQueryData<Category[]>(categoriesKey(locale)) ?? [];
+  const baseCategories = qc.getQueryData<Category[]>(categoriesKey(locale)) ?? [];
+  const allCategories = filters.category ? await fetchAllCategories(locale).catch(() => []) : [];
+  const categories = dedupeById([...baseCategories, ...allCategories, ...(extraCategory ? [extraCategory] : [])]);
   const { landing, category, categoryLabel } = resolveLanding({ locale, filters, categories });
   const collectionName = category && !landing.city
     ? category.seoTitle
@@ -135,12 +184,15 @@ export async function ListingLandingPage({
   const cached = qc.getQueryData<InfiniteData<ListingsPage>>(key);
   const listings = cached?.pages.flatMap((p) => p.offers) ?? [];
   const totalCount = cached?.pages[0]?.totalCount ?? listings.length;
+  const parentCategory = category?.parentId ? categories.find((c) => c.id === category.parentId) : undefined;
 
   const breadcrumb = listingBreadcrumbTrail({
     homeLabel: common.breadcrumbHome,
     feedLabel: t.titleAll,
-    categoryTitle: category?.title,
-    category: category?.id,
+    categoryTitle: parentCategory?.title ?? category?.title,
+    category: parentCategory?.id ?? category?.id,
+    subcategoryTitle: parentCategory ? category?.title : undefined,
+    subcategory: parentCategory ? category?.id : undefined,
     city: landing.city,
   });
 
@@ -156,10 +208,10 @@ export async function ListingLandingPage({
         })}
       />
       {totalCount > 0 && listings.length > 0 && (
-        <JsonLd data={itemListJsonLd(locale, listings.map((l) => ({ id: l.id, name: l.title })))} />
+        <JsonLd data={itemListJsonLd(locale, listings.map((l) => ({ id: l.id, name: l.title, city: l.city })))} />
       )}
       <Suspense>
-        <FeedScreen initialFilters={filters} />
+        <FeedScreen initialFilters={resolvedFilters} extraCategory={extraCategory} extraCategories={allCategories} />
       </Suspense>
     </HydrationBoundary>
   );

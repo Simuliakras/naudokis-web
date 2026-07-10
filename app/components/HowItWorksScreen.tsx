@@ -119,7 +119,7 @@ export function HowItWorksScreen() {
           <FeatureBand eyebrow={t.trustEyebrow} title={t.trustTitle} items={t.trust} />
 
           {/* CTA (green) */}
-          <AppCtaBanner title={data.ctaTitle} body={data.ctaBody} phoneAlt={t.ctaPhoneAlt} placement="hiw_cta" />
+          <AppCtaBanner eyebrow={t.ctaEyebrow} title={data.ctaTitle} body={data.ctaBody} phoneAlt={t.ctaPhoneAlt} placement="hiw_cta" />
 
           {/* FAQ — shared home-page section; role-aware content (the owner tab
               gets owner questions: payouts, fees, damage). `key={role}` remounts

@@ -4,6 +4,7 @@
 // locked to the app via the redirect modal. This file is the orchestrator —
 // the presentational pieces live in ./ListingDetail.
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
@@ -16,8 +17,9 @@ import {
 } from "./ListingDetail";
 import { useListing, useListings, ListingNotFoundError } from "@/app/lib/listings";
 import { useCategories } from "@/app/lib/categories";
-import { categoryIconFor } from "@/app/lib/category-style";
-import { lastFeedUrl } from "@/app/lib/search";
+import { categoryIconFor, categoryNameFor } from "@/app/lib/category-style";
+import { lastFeedUrl, listingLandingHref } from "@/app/lib/search";
+import { listingDetailPath } from "@/app/lib/listing-url";
 import { localePath } from "@/app/lib/i18n/config";
 import { useI18n } from "./I18nProvider";
 
@@ -162,7 +164,15 @@ export function ListingScreen({ id }: { id: string }) {
             column left a dead region under the sidebar once reviews grow). */}
         <ReviewsSection listing={listing} onShowReviews={showReviews} />
 
-        {listing.categoryId && <SimilarRail currentId={listing.id} categoryId={listing.categoryId} />}
+        {listing.categoryId && (
+          <SimilarRail
+            currentId={listing.id}
+            categoryId={listing.categoryId}
+            currentCity={listing.city}
+            currentPriceCents={listing.priceCents}
+            ownerId={listing.owner?.id}
+          />
+        )}
       </div>
 
       <MobileBar price={listing.price} hidden={footerInView} onReserve={reserve} />
@@ -174,27 +184,57 @@ export function ListingScreen({ id }: { id: string }) {
    The detail page's highest-leverage re-engagement surface — queries the browse
    feed by the top-level category id (localized display names as free-text `q`
    return zero matches on the live API, which silently killed the rail), drops the
-   current listing, shows up to 4. A single sibling still renders — under a broader
-   honest heading — so launch-size inventory isn't a dead end. */
-function SimilarRail({ currentId, categoryId }: { currentId: string; categoryId: string }) {
+   current listing, shows up to 5 (a full .nk-grid-4 desktop row). A single sibling
+   still renders — under a broader honest heading — so launch-size inventory isn't
+   a dead end. */
+const RAIL_MAX = 5;
+function SimilarRail({
+  currentId,
+  categoryId,
+  currentCity,
+  currentPriceCents,
+  ownerId,
+}: {
+  currentId: string;
+  categoryId: string;
+  currentCity?: string;
+  currentPriceCents: number;
+  ownerId?: string;
+}) {
   const { locale, dict } = useI18n();
   const { data } = useListings(locale, { category: categoryId });
   const cats = useCategories(locale).data ?? [];
-  const items = (data ?? []).filter((o) => o.id !== currentId).slice(0, 4);
+  const siblings = (data ?? []).filter((o) => o.id !== currentId);
+  const ownerItems = ownerId ? siblings.filter((o) => o.ownerId === ownerId) : [];
+  const similarPriceItems = currentPriceCents
+    ? siblings.filter((o) => Math.abs(o.priceCents - currentPriceCents) / currentPriceCents <= 0.35)
+    : [];
+  const items = (ownerItems.length >= 2 ? ownerItems : similarPriceItems.length >= 2 ? similarPriceItems : siblings).slice(0, RAIL_MAX);
   if (items.length === 0) {
     return null;
   }
   const heading = items.length >= 2 ? dict.detail.similarHeading : dict.detail.moreItemsHeading;
+  const categoryTitle = categoryNameFor(cats, categoryId);
   return (
     <section style={{ marginTop: 64 }} aria-label={heading}>
       <h2 style={{ margin: "0 0 24px", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text)" }}>{heading}</h2>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 22 }}>
+        <Link className="nk-fchip nk-fchip--link" href={listingLandingHref({ locale, category: categoryId })}>
+          <span>{categoryTitle ?? dict.feed.categoryLabel}</span>
+        </Link>
+        {currentCity && (
+          <Link className="nk-fchip nk-fchip--link" href={listingLandingHref({ locale, category: categoryId, city: currentCity })}>
+            <span>{categoryTitle ? `${categoryTitle} · ${currentCity}` : currentCity}</span>
+          </Link>
+        )}
+      </div>
       <div className="nk-grid-4">
         {items.map((o) => (
           <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
             <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
               rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
-              img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
-              href={localePath(locale, `/skelbimai/${o.id}`)} />
+              img={o.img} category={o.category} categoryName={categoryNameFor(cats, o.category)} categoryIcon={categoryIconFor(cats, o.category)}
+              href={localePath(locale, listingDetailPath({ id: o.id, title: o.title, city: o.city }))} />
           </div>
         ))}
       </div>

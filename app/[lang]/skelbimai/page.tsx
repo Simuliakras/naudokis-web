@@ -7,21 +7,19 @@ import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { makeQueryClient } from "@/app/lib/query";
 import { fetchListingsCount, fetchListingsPage, listingsInfiniteKey, LISTINGS_FIRST_CURSOR, parseSortKey, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
 import { fetchCategories, categoriesKey, type Category } from "@/app/lib/categories";
+import { firstValue, pageFromLandingSearch, hasNonCanonicalLandingSearch, type LandingSearchParams } from "@/app/lib/landing-params";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 
 // Read the ?q/?cat/?city/?sort filters server-side, matching FeedScreen's hook.
-// A repeated param (?q=a&q=b) arrives as an array — take the first value.
-type RawSearch = Record<string, string | string[] | undefined>;
-function firstValue(v: string | string[] | undefined): string | undefined {
-  return Array.isArray(v) ? v[0] : v;
-}
+type RawSearch = LandingSearchParams;
 function filtersFromSearch(sp: RawSearch): ListingFilters {
   return {
     q: firstValue(sp.q) ?? "",
     city: firstValue(sp.city) ?? "",
     category: firstValue(sp.cat) ?? "",
     sort: parseSortKey(firstValue(sp.sort)),
+    page: pageFromLandingSearch(sp),
   };
 }
 
@@ -30,6 +28,7 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
   const locale = requireLocale(lang);
   const { feed: t, meta } = getDictionary(locale);
   const sp = await searchParams;
+  const page = pageFromLandingSearch(sp);
   const categories = await fetchCategories(locale).catch(() => []);
   const landing = resolveListingLanding({
     catParam: firstValue(sp.cat) ?? "",
@@ -61,19 +60,16 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
       : t.metaDescription;
 
   const md = pageMetadata({
-    locale, path: landing.path, title, description,
+    locale, path: page > 1 ? `${landing.path}?page=${page}` : landing.path, title, description,
     ogLocale: meta.ogLocale, ogImageAlt: meta.ogImageAlt,
   });
-  // Free-text searches, sort/delivery variants and invalid filter values create
-  // duplicate or thin states. Let crawlers follow their links, but index only the
-  // stable browse/category/city/category+city landing URLs.
-  const q = firstValue(sp.q);
-  const sort = firstValue(sp.sort);
-  const delivery = firstValue(sp.delivery);
+  // Free-text searches, sort/delivery/price variants and invalid filter values
+  // create duplicate or thin states. Let crawlers follow their links, but index
+  // only the stable browse/category/city/category+city landing URLs. The
+  // search-param test is shared with the pretty-URL landing pages so they can't
+  // disagree on what counts as non-canonical.
   if (
-    (q && q.trim()) ||
-    (sort && parseSortKey(sort) !== "recommended") ||
-    delivery === "1" ||
+    hasNonCanonicalLandingSearch(sp) ||
     landing.hasInvalidCategory ||
     landing.hasInvalidCity
   ) {
@@ -138,7 +134,7 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
     category: landing.category?.id,
     city: landing.city,
   }));
-  const itemList = itemListJsonLd(locale, listings.map((l) => ({ id: l.id, name: l.title })));
+  const itemList = itemListJsonLd(locale, listings.map((l) => ({ id: l.id, name: l.title, city: l.city })));
 
   return (
     <HydrationBoundary state={dehydrate(qc)}>

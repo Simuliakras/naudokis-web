@@ -9,6 +9,7 @@ import type { FaqItem } from "@/app/lib/i18n/types";
 import { LT_CITIES, type City } from "@/app/lib/cities";
 import type { Category } from "@/app/lib/categories";
 import { listingLandingPath } from "@/app/lib/landing-routes";
+import { listingDetailPath } from "@/app/lib/listing-url";
 
 export {
   categoryIdFromSlug,
@@ -17,6 +18,8 @@ export {
   citySlugFor,
   listingFilterPath,
   listingLandingPath,
+  subcategoryIdFromSlug,
+  subcategorySlugForId,
 } from "@/app/lib/landing-routes";
 export type { ListingLandingFilters } from "@/app/lib/landing-routes";
 
@@ -80,7 +83,11 @@ export function resolveListingLanding({
     city,
     hasInvalidCategory: Boolean(cat && !category),
     hasInvalidCity: Boolean(cityName && !city),
-    path: listingLandingPath({ category: category?.id, city }),
+    path: listingLandingPath({
+      category: category?.parentId ?? category?.id,
+      subcategory: category?.parentId ? category.id : undefined,
+      city,
+    }),
   };
 }
 
@@ -300,7 +307,7 @@ export function categoriesCollectionJsonLd({
 }
 
 // Listings → an ItemList of links to each detail page (category/search/city pages).
-export function itemListJsonLd(locale: Locale, items: { id: string; name: string }[]): JsonLdNode {
+export function itemListJsonLd(locale: Locale, items: { id: string; name: string; city?: string }[]): JsonLdNode {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -309,7 +316,7 @@ export function itemListJsonLd(locale: Locale, items: { id: string; name: string
       "@type": "ListItem",
       position: i + 1,
       name: item.name,
-      url: absoluteUrl(locale, `/skelbimai/${item.id}`),
+      url: absoluteUrl(locale, listingDetailPath({ id: item.id, title: item.name, city: item.city })),
     })),
   };
 }
@@ -317,10 +324,11 @@ export function itemListJsonLd(locale: Locale, items: { id: string; name: string
 // A rental listing as a Product with a per-day Offer (UnitPriceSpecification
 // keeps the daily rate honest — schema.org Offer has no native rental unit).
 export function listingJsonLd({
-  locale, id, name, description, image, priceCents, ratingAverage, ratingCount, itemCondition,
+  locale, id, path, name, description, image, priceCents, ratingAverage, ratingCount, itemCondition,
 }: {
   locale: Locale;
   id: string;
+  path?: string;
   name: string;
   description: string;
   image?: string;
@@ -330,7 +338,7 @@ export function listingJsonLd({
   itemCondition?: string;
 }): JsonLdNode {
   const price = (priceCents / 100).toFixed(2);
-  const url = absoluteUrl(locale, `/skelbimai/${id}`);
+  const url = absoluteUrl(locale, path ?? `/skelbimai/${id}`);
   const node: JsonLdNode = {
     "@context": "https://schema.org",
     "@type": "Product",

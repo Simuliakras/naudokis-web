@@ -2,7 +2,7 @@
 // Reusable listings feed — powers search (?q=) and category (?cat=) browsing.
 // Search / filter / sort are functional on the web; only transactional actions
 // (favorite/reserve/contact) are locked to the app.
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
@@ -11,17 +11,18 @@ import { useSheetDrag } from "@/app/lib/use-sheet-drag";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
-import { Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, Toggle, openRedirect, rovingKeyNav, type SelectOption } from "./ui";
+import { Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, Toggle, openRedirect, rovingKeyNav, type SelectOption, type IconName } from "./ui";
 import { PageHead, SeoNote } from "./headers";
 import { HeroOwnerCta } from "./HeroSearch";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
-import { useCategories, type Category } from "@/app/lib/categories";
-import { useListingsInfinite, parseSortKey, photoFirst } from "@/app/lib/listings";
+import { dedupeById, useCategories, type Category } from "@/app/lib/categories";
+import { LISTINGS_PAGE_SIZE, useListingsInfinite, parseSortKey, parsePageParam, photoFirst } from "@/app/lib/listings";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { trackEvent } from "@/app/lib/analytics";
-import { categoryIconFor } from "@/app/lib/category-style";
+import { categoryIconFor, categoryNameFor } from "@/app/lib/category-style";
 import { listingLandingHref, rememberFeedUrl } from "@/app/lib/search";
+import { listingDetailPath } from "@/app/lib/listing-url";
 import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { LT_CITIES } from "@/app/lib/cities";
@@ -32,6 +33,8 @@ import type { ListingFilters } from "@/app/lib/listings";
 
 type FeedScreenProps = {
   initialFilters?: ListingFilters & { delivery?: boolean };
+  extraCategory?: Category;
+  extraCategories?: Category[];
 };
 
 // Honest client-side price bands over the loaded offers' real daily price (the
@@ -44,7 +47,7 @@ const PRICE_BANDS: { value: string; min: number | null; max: number | null }[] =
   { value: "60+", min: 60, max: null },
 ];
 
-export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
+export function FeedScreen({ initialFilters, extraCategory, extraCategories = [] }: FeedScreenProps = {}) {
   const { locale, dict } = useI18n();
   const t = dict.feed;
   const sp = useSearchParams();
@@ -62,6 +65,7 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
         cat: initialFilters.category ?? "",
         city: initialFilters.city ?? "",
         sort: initialFilters.sort ?? "recommended",
+        page: parsePageParam(initialFilters.page),
         delivery: initialFilters.delivery ?? false,
         price: "",
       }
@@ -70,6 +74,7 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
         cat: sp.get("cat") ?? "",
         city: validCity(sp.get("city") ?? ""),
         sort: parseSortKey(sp.get("sort")),
+        page: parsePageParam(sp.get("page")),
         delivery: sp.get("delivery") === "1",
         price: PRICE_BANDS.some((b) => b.value === sp.get("price")) ? (sp.get("price") as string) : "",
       };
@@ -88,12 +93,17 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
     if (params.cat) next.set("cat", params.cat);
     if (params.city) next.set("city", params.city);
     if (params.sort && params.sort !== "recommended") next.set("sort", params.sort);
+    if (params.page > 1) next.set("page", String(params.page));
     if (params.delivery) next.set("delivery", "1");
     if (params.price) next.set("price", params.price);
+    const resetPage = Object.keys(patch).some((key) => key !== "page");
     for (const [k, v] of Object.entries(patch)) {
       const isDefault = v === "" || v === false || v === "recommended";
       if (isDefault) next.delete(k);
       else next.set(k, v === true ? "1" : String(v));
+    }
+    if (resetPage) {
+      next.delete("page");
     }
     trackEvent("Listing Filter Change", {
       locale,
@@ -146,12 +156,18 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
     rememberFeedUrl(window.location.pathname + window.location.search);
   }, [sp]);
 
-  const cats = useCategories(locale).data ?? [];
+  const topCats = useCategories(locale).data;
+  // Merged lookup set (card eyebrows/icons, breadcrumbs, related subcategories).
+  // The category <select> stays top-level only — see catOptions below.
+  const cats = useMemo(
+    () => dedupeById([...(topCats ?? []), ...extraCategories, ...(extraCategory ? [extraCategory] : [])]),
+    [topCats, extraCategories, extraCategory],
+  );
   const {
     data, isLoading, isError, refetch,
     fetchNextPage, hasNextPage, isFetchingNextPage, isPlaceholderData,
   } = useListingsInfinite(locale, {
-    q: params.q, city: params.city, category: params.cat, sort: params.sort,
+    q: params.q, city: params.city, category: params.cat, sort: params.sort, page: params.page,
   });
 
   useReloadOnReconnect({ online, isError, refetch });
@@ -225,6 +241,7 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
   // A category landing renders the taxonomy's authored heading + intro
   // (seoTitle/seoBody); the short name stays the breadcrumb/chip label.
   const cat = cats.find((c) => c.id === params.cat);
+  const parentCat = cat?.parentId ? cats.find((c) => c.id === cat.parentId) : undefined;
   const catTitle = cat?.title;
   const categorySeoLabel = cat ? t.categorySeoLabel(cat.id, cat.title) : undefined;
   const isCat = !!params.cat;
@@ -265,15 +282,17 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
     : listingBreadcrumbTrail({
         homeLabel: dict.common.breadcrumbHome,
         feedLabel: t.titleAll,
-        categoryTitle: params.cat ? (catTitle ?? params.cat) : undefined,
-        category: params.cat || undefined,
+        categoryTitle: params.cat ? (parentCat?.title ?? catTitle ?? params.cat) : undefined,
+        category: parentCat?.id ?? (params.cat || undefined),
+        subcategoryTitle: parentCat ? (catTitle ?? params.cat) : undefined,
+        subcategory: parentCat ? params.cat : undefined,
         city: params.city || undefined,
       })
         .slice(1)
         .map((c) => ({ label: c.name, href: localePath(locale, c.path) }));
 
   const anyActive = !!params.q || isCat || !!params.city || params.delivery || !!params.price || params.sort !== "recommended";
-  const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "recommended", delivery: false, price: "" }); };
+  const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "recommended", page: "", delivery: false, price: "" }); };
   // Count of secondary (sheet) filters — badges the mobile "Filters" button.
   const activeFilterCount = [params.cat, params.city, params.delivery, params.price, params.sort !== "recommended"].filter(Boolean).length;
 
@@ -283,7 +302,13 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
     { value: "price_desc", label: t.sortPriceDesc },
     { value: "rating_desc", label: t.sortRatingBest },
   ];
-  const catOptions: SelectOption[] = [{ value: "", label: t.allCategories }, ...cats.map((c) => ({ value: c.id, label: c.title }))];
+  // Top-level categories only — the merged `cats` set would flatten ~40 sub-
+  // categories into the select. The active subcategory (landing pages) is
+  // appended so the control can still label its current value.
+  const catOptions: SelectOption[] = [
+    { value: "", label: t.allCategories },
+    ...dedupeById([...(topCats ?? []), ...(cat ? [cat] : [])]).map((c) => ({ value: c.id, label: c.title })),
+  ];
   const cityOptions: SelectOption[] = [{ value: "", label: dict.cityPicker.all }, ...LT_CITIES.map((c) => ({ value: c, label: c }))];
   const priceOptions: SelectOption[] = [
     { value: "", label: t.priceAny },
@@ -325,9 +350,9 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
     <div key={o.id} className="nk-reveal" role="listitem" style={{ display: "grid" }}>
       <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
         rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
-        img={o.img} category={o.category} categoryIcon={categoryIconFor(cats, o.category)}
+        img={o.img} category={o.category} categoryName={categoryNameFor(cats, o.category)} categoryIcon={categoryIconFor(cats, o.category)}
         imageLoading={eager && index < Math.max(1, columns) ? "eager" : "lazy"}
-        href={localePath(locale, `/skelbimai/${o.id}`)} />
+        href={localePath(locale, listingDetailPath({ id: o.id, title: o.title, city: o.city }))} />
     </div>
   );
 
@@ -369,6 +394,61 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
       title={params.city ? empty.filterTitleCity(params.city) : empty.filterTitle} subtitle={empty.filterBody(params.delivery)}
       actionLabel={empty.filterAction} onAction={reset} />;
   };
+
+  const pageHref = (page: number) => {
+    const next = new URLSearchParams();
+    if (params.q) next.set("q", params.q);
+    if (!staticLanding && params.cat) next.set("cat", params.cat);
+    if (!staticLanding && params.city) next.set("city", params.city);
+    if (params.sort && params.sort !== "recommended") next.set("sort", params.sort);
+    if (params.delivery) next.set("delivery", "1");
+    if (params.price) next.set("price", params.price);
+    if (page > 1) next.set("page", String(page));
+    const qs = next.toString();
+    return qs ? `${pathname}?${qs}` : pathname;
+  };
+  const totalPages = totalCount ? Math.ceil(totalCount / LISTINGS_PAGE_SIZE) : null;
+  const showPager = !isLoading && !isError && !clientFiltered && !params.q && (params.page > 1 || !!hasNextPage);
+
+  // Landing-insights tiles, derived from the FIRST result page only: the copy
+  // makes page-scoped claims ("visible on this page…"), so it must match the
+  // SSR HTML and stay put while infinite scroll appends pages. Capped at 8
+  // tiles so the band reads as an editorial block, not an SEO wall.
+  const insightCategory = categorySeoLabel ?? catTitle;
+  const firstPage = data?.pages?.[0];
+  const insightItems = useMemo<InsightItem[]>(() => {
+    const offers = firstPage?.offers ?? [];
+    if (offers.length === 0) {
+      return [];
+    }
+    const prices = offers.map((o) => o.priceCents).filter((n) => Number.isFinite(n));
+    const hasDelivery = offers.some((o) => o.hasDelivery);
+    const isNonEmpty = (s: string | undefined): s is string => !!s;
+    const neighborhoods = Array.from(new Set(offers.map((o) => o.subdivision).filter(isNonEmpty))).slice(0, 5);
+    const relatedSubcategories = cat
+      ? cats
+          .filter((c) => c.parentId === (cat.parentId ?? cat.id) && c.id !== cat.id)
+          .slice(0, 5)
+          .map((c) => c.title)
+      : [];
+    const scope = { category: insightCategory, city: params.city || undefined };
+    const items: (InsightItem | false)[] = [
+      { icon: "LayoutGrid", text: t.insightsInventory(totalCount ?? offers.length, scope) },
+      prices.length > 0 && { icon: "Tag", text: t.insightsPriceRange(Math.min(...prices), Math.max(...prices)) },
+      // One locality tile: sibling subcategories on category landings, else the
+      // first page's visible neighborhoods on city landings.
+      relatedSubcategories.length > 0
+        ? { icon: "LayoutGrid", text: t.insightsSubcategories(relatedSubcategories) }
+        : neighborhoods.length > 0 && { icon: "MapPin", text: t.insightsNeighborhoods(neighborhoods) },
+      { icon: "Calendar", text: t.insightsUseCases(scope) },
+      { icon: "BadgeCheck", text: t.insightsChecks },
+      { icon: "CreditCard", text: t.insightsDeposit },
+      { icon: "Handshake", text: t.insightsPickupDelivery(hasDelivery) },
+      { icon: "ShieldCheck", text: t.insightsTrust },
+    ];
+    return items.filter((item): item is InsightItem => Boolean(item));
+  }, [firstPage, cat, cats, insightCategory, params.city, totalCount, t]);
+  const showInsights = isLanding && insightItems.length > 0;
 
   return (
     <Chrome>
@@ -581,12 +661,41 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
             </div>
           )}
 
+          {showPager && (
+            <nav aria-label={t.paginationLabel} className="nk-seopager">
+              {params.page > 1 && (
+                <Link href={pageHref(params.page - 1)} className="nk-fchip nk-fchip--link">
+                  <Icon name="ArrowLeft" size={15} stroke={2.2} color="currentColor" />
+                  <span>{t.previousPage}</span>
+                </Link>
+              )}
+              <span className="nk-seopager__status">
+                {totalPages ? t.pageStatus(params.page, totalPages) : t.pageStatusShort(params.page)}
+              </span>
+              {hasNextPage && (
+                <Link href={pageHref(params.page + 1)} className="nk-fchip nk-fchip--link">
+                  <span>{t.nextPage}</span>
+                  <Icon name="ArrowRight" size={15} stroke={2.2} color="currentColor" />
+                </Link>
+              )}
+            </nav>
+          )}
+
           {/* Supply-side exit: the feed is where owner intent surfaces ("my item
               would sit well here") — reuses the hero's owner prompt + CTA. */}
           {list.length > 0 && (
             <div style={{ display: "flex", justifyContent: "center", marginTop: 28 }}>
               <HeroOwnerCta />
             </div>
+          )}
+
+          {showInsights && (
+            <LandingInsights
+              eyebrow={t.insightsEyebrow}
+              heading={t.insightsHeading({ category: insightCategory, city: params.city || undefined })}
+              cta={t.insightsCta}
+              items={insightItems}
+            />
           )}
 
           <SeoNote heading={seoHeading} body={seoBody}>
@@ -609,6 +718,38 @@ export function FeedScreen({ initialFilters }: FeedScreenProps = {}) {
         <Footer locale={locale} />
       </div>
     </Chrome>
+  );
+}
+
+type InsightItem = { icon: IconName; text: string };
+
+function LandingInsights({
+  eyebrow,
+  heading,
+  cta,
+  items,
+}: {
+  eyebrow: string;
+  heading: string;
+  cta: string;
+  items: InsightItem[];
+}) {
+  return (
+    <section className="nk-landing-insights" aria-labelledby="nk-landing-insights-title">
+      <div className="nk-landing-insights__head">
+        <span className="nk-landing-insights__eyebrow">{eyebrow}</span>
+        <h2 id="nk-landing-insights-title">{heading}</h2>
+        <p>{cta}</p>
+      </div>
+      <div className="nk-landing-insights__grid">
+        {items.map((item) => (
+          <div key={item.icon + item.text} className="nk-landing-insights__item">
+            <span className="nk-landing-insights__icon"><Icon name={item.icon} size={20} stroke={2} color="currentColor" /></span>
+            <p>{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

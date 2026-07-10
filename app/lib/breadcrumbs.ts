@@ -13,6 +13,8 @@ export function listingBreadcrumbTrail({
   feedLabel,
   categoryTitle,
   category,
+  subcategoryTitle,
+  subcategory,
   city,
 }: {
   homeLabel: string;
@@ -21,6 +23,8 @@ export function listingBreadcrumbTrail({
   // label used in the page heading. Undefined for a city-only or bare landing.
   categoryTitle?: string;
   category?: string; // backend category id (drives the landing path)
+  subcategoryTitle?: string;
+  subcategory?: string;
   city?: string;
 }): Crumb[] {
   const trail: Crumb[] = [
@@ -29,6 +33,10 @@ export function listingBreadcrumbTrail({
   ];
   if (category && categoryTitle) {
     trail.push({ name: categoryTitle, path: listingLandingPath({ category }) });
+  }
+  if (category && subcategory && subcategoryTitle && city) {
+    trail.push({ name: `${subcategoryTitle}, ${city}`, path: listingLandingPath({ category, subcategory, city }) });
+    return trail;
   }
   if (city) {
     trail.push({ name: city, path: listingLandingPath({ category, city }) });
