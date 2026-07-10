@@ -11,8 +11,8 @@ import { useSheetDrag } from "@/app/lib/use-sheet-drag";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
-import { Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, Toggle, openRedirect, rovingKeyNav, type SelectOption, type IconName } from "./ui";
-import { PageHead, SeoNote } from "./headers";
+import { Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, Toggle, openRedirect, rovingKeyNav, type SelectOption } from "./ui";
+import { ChipLinkRow, PageHead, SeoNote } from "./headers";
 import { HeroOwnerCta } from "./HeroSearch";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { dedupeById, useCategories, type Category } from "@/app/lib/categories";
@@ -382,8 +382,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     if (isCat && !filtersActive) {
       // Dead-end (empty category): keep the user browsing on the web as the
       // primary path; the owner CTA stays available as the secondary action.
-      // The category's own glyph makes ~10 programmatic empties feel authored.
-      return <EmptyState illustration="listings" illustrationIcon={categoryIconFor(cats, params.cat)}
+      return <EmptyState illustration="listings"
         title={empty.categoryTitle} subtitle={empty.categoryBody}
         actionLabel={empty.categoryActionSecondary} actionPrimary
         onAction={() => router.push(localePath(locale, "/kategorijos"))}
@@ -409,46 +408,6 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
   };
   const totalPages = totalCount ? Math.ceil(totalCount / LISTINGS_PAGE_SIZE) : null;
   const showPager = !isLoading && !isError && !clientFiltered && !params.q && (params.page > 1 || !!hasNextPage);
-
-  // Landing-insights tiles, derived from the FIRST result page only: the copy
-  // makes page-scoped claims ("visible on this page…"), so it must match the
-  // SSR HTML and stay put while infinite scroll appends pages. Capped at 8
-  // tiles so the band reads as an editorial block, not an SEO wall.
-  const insightCategory = categorySeoLabel ?? catTitle;
-  const firstPage = data?.pages?.[0];
-  const insightItems = useMemo<InsightItem[]>(() => {
-    const offers = firstPage?.offers ?? [];
-    if (offers.length === 0) {
-      return [];
-    }
-    const prices = offers.map((o) => o.priceCents).filter((n) => Number.isFinite(n));
-    const hasDelivery = offers.some((o) => o.hasDelivery);
-    const isNonEmpty = (s: string | undefined): s is string => !!s;
-    const neighborhoods = Array.from(new Set(offers.map((o) => o.subdivision).filter(isNonEmpty))).slice(0, 5);
-    const relatedSubcategories = cat
-      ? cats
-          .filter((c) => c.parentId === (cat.parentId ?? cat.id) && c.id !== cat.id)
-          .slice(0, 5)
-          .map((c) => c.title)
-      : [];
-    const scope = { category: insightCategory, city: params.city || undefined };
-    const items: (InsightItem | false)[] = [
-      { icon: "LayoutGrid", text: t.insightsInventory(totalCount ?? offers.length, scope) },
-      prices.length > 0 && { icon: "Tag", text: t.insightsPriceRange(Math.min(...prices), Math.max(...prices)) },
-      // One locality tile: sibling subcategories on category landings, else the
-      // first page's visible neighborhoods on city landings.
-      relatedSubcategories.length > 0
-        ? { icon: "LayoutGrid", text: t.insightsSubcategories(relatedSubcategories) }
-        : neighborhoods.length > 0 && { icon: "MapPin", text: t.insightsNeighborhoods(neighborhoods) },
-      { icon: "Calendar", text: t.insightsUseCases(scope) },
-      { icon: "BadgeCheck", text: t.insightsChecks },
-      { icon: "CreditCard", text: t.insightsDeposit },
-      { icon: "Handshake", text: t.insightsPickupDelivery(hasDelivery) },
-      { icon: "ShieldCheck", text: t.insightsTrust },
-    ];
-    return items.filter((item): item is InsightItem => Boolean(item));
-  }, [firstPage, cat, cats, insightCategory, params.city, totalCount, t]);
-  const showInsights = isLanding && insightItems.length > 0;
 
   return (
     <Chrome>
@@ -689,15 +648,6 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
             </div>
           )}
 
-          {showInsights && (
-            <LandingInsights
-              eyebrow={t.insightsEyebrow}
-              heading={t.insightsHeading({ category: insightCategory, city: params.city || undefined })}
-              cta={t.insightsCta}
-              items={insightItems}
-            />
-          )}
-
           <SeoNote heading={seoHeading} body={seoBody}>
             <RelatedLandingLinks
               locale={locale}
@@ -718,38 +668,6 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
         <Footer locale={locale} />
       </div>
     </Chrome>
-  );
-}
-
-type InsightItem = { icon: IconName; text: string };
-
-function LandingInsights({
-  eyebrow,
-  heading,
-  cta,
-  items,
-}: {
-  eyebrow: string;
-  heading: string;
-  cta: string;
-  items: InsightItem[];
-}) {
-  return (
-    <section className="nk-landing-insights" aria-labelledby="nk-landing-insights-title">
-      <div className="nk-landing-insights__head">
-        <span className="nk-landing-insights__eyebrow">{eyebrow}</span>
-        <h2 id="nk-landing-insights-title">{heading}</h2>
-        <p>{cta}</p>
-      </div>
-      <div className="nk-landing-insights__grid">
-        {items.map((item) => (
-          <div key={item.icon + item.text} className="nk-landing-insights__item">
-            <span className="nk-landing-insights__icon"><Icon name={item.icon} size={20} stroke={2} color="currentColor" /></span>
-            <p>{item.text}</p>
-          </div>
-        ))}
-      </div>
-    </section>
   );
 }
 
@@ -791,17 +709,11 @@ function RelatedLandingLinks({
   // Micro-label + the nav-styled --link chip variant keep these crawlable links
   // visually distinct from the functional filter chips at the top of the page.
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 10, paddingTop: 4 }}>
-      <span style={{ width: "100%", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12.5, letterSpacing: ".07em", textTransform: "uppercase", color: "var(--nk-text-muted)" }}>{heading}</span>
-      <Link href={localePath(locale, "/kategorijos")} className="nk-fchip nk-fchip--link">
-        <span>{allLabel}</span>
-      </Link>
-      {links.map((link) => (
-        <Link key={link.href} href={link.href} className="nk-fchip nk-fchip--link">
-          <span>{link.label}</span>
-        </Link>
-      ))}
-    </div>
+    <ChipLinkRow
+      label={heading}
+      links={[{ label: allLabel, href: localePath(locale, "/kategorijos") }, ...links]}
+      style={{ paddingTop: "var(--nk-gap-md)" }}
+    />
   );
 }
 

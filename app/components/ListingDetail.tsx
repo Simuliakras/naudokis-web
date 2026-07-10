@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Icon, IconName, Pill, openRedirect } from "./ui";
+import { RowHead } from "./headers";
 import { SectionEmpty } from "./cards";
 import { formatLocation } from "@/app/lib/listings";
 import type { ListingDetail, ListingDelivery, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
@@ -24,10 +25,7 @@ function Section({ id, title, sub, first, children }: {
 }) {
   return (
     <section id={id} className="nk-sec" style={{ marginTop: first ? 0 : 32, paddingTop: first ? 0 : 32 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: sub ? "var(--nk-gap-2xs)" : 0, marginBottom: "var(--nk-gap-xl)" }}>
-        <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 25, lineHeight: "30px", color: "var(--nk-text)" }}>{title}</h2>
-        {sub && <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>{sub}</p>}
-      </div>
+      <RowHead title={title} sub={sub} marginBottom="var(--nk-gap-xl)" />
       {children}
     </section>
   );

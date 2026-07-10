@@ -119,16 +119,15 @@ export function OfferCard({
 
 /* ---------------- Category card (all-categories grid + home section) ---------------- */
 export function CategoryCard({
-  title, href, id, icon, description,
+  title, href, id, icon,
 }: {
   title: string;
   href: string;
   id: string; // top-level category id — selects the accent hue
   icon: IconName; // glyph resolved from the wire's icon_name (Category.icon)
-  description?: string; // authored category intro (Category.seoBody), clamped to fit
 }) {
   return (
-    <div className={description ? "nk-cat nk-cat--lead" : "nk-cat"} data-cat={id}>
+    <div className="nk-cat" data-cat={id}>
       <Link href={href} className="nk-stretch" aria-label={title} />
       <div className="nk-cat__img" />
       <div className="nk-cat__overlay" />
@@ -136,7 +135,6 @@ export function CategoryCard({
       <div className="nk-cat__content">
         <div className="nk-cat__text">
           <h3 className="nk-h-row" style={{ margin: 0, fontSize: 22, lineHeight: "26px" }}>{title}</h3>
-          {description && <p className="nk-cat__desc">{description}</p>}
         </div>
       </div>
     </div>
@@ -151,12 +149,12 @@ export function InterruptionBanner() {
     <div className="nk-interrupt nk-grain">
       <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
       <Image src="/naudokis/icon.png" alt="" width={409} height={409}
-        style={{ position: "relative", width: 88, height: 88, borderRadius: 21, flex: "none" }} />
+        style={{ position: "relative", width: 64, height: 64, borderRadius: 15, flex: "none" }} />
       <div style={{ position: "relative", flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
         {/* CTA banner, not a document section — a <p> keeps the feed's heading
             outline clean (an h3 here landed before the page's first h2). */}
         <p style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{t.interruptTitle}</p>
-        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "26px", color: "var(--nk-text-2)", maxWidth: 520 }}>{t.interruptBody}</p>
+        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "26px", color: "var(--nk-text-2)" }}>{t.interruptBody}</p>
       </div>
       <button className="nk-btn nk-btn--primary" style={{ position: "relative", padding: "16px 28px" }}
         onClick={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}>
@@ -251,12 +249,11 @@ export function CategoryCardSkeleton({ ghost = false }: { ghost?: boolean } = {}
    optional outline `secondaryLabel` sits beside it (e.g. the empty-category L4
    "Išnuomoti daiktą" + "Visos kategorijos" pairing). */
 export function EmptyState({
-  illustration, illustrationIcon, icon = "SearchX", title, subtitle, titleAs = "h3",
+  illustration, icon = "SearchX", title, subtitle, titleAs = "h3",
   actionLabel, onAction, actionPrimary = false, actionIcon,
   secondaryLabel, onSecondaryAction, tone = "default",
 }: {
   illustration?: IllusName;
-  illustrationIcon?: IconName; // context glyph overlaid on the illustration (see Illustration)
   icon?: IconName;
   title: string;
   subtitle: string;
@@ -286,7 +283,7 @@ export function EmptyState({
   return (
     <div className="nk-empty" role={danger ? "alert" : undefined}>
       {illustration
-        ? <Illustration name={illustration} icon={illustrationIcon} />
+        ? <Illustration name={illustration} />
         : <span className="nk-empty__icon" style={danger ? { background: "var(--nk-danger-tint)" } : undefined}>
             <Icon name={icon} size={40} stroke={1.8} color={danger ? "var(--nk-danger)" : "var(--nk-text-muted)"} />
           </span>}

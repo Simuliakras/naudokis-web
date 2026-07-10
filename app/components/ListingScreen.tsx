@@ -4,12 +4,12 @@
 // locked to the app via the redirect modal. This file is the orchestrator —
 // the presentational pieces live in ./ListingDetail.
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Breadcrumb, openRedirect } from "./ui";
+import { ChipLinkRow, RowHead } from "./headers";
 import { EmptyState, OfferCard } from "./cards";
 import {
   ListingSkeleton, ListingHeader, Gallery, DetailBody, ReviewsSection,
@@ -217,17 +217,16 @@ function SimilarRail({
   const categoryTitle = categoryNameFor(cats, categoryId);
   return (
     <section style={{ marginTop: 64 }} aria-label={heading}>
-      <h2 style={{ margin: "0 0 24px", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 24, lineHeight: "30px", color: "var(--nk-text)" }}>{heading}</h2>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 22 }}>
-        <Link className="nk-fchip nk-fchip--link" href={listingLandingHref({ locale, category: categoryId })}>
-          <span>{categoryTitle ?? dict.feed.categoryLabel}</span>
-        </Link>
-        {currentCity && (
-          <Link className="nk-fchip nk-fchip--link" href={listingLandingHref({ locale, category: categoryId, city: currentCity })}>
-            <span>{categoryTitle ? `${categoryTitle} · ${currentCity}` : currentCity}</span>
-          </Link>
-        )}
-      </div>
+      <RowHead title={heading} marginBottom="var(--nk-gap-xl)" />
+      <ChipLinkRow
+        style={{ marginBottom: "var(--nk-gap-xl)" }}
+        links={[
+          { label: categoryTitle ?? dict.feed.categoryLabel, href: listingLandingHref({ locale, category: categoryId }) },
+          ...(currentCity
+            ? [{ label: categoryTitle ? `${categoryTitle} · ${currentCity}` : currentCity, href: listingLandingHref({ locale, category: categoryId, city: currentCity }) }]
+            : []),
+        ]}
+      />
       <div className="nk-grid-4">
         {items.map((o) => (
           <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>

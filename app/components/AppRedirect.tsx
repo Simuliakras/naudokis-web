@@ -9,7 +9,7 @@ import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
 import { useSheetDrag } from "@/app/lib/use-sheet-drag";
 import { prefersReducedMotion } from "@/app/lib/motion";
-import { APP_STORE_URL, PLAY_STORE_URL, SMART_INSTALL_URL } from "@/app/lib/contact";
+import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 import { trackEvent } from "@/app/lib/analytics";
 
 // One buffer-frame past the .2s `nk-*-out` exit keyframes in globals.css, so the
@@ -102,7 +102,6 @@ export function AppRedirect() {
   useSheetDrag({ panelRef, handleRef: grabRef, enabled: state.open, onDismiss: close });
 
   if (!state.open) return null;
-  const emailHref = `mailto:?subject=${encodeURIComponent(dict.bridge.emailSelfSubject)}&body=${encodeURIComponent(SMART_INSTALL_URL)}`;
   // Same string as the mobile "Also on:" row, minus the trailing colon so it sits
   // cleanly as a centred divider label (both locales end in ":").
   const storeLabel = dict.bridge.storesAlso.replace(/[:：]+\s*$/, "");
@@ -133,8 +132,8 @@ export function AppRedirect() {
           </div>
         )}
         {/* Desktop hero: the QR is the working handoff path there (/go only
-            resolves to a store on a phone), so it gets the card + heading and the
-            mailto fallback for visitors who can't scan. Hidden ≤560px. */}
+            resolves to a store on a phone), so it gets the card + heading.
+            Hidden ≤560px. */}
         <div className="nk-redirect-qr">
           <span className="nk-qr-frame">
             <QR size={128} />
@@ -146,10 +145,6 @@ export function AppRedirect() {
           <span style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
             <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 17, lineHeight: "22px", color: "var(--nk-text)" }}>{dict.bridge.qrTitle}</span>
             <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, lineHeight: "20px", color: "var(--nk-text-muted)" }}>{dict.bridge.qrHint}</span>
-            <a href={emailHref} onClick={() => trackEvent("Send Link Email Click", { placement: "bridge_modal" })}
-              style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)", textDecoration: "underline", textUnderlineOffset: 3, width: "fit-content" }}>
-              {dict.bridge.emailSelf}
-            </a>
           </span>
         </div>
         {/* Desktop: separate the scan handoff from the store click-path. Hidden ≤560px. */}
@@ -175,11 +170,6 @@ export function AppRedirect() {
             <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--nk-text-2)", textDecoration: "underline", textUnderlineOffset: 3 }}
               onClick={() => trackEvent("App Store Click", { store: "apple", placement: "bridge_modal_text" })}>App Store</a>
           </p>
-          {/* Explicit decline path — softer than hunting for the corner ×. */}
-          <button type="button" className="nk-btn nk-btn--ghost" style={{ justifyContent: "center", fontSize: 15 }}
-            onClick={() => { trackEvent("Bridge Dismissed", { placement: "text_button" }); close(); }}>
-            {dict.bridge.keepBrowsing}
-          </button>
         </div>
       </div>
     </div>

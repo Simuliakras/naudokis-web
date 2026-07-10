@@ -8,6 +8,7 @@
 // sections.tsx. Consumers import from here directly; ui.tsx re-exports SectionHead
 // for back-compat with older import sites.
 import React from "react";
+import Link from "next/link";
 
 /* ---------------- Section spacing wrapper ----------------
    One place to spend the fluid rhythm tokens instead of inlining paddingBlock on
@@ -92,11 +93,16 @@ export function PageHead({
   className?: string;
   children?: React.ReactNode;
 }) {
+  // eyebrow + title ride in a .nk-headhug cluster so the eyebrow keeps the
+  // sitewide 4px hug even where the surrounding stack runs a looser rhythm
+  // (the hero band's --hero-gap, the pagehead's --nk-gap-sm).
   if (size === "band") {
     return (
       <>
-        {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
-        <As>{title}</As>
+        <div className="nk-headhug">
+          {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
+          <As>{title}</As>
+        </div>
         {typeof subtitle === "string" ? <p className="nk-hero-band__lead">{subtitle}</p> : subtitle}
         {children}
       </>
@@ -104,8 +110,10 @@ export function PageHead({
   }
   return (
     <div className={className ? `nk-pagehead ${className}` : "nk-pagehead"} style={{ maxWidth, marginBottom }}>
-      {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
-      <As className="nk-h-page" style={{ margin: 0 }}>{title}</As>
+      <div className="nk-headhug">
+        {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
+        <As className="nk-h-page" style={{ margin: 0 }}>{title}</As>
+      </div>
       {typeof subtitle === "string"
         ? <p className="nk-subtitle" style={subtitleMaxWidth ? { maxWidth: subtitleMaxWidth } : undefined}>{subtitle}</p>
         : subtitle}
@@ -114,10 +122,56 @@ export function PageHead({
   );
 }
 
+/* ---------------- Row head ----------------
+   The shared 24px display H2 for in-page content rows (SEO note, similar rail,
+   listing-detail sections). `sub` renders the detail page's lede; `color` lets
+   the SEO note keep its softer text-2. */
+export function RowHead({
+  title, sub, color = "var(--nk-text)", marginBottom = 0,
+}: {
+  title: string;
+  sub?: string;
+  color?: string;
+  marginBottom?: number | string;
+}) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: sub ? "var(--nk-gap-2xs)" : 0, marginBottom }}>
+      <h2 className="nk-h-row" style={{ margin: 0, color }}>{title}</h2>
+      {sub && <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>{sub}</p>}
+    </div>
+  );
+}
+
+/* ---------------- Chip-link row ----------------
+   Crawlable landing-link pills (.nk-fchip--link) shared by the feed SEO note and
+   the listing-detail similar rail. Optional `label` renders the full-width
+   uppercase micro-label ("Populiarios paieškos") on its own line. */
+export function ChipLinkRow({
+  label, links, style,
+}: {
+  label?: string;
+  links: { label: string; href: string }[];
+  style?: React.CSSProperties;
+}) {
+  if (links.length === 0) {
+    return null;
+  }
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--nk-gap-sm)", ...style }}>
+      {label && <span style={{ width: "100%", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12.5, letterSpacing: ".07em", textTransform: "uppercase", color: "var(--nk-text-muted)" }}>{label}</span>}
+      {links.map((link) => (
+        <Link key={link.href} href={link.href} className="nk-fchip nk-fchip--link">
+          <span>{link.label}</span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 /* ---------------- SEO note ----------------
    The closing "authored intro" block shared verbatim by the feed and categories
    screens (24px display H2 + 65ch small body). `children` carries the feed's
-   RelatedLandingLinks; categories passes none. */
+   related-landing ChipLinkRow; categories passes none. */
 export function SeoNote({
   heading, body, children,
 }: {
@@ -128,7 +182,7 @@ export function SeoNote({
   return (
     <Section top="head" bottom="section">
       <div style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
-        <h2 style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: "var(--nk-fs-row)", lineHeight: "30px", color: "var(--nk-text-2)" }}>{heading}</h2>
+        <RowHead title={heading} color="var(--nk-text-2)" />
         {/* 65ch reading measure (matches .nk-prose / the header intro) */}
         <p style={{ margin: 0, maxWidth: "65ch", fontFamily: "var(--nk-font-body)", fontSize: "var(--nk-fs-sm)", lineHeight: "26px", color: "var(--nk-text-muted)" }}>{body}</p>
         {children}

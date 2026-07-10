@@ -3,10 +3,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useI18nOptional } from "./I18nProvider";
 import { localeHome } from "@/app/lib/i18n/config";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 import { trackEvent } from "@/app/lib/analytics";
+import { prefersReducedMotion } from "@/app/lib/motion";
 // Icon / Pattern / QR / IconName are defined in the server-renderable visual.tsx
 // (single source of truth) and re-exported here so existing `from "./ui"` import
 // sites keep working unchanged.
@@ -16,10 +18,25 @@ export type { IconName };
 
 /* ---------------- Logo ---------------- */
 // A real link to the locale home (a logo is expected to navigate, not no-op).
+// Already on the home page, a same-URL navigation is a no-op — scroll to top instead.
 export function Logo({ height = 36, priority = false }: { height?: number; priority?: boolean }) {
   const { locale } = useI18nOptional();
+  const pathname = usePathname();
+  const home = localeHome(locale);
+  const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Modified clicks keep their native meaning (cmd/ctrl → new tab, etc.).
+    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
+      return;
+    }
+    // The proxy rewrites "/" → "/lt" internally; usePathname can report either form.
+    if (pathname !== home && pathname !== `/${locale}`) {
+      return;
+    }
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+  };
   return (
-    <Link className="nk-logo" href={localeHome(locale)}>
+    <Link className="nk-logo" href={home} onClick={onClick}>
       <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={287} height={64}
         preload={priority} style={{ height, width: "auto" }} />
     </Link>
@@ -208,33 +225,18 @@ const NK_ILLUS: Record<IllusName, React.ReactNode> = {
 };
 
 export function Illustration({
-  name = "search", size = 224, className = "", style, icon,
+  name = "search", size = 224, className = "", style,
 }: {
   name?: IllusName;
   size?: number;
   className?: string;
   style?: React.CSSProperties;
-  icon?: IconName; // context glyph overlaid on the "listings" card area (e.g. the empty category's own icon)
 }) {
-  const svg = (
+  return (
     <svg className={"nk-empty__ill " + className} width={size} height={size} viewBox="0 0 200 200"
-      aria-hidden="true" focusable="false" style={icon ? undefined : style}>
+      aria-hidden="true" focusable="false" style={style}>
       {NK_ILLUS[name] ?? NK_ILLUS.search}
     </svg>
-  );
-  if (!icon) {
-    return svg;
-  }
-  // Overlay centred on the listings illustration's photo rect (x60 y58 w80 h45 in
-  // the 200-unit canvas) so the ~10 programmatic empty pages feel authored, not
-  // templated. Literal brand hex: raw-SVG constraint, same as NK_ILLUS.
-  return (
-    <span aria-hidden="true" style={{ position: "relative", display: "inline-flex", ...style }}>
-      {svg}
-      <span style={{ position: "absolute", left: "50%", top: "40%", transform: "translate(-50%, -50%)", color: "#F9F367", display: "inline-flex" }}>
-        <Icon name={icon} size={Math.round(size * 0.24)} stroke={1.8} color="#F9F367" />
-      </span>
-    </span>
   );
 }
 

@@ -143,7 +143,8 @@ export type Dict = {
     trustEyebrow: string;
     trustTitle: string;
     trust: [HtwTrust, HtwTrust, HtwTrust];
-    browseCta: string; // mid-funnel exit into the live inventory ("Browse items")
+    browseCta: string; // renter mid-funnel exit into the live inventory ("Browse items")
+    listCta: string; // owner mid-funnel CTA ("List an item") — listing lives in the app, opens the list-flow bridge modal
     faqEyebrow: string;
     faqTitle: string;
     faqSubheading: string;
@@ -372,20 +373,6 @@ export type Dict = {
     nextPage: string;
     pageStatus: (page: number, totalPages: number) => string;
     pageStatusShort: (page: number) => string;
-    // Landing-insights band (category/city landings). Tiles derive from the
-    // first result page only, so every claim is stable and page-scoped.
-    insightsEyebrow: string; // micro-label above the landing-insights heading
-    insightsHeading: (parts: { category?: string; city?: string }) => string;
-    insightsInventory: (count: number, parts: { category?: string; city?: string }) => string;
-    insightsPriceRange: (minCents: number, maxCents: number) => string;
-    insightsNeighborhoods: (neighborhoods: string[]) => string;
-    insightsUseCases: (parts: { category?: string; city?: string }) => string;
-    insightsChecks: string;
-    insightsDeposit: string;
-    insightsPickupDelivery: (hasDelivery: boolean) => string;
-    insightsSubcategories: (subcategories: string[]) => string;
-    insightsTrust: string;
-    insightsCta: string;
     backToTop: string; // floating back-to-top button label
     seoHeading: string;
     seoBody: string;
@@ -422,9 +409,6 @@ export type Dict = {
     qrHint: string;
     qrTitle: string; // desktop-modal hero heading over the QR ("scan to continue on your phone")
     installCta: string; // primary install button in the bridge modal (mobile-only — /go resolves a store only on phones)
-    keepBrowsing: string; // explicit low-emphasis text dismiss ("keep browsing the site")
-    emailSelf: string; // desktop fallback — mailto with the smart-install link prefilled
-    emailSelfSubject: string;
     storesAlso: string; // mobile lead-in for the quiet store text links ("Also on:")
     close: string;
     opensAppHint: string; // affordance hint on locked CTAs ("Opens in the app")

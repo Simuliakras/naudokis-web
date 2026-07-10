@@ -244,6 +244,7 @@ export const lt: Dict = {
       },
     ],
     browseCta: "Naršyti daiktus",
+    listCta: "Įkelti skelbimą",
     faqEyebrow: "Turite klausimų?",
     faqTitle: "Dažniausi klausimai",
     faqSubheading:
@@ -668,47 +669,6 @@ export const lt: Dict = {
     nextPage: "Kitas puslapis",
     pageStatus: (page, totalPages) => `${page} puslapis iš ${totalPages}`,
     pageStatusShort: (page) => `${page} puslapis`,
-    insightsEyebrow: "Vietinė nuoma",
-    insightsHeading: ({ category, city }) => {
-      const locative = city ? cityLocativeLt(city) : "Lietuvoje";
-      const what = category ? category.toLowerCase() : "daiktų";
-      return `Ką verta žinoti apie ${what} nuomą ${locative}`;
-    },
-    insightsInventory: (count, { category, city }) => {
-      const locative = city ? cityLocativeLt(city) : "Lietuvoje";
-      const what = category
-        ? `${category.toLowerCase()} pasiūlymų`
-        : "nuomos pasiūlymų";
-      return `Šiuo metu rodoma ${count} ${what} ${locative}; nauji daiktai atsiranda pagal savininkų įkeltus skelbimus.`;
-    },
-    insightsPriceRange: (minCents, maxCents) => {
-      const min = Math.round(minCents / 100);
-      const max = Math.round(maxCents / 100);
-      return min === max
-        ? `Šiame puslapyje matomi pasiūlymai kainuoja apie ${min} € už dieną.`
-        : `Šiame puslapyje matomų pasiūlymų kainos svyruoja nuo ${min} € iki ${max} € už dieną.`;
-    },
-    insightsNeighborhoods: (neighborhoods) =>
-      `Matomos vietovės ir rajonai: ${neighborhoods.join(", ")}.`,
-    insightsUseCases: ({ category, city }) => {
-      const what = category ? category.toLowerCase() : "daiktus";
-      const where = city ? cityLocativeLt(city) : "Lietuvoje";
-      return `Dažniausi atvejai: trumpas projektas, savaitgalio išvyka, renginys, remontas ar vienkartinis poreikis, kai ${what} patogiau išsinuomoti ${where}, o ne pirkti.`;
-    },
-    insightsChecks:
-      "Prieš rezervuodami patikrinkite komplektaciją, būklę, nuomos trukmę, atšaukimo sąlygas, perdavimo vietą ir ar reikės papildomų priedų.",
-    insightsDeposit:
-      "Užstatas priklauso nuo konkretaus daikto vertės ir savininko sąlygų; jį matysite prieš patvirtindami rezervaciją programėlėje.",
-    insightsPickupDelivery: (hasDelivery) =>
-      hasDelivery
-        ? "Atsiėmimas ir pristatymas priklauso nuo skelbimo: dalį matomų pasiūlymų galima derinti su pristatymu, kitus reikia pasiimti sutartoje vietoje."
-        : "Dažniausias perdavimo būdas yra atsiėmimas sutartoje vietoje; jei pristatymas svarbus, įjunkite pristatymo filtrą arba patikrinkite skelbimo sąlygas.",
-    insightsSubcategories: (subcategories) =>
-      `Populiarios susijusios pakategorės: ${subcategories.join(", ")}.`,
-    insightsTrust:
-      "Prieš rezervuodami peržiūrėkite savininko profilį, patikros žymas, atsiliepimus, užstatą ir perdavimo sąlygas.",
-    insightsCta:
-      "Svetainėje galite palyginti pasiūlymus, o datas, žinutes, galutinę sumą ir mokėjimą patvirtinsite programėlėje.",
     backToTop: "Į viršų",
     seoHeading: "Daiktų nuoma Lietuvoje",
     seoBody:
@@ -754,9 +714,6 @@ export const lt: Dict = {
     qrHint: "Nuskenuokite QR kodą telefonu ir atidarykite Naudokis.",
     qrTitle: "Nuskenuokite ir tęskite telefone",
     installCta: "Atsisiųsti programėlę",
-    keepBrowsing: "Toliau naršyti",
-    emailSelf: "Nusiųsti nuorodą sau el. paštu",
-    emailSelfSubject: "Naudokis programėlės nuoroda",
     storesAlso: "Taip pat:",
     close: "Uždaryti",
     opensAppHint: "Atsidarys programėlėje",

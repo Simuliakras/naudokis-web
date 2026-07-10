@@ -7,6 +7,7 @@ import { Chrome } from "@/app/components/Chrome";
 import { Nav } from "@/app/components/sections";
 import { Footer } from "@/app/components/sections-home";
 import { Breadcrumb, Icon } from "@/app/components/ui";
+import { PageHead } from "@/app/components/headers";
 import { JsonLd } from "@/app/components/JsonLd";
 
 // Lightweight legal hub — the Terms' wayfinding table promises a "map of all
@@ -44,11 +45,12 @@ export default async function Page({ params }: PageProps<"/[lang]/teisine">) {
           <Nav />
           <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) var(--nk-section-y-lg)", maxWidth: 1100 }}>
             <Breadcrumb homeLabel={common.breadcrumbHome} label={common.breadcrumbLabel} items={[{ label: t.hubTitle }]} />
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-section-head)" }}>
-              <span className="nk-eyebrow">{t.brandSub}</span>
-              <h1 className="nk-h-page" style={{ margin: 0 }}>{t.hubTitle}</h1>
-              <p className="nk-body" style={{ margin: 0, maxWidth: 620 }}>{t.hubLead}</p>
-            </div>
+            <PageHead
+              eyebrow={t.brandSub}
+              title={t.hubTitle}
+              marginBottom="var(--nk-section-head)"
+              subtitle={<p className="nk-body" style={{ margin: 0, maxWidth: 620 }}>{t.hubLead}</p>}
+            />
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
               {legalDocs().map((doc) => {
                 const href = legalHref(doc.id, locale);

@@ -97,7 +97,7 @@ export function CategoriesScreen() {
           ) : list.length ? (
             <div className="nk-grid-cats nk-reveal-grid">
               {list.map((c) => (
-                <CategoryCard key={c.id} id={c.id} icon={c.icon} title={c.title} description={c.seoBody} href={listingLandingHref({ category: c.id, locale })} />
+                <CategoryCard key={c.id} id={c.id} icon={c.icon} title={c.title} href={listingLandingHref({ category: c.id, locale })} />
               ))}
             </div>
           ) : (

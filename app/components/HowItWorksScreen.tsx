@@ -11,13 +11,18 @@ import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { AppCtaBanner } from "./AppCtaBanner";
 import { FeatureBand } from "./FeatureBand";
-import { Icon, AppBadges, Breadcrumb, Pattern, type IconName } from "./ui";
+import { Icon, AppBadges, Breadcrumb, Pattern, openRedirect, type IconName } from "./ui";
 import { PageHead } from "./headers";
 import { useI18n } from "./I18nProvider";
 import { localePath } from "@/app/lib/i18n/config";
 import type { HtwScreen, HtwStep } from "@/app/lib/i18n/types";
 
 type Role = "renter" | "owner";
+
+// Shared shell of the role-matched mid-funnel CTA (owner <button> / renter <Link>).
+const CTA_CLASS = "nk-btn nk-btn--ghost";
+const CTA_STYLE: React.CSSProperties = { alignSelf: "flex-start", borderColor: "var(--nk-border)" };
+const CTA_ICON = <Icon name="ArrowRight" size={16} stroke={2} color="var(--nk-text)" />;
 
 export function HowItWorksScreen() {
   const { locale, dict } = useI18n();
@@ -91,12 +96,19 @@ export function HowItWorksScreen() {
                 </div>
                 <p className="nk-hero-band__lead" style={{ textAlign: "left", maxWidth: 560, fontSize: 19, lineHeight: "30px" }}>{data.lead}</p>
                 <StepList steps={steps} active={active} onSelect={setActive} role={role} />
-                {/* Mid-funnel exit into the live product — the explainer's natural
-                    next step is browsing, not only the store. */}
-                <Link className="nk-btn nk-btn--ghost" style={{ alignSelf: "flex-start", borderColor: "var(--nk-border)" }}
-                  href={localePath(locale, role === "owner" ? "/kategorijos" : "/skelbimai")}>
-                  {t.browseCta} <Icon name="ArrowRight" size={16} stroke={2} color="var(--nk-text)" />
-                </Link>
+                {/* Mid-funnel exit, role-matched: renters browse the live feed;
+                    owners list items — that lives in the app, so it opens the
+                    list-flow bridge modal instead of a page. */}
+                {role === "owner" ? (
+                  <button type="button" className={CTA_CLASS} style={CTA_STYLE}
+                    onClick={() => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody })}>
+                    {t.listCta} {CTA_ICON}
+                  </button>
+                ) : (
+                  <Link className={CTA_CLASS} style={CTA_STYLE} href={localePath(locale, "/skelbimai")}>
+                    {t.browseCta} {CTA_ICON}
+                  </Link>
+                )}
               </div>
               <div className="htw-right">
                 <div className="htw-phonewrap">

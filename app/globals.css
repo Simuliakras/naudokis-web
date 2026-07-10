@@ -389,6 +389,10 @@ a,button,input,textarea,select{touch-action:manipulation}
 
 /* ---- Heading block (eyebrow defined in the type ramp above) ---- */
 .nk-head{display:flex;flex-direction:column;gap:var(--nk-gap-2xs);flex:1 1 auto;min-width:0}
+/* eyebrow + heading hug — THE sitewide eyebrow→title gap (matches .nk-head).
+   Wrap the pair wherever the surrounding stack runs a looser rhythm (page heads,
+   hero bands, CTA banner) so the eyebrow always hugs its title. */
+.nk-headhug{display:flex;flex-direction:column;gap:var(--nk-gap-2xs);align-items:inherit;min-width:0}
 .nk-head__action{flex:none}
 .nk-head h2{font-family:var(--nk-font-display);font-weight:700;font-size:var(--nk-fs-h2);line-height:1.1;color:var(--nk-text);margin:0}
 /* optional lede under a SectionHead title (Faq subheading, home HowItWorks lead) */
@@ -746,16 +750,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-head__action{min-height:var(--nk-tap);display:inline-flex;align-items:center}
   .nk-cats-all{font-size:17px}
   .nk-cat{padding:14px}
-  /* both plain and --lead disks share the compact geometry (the intro line is
-     hidden below, so the lead tile needs no extra disk lift) */
-  .nk-cat__disk,.nk-cat--lead .nk-cat__disk{width:52px;height:52px;inset:0 0 40px}
+  .nk-cat__disk{width:52px;height:52px;inset:0 0 40px}
   .nk-cat__disk svg{width:24px;height:24px}
   .nk-cat__content{align-items:flex-end}
   .nk-cat h3{font-size:15px!important;line-height:18px!important}
-  /* the authored intro is a clipped 1-3 word fragment at ~148px — drop it so the
-     compact tile carries a clean disk + 2-line title. Extra specificity beats the
-     later base `.nk-cat__desc{display:-webkit-box}` (same 1-class specificity). */
-  .nk-cat .nk-cat__desc{display:none}
 }
 /* per-category gradient identity — accent blended strongly so each tile reads distinctly */
 .nk-cat__img{position:absolute;inset:0;z-index:0;
@@ -780,20 +778,18 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__disk{transform:translateY(-2px);box-shadow:var(--nk-edge-top),0 8px 20px rgba(0,0,0,.28)}}
 .nk-cat__content{position:relative;z-index:1;
   display:flex;justify-content:center;align-items:center;gap:var(--nk-gap-sm)}
-/* title + optional intro stack, centred horizontally under the disk; min-width:0
-   lets the clamp shrink inside the flex row, flex:1 + text-align keep the lines
-   centred across the full tile width */
-.nk-cat__text{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;text-align:center}
+/* title block, centred horizontally under the disk; min-width:0 lets the clamp
+   shrink inside the flex row, flex:1 + text-align keep the lines centred across
+   the full tile width */
+.nk-cat__text{flex:1;min-width:0;display:flex;flex-direction:column;text-align:center}
 /* clamp the title to two lines at every width so long LT names (e.g. "Garsas,
    muzika ir renginių technika") never push past the fixed tile height */
 .nk-cat__text h3{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* Reserve the full 2-line slot so titles stay level across a row where a neighbour
-   wraps (F-009). Plain tiles reserve it on the flex text block and centre the
-   (1- or 2-line) title inside it; --lead tiles keep the reservation on the title
-   so the stacked title + intro clears the disk. */
+   wraps (F-009): the flex text block reserves it and centres the (1- or 2-line)
+   title inside it. */
 @media(min-width:561px){
-  .nk-cat--lead .nk-cat__text h3{min-height:2.4em}
-  .nk-cat:not(.nk-cat--lead) .nk-cat__text{min-height:52px;justify-content:center}
+  .nk-cat__text{min-height:52px;justify-content:center}
 }
 /* smallest phones (below the 360 CSS floor): allow a 3rd line so a long name like
    "Garsas, muzika ir renginių technika" keeps its last word at 320px */
@@ -801,12 +797,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-grid-cats{--nk-cat-h:150px}
   .nk-cat__text h3{font-size:14px!important;line-height:16px!important;-webkit-line-clamp:4}
 }
-/* authored category intro — two lines so the (grammatically-correct) genitive
-   description conveys a useful clause before clamping */
-.nk-cat__desc{margin:0;font-family:var(--nk-font-body);font-size:14px;line-height:19px;color:var(--nk-text-muted);
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-/* a described tile lifts its centred disk so the two-line intro clears it */
-.nk-cat--lead .nk-cat__disk{inset:0 0 84px}
 @media(prefers-reduced-motion:reduce){
   .nk-cat,.nk-cat__img,.nk-cat__disk{transition:none}
   .nk-cat:hover{transform:none}
@@ -1233,15 +1223,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-fchip--link:hover{background:var(--nk-surface)}
 .nk-seopager{display:flex;align-items:center;justify-content:center;gap:var(--nk-gap-sm);flex-wrap:wrap;margin-top:28px}
 .nk-seopager__status{font-family:var(--nk-font-display);font-weight:700;font-size:14px;color:var(--nk-text-muted)}
-.nk-landing-insights{margin-top:clamp(36px,5vw,56px);padding:clamp(20px,4vw,32px);border:1px solid var(--nk-border);border-radius:var(--nk-r-card);background:var(--nk-surface);display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);gap:clamp(20px,4vw,36px);align-items:start}
-.nk-landing-insights__head{display:flex;flex-direction:column;gap:var(--nk-gap-sm)}
-.nk-landing-insights__eyebrow{font-family:var(--nk-font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--nk-purple-hover)}
-.nk-landing-insights h2{margin:0;font-family:var(--nk-font-display);font-size:clamp(24px,3vw,34px);line-height:1.08;color:var(--nk-text)}
-.nk-landing-insights__head p,.nk-landing-insights__item p{margin:0;font-family:var(--nk-font-body);font-size:16px;line-height:24px;color:var(--nk-text-2)}
-.nk-landing-insights__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--nk-gap-sm)}
-.nk-landing-insights__item{min-width:0;display:flex;gap:var(--nk-gap-sm);padding:16px;border:1px solid var(--nk-border-soft);border-radius:var(--nk-r-card);background:var(--nk-surface-2)}
-.nk-landing-insights__icon{flex:none;width:34px;height:34px;border-radius:17px;display:inline-flex;align-items:center;justify-content:center;color:var(--nk-purple-hover);background:var(--nk-purple-tag)}
-@media(max-width:760px){.nk-landing-insights{grid-template-columns:1fr}.nk-landing-insights__grid{grid-template-columns:1fr}}
 .nk-grid-feed{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--nk-grid-row-gap) var(--nk-grid-gap);max-width:var(--nk-content-cap)}
 @media(min-width:1025px) and (max-width:1280px){.nk-grid-feed{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(min-width:701px) and (max-width:1024px){.nk-grid-feed{grid-template-columns:repeat(3,minmax(0,1fr))}}

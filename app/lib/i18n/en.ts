@@ -220,6 +220,7 @@ export const en: Dict = {
       },
     ],
     browseCta: "Browse items",
+    listCta: "List an item",
     faqEyebrow: "More questions?",
     faqTitle: "Common questions",
     faqSubheading:
@@ -585,43 +586,6 @@ export const en: Dict = {
     nextPage: "Next page",
     pageStatus: (page, totalPages) => `Page ${page} of ${totalPages}`,
     pageStatusShort: (page) => `Page ${page}`,
-    insightsEyebrow: "Local rental",
-    insightsHeading: ({ category, city }) => {
-      const where = city ? `in ${city}` : "in Lithuania";
-      const what = category ? category.toLowerCase() : "item";
-      return `What to know about ${what} rental ${where}`;
-    },
-    insightsInventory: (count, { category, city }) => {
-      const where = city ? `in ${city}` : "in Lithuania";
-      const what = category ? `${category.toLowerCase()} listing${count === 1 ? "" : "s"}` : `rental listing${count === 1 ? "" : "s"}`;
-      return `Currently showing ${count} ${what} ${where}; new items appear as owners publish listings.`;
-    },
-    insightsPriceRange: (minCents, maxCents) => {
-      const min = Math.round(minCents / 100);
-      const max = Math.round(maxCents / 100);
-      return min === max
-        ? `Listings visible on this page are around €${min} per day.`
-        : `Listings visible on this page range from €${min} to €${max} per day.`;
-    },
-    insightsNeighborhoods: (neighborhoods) => `Visible neighborhoods and areas: ${neighborhoods.join(", ")}.`,
-    insightsUseCases: ({ category, city }) => {
-      const what = category ? category.toLowerCase() : "items";
-      const where = city ? `in ${city}` : "in Lithuania";
-      return `Common use cases include a short project, weekend trip, event, repair job or one-off need where renting ${what} ${where} is easier than buying.`;
-    },
-    insightsChecks:
-      "Before reserving, check what is included, item condition, rental duration, cancellation terms, handover location and whether extra accessories are needed.",
-    insightsDeposit:
-      "Deposit expectations depend on the specific item value and owner terms; the deposit is shown before you confirm the reservation in the app.",
-    insightsPickupDelivery: (hasDelivery) =>
-      hasDelivery
-        ? "Pickup and delivery depend on the listing: some visible offers can be arranged with delivery, while others are picked up at an agreed location."
-        : "Pickup at an agreed location is the most common handover method; if delivery matters, use the delivery filter or review the listing terms.",
-    insightsSubcategories: (subcategories) => `Popular related subcategories: ${subcategories.join(", ")}.`,
-    insightsTrust:
-      "Before reserving, review the owner profile, verification badges, reviews, deposit and handover terms.",
-    insightsCta:
-      "Compare listings on the website, then confirm dates, messages, final amount and payment in the app.",
     backToTop: "Back to top",
     seoHeading: "Item rental in Lithuania",
     seoBody:
@@ -665,9 +629,6 @@ export const en: Dict = {
     qrHint: "Scan the QR code with your phone to open Naudokis.",
     qrTitle: "Scan to continue on your phone",
     installCta: "Get the app",
-    keepBrowsing: "Keep browsing",
-    emailSelf: "Email yourself the link",
-    emailSelfSubject: "Your Naudokis app link",
     storesAlso: "Also on:",
     close: "Close",
     opensAppHint: "Opens in the app",
