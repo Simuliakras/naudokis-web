@@ -20,6 +20,23 @@ const LT_CATEGORY_SEO_LABELS: Record<string, string> = {
   other: "Daiktų",
 };
 
+// One-line tile examples (Categories v2) — approved copy from the 2026-07
+// design handoff, keyed by top-level category id.
+const LT_CATEGORY_EXAMPLES: Record<string, string> = {
+  transport: "Automobiliai, priekabos, paspirtukai",
+  photo_video: "Fotoaparatai, objektyvai, dronai",
+  tools_construction: "Gręžtuvai, pjūklai, perforatoriai",
+  sports_leisure: "Dviračiai, irklentės, slidės",
+  home_garden: "Vejapjovės, plovyklos, sodo technika",
+  electronics_tech: "Projektoriai, konsolės, kompiuteriai",
+  audio_music_events: "Kolonėlės, mikrofonai, apšvietimas",
+  events_parties: "Palapinės, stalai, dekoracijos",
+  clothing_accessories: "Suknelės, kostiumai, aksesuarai",
+  kids: "Vežimėliai, kėdutės, žaislai",
+  health_medical: "Ramentai, vežimėliai, masažuokliai",
+  other: "Viskas, kas netelpa kitur",
+};
+
 export const lt: Dict = {
   meta: {
     title:
@@ -65,6 +82,7 @@ export const lt: Dict = {
     eyebrow: "Naršykite",
     title: "Populiarios nuomos kategorijos",
     all: "Visos kategorijos",
+    examples: (id) => LT_CATEGORY_EXAMPLES[id],
     // Use the genitive category label (already inflected) so the copy reads as
     // correct Lithuanian — interpolating the nominative name produces broken
     // grammar ("Naršykite įrankiai ir statyba nuomos…"). Falls back to the plain

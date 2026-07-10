@@ -4,6 +4,24 @@
 // is the one verb for the conversion action.
 import type { Dict } from "./types";
 
+// One-line tile examples (Categories v2), keyed by top-level category id.
+// DRAFT (marketing sign-off): the 2026-07 handoff approved only the LT lines —
+// these are direct EN equivalents.
+const EN_CATEGORY_EXAMPLES: Record<string, string> = {
+  transport: "Cars, trailers, scooters",
+  photo_video: "Cameras, lenses, drones",
+  tools_construction: "Drills, saws, demolition hammers",
+  sports_leisure: "Bikes, paddleboards, skis",
+  home_garden: "Lawnmowers, pressure washers, garden tools",
+  electronics_tech: "Projectors, consoles, computers",
+  audio_music_events: "Speakers, microphones, lighting",
+  events_parties: "Tents, tables, decorations",
+  clothing_accessories: "Dresses, suits, accessories",
+  kids: "Strollers, car seats, toys",
+  health_medical: "Crutches, wheelchairs, massagers",
+  other: "Anything that doesn’t fit elsewhere",
+};
+
 export const en: Dict = {
   meta: {
     title: "Item rental in Lithuania | Naudokis.lt",
@@ -49,6 +67,7 @@ export const en: Dict = {
     eyebrow: "Browse",
     title: "Popular rental categories",
     all: "All categories",
+    examples: (id) => EN_CATEGORY_EXAMPLES[id],
     seoFallbackBody: (name) =>
       `Browse ${name.toLowerCase()} rentals across Lithuania. Compare prices, locations, owner profiles and continue your reservation in the app.`,
     metaTitleFallback: (name) => `${name} rental in Lithuania | Naudokis.lt`,

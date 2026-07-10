@@ -93,6 +93,11 @@ export type Dict = {
     eyebrow: string;
     title: string;
     all: string;
+    // One-line examples for the v2 tile ("Automobiliai, priekabos, paspirtukai"),
+    // keyed by top-level category id like feed.categorySeoLabel — titles come
+    // from the backend, but these curated lines are authored copy. Undefined for
+    // an unknown id → the card simply omits the line.
+    examples: (id: string) => string | undefined;
     // Generic page-intro fallback for a category landing when the backend has no
     // authored seo/meta description yet (e.g. a brand-new, un-seeded node). The
     // category `id` lets LT build the grammatically-correct genitive phrase

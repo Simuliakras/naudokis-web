@@ -459,11 +459,22 @@ function LocaleSwitcher({ inflow = false }: { inflow?: boolean }) {
 }
 
 /* ---------------- Categories ---------------- */
+// Curated home shelf (2026-07 handoff): 10 categories in this order — drops
+// health_medical and other; the Kategorijos page keeps the full grid.
+const HOME_SHELF_IDS = [
+  "transport", "photo_video", "tools_construction", "sports_leisure", "home_garden",
+  "electronics_tech", "audio_music_events", "events_parties", "clothing_accessories", "kids",
+] as const;
+
 export function Categories() {
   const { locale, dict } = useI18n();
   const t = dict.categories;
   const { data, isLoading, isError, refetch } = useCategories(locale);
-  const list = (data ?? []).slice(0, 5);
+  const cats = data ?? [];
+  const curated = HOME_SHELF_IDS.flatMap((id) => cats.find((c) => c.id === id) ?? []);
+  // Guard against id-vocabulary drift on the wire: never show an empty shelf
+  // while the backend actually has categories.
+  const list = curated.length ? curated : cats.slice(0, HOME_SHELF_IDS.length);
   return (
     <Section id="kategorijos" contained bottom="head">
       <SectionHead
@@ -482,8 +493,8 @@ export function Categories() {
         }
       />
       {isLoading ? (
-        <div className="nk-grid-cats">
-          {Array.from({ length: 5 }).map((_, i) => (
+        <div className="nk-grid-cats nk-cats-shelf">
+          {Array.from({ length: HOME_SHELF_IDS.length }).map((_, i) => (
             <CategoryCardSkeleton key={i} />
           ))}
         </div>
@@ -498,7 +509,7 @@ export function Categories() {
           onPrimary={() => refetch()}
         />
       ) : list.length ? (
-        <div className="nk-grid-cats nk-reveal-grid">
+        <div className="nk-grid-cats nk-cats-shelf nk-reveal-grid">
           {list.map((c) => (
             <CategoryCard
               key={c.id}
@@ -506,6 +517,7 @@ export function Categories() {
               icon={c.icon}
               title={c.title}
               href={listingLandingHref({ category: c.id, locale })}
+              examples={t.examples(c.id)}
             />
           ))}
         </div>

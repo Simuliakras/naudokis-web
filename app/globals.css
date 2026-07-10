@@ -734,7 +734,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   font-family:var(--nk-font-body);font-weight:600;font-size:13px;line-height:1;color:var(--nk-text);white-space:nowrap}
 .nk-offer__badge svg{flex:none}
 
-/* ---- category card (editorial: icon top-left, title + count chip bottom) ---- */
+/* ---- category card shell (radius/border/lift/focus/active) — the v2 inner
+   anatomy (.nk-catv2__*) lives in the Categories v2 layer at EOF ---- */
 .nk-cat{position:relative;width:100%;height:var(--nk-cat-h,248px);border-radius:var(--nk-r-card);overflow:hidden;text-align:left;cursor:pointer;
   display:flex;flex-direction:column;justify-content:flex-end;padding:22px;
   border:1px solid var(--nk-divider);box-shadow:var(--nk-edge-top);
@@ -743,8 +744,8 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(hover:hover) and (pointer:fine){.nk-cat:hover{transform:translateY(-6px);box-shadow:var(--nk-edge-top),var(--nk-shadow-2)}}
 .nk-cat:focus-within{border-color:var(--nk-accent-border);box-shadow:var(--nk-edge-top),0 0 0 3px var(--nk-purple-hover)}
 .nk-cat:active{transform:scale(.99)}
-/* compact 2-up tiles on phones: square-ish, smaller centred disk, title clamped
-   to two lines (the whole tile is the tap target) */
+/* compact 2-up tiles on phones (the whole tile is the tap target); the v2 inner
+   anatomy compacts itself in the Categories v2 layer at EOF */
 @media(max-width:560px){
   /* SectionHead stacks head → "view all" action on phones so the trailing
      "Visos kategorijos →" arrow can't clip/overflow at the 320px floor */
@@ -752,68 +753,21 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-head__action{min-height:var(--nk-tap);display:inline-flex;align-items:center}
   .nk-cats-all{font-size:17px}
   .nk-cat{padding:14px}
-  .nk-cat__disk{width:52px;height:52px;inset:0 0 40px}
-  .nk-cat__disk svg{width:24px;height:24px}
-  .nk-cat__content{align-items:flex-end}
   .nk-cat h3{font-size:15px!important;line-height:18px!important}
 }
-/* per-category gradient identity — accent blended strongly so each tile reads distinctly */
-.nk-cat__img{position:absolute;inset:0;z-index:0;
-  background:
-    radial-gradient(125% 100% at 82% -12%, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 60%, transparent), transparent 58%),
-    linear-gradient(155deg, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 52%, var(--nk-card-grad-1)), var(--nk-card-grad-2));
-  transition:transform .55s var(--nk-ease)}
-@media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__img{transform:scale(1.06)}}
-/* legibility scrim — lighter at the top (keeps the icon disk vivid), darker at the title */
-.nk-cat__overlay{position:absolute;inset:0;z-index:0;
-  background:linear-gradient(180deg,rgba(27,27,27,.10),rgba(27,27,27,0) 42%,rgba(27,27,27,.72))}
-/* category icon disk (centered in the tile) */
-.nk-cat__disk{position:absolute;z-index:1;inset:0 0 44px;margin:auto;
-  width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  background:color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 32%, transparent);
-  border:1px solid color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 48%, transparent);
-  /* white glyph (the disk fill + ring + tile gradient already carry the category
-     hue) — guarantees strong icon contrast vs the earlier accent-on-accent tint */
-  color:rgba(255,255,255,.92);
-  box-shadow:var(--nk-edge-top);
-  transition:transform .28s var(--nk-ease),box-shadow .28s ease}
-@media(hover:hover) and (pointer:fine){.nk-cat:hover .nk-cat__disk{transform:translateY(-2px);box-shadow:var(--nk-edge-top),0 8px 20px rgba(0,0,0,.28)}}
-.nk-cat__content{position:relative;z-index:1;
-  display:flex;justify-content:center;align-items:center;gap:var(--nk-gap-sm)}
-/* title block, centred horizontally under the disk; min-width:0 lets the clamp
-   shrink inside the flex row, flex:1 + text-align keep the lines centred across
-   the full tile width */
-.nk-cat__text{flex:1;min-width:0;display:flex;flex-direction:column;text-align:center}
-/* clamp the title to two lines at every width so long LT names (e.g. "Garsas,
-   muzika ir renginių technika") never push past the fixed tile height */
-.nk-cat__text h3{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-/* Reserve the full 2-line slot so titles stay level across a row where a neighbour
-   wraps (F-009): the flex text block reserves it and centres the (1- or 2-line)
-   title inside it. */
-@media(min-width:561px){
-  .nk-cat__text{min-height:52px;justify-content:center}
-}
-/* smallest phones (below the 360 CSS floor): allow a 3rd line so a long name like
-   "Garsas, muzika ir renginių technika" keeps its last word at 320px */
+/* smallest phones (below the 360 CSS floor): a touch more tile height so long LT
+   names (e.g. "Garsas, muzika ir renginių technika") keep breathing room at 320px */
 @media(max-width:400px){
   .nk-grid-cats{--nk-cat-h:150px}
-  .nk-cat__text h3{font-size:14px!important;line-height:16px!important;-webkit-line-clamp:4}
 }
 @media(prefers-reduced-motion:reduce){
-  .nk-cat,.nk-cat__img,.nk-cat__disk{transition:none}
-  .nk-cat:hover{transform:none}
-  .nk-cat:hover .nk-cat__img,.nk-cat:hover .nk-cat__disk{transform:none}}
+  .nk-cat{transition:none}
+  .nk-cat:hover{transform:none}}
 
 /* category skeleton — height comes from the shared --nk-cat-h token so it matches
-   the real tile at every breakpoint; inner shapes compact on phones to mirror the
-   compact tile skin (disk 52) */
-.nk-cat-skel{height:var(--nk-cat-h,208px);border-radius:var(--nk-r-card);position:relative}
-.nk-cat-skel__disk{position:absolute;inset:0 0 44px;margin:auto;width:88px;height:88px;border-radius:50%;background:rgba(27,27,27,.3)}
-.nk-cat-skel__bar{position:absolute;left:22px;bottom:22px;width:55%;height:22px;border-radius:6px;background:rgba(27,27,27,.3)}
-@media(max-width:560px){
-  .nk-cat-skel__disk{width:52px;height:52px;inset:0 0 34px}
-  .nk-cat-skel__bar{left:14px;bottom:14px;width:64%;height:14px}
-}
+   the real tile at every breakpoint (plain shimmer block; the v2 tile has no
+   fixed inner shapes worth mirroring) */
+.nk-cat-skel{height:var(--nk-cat-h,208px);border-radius:var(--nk-r-card)}
 
 /* ---- feature card hover ---- */
 .nk-feature{box-shadow:var(--nk-edge-top);transition:transform .28s ease,background .28s ease}
@@ -1907,7 +1861,6 @@ svg.nk-ico{stroke-width:1.75}
 @media(hover:hover) and (pointer:fine){
   .nk-offer:hover,.nk-cat:hover{transform:translateY(-3px);box-shadow:var(--nk-edge-top),var(--nk-shadow-2)}
   .nk-offer:hover .nk-zoom{transform:scale(1.03)}
-  .nk-cat:hover .nk-cat__img{transform:scale(1.03)}
   .nk-round--solid:hover,.nk-round--outline:hover{transform:translateX(2px)}
 }
 .nk-fav{width:42px;height:42px;border-radius:21px;background:rgba(18,20,21,.55);border:1px solid rgba(255,255,255,.12)}
@@ -1917,10 +1870,6 @@ svg.nk-ico{stroke-width:1.75}
   radial-gradient(62% 54% at 50% 44%, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 12%, transparent), transparent 72%),
   var(--nk-media)}
 .nk-offer__media--empty .nk-imgicon{opacity:.34}
-.nk-cat__img{background:
-  radial-gradient(125% 100% at 82% -12%, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 42%, transparent), transparent 58%),
-  linear-gradient(155deg, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 34%, var(--nk-card-grad-1)), var(--nk-card-grad-2))}
-.nk-cat__disk{background:color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 22%, transparent);border-color:color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 34%, transparent)}
 /* texture: whisper grain, dimmer patterns */
 .nk-grain::after{opacity:.028}
 .nk-brand-pattern{opacity:.055}
@@ -2001,4 +1950,120 @@ svg.nk-ico{stroke-width:1.75}
   .nk-grid-4--rail{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:min(68%,240px);overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:calc(-1*var(--nk-gutter));padding-inline:var(--nk-gutter);padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .nk-grid-4--rail::-webkit-scrollbar{display:none}
   .nk-grid-4--rail>*{scroll-snap-align:start}
+}
+
+/* ============================================================
+   Categories v2 — editorial tile anatomy + home snap rail
+   (2026-07 design handoff). Rides --cat-accent / --nk-gutter /
+   --nk-card-grad-2 / --nk-ease; no new tokens.
+   Root keeps .nk-cat (base radius/border/hover-lift/focus-ring/active,
+   including the Quiet Luxe finish overrides). The .nk-cat.nk-catv2
+   double class is load-bearing: its (0,2,0) specificity lets this
+   layer (and its reduced-motion block) outrank the Quiet Luxe
+   .nk-cat:hover overrides above without relying on source order.
+   ============================================================ */
+.nk-cat.nk-catv2{justify-content:space-between;padding:clamp(16px,1.5vw,22px);text-align:left}
+/* per-category hover identity: border warms to the category accent */
+.nk-cat.nk-catv2:hover{border-color:color-mix(in oklab, var(--cat-accent,var(--nk-purple)) 42%, transparent)}
+/* decorative layers must not intercept clicks — the tile's link is the
+   stretched .nk-stretch beneath them */
+.nk-catv2__top,.nk-catv2__meta{pointer-events:none}
+
+/* quiet surface: dark base, soft accent bloom behind the watermark,
+   faint counter-tint top-left — identity without the loud v1 gradient */
+.nk-catv2__bg{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(120% 100% at 104% 112%, color-mix(in oklab, var(--cat-accent,var(--nk-purple)) 30%, transparent), transparent 60%),
+    radial-gradient(80% 62% at -8% -16%, color-mix(in oklab, var(--cat-accent,var(--nk-purple)) 13%, transparent), transparent 62%),
+    linear-gradient(160deg, color-mix(in oklab, var(--cat-accent,var(--nk-purple)) 14%, var(--nk-card-grad-2)), var(--nk-card-grad-2) 82%)}
+
+/* thin-line watermark of the category icon — imagery depth without fake photos */
+.nk-catv2__ghost{position:absolute;z-index:0;right:-24px;bottom:-28px;width:148px;height:148px;pointer-events:none;
+  color:color-mix(in oklab, var(--cat-accent,var(--nk-purple)) 70%, white);opacity:.15;transform:rotate(-7deg);
+  transition:transform .5s var(--nk-ease),opacity .3s ease}
+.nk-catv2__ghost svg{display:block;width:100%;height:100%;stroke-width:.9}
+
+/* top row: accent icon chip left, circular "go" affordance right */
+.nk-catv2__top{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.nk-catv2__chip{width:48px;height:48px;border-radius:14px;flex:none;display:flex;align-items:center;justify-content:center;
+  background:color-mix(in oklab, var(--cat-accent,var(--nk-purple)) 20%, rgba(40,44,45,.42));
+  border:1px solid color-mix(in oklab, var(--cat-accent,var(--nk-purple)) 34%, transparent);
+  color:rgba(255,255,255,.94);box-shadow:var(--nk-edge-top);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  transition:transform .28s var(--nk-ease)}
+.nk-catv2__chip svg{width:24px;height:24px;display:block}
+.nk-catv2__go{width:32px;height:32px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);
+  transition:opacity .25s ease,transform .3s var(--nk-ease),background .25s ease,border-color .25s ease}
+.nk-catv2__go svg{width:15px;height:15px;display:block}
+
+/* bottom block: title + one-line examples */
+.nk-catv2__meta{position:relative;z-index:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+.nk-catv2__meta h3{margin:0;font-family:var(--nk-font-display);font-size:20px;line-height:25px;letter-spacing:-.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nk-catv2__sub{margin:0;font-family:var(--nk-font-body);font-size:13.5px;line-height:18px;color:rgba(255,255,255,.62);text-wrap:pretty}
+
+/* hover choreography (fine pointers only): arrow slides in, watermark drifts,
+   chip lifts. The tile-level lift/shadow comes from the base/Quiet Luxe .nk-cat. */
+@media(hover:hover) and (pointer:fine){
+  .nk-catv2__go{opacity:0;transform:translateX(-6px)}
+  .nk-cat.nk-catv2:hover .nk-catv2__go{opacity:1;transform:none;
+    background:color-mix(in oklab, var(--cat-accent,var(--nk-purple)) 30%, transparent);
+    border-color:color-mix(in oklab, var(--cat-accent,var(--nk-purple)) 46%, transparent)}
+  .nk-cat.nk-catv2:hover .nk-catv2__ghost{opacity:.22;transform:rotate(-3deg) translate(-5px,-6px) scale(1.05)}
+  .nk-cat.nk-catv2:hover .nk-catv2__chip{transform:translateY(-2px)}
+}
+/* keyboard: reveal the arrow when the stretched link has focus */
+.nk-cat.nk-catv2:focus-within .nk-catv2__go{opacity:1;transform:none}
+
+/* phones: compact 2-up skin — smaller chip, no examples line, tighter watermark.
+   Title size comes from the shared .nk-cat h3 mobile rule above. */
+@media(max-width:560px){
+  .nk-cat.nk-catv2{padding:14px}
+  .nk-catv2__chip{width:40px;height:40px;border-radius:12px}
+  .nk-catv2__chip svg{width:20px;height:20px}
+  .nk-catv2__go{width:28px;height:28px}
+  .nk-catv2__go svg{width:13px;height:13px}
+  .nk-catv2__sub{display:none}
+  .nk-catv2__ghost{width:112px;height:112px;right:-20px;bottom:-24px}
+}
+@media(max-width:400px){
+  .nk-catv2__go{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .nk-catv2__ghost,.nk-catv2__chip,.nk-catv2__go{transition:none}
+  /* double class outranks the Quiet Luxe hover lift, which otherwise overrides
+     the base reduced-motion transform:none by cascade order */
+  .nk-cat.nk-catv2:hover{transform:none}
+  .nk-cat.nk-catv2:hover .nk-catv2__ghost{transform:rotate(-7deg)}
+  .nk-cat.nk-catv2:hover .nk-catv2__chip{transform:none}
+}
+
+/* ============================================================
+   Home category shelf — swipeable snap rail ≤980px, standard
+   .nk-grid-cats grid above (10 tiles = 4+4+2 / 5+5). The rail
+   bleeds to the viewport edge (negative gutter margins), fades
+   at both ends, hides its scrollbar and snaps to the gutter.
+   Third instance of the edge-bleed snap-rail idiom (see
+   .nk-catrail, .nk-grid-4--rail) — candidate for a shared
+   utility in a dedicated cleanup pass.
+   ============================================================ */
+@media(max-width:980px){
+  /* 14px card gap is the handoff value — deliberately between
+     --nk-gap-sm (12) and --nk-gap-md (16); no matching token */
+  .nk-cats-shelf{display:flex;gap:14px;overflow-x:auto;
+    margin-inline:calc(var(--nk-gutter)*-1);padding:4px var(--nk-gutter) 6px;
+    scroll-snap-type:x mandatory;scroll-padding-inline:var(--nk-gutter);
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 var(--nk-gutter),#000 calc(100% - var(--nk-gutter)),transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 var(--nk-gutter),#000 calc(100% - var(--nk-gutter)),transparent)}
+  .nk-cats-shelf::-webkit-scrollbar{display:none}
+  .nk-cats-shelf > *{flex:0 0 224px;scroll-snap-align:start}
+  /* skeletons ride the same height so tiles don't jump when data lands */
+  .nk-cats-shelf .nk-cat,.nk-cats-shelf .nk-cat-skel{height:192px}
+}
+/* phones: narrower rail cards (compact tile skin applies), ~2.2 visible + peek */
+@media(max-width:560px){
+  .nk-cats-shelf > *{flex-basis:min(46vw,180px)}
+  .nk-cats-shelf .nk-cat,.nk-cats-shelf .nk-cat-skel{height:158px}
 }

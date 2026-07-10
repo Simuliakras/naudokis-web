@@ -55,10 +55,10 @@ export function CategoriesScreen() {
             title={t.title}
             subtitle={t.body}
             subtitleMaxWidth={620}
-            marginBottom="var(--nk-s-8)"
+            marginBottom="var(--nk-s-10)"
           />
 
-          <form onSubmit={(e) => e.preventDefault()} role="search" style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-8)" }}>
+          <form onSubmit={(e) => e.preventDefault()} role="search" style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-10)" }}>
             <span className="nk-searchfield" style={{ width: "100%", maxWidth: 560 }}>
               <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
               <input id="nk-cats-search-input" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.searchPlaceholder}
@@ -97,7 +97,8 @@ export function CategoriesScreen() {
           ) : list.length ? (
             <div className="nk-grid-cats nk-reveal-grid">
               {list.map((c) => (
-                <CategoryCard key={c.id} id={c.id} icon={c.icon} title={c.title} href={listingLandingHref({ category: c.id, locale })} />
+                <CategoryCard key={c.id} id={c.id} icon={c.icon} title={c.title} href={listingLandingHref({ category: c.id, locale })}
+                  examples={dict.categories.examples(c.id)} />
               ))}
             </div>
           ) : (

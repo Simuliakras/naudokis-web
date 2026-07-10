@@ -119,23 +119,29 @@ export function OfferCard({
 
 /* ---------------- Category card (all-categories grid + home section) ---------------- */
 export function CategoryCard({
-  title, href, id, icon,
+  title, href, id, icon, examples,
 }: {
   title: string;
   href: string;
   id: string; // top-level category id — selects the accent hue
   icon: IconName; // glyph resolved from the wire's icon_name (Category.icon)
+  examples?: string; // one-line examples (dict, id-keyed); hidden ≤560px by CSS
 }) {
+  // Bare <Icon> — its default 24/2 width/stroke attributes are inert here: the
+  // v2 CSS (plus the global svg.nk-ico stroke) restyles size/stroke per slot and
+  // breakpoint (e.g. chip 24→20px at ≤560), which per-render props can't do.
   return (
-    <div className="nk-cat" data-cat={id}>
+    <div className="nk-cat nk-catv2" data-cat={id}>
       <Link href={href} className="nk-stretch" aria-label={title} />
-      <div className="nk-cat__img" />
-      <div className="nk-cat__overlay" />
-      <span className="nk-cat__disk"><Icon name={icon} size={52} stroke={1.7} /></span>
-      <div className="nk-cat__content">
-        <div className="nk-cat__text">
-          <h3 className="nk-h-row" style={{ margin: 0, fontSize: 22, lineHeight: "26px" }}>{title}</h3>
-        </div>
+      <div className="nk-catv2__bg" />
+      <span className="nk-catv2__ghost" aria-hidden="true"><Icon name={icon} /></span>
+      <div className="nk-catv2__top">
+        <span className="nk-catv2__chip"><Icon name={icon} /></span>
+        <span className="nk-catv2__go" aria-hidden="true"><Icon name="ArrowRight" /></span>
+      </div>
+      <div className="nk-catv2__meta">
+        <h3>{title}</h3>
+        {examples ? <p className="nk-catv2__sub">{examples}</p> : null}
       </div>
     </div>
   );
@@ -230,16 +236,11 @@ export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
 }
 
 /* ---------------- Skeleton category card ----------------
-   Height + inner shapes are driven by CSS (`.nk-cat-skel*`, via the shared
+   A plain shimmer block — height is driven by CSS (`.nk-cat-skel`, via the shared
    --nk-cat-h token) so the skeleton tracks the real tile at every breakpoint. */
 export function CategoryCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
   const cls = ghost ? "nk-ghost" : "nk-skel";
-  return (
-    <div aria-hidden="true" className={`${cls} nk-cat-skel`}>
-      <div className={`${cls} nk-cat-skel__disk`} />
-      <div className={`${cls} nk-cat-skel__bar`} />
-    </div>
-  );
+  return <div aria-hidden="true" className={`${cls} nk-cat-skel`} />;
 }
 
 /* ---------------- Empty state ----------------
