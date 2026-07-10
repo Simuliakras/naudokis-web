@@ -109,7 +109,7 @@ export function OfferCard({
             </span>
           ) : (
             // No reviews yet — surface that as a "New" trust signal instead of a gap.
-            <span style={{ marginLeft: "auto" }}><Pill tone="yellow" icon="Sparkles">{c.newListing}</Pill></span>
+            <span className="o-new" style={{ marginLeft: "auto" }}><Pill tone="yellow" icon="Sparkles">{c.newListing}</Pill></span>
           )}
         </div>
       </div>

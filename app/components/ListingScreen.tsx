@@ -184,7 +184,8 @@ export function ListingScreen({ id }: { id: string }) {
    The detail page's highest-leverage re-engagement surface — queries the browse
    feed by the top-level category id (localized display names as free-text `q`
    return zero matches on the live API, which silently killed the rail), drops the
-   current listing, shows up to 5 (a full .nk-grid-4 desktop row). A single sibling
+   current listing, shows up to 5 (the --rail modifier caps wide desktop at 4-up,
+   so a 5th card starts a second row there; phones swipe all 5). A single sibling
    still renders — under a broader honest heading — so launch-size inventory isn't
    a dead end. */
 const RAIL_MAX = 5;
@@ -227,7 +228,7 @@ function SimilarRail({
             : []),
         ]}
       />
-      <div className="nk-grid-4">
+      <div className="nk-grid-4 nk-grid-4--rail">
         {items.map((o) => (
           <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
             <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}

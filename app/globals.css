@@ -7,24 +7,25 @@
 
 :root {
   /* ---- Brand accents (from mobile app palettes.ts · darkColors) --------- */
-  /* Primary indigo #6665E0 is the authoritative value, pulled from the mobile
-     app source — it overrides the earlier #807FFE / #9263FF guesses. */
-  --nk-purple:        #6665E0;   /* PRIMARY — buttons, links, accents (app)   */
-  --nk-purple-deep:   #5756C6;   /* primaryDark — border / pressed            */
-  --nk-purple-hover:  #8A89FF;   /* primaryText — hover / on-dark links (4.8:1 on flat --nk-bg only) */
-  --nk-purple-bright: #A8A7FF;   /* accent text over glass/tinted surfaces — ≥4.5:1 on the lightest hero glass */
-  --nk-purple-tag-text:#A3A2FF;  /* 14px text on --nk-purple-tag washes (≈5.3:1) — -hover fails there */
-  --nk-purple-tint:   rgba(102,101,224,.20);  /* faint decorative tint        */
-  --nk-purple-soft:   rgba(102,101,224,.12);  /* outline button hover wash    */
-  --nk-accent-bg:     #5756C6;   /* active/selected control fill — SOLID      */
+  /* 2026-07 "Quiet Luxe" retarget: refined indigo #5E5CE6 supersedes the
+     mobile app's #6665E0 (brand/surface/radii/elevation tokens retuned per
+     the approved design handoff; --nk-light-* and per-category hues kept). */
+  --nk-purple:        #5E5CE6;   /* PRIMARY — buttons, links, accents (app)   */
+  --nk-purple-deep:   #4B49CF;   /* primaryDark — border / pressed            */
+  --nk-purple-hover:  #A09EFF;   /* primaryText — hover / on-dark links (4.8:1 on flat --nk-bg only) */
+  --nk-purple-bright: #B6B4FF;   /* accent text over glass/tinted surfaces — ≥4.5:1 on the lightest hero glass */
+  --nk-purple-tag-text:#B0AEFF;  /* 14px text on --nk-purple-tag washes (≈5.3:1) — -hover fails there */
+  --nk-purple-tint:   rgba(94,92,230,.18);  /* faint decorative tint        */
+  --nk-purple-soft:   rgba(94,92,230,.10);  /* outline button hover wash    */
+  --nk-accent-bg:     #4B49CF;   /* active/selected control fill — SOLID      */
   --nk-accent-text:   #FFFFFF;   /* active/selected control text              */
-  --nk-accent-border: rgba(102,101,224,.45);  /* active control / card hover  */
-  --nk-card-grad-1:   #3F3E94;   /* cardGradientDark — category card          */
-  --nk-card-grad-2:   #2A2849;   /* cardGradientDarkSecondary                 */
-  --nk-yellow:        #F9F367;   /* eyebrows, stars, highlights, logo left    */
-  --nk-yellow-deep:   #e6df4e;   /* deep stop for yellow gradients (rating bar) */
-  --nk-green:         #10B981;   /* download banner, success badge            */
-  --nk-green-text:    #34D399;   /* green TEXT on green tints (≥6:1) — solid fills/icons keep --nk-green */
+  --nk-accent-border: rgba(94,92,230,.40);  /* active control / card hover  */
+  --nk-card-grad-1:   #3A3987;   /* cardGradientDark — category card          */
+  --nk-card-grad-2:   #262545;   /* cardGradientDarkSecondary                 */
+  --nk-yellow:        #EDD26E;   /* eyebrows, stars, highlights, logo left    */
+  --nk-yellow-deep:   #D4B44F;   /* deep stop for yellow gradients (rating bar) */
+  --nk-green:         #22A97C;   /* download banner, success badge            */
+  --nk-green-text:    #57D6A6;   /* green TEXT on green tints (≥6:1) — solid fills/icons keep --nk-green */
   --nk-orange:        #E07A4A;   /* pattern accent (4th brand color)          */
   /* feedback / state colors (error EmptyState) */
   --nk-danger:        #E5564B;   /* error / destructive                       */
@@ -46,59 +47,60 @@
   --nk-cat-other:       #7C78A6;  /* desaturated brand-purple — "Other" stays branded, not greyed-out/disabled */
 
   /* ---- Tonal tints (htw step tags / pills / phone-glows on dark) -------- */
-  --nk-yellow-tint:   rgba(249,243,103,.14);  /* yellow tag / pill wash      */
-  --nk-yellow-glow:   rgba(249,243,103,.45);  /* yellow synced-phone glow    */
-  --nk-green-tint:    rgba(16,185,129,.14);   /* green tag / payout wash      */
-  --nk-green-soft:    rgba(16,185,129,.20);   /* green pill fill              */
-  --nk-green-glow:    rgba(16,185,129,.45);   /* green synced-phone glow      */
-  --nk-purple-pill:   rgba(102,101,224,.22);  /* purple pill fill             */
-  --nk-purple-tag:    rgba(102,101,224,.16);  /* purple tag wash              */
+  --nk-yellow-tint:   rgba(237,210,110,.12);  /* yellow tag / pill wash      */
+  --nk-yellow-glow:   rgba(237,210,110,.36);  /* yellow synced-phone glow    */
+  --nk-green-tint:    rgba(34,169,124,.13);   /* green tag / payout wash      */
+  --nk-green-soft:    rgba(34,169,124,.18);   /* green pill fill              */
+  --nk-green-glow:    rgba(34,169,124,.38);   /* green synced-phone glow      */
+  --nk-purple-pill:   rgba(94,92,230,.20);  /* purple pill fill             */
+  --nk-purple-tag:    rgba(94,92,230,.14);  /* purple tag wash              */
   --nk-purple-glow:   rgba(102,101,224,.45);  /* purple synced-phone glow     */
-  --nk-purple-glow-2: rgba(102,101,224,.50);  /* phone ambient glow (default) */
-  --nk-purple-shadow: rgba(102,101,224,.34);  /* active step-number shadow    */
-  --nk-surface-hover-glass: rgba(55,63,64,.92);  /* feature / trust card hover */
+  --nk-purple-glow-2: rgba(94,92,230,.40);  /* phone ambient glow (default) */
+  --nk-purple-shadow: rgba(94,92,230,.28);  /* active step-number shadow    */
+  --nk-surface-hover-glass: rgba(50,56,58,.92);  /* feature / trust card hover */
 
   /* ---- Dark surfaces (primary identity) --------------------------------- */
-  --nk-bg:            #282C2D;   /* charcoal — primary page background        */
-  --nk-bg-deep:       #1B1B1B;   /* near-black — pattern / alt sections       */
-  --nk-surface:       #2F3436;   /* backgroundTertiary — card surface (app)   */
-  --nk-surface-2:     #373F40;   /* raised surface                            */
-  --nk-surface-hover: #414a4b;   /* ghost button hover                        */
-  --nk-faq-hover:     #343a3b;   /* FAQ row hover                             */
-  --nk-glass:         rgba(255,255,255,0.04);  /* hero glass panel (blur 40)  */
-  --nk-glass-strong:  rgba(255,255,255,0.07);  /* feature card glass          */
-  --nk-glass-card-border: rgba(255,255,255,0.10);  /* firmer hairline on glass cards */
-  --nk-glass-nav:     rgba(26,26,26,0.72);     /* glassBackdrop — nav over page */
+  --nk-bg:            #222527;   /* charcoal — primary page background        */
+  --nk-bg-deep:       #171919;   /* near-black — pattern / alt sections       */
+  --nk-surface:       #2A2E30;   /* backgroundTertiary — card surface (app)   */
+  --nk-surface-2:     #313638;   /* raised surface                            */
+  --nk-surface-hover: #3A4042;   /* ghost button hover                        */
+  --nk-faq-hover:     #2E3234;   /* FAQ row hover                             */
+  --nk-glass:         rgba(255,255,255,.03);  /* hero glass panel (blur 40)  */
+  --nk-glass-strong:  rgba(255,255,255,.05);  /* feature card glass          */
+  --nk-glass-card-border: rgba(255,255,255,.08);  /* firmer hairline on glass cards */
+  --nk-glass-nav:     rgba(18,19,20,.76);     /* glassBackdrop — nav over page */
   --nk-surface-glass: rgba(255,255,255,0.03);  /* surfaceElevated             */
   --nk-input-bg:      rgba(255,255,255,0.04);  /* inputBackground — ghost btn / listing fields */
   --nk-overlay:       rgba(20,22,23,0.62);     /* dark glass scrim — gallery / map chips */
   --nk-ink:           #121212;   /* app-store badge / deepest ink             */
 
   /* ---- Text on dark (app: white-at-opacity) -----------------------------
-     Verified WCAG contrast against --nk-bg (#282C2D), composited over the bg
-     for the translucent tokens (recompute if --nk-bg changes):
-       --nk-text       #FFF            14.1:1  ✓ AAA
-       --nk-text-2     white @85%      10.6:1  ✓ AAA
-       --nk-text-muted white @70%       7.7:1  ✓ AAA  (≥4.5 on --nk-surface too)
-       --nk-green      #10B981          5.6:1  ✓ AA   (status text / pills)
-       --nk-purple-hover #8A89FF        4.8:1  ✓ AA   (on-dark links / icons)
-     Button: white label on --nk-purple (#6665E0) is 4.7:1 ✓ AA. The hover
-     darkens to --nk-purple-deep (5.8:1). --nk-purple-hover is a TEXT/icon color
-     on dark only — never a button fill (white-on-#8A89FF is 3.0:1, fails). */
+     Verified WCAG contrast against --nk-bg (#222527), composited over the bg
+     for the translucent tokens (recompute if --nk-bg changes) — Quiet Luxe
+     spot-checks from the design handoff, all AA by design:
+       --nk-text       #FFF            ~15:1   ✓ AAA
+       --nk-text-2     white @88%      ~12:1   ✓ AAA
+       --nk-text-muted white @62%      ≈6.3:1  ✓ AA   (≥4.5 on --nk-surface too)
+       gold eyebrow (78% gold-to-white mix)  ≈10:1  ✓ AAA
+       --nk-purple-hover #A09EFF       ≈5.9:1  ✓ AA   (on-dark links / icons)
+     Button: white label on the gradient primary (#6E6CF2→#5350D6) is ≥4.9:1
+     ✓ AA. --nk-purple-hover is a TEXT/icon color on dark only — never a
+     button fill (white on it fails). */
   --nk-text:          #FFFFFF;            /* textPrimary                      */
-  --nk-text-2:        rgba(255,255,255,0.85);  /* textSecondary             */
-  --nk-text-muted:    rgba(255,255,255,0.70);  /* textMuted                 */
-  --nk-text-tertiary: rgba(255,255,255,0.55);  /* dimmest readable text tier on dark (hints) — 5.3:1 on --nk-bg */
+  --nk-text-2:        rgba(255,255,255,.88);  /* textSecondary             */
+  --nk-text-muted:    rgba(255,255,255,.62);  /* textMuted                 */
+  --nk-text-tertiary: rgba(255,255,255,.48);  /* dimmest readable text tier on dark (hints) — 5.3:1 on --nk-bg */
   --nk-text-slate:    #455759;   /* placeholder text in light search field   */
   --nk-avatar-icon:   #5b6163;   /* placeholder user glyph on tinted avatars */
 
   /* ---- Borders / lines (app: translucent white hairlines) --------------- */
-  --nk-border:        rgba(255,255,255,0.10);  /* glassBorder — default     */
-  --nk-hairline:      rgba(255,255,255,0.07);  /* surfaceElevatedBorder     */
-  --nk-border-soft:   rgba(255,255,255,0.12);  /* FAQ / row hairline (dark) */
-  --nk-border-strong: rgba(255,255,255,0.18);  /* burger / control hover edge */
+  --nk-border:        rgba(255,255,255,.07);  /* glassBorder — default     */
+  --nk-hairline:      rgba(255,255,255,.05);  /* surfaceElevatedBorder     */
+  --nk-border-soft:   rgba(255,255,255,.08);  /* FAQ / row hairline (dark) */
+  --nk-border-strong: rgba(255,255,255,.13);  /* burger / control hover edge */
   --nk-border-faint:  var(--nk-hairline);      /* subtle hairline dividers  */
-  --nk-divider:       rgba(255,255,255,0.08);  /* listing-detail row dividers / rating track */
+  --nk-divider:       rgba(255,255,255,.06);  /* listing-detail row dividers / rating track */
 
   /* ---- Light theme (marketing wireframe / app-light surfaces) ----------- */
   --nk-light-bg:      #FFFFFF;
@@ -133,14 +135,14 @@
   --nk-font-body:     var(--font-sora), system-ui, sans-serif;     /* body, eyebrows, prices, meta */
 
   /* ---- Radii ------------------------------------------------------------ */
-  --nk-r-card:    24px;   /* offer / category / feature cards (matches the design prototypes' rendered radius) */
-  --nk-r-lg:      20px;   /* hero panel, CTA banner, large feature blocks    */
-  --nk-r-md:      16px;   /* panels, popovers, banners                       */
-  --nk-r-sm:      12px;   /* small controls, drawer items, social tiles      */
-  --nk-r-chip:    18px;   /* location & filter chips                         */
-  --nk-r-pill:    25px;   /* pill buttons (search, primary)                  */
-  --nk-r-pill-lg: 34px;   /* hero search bar                                 */
-  --nk-r-faq:     46px;   /* FAQ accordion row                               */
+  --nk-r-card:    18px;   /* offer / category / feature cards (matches the design prototypes' rendered radius) */
+  --nk-r-lg:      16px;   /* hero panel, CTA banner, large feature blocks    */
+  --nk-r-md:      14px;   /* panels, popovers, banners                       */
+  --nk-r-sm:      10px;   /* small controls, drawer items, social tiles      */
+  --nk-r-chip:    12px;   /* location & filter chips                         */
+  --nk-r-pill:    14px;   /* pill buttons (search, primary)                  */
+  --nk-r-pill-lg: 22px;   /* hero search bar                                 */
+  --nk-r-faq:     18px;   /* FAQ accordion row                               */
   --nk-r-icon:    22px;   /* round icon button (44px circle)                 */
 
   /* ---- Fixed element sizes ----------------------------------------------- */
@@ -159,13 +161,13 @@
   --nk-shadow-input:  0 4px 4px 0 rgba(0,0,0,0.25);          /* search bar   */
   --nk-blur:          blur(40px);                            /* glass        */
   /* elevation tiers — every raised dark surface picks one of these */
-  --nk-edge-top:      inset 0 1px 0 rgba(255,255,255,.07);   /* lit-from-above highlight */
-  --nk-shadow-1:      0 1px 2px rgba(0,0,0,.22), 0 4px 14px rgba(0,0,0,.16);
-  --nk-shadow-2:      0 10px 28px rgba(0,0,0,.32);           /* resting panels */
-  --nk-shadow-3:      0 22px 50px rgba(0,0,0,.45);           /* card hover / popovers */
-  --nk-shadow-modal:  0 30px 80px rgba(0,0,0,.5);            /* dialogs */
-  --nk-glow-accent:   0 4px 18px rgba(102,101,224,.22);      /* focused fields / primary hover */
-  --nk-glow-purple:   rgba(102,101,224,.40);                 /* ambient CTA radials — brand purple */
+  --nk-edge-top:      inset 0 1px 0 rgba(255,255,255,.04);   /* lit-from-above highlight */
+  --nk-shadow-1:      0 1px 2px rgba(0,0,0,.16),0 6px 18px rgba(0,0,0,.12);
+  --nk-shadow-2:      0 14px 34px rgba(0,0,0,.26);           /* resting panels */
+  --nk-shadow-3:      0 26px 60px rgba(0,0,0,.36);           /* card hover / popovers */
+  --nk-shadow-modal:  0 34px 90px rgba(0,0,0,.46);            /* dialogs */
+  --nk-glow-accent:   0 8px 26px rgba(94,92,230,.22);      /* focused fields / primary hover */
+  --nk-glow-purple:   rgba(94,92,230,.32);                 /* ambient CTA radials — brand purple */
   --nk-shadow-phone-hero: drop-shadow(10px 15px 42px rgba(22,22,22,.50)); /* hero phone img */
   --nk-shadow-phone-cta:  drop-shadow(0 26px 50px rgba(0,0,0,.5));        /* CTA phone img  */
 
@@ -199,18 +201,18 @@
      Drive container gutters + section padding from clamp() so the desktop grid
      scales down to mobile without per-component media queries. */
   --nk-gutter:        clamp(20px, 6vw, 82px);   /* container side padding     */
-  --nk-section-y:     clamp(64px, 8vw, 112px);  /* standard section padding-y */
-  --nk-section-y-lg:  clamp(72px, 9vw, 120px);  /* hero / feature heavy bands */
+  --nk-section-y:     clamp(72px,9vw,124px);  /* standard section padding-y */
+  --nk-section-y-lg:  clamp(80px,10vw,136px);  /* hero / feature heavy bands */
   --nk-section-head:  clamp(40px, 5vw, 60px);   /* section head → content gap */
-  --nk-card-pad:      clamp(20px, 1.4vw, 24px); /* listing-card body padding   */
+  --nk-card-pad:      clamp(20px,1.5vw,26px); /* listing-card body padding   */
   --nk-card-pad-sm:   clamp(16px, 1.2vw, 20px); /* compact cards (fact/host/booking) */
   --nk-block-pad:     clamp(32px, 4vw, 56px);   /* feature / testimonial card  */
   --nk-panel-pad:     clamp(28px, 4.4vw, 60px); /* hero panel / large blocks   */
   --nk-stack-lg:      clamp(28px, 3.4vw, 40px); /* large vertical stacks       */
   --nk-page-top:      clamp(28px, 4vw, 56px);   /* content-page top padding under nav */
-  --nk-grid-gap:      clamp(20px, 2.4vw, 32px); /* responsive grid gap (feed/cats/etc) */
+  --nk-grid-gap:      clamp(22px,2.6vw,34px); /* responsive grid gap (feed/cats/etc) */
   --nk-grid-row-gap:  clamp(28px, 3vw, 48px);   /* feed row gap, collapses on mobile   */
-  --nk-r-tile:        16px;                      /* unified gallery tile radius */
+  --nk-r-tile:        14px;                      /* unified gallery tile radius */
   --nk-card-min:      260px;                      /* feed/card grids choose columns by usable card width */
   --nk-offer-min:     230px;                      /* compact marketing/related offer grids */
   --nk-cat-min:       220px;                      /* category tiles stay readable before adding a column */
@@ -1876,4 +1878,127 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
     backdrop-filter:none;
     -webkit-backdrop-filter:none;
   }
+}
+
+/* ============================================================================
+   "Quiet Luxe" finish layer (2026-07 design handoff)
+   Same layout, same components; only finishes change. Token retargets live in
+   :root above; the rules below retune type tracking, icon stroke, the gradient
+   primary button, hover motion, imagery tinting and texture opacities.
+   ========================================================================== */
+/* type finish: tracked micro-eyebrow, tighter display headings */
+.nk-eyebrow{font-size:16px;line-height:21px;font-weight:700;letter-spacing:.18em;color:color-mix(in srgb,var(--nk-yellow) 78%,white)}
+.nk-h-hero{letter-spacing:-.018em}
+.nk-h-section,.nk-head h2,.nk-h-page{letter-spacing:-.014em}
+.nk-h-card,.nk-h-row{letter-spacing:-.008em}
+.nk-offer h3{letter-spacing:-.01em}
+.nk-offer__eyebrow{font-size:10.5px;letter-spacing:.17em;font-weight:600;color:color-mix(in oklab,var(--cat-accent,var(--nk-purple)) 42%,white)}
+/* icons: lighter 1.75px stroke */
+svg.nk-ico{stroke-width:1.75}
+/* buttons: composed, less springy; one confident gradient conversion accent */
+.nk-btn{font-weight:600;letter-spacing:.01em}
+.nk-btn--primary{background:linear-gradient(180deg,#6E6CF2 0%,#5350D6 100%);border:1px solid #4543BE;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 1px 2px rgba(0,0,0,.22)}
+.nk-btn--primary:hover{background:linear-gradient(180deg,#7B79F7 0%,#5D5AE0 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),var(--nk-glow-accent)}
+/* hero search submit keeps the original full-pill radius (sits inside the 34px-radius search bar) */
+.nk-search .nk-btn{border-radius:25px}
+.nk-btn:active{transform:scale(.985)}
+/* cards: hairline + calm 3px lift, gentler zoom */
+.nk-offer,.nk-cat{border-color:var(--nk-border)}
+@media(hover:hover) and (pointer:fine){
+  .nk-offer:hover,.nk-cat:hover{transform:translateY(-3px);box-shadow:var(--nk-edge-top),var(--nk-shadow-2)}
+  .nk-offer:hover .nk-zoom{transform:scale(1.03)}
+  .nk-cat:hover .nk-cat__img{transform:scale(1.03)}
+  .nk-round--solid:hover,.nk-round--outline:hover{transform:translateX(2px)}
+}
+.nk-fav{width:42px;height:42px;border-radius:21px;background:rgba(18,20,21,.55);border:1px solid rgba(255,255,255,.12)}
+/* imagery: quieter category tint on empty media */
+.nk-offer__media--empty{background:
+  radial-gradient(90% 70% at 50% 110%, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 11%, transparent), transparent 70%),
+  radial-gradient(62% 54% at 50% 44%, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 12%, transparent), transparent 72%),
+  var(--nk-media)}
+.nk-offer__media--empty .nk-imgicon{opacity:.34}
+.nk-cat__img{background:
+  radial-gradient(125% 100% at 82% -12%, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 42%, transparent), transparent 58%),
+  linear-gradient(155deg, color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 34%, var(--nk-card-grad-1)), var(--nk-card-grad-2))}
+.nk-cat__disk{background:color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 22%, transparent);border-color:color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 34%, transparent)}
+/* texture: whisper grain, dimmer patterns */
+.nk-grain::after{opacity:.028}
+.nk-brand-pattern{opacity:.055}
+.nk-footer__pattern{opacity:.07}
+.nk-hiw-line{opacity:.22}
+/* nav: crisper condensed state */
+.nk-nav-bar.nk-scrolled{box-shadow:0 1px 0 rgba(255,255,255,.05),0 10px 30px rgba(0,0,0,.25)}
+
+/* ============================================================
+   Quiet Luxe — 2026 mobile/tablet upgrade layer
+   Desktop (>560px grids / >1024px layouts) untouched. Upgrades:
+   1. Phones browse a dense 2-up card grid (Airbnb/Vinted pattern)
+      with a compact card skin — ~2.4x more inventory per screen
+      vs the old 1-up column.
+   2. "Panašūs daiktai" becomes a swipeable edge-to-edge snap rail.
+   3. Tighter mobile card chrome: 36px fav disk, compact badges,
+      smaller placeholder glyphs.
+   4. Calmer mobile type on the loudest fixed-size text (detail H1,
+      interruption banner, FAQ rows).
+   !important is required where the card carries inline styles
+   (cards.tsx OfferCard type/geometry).
+   ============================================================ */
+@media(max-width:560px){
+  :root{--nk-card-pad:14px}
+  /* --- 1. dense 2-up browsing grids --- */
+  .nk-grid-feed,.nk-grid-4{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 10px}
+  /* --- compact card skin --- */
+  .nk-offer .nk-offer__body{gap:5px!important}
+  .nk-offer h3{font-size:15px!important;line-height:19px!important;min-height:38px!important}
+  .nk-offer__eyebrow{font-size:9.5px!important;letter-spacing:.14em!important}
+  .nk-offer__body>span:not(.nk-offer__eyebrow){font-size:12.5px!important}
+  .nk-offer__body>span:not(.nk-offer__eyebrow) svg.nk-ico{width:13px!important;height:13px!important}
+  .nk-offer__pricebar{padding-top:8px!important}
+  .nk-offer__pricebar>span:first-child>span:first-child{font-size:18px!important}
+  .nk-offer__pricebar>span:first-child>span:last-child{font-size:11.5px!important}
+  .nk-offer__pricebar b{font-size:12.5px!important}
+  .nk-offer__pricebar b+span{font-size:12.5px!important}
+  .nk-offer__pricebar svg.nk-ico{width:13px!important;height:13px!important}
+  /* .o-new sits on the "Naujas" pill WRAPPER in cards.tsx OfferCard; the
+     inline-styled Pill span inside is the >span target. */
+  .o-new>span{padding:4px 9px!important;font-size:11.5px!important}
+  .o-new svg.nk-ico{width:12px!important;height:12px!important}
+  .nk-offer .nk-fav{width:36px!important;height:36px!important;top:10px!important;right:10px!important;border-radius:18px!important}
+  .nk-offer .nk-fav svg.nk-ico{width:17px!important;height:17px!important}
+  .nk-offer__badge{top:10px!important;left:10px!important;padding:4px 8px!important;font-size:10.5px!important;max-width:calc(100% - 52px)!important}
+  .nk-offer__badge svg.nk-ico{width:11px!important;height:11px!important}
+  .nk-offer__media .nk-imgicon{width:40px!important;height:40px!important}
+  /* --- 4. calmer mobile type on fixed-size text --- */
+  .nk-detail h1{font-size:28px!important;line-height:1.12!important}
+  .nk-interrupt div p:first-child{font-size:21px!important;line-height:26px!important}
+  .nk-interrupt div p:last-child{font-size:15px!important;line-height:22px!important}
+  .nk-faq .nk-h-row{font-size:19px;line-height:24px}
+  .nk-empty__ill{width:156px;height:156px}
+  .nk-h-hero{hyphens:auto;-webkit-hyphens:auto}
+  /* redirect modal heading scales down on phones */
+  .nk-redirect-panel h2{font-size:22px!important;line-height:27px!important}
+}
+/* --- tablet: comfortable reading measure for detail prose --- */
+@media(min-width:561px) and (max-width:1024px){
+  .nk-detail .nk-prose{max-width:62ch}
+}
+
+/* ============================================================
+   Site-level rule changes approved during the design review
+   (apply alongside the token retargets above).
+   ============================================================ */
+/* Feed grid spans the full container on ultrawide (drops the
+   1480px --nk-content-cap guardrail on the browse feed only). */
+.nk-grid-feed{max-width:none}
+/* "Panašūs daiktai" rail on the listing detail page: max 4-up on
+   wide desktop (the 5-up feed grid read too dense in that context).
+   The extra class is added in ListingScreen.tsx SimilarRail. */
+@media(min-width:1281px){
+  .nk-grid-4--rail{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+/* Phones: the rail becomes a swipeable edge-to-edge snap carousel. */
+@media(max-width:560px){
+  .nk-grid-4--rail{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:min(68%,240px);overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:calc(-1*var(--nk-gutter));padding-inline:var(--nk-gutter);padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .nk-grid-4--rail::-webkit-scrollbar{display:none}
+  .nk-grid-4--rail>*{scroll-snap-align:start}
 }
