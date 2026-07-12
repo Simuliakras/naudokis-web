@@ -116,19 +116,21 @@ export function Icon({
 
 type PatternName = "hero-pattern" | "section-pattern" | "footer-pattern";
 
-export function Pattern({ name, className, style, priority = false }: {
+export function Pattern({ name, className, style, priority = false, mobileBlank = false }: {
   name: PatternName;
   className?: string;
   style?: React.CSSProperties;
   priority?: boolean;
+  mobileBlank?: boolean;
 }) {
   const base = `/naudokis/${name}`;
   return (
     <picture>
+      {mobileBlank && <source media="(max-width: 560px)" srcSet="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" type="image/gif" />}
       <source srcSet={`${base}.avif`} type="image/avif" />
       <source srcSet={`${base}.webp`} type="image/webp" />
       <img src={`${base}.png`} alt="" aria-hidden="true" className={className} style={style}
-        loading={priority ? undefined : "lazy"} />
+        loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : undefined} />
     </picture>
   );
 }

@@ -17,16 +17,31 @@
 
 const ONELINK_URL = process.env.NEXT_PUBLIC_ONELINK_URL ?? "";
 
+// Mirrors SITE_URL in app/lib/seo.ts — kept literal so this client-bundled leaf
+// lib doesn't drag the whole seo module graph into the /invite page.
+const CANONICAL_ORIGIN = "https://www.naudokis.lt";
+
+// The configured OneLink template, or null when unset/invalid. HTTPS-only: a
+// mistyped value must fail safely to the /go fallback, never to a downgraded
+// or relative redirect target.
+function oneLinkBase(): URL | null {
+  try {
+    const url = new URL(ONELINK_URL);
+    return url.protocol === "https:" && url.hostname ? url : null;
+  } catch {
+    return null;
+  }
+}
+
 // Relative smart-link fallback used when OneLink is unconfigured or no code is
 // present. Its relativeness is load-bearing: InviteScreen gates the reward copy
 // on `installLink.startsWith("http")`, so a "/go" fallback never advertises
 // attribution it can't deliver.
 const INSTALL_FALLBACK = "/go";
 
-// Build an absolute OneLink URL from the configured template plus the given
-// params. Callers only reach here once ONELINK_URL is known non-empty.
-function oneLink(params: Record<string, string>): string {
-  const url = new URL(ONELINK_URL);
+// Absolute OneLink URL: the resolved template base plus the given params.
+function oneLink(base: URL, params: Record<string, string>): string {
+  const url = new URL(base);
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.set(key, value);
   }
@@ -36,10 +51,11 @@ function oneLink(params: Record<string, string>): string {
 // Per-code referral install link: an absolute OneLink URL carrying the 8-char
 // code when configured, or the /go fallback otherwise.
 export function buildInstallLink(code: string | null): string {
-  if (!code || !ONELINK_URL) {
+  const base = oneLinkBase();
+  if (!code || !base) {
     return INSTALL_FALLBACK;
   }
-  return oneLink({
+  return oneLink(base, {
     // The app's UDL reads the 8-char referral code from deep_link_value (backend
     // contract / referralShareLinkCodeParam) — keep this param name identical to
     // the backend `share_link` builder and the dashboard OneLink template.
@@ -51,9 +67,32 @@ export function buildInstallLink(code: string | null): string {
 
 // Generic (codeless) install smart link for /go: an absolute OneLink URL when
 // configured, or null so the caller falls back to its OS-sniff store redirect.
-export function buildGenericInstallLink(): string | null {
-  if (!ONELINK_URL) {
+export function buildGenericInstallLink(
+  attribution: Record<string, string> = {},
+  deepLinkPath?: string,
+): string | null {
+  const base = oneLinkBase();
+  if (!base) {
     return null;
   }
-  return oneLink({ pid: "web", c: "install" });
+  // Map campaign context onto the OneLink contract: explicit AppsFlyer params
+  // win, utm_* fills the gaps, and pid/c always resolve so attribution is never
+  // recorded as "unknown".
+  const params: Record<string, string> = { ...attribution };
+  params.pid = attribution.pid || attribution.utm_source || "web";
+  params.c = attribution.c || attribution.utm_campaign || "install";
+  if (!params.af_channel && attribution.utm_medium) {
+    params.af_channel = attribution.utm_medium;
+  }
+  if (!params.af_ad && attribution.utm_content) {
+    params.af_ad = attribution.utm_content;
+  }
+  if (!params.af_keywords && attribution.utm_term) {
+    params.af_keywords = attribution.utm_term;
+  }
+  if (deepLinkPath) {
+    params.af_dp = `naudokis://${deepLinkPath.replace(/^\/+/, "")}`;
+    params.af_web_dp = `${CANONICAL_ORIGIN}${deepLinkPath}`;
+  }
+  return oneLink(base, params);
 }

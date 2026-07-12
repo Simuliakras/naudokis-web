@@ -24,8 +24,8 @@ import { listingLandingHref } from "@/app/lib/search";
 export function Hero({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   return (
-    <section id="top" style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
-      <Pattern name="hero-pattern" priority className="nk-hero-pattern nk-brand-pattern"
+    <section id="top" style={{ position: "relative", background: "radial-gradient(circle at 85% 20%, var(--nk-purple-halo), transparent 42%), var(--nk-bg-deep)", overflow: "hidden" }}>
+      <Pattern name="hero-pattern" priority mobileBlank className="nk-hero-pattern nk-brand-pattern"
         style={{ position: "absolute", top: 0, bottom: 0, height: "100%", objectFit: "cover", objectPosition: "right top", pointerEvents: "none" }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
         {/* grid columns / padding / min-height live on .nk-hero-panel in globals.css
@@ -55,11 +55,13 @@ export function Hero({ locale }: { locale: Locale }) {
           {/* right column — real app device + QR */}
           <div className="nk-hero-media" style={{ position: "relative", zIndex: 1 }}>
             {/* LCP image: next/image serves responsive AVIF/WebP and `preload`
-                preloads it (replaces the manual fetchPriority hint). */}
-            {/* `preload` preloads the desktop LCP; the ≤560px candidate is tiny on
-                purpose because the device mockup is `display:none` there (see globals),
+                preloads the desktop candidate. The ≤560px candidate is tiny on
+                purpose — the device mockup is `display:none` there (see globals),
                 so phones don't waste bandwidth preloading an image they never show. */}
-            <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt} width={714} height={968} preload sizes="(max-width: 560px) 60px, (max-width: 1024px) 80vw, 420px" style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
+            <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt}
+              width={714} height={968} preload
+              sizes="(max-width: 560px) 60px, (max-width: 1024px) 80vw, 420px"
+              style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
             <div className="nk-hero-qr" style={{ position: "absolute", right: "clamp(16px, 2vw, 32px)", bottom: 0 }}><QR size={132} /></div>
           </div>
         </div>

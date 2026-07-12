@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { LT_CITIES } from "@/app/lib/cities";
 import { trackEvent } from "@/app/lib/analytics";
 import { listingSearchHref } from "@/app/lib/search";
@@ -9,7 +10,7 @@ import {
   closeListbox,
   focusListboxSelection,
   Icon,
-  listboxKeyNav,
+  listboxPanelKeyNav,
   listboxTriggerKeyNav,
   openRedirect,
 } from "./ui";
@@ -27,11 +28,15 @@ export function HeroOwnerCta() {
   return (
     <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--nk-gap-2xs) var(--nk-gap-sm)" }}>
       <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>{dict.hero.ownerPrompt}</span>
-      <button type="button" className="nk-cats-all" onClick={() => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody })}
+      <Link href="/go" prefetch={false} className="nk-cats-all" onClick={(event) => {
+        event.preventDefault();
+        trackEvent("Owner Listing Intent", { placement: "hero" });
+        openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody });
+      }}
         style={{ background: "transparent", padding: "10px 0", minHeight: "var(--nk-tap)", fontWeight: 700, fontSize: 15.5, color: "var(--nk-purple-bright)", cursor: "pointer", gap: 6 }}>
         {dict.hero.ownerCta}
         <Icon name="ArrowRight" size={16} stroke={2.2} color="currentColor" />
-      </button>
+      </Link>
     </div>
   );
 }
@@ -49,15 +54,9 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: s
         setOpen(false);
       }
     };
-    // Escape restores focus to the trigger (focus lives inside the open panel).
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeListbox(setOpen, triggerRef, ref);
-    };
     document.addEventListener("mousedown", onDoc);
-    document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("mousedown", onDoc);
-      document.removeEventListener("keydown", onKey);
     };
   }, []);
 
@@ -90,7 +89,6 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: s
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`${dict.search.labelWhere}: ${value || dict.cityPicker.all}`}
       >
         <Icon name="MapPin" size={20} stroke={2} color="var(--nk-bg)" />
         <span className="nk-search__col" style={{ flex: 1 }}>
@@ -112,7 +110,7 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: s
           ref={listRef}
           role="listbox"
           aria-label={dict.cityPicker.heading}
-          onKeyDown={listboxKeyNav}
+          onKeyDown={(e) => listboxPanelKeyNav(e, setOpen, triggerRef, ref)}
           className="nk-citypick__panel"
         >
           <span className="nk-citypick__heading">{dict.cityPicker.heading}</span>
@@ -161,6 +159,8 @@ export function SearchBar() {
   return (
     <form
       className="nk-search"
+      action={listingSearchHref({ locale })}
+      method="get"
       onSubmit={go}
       style={{
         position: "relative",
@@ -180,6 +180,7 @@ export function SearchBar() {
         <span className="nk-search__col" style={{ flex: 1 }}>
           <span className="nk-search__label">{dict.search.labelWhat}</span>
           <input
+            name="q"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={dict.search.placeholder}
@@ -190,6 +191,7 @@ export function SearchBar() {
       </span>
       <span style={{ width: 1, height: 36, background: "var(--nk-light-line)" }} />
       <HeroCityPicker value={city} onChange={setCity} />
+      {city && <input type="hidden" name="city" value={city} />}
       <button type="submit" className="nk-btn nk-btn--primary" style={{ padding: "16px 36px" }}>
         {dict.search.submit}
       </button>

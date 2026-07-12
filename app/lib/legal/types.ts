@@ -6,11 +6,11 @@
 export type Lang = "en" | "lt";
 
 // One manifest entry per legal document. `hasEn` gates the loader's LT fallback;
-// `blurb` feeds the SEO meta-description. (The Policy Center grouping/label
-// fields were dropped when the hub was retired.)
+// Localized titles drive the Policy Center; blurbs feed SEO descriptions.
 export type LegalDocMeta = {
   id: string;
   hasEn: boolean;
+  title: Record<Lang, string>;
   blurb: Record<Lang, string>;
 };
 

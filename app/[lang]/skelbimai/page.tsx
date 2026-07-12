@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { dehydrate, HydrationBoundary, type InfiniteData } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
+import { localePath } from "@/app/lib/i18n/config";
 import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding, NOINDEX_FOLLOW } from "@/app/lib/seo";
 import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { makeQueryClient } from "@/app/lib/query";
@@ -89,7 +90,7 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
 export default async function Page({ params, searchParams }: PageProps<"/[lang]/skelbimai">) {
   const { lang } = await params;
   const locale = requireLocale(lang);
-  const { common, feed: t } = getDictionary(locale);
+  const { common, feed: t, search } = getDictionary(locale);
   const filters = filtersFromSearch(await searchParams);
 
   const qc = makeQueryClient();
@@ -143,7 +144,16 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
       {totalCount > 0 && listings.length > 0 && <JsonLd data={itemList} />}
       {/* FeedScreen reads ?q/?cat/?city/?sort/?delivery via useSearchParams, which
           requires a Suspense boundary on a prerendered route (Next.js 16). */}
-      <Suspense>
+      <Suspense fallback={(
+        <main className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px" }}>
+          <h1 className="nk-h-page">{filters.q ? t.titleSearch : t.titleAll}</h1>
+          <p className="nk-subtitle">{filters.q ? t.subtitleSearch(filters.q) : t.subtitleAll}</p>
+          <form action={localePath(locale, "/skelbimai")} method="get" role="search" className="nk-search" style={{ marginTop: 24 }}>
+            <input name="q" defaultValue={filters.q} aria-label={t.searchPlaceholder} placeholder={t.searchPlaceholder} />
+            <button type="submit">{search.submit}</button>
+          </form>
+        </main>
+      )}>
         <FeedScreen />
       </Suspense>
     </HydrationBoundary>

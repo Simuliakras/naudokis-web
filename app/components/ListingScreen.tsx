@@ -15,21 +15,25 @@ import {
   ListingSkeleton, ListingHeader, Gallery, DetailBody, ReviewsSection,
   BookingPanel, HostCard, MobileBar, detailCrumbs, feedCrumbItems,
 } from "./ListingDetail";
-import { useListing, useListings, ListingNotFoundError } from "@/app/lib/listings";
+import { useListing, useListings, ListingNotFoundError, marketplaceErrorKind } from "@/app/lib/listings";
 import { useCategories } from "@/app/lib/categories";
 import { categoryIconFor, categoryNameFor } from "@/app/lib/category-style";
 import { lastFeedUrl, listingLandingHref } from "@/app/lib/search";
 import { listingDetailPath } from "@/app/lib/listing-url";
 import { localePath } from "@/app/lib/i18n/config";
 import { useI18n } from "./I18nProvider";
+import { trackEvent } from "@/app/lib/analytics";
+import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 
 export function ListingScreen({ id }: { id: string }) {
   const { locale, dict } = useI18n();
   const router = useRouter();
+  const online = useOnlineStatus();
   const [shared, setShared] = useState(false);
   const [footerInView, setFooterInView] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
   const { data: listing, isLoading, isError, error, refetch } = useListing(id, locale);
+  useReloadOnReconnect({ online, isError, refetch });
 
   useEffect(() => {
     const footer = footerRef.current;
@@ -90,7 +94,13 @@ export function ListingScreen({ id }: { id: string }) {
     );
   }
   if (isError || !listing) {
-    return shell(<EmptyState illustration="error" tone="danger" title={dict.detail.loadErrorTitle} subtitle={dict.detail.loadErrorBody} actionLabel={dict.offers.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />);
+    const kind = marketplaceErrorKind(error);
+    return shell(online
+      ? <EmptyState illustration="error" tone="danger"
+          title={kind === "timeout" ? dict.offline.timeoutTitle : dict.offline.serverTitle}
+          subtitle={kind === "timeout" ? dict.offline.timeoutBody : dict.offline.serverBody}
+          actionLabel={dict.offers.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
+      : <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body} actionLabel={dict.offline.retry} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />);
   }
 
   const category = listing.tags[0];
@@ -102,7 +112,8 @@ export function ListingScreen({ id }: { id: string }) {
   // Every trigger carries the listing context so the modal can keep the user's
   // intent (item + price) visible across the install handoff.
   const listingCtx = { title: listing.title, thumb: listing.images[0], priceLabel: `${listing.price} ${dict.detail.perDay}` };
-  const lockFav = () => openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody, listing: listingCtx });
+  const appPath = `/listing/${listing.id}`;
+  const lockFav = () => openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody, listing: listingCtx, appPath });
   // Sharing is a real web action (not app-locked): use the native share sheet
   // where available, otherwise copy the URL and flash a transient "copied" state.
   const share = async () => {
@@ -119,9 +130,15 @@ export function ListingScreen({ id }: { id: string }) {
       // The user dismissed the share sheet (or clipboard was blocked) — keep state unchanged.
     }
   };
-  const reserve = () => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: listingCtx });
-  const contact = () => openRedirect({ title: dict.bridge.contactTitle, body: dict.bridge.contactBody, listing: listingCtx });
-  const showReviews = () => openRedirect({ title: dict.bridge.reviewsTitle, body: dict.bridge.reviewsBody, listing: listingCtx });
+  const reserve = () => {
+    trackEvent("Renter Booking Intent", { placement: "listing", category: listing.categoryId ?? "unknown" });
+    openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: listingCtx, appPath });
+  };
+  const contact = () => {
+    trackEvent("Owner Contact Intent", { placement: "listing", category: listing.categoryId ?? "unknown" });
+    openRedirect({ title: dict.bridge.contactTitle, body: dict.bridge.contactBody, listing: listingCtx, appPath });
+  };
+  const showReviews = () => openRedirect({ title: dict.bridge.reviewsTitle, body: dict.bridge.reviewsBody, listing: listingCtx, appPath });
 
   return shell(
     <>
@@ -133,7 +150,7 @@ export function ListingScreen({ id }: { id: string }) {
       {/* fade in over the skeleton; the fixed mobile bar stays outside the wrapper */}
       <div className="nk-fadecontent">
         <ListingHeader listing={listing} shared={shared} onShare={share} onFav={lockFav} />
-        <Gallery images={listing.images} title={listing.title} isNew={isNew} />
+        <Gallery images={listing.images} title={listing.title} isNew={isNew} appPath={appPath} />
 
         {/* The sticky sidebar booking panel is hidden on tablet/phone (≤980px);
             surface the booking facts — and the owner trust card, otherwise ~8
@@ -175,7 +192,7 @@ export function ListingScreen({ id }: { id: string }) {
         )}
       </div>
 
-      <MobileBar price={listing.price} hidden={footerInView} onReserve={reserve} />
+      <MobileBar price={listing.price} appPath={appPath} hidden={footerInView} onReserve={reserve} />
     </>,
   );
 }

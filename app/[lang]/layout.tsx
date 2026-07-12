@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Archivo, Sora } from "next/font/google";
 import "../globals.css";
 import { Providers } from "../providers";
 import { I18nProvider } from "../components/I18nProvider";
@@ -9,19 +8,7 @@ import { defaultLocale, locales, isLocale, localeHome } from "@/app/lib/i18n/con
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { APP_STORE_ID } from "@/app/lib/contact";
 import { SITE_URL } from "@/app/lib/seo";
-
-const archivo = Archivo({
-  variable: "--font-archivo",
-  subsets: ["latin", "latin-ext"],
-  // 800 was declared but never referenced in CSS/inline styles (max used is 700).
-  weight: ["400", "500", "600", "700"],
-});
-
-const sora = Sora({
-  variable: "--font-sora",
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
-});
+import { brandFont } from "@/app/lib/fonts";
 
 export async function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -120,7 +107,8 @@ const bridgeBootstrap = `
     event.preventDefault();
     const payload = {
       title: trigger.getAttribute("data-nk-redirect-title") || "",
-      body: trigger.getAttribute("data-nk-redirect-body") || ""
+      body: trigger.getAttribute("data-nk-redirect-body") || "",
+      appPath: trigger.getAttribute("data-nk-redirect-target") || undefined
     };
     window.__nkPendingRedirect = payload;
     window.dispatchEvent(new CustomEvent(EVENT, { detail: payload }));
@@ -133,7 +121,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   const locale = isLocale(lang) ? lang : defaultLocale;
   const dict = getDictionary(locale);
   return (
-    <html lang={locale} className={`${archivo.variable} ${sora.variable}`} data-scroll-behavior="smooth">
+    <html lang={locale} className={brandFont.variable} data-scroll-behavior="smooth">
       {/* suppressHydrationWarning: browser extensions (Grammarly, dark-reader, …)
           inject attributes onto <body> before React hydrates; this silences the
           resulting one-level attribute mismatch without hiding it for children. */}

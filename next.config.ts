@@ -36,9 +36,21 @@ const csp = [
   ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
+// Phase-one strict CSP: observe what would break without script unsafe-inline
+// before enforcing it. This report-only policy inventories the remaining
+// framework/bootstrap inline code without changing the current SSG/ISR model.
+// Inline styles remain allowed in this first phase because the component system
+// still intentionally uses React style objects.
+const strictReportOnlyCsp = csp
+  .replace("script-src 'self' 'unsafe-inline'", "script-src 'self'")
+  // This directive has no report-only semantics and browsers warn if it is
+  // present there; it remains active in the enforced policy above.
+  .replace("; upgrade-insecure-requests", "");
+
 // Pragmatic security headers applied to every route.
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },
+  ...(!isDev ? [{ key: "Content-Security-Policy-Report-Only", value: strictReportOnlyCsp }] : []),
   { key: "Reporting-Endpoints", value: 'csp-endpoint="/api/csp-report"' },
   // Force HTTPS for two years, including subdomains; eligible for preload lists.
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
@@ -86,6 +98,7 @@ const appLinkPaths = [
 ];
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   experimental: {
     globalNotFound: true,
   },
@@ -137,6 +150,10 @@ const nextConfig: NextConfig = {
   // pre-encoded to .avif/.webp and served via <picture>, so they skip the optimizer.
   images: {
     formats: ["image/avif", "image/webp"],
+    // Listing cards are often 160–320 CSS pixels wide. Supplying intermediate
+    // candidates prevents the default 384px floor from over-serving every
+    // two-column mobile card.
+    imageSizes: [56, 96, 128, 160, 192, 256, 320],
     // Per-host CDN allowlist (see IMAGE_CDN_HOSTS) so arbitrary CloudFront
     // content can't be routed through our optimizer.
     remotePatterns: IMAGE_CDN_HOSTS.map((host) => new URL(`${host}/**`)),

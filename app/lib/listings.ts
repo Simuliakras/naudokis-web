@@ -119,6 +119,30 @@ type PublicReviewsResponse = {
   data: { reviews: ApiPublicReview[]; count: number; has_more: boolean; next_token?: string };
 };
 
+export type MarketplaceErrorKind = "timeout" | "network" | "server";
+
+export class MarketplaceApiError extends Error {
+  constructor(public readonly kind: MarketplaceErrorKind, public readonly status?: number) {
+    super(kind === "server" && status ? `Marketplace API error: ${status}` : `Marketplace API ${kind} error`);
+    this.name = "MarketplaceApiError";
+  }
+}
+
+async function marketplaceFetch(input: string | URL, init?: Parameters<typeof fetch>[1]): Promise<Response> {
+  try {
+    return await fetch(input, { ...init, signal: AbortSignal.timeout(10_000) });
+  } catch (error) {
+    if (error instanceof DOMException && (error.name === "TimeoutError" || error.name === "AbortError")) {
+      throw new MarketplaceApiError("timeout");
+    }
+    throw new MarketplaceApiError("network");
+  }
+}
+
+export function marketplaceErrorKind(error: unknown): MarketplaceErrorKind {
+  return error instanceof MarketplaceApiError ? error.kind : "server";
+}
+
 /* ---------------- View models ---------------- */
 export type Offer = {
   id: string;
@@ -367,17 +391,32 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
   };
 }
 
+// Synthetic records belong in isolated backend fixtures, never in a public
+// catalogue. Keep this defensive web boundary even after the API dataset is
+// cleaned so an accidentally seeded E2E record cannot reach cards, metadata,
+// sitemaps, or the image optimizer again.
+const SYNTHETIC_LISTING_RE = /(?:^|[/_-])e2e[-_]?test(?:[/_-]|$)/i;
+
+function isPublicListing(l: Pick<ApiListing, "id" | "title" | "images">): boolean {
+  const values = [l.id, l.title, ...l.images.map((image) => image.url)];
+  return !values.some((value) => SYNTHETIC_LISTING_RE.test(value));
+}
+
+function publicListingItems(items: ApiListing[]): ApiListing[] {
+  return items.filter((listing) => listing.status === "active" && isPublicListing(listing));
+}
+
 export async function fetchListings(locale: Locale, filters: ListingFilters): Promise<Offer[]> {
   const url = buildListingsUrl(filters);
   // Server-side (home/feed prefetch) the browse data stays fresh for the same
   // window as a single listing, and the route-level `revalidate = 300` on the
   // home page can regenerate with fresh data. Browser fetches ignore `next`.
-  const res = await fetch(url, { next: { revalidate: LISTING_REVALIDATE } });
+  const res = await marketplaceFetch(url, { next: { revalidate: LISTING_REVALIDATE } });
   if (!res.ok) {
-    throw new Error(`Failed to load listings: ${res.status}`);
+    throw new MarketplaceApiError("server", res.status);
   }
   const body: ListingsResponse = await res.json();
-  return body.data.items.filter((l) => l.status === "active").map((l) => apiToOffer(l, locale));
+  return publicListingItems(body.data.items).map((l) => apiToOffer(l, locale));
 }
 
 // One page of browse results plus the cursor for the next page (null at the end).
@@ -405,9 +444,9 @@ export async function fetchListingsPage(
       if (token) {
         cursorUrl.searchParams.set("next_token", token);
       }
-      const cursorRes = await fetch(cursorUrl, { next: { revalidate: LISTING_REVALIDATE } });
+      const cursorRes = await marketplaceFetch(cursorUrl, { next: { revalidate: LISTING_REVALIDATE } });
       if (!cursorRes.ok) {
-        throw new Error(`Failed to advance listings cursor: ${cursorRes.status}`);
+        throw new MarketplaceApiError("server", cursorRes.status);
       }
       const cursorBody: ListingsResponse = await cursorRes.json();
       token = cursorBody.data.next_token ?? null;
@@ -423,15 +462,17 @@ export async function fetchListingsPage(
   if (token) {
     url.searchParams.set("next_token", token);
   }
-  const res = await fetch(url, { next: { revalidate: LISTING_REVALIDATE } });
+  const res = await marketplaceFetch(url, { next: { revalidate: LISTING_REVALIDATE } });
   if (!res.ok) {
-    throw new Error(`Failed to load listings: ${res.status}`);
+    throw new MarketplaceApiError("server", res.status);
   }
   const body: ListingsResponse = await res.json();
+  const visibleItems = publicListingItems(body.data.items);
+  const removedCount = body.data.items.length - visibleItems.length;
   return {
-    offers: body.data.items.filter((l) => l.status === "active").map((l) => apiToOffer(l, locale)),
+    offers: visibleItems.map((l) => apiToOffer(l, locale)),
     nextToken: body.data.next_token ?? null,
-    totalCount: body.data.count ?? body.data.items.length,
+    totalCount: Math.max(0, (body.data.count ?? body.data.items.length) - removedCount),
   };
 }
 
@@ -442,9 +483,9 @@ export async function fetchListingsPage(
 export async function fetchListingsCount(locale: Locale, filters: ListingFilters = {}): Promise<number> {
   const url = buildListingsUrl(filters);
   url.searchParams.set("limit", "1");
-  const res = await fetch(url, { next: { revalidate: LISTING_REVALIDATE } });
+  const res = await marketplaceFetch(url, { next: { revalidate: LISTING_REVALIDATE } });
   if (!res.ok) {
-    throw new Error(`Failed to load listings count: ${res.status}`);
+    throw new MarketplaceApiError("server", res.status);
   }
   const body: ListingsResponse = await res.json();
   return body.data.count ?? body.data.items.length;
@@ -489,7 +530,7 @@ export class ListingNotFoundError extends Error {
 // review endpoints. Same `next` options as the detail page's raw-metadata fetch so
 // Next memoizes the same-URL server requests into one (ignored by browser fetch).
 async function fetchListingDetailRaw(id: string): Promise<ApiListingDetail> {
-  const res = await fetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } });
+  const res = await marketplaceFetch(`${API_BASE}/listings/${id}`, { next: { revalidate: LISTING_REVALIDATE } });
   // The backend answers 400 ("Invalid UUID format") for malformed ids — as terminal
   // as a 404, so both map to not-found: the server page can notFound() and the client
   // shows the "no longer available" state instead of burning retries on it.
@@ -497,7 +538,7 @@ async function fetchListingDetailRaw(id: string): Promise<ApiListingDetail> {
     throw new ListingNotFoundError(id);
   }
   if (!res.ok) {
-    throw new Error(`Failed to load listing ${id}: ${res.status}`);
+    throw new MarketplaceApiError("server", res.status);
   }
   const body: ListingDetailResponse = await res.json();
   return body.data;
@@ -511,7 +552,7 @@ export type ReviewStatsView = { ratingAverage: number | null; ratingCount: numbe
 // Next collapses the two server requests into one).
 export async function fetchReviewStats(id: string): Promise<ReviewStatsView> {
   try {
-    const res = await fetch(`${API_BASE}/listings/${id}/review-stats`, { next: { revalidate: LISTING_REVALIDATE } });
+    const res = await marketplaceFetch(`${API_BASE}/listings/${id}/review-stats`, { next: { revalidate: LISTING_REVALIDATE } });
     if (!res.ok) {
       return { ratingAverage: null, ratingCount: 0, breakdown: [] };
     }
@@ -531,7 +572,7 @@ export async function fetchReviewStats(id: string): Promise<ReviewStatsView> {
 // Resilient like the stats fetch; dates are pre-formatted into the cached result.
 async function fetchReviews(id: string, locale: Locale): Promise<ListingReview[]> {
   try {
-    const res = await fetch(`${API_BASE}/listings/${id}/reviews?limit=3`, { next: { revalidate: LISTING_REVALIDATE } });
+    const res = await marketplaceFetch(`${API_BASE}/listings/${id}/reviews?limit=3`, { next: { revalidate: LISTING_REVALIDATE } });
     if (!res.ok) {
       return [];
     }
@@ -622,6 +663,9 @@ function localizeUnitEn(value: string, unit: string | undefined): string {
 }
 
 export async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> {
+  if (SYNTHETIC_LISTING_RE.test(id)) {
+    throw new ListingNotFoundError(id);
+  }
   // The detail document plus its two review endpoints, fetched in parallel. Only
   // the detail fetch can reject (→ error screen); stats/reviews degrade gracefully.
   const [detail, stats, reviews] = await Promise.all([

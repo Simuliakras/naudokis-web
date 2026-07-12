@@ -42,9 +42,6 @@ export type LegalDict = {
   warnLabel: string;       // warning-callout label ("Svarbu" / "Important")
   anchorLabel: string;     // h2 permalink aria-label ("Link to this section")
   relatedHeading: string;  // "See also" heading at the bottom of a doc
-  docTermsTitle: string;   // sibling-link label → Terms of Use
-  docPrivacyTitle: string; // sibling-link label → Privacy Policy
-  docDeleteTitle: string;  // sibling-link label → Account & Data Deletion
   hubTitle: string;        // /teisine legal-hub H1
   hubLead: string;         // /teisine lede + meta description
   questionsTitle: string;  // contact card heading
@@ -230,6 +227,9 @@ export type Dict = {
     specsHeading: string;
     handoverHeading: string;
     mapTitle: (city: string) => string;
+    mapLoad: string;
+    mapNotice: string;
+    mapPrivacy: string;
     pickupLabel: string;
     pickupFree: string;
     deliveryLabel: string;
@@ -296,6 +296,7 @@ export type Dict = {
     // NOT detail.newListingPill's longer phrase: the badge + city must share one
     // meta-row line at 4-up card widths (~250px), and the long form wraps it.
     newListing: string;
+    imageUnavailable: string;
     breadcrumbHome: string; // breadcrumb root label
     breadcrumbLabel: string; // accessible name for the breadcrumb <nav> landmark
     skipToContent: string; // skip-link label (first focusable element on the page)
@@ -378,6 +379,11 @@ export type Dict = {
     nextPage: string;
     pageStatus: (page: number, totalPages: number) => string;
     pageStatusShort: (page: number) => string;
+    // ?page beyond the last page (stale link / shrunken inventory) — an honest
+    // dead-end state instead of a filter-blame message + "Page 2 of 1" pager
+    pageEmptyTitle: string;
+    pageEmptyBody: string;
+    pageEmptyAction: string;
     backToTop: string; // floating back-to-top button label
     seoHeading: string;
     seoBody: string;
@@ -406,6 +412,10 @@ export type Dict = {
     title: string;
     body: string;
     retry: string;
+    timeoutTitle: string;
+    timeoutBody: string;
+    serverTitle: string;
+    serverBody: string;
   };
   // Locked-mode "Bridge": transactional actions open the app-redirect modal.
   bridge: {
@@ -415,6 +425,8 @@ export type Dict = {
     qrTitle: string; // desktop-modal hero heading over the QR ("scan to continue on your phone")
     installCta: string; // primary install button in the bridge modal (mobile-only — /go resolves a store only on phones)
     storesAlso: string; // mobile lead-in for the quiet store text links ("Also on:")
+    appOpenFallback: string;
+    retryOpen: string;
     close: string;
     opensAppHint: string; // affordance hint on locked CTAs ("Opens in the app")
     googlePlayAlt: string; // store-badge image alt / button accessible name

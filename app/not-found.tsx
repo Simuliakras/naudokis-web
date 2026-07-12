@@ -5,14 +5,8 @@
 // either language. Inlined colors mirror --nk-* tokens; keep in sync.
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Archivo, Sora } from "next/font/google";
 import { CONTACT_EMAIL } from "@/app/lib/contact";
-
-// Standalone page (outside the [lang] layout) — load the brand fonts directly so
-// the 404 doesn't fall back to system-ui on the most jarring surface to go
-// off-brand. Same families/weights as the root layout.
-const archivo = Archivo({ subsets: ["latin", "latin-ext"], weight: ["600", "700"] });
-const sora = Sora({ subsets: ["latin", "latin-ext"], weight: ["400", "600"] });
+import { brandFont } from "@/app/lib/fonts";
 
 export const metadata: Metadata = {
   title: "Šio puslapio neradome | Page not found",
@@ -75,6 +69,14 @@ export default function NotFound() {
             display: none !important;
           }
         }
+        .nf-cta-short { display: none; }
+        @media (max-width: 430px) {
+          .nf-header { gap: 12px !important; padding-inline: 12px !important; }
+          .nf-header img { height: 32px !important; width: auto !important; }
+          .nf-header .nf-cta { padding-inline: 16px !important; }
+          .nf-cta-full { display: none; }
+          .nf-cta-short { display: inline; }
+        }
       `}</style>
       <main
         style={{
@@ -83,7 +85,7 @@ export default function NotFound() {
             "radial-gradient(circle at 78% 18%, rgba(102,101,224,.30), transparent 34%), radial-gradient(circle at 18% 82%, rgba(16,185,129,.18), transparent 30%), #282C2D",
           color: "#FFFFFF",
         }}
-        className={sora.className}
+        className={brandFont.className}
       >
         <header
           className="nf-header"
@@ -118,7 +120,7 @@ export default function NotFound() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={archivo.className}
+                className={brandFont.className}
                 style={{
                   color: "#FFFFFF",
                   textDecoration: "none",
@@ -133,8 +135,9 @@ export default function NotFound() {
           {/* the site's one conversion action stays in the chrome even here;
               /go is a redirect route handler, so a plain <a> is correct */}
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/go" className={"nf-cta " + archivo.className} style={{ ...primaryCta, minHeight: 44, padding: "0 20px", fontSize: 15, flex: "none" }}>
-            Atsisiųsti programėlę
+          <a href="/go" aria-label="Atsisiųsti programėlę" className={"nf-cta " + brandFont.className} style={{ ...primaryCta, minHeight: 44, padding: "0 20px", fontSize: 15, flex: "none" }}>
+            <span className="nf-cta-full">Atsisiųsti programėlę</span>
+            <span className="nf-cta-short">Programėlė</span>
           </a>
         </header>
 
@@ -172,7 +175,7 @@ export default function NotFound() {
               404
             </p>
             <h1
-              className={archivo.className}
+              className={brandFont.className}
               style={{
                 margin: 0,
                 fontSize: "clamp(34px, 7vw, 64px)",

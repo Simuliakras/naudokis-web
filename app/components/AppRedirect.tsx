@@ -11,6 +11,7 @@ import { useSheetDrag } from "@/app/lib/use-sheet-drag";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 import { trackEvent } from "@/app/lib/analytics";
+import { WEB_ATTRIBUTION_KEYS, cleanAttributionValue, goHref } from "@/app/lib/attribution";
 
 // One buffer-frame past the .2s `nk-*-out` exit keyframes in globals.css, so the
 // dialog unmounts only after the animation has finished painting.
@@ -22,6 +23,20 @@ const EXIT_MS = 220;
 // animation is softened, so conversion is never suppressed.
 const SEEN_KEY = "nk_bridge_seen";
 
+// /go href carrying the user's app intent plus any campaign params from the
+// page URL, so an install started in the modal keeps its attribution.
+function smartInstallHref(appPath: string | undefined, handoff: "smart" | "qr") {
+  const source = new URLSearchParams(window.location.search);
+  const params: Record<string, string> = { handoff };
+  for (const key of WEB_ATTRIBUTION_KEYS) {
+    const value = cleanAttributionValue(source.get(key));
+    if (value) {
+      params[key] = value;
+    }
+  }
+  return goHref(appPath, params);
+}
+
 declare global {
   interface Window {
     __nkBridgeReady?: boolean;
@@ -32,11 +47,14 @@ declare global {
 export function AppRedirect() {
   const { dict } = useI18n();
   const [state, setState] = useState<{ open: boolean; closing: boolean; instant: boolean } & RedirectPayload>({ open: false, closing: false, instant: false, title: "", body: "" });
+  const [showOpenFallback, setShowOpenFallback] = useState(false);
+  const [thumbFailed, setThumbFailed] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const grabRef = useRef<HTMLDivElement>(null); // sheet drag handle (mobile)
   const closeRef = useRef<HTMLButtonElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null); // restored when the dialog closes
   const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fallbackTimer = useRef<number | null>(null);
 
   // Finalize teardown: unmount the dialog and restore focus to the opener.
   const finalize = useCallback(() => {
@@ -56,13 +74,17 @@ export function AppRedirect() {
     exitTimer.current = setTimeout(finalize, EXIT_MS);
   }, [finalize]);
 
-  useEffect(() => () => { if (exitTimer.current) clearTimeout(exitTimer.current); }, []);
+  useEffect(() => () => {
+    if (exitTimer.current) clearTimeout(exitTimer.current);
+    if (fallbackTimer.current) clearTimeout(fallbackTimer.current);
+  }, []);
 
   useEffect(() => {
     const openPayload = (payload: RedirectPayload) => {
       const d = payload ?? { title: "", body: "" };
       lastFocused.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       if (exitTimer.current) clearTimeout(exitTimer.current);
+      if (fallbackTimer.current) clearTimeout(fallbackTimer.current);
       let seen = false;
       try {
         seen = sessionStorage.getItem(SEEN_KEY) === "1";
@@ -71,7 +93,9 @@ export function AppRedirect() {
         // sessionStorage can throw in private modes — fall back to the full entrance.
       }
       window.__nkPendingRedirect = null;
-      setState({ open: true, closing: false, instant: seen, title: d.title || dict.bridge.defaultTitle, body: d.body || dict.bridge.defaultBody, listing: d.listing });
+      setShowOpenFallback(false);
+      setThumbFailed(false);
+      setState({ open: true, closing: false, instant: seen, title: d.title || dict.bridge.defaultTitle, body: d.body || dict.bridge.defaultBody, listing: d.listing, appPath: d.appPath });
     };
     const onOpen = (e: Event) => {
       openPayload((e as CustomEvent<RedirectPayload>).detail ?? { title: "", body: "" });
@@ -102,6 +126,27 @@ export function AppRedirect() {
   useSheetDrag({ panelRef, handleRef: grabRef, enabled: state.open, onDismiss: close });
 
   if (!state.open) return null;
+  const installHref = smartInstallHref(state.appPath, "smart");
+  const qrInstallHref = smartInstallHref(state.appPath, "qr");
+  const installUrl = new URL(qrInstallHref, window.location.origin).toString();
+  const attemptOpen = () => {
+    const retry = showOpenFallback;
+    setShowOpenFallback(false);
+    trackEvent(retry ? "App Open Retry" : "App Open Attempt", {
+      placement: "bridge_modal",
+      contextPreserved: Boolean(state.appPath),
+    });
+    if (fallbackTimer.current) clearTimeout(fallbackTimer.current);
+    fallbackTimer.current = window.setTimeout(() => {
+      if (document.visibilityState === "visible") {
+        setShowOpenFallback(true);
+        trackEvent("App Open Fallback Shown", {
+          placement: "bridge_modal",
+          contextPreserved: Boolean(state.appPath),
+        });
+      }
+    }, 1800);
+  };
   // Same string as the mobile "Also on:" row, minus the trailing colon so it sits
   // cleanly as a centred divider label (both locales end in ":").
   const storeLabel = dict.bridge.storesAlso.replace(/[:：]+\s*$/, "");
@@ -122,8 +167,8 @@ export function AppRedirect() {
         {state.listing && (
           <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 12, borderRadius: "var(--nk-r-md)", background: "var(--nk-surface-2)", border: "1px solid var(--nk-glass-card-border)", boxShadow: "var(--nk-edge-top)" }}>
             <span className="nk-imgph" style={{ width: 56, height: 44, borderRadius: 8, flex: "none", position: "relative", overflow: "hidden" }}>
-              {state.listing.thumb && <Image src={state.listing.thumb} alt="" fill sizes="56px" style={{ objectFit: "cover" }} />}
-              {!state.listing.thumb && <Icon name="Image" size={18} stroke={1.5} className="nk-imgicon" />}
+              {state.listing.thumb && !thumbFailed && <Image src={state.listing.thumb} alt="" fill sizes="56px" style={{ objectFit: "cover" }} onError={() => setThumbFailed(true)} />}
+              {(!state.listing.thumb || thumbFailed) && <Icon name="ImageOff" size={18} stroke={1.5} className="nk-imgicon" />}
             </span>
             <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
               <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{state.listing.title}</span>
@@ -136,7 +181,7 @@ export function AppRedirect() {
             Hidden ≤560px. */}
         <div className="nk-redirect-qr">
           <span className="nk-qr-frame">
-            <QR size={128} />
+            <QR size={128} value={installUrl} />
             <span className="nk-qr-frame__corner nk-qr-frame__corner--tl" aria-hidden="true" />
             <span className="nk-qr-frame__corner nk-qr-frame__corner--tr" aria-hidden="true" />
             <span className="nk-qr-frame__corner nk-qr-frame__corner--bl" aria-hidden="true" />
@@ -152,10 +197,11 @@ export function AppRedirect() {
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Mobile primary: one-tap smart link that sniffs the OS. Hidden >560px,
               where it would only 302 back to the homepage (a decoy CTA). */}
-          <a className="nk-btn nk-btn--primary nk-redirect-smartlink" href="/go" target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}
-            onClick={() => trackEvent("Smart App Link Click", { placement: "bridge_modal" })}>
-            <Icon name="Download" size={18} stroke={2.2} color="var(--nk-text)" /> {dict.bridge.installCta}
+          <a className="nk-btn nk-btn--primary nk-redirect-smartlink" href={installHref} target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}
+            onClick={attemptOpen}>
+            <Icon name="Download" size={18} stroke={2.2} color="var(--nk-text)" /> {showOpenFallback ? dict.bridge.retryOpen : dict.bridge.installCta}
           </a>
+          <p role="status" className="nk-redirect-openfallback">{showOpenFallback ? dict.bridge.appOpenFallback : ""}</p>
           {/* Desktop secondary: clickable store badges. On mobile they collapse to a
               quiet text row — /go already routes to the right store, so a second and
               third full-weight install button would only dilute the tap. */}

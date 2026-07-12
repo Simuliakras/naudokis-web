@@ -8,8 +8,10 @@ export function JsonLd({ data }: { data: JsonLdNode }) {
   return (
     <script
       type="application/ld+json"
-      // Serialized server-side from typed builders; no user HTML, only data.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      // Escape `<` even though our builders are typed: listing titles and
+      // descriptions contain owner-authored strings, and an HTML parser can
+      // otherwise terminate the script element before JSON parsing begins.
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
     />
   );
 }

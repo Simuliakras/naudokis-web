@@ -17,7 +17,9 @@ import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
+import { goHref } from "@/app/lib/attribution";
 import { useI18n } from "./I18nProvider";
+import { trackEvent } from "@/app/lib/analytics";
 
 /* ---------------- Shared primitives ---------------- */
 function Section({ id, title, sub, first, children }: {
@@ -65,7 +67,11 @@ function GalleryTile({ src, alt, big, onOpen, children }: {
     <>
       {src && failedSrc !== src && (
         <Image src={src} alt={alt ?? ""} fill preload={big}
-          sizes={big ? "(max-width: 980px) 100vw, 60vw" : "(max-width: 980px) 50vw, 20vw"}
+          sizes={big
+            // the detail column caps at 1340px — a bare vw kept scaling the
+            // request past it (~1.5-3x pixels at wide/ultrawide)
+            ? "(max-width: 980px) 100vw, min(60vw, 800px)"
+            : "(max-width: 980px) 50vw, min(20vw, 268px)"}
           onError={(event) => {
             event.currentTarget.style.visibility = "hidden";
             setFailedSrc(src);
@@ -286,7 +292,9 @@ export function ListingHeader({ listing, shared, onShare, onFav }: {
           )}
         </div>
       </div>
-      <div className="nk-lhead__actions" style={{ display: "flex", gap: "var(--nk-gap-sm)", flex: "none" }}>
+      {/* flex sizing lives in CSS: an inline flex:none here silently overrode the
+          ≤430px full-width actions-row rule for months */}
+      <div className="nk-lhead__actions" style={{ display: "flex", gap: "var(--nk-gap-sm)" }}>
         <button className="nk-lfield" style={headerBtn} onClick={onShare}><Icon name="Share2" size={17} stroke={2} color="var(--nk-text)" /> {shared ? t.shareCopied : t.share}</button>
         <button className="nk-lfield" style={headerBtn} onClick={onFav} title={dict.bridge.opensAppHint}><Icon name="Heart" size={17} stroke={2} color="var(--nk-text)" fill="none" /> {t.save}</button>
       </div>
@@ -298,7 +306,7 @@ export function ListingHeader({ listing, shared, onShare, onFav }: {
    Viewing photos needs no account, so the bento opens a real lightbox (prev/next,
    keyboard, focus-trap). Only the app-bound actions stay locked — the lightbox
    footer keeps the "reserve in the app" CTA. */
-export function Gallery({ images, title, isNew }: { images: string[]; title: string; isNew: boolean }) {
+export function Gallery({ images, title, isNew, appPath }: { images: string[]; title: string; isNew: boolean; appPath: string }) {
   const { dict } = useI18n();
   const t = dict.detail;
   const [lightbox, setLightbox] = useState<number | null>(null);
@@ -362,7 +370,7 @@ export function Gallery({ images, title, isNew }: { images: string[]; title: str
         ))}
       </div>
       {lightbox !== null && (
-        <GalleryLightbox images={images} title={title} start={lightbox} onClose={() => setLightbox(null)} />
+        <GalleryLightbox images={images} title={title} appPath={appPath} start={lightbox} onClose={() => setLightbox(null)} />
       )}
     </>
   );
@@ -428,8 +436,8 @@ function LightboxImage({ src, alt, errorLabel }: { src: string; alt: string; err
   );
 }
 
-function GalleryLightbox({ images, title, start, onClose }: {
-  images: string[]; title: string; start: number; onClose: () => void;
+function GalleryLightbox({ images, title, appPath, start, onClose }: {
+  images: string[]; title: string; appPath: string; start: number; onClose: () => void;
 }) {
   const { dict } = useI18n();
   const t = dict.detail;
@@ -552,7 +560,7 @@ function GalleryLightbox({ images, title, start, onClose }: {
             <span aria-hidden />
           )}
           <button className="nk-btn nk-btn--primary nk-btn--sm" title={dict.bridge.opensAppHint}
-            onClick={() => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: { title, thumb: images[i] } })}>
+            onClick={() => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: { title, thumb: images[i] }, appPath })}>
             <Icon name="Smartphone" size={16} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
           </button>
         </div>
@@ -661,9 +669,18 @@ function HandoverRow({ icon, label, value, pill }: { icon: IconName; label: stri
 function HandoverSection({ city, subdivision, delivery }: { city: string; subdivision?: string; delivery: ListingDelivery }) {
   const { locale, dict } = useI18n();
   const t = dict.detail;
-  // The embedded map geocodes on the city alone — subdivisions don't reliably
-  // resolve in the Maps Embed API, so keep the query coarse and show the finer
-  // "City, Subdivision" only as the human-readable pickup location.
+  const [mapAllowed, setMapAllowed] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      try {
+        setMapAllowed(localStorage.getItem("nk_google_maps_allowed") === "1");
+      } catch {
+        // Storage can be unavailable in strict/private contexts; explicit consent
+        // still works for the current render.
+      }
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
   const pickupLocation = formatLocation(city, subdivision);
   const mapSrc = GOOGLE_MAPS_API_KEY && city
     ? `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(`${city}, Lietuva`)}&zoom=11&language=${locale}`
@@ -675,7 +692,7 @@ function HandoverSection({ city, subdivision, delivery }: { city: string; subdiv
   return (
     <Section id="perdavimas" title={t.handoverHeading} sub={t.deliverySub(city, { pickup: showPickup, delivery: delivery.delivery })}>
       <div className="nk-tworow" style={{ alignItems: "stretch", gap: "var(--nk-gap-xl)" }}>
-        {mapSrc ? (
+        {mapSrc && mapAllowed ? (
           <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", minHeight: 200, border: "1px solid var(--nk-border)" }}>
             <iframe
               src={mapSrc}
@@ -684,6 +701,21 @@ function HandoverSection({ city, subdivision, delivery }: { city: string; subdiv
               referrerPolicy="no-referrer-when-downgrade"
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
             />
+          </div>
+        ) : mapSrc ? (
+          <div className="nk-map-consent">
+            <DeliveryZoneGraphic radiusKm={delivery.radiusKm} />
+            <div className="nk-map-consent__panel">
+              <p>{t.mapNotice}</p>
+              <div className="nk-map-consent__actions">
+                <button type="button" className="nk-btn nk-btn--ghost" onClick={() => {
+                  setMapAllowed(true);
+                  try { localStorage.setItem("nk_google_maps_allowed", "1"); } catch {}
+                  trackEvent("Google Maps Loaded", { locale, placement: "listing_handover" });
+                }}>{t.mapLoad}</button>
+                <a href={localePath(locale, "/privatumo-politika")}>{t.mapPrivacy}</a>
+              </div>
+            </div>
           </div>
         ) : (
           <DeliveryZoneGraphic radiusKm={delivery.radiusKm} />
@@ -771,13 +803,15 @@ function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews
                 {!r.avatar && <Icon name="User" size={20} stroke={1.6} color="var(--nk-avatar-icon)" />}
               </span>
               <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)", flex: 1, minWidth: 0 }}>
-                <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)" }}>{r.name}</span>
+                <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)", overflowWrap: "anywhere", hyphens: "auto" }}>{r.name}</span>
                 <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)" }}>
                   <Stars value={r.stars} size={13} /><span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>· {r.date}</span>
                 </span>
               </div>
             </div>
-            <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 15, lineHeight: "24px", color: "var(--nk-text-2)" }}>{r.text}</p>
+            {/* UGC: hyphenate long LT compounds; anywhere only as the last resort
+                so pasted URLs/tokens can never clip at ≤360px card widths */}
+            <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 15, lineHeight: "24px", color: "var(--nk-text-2)", hyphens: "auto", overflowWrap: "anywhere" }}>{r.text}</p>
           </div>
         ))}
       </div>
@@ -838,11 +872,13 @@ export function BookingPanel({ listing, onReserve, variant = "full" }: {
   const t = dict.detail;
   return (
     <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
-      <div style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
+      {/* flexWrap: at the 981px sidebar minimum a max price + 5-digit review count
+          overflowed the card — the rating chip drops to its own line instead */}
+      <div style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)", flexWrap: "wrap" }}>
         <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 33, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.price}</span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{t.perDay}</span>
         {listing.rating && (
-          <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-2)", whiteSpace: "nowrap" }}>
+          <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-2)" }}>
             <Icon name="Star" size={14} color="var(--nk-yellow)" fill="var(--nk-yellow)" /> {listing.rating} · {listing.ratingCount}
           </span>
         )}
@@ -852,11 +888,13 @@ export function BookingPanel({ listing, onReserve, variant = "full" }: {
           value just read "Programėlėje". */}
       <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, lineHeight: "18px", color: "var(--nk-text-muted)" }}>{t.confirmInApp}</span>
       {variant !== "facts" && (
-        <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}
+        <a className="nk-btn nk-btn--primary" href={goHref(`/listing/${listing.id}`)}
+          onClick={(event) => { event.preventDefault(); onReserve(); }} title={dict.bridge.opensAppHint}
           data-nk-redirect data-nk-redirect-title={dict.bridge.reserveTitle} data-nk-redirect-body={dict.bridge.reserveBody}
+          data-nk-redirect-target={`/listing/${listing.id}`}
           style={{ width: "100%", padding: 16, fontSize: 17 }}>
           <Icon name="Smartphone" size={17} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
-        </button>
+        </a>
       )}
     </div>
   );
@@ -921,7 +959,7 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
 }
 
 /* ---------------- Mobile reserve bar ---------------- */
-export function MobileBar({ price, hidden, onReserve }: { price: string; hidden?: boolean; onReserve: () => void }) {
+export function MobileBar({ price, appPath, hidden, onReserve }: { price: string; appPath: string; hidden?: boolean; onReserve: () => void }) {
   const { dict } = useI18n();
   const t = dict.detail;
   return (
@@ -930,11 +968,13 @@ export function MobileBar({ price, hidden, onReserve }: { price: string; hidden?
         <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, color: "var(--nk-text)" }}>{price} <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 400, fontSize: 15, color: "var(--nk-text-2)" }}>{t.perDayShort}</span></span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>{t.mobileBookingNote}</span>
       </span>
-      <button className="nk-btn nk-btn--primary" onClick={onReserve} title={dict.bridge.opensAppHint}
+      <a className="nk-btn nk-btn--primary" href={goHref(appPath)}
+        onClick={(event) => { event.preventDefault(); onReserve(); }} title={dict.bridge.opensAppHint}
         data-nk-redirect data-nk-redirect-title={dict.bridge.reserveTitle} data-nk-redirect-body={dict.bridge.reserveBody}
+        data-nk-redirect-target={appPath}
         style={{ padding: "14px 26px", fontSize: 16 }}>
         <Icon name="Smartphone" size={16} stroke={2.2} color="var(--nk-text)" /> {t.reserveMobile}
-      </button>
+      </a>
     </div>
   );
 }

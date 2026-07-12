@@ -7,13 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "type-check": "tsc --noEmit",
+    "type-check": "next typegen && tsc --noEmit",
     "test:e2e": "playwright test",
     "responsive:audit": "node scripts/responsive-audit.mjs",
     "responsive:audit:quick": "node scripts/responsive-audit.mjs --quick",
     "legal:json": "node scripts/legal-md-to-json.mjs",
     "legal:shots": "node scripts/legal-audit-shots.mjs",
-    "gen:qr": "node scripts/generate-install-qr.mjs"
+    "gen:qr": "node scripts/generate-install-qr.mjs",
+    "verify:app-links": "node scripts/verify-app-links.mjs"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.56.0",

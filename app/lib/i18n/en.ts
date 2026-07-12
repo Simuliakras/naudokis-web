@@ -5,7 +5,7 @@
 import type { Dict } from "./types";
 
 // One-line tile examples (Categories v2), keyed by top-level category id.
-// DRAFT (marketing sign-off): the 2026-07 handoff approved only the LT lines —
+// FINAL (2026-07 bilingual content pass):
 // these are direct EN equivalents.
 const EN_CATEGORY_EXAMPLES: Record<string, string> = {
   transport: "Cars, trailers, scooters",
@@ -45,10 +45,10 @@ export const en: Dict = {
   },
   hero: {
     badge: "Item rental from private and business owners across Lithuania",
-    // DRAFT (marketing sign-off): de-calqued — the LT-mirroring phrasing parsed
+    // FINAL: de-calqued — the LT-mirroring phrasing parsed
     // as an obligation ("you need to rent").
     title: "Need it for a day? Rent it instead of buying.",
-    // DRAFT (marketing sign-off): tightened — mirrors the LT trim.
+    // FINAL: tightened — mirrors the LT trim.
     body: "Find tools, vehicles, cameras or leisure gear from owners in Lithuania. Compare online, then confirm dates, final amount and payment in the Naudokis app.",
     ownerPrompt: "Have an item sitting idle?",
     ownerCta: "List it for rent",
@@ -86,7 +86,7 @@ export const en: Dict = {
     bandEmptyRetry: "Refresh",
   },
   offers: {
-    // DRAFT (marketing sign-off): recency framing — "picked for you"/"popular"/
+    // FINAL: recency framing — "picked for you"/"popular"/
     // "nearby" had no personalization, review or geo signal behind them.
     eyebrow: "Browse",
     title: "The latest items to rent",
@@ -105,7 +105,7 @@ export const en: Dict = {
     bandEmptyAction: "All categories",
     bandEmptySecondary: "Open in the app",
   },
-  // DRAFT (marketing sign-off): mirrors the new LT trust-band messaging.
+  // FINAL: mirrors the LT trust-band messaging.
   features: [
     {
       icon: "Users",
@@ -123,7 +123,7 @@ export const en: Dict = {
       body: "If questions or misunderstandings come up during a rental, the Naudokis team helps you understand the situation and find a clear next step.",
     },
   ],
-  // DRAFT (marketing sign-off): section header for the trust band.
+  // FINAL: section header for the trust band.
   featuresHead: {
     eyebrow: "Why Naudokis",
     title: "Rentals that don't feel risky",
@@ -262,7 +262,7 @@ export const en: Dict = {
         a: "Dates, final amounts, payments, messages, reservations and notifications are managed in the app. On the website you can browse and compare listings.",
       },
     ],
-    // DRAFT (marketing/legal sign-off): owner-side FAQ — mirrors the LT set.
+    // FINAL product copy: owner-side FAQ — mirrors the LT set and published policies.
     faqOwner: [
       {
         q: "When do I get paid?",
@@ -391,6 +391,7 @@ export const en: Dict = {
     helpHeading: "Help & policies",
     help: [
       { label: "How it works", href: "/kaip-tai-veikia" },
+      { label: "Payments, deposits & cancellations", href: "/teisine" },
       { label: "Privacy policy", href: "/privatumo-politika" },
       { label: "Terms of use", href: "/naudojimosi-salygos" },
       { label: "Account deletion", href: "/paskyros-trynimas" },
@@ -422,6 +423,9 @@ export const en: Dict = {
     specsHeading: "Specifications",
     handoverHeading: "Item handover",
     mapTitle: (city) => `${city} on the map`,
+    mapLoad: "Load the Google Maps map",
+    mapNotice: "The map loads only after you choose it. Google may receive your IP address and device data.",
+    mapPrivacy: "Privacy information",
     pickupLabel: "Pickup",
     pickupFree: "Free",
     deliveryLabel: "Delivery",
@@ -489,7 +493,7 @@ export const en: Dict = {
     termCancelSub: "Cancellation policy",
     termInsuranceTitle: "Insurance noted by owner",
     termInsuranceSub: "Details in listing terms",
-    mobileBookingNote: "Final amount in the app",
+    mobileBookingNote: "Total shown in the app",
   },
   common: {
     favorite: "Save",
@@ -497,6 +501,7 @@ export const en: Dict = {
     perDay: "per day",
     reviewCount: (n) => `${n} review${n === 1 ? "" : "s"}`,
     newListing: "New",
+    imageUnavailable: "Image unavailable",
     breadcrumbHome: "Home",
     breadcrumbLabel: "Breadcrumb",
     skipToContent: "Skip to content",
@@ -561,7 +566,7 @@ export const en: Dict = {
       return `Naudokis.lt connects people and businesses that need ${what} for a short time with private and business owners ${where}. Browse by category, city or price, then manage dates, messages, the final amount and payment in the app.`;
     },
     crumbCategories: "Categories",
-    // DRAFT (marketing sign-off): static eyebrow — never duplicates the dynamic H1s.
+    // FINAL: static eyebrow — never duplicates the dynamic H1s.
     eyebrow: "Rentals across Lithuania",
     titleAll: "Items to rent",
     titleSearch: "Search results",
@@ -605,6 +610,9 @@ export const en: Dict = {
     nextPage: "Next page",
     pageStatus: (page, totalPages) => `Page ${page} of ${totalPages}`,
     pageStatusShort: (page) => `Page ${page}`,
+    pageEmptyTitle: "This page no longer exists",
+    pageEmptyBody: "The list of listings has changed, so this page is out of range. Head back to the start of the list.",
+    pageEmptyAction: "Back to page 1",
     backToTop: "Back to top",
     seoHeading: "Item rental in Lithuania",
     seoBody:
@@ -639,16 +647,22 @@ export const en: Dict = {
     title: "You’re offline",
     body: "Reconnect to load rentals and continue browsing.",
     retry: "Try again",
+    timeoutTitle: "The server is taking too long",
+    timeoutBody: "Your search and filters are preserved. Check your connection and try again.",
+    serverTitle: "The service is temporarily unavailable",
+    serverBody: "Your search and filters are preserved. Please try again in a moment.",
   },
   bridge: {
     defaultTitle: "Continue this rental in the app",
-    // DRAFT (marketing sign-off): role-neutral — covers both marketplace sides.
+    // FINAL: role-neutral — covers both marketplace sides.
     defaultBody:
       "Use the app to choose dates, message the owner, see fees, deposit and the final amount, then pay through Stripe.",
     qrHint: "Scan the QR code with your phone to open Naudokis.",
     qrTitle: "Scan to continue on your phone",
     installCta: "Get the app",
     storesAlso: "Also on:",
+    appOpenFallback: "Didn’t open? Try again or choose your app store below.",
+    retryOpen: "Try opening again",
     close: "Close",
     opensAppHint: "Opens in the app",
     googlePlayAlt: "Get it on Google Play",
@@ -680,13 +694,13 @@ export const en: Dict = {
       `You’ve been invited to Naudokis! Get ${amount} on your first rental.`,
     titleUnknown: "You’ve been invited to Naudokis.",
     titleGeneric: "Rent items from people and businesses nearby.",
-    // DRAFT (marketing sign-off): "nearby" no longer echoes the headline's line.
+    // FINAL: "nearby" no longer echoes the headline's line.
     lead: "Naudokis helps you rent items from private and business owners. Get the app to start.",
     rewardExplainer:
       "Your reward is credited to your account once you verify your identity in the app. The friend who invited you is rewarded after your first completed rental.",
     invalidNote:
       "This invite code is no longer valid, but you can use the app as usual.",
-    // DRAFT (marketing sign-off): truthful value bullets — already-claimed facts only.
+    // FINAL: truthful value bullets — published-policy facts only.
     benefits: [
       "Payments are processed through Stripe; deposits are shown before confirmation",
       "Owner profiles, verification badges and reviews",
@@ -696,7 +710,7 @@ export const en: Dict = {
     qrHint: "Scan with your phone",
     codeLabel: "Your invite code",
   },
-  // DRAFT (marketing sign-off): account-deletion cancel bridge copy.
+  // FINAL: account-deletion cancel bridge copy.
   cancelDeletion: {
     meta: {
       title: "Cancel account deletion — Naudokis",
@@ -746,9 +760,6 @@ export const en: Dict = {
     warnLabel: "Important",
     anchorLabel: "Link to this section",
     relatedHeading: "Related documents",
-    docTermsTitle: "Terms of Use",
-    docPrivacyTitle: "Privacy Policy",
-    docDeleteTitle: "Account & Data Deletion",
     hubTitle: "Rules & privacy",
     hubLead: "The main Naudokis rules, privacy information and account data controls in one place.",
     questionsTitle: "Questions about how this applies to your rental?",

@@ -62,7 +62,18 @@ export function useDismissableLayer(
       if (lockScroll) {
         document.body.style.overflow = "";
       }
-      opener?.focus();
+      // A closeAt auto-dismiss can leave the opener display:none on the new band
+      // (e.g. the mobile Filters button once the viewport passes the breakpoint) —
+      // focusing it then silently drops keyboard focus to <body>. Park on <main>.
+      if (opener?.isConnected && opener.offsetParent !== null) {
+        opener.focus();
+        return;
+      }
+      const main = opener ? document.getElementById("nk-main") : null;
+      if (main) {
+        main.setAttribute("tabindex", "-1");
+        main.focus({ preventScroll: true });
+      }
     };
   }, [open, lockScroll, restoreFocus, closeAt, initialFocus]);
 }

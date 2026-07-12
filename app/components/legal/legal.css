@@ -70,7 +70,7 @@
 .nk-lg-root[data-layout="a"] .nk-lg-article{ order:1; }
 
 /* table of contents (sidebar) */
-.nk-lg-toc{ position:sticky; top:calc(var(--nk-nav-h-scrolled) + 16px); align-self:start; max-height:calc(100vh - 110px);
+.nk-lg-toc{ position:sticky; top:calc(var(--nk-nav-h-scrolled) + 16px); align-self:start; max-height:calc(100vh - 110px); max-height:calc(100dvh - 110px);
   overflow-y:auto; padding-right:6px; margin-bottom:64px;
   /* persistent thin scrollbar — macOS overlay bars gave no cue that items 17+ exist */
   scrollbar-width:thin; scrollbar-color:var(--nk-border) transparent; }
@@ -194,7 +194,7 @@
 
 /* back to top — visibility keeps the invisible control out of the Tab order
    (opacity alone left it focusable from page load) without killing the fade */
-.nk-lg-totop{ position:fixed; right:24px; bottom:24px; z-index:70; min-width:44px; min-height:44px; width:46px; height:46px;
+.nk-lg-totop{ position:fixed; right:calc(24px + var(--nk-safe-right,0px)); bottom:calc(24px + var(--nk-safe-bottom,0px)); z-index:70; min-width:44px; min-height:44px; width:46px; height:46px;
   border-radius:14px; border:1px solid var(--lg-rule); background:var(--lg-float-bg);
   backdrop-filter:blur(10px); color:var(--nk-text); cursor:pointer; display:flex;
   align-items:center; justify-content:center; opacity:0; transform:translateY(10px) scale(.94);
@@ -203,8 +203,11 @@
 .nk-lg-totop.is-on{ opacity:1; transform:none; pointer-events:auto; visibility:visible; }
 .nk-lg-totop:hover{ background:var(--nk-purple); border-color:var(--nk-purple); }
 
-/* floating TOC button (mobile) */
-.nk-lg-fab-toc{ position:fixed; left:24px; bottom:24px; z-index:70; display:none;
+/* floating TOC button (mobile/tablet) — anchored bottom-RIGHT: left-anchored it
+   sat on the reading column's line starts (covered the SVARBU warning at
+   1024x768); ragged-right line ends tolerate an overlay far better. The
+   back-to-top control stacks above it whenever both are on screen. */
+.nk-lg-fab-toc{ position:fixed; right:calc(24px + var(--nk-safe-right,0px)); left:auto; bottom:calc(24px + var(--nk-safe-bottom,0px)); z-index:70; display:none;
   align-items:center; gap:9px; min-height:44px; height:46px; padding:0 18px; border-radius:14px;
   border:1px solid var(--lg-rule); background:var(--lg-float-bg); backdrop-filter:blur(10px);
   color:var(--nk-text); cursor:pointer; font-family:var(--nk-font-display); font-weight:600; font-size:14px; }
@@ -221,7 +224,10 @@
 .nk-lg-drawer.is-open .nk-lg-drawer__panel{ transform:none; }
 .nk-lg-drawer__panel::after{ content:""; position:sticky; bottom:0; display:block; flex:none; height:28px; margin-top:-28px;
   background:linear-gradient(to bottom, transparent, var(--lg-elevated)); pointer-events:none; }
-.nk-lg-drawer__top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+/* pinned: the panel is the scroller, so an unpinned header (title + close)
+   scrolled away with the long TOC list */
+.nk-lg-drawer__top{ position:sticky; top:-24px; z-index:1; background:var(--lg-elevated);
+  padding-block:6px; margin-top:-6px; display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
 .nk-lg-drawer__top h3{ margin:0; font-family:var(--nk-font-display); font-weight:700; font-size:14px;
   letter-spacing:.14em; text-transform:uppercase; color:var(--nk-text-muted); }
 .nk-lg-drawer__panel a{ display:flex; flex:none; gap:10px; padding:9px 12px; border-radius:10px; min-height:var(--nk-tap);
@@ -234,11 +240,20 @@
   .nk-lg-root[data-layout="a"] .nk-lg-body{ grid-template-columns:1fr; }
   .nk-lg-root[data-layout="a"] .nk-lg-toc{ display:none; }
   .nk-lg-root[data-layout="a"] .nk-lg-fab-toc{ display:flex; }
+  /* both floating controls share the right edge — stack back-to-top above */
+  .nk-lg-root[data-layout="a"] .nk-lg-totop{ bottom:calc(84px + var(--nk-safe-bottom,0px)); }
 }
-@media (max-width:1180px) and (min-width:981px){
+/* 981–1023 only: the sidebar genuinely doesn't fit (620px article + 264px TOC).
+   From 1024 the two-column layout engages — laptops/iPad-landscape read with a
+   real TOC instead of a FAB + drawer while the right margin sat dead. */
+@media (max-width:1023px) and (min-width:981px){
   .nk-lg-root[data-layout="a"] .nk-lg-body{ grid-template-columns:1fr; }
   .nk-lg-root[data-layout="a"] .nk-lg-toc{ display:none; }
   .nk-lg-root[data-layout="a"] .nk-lg-fab-toc{ display:flex; }
+  .nk-lg-root[data-layout="a"] .nk-lg-totop{ bottom:calc(84px + var(--nk-safe-bottom,0px)); }
+}
+@media (max-width:1180px) and (min-width:1024px){
+  .nk-lg-root[data-layout="a"] .nk-lg-body{ grid-template-columns:minmax(0,var(--lg-read)) 244px; gap:clamp(32px,4vw,56px); }
 }
 /* Legal tables read as records once the reading column gets tight: each row
    becomes a card and every cell carries its original column heading via
@@ -255,6 +270,9 @@
     background:var(--nk-surface); box-shadow:var(--nk-edge-top); }
   .nk-lg-td{ display:grid; grid-template-columns:minmax(96px,36%) minmax(0,1fr); gap:12px; align-items:start;
     width:100%; padding:13px 14px; font-size:14px; border-bottom:1px solid var(--lg-rule-soft); }
+  /* the value is ONE grid item (span wrapper from Blocks.tsx) so links + text
+     flow as a sentence instead of shattering into separate grid cells */
+  .nk-lg-td__val{ min-width:0; overflow-wrap:anywhere; }
   .nk-lg-td::before{ content:attr(data-label); min-width:0; font-family:var(--nk-font-display); font-weight:700;
     font-size:12px; line-height:1.45; color:var(--nk-text); overflow-wrap:anywhere; }
   .nk-lg-td[data-label=""]{ display:block; }
@@ -270,9 +288,9 @@
   .nk-lg-h2{ align-items:flex-start; }
   .nk-lg-anchor{ width:var(--nk-tap); height:var(--nk-tap); margin-left:-10px; align-self:flex-start; margin-top:1px; }
   .nk-lg-shell{ padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
-  .nk-lg-fab-toc{ left:16px; bottom:calc(28px + env(safe-area-inset-bottom)); height:44px; padding:0 15px; border-radius:13px;
+  .nk-lg-fab-toc{ right:calc(16px + var(--nk-safe-right,0px)); left:auto; bottom:calc(28px + var(--nk-safe-bottom,0px)); height:44px; padding:0 15px; border-radius:13px;
     box-shadow:0 12px 30px rgba(0,0,0,.28), var(--nk-edge-top); }
-  .nk-lg-totop{ right:16px; bottom:calc(28px + env(safe-area-inset-bottom)); width:44px; height:44px; border-radius:13px;
+  .nk-lg-totop{ right:calc(16px + var(--nk-safe-right,0px)); bottom:calc(84px + var(--nk-safe-bottom,0px)); width:44px; height:44px; border-radius:13px;
     box-shadow:0 12px 30px rgba(0,0,0,.28), var(--nk-edge-top); }
 }
 @media (max-height:620px){

@@ -3,7 +3,7 @@
 // Interactive sticky steps with a renter/owner role toggle and a synced phone
 // mock-up, a trust strip, a mini-FAQ and the green app-download CTA. Ported from
 // the design bundle's kaip-tai-veikia prototype to the nk- design system.
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Nav, Faq } from "./sections";
@@ -36,8 +36,10 @@ export function HowItWorksScreen() {
   // location so the page stays statically generated (useSearchParams would force
   // a Suspense/dynamic boundary for a one-shot read). Deliberately an effect, not
   // a lazy initializer: the prerendered HTML is always the renter role, so
-  // reading location during render would be a hydration mismatch.
-  useEffect(() => {
+  // reading location during render would be a hydration mismatch. A LAYOUT
+  // effect so the swap commits before the hydrated frame paints — the only
+  // renter flash left is the unavoidable static-HTML paint before hydration.
+  useLayoutEffect(() => {
     if (new URLSearchParams(window.location.search).get("role") === "owner") {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot URL → state sync on mount
       setRole("owner");
@@ -246,15 +248,20 @@ function StepList({
             </span>
             {/* Tablet/phone: the synced sticky phone is hidden, so the active step
                 carries its own app screen inline — step and screen can't decouple.
-                Hidden on desktop, where .htw-right shows the synced phone. */}
-            {i === active && (
-              <span className="htw-step__device" aria-hidden="true">
-                <span className="htw-phone htw-phone--inline">
-                  <span className="htw-phone__notch" />
-                  <span className="htw-phone__screen"><PhoneScreen kind={s.screen} /></span>
+                Hidden on desktop, where .htw-right shows the synced phone. Every
+                step keeps its device MOUNTED inside a 0fr→1fr reveal (the
+                .htw-step__reveal idiom): the old conditional mount teleported
+                everything below by a full phone-mock height on each step switch. */}
+            <span className="htw-step__devicewrap" aria-hidden="true">
+              <span className="htw-step__deviceclip">
+                <span className="htw-step__device">
+                  <span className="htw-phone htw-phone--inline">
+                    <span className="htw-phone__notch" />
+                    <span className="htw-phone__screen"><PhoneScreen kind={s.screen} /></span>
+                  </span>
                 </span>
               </span>
-            )}
+            </span>
           </span>
         </div>
       ))}

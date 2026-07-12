@@ -1,20 +1,22 @@
-const PACKAGE_NAME = "com.naudokis.naudokis";
+const PACKAGE_NAME = process.env.ANDROID_APP_LINK_PACKAGE_NAME ?? "com.naudokis.naudokis";
+const SHA256_FINGERPRINT = /^(?:[0-9A-F]{2}:){31}[0-9A-F]{2}$/;
 
 function fingerprints(): string[] {
   return (process.env.ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS ?? "")
     .split(/[,\n;]/)
     .map((value) => value.trim())
-    .filter(Boolean);
+    .map((value) => value.toUpperCase())
+    .filter((value, index, all) => SHA256_FINGERPRINT.test(value) && all.indexOf(value) === index);
 }
 
 export const dynamic = "force-dynamic";
 
 export function GET() {
   const sha256 = fingerprints();
-  if (sha256.length === 0) {
+  if (sha256.length < 2) {
     return Response.json(
       {
-        error: "ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS is not configured",
+        error: "Two valid Android SHA-256 certificate fingerprints are required",
       },
       {
         status: 503,

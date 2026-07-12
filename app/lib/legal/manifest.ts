@@ -17,16 +17,20 @@ export function legalDocs(): LegalDocMeta[] {
   return MANIFEST.docs;
 }
 
-// The two legal documents keep their pretty top-level LT/EN routes.
+// Primary documents keep their pretty top-level routes; operational policies
+// live under /politikos so every transaction rule is independently linkable.
 export const CANONICAL_PATHS: Record<string, string> = {
   "privacy-policy": "/privatumo-politika",
   "terms-of-use": "/naudojimosi-salygos",
   "account-deletion": "/paskyros-trynimas",
+  "payments-fees": "/politikos/payments-fees",
+  "cancellations-refunds": "/politikos/cancellations-refunds",
+  "deposits-damage-disputes": "/politikos/deposits-damage-disputes",
+  "reservation-handover": "/politikos/reservation-handover",
+  "trust-safety-support": "/politikos/trust-safety-support",
 };
 
-// In-app, locale-correct path for a document id. Only the canonical docs have
-// real routes; any other id (e.g. a retired sub-document) resolves to undefined
-// so callers can render it as plain text rather than link to a 404.
+// In-app, locale-correct path for a published document id.
 export function legalHref(docId: string, locale: Locale): string | undefined {
   const path = CANONICAL_PATHS[docId];
   return path ? `${localePrefix(locale)}${path}` : undefined;

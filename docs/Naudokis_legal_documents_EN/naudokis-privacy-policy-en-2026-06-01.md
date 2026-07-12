@@ -108,10 +108,10 @@ Data is not processed for "all possible purposes". It is used to the extent nece
 
 The Controller for most Personal Data Processing described in this Policy is:
 
-**MB Naudokis**
-Legal entity code: **307423504**
-Registered office address: **Numėjos g. 6, LT-08402 Vilnius, Lithuania**
-Privacy and support contact: **info@naudokis.lt**
+- **MB Naudokis**
+- Legal entity code: **307423504**
+- Registered office address: **Numėjos g. 6, LT-08402 Vilnius, Lithuania**
+- Privacy and support contact: **info@naudokis.lt**
 
 Naudokis has not appointed a separate data protection officer. For all privacy matters, including requests to exercise data subject rights, contact us by email at **info@naudokis.lt**. The need to appoint a data protection officer is reassessed if the scale, nature, or risk of Processing changes.
 
@@ -270,6 +270,8 @@ If this duty is breached, Naudokis has the right to restrict the account, remove
 
 Data may be transferred to other transaction participants, payment, identity verification, infrastructure, communication, diagnostic, security, accounting, legal, tax, and other service providers, as well as authorities where required by legislation.
 
+On listing pages, the website offers an optional Google Maps embed. The map is not loaded until you choose **Load the Google Maps map**. If you load it, Google may receive your IP address, browser and device information, the requested city, and ordinary request metadata under Google's own privacy terms. Your choice is stored in your browser so later listing maps can load without asking again; clearing site storage resets it.
+
 A more detailed summary of vendors, recipients, Cookies, SDKs, and technologies is provided in the [Vendors, Recipients, Cookies, and SDK Appendix](naudokis-privacy-vendors-sdk-en-2026-06-01.md).
 
 ## 11. Payments, identity verification, and regulated Processing
@@ -409,10 +411,10 @@ You may first contact us by email at **info@naudokis.lt** so that we can review 
 
 You may also submit a complaint to the Lithuanian State Data Protection Inspectorate (SDPI) or another competent EU data protection authority.
 
-**SDPI website:** https://vdai.lrv.lt/
-**Address:** L. Sapiegos g. 17, LT-10312 Vilnius, Lithuania
-**Email:** ada@ada.lt (the current contact is always checked on the SDPI website)
-**E-delivery box:** 188607912, if this channel applies to you
+- **SDPI website:** https://vdai.lrv.lt/
+- **Address:** L. Sapiegos g. 17, LT-10312 Vilnius, Lithuania
+- **Email:** ada@ada.lt (the current contact is always checked on the SDPI website)
+- **E-delivery box:** 188607912, if this channel applies to you
 
 ## 22. Privacy appendices
 
@@ -427,9 +429,9 @@ These privacy appendices form part of this Policy and apply together with the ma
 
 ## 23. Contacts
 
-Privacy requests: **info@naudokis.lt**
-Support: **info@naudokis.lt**
-Operator: **MB Naudokis, legal entity code 307423504, registered office address Numėjos g. 6, LT-08402 Vilnius, Lithuania**
+- Privacy requests: **info@naudokis.lt**
+- Support: **info@naudokis.lt**
+- Operator: **MB Naudokis, legal entity code 307423504, registered office address Numėjos g. 6, LT-08402 Vilnius, Lithuania**
 
 ---
 

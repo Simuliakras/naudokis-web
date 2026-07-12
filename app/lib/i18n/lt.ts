@@ -62,7 +62,7 @@ export const lt: Dict = {
   hero: {
     badge: "Nuoma iš patvirtintų naudotojų",
     title: "Reikia trumpam? Išsinuomokite, o ne pirkite.",
-    // DRAFT (marketing sign-off): tightened — the long lede pushed the search
+    // FINAL (2026-07 bilingual content pass): tightened — the long lede pushed the search
     // card ~2 screens down at phone widths.
     body: "Raskite įrankius, transportą, foto techniką ar laisvalaikio įrangą iš savininkų Lietuvoje. Palyginkite internete, o datas, galutinę sumą ir mokėjimą patvirtinkite programėlėje.",
     ownerPrompt: "Daiktas stovi nenaudojamas?",
@@ -110,7 +110,7 @@ export const lt: Dict = {
     bandEmptyRetry: "Atnaujinti",
   },
   offers: {
-    // DRAFT (marketing sign-off): recency framing — "picked for you"/"popular"/
+    // FINAL: recency framing — "picked for you"/"popular"/
     // "nearby" had no personalization, review or geo signal behind them.
     eyebrow: "Naršykite",
     title: "Naujausi daiktai nuomai",
@@ -146,7 +146,7 @@ export const lt: Dict = {
       body: "Jei nuomos metu kyla klausimų ar nesusipratimų, Naudokis komanda padeda suprasti situaciją ir rasti aiškų kitą žingsnį.",
     },
   ],
-  // DRAFT (marketing sign-off): section header for the trust band.
+  // FINAL: section header for the trust band.
   featuresHead: {
     eyebrow: "Kodėl Naudokis",
     title: "Nuoma, kuri nesijaučia rizikinga",
@@ -285,7 +285,7 @@ export const lt: Dict = {
         a: "Programėlėje pasirenkamos datos, rodomos galutinės sumos, tvarkomi mokėjimai, žinutės, rezervacijos ir pranešimai. Svetainėje galite patogiai naršyti ir palyginti pasiūlymus.",
       },
     ],
-    // DRAFT (marketing/legal sign-off): owner-side FAQ — payouts, fees, damage,
+    // FINAL product copy: owner-side FAQ — payouts, fees, damage,
     // requests. Only already-claimed facts (Stripe payouts, upfront fees, deposit
     // + dispute process per the Terms); no numbers invented.
     faqOwner: [
@@ -418,6 +418,7 @@ export const lt: Dict = {
     helpHeading: "Pagalba ir taisyklės",
     help: [
       { label: "Kaip tai veikia", href: "/kaip-tai-veikia" },
+      { label: "Mokėjimai, užstatai ir atšaukimai", href: "/teisine" },
       { label: "Privatumo politika", href: "/privatumo-politika" },
       { label: "Naudojimosi sąlygos", href: "/naudojimosi-salygos" },
       { label: "Paskyros ištrynimas", href: "/paskyros-trynimas" },
@@ -457,6 +458,9 @@ export const lt: Dict = {
     specsHeading: "Specifikacijos",
     handoverHeading: "Daikto perdavimas",
     mapTitle: (city) => `${city} žemėlapyje`,
+    mapLoad: "Rodyti „Google Maps“ žemėlapį",
+    mapNotice: "Žemėlapis įkeliamas tik jums pasirinkus. Google gali gauti jūsų IP adresą ir įrenginio duomenis.",
+    mapPrivacy: "Privatumo informacija",
     pickupLabel: "Atsiėmimas",
     pickupFree: "Nemokama",
     deliveryLabel: "Pristatymas",
@@ -525,7 +529,7 @@ export const lt: Dict = {
     termCancelSub: "Atšaukimo politika",
     termInsuranceTitle: "Draudimą nurodė savininkas",
     termInsuranceSub: "Sąlygos skelbime",
-    mobileBookingNote: "Galutinė suma programėlėje",
+    mobileBookingNote: "Visa suma programėlėje",
   },
   common: {
     favorite: "Įsiminti",
@@ -543,6 +547,7 @@ export const lt: Dict = {
       return `${n} ${word}`;
     },
     newListing: "Naujas",
+    imageUnavailable: "Nuotrauka nepasiekiama",
     breadcrumbHome: "Pagrindinis",
     breadcrumbLabel: "Naršymo kelias",
     skipToContent: "Pereiti prie turinio",
@@ -624,7 +629,7 @@ export const lt: Dict = {
       return `Naudokis.lt jungia žmones ir verslus, kuriems ${what} reikia trumpam, su privačiais ir verslo savininkais ${where}. Naršykite pagal kategoriją, miestą ar kainą, o datas, žinutes, galutinę sumą ir mokėjimą valdykite programėlėje.`;
     },
     crumbCategories: "Kategorijos",
-    // DRAFT (marketing sign-off): static eyebrow — never duplicates the dynamic H1s.
+    // FINAL: static eyebrow — never duplicates the dynamic H1s.
     eyebrow: "Nuoma visoje Lietuvoje",
     titleAll: "Nuomojami daiktai",
     titleSearch: "Paieškos rezultatai",
@@ -687,6 +692,9 @@ export const lt: Dict = {
     nextPage: "Kitas puslapis",
     pageStatus: (page, totalPages) => `${page} puslapis iš ${totalPages}`,
     pageStatusShort: (page) => `${page} puslapis`,
+    pageEmptyTitle: "Tokio puslapio nebėra",
+    pageEmptyBody: "Skelbimų sąrašas pasikeitė, todėl šis puslapis nebeegzistuoja. Grįžkite į sąrašo pradžią.",
+    pageEmptyAction: "Į pirmą puslapį",
     backToTop: "Į viršų",
     seoHeading: "Daiktų nuoma Lietuvoje",
     seoBody:
@@ -723,16 +731,22 @@ export const lt: Dict = {
     title: "Nėra interneto ryšio",
     body: "Prisijunkite prie interneto, kad galėtumėte įkelti nuomos pasiūlymus ir tęsti naršymą.",
     retry: "Bandyti dar kartą",
+    timeoutTitle: "Serveris atsako per lėtai",
+    timeoutBody: "Jūsų paieška ir filtrai išsaugoti. Patikrinkite ryšį ir bandykite dar kartą.",
+    serverTitle: "Paslauga laikinai nepasiekiama",
+    serverBody: "Jūsų paieška ir filtrai išsaugoti. Po akimirkos bandykite dar kartą.",
   },
   bridge: {
     defaultTitle: "Tęskite nuomą programėlėje",
-    // DRAFT (marketing sign-off): role-neutral — covers both marketplace sides.
+    // FINAL: role-neutral — covers both marketplace sides.
     defaultBody:
       "Programėlėje pasirinksite datas, rašysite savininkui, matysite mokesčius, užstatą ir galutinę sumą, tada mokėsite per Stripe.",
     qrHint: "Nuskenuokite QR kodą telefonu ir atidarykite Naudokis.",
     qrTitle: "Nuskenuokite ir tęskite telefone",
     installCta: "Atsisiųsti programėlę",
     storesAlso: "Taip pat:",
+    appOpenFallback: "Programėlė neatsidarė? Bandykite dar kartą arba pasirinkite programėlių parduotuvę.",
+    retryOpen: "Bandyti atidaryti dar kartą",
     close: "Uždaryti",
     opensAppHint: "Atsidarys programėlėje",
     googlePlayAlt: "Gaukite „Google Play“ parduotuvėje",
@@ -765,13 +779,13 @@ export const lt: Dict = {
       `Jus pakvietė į Naudokis! Gaukite ${amount} pirmai nuomai.`,
     titleUnknown: "Jus pakvietė į Naudokis.",
     titleGeneric: "Nuomokitės daiktus iš žmonių ir verslų šalia.",
-    // DRAFT (marketing sign-off): "šalia" no longer echoes the headline's line.
+    // FINAL: "šalia" no longer echoes the headline's line.
     lead: "Naudokis padeda išsinuomoti daiktus iš privačių ir verslo savininkų. Atsisiųskite programėlę, kad pradėtumėte.",
     rewardExplainer:
       "Premija įskaitoma jūsų paskyroje, kai programėlėje patvirtinsite tapatybę. Jus pakvietęs draugas premiją gauna po jūsų pirmos užbaigtos nuomos.",
     invalidNote:
       "Šis pakvietimo kodas nebegalioja, tačiau programėle galite naudotis įprastai.",
-    // DRAFT (marketing sign-off): truthful value bullets — already-claimed facts only.
+    // FINAL: truthful value bullets — published-policy facts only.
     benefits: [
       "Mokėjimai apdorojami per Stripe, o užstatas parodomas prieš patvirtinimą",
       "Savininkų profiliai, patikros žymos ir atsiliepimai",
@@ -781,7 +795,7 @@ export const lt: Dict = {
     qrHint: "Nuskenuokite telefonu",
     codeLabel: "Jūsų pakvietimo kodas",
   },
-  // DRAFT (marketing sign-off): account-deletion cancel bridge copy.
+  // FINAL: account-deletion cancel bridge copy.
   cancelDeletion: {
     meta: {
       title: "Atšaukti paskyros ištrynimą — Naudokis",
@@ -836,9 +850,6 @@ export const lt: Dict = {
     warnLabel: "Svarbu",
     anchorLabel: "Nuoroda į šį skyrių",
     relatedHeading: "Susiję dokumentai",
-    docTermsTitle: "Naudojimosi sąlygos",
-    docPrivacyTitle: "Privatumo politika",
-    docDeleteTitle: "Paskyros ir duomenų trynimas",
     hubTitle: "Taisyklės ir privatumas",
     hubLead:
       "Pagrindinės Naudokis taisyklės, privatumo informacija ir paskyros duomenų valdymas vienoje vietoje.",

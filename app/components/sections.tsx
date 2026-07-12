@@ -35,7 +35,7 @@ import {
   focusListboxSelection,
   Icon,
   IconName,
-  listboxKeyNav,
+  listboxPanelKeyNav,
   listboxTriggerKeyNav,
   Logo,
   openRedirect,
@@ -54,7 +54,7 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const burgerRef = useRef<HTMLButtonElement>(null);
-  const drawerRef = useRef<HTMLDivElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
 
   // Active-route flag for aria-current — strip any locale prefix to the bare
   // path (the default locale is unprefixed) before matching.
@@ -183,14 +183,18 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
           {/* Install CTA lives OUTSIDE the collapsible link group so the site's
               single conversion action survives the ≤1120px collapse — full label
               on desktop, compact label beside the burger on phones/tablets. */}
-          <button
+          <Link
+            href="/go"
+            prefetch={false}
             className="nk-btn nk-btn--primary nk-nav-cta"
-            onClick={() =>
+            aria-label={dict.nav.getApp}
+            onClick={(event) => {
+              event.preventDefault();
               openRedirect({
                 title: dict.bridge.defaultTitle,
                 body: dict.bridge.defaultBody,
-              })
-            }
+              });
+            }}
           >
             <Icon
               name="Download"
@@ -200,7 +204,7 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
             />{" "}
             <span className="nk-nav-cta__full">{dict.nav.getApp}</span>
             <span className="nk-nav-cta__short">{dict.nav.getAppShort}</span>
-          </button>
+          </Link>
           <button
             ref={burgerRef}
             className="nk-nav-burger"
@@ -217,10 +221,11 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
             />
           </button>
         </div>
-        <div
+        <nav
           ref={drawerRef}
           id="nk-mobile-nav"
           className={"nk-nav-drawer" + (menuOpen ? " open" : "")}
+          aria-label={dict.nav.primary}
           // Closed, the drawer is only visually collapsed (max-height/opacity) so
           // the exit animation can play — inert removes its six interactive
           // descendants from the Tab order and the accessibility tree.
@@ -268,10 +273,13 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
                   edge and covered the install CTA below (F-110). */}
               <LocaleSwitcher inflow />
             </div>
-            <button
+            <Link
+              href="/go"
+              prefetch={false}
               className="nk-btn nk-btn--primary"
               style={{ margin: "4px 12px 0", justifyContent: "center" }}
-              onClick={() => {
+              onClick={(event) => {
+                event.preventDefault();
                 setMenuOpen(false);
                 openRedirect({
                   title: dict.bridge.defaultTitle,
@@ -286,9 +294,9 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
                 color="var(--nk-text)"
               />{" "}
               {dict.nav.getApp}
-            </button>
+            </Link>
           </div>
-        </div>
+        </nav>
       </header>
     </>
   );
@@ -316,15 +324,9 @@ function LocaleSwitcher({ inflow = false }: { inflow?: boolean }) {
       )
         setOpen(false);
     };
-    // Escape restores focus to the trigger (focus lives inside the open panel).
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeListbox(setOpen, triggerRef, ref);
-    };
     document.addEventListener("mousedown", onDoc);
-    document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("mousedown", onDoc);
-      document.removeEventListener("keydown", onKey);
     };
   }, []);
   // Move focus into the open menu (onto the current locale) for keyboard users.
@@ -393,7 +395,7 @@ function LocaleSwitcher({ inflow = false }: { inflow?: boolean }) {
           ref={listRef}
           role="listbox"
           aria-label={dict.nav.language}
-          onKeyDown={listboxKeyNav}
+          onKeyDown={(e) => listboxPanelKeyNav(e, setOpen, triggerRef, ref)}
           style={{
             ...(inflow
               ? { marginTop: 6 }

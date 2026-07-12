@@ -4,6 +4,5 @@
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.naudokis.lt";
 
 // Google Maps Embed API key (client-readable). When unset, the listing-detail
-// map falls back to the decorative delivery-zone graphic, so local dev and
-// screenshot builds work without a key.
+// map falls back to the decorative delivery-zone graphic.
 export const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";

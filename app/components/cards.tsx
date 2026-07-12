@@ -56,7 +56,7 @@ export function OfferCard({
         {img && failedSrc !== img && (
           <Image src={img} alt={title} fill className="nk-zoom"
             loading={imageLoading}
-            sizes="(max-width: 760px) 92vw, (max-width: 1100px) 46vw, 416px"
+            sizes="(max-width: 560px) calc(50vw - 28px), (max-width: 750px) calc(50vw - 40px), (max-width: 1020px) calc(33vw - 30px), (max-width: 1280px) calc(25vw - 30px), min(20vw, 345px)"
             onError={(event) => {
               event.currentTarget.style.visibility = "hidden";
               setFailedSrc(img);
@@ -72,7 +72,12 @@ export function OfferCard({
             <Icon name="Truck" size={14} color="var(--nk-text)" stroke={2} /> {c.delivery}
           </span>
         )}
-        {!showPhoto && <Icon name={categoryIcon} size={56} stroke={1.5} className="nk-imgicon" />}
+        {!showPhoto && (
+          <span className="nk-imgfallback" role="img" aria-label={c.imageUnavailable}>
+            <span className="nk-imgfallback__mark"><Icon name={categoryIcon} size={34} stroke={1.6} /></span>
+            <span>{c.imageUnavailable}</span>
+          </span>
+        )}
         {/* No carousel dots: the browse card carries a single photo, so paging
             dots would be a false affordance. The lightbox/gallery lives on the
             detail page where the full photo set is available. */}

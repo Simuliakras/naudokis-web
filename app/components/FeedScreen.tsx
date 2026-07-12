@@ -16,7 +16,7 @@ import { ChipLinkRow, PageHead, SeoNote } from "./headers";
 import { HeroOwnerCta } from "./HeroSearch";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { dedupeById, useCategories, type Category } from "@/app/lib/categories";
-import { LISTINGS_PAGE_SIZE, useListingsInfinite, parseSortKey, parsePageParam, photoFirst } from "@/app/lib/listings";
+import { LISTINGS_PAGE_SIZE, useListingsInfinite, parseSortKey, parsePageParam, photoFirst, marketplaceErrorKind } from "@/app/lib/listings";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { trackEvent } from "@/app/lib/analytics";
@@ -164,13 +164,16 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     [topCats, extraCategories, extraCategory],
   );
   const {
-    data, isLoading, isError, refetch,
+    data, isLoading, isError, error, refetch,
     fetchNextPage, hasNextPage, isFetchingNextPage, isPlaceholderData,
   } = useListingsInfinite(locale, {
     q: params.q, city: params.city, category: params.cat, sort: params.sort, page: params.page,
   });
 
   useReloadOnReconnect({ online, isError, refetch });
+  const errorKind = marketplaceErrorKind(error);
+  const errorTitle = errorKind === "timeout" ? dict.offline.timeoutTitle : dict.offline.serverTitle;
+  const errorBody = errorKind === "timeout" ? dict.offline.timeoutBody : dict.offline.serverBody;
 
   // Photo safeguard: on the default "recommended" sort, order photo-bearing
   // listings first so a first-time visitor isn't met with a wall of category-icon
@@ -237,6 +240,19 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Keep the selected chip visible in the mobile category rail — landing on a
+  // filtered URL used to render the rail scrolled to the start, so the active
+  // selection (often far down the taxonomy) was invisible.
+  const catrailRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // scroll the RAIL only (scrollIntoView could also scroll the page vertically)
+    const rail = catrailRef.current;
+    const active = rail?.querySelector<HTMLElement>(".is-active");
+    if (rail && active) {
+      rail.scrollLeft = Math.max(0, active.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2);
+    }
+  }, [params.cat, cats.length]);
 
   // A category landing renders the taxonomy's authored heading + intro
   // (seoTitle/seoBody); the short name stays the breadcrumb/chip label.
@@ -363,9 +379,32 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
   const filtersActive = params.delivery || !!params.price || params.sort !== "recommended";
   const empty = t.empty;
   const listItem = () => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody });
+  const pageHref = (page: number) => {
+    const next = new URLSearchParams();
+    if (params.q) next.set("q", params.q);
+    if (!staticLanding && params.cat) next.set("cat", params.cat);
+    if (!staticLanding && params.city) next.set("city", params.city);
+    if (params.sort && params.sort !== "recommended") next.set("sort", params.sort);
+    if (params.delivery) next.set("delivery", "1");
+    if (params.price) next.set("price", params.price);
+    if (page > 1) next.set("page", String(page));
+    const qs = next.toString();
+    return qs ? `${pathname}?${qs}` : pathname;
+  };
   const renderEmpty = () => {
+    // Beyond the last page (stale link, shrunken inventory): say exactly that.
+    // Falling through used to show three contradictions at once — a filter-blame
+    // message with no filters set, the page-1 count, and a "Page 2 of 1" pager.
+    if (params.page > 1) {
+      return <EmptyState illustration="listings" title={t.pageEmptyTitle} subtitle={t.pageEmptyBody}
+        actionLabel={t.pageEmptyAction} actionPrimary
+        onAction={() => router.push(pageHref(1))} />;
+    }
     if (params.q) {
-      return <EmptyState illustration="search" title={empty.searchTitle(params.q)} subtitle={empty.searchBody}
+      // echo at most ~40 chars of the query back — the headline must never carry
+      // an unbounded string
+      const qEcho = params.q.length > 42 ? `${params.q.slice(0, 42).trimEnd()}…` : params.q;
+      return <EmptyState illustration="search" title={empty.searchTitle(qEcho)} subtitle={empty.searchBody}
         actionLabel={empty.searchAction} onAction={reset}
         secondaryLabel={t.allCategories}
         onSecondaryAction={() => router.push(localePath(locale, "/kategorijos"))} />;
@@ -394,20 +433,11 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
       actionLabel={empty.filterAction} onAction={reset} />;
   };
 
-  const pageHref = (page: number) => {
-    const next = new URLSearchParams();
-    if (params.q) next.set("q", params.q);
-    if (!staticLanding && params.cat) next.set("cat", params.cat);
-    if (!staticLanding && params.city) next.set("city", params.city);
-    if (params.sort && params.sort !== "recommended") next.set("sort", params.sort);
-    if (params.delivery) next.set("delivery", "1");
-    if (params.price) next.set("price", params.price);
-    if (page > 1) next.set("page", String(page));
-    const qs = next.toString();
-    return qs ? `${pathname}?${qs}` : pathname;
-  };
   const totalPages = totalCount ? Math.ceil(totalCount / LISTINGS_PAGE_SIZE) : null;
-  const showPager = !isLoading && !isError && !clientFiltered && !params.q && (params.page > 1 || !!hasNextPage);
+  // never render a self-contradicting "Page N of M" with N > M — the beyond-end
+  // empty state carries the recovery action instead
+  const showPager = !isLoading && !isError && !clientFiltered && !params.q &&
+    (params.page > 1 || !!hasNextPage) && (totalPages === null || params.page <= totalPages);
 
   return (
     <Chrome>
@@ -482,7 +512,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
 
           {/* Mobile category rail — the browse dimension stays visible on the page
               itself instead of two taps deep in the filter sheet (≤560px only). */}
-          <div className="nk-catrail">
+          <div className="nk-catrail" ref={catrailRef}>
             <button type="button" className={"nk-pillctl nk-catrail__chip" + (!params.cat ? " is-active" : "")}
               aria-pressed={!params.cat} onClick={() => setParams({ cat: "" })}>{t.allCategories}</button>
             {cats.map((c) => (
@@ -572,7 +602,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
             <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body}
               actionLabel={dict.offline.retry} onAction={() => refetch()} />
           ) : isError && loaded.length === 0 ? (
-            <EmptyState illustration="error" tone="danger" title={dict.offers.errorTitle} subtitle={dict.offers.errorSubtitle}
+            <EmptyState illustration="error" tone="danger" title={errorTitle} subtitle={errorBody}
               actionLabel={dict.offers.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
           ) : list.length ? (
             // The interruption banner sits between two grids (not inside one) so no

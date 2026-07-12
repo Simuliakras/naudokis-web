@@ -248,7 +248,14 @@ export function Illustration({
 // (compact item row in the modal). Real wire data only — title/thumb/price come
 // from the listing view models, never fabricated.
 export type RedirectListingContext = { title: string; thumb?: string; priceLabel?: string };
-export type RedirectPayload = { title: string; body: string; listing?: RedirectListingContext };
+export type RedirectPayload = {
+  title: string;
+  body: string;
+  listing?: RedirectListingContext;
+  // Canonical native-app path, e.g. /listing/<id>. The bridge sends it through
+  // /go so AppsFlyer can resume the same intent after installation.
+  appPath?: string;
+};
 export const NK_REDIRECT_EVENT = "nk:redirect";
 
 export function openRedirect(payload: RedirectPayload) {
@@ -345,8 +352,9 @@ export function InputClear({ onClick, label }: { onClick: () => void; label: str
 /* ---------------- Listbox keyboard navigation ----------------
    Shared roving-focus handler for the custom listbox popovers (FilterSelect,
    CityPicker, LocaleSwitcher): Arrow/Home/End move focus between the panel's
-   role="option" elements. Attach as onKeyDown on the listbox panel. */
-export function listboxKeyNav(e: React.KeyboardEvent) {
+   role="option" elements. Internal — panels attach listboxPanelKeyNav, which
+   adds the Escape layer on top. */
+function listboxKeyNav(e: React.KeyboardEvent) {
   if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) {
     return;
   }
@@ -364,12 +372,38 @@ export function listboxKeyNav(e: React.KeyboardEvent) {
   options[next].focus();
 }
 
-/* Open a closed listbox with ArrowDown — attach as onKeyDown on the trigger. */
+// Escape belongs to the innermost open layer. Stop it here so a listbox inside
+// the mobile drawer or filter sheet does not also dismiss its parent overlay.
+export function listboxPanelKeyNav(
+  e: React.KeyboardEvent,
+  setOpen: (open: boolean) => void,
+  trigger: React.RefObject<HTMLButtonElement | null>,
+  container: React.RefObject<HTMLElement | null>,
+) {
+  if (e.key === "Escape") {
+    e.preventDefault();
+    e.stopPropagation();
+    closeListbox(setOpen, trigger, container);
+    return;
+  }
+  listboxKeyNav(e);
+}
+
+/* Trigger-level keys for a listbox: ArrowDown opens a closed panel; Escape
+   closes an open one (reachable via Shift+Tab back out of the panel) without
+   dismissing a parent overlay. Focus already sits on the trigger, so there is
+   nothing to restore. Attach as onKeyDown on the trigger. */
 export function listboxTriggerKeyNav(open: boolean, setOpen: (open: boolean) => void) {
   return (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown" && !open) {
       e.preventDefault();
       setOpen(true);
+      return;
+    }
+    if (e.key === "Escape" && open) {
+      e.preventDefault();
+      e.stopPropagation();
+      setOpen(false);
     }
   };
 }
@@ -446,10 +480,8 @@ export function FilterSelect({
     // Escape closes AND restores focus to the trigger (focus lives inside the
     // panel while open); an outside click just closes — the user is elsewhere.
     const onDoc = (e: MouseEvent) => { if (ref.current && e.target instanceof Node && !ref.current.contains(e.target)) setOpen(false); };
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeListbox(setOpen, triggerRef, ref); };
     document.addEventListener("mousedown", onDoc);
-    document.addEventListener("keydown", onKey);
-    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
+    return () => { document.removeEventListener("mousedown", onDoc); };
   }, []);
   // Move focus into the open list (onto the selected option) for keyboard users.
   useEffect(() => {
@@ -482,7 +514,8 @@ export function FilterSelect({
         <Icon name="ChevronDown" size={15} stroke={2.4} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
       </button>
       {open && (
-        <span ref={panelRef} role="listbox" aria-label={label} onKeyDown={listboxKeyNav}
+        <span ref={panelRef} role="listbox" aria-label={label}
+          onKeyDown={(e) => listboxPanelKeyNav(e, setOpen, triggerRef, ref)}
           style={{ position: "absolute", ...panelPos, [align]: 0, minWidth: 230, maxWidth: "calc(100vw - 2*var(--nk-gutter))",
             maxHeight: "min(60vh, 480px)", overflowY: "auto", overscrollBehavior: "contain",
             background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: 16, padding: 7, display: "flex", flexDirection: "column", gap: 2, boxShadow: "var(--nk-shadow-3)", zIndex: 50 }}>

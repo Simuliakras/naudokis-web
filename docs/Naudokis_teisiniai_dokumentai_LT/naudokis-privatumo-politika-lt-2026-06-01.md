@@ -108,10 +108,10 @@ Duomenys netvarkomi „visiems galimiems tikslams“. Jie naudojami tiek, kiek b
 
 Daugumos šioje Politikoje aprašytų asmens duomenų tvarkymo veiksmų duomenų valdytojas yra:
 
-**MB „Naudokis“**
-Juridinio asmens kodas: **307423504**
-Registruotos buveinės adresas: **Numėjos g. 6, LT-08402 Vilnius, Lietuva**
-Privatumo ir pagalbos kontaktas: **info@naudokis.lt**
+- **MB „Naudokis“**
+- Juridinio asmens kodas: **307423504**
+- Registruotos buveinės adresas: **Numėjos g. 6, LT-08402 Vilnius, Lietuva**
+- Privatumo ir pagalbos kontaktas: **info@naudokis.lt**
 
 „Naudokis“ nėra paskyrusi atskiro duomenų apsaugos pareigūno. Visais privatumo klausimais, įskaitant prašymus įgyvendinti duomenų subjekto teises, kreipkitės el. paštu **info@naudokis.lt**. Poreikis paskirti duomenų apsaugos pareigūną pakartotinai vertinamas, jei keičiasi duomenų tvarkymo mastas, pobūdis ar rizika.
 
@@ -270,6 +270,8 @@ Pažeidus šią pareigą, „Naudokis“ turi teisę riboti paskyrą, pašalinti
 
 Duomenys gali būti perduodami kitiems sandorio dalyviams, mokėjimų, tapatybės patvirtinimo, infrastruktūros, komunikacijos, diagnostikos, saugumo, apskaitos, teisės, mokesčių ir kitiems paslaugų teikėjams, taip pat institucijoms, kai to reikalauja teisės aktai.
 
+Skelbimų puslapiuose svetainė siūlo pasirenkamą „Google Maps“ žemėlapį. Žemėlapis neįkeliamas, kol nepasirenkate **Rodyti „Google Maps“ žemėlapį**. Jį įkėlus Google gali gauti jūsų IP adresą, naršyklės ir įrenginio informaciją, prašomą miestą bei įprastus užklausos metaduomenis pagal Google privatumo sąlygas. Pasirinkimas išsaugomas naršyklėje, kad vėlesni skelbimų žemėlapiai galėtų būti rodomi neklausiant dar kartą; išvalius svetainės duomenis pasirinkimas panaikinamas.
+
 Išsamesnė teikėjų, gavėjų, slapukų, SDK ir technologijų santrauka pateikiama [Teikėjų, gavėjų, slapukų ir SDK priede](naudokis-privatumas-tiekejai-sdk-lt-2026-06-01.md).
 
 ## 11. Mokėjimai, tapatybės patvirtinimas ir reguliuojamas tvarkymas
@@ -409,10 +411,10 @@ Pirmiausia galite kreiptis į mus el. paštu **info@naudokis.lt**, kad galėtume
 
 Taip pat galite pateikti skundą Valstybinei duomenų apsaugos inspekcijai (VDAI) arba kitai kompetentingai ES duomenų apsaugos institucijai.
 
-**VDAI svetainė:** https://vdai.lrv.lt/
-**Adresas:** L. Sapiegos g. 17, LT-10312 Vilnius, Lietuva
-**El. paštas:** ada@ada.lt (aktualų kontaktą pasitikrinkite VDAI svetainėje)
-**E. pristatymo dėžutė:** 188607912, jei šis kanalas jums taikomas
+- **VDAI svetainė:** https://vdai.lrv.lt/
+- **Adresas:** L. Sapiegos g. 17, LT-10312 Vilnius, Lietuva
+- **El. paštas:** ada@ada.lt (aktualų kontaktą pasitikrinkite VDAI svetainėje)
+- **E. pristatymo dėžutė:** 188607912, jei šis kanalas jums taikomas
 
 ## 22. Privatumo priedai
 
@@ -427,9 +429,9 @@ Taip pat galite pateikti skundą Valstybinei duomenų apsaugos inspekcijai (VDAI
 
 ## 23. Kontaktai
 
-Privatumo prašymai: **info@naudokis.lt**
-Pagalba: **info@naudokis.lt**
-Operatorius: **MB „Naudokis“, juridinio asmens kodas 307423504, registruotos buveinės adresas – Numėjos g. 6, LT-08402 Vilnius, Lietuva**
+- Privatumo prašymai: **info@naudokis.lt**
+- Pagalba: **info@naudokis.lt**
+- Operatorius: **MB „Naudokis“, juridinio asmens kodas 307423504, registruotos buveinės adresas – Numėjos g. 6, LT-08402 Vilnius, Lietuva**
 
 ---
 

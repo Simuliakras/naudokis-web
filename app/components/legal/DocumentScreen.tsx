@@ -32,8 +32,10 @@ export function DocumentScreen({
 
   // Cross-link to EVERY other published document (the single-sibling rail hid
   // the most relevant neighbour, e.g. deletion → privacy) + a contact route.
-  const docTitle = (id: string) =>
-    id === "privacy-policy" ? t.docPrivacyTitle : id === "terms-of-use" ? t.docTermsTitle : t.docDeleteTitle;
+  const docTitle = (id: string) => {
+    const meta = getLegalDocMeta(id);
+    return meta?.title[locale] ?? meta?.title.lt ?? id;
+  };
   const siblings = Object.keys(CANONICAL_PATHS).filter((id) => id !== docId);
   const contactEmail = docId === "privacy-policy" ? CONTACT_PRIVACY_EMAIL : CONTACT_EMAIL;
 

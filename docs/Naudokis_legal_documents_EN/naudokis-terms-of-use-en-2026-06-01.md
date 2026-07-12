@@ -62,21 +62,21 @@ This short process helps explain when the most important rules apply:
 
 | Looking for information about... | Read |
 | --- | --- |
-| Who Naudokis is and who is the party to the Rental Transaction | Section 3 |
-| Account, age, and identity verification | Sections 4 and 6 |
-| Listings, prohibited items, and risky categories | Section 7 and the [Prohibited and Restricted Items Rules](naudokis-prohibited-restricted-items-en-2026-06-01.md) |
-| Reservations and conclusion of a Rental Transaction | Section 9 |
-| Payments, fees, Stripe, and information before payment | Section 10 and the [Payments, Fees, and Stripe Rules](naudokis-payments-fees-stripe-en-2026-06-01.md) |
-| Deposits, damage, loss, and Disputes | Sections 11 and 13 and the [Deposit, Damage, Loss, and Dispute Rules](naudokis-deposits-damage-disputes-en-2026-06-01.md) |
-| Cancellation, refunds, and the right of withdrawal | Section 12 and the [Cancellation, Refund, and Right of Withdrawal Rules](naudokis-cancellations-refunds-en-2026-06-01.md) |
-| Business Users, Traders, VAT, VIES, and DAC7 | Section 15 and the [Business Users, Traders, and B2B Rules](naudokis-business-users-en-2026-06-01.md) |
-| Content, moderation, appeals, and DSA notices | Sections 16 and 17 and the [Moderation, Complaints, and DSA Rules](naudokis-moderation-dsa-en-2026-06-01.md) |
-| Consumer complaints, authorities, and Dispute resolution | Sections 18 and 21 |
+| Who Naudokis is and who is the party to the Rental Transaction | Section [3](#3-what-naudokis-is) |
+| Account, age, and identity verification | Sections [4](#4-eligibility-and-account) and [6](#6-verification-readiness-and-compliance) |
+| Listings, prohibited items, and risky categories | Section [7](#7-listings-prohibited-items-and-higher-risk-categories) and the [Prohibited and Restricted Items Rules](naudokis-prohibited-restricted-items-en-2026-06-01.md) |
+| Reservations and conclusion of a Rental Transaction | Section [9](#9-reservations-and-conclusion-of-a-rental-transaction) |
+| Payments, fees, Stripe, and information before payment | Section [10](#10-payments-fees-and-stripe) and the [Payments, Fees, and Stripe Rules](naudokis-payments-fees-stripe-en-2026-06-01.md) |
+| Deposits, damage, loss, and Disputes | Sections [11](#11-deposits) and [13](#13-handover-return-damage-and-disputes) and the [Deposit, Damage, Loss, and Dispute Rules](naudokis-deposits-damage-disputes-en-2026-06-01.md) |
+| Cancellation, refunds, and the right of withdrawal | Section [12](#12-cancellations-refunds-and-the-right-of-withdrawal) and the [Cancellation, Refund, and Right of Withdrawal Rules](naudokis-cancellations-refunds-en-2026-06-01.md) |
+| Business Users, Traders, VAT, VIES, and DAC7 | Section [15](#15-business-users-transparency-and-search) and the [Business Users, Traders, and B2B Rules](naudokis-business-users-en-2026-06-01.md) |
+| Content, moderation, appeals, and DSA notices | Sections [16](#16-user-content-prohibited-conduct-and-safety) and [17](#17-moderation-dsa-ai-and-account-restrictions) and the [Moderation, Complaints, and DSA Rules](naudokis-moderation-dsa-en-2026-06-01.md) |
+| Consumer complaints, authorities, and Dispute resolution | Sections [18](#18-complaints-and-consumer-rights) and [21](#21-changes-termination-and-applicable-law) |
 | Reservation statuses, handover, and completion process | the [Reservation, Handover, and Completion Process Rules](naudokis-reservation-handover-completion-en-2026-06-01.md) |
 | Identity, risk, and trust measures | the [Trust, Checks, and Safeguards Standard](naudokis-trust-checks-safeguards-en-2026-06-01.md) |
 | Reviews, search, and ranking | the [Reviews, Search, and Ranking Rules](naudokis-reviews-search-ranking-en-2026-06-01.md) |
 | Map of all legal documents | the [Rules Center](naudokis-policy-center-en-2026-06-01.md) |
-| Naudokis contacts | Section 24 |
+| Naudokis contacts | Section [24](#24-contacts) |
 
 ## Platform document structure
 

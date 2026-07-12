@@ -31,8 +31,6 @@ export default async function Page({ params }: PageProps<"/[lang]/teisine">) {
   const { lang } = await params;
   const locale = requireLocale(lang);
   const { legal: t, common } = getDictionary(locale);
-  const docTitle = (id: string) =>
-    id === "privacy-policy" ? t.docPrivacyTitle : id === "terms-of-use" ? t.docTermsTitle : t.docDeleteTitle;
   const breadcrumb = breadcrumbJsonLd(locale, [
     { name: common.breadcrumbHome, path: "" },
     { name: t.hubTitle, path: "/teisine" },
@@ -61,7 +59,7 @@ export default async function Page({ params }: PageProps<"/[lang]/teisine">) {
                   <Link key={doc.id} href={href}
                     style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-lg)", padding: "clamp(20px,2.6vw,28px)", borderRadius: "var(--nk-r-card)", background: "var(--nk-surface)", border: "1px solid var(--nk-border)", textDecoration: "none", boxShadow: "var(--nk-edge-top)" }}>
                     <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-                      <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, color: "var(--nk-text)" }}>{docTitle(doc.id)}</span>
+                      <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, color: "var(--nk-text)" }}>{doc.title[locale] ?? doc.title.lt}</span>
                       <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, lineHeight: "24px", color: "var(--nk-text-muted)" }}>{localizedBlurb(doc, locale)}</span>
                     </span>
                     <Icon name="ArrowRight" size={20} stroke={2.2} color="var(--nk-text-muted)" style={{ flex: "none" }} />

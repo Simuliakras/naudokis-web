@@ -25,6 +25,16 @@ const KEPT_BY_FILE = {
   "naudokis-terms-of-use-en-2026-06-01": "terms-of-use",
   "naudokis-privatumo-politika-lt-2026-06-01": "privacy-policy",
   "naudokis-privacy-policy-en-2026-06-01": "privacy-policy",
+  "naudokis-mokejimai-mokesciai-stripe-lt-2026-06-01": "payments-fees",
+  "naudokis-payments-fees-stripe-en-2026-06-01": "payments-fees",
+  "naudokis-atsaukimai-grazinimai-lt-2026-06-01": "cancellations-refunds",
+  "naudokis-cancellations-refunds-en-2026-06-01": "cancellations-refunds",
+  "naudokis-uzstatai-zala-gincai-lt-2026-06-01": "deposits-damage-disputes",
+  "naudokis-deposits-damage-disputes-en-2026-06-01": "deposits-damage-disputes",
+  "naudokis-rezervacijos-perdavimas-uzbaigimas-lt-2026-06-01": "reservation-handover",
+  "naudokis-reservation-handover-completion-en-2026-06-01": "reservation-handover",
+  "naudokis-pasitikejimas-patikros-apsauga-lt-2026-06-01": "trust-safety-support",
+  "naudokis-trust-checks-safeguards-en-2026-06-01": "trust-safety-support",
 };
 
 // The four conversions to run: { file, id, lang }.
@@ -33,6 +43,16 @@ const JOBS = [
   { file: "naudokis-terms-of-use-en-2026-06-01.md", id: "terms-of-use", lang: "en", dir: EN_DIR },
   { file: "naudokis-privatumo-politika-lt-2026-06-01.md", id: "privacy-policy", lang: "lt", dir: LT_DIR },
   { file: "naudokis-privacy-policy-en-2026-06-01.md", id: "privacy-policy", lang: "en", dir: EN_DIR },
+  { file: "naudokis-mokejimai-mokesciai-stripe-lt-2026-06-01.md", id: "payments-fees", lang: "lt", dir: LT_DIR },
+  { file: "naudokis-payments-fees-stripe-en-2026-06-01.md", id: "payments-fees", lang: "en", dir: EN_DIR },
+  { file: "naudokis-atsaukimai-grazinimai-lt-2026-06-01.md", id: "cancellations-refunds", lang: "lt", dir: LT_DIR },
+  { file: "naudokis-cancellations-refunds-en-2026-06-01.md", id: "cancellations-refunds", lang: "en", dir: EN_DIR },
+  { file: "naudokis-uzstatai-zala-gincai-lt-2026-06-01.md", id: "deposits-damage-disputes", lang: "lt", dir: LT_DIR },
+  { file: "naudokis-deposits-damage-disputes-en-2026-06-01.md", id: "deposits-damage-disputes", lang: "en", dir: EN_DIR },
+  { file: "naudokis-rezervacijos-perdavimas-uzbaigimas-lt-2026-06-01.md", id: "reservation-handover", lang: "lt", dir: LT_DIR },
+  { file: "naudokis-reservation-handover-completion-en-2026-06-01.md", id: "reservation-handover", lang: "en", dir: EN_DIR },
+  { file: "naudokis-pasitikejimas-patikros-apsauga-lt-2026-06-01.md", id: "trust-safety-support", lang: "lt", dir: LT_DIR },
+  { file: "naudokis-trust-checks-safeguards-en-2026-06-01.md", id: "trust-safety-support", lang: "en", dir: EN_DIR },
 ];
 
 const DIACRITICS = { ą: "a", č: "c", ę: "e", ė: "e", į: "i", š: "s", ų: "u", ū: "u", ž: "z" };

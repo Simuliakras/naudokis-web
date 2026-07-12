@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Naudojimosi sąlygos",
+    "title": "„Naudokis“ naudojimosi sąlygos",
     "version": "2026-06-01",
     "effective_date": "2026-06-01",
     "last_updated": "2026-06-01",
@@ -242,8 +242,8 @@
           "[4](#4-tinkamumas-ir-paskyra) ir [6](#6-patvirtinimas-pasirengimas-ir-atitiktis) skyriuose"
         ],
         [
-          "Skelbimus, draudžiamus daiktus ir didesnės rizikos kategorijas",
-          "[7](#7-skelbimai-draudziami-daiktai-ir-aukstesnes-rizikos-kategorijos) skyriuje ir Draudžiamų ir ribojamų daiktų taisyklėse (Naudokis programėlėje)"
+          "Skelbimus, draudžiamus daiktus ir rizikingas kategorijas",
+          "[7](#7-skelbimai-draudziami-daiktai-ir-aukstesnes-rizikos-kategorijos) skyriuje ir Draudžiamų ir ribojamų daiktų taisyklėse"
         ],
         [
           "Rezervacijas ir Nuomos sandorio sudarymą",
@@ -251,23 +251,23 @@
         ],
         [
           "Mokėjimus, mokesčius, Stripe ir informaciją prieš mokėjimą",
-          "[10](#10-mokejimai-mokesciai-ir-stripe) skyriuje ir Mokėjimų, mokesčių ir Stripe taisyklėse (Naudokis programėlėje)"
+          "[10](#10-mokejimai-mokesciai-ir-stripe) skyriuje ir [Mokėjimų, mokesčių ir Stripe taisyklėse](doc:payments-fees)"
         ],
         [
           "Užstatus, žalą, praradimą ir ginčus",
-          "[11](#11-uzstatai) ir [13](#13-perdavimas-grazinimas-zala-ir-gincai) skyriuose bei Užstatų, žalos, praradimo ir ginčų taisyklėse (Naudokis programėlėje)"
+          "[11](#11-uzstatai) ir [13](#13-perdavimas-grazinimas-zala-ir-gincai) skyriuose bei [Užstatų, žalos, praradimo ir ginčų taisyklėse](doc:deposits-damage-disputes)"
         ],
         [
           "Atšaukimą, grąžinimus ir teisę atsisakyti sutarties",
-          "[12](#12-atsaukimai-grazinimai-ir-teise-atsisakyti-sutarties) skyriuje ir Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklėse (Naudokis programėlėje)"
+          "[12](#12-atsaukimai-grazinimai-ir-teise-atsisakyti-sutarties) skyriuje ir [Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklėse](doc:cancellations-refunds)"
         ],
         [
           "Verslo naudotojus, Prekiautojus, PVM, VIES ir DAC7",
-          "[15](#15-verslo-naudotojai-skaidrumas-ir-paieska) skyriuje ir Verslo naudotojų, Prekiautojų ir B2B taisyklėse (Naudokis programėlėje)"
+          "[15](#15-verslo-naudotojai-skaidrumas-ir-paieska) skyriuje ir Verslo naudotojų, Prekiautojų ir B2B taisyklėse"
         ],
         [
           "Turinį, moderavimą, apeliacijas ir DSA pranešimus",
-          "[16](#16-naudotoju-turinys-draudziamas-elgesys-ir-saugumas) ir [17](#17-moderavimas-dsa-di-ir-paskyru-apribojimai) skyriuose bei Moderavimo, skundų ir DSA taisyklėse (Naudokis programėlėje)"
+          "[16](#16-naudotoju-turinys-draudziamas-elgesys-ir-saugumas) ir [17](#17-moderavimas-dsa-di-ir-paskyru-apribojimai) skyriuose bei Moderavimo, skundų ir DSA taisyklėse"
         ],
         [
           "Vartotojų skundus, institucijas ir ginčų sprendimą",
@@ -275,19 +275,19 @@
         ],
         [
           "Rezervacijos būsenas, perdavimo ir užbaigimo procesą",
-          "Rezervacijos, perdavimo ir užbaigimo proceso taisykles (Naudokis programėlėje)"
+          "[Rezervacijos, perdavimo ir užbaigimo proceso taisykles](doc:reservation-handover)"
         ],
         [
           "Tapatybės, rizikos ir pasitikėjimo priemones",
-          "Pasitikėjimo, patikrų ir apsaugos priemonių standartą (Naudokis programėlėje)"
+          "[Pasitikėjimo, patikrų ir apsaugos priemonių standartą](doc:trust-safety-support)"
         ],
         [
           "Atsiliepimus, paiešką ir reitingavimą",
-          "Atsiliepimų, paieškos ir reitingavimo taisykles (Naudokis programėlėje)"
+          "Atsiliepimų, paieškos ir reitingavimo taisykles"
         ],
         [
           "Visų teisinių dokumentų žemėlapį",
-          "[Teisinės informacijos centre](/teisine)"
+          "Taisyklių centrą"
         ],
         [
           "„Naudokis“ kontaktus",
@@ -314,7 +314,7 @@
     },
     {
       "t": "p",
-      "md": "Praktinė rezervacijos eiga paaiškinta Rezervacijos, perdavimo ir užbaigimo proceso taisyklėse. Naudotojų pasitikėjimo, tapatybės, rizikos ir saugumo priemonės aprašytos Pasitikėjimo, patikrų ir apsaugos priemonių standarte."
+      "md": "Praktinė rezervacijos eiga paaiškinta [Rezervacijos, perdavimo ir užbaigimo proceso taisyklėse](doc:reservation-handover). Naudotojų pasitikėjimo, tapatybės, rizikos ir saugumo priemonės aprašytos [Pasitikėjimo, patikrų ir apsaugos priemonių standarte](doc:trust-safety-support)."
     },
     {
       "t": "p",
@@ -361,7 +361,16 @@
         "„**Rezervacijos užklausa**“ – per Platformą pateikta konkretaus daikto nuomos užklausa pasirinktoms datoms.",
         "„**Rezervacija**“ – Rezervacijos užklausa ir jos pagrindu vykdomas nuomos procesas, įskaitant patvirtinimą, vykdymą, atšaukimą ar užbaigimą.",
         "„**Nuomos sandoris**“ – Nuomotojo ir Nuomininko tarpusavio susitarimas dėl daikto nuomos, sudaromas naudojantis Platformos priemonėmis.",
-        "„**Užstatas**“ – Programėlėje prieš mokėjimo patvirtinimą nurodyta grąžintina suma. Paleidimo laikotarpiu ji paprastai įtraukiama į Stripe mokėjimo autorizaciją kartu su Rezervacijos mokėjimu ir nurašoma tik po Nuomotojo priėmimo bei sėkmingo mokėjimo užbaigimo. Po nuomos Užstatas gali būti grąžinamas, iš dalies grąžinamas arba panaudojamas pagrįstiems reikalavimams padengti pagal šias Sąlygas, įrodymus, ginčo rezultatą, mokėjimų teikėjo taisykles ir taikomą teisę. Užstatas nėra draudimas, garantija, Nuomininko atsakomybės riba, atskira bankinė depozitinė, klientų lėšų ar sąlyginio deponavimo sąskaita, taip pat nėra palūkanas kaupianti sąskaita.",
+        "„**Užstatas**“ – Programėlėje prieš mokėjimo patvirtinimą nurodyta grąžintina suma."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Paleidimo laikotarpiu ji paprastai įtraukiama į Stripe mokėjimo autorizaciją kartu su Rezervacijos mokėjimu ir nurašoma tik po Nuomotojo priėmimo bei sėkmingo mokėjimo užbaigimo. Po nuomos Užstatas gali būti grąžinamas, iš dalies grąžinamas arba panaudojamas pagrįstiems reikalavimams padengti pagal šias Sąlygas, įrodymus, ginčo rezultatą, mokėjimų teikėjo taisykles ir taikomą teisę. Užstatas nėra draudimas, garantija, Nuomininko atsakomybės riba, atskira bankinė depozitinė, klientų lėšų ar sąlyginio deponavimo sąskaita, taip pat nėra palūkanas kaupianti sąskaita."
+    },
+    {
+      "t": "ul",
+      "items": [
         "„**Turinys**“ – skelbimai, nuotraukos, aprašymai, žinutės, atsiliepimai, įrodymai, profilio informacija, verslo informacija, pagalbos užklausos ir kita Naudotojų per Platformą pateikiama arba sukuriama informacija."
       ]
     },
@@ -712,7 +721,7 @@
     },
     {
       "t": "p",
-      "md": "Išsamios mokėjimų, mokesčių, išmokų, Stripe, PVM, VIES, DAC7 ir sąskaitų taisyklės pateikiamos Mokėjimų, mokesčių ir Stripe taisyklėse."
+      "md": "Išsamios mokėjimų, mokesčių, išmokų, Stripe, PVM, VIES, DAC7 ir sąskaitų taisyklės pateikiamos [Mokėjimų, mokesčių ir Stripe taisyklėse](doc:payments-fees)."
     },
     {
       "t": "h2",
@@ -729,7 +738,7 @@
     },
     {
       "t": "p",
-      "md": "Išsamios Užstato, žalos, praradimo, įrodymų ir ginčų taisyklės pateikiamos Užstatų, žalos, praradimo ir ginčų taisyklėse."
+      "md": "Išsamios Užstato, žalos, praradimo, įrodymų ir ginčų taisyklės pateikiamos [Užstatų, žalos, praradimo ir ginčų taisyklėse](doc:deposits-damage-disputes)."
     },
     {
       "t": "h2",
@@ -750,7 +759,7 @@
     },
     {
       "t": "p",
-      "md": "Išsamios atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklės pateikiamos Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklėse."
+      "md": "Išsamios atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklės pateikiamos [Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklėse](doc:cancellations-refunds)."
     },
     {
       "t": "h2",
@@ -771,7 +780,7 @@
     },
     {
       "t": "p",
-      "md": "Išsamios perdavimo, grąžinimo, žalos, praradimo, įrodymų ir ginčų taisyklės pateikiamos Užstatų, žalos, praradimo ir ginčų taisyklėse."
+      "md": "Išsamios perdavimo, grąžinimo, žalos, praradimo, įrodymų ir ginčų taisyklės pateikiamos [Užstatų, žalos, praradimo ir ginčų taisyklėse](doc:deposits-damage-disputes)."
     },
     {
       "t": "h2",
@@ -1292,9 +1301,9 @@
     {
       "t": "ul",
       "items": [
-        "23.1. Mokėjimų, mokesčių ir Stripe taisyklės",
-        "23.2. Užstatų, žalos, praradimo ir ginčų taisyklės",
-        "23.3. Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklės",
+        "23.1. [Mokėjimų, mokesčių ir Stripe taisyklės](doc:payments-fees)",
+        "23.2. [Užstatų, žalos, praradimo ir ginčų taisyklės](doc:deposits-damage-disputes)",
+        "23.3. [Atšaukimo, grąžinimo ir teisės atsisakyti sutarties taisyklės](doc:cancellations-refunds)",
         "23.4. Verslo naudotojų, Prekiautojų ir B2B taisyklės",
         "23.5. Moderavimo, skundų ir DSA taisyklės",
         "23.6. Draudžiamų ir ribojamų daiktų taisyklės"

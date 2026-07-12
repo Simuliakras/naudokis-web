@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 import { locales, defaultLocale, localePrefix } from "@/app/lib/i18n/config";
-import { fetchCategories } from "@/app/lib/categories";
+import { fetchAllCategories } from "@/app/lib/categories";
 import { LT_CITIES } from "@/app/lib/cities";
 import { fetchListingsCount } from "@/app/lib/listings";
 import { listingLandingPath, SITE_URL } from "@/app/lib/seo";
+import { CANONICAL_PATHS, legalDocs } from "@/app/lib/legal/manifest";
 
 // Per-locale entries for a bare path ("" → home), with hreflang alternates.
 // `lastModified`/`images` are only set for entries with real data (listings) —
@@ -43,18 +44,36 @@ const STATIC_PATHS: [path: string, priority: number][] = [
   ["/privatumo-politika", 0.3],
   ["/naudojimosi-salygos", 0.3],
   ["/paskyros-trynimas", 0.3],
+  ...legalDocs()
+    .map((doc) => CANONICAL_PATHS[doc.id])
+    .filter((path): path is string => path?.startsWith("/politikos/"))
+    .map((path) => [path, 0.3] as [string, number]),
 ];
 
 // Max simultaneous count lookups when enumerating landing candidates.
 const COUNT_CONCURRENCY = 8;
 
 async function listingLandingPaths(): Promise<string[]> {
-  const categories = await fetchCategories(defaultLocale).catch(() => []);
+  const categories = await fetchAllCategories(defaultLocale).catch(() => []);
+  const parents = categories.filter((category) => !category.parentId);
+  const parentById = new Map(parents.map((category) => [category.id, category]));
   type LandingCandidate = { path: string; category?: string; city?: string };
   const candidates: LandingCandidate[] = [
-    ...categories.map((category) => ({ path: listingLandingPath({ category: category.id }), category: category.id })),
+    ...parents.map((category) => ({ path: listingLandingPath({ category: category.id }), category: category.id })),
+    // Subcategory landings are real indexable routes too. Without these entries
+    // they have no reliable discovery path because the public category grids
+    // intentionally show only the top level.
+    ...categories.flatMap((subcategory) => {
+      const parent = subcategory.parentId ? parentById.get(subcategory.parentId) : undefined;
+      return parent
+        ? [{
+            path: listingLandingPath({ category: parent.id, subcategory: subcategory.id }),
+            category: subcategory.id,
+          }]
+        : [];
+    }),
     ...LT_CITIES.map((city) => ({ path: listingLandingPath({ city }), city })),
-    ...categories.flatMap((category) =>
+    ...parents.flatMap((category) =>
       LT_CITIES.map((city) => ({
         path: listingLandingPath({ category: category.id, city }),
         category: category.id,

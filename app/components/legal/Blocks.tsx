@@ -94,7 +94,11 @@ export function Blocks({
                         <tr key={j}>
                           {r.map((c, k) => (
                             <td key={k} className="nk-lg-td" data-label={b.head[k] ?? ""}>
-                              <Inline text={c} locale={locale} />
+                              {/* single flow wrapper: the ≤700px card transform grids the cell
+                                  (label + value) — bare inline children would each become their
+                                  own grid item and shatter sentences like "Skaitykite 4 ir 6
+                                  skyriuose" into separate rows */}
+                              <span className="nk-lg-td__val"><Inline text={c} locale={locale} /></span>
                             </td>
                           ))}
                         </tr>

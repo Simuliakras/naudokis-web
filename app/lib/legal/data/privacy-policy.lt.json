@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Privatumo politika",
+    "title": "„Naudokis“ privatumo politika",
     "version": "2026-06-01",
     "effective_date": "2026-06-01",
     "last_updated": "2026-06-01",
@@ -859,6 +859,10 @@
     },
     {
       "t": "p",
+      "md": "Skelbimų puslapiuose svetainė siūlo pasirenkamą „Google Maps“ žemėlapį. Žemėlapis neįkeliamas, kol nepasirenkate **Rodyti „Google Maps“ žemėlapį**. Jį įkėlus Google gali gauti jūsų IP adresą, naršyklės ir įrenginio informaciją, prašomą miestą bei įprastus užklausos metaduomenis pagal Google privatumo sąlygas. Pasirinkimas išsaugomas naršyklėje, kad vėlesni skelbimų žemėlapiai galėtų būti rodomi neklausiant dar kartą; išvalius svetainės duomenis pasirinkimas panaikinamas."
+    },
+    {
+      "t": "p",
       "md": "Išsamesnė teikėjų, gavėjų, slapukų, SDK ir technologijų santrauka pateikiama Teikėjų, gavėjų, slapukų ir SDK priede."
     },
     {
@@ -907,7 +911,6 @@
         "OpenAI ar kitus DI paslaugų teikėjus, kai naudojamos DI funkcijos;",
         "Google serverio pusės adresų automatinį pildymą per Google Places API;",
         "Expo tiesioginius pranešimus;",
-        "AppsFlyer diegimų atribuciją ir gilių nuorodų matavimą, kai esate davę sutikimą;",
         "socialinio prisijungimo paslaugas, įskaitant Apple, Google ir Facebook;",
         "atvirkštinį geokodavimą per OpenStreetMap Nominatim, valdomą OpenStreetMap Foundation. Tokiu atveju perduodamos tik koordinatės, be tiesioginių identifikatorių."
       ]
