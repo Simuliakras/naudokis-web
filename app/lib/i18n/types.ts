@@ -235,6 +235,7 @@ export type Dict = {
     deliveryLabel: string;
     deliveryByArrangement: string;
     deliveryRadius: (km: number) => string; // "Iki N km" (the "Pristatymas" label carries the noun)
+    deliveryPerKm: (price: string) => string; // delivery-row badge (omitted when the wire carries no per-km price)
     termsHeading: string;
     reviewsHeading: string;
     reviewsEmptyTitle: string;

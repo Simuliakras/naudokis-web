@@ -725,7 +725,14 @@ function HandoverSection({ city, subdivision, delivery }: { city: string; subdiv
             <HandoverRow icon="MapPin" label={t.pickupLabel} value={pickupLocation || "—"} pill={<Pill tone="green">{t.pickupFree}</Pill>} />
           )}
           {delivery.delivery && (
-            <HandoverRow icon="Car" label={t.deliveryLabel} value={delivery.radiusKm ? t.deliveryRadius(delivery.radiusKm) : t.deliveryByArrangement} />
+            <HandoverRow
+              icon="Car"
+              label={t.deliveryLabel}
+              value={delivery.radiusKm ? t.deliveryRadius(delivery.radiusKm) : t.deliveryByArrangement}
+              // Only the owner's own per-km rate; when the wire carries none the row
+              // stays badge-less rather than implying a price we don't have.
+              pill={delivery.pricePerKm ? <Pill tone="accent">{t.deliveryPerKm(delivery.pricePerKm)}</Pill> : undefined}
+            />
           )}
         </div>
       </div>

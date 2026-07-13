@@ -63,6 +63,7 @@ type ApiOwner = {
 type ApiDeliveryMethod = {
   type: string;
   delivery_radius_km?: number;
+  price_per_km_cents?: number; // user_delivery only; absent → price by arrangement
 };
 
 // Faithful (read-only) model of the backend `ListingDetail` contract — only the
@@ -215,7 +216,12 @@ export type ListingReview = { name: string; date: string; stars: number; text: s
 export type RatingBucket = { stars: number; count: number };
 
 // Summarized delivery options for the handover section.
-export type ListingDelivery = { pickup: boolean; delivery: boolean; radiusKm: number | null };
+export type ListingDelivery = {
+  pickup: boolean;
+  delivery: boolean;
+  radiusKm: number | null;
+  pricePerKm: string | null; // formatted ("1 €" / "€1"); null when the owner prices it by arrangement
+};
 
 export type ListingOwner = {
   id?: string; // wire owner id — keys the "more from this owner" rail (names aren't unique)
@@ -590,13 +596,15 @@ async function fetchReviews(id: string, locale: Locale): Promise<ListingReview[]
 }
 
 // Summarize the delivery methods array into the flags the handover section needs.
-function mapDelivery(methods: ApiDeliveryMethod[] | undefined): ListingDelivery {
+function mapDelivery(methods: ApiDeliveryMethod[] | undefined, locale: Locale): ListingDelivery {
   const list = methods ?? [];
   const userDelivery = list.find((m) => m.type === "user_delivery");
+  const perKmCents = userDelivery?.price_per_km_cents;
   return {
     pickup: list.some((m) => m.type === "pickup"),
     delivery: !!userDelivery,
     radiusKm: userDelivery?.delivery_radius_km ?? null,
+    pricePerKm: perKmCents ? formatPrice(perKmCents, locale) : null,
   };
 }
 
@@ -691,7 +699,7 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
       (a) => a.id === "insurance_included" && !a.orphan && a.value_label_lt === "Taip",
     ),
     categoryId: detail.category_path?.[0],
-    delivery: mapDelivery(detail.delivery_methods),
+    delivery: mapDelivery(detail.delivery_methods, locale),
     description: detail.description,
     rating: ratingLabel(stats.ratingAverage, stats.ratingCount, locale),
     ratingValue: stats.ratingAverage ?? 0,

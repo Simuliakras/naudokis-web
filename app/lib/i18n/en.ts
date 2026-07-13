@@ -431,6 +431,7 @@ export const en: Dict = {
     deliveryLabel: "Delivery",
     deliveryByArrangement: "By arrangement",
     deliveryRadius: (km) => `Up to ${km} km`,
+    deliveryPerKm: (price) => `${price} / km`,
     termsHeading: "Rental terms",
     reviewsHeading: "Reviews",
     similarHeading: "Similar items",

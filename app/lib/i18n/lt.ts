@@ -466,6 +466,7 @@ export const lt: Dict = {
     deliveryLabel: "Pristatymas",
     deliveryByArrangement: "Pagal susitarimą",
     deliveryRadius: (km) => `Iki ${km} km`,
+    deliveryPerKm: (price) => `${price} / km`,
     termsHeading: "Nuomos sąlygos",
     reviewsHeading: "Atsiliepimai",
     similarHeading: "Panašūs daiktai",
