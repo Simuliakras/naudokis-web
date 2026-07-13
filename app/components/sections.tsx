@@ -716,7 +716,9 @@ export function Faq({
   const [open, setOpen] = useState(0);
   return (
     <section style={{ background: "var(--nk-bg)" }}>
-      <Section as="div" contained top="section-lg" bottom="section-lg" style={{ maxWidth: 1320 }}>
+      {/* standard rhythm on top (124px at the desktop cap) against the CTA banner
+          above; the heavier -lg keeps the seam down to the footer */}
+      <Section as="div" contained top="section" bottom="section-lg" style={{ maxWidth: 1320 }}>
         {/* same eyebrow+H2 anatomy as every other home section, left-aligned to
             match them; the optional subheading rides in the head's subtitle slot */}
         <SectionHead eyebrow={eyebrow} title={heading} subtitle={subheading} />
