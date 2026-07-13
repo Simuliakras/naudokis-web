@@ -863,6 +863,14 @@
     },
     {
       "t": "p",
+      "md": "The website offers optional install-attribution measurement through AppsFlyer. By default the website loads no AppsFlyer script, pixel, or identifier and creates no AppsFlyer link: install buttons lead directly to the App Store or Google Play. When you select an install button, you are asked to make an explicit choice in which refusing is as easy as allowing; selecting the install button is not itself consent. Only if you choose **Allow measurement** is the install link routed through AppsFlyer, which may then receive your IP address, browser and device information, the campaign or invite code, and ordinary request metadata under AppsFlyer's own privacy terms. Your choice — and equally a refusal — is stored in a first-party preference Cookie (`nk_attr_consent`) containing only the choice, the policy version, and the date; it contains no advertising identifier. You can change or withdraw the choice at any time under **Privacy choices** in the website footer; after withdrawal, install links again lead directly to the stores. This website preference is separate from the in-app analytics and advertising consent and does not change it. A referral reward does not depend on this choice: the invite code can always be entered manually in the App."
+    },
+    {
+      "t": "p",
+      "md": "Links in transactional emails (booking requests, messages, billing documents, reviews, password reset, account-deletion cancellation) are first-party links to www.naudokis.lt. They are not attribution links and are not routed through AppsFlyer, so opening such an email does not disclose the click to an attribution provider. Where such a link carries a single-use token, that token is used only to perform the action you requested and is not sent to analytics or error-monitoring providers."
+    },
+    {
+      "t": "p",
       "md": "A more detailed summary of vendors, recipients, Cookies, SDKs, and technologies is provided in the Vendors, Recipients, Cookies, and SDK Appendix."
     },
     {

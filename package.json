@@ -14,7 +14,8 @@
     "legal:json": "node scripts/legal-md-to-json.mjs",
     "legal:shots": "node scripts/legal-audit-shots.mjs",
     "gen:qr": "node scripts/generate-install-qr.mjs",
-    "verify:app-links": "node scripts/verify-app-links.mjs"
+    "verify:app-links": "node scripts/verify-app-links.mjs",
+    "verify:app-links:static": "node scripts/verify-app-links.mjs --static"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.56.0",
@@ -23,7 +24,8 @@
     "next": "16.2.7",
     "qrcode": "^1.5.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",

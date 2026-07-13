@@ -2,9 +2,9 @@
 // Components — never from a "use client" module. That keeps the ~740 KB of
 // document JSON out of client bundles. Each doc is pulled via a template-literal
 // dynamic import, so the bundler emits one chunk per file and a statically
-// rendered page only carries its own document. (We don't use the `server-only`
-// guard package as it isn't a project dependency; the build is verified to ship
-// no document JSON in client chunks instead.)
+// rendered page only carries its own document. `server-only` makes a breach a build
+// error rather than a silently fat bundle.
+import "server-only";
 import type { Locale } from "@/app/lib/i18n/config";
 import { getLegalDocMeta } from "./manifest";
 import type { LegalDocument } from "./types";

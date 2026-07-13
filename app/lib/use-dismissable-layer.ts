@@ -7,7 +7,12 @@
 // `onDismiss` is read through a ref, so an inline/unstable handler never re-runs
 // the effect: it fires only when `open` (or an option) actually changes. That is
 // what keeps callers from re-animating / stealing focus on every parent re-render.
+//
+// Layers stack (see lib/layer-stack.ts): Escape reaches only the top-most one, and
+// the scroll lock is ref-counted, so a dialog opened over another can close without
+// dismissing it or unlocking the page behind it.
 import { RefObject, useEffect, useRef } from "react";
+import { enterEscapeLayer, lockBodyScroll } from "./layer-stack";
 
 type DismissableLayerOptions = {
   lockScroll?: boolean; // freeze <body> scroll while open (default true)
@@ -35,13 +40,13 @@ export function useDismissableLayer(
     }
     const dismiss = () => dismissRef.current();
     const opener = restoreFocus && document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    if (lockScroll) {
-      document.body.style.overflow = "hidden";
-    }
+    const layer = enterEscapeLayer();
+    const unlockScroll = lockScroll ? lockBodyScroll() : null;
     // Focus after paint so the target exists and any entrance animation can start.
     const raf = requestAnimationFrame(() => initialFocus?.current?.focus());
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      // Escape belongs to whatever opened last — never to the layer underneath it.
+      if (e.key === "Escape" && layer.isTop()) {
         dismiss();
       }
     };
@@ -59,9 +64,8 @@ export function useDismissableLayer(
       cancelAnimationFrame(raf);
       window.removeEventListener("keydown", onKey);
       mq?.removeEventListener("change", onBreakpoint);
-      if (lockScroll) {
-        document.body.style.overflow = "";
-      }
+      unlockScroll?.();
+      layer.release();
       // A closeAt auto-dismiss can leave the opener display:none on the new band
       // (e.g. the mobile Filters button once the viewport passes the breakpoint) —
       // focusing it then silently drops keyboard focus to <body>. Park on <main>.

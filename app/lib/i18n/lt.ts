@@ -769,6 +769,30 @@ export const lt: Dict = {
     listBody:
       "Įkelkite nuotraukas, aprašykite būklę ir komplektaciją, nustatykite kainą bei užstatą. Užklausas tvirtinate jūs.",
   },
+  // FINAL: attribution-consent copy. Names AppsFlyer outright, says plainly that it
+  // is optional, and gives both actions the same weight — the refusal must not read
+  // as the lesser choice.
+  consent: {
+    title: "Padėkite suprasti, kaip mus radote",
+    body: "Jei sutiksite, „AppsFlyer“ gaus techninę informaciją apie diegimą ir kampaniją. Tai neprivaloma ir niekaip neriboja naudojimosi Naudokis.",
+    privacyLink: "Privatumo politika",
+    allow: "Leisti matavimą ir tęsti",
+    decline: "Tęsti be matavimo",
+    close: "Uždaryti",
+  },
+  privacyChoices: {
+    trigger: "Privatumo nustatymai",
+    title: "Diegimo atribucija",
+    body: "Leisti „AppsFlyer“ nustatyti, kuri kampanija ar pakvietimas paskatino programėlės diegimą.",
+    statusLabel: "Dabartinė būsena",
+    statusAllowed: "Leidžiama",
+    statusNotAllowed: "Neleidžiama",
+    allow: "Leisti diegimo atribuciją",
+    withdraw: "Atšaukti leidimą",
+    scopeNote:
+      "Tai svetainės nustatymas. Analitiką programėlėje valdote atskirai — jos nustatymuose.",
+    close: "Uždaryti",
+  },
   invite: {
     meta: {
       title: "Jus pakvietė į Naudokis — atsisiųskite programėlę",
@@ -795,6 +819,10 @@ export const lt: Dict = {
     ctaInstall: "Atsisiųsti programėlę",
     qrHint: "Nuskenuokite telefonu",
     codeLabel: "Jūsų pakvietimo kodas",
+    codeHint:
+      "Įveskite šį kodą programėlėje po registracijos — premija priklauso nuo kodo, o ne nuo matavimo leidimo.",
+    codeCopy: "Kopijuoti kodą",
+    codeCopied: "Nukopijuota",
   },
   // FINAL: account-deletion cancel bridge copy.
   cancelDeletion: {
@@ -821,6 +849,57 @@ export const lt: Dict = {
       "Įvyko laikina klaida. Bandykite dar kartą arba susisiekite su mumis.",
     retry: "Bandyti dar kartą",
     correlationLabel: "Užklausos ID",
+  },
+  // FINAL: app-handoff landings. The web never loads the record behind the link, so
+  // every line describes the intent only — nothing here may imply the id exists.
+  handoff: {
+    meta: {
+      title: "Atidarykite Naudokis programėlėje",
+      description: "Šis puslapis tęsiamas Naudokis programėlėje.",
+    },
+    kinds: {
+      bookingRequest: {
+        title: "Jūsų rezervacijos užklausa laukia programėlėje",
+        body: "Rezervacijas tvirtinate, keičiate ir atšaukiate Naudokis programėlėje.",
+      },
+      chat: {
+        title: "Tęskite pokalbį programėlėje",
+        body: "Susirašinėjimas su savininku vyksta Naudokis programėlėje.",
+      },
+      review: {
+        title: "Atsiliepimai — programėlėje",
+        body: "Atsiliepimą palikti ar peržiūrėti galite Naudokis programėlėje.",
+      },
+      billingDocuments: {
+        title: "Sąskaitos — programėlėje",
+        body: "Mokėjimų dokumentus rasite Naudokis programėlėje.",
+      },
+      profile: {
+        title: "Profilis — programėlėje",
+        body: "Savininkų profilius peržiūrėsite Naudokis programėlėje.",
+      },
+      myProfile: {
+        title: "Jūsų paskyra — programėlėje",
+        body: "Paskyrą, nuomas ir nustatymus valdote Naudokis programėlėje.",
+      },
+      rewards: {
+        title: "Premijos — programėlėje",
+        body: "Pakvietimų premijas ir jų būseną matote Naudokis programėlėje.",
+      },
+      resetPassword: {
+        title: "Slaptažodžio keitimas — programėlėje",
+        body: "Slaptažodį pakeisite Naudokis programėlėje. Nuoroda galioja ribotą laiką.",
+      },
+      verifyEmail: {
+        title: "El. pašto patvirtinimas — programėlėje",
+        body: "El. paštą patvirtinsite Naudokis programėlėje. Nuoroda galioja ribotą laiką.",
+      },
+    },
+    openApp: "Atidaryti programėlėje",
+    openHint: "Niekas neatsidarė? Vadinasi, programėlės dar neturite — atsisiųskite ją žemiau.",
+    installLead: "Neturite programėlės? Atsisiųskite nemokamai.",
+    installCta: "Atsisiųsti programėlę",
+    qrHint: "Nuskenuokite telefonu",
   },
   cityPicker: {
     heading: "Pasirinkite miestą",

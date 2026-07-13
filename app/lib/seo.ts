@@ -4,7 +4,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { defaultLocale, isLocale, localePrefix, type Locale } from "@/app/lib/i18n/config";
-import { CONTACT_EMAIL, CONTACT_PHONE, SOCIAL_LINKS, APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
+import { CONTACT_EMAIL, CONTACT_PHONE, SITE_ORIGIN, SOCIAL_LINKS, APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 import type { FaqItem } from "@/app/lib/i18n/types";
 import { LT_CITIES, type City } from "@/app/lib/cities";
 import type { Category } from "@/app/lib/categories";
@@ -23,9 +23,11 @@ export {
 } from "@/app/lib/landing-routes";
 export type { ListingLandingFilters } from "@/app/lib/landing-routes";
 
-// Canonical production origin — the single source of truth for absolute URLs,
-// shared by the metadata builders here and the sitemap/robots routes.
-export const SITE_URL = "https://www.naudokis.lt";
+// Canonical production origin, for absolute URLs in the metadata builders here and
+// in the sitemap/robots routes. Defined in contact.ts (which client components can
+// import without dragging this whole module graph into the bundle) and re-exported
+// under the name the SEO code has always used.
+export const SITE_URL = SITE_ORIGIN;
 
 // `robots` value for pages we want crawled-through but kept out of the index —
 // empty category/city landings, a missing listing, LT-content served under /en.

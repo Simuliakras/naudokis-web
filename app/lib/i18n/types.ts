@@ -17,6 +17,19 @@ export type HtwRole = {
   steps: [HtwStep, HtwStep, HtwStep, HtwStep];
 };
 export type HtwTrust = { icon: IconName; title: string; body: string };
+// The app-only screens the backend links to from transactional email. Each one is
+// a first-party handoff page here (the web has no login), keyed by its URL segment.
+export type HandoffKind =
+  | "bookingRequest"
+  | "chat"
+  | "review"
+  | "billingDocuments"
+  | "profile"
+  | "myProfile"
+  | "rewards"
+  | "resetPassword"
+  | "verifyEmail";
+
 export type FooterLink = { label: string; href: string };
 // A footer category link: localized display `label` + stable backend category id.
 export type FooterCategory = { label: string; categoryId: string };
@@ -445,6 +458,31 @@ export type Dict = {
     listTitle: string;
     listBody: string;
   };
+  // Install-attribution consent prompt. Shown only when someone acts on an install
+  // CTA with no stored choice. `allow` and `decline` must stay equally plain and
+  // equally weighted — no "accept all", no nudge (see components/ConsentSheet.tsx).
+  consent: {
+    title: string;
+    body: string; // names AppsFlyer and says plainly that it's optional
+    privacyLink: string;
+    allow: string;
+    decline: string;
+    close: string;
+  };
+  // Footer "Privacy choices" — permanent access to the same choice, plus withdrawal.
+  // scopeNote must keep this scoped to the WEBSITE: the app has its own setting.
+  privacyChoices: {
+    trigger: string; // footer link label
+    title: string;
+    body: string;
+    statusLabel: string;
+    statusAllowed: string;
+    statusNotAllowed: string;
+    allow: string;
+    withdraw: string;
+    scopeNote: string;
+    close: string;
+  };
   // Referral bridge (/invite) — validates a ?code, shows the reward and routes to
   // the app. Copy must stay honest: the reward lands AFTER the user verifies
   // identity in the app, and the inviter is paid on the new user's first
@@ -462,6 +500,12 @@ export type Dict = {
     ctaInstall: string;
     qrHint: string;
     codeLabel: string; // label above the on-page code (manual-entry fallback)
+    // The code is entered in-app after signup. This path always works and never
+    // depends on attribution consent — it is the reward's real guarantee, not a
+    // degraded fallback, so it is stated plainly rather than hidden.
+    codeHint: string;
+    codeCopy: string; // copy-to-clipboard action
+    codeCopied: string; // confirmation after copying
   };
   // Account-deletion cancel bridge (/cancel-deletion) — the desktop / no-app path
   // for a GDPR-critical action. The ?token in the URL authorizes a public backend
@@ -483,6 +527,20 @@ export type Dict = {
     errorBody: string;
     retry: string;
     correlationLabel: string; // label before the copyable support correlation id
+  };
+  // App-handoff landings for the paths the backend puts in transactional emails
+  // (/booking-request/…, /chat/…, /review/…, /billing-documents/…, /my-profile,
+  // /rewards, /reset-password, /verify-email, /profile/…). These are intent-matched
+  // screens, NOT the authenticated resource: the web never fetches the record, so
+  // copy must describe the intent without ever implying the id exists.
+  handoff: {
+    meta: { title: string; description: string };
+    kinds: Record<HandoffKind, { title: string; body: string }>;
+    openApp: string; // primary — the naudokis:// deep link
+    openHint: string; // "nothing happened?" explainer under the primary action
+    installLead: string; // lead-in above the store badges
+    installCta: string; // generic install (runs the attribution choice)
+    qrHint: string;
   };
   cityPicker: {
     heading: string; // dropdown header, e.g. "Pasirinkite miestą"

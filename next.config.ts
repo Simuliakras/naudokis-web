@@ -66,36 +66,11 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
 
-// Mobile-app universal-link / deep-link paths. The app claims these via
-// .well-known/{apple-app-site-association,assetlinks.json}; when the app isn't
-// installed they fall through to a static promo page (public/deep-link.html,
-// noindex). Carried over from the previous site so existing app links keep
-// working after the migration.
-//
-// CANONICAL list of the APP-ONLY deep-link paths (auth-gated screens the web can't
-// render) that rewrite to the static deep-link.html interstitial. The same set is
-// mirrored, by hand, in two places that can't import it: the `proxy.ts` matcher
-// exclusion regex, and the `paths` array in
-// public/.well-known/apple-app-site-association. Keep all three in sync when
-// adding/removing a path (see public/.well-known/README.md).
-//
-// NOTE: /invite and /cancel-deletion are DELIBERATELY absent here — each has a real
-// localized page that IS its own app-not-installed fallback. They still appear in
-// the AASA `paths` (app-installed users open the app), but must NOT rewrite to
-// deep-link.html or be excluded from the proxy, or their pages would never render.
-const appLinkPaths = [
-  "/listing/:path*",
-  "/profile/:path*",
-  "/booking-request/:path*",
-  "/billing-documents/:path*",
-  "/review/:path*",
-  "/chat/:path*",
-  "/my-profile",
-  "/rewards",
-  "/ref/:path*",
-  "/reset-password",
-  "/verify-email",
-];
+// NOTE: there is no longer an `appLinkPaths` rewrite list here. Every path claimed
+// in .well-known/apple-app-site-association is now a REAL localized page under
+// app/[lang]/ (see app/lib/app-links.ts) instead of a rewrite to a static
+// interstitial. A rewrite added here for one of those paths would shadow its page.
+// The remaining invariant is checked by `yarn verify:app-links`.
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
@@ -139,11 +114,6 @@ const nextConfig: NextConfig = {
       { source: "/naudojimo-taisykles", destination: "/naudojimosi-salygos", permanent: true },
       { source: "/en/naudojimo-taisykles", destination: "/en/naudojimosi-salygos", permanent: true },
     ];
-  },
-  async rewrites() {
-    // Serve the deep-link fallback without changing the URL (so the universal
-    // link still matches if the app installs mid-session).
-    return appLinkPaths.map((source) => ({ source, destination: "/deep-link.html" }));
   },
   // Serve modern formats from the built-in optimizer (used by next/image for the
   // hero/CTA phone mockups). AVIF first, WebP fallback. Static brand patterns are

@@ -863,6 +863,14 @@
     },
     {
       "t": "p",
+      "md": "Svetainė siūlo pasirenkamą diegimo atribucijos matavimą per „AppsFlyer“. Pagal nutylėjimą svetainė neįkelia jokio „AppsFlyer“ scenarijaus, pikselio ar identifikatoriaus ir nesukuria „AppsFlyer“ nuorodos: diegimo mygtukai veda tiesiai į „App Store“ arba „Google Play“. Paspaudus diegimo mygtuką jūsų paprašoma aiškaus pasirinkimo, kurio atsisakymas yra lygiavertis sutikimui; pats mygtuko paspaudimas sutikimu nelaikomas. Tik pasirinkus **Leisti matavimą** diegimo nuoroda nukreipiama per „AppsFlyer“, kuris tuomet gali gauti jūsų IP adresą, naršyklės ir įrenginio informaciją, kampanijos ar pakvietimo kodą bei įprastus užklausos metaduomenis pagal „AppsFlyer“ privatumo sąlygas. Pasirinkimas — taip pat ir atsisakymas — išsaugomas pirmosios šalies nuostatų slapuke (`nk_attr_consent`), kuriame saugoma tik pasirinkimo būsena, politikos versija ir data; jokio reklamos identifikatoriaus jame nėra. Pasirinkimą bet kada galite pakeisti arba atšaukti svetainės poraštės skiltyje **Privatumo nustatymai**; atšaukus, diegimo nuorodos vėl veda tiesiai į parduotuves. Šis svetainės nustatymas yra atskiras nuo Programėlės analitikos ir reklamos sutikimo ir jo nekeičia. Rekomendacijų premija nuo šio pasirinkimo nepriklauso: pakvietimo kodą visada galima įvesti Programėlėje rankiniu būdu."
+    },
+    {
+      "t": "p",
+      "md": "Nuorodos operaciniuose el. laiškuose (rezervacijų užklausos, žinutės, sąskaitų dokumentai, atsiliepimai, slaptažodžio keitimas, paskyros trynimo atšaukimas) yra pirmosios šalies nuorodos į www.naudokis.lt. Tai nėra atribucijos nuorodos ir jos nenukreipiamos per „AppsFlyer“, todėl atidarius tokį el. laišką paspaudimas neatskleidžiamas atribucijos teikėjui. Kai tokioje nuorodoje yra vienkartinis žetonas, jis naudojamas tik jūsų prašomam veiksmui atlikti ir neperduodamas analitikos ar klaidų stebėsenos teikėjams."
+    },
+    {
+      "t": "p",
       "md": "Išsamesnė teikėjų, gavėjų, slapukų, SDK ir technologijų santrauka pateikiama Teikėjų, gavėjų, slapukų ir SDK priede."
     },
     {

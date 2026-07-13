@@ -6,7 +6,18 @@ test("unknown routes are hard 404s and stay out of the index", async ({ request 
   expect(await response.text()).toContain('name="robots" content="noindex');
 });
 
-test("smart install rejects external targets and preserves safe campaign context", async ({ request }) => {
+// The consent cookie /go reads (see app/lib/consent.ts): "<version>.<choice>.<unix>".
+// Ages are relative to now, so an "expired" cookie stays expired as the clock moves.
+const POLICY_VERSION = 1;
+const DAY = 24 * 60 * 60;
+
+function consentHeader({ version = POLICY_VERSION, choice = "granted", ageDays = 0 } = {}) {
+  const madeAt = Math.floor(Date.now() / 1000) - ageDays * DAY;
+  return { Cookie: `nk_attr_consent=${version}.${choice}.${madeAt}` };
+}
+const grantedNow = () => consentHeader();
+
+test("smart install rejects external targets and never attributes without consent", async ({ request }) => {
   const response = await request.get(
     "/go?target=https%3A%2F%2Fevil.example%2Fphish&utm_source=paid-social&utm_medium=cpc&utm_campaign=summer",
     { maxRedirects: 0 },
@@ -15,15 +26,136 @@ test("smart install rejects external targets and preserves safe campaign context
   const location = response.headers().location;
   expect(location).toBeTruthy();
   expect(location).not.toContain("evil.example");
+  // No stored choice → the click must not reach the attribution processor at all.
+  expect(location).not.toContain("link.naudokis.lt");
+  expect(response.headers()["cache-control"]).toContain("no-store");
+});
 
-  // With OneLink configured, campaign parameters are mapped into its attribution
-  // contract. Without it, /go intentionally falls back to the native store.
-  if (location?.startsWith("https://link.naudokis.lt/")) {
-    const redirect = new URL(location);
-    expect(redirect.searchParams.get("pid")).toBe("paid-social");
-    expect(redirect.searchParams.get("c")).toBe("summer");
-    expect(redirect.searchParams.get("af_channel")).toBe("cpc");
-  }
+// Fail closed: anything that isn't a current, explicit opt-in goes straight to the
+// store. A silent "granted" here would hand AppsFlyer a click nobody agreed to.
+const REFUSED_CONSENT = {
+  "a refusal": consentHeader({ choice: "denied" }),
+  "a stale policy version": consentHeader({ version: POLICY_VERSION - 1 }),
+  "a malformed value": { Cookie: "nk_attr_consent=garbage" },
+  "an expired choice": consentHeader({ ageDays: 365 }),
+};
+
+for (const [name, headers] of Object.entries(REFUSED_CONSENT)) {
+  test(`smart install does not attribute with ${name}`, async ({ request }) => {
+    const response = await request.get("/go?utm_source=paid-social", { maxRedirects: 0, headers });
+    expect(response.status()).toBe(302);
+    expect(response.headers().location).not.toContain("link.naudokis.lt");
+  });
+}
+
+test("smart install maps campaign context onto OneLink once consent is granted", async ({ request }) => {
+  const response = await request.get(
+    "/go?target=https%3A%2F%2Fevil.example%2Fphish&utm_source=paid-social&utm_medium=cpc&utm_campaign=summer",
+    { maxRedirects: 0, headers: grantedNow() },
+  );
+  expect(response.status()).toBe(302);
+  const location = response.headers().location ?? "";
+  expect(location).not.toContain("evil.example");
+
+  // OneLink is only configured in environments that set NEXT_PUBLIC_ONELINK_URL;
+  // where it isn't, /go correctly falls back to the native store even when granted.
+  test.skip(!location.startsWith("https://link.naudokis.lt/"), "OneLink not configured");
+  const redirect = new URL(location);
+  expect(redirect.searchParams.get("pid")).toBe("paid-social");
+  expect(redirect.searchParams.get("c")).toBe("summer");
+  expect(redirect.searchParams.get("af_channel")).toBe("cpc");
+});
+
+// Transactional ids must never reach AppsFlyer, even from a visitor who opted in:
+// only the public listing path is a permitted deferred deep-link target.
+test("smart install refuses to forward transactional targets to AppsFlyer", async ({ request }) => {
+  const bookingId = "3f0b8b5e-1c2d-4e3f-8a9b-0c1d2e3f4a5b";
+  const response = await request.get(`/go?target=%2Fbooking-request%2F${bookingId}`, {
+    maxRedirects: 0,
+    headers: grantedNow(),
+  });
+  expect(response.status()).toBe(302);
+  expect(response.headers().location).not.toContain(bookingId);
+});
+
+// The 404 boundary renders the full site chrome, footer included — so every client
+// leaf in it (the footer now carries the privacy-choices dialog) must survive there.
+// A throw in any of them turns a clean 404 into a global-error page.
+test("an unknown locale segment 404s cleanly rather than crashing the boundary", async ({ page }) => {
+  const response = await page.goto("/xx/whatever");
+  expect(response?.status()).toBe(404);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByText("Application error")).toHaveCount(0);
+});
+
+/* ---------------- Install-attribution consent ---------------- */
+
+// The prompt is mounted via next/dynamic, so a click can land before it exists.
+// askConsent() fails closed in that window; wait it out rather than test the race.
+const consentReady = (page: import("@playwright/test").Page) =>
+  page.waitForFunction(() => Reflect.get(window, "__nkConsentReady") === true);
+
+test("an install CTA asks for the choice, and dismissing aborts without storing one", async ({ page }) => {
+  await page.goto("/invite?code=ABCD2345");
+  await consentReady(page);
+  await page.getByRole("button", { name: "Atsisiųsti programėlę" }).first().click();
+
+  const prompt = page.getByRole("dialog");
+  await expect(prompt).toBeVisible();
+  // Neither choice may be preselected or dominant — refusing must be as easy as allowing.
+  await expect(prompt.getByRole("button", { name: /Leisti matavimą/ })).toBeVisible();
+  await expect(prompt.getByRole("button", { name: /Tęsti be matavimo/ })).toBeVisible();
+  await expect(prompt.getByRole("button", { name: /Leisti matavimą/ })).not.toBeFocused();
+
+  await page.keyboard.press("Escape");
+  await expect(prompt).toBeHidden();
+  // A dismissal is not a refusal: nothing is stored, and the install does not proceed.
+  await expect(page).toHaveURL(/\/invite\?code=ABCD2345$/);
+  expect(await page.evaluate(() => document.cookie)).not.toContain("nk_attr_consent");
+});
+
+// Withdrawing in the footer panel stores an explicit refusal, so the very next
+// install click must go straight through instead of asking all over again.
+test("a stored refusal is not asked again on the next install click", async ({ page }) => {
+  await page.goto("/invite?code=ABCD2345");
+  await consentReady(page);
+  await page.evaluate(
+    (cookie) => { document.cookie = cookie; },
+    `nk_attr_consent=1.denied.${Math.floor(Date.now() / 1000)}; Path=/`,
+  );
+
+  await page.getByRole("button", { name: "Atsisiųsti programėlę" }).first().click();
+  // If the prompt had opened, we would still be sitting on /invite.
+  await page.waitForURL((url) => !url.pathname.startsWith("/invite"));
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+// The prompt opens ON TOP of the bridge modal, so both layers are live at once.
+// Escape must reach only the top one, the page must stay scroll-locked underneath,
+// and Tab must not wander into the modal behind the prompt.
+test("the consent prompt stacks over the bridge modal without dismissing it", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 }); // the smart link is mobile-only
+  await page.goto("/");
+  await consentReady(page);
+  // The documented bridge contract (see ui.tsx openRedirect / NK_REDIRECT_EVENT).
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent("nk:redirect", { detail: { title: "Test", body: "Test" } })),
+  );
+
+  const modal = page.locator(".nk-redirect-panel");
+  await expect(modal).toBeVisible();
+  await page.locator(".nk-redirect-smartlink").click();
+
+  const prompt = page.locator(".nk-dialog-panel");
+  await expect(prompt).toBeVisible();
+  await expect(modal).toBeVisible();
+
+  await page.keyboard.press("Escape");
+  // Only the top layer closes. The modal underneath survives, and the ref-counted
+  // scroll lock is still held by it.
+  await expect(prompt).toBeHidden();
+  await expect(modal).toBeVisible();
+  await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
 });
 
 test("homepage search remains usable when JavaScript is blocked", async ({ browser }) => {
@@ -104,6 +236,65 @@ test("native handoff outcomes require a signed journey token", async ({ request 
     data: { token: "tampered", event: "native_open", platform: "ios" },
   });
   expect(response.status()).toBe(401);
+});
+
+// The privacy boundary: the referral bridge must render with no AppsFlyer SDK,
+// pixel, script, identifier or URL — in the DOM or on the wire — until the visitor
+// has made a choice. Asserted against the hydrated page, not just the server HTML,
+// because the code (and any link built from it) is resolved client-side.
+test("the referral bridge carries no AppsFlyer URL before a choice is made", async ({ page }) => {
+  const thirdParty: string[] = [];
+  page.on("request", (request) => {
+    if (/link\.naudokis\.lt|onelink\.me|appsflyer/i.test(request.url())) {
+      thirdParty.push(request.url());
+    }
+  });
+
+  await page.goto("/invite?code=ABCD2345");
+  // The code is shown regardless — the reward never depended on attribution.
+  await expect(page.getByText("ABCD2345")).toBeVisible();
+
+  const html = await page.content();
+  expect(html).not.toContain("link.naudokis.lt");
+  expect(html).not.toContain("onelink.me");
+  expect(html).not.toContain("appsflyer");
+  expect(thirdParty).toEqual([]);
+});
+
+// Emailed app links land on a first-party page, not an interstitial that bounces
+// the click onward to an attribution processor.
+test("app-handoff landings render first-party and never forward to AppsFlyer", async ({ request }) => {
+  const response = await request.get("/booking-request/3f0b8b5e-1c2d-4e3f-8a9b-0c1d2e3f4a5b", { maxRedirects: 0 });
+  expect(response.status()).toBe(200);
+  const html = await response.text();
+  expect(html).toContain('name="robots" content="noindex');
+  expect(html).not.toContain("link.naudokis.lt");
+  expect(html).toContain('lang="lt"');
+});
+
+test("app-handoff landings honour Accept-Language without changing the URL", async ({ request }) => {
+  const response = await request.get("/booking-request/3f0b8b5e-1c2d-4e3f-8a9b-0c1d2e3f4a5b", {
+    maxRedirects: 0,
+    headers: { "Accept-Language": "en-GB,en;q=0.9" },
+  });
+  expect(response.status()).toBe(200);
+  expect(await response.text()).toContain('lang="en"');
+});
+
+// A real id and a made-up one must be indistinguishable, or the page becomes an
+// oracle for whether someone else's booking exists.
+test("app-handoff landings leak nothing about whether the id exists", async ({ request }) => {
+  const [real, bogus] = await Promise.all([
+    request.get("/chat/3f0b8b5e-1c2d-4e3f-8a9b-0c1d2e3f4a5b"),
+    request.get("/chat/00000000-0000-4000-8000-000000000000"),
+  ]);
+  expect(real.status()).toBe(bogus.status());
+  const strip = (html: string) => html.replace(/[0-9a-f-]{36}/gi, "<id>");
+  expect(strip(await real.text())).toBe(strip(await bogus.text()));
+});
+
+test("the retired deep-link interstitial is gone", async ({ request }) => {
+  expect((await request.get("/deep-link.html")).status()).toBe(404);
 });
 
 test("every stylesheet referenced by the rendered document exists", async ({ request }) => {

@@ -16,9 +16,15 @@ export const APP_STORE_ID = "6753683957";
 export const APP_STORE_URL = `https://apps.apple.com/lt/app/naudokis/id${APP_STORE_ID}`;
 export const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.naudokis.naudokis";
 
+// Canonical origin — the one definition of where this site lives. It lives here, in
+// the leaf constants module, so client components (the /invite QR needs an absolute
+// URL) can import it without pulling the whole SEO module graph into the bundle.
+// app/lib/seo.ts re-exports it as SITE_URL.
+export const SITE_ORIGIN = "https://www.naudokis.lt";
+
 // The OS-sniffing smart-install URL the static QR encodes (see
 // scripts/generate-install-qr.mjs) — canonical absolute form for share/email links.
-export const SMART_INSTALL_URL = "https://www.naudokis.lt/go";
+export const SMART_INSTALL_URL = `${SITE_ORIGIN}/go`;
 
 // Official brand profiles emitted as schema.org `sameAs` on the Organization node
 // and rendered in the footer. Only real brand URLs belong here.

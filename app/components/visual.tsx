@@ -3,7 +3,7 @@ import Link from "next/link";
 import type React from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUp, ArrowUpDown, Baby, BadgeCheck, Calendar, Camera, Car,
-  ChevronDown, ChevronRight, Coins, CreditCard, Download, Dumbbell, Euro, Expand, Flag, Globe,
+  Check, ChevronDown, ChevronRight, Coins, Copy, CreditCard, Download, Dumbbell, Euro, Expand, Flag, Globe,
   Handshake, Heart, HeartPulse,
   Home, Image as ImageIcon, ImageOff, Inbox, Info, Laptop, LayoutGrid, LoaderCircle, type LucideIcon, Mail,
   MapPin, Menu, MessageCircle, MoreHorizontal, Package, PartyPopper, Phone, RefreshCcw, ScrollText, Search,
@@ -46,6 +46,7 @@ const ICONS = {
   Info: lucide(Info), BadgeCheck: lucide(BadgeCheck), RefreshCcw: lucide(RefreshCcw), Share2: lucide(Share2),
   MoreHorizontal: lucide(MoreHorizontal), ChevronRight: lucide(ChevronRight), Sparkles: lucide(Sparkles),
   Download: lucide(Download), Camera: lucide(Camera), Handshake: lucide(Handshake), Coins: lucide(Coins),
+  Copy: lucide(Copy), Check: lucide(Check),
   Smartphone: lucide(Smartphone), Wrench: lucide(Wrench),
   PartyPopper: lucide(PartyPopper), Shirt: lucide(Shirt), Baby: lucide(Baby), Speaker: lucide(Speaker),
   Laptop: lucide(Laptop), Dumbbell: lucide(Dumbbell), HeartPulse: lucide(HeartPulse),

@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import "../globals.css";
 import { Providers } from "../providers";
 import { I18nProvider } from "../components/I18nProvider";
 import { ScrollToTop } from "../components/ScrollToTop";
+import { Analytics } from "../components/Analytics";
 import { defaultLocale, locales, isLocale, localeHome } from "@/app/lib/i18n/config";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { APP_STORE_ID } from "@/app/lib/contact";
@@ -142,9 +142,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
             {children}
           </I18nProvider>
         </Providers>
-        {plausibleDomain && (
-          <Script defer data-domain={plausibleDomain} src={plausibleSrc} strategy="afterInteractive" />
-        )}
+        {plausibleDomain && <Analytics domain={plausibleDomain} src={plausibleSrc} />}
       </body>
     </html>
   );

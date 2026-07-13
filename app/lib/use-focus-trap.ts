@@ -2,7 +2,11 @@
 // dialogs, drawers). Wraps focus from the last focusable element back to the
 // first and vice-versa. Callers keep their own Escape/arrow handling — this hook
 // owns only the Tab key, so it composes with an existing keydown effect.
+//
+// Only the top-most trap acts (see lib/layer-stack.ts): when a dialog opens over
+// another, two live traps would each yank Tab back into their own panel.
 import { RefObject, useEffect } from "react";
+import { enterFocusTrapLayer } from "./layer-stack";
 
 // One canonical focusable selector for every trap. [aria-hidden="true"] nodes are
 // excluded so decorative/off-screen controls never receive focus inside a dialog.
@@ -14,8 +18,9 @@ export function useFocusTrap<T extends HTMLElement>(panelRef: RefObject<T | null
     if (!active) {
       return;
     }
+    const layer = enterFocusTrapLayer();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Tab" || !panelRef.current) {
+      if (e.key !== "Tab" || !panelRef.current || !layer.isTop()) {
         return;
       }
       const focusable = panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE);
@@ -33,6 +38,9 @@ export function useFocusTrap<T extends HTMLElement>(panelRef: RefObject<T | null
       }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      layer.release();
+    };
   }, [active, panelRef]);
 }

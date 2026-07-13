@@ -12,6 +12,7 @@ import { prefersReducedMotion } from "@/app/lib/motion";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 import { trackEvent } from "@/app/lib/analytics";
 import { WEB_ATTRIBUTION_KEYS, cleanAttributionValue, goHref } from "@/app/lib/attribution";
+import { useInstallCta } from "@/app/lib/use-install-cta";
 
 // One buffer-frame past the .2s `nk-*-out` exit keyframes in globals.css, so the
 // dialog unmounts only after the animation has finished painting.
@@ -46,6 +47,7 @@ declare global {
 
 export function AppRedirect() {
   const { dict } = useI18n();
+  const { onAnchorClick } = useInstallCta();
   const [state, setState] = useState<{ open: boolean; closing: boolean; instant: boolean } & RedirectPayload>({ open: false, closing: false, instant: false, title: "", body: "" });
   const [showOpenFallback, setShowOpenFallback] = useState(false);
   const [thumbFailed, setThumbFailed] = useState(false);
@@ -180,13 +182,7 @@ export function AppRedirect() {
             resolves to a store on a phone), so it gets the card + heading.
             Hidden ≤560px. */}
         <div className="nk-redirect-qr">
-          <span className="nk-qr-frame">
-            <QR size={128} value={installUrl} />
-            <span className="nk-qr-frame__corner nk-qr-frame__corner--tl" aria-hidden="true" />
-            <span className="nk-qr-frame__corner nk-qr-frame__corner--tr" aria-hidden="true" />
-            <span className="nk-qr-frame__corner nk-qr-frame__corner--bl" aria-hidden="true" />
-            <span className="nk-qr-frame__corner nk-qr-frame__corner--br" aria-hidden="true" />
-          </span>
+          <QR size={128} value={installUrl} />
           <span style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
             <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 17, lineHeight: "22px", color: "var(--nk-text)" }}>{dict.bridge.qrTitle}</span>
             <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, lineHeight: "20px", color: "var(--nk-text-muted)" }}>{dict.bridge.qrHint}</span>
@@ -197,8 +193,13 @@ export function AppRedirect() {
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Mobile primary: one-tap smart link that sniffs the OS. Hidden >560px,
               where it would only 302 back to the homepage (a decoy CTA). */}
+          {/* Ask for the attribution choice first if none is stored. /go enforces it
+              either way — this only means the visitor is asked at the moment they act,
+              instead of being sent on unasked and never attributed. attemptOpen rides
+              on onNavigate so its "did the app open?" timer starts when we actually
+              leave, not while the prompt is still on screen. */}
           <a className="nk-btn nk-btn--primary nk-redirect-smartlink" href={installHref} target="_blank" rel="noopener noreferrer" style={{ width: "100%" }}
-            onClick={attemptOpen}>
+            onClick={(e) => onAnchorClick(e, { onNavigate: attemptOpen })}>
             <Icon name="Download" size={18} stroke={2.2} color="var(--nk-text)" /> {showOpenFallback ? dict.bridge.retryOpen : dict.bridge.installCta}
           </a>
           <p role="status" className="nk-redirect-openfallback">{showOpenFallback ? dict.bridge.appOpenFallback : ""}</p>

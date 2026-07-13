@@ -17,12 +17,15 @@ import { useI18n } from "./I18nProvider";
 import { localeHome } from "@/app/lib/i18n/config";
 import { SMART_INSTALL_URL, CONTACT_EMAIL } from "@/app/lib/contact";
 import { cancelDeletionByToken } from "@/app/lib/account";
+import { useInstallCta } from "@/app/lib/use-install-cta";
+import { useStripSensitiveQuery } from "@/app/lib/use-strip-sensitive-query";
 
 type State = "idle" | "submitting" | "success" | "invalid" | "already" | "error";
 
 export function CancelDeletionScreen() {
   const { locale, dict } = useI18n();
   const t = dict.cancelDeletion;
+  const { openInstall } = useInstallCta();
   // The token is a long HMAC string — read it verbatim, never decode/trim/reformat.
   const token = useSearchParams().get("token") ?? "";
 
@@ -30,11 +33,17 @@ export function CancelDeletionScreen() {
   const [state, setState] = useState<State>(token ? "idle" : "invalid");
   const [correlationId, setCorrelationId] = useState<string>();
 
+  // We hold the token in `token` above; get it out of the address bar. Nothing here
+  // needs the original query afterwards, so the returned ref is ignored.
+  useStripSensitiveQuery(Boolean(token));
+
   const goHome = () => {
     window.location.href = localeHome(locale);
   };
+  // A generic install CTA — so it may ask for the attribution choice. The deletion
+  // token is never part of it: /go only ever receives the bare smart-install URL.
   const openApp = () => {
-    window.location.href = SMART_INSTALL_URL;
+    void openInstall(SMART_INSTALL_URL);
   };
 
   const submit = async () => {

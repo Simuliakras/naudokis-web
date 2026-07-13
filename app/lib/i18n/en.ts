@@ -684,6 +684,30 @@ export const en: Dict = {
     listTitle: "List your item for rent",
     listBody: "Add photos, describe the condition and what is included, set the price and deposit. You approve each request.",
   },
+  // DRAFT: attribution-consent copy — needs sign-off before the OneLink URL is
+  // switched on in prod. Both actions must stay equally weighted.
+  consent: {
+    title: "Help us understand how you found Naudokis",
+    body: "If you allow attribution, AppsFlyer will receive technical install and campaign information. This is optional and does not affect your ability to use Naudokis.",
+    privacyLink: "Privacy Policy",
+    allow: "Allow measurement and continue",
+    decline: "Continue without measurement",
+    close: "Close",
+  },
+  // DRAFT.
+  privacyChoices: {
+    trigger: "Privacy choices",
+    title: "Install attribution",
+    body: "Allow AppsFlyer to measure which campaign or referral led to an app installation.",
+    statusLabel: "Current status",
+    statusAllowed: "Allowed",
+    statusNotAllowed: "Not allowed",
+    allow: "Allow install attribution",
+    withdraw: "Withdraw permission",
+    scopeNote:
+      "This is a website preference. Analytics in the app are controlled separately, in the app’s settings.",
+    close: "Close",
+  },
   invite: {
     meta: {
       title: "You’ve been invited to Naudokis — get the app",
@@ -710,6 +734,10 @@ export const en: Dict = {
     ctaInstall: "Get the app",
     qrHint: "Scan with your phone",
     codeLabel: "Your invite code",
+    codeHint:
+      "Enter this code in the app after you sign up — the reward depends on the code, not on allowing measurement.",
+    codeCopy: "Copy code",
+    codeCopied: "Copied",
   },
   // FINAL: account-deletion cancel bridge copy.
   cancelDeletion: {
@@ -731,6 +759,57 @@ export const en: Dict = {
     errorBody: "Something went wrong. Please try again or contact us.",
     retry: "Try again",
     correlationLabel: "Reference ID",
+  },
+  // DRAFT: app-handoff landings. The web never loads the record behind the link, so
+  // every line describes the intent only — nothing here may imply the id exists.
+  handoff: {
+    meta: {
+      title: "Open in the Naudokis app",
+      description: "This page continues in the Naudokis app.",
+    },
+    kinds: {
+      bookingRequest: {
+        title: "Your booking request is in the app",
+        body: "Booking requests are confirmed, changed and cancelled in the Naudokis app.",
+      },
+      chat: {
+        title: "Continue this conversation in the app",
+        body: "Messages with the owner live in the Naudokis app.",
+      },
+      review: {
+        title: "Reviews are in the app",
+        body: "Open the app to leave or read a review.",
+      },
+      billingDocuments: {
+        title: "Billing documents are in the app",
+        body: "Your payment documents are available in the Naudokis app.",
+      },
+      profile: {
+        title: "Profiles are in the app",
+        body: "Owner profiles are shown in the Naudokis app.",
+      },
+      myProfile: {
+        title: "Your account is in the app",
+        body: "Manage your account, rentals and settings in the Naudokis app.",
+      },
+      rewards: {
+        title: "Rewards are in the app",
+        body: "See your invite rewards and their status in the Naudokis app.",
+      },
+      resetPassword: {
+        title: "Reset your password in the app",
+        body: "Set a new password in the Naudokis app. This link is valid for a limited time.",
+      },
+      verifyEmail: {
+        title: "Confirm your email in the app",
+        body: "Confirm your email in the Naudokis app. This link is valid for a limited time.",
+      },
+    },
+    openApp: "Open in the app",
+    openHint: "Nothing happened? Then you don’t have the app yet — get it below.",
+    installLead: "Don’t have the app? Get it free.",
+    installCta: "Get the app",
+    qrHint: "Scan with your phone",
   },
   cityPicker: {
     heading: "Choose a city",

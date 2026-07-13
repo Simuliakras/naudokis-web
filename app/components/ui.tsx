@@ -1,6 +1,6 @@
 "use client";
 // Naudokis UI kit — primitives.
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,6 +9,8 @@ import { localeHome } from "@/app/lib/i18n/config";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 import { trackEvent } from "@/app/lib/analytics";
 import { prefersReducedMotion } from "@/app/lib/motion";
+import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
+import { useFocusTrap } from "@/app/lib/use-focus-trap";
 // Icon / Pattern / QR / IconName are defined in the server-renderable visual.tsx
 // (single source of truth) and re-exported here so existing `from "./ui"` import
 // sites keep working unchanged.
@@ -280,6 +282,48 @@ export function CloseButton({ label, onClick, className, ref }: {
       onClick={onClick} aria-label={label}>
       <Icon name="X" size={20} color="var(--nk-text)" />
     </button>
+  );
+}
+
+/* ---------------- Dialog (centred modal layer) ----------------
+   Scrim, panel, the two layer hooks and the three dismiss paths (Escape, backdrop,
+   close button) in one place, so every dialog behaves identically — including when
+   one opens on top of another (see lib/layer-stack.ts).
+
+   Focus lands on the PANEL, never on the first button: a dialog that asks a
+   question must not preselect one of its answers. */
+export function Dialog({ open, onDismiss, title, description, closeLabel, children }: {
+  open: boolean;
+  onDismiss: () => void;
+  title: string;
+  description: string;
+  closeLabel: string;
+  children: React.ReactNode;
+}) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const bodyId = useId();
+  useDismissableLayer(open, onDismiss, { initialFocus: panelRef });
+  useFocusTrap(panelRef, open);
+
+  if (!open) {
+    return null;
+  }
+  return (
+    <div className="nk-dialog-scrim" role="presentation"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) {
+          onDismiss();
+        }
+      }}>
+      <div ref={panelRef} tabIndex={-1} className="nk-dialog-panel" role="dialog" aria-modal="true"
+        aria-labelledby={titleId} aria-describedby={bodyId}>
+        <CloseButton label={closeLabel} onClick={onDismiss} className="nk-dialog-close" />
+        <h2 id={titleId} className="nk-dialog-title">{title}</h2>
+        <p id={bodyId} className="nk-dialog-body">{description}</p>
+        {children}
+      </div>
+    </div>
   );
 }
 

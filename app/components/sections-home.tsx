@@ -14,6 +14,7 @@ import {
 import { SearchBar, HeroOwnerCta } from "./HeroSearch";
 import { AppCtaBanner } from "./AppCtaBanner";
 import { FeatureBand } from "./FeatureBand";
+import { PrivacyChoices } from "./PrivacyChoices";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, SOCIAL_PROFILES } from "@/app/lib/contact";
 import { LT_CITIES } from "@/app/lib/cities";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
@@ -161,6 +162,9 @@ export function Footer({ locale }: { locale: Locale }) {
 
         <div className="nk-footer__bottom">
           <span className="nk-footer__legal">{t.copyright}</span>
+          {/* Client leaf: the install-attribution choice must be changeable/withdrawable
+              from any page, so it lives in the footer rather than only in the prompt. */}
+          <PrivacyChoices />
           <div className="nk-footer__pay">
             {FOOTER_PAY.map(([f, a]) => (
               <Image key={f} src={`/naudokis/${f}.png`} alt={a} width={100} height={52}

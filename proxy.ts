@@ -3,7 +3,8 @@
 // pass /en through, and redirect any explicit /lt URLs back to the unprefixed form.
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { defaultLocale, locales } from "@/app/lib/i18n/config";
+import { defaultLocale, locales, negotiateLocale } from "@/app/lib/i18n/config";
+import { isHandoffPath } from "@/app/lib/app-links";
 
 const NON_DEFAULT = locales.filter((l) => l !== defaultLocale);
 // Marker carried ON the internal /lt rewrite URL. It MUST be a query param, not a
@@ -45,10 +46,23 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
+  // App-handoff paths: same internal rewrite, but the locale is negotiated from the
+  // browser rather than assumed, because these URLs are baked into emails and app-link
+  // claims and carry no locale of their own. The visible URL is untouched (a rewrite,
+  // never a redirect) — the emailed URLs must keep working byte-for-byte.
+  //
+  // Safe to vary per request because those pages are force-dynamic (Next then sends
+  // no-store), so no shared cache can pin one locale's render to the shared URL.
+  const locale = isHandoffPath(pathname) ? negotiateLocale(request.headers.get("accept-language")) : defaultLocale;
+
   // Everything else is the unprefixed default locale: rewrite to the internal segment.
   const url = request.nextUrl.clone();
-  url.pathname = `/${defaultLocale}${pathname === "/" ? "" : pathname}`;
-  url.searchParams.set(INTERNAL_LOCALE_REWRITE, "1");
+  url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
+  // The marker only guards the default-locale rewrite from the /lt → / redirect
+  // above; an /en target hits the non-default pass-through and needs none.
+  if (locale === defaultLocale) {
+    url.searchParams.set(INTERNAL_LOCALE_REWRITE, "1");
+  }
   return NextResponse.rewrite(url);
 }
 
@@ -56,10 +70,12 @@ export const config = {
   // Run on page routes only; skip Next internals, static brand assets, the
   // root-level SEO metadata routes and generated listing sitemaps (not localized
   // as routable pages), the `/go` smart-install redirect route handler (locale-
-  // agnostic — must reach app/go/route.ts, not /lt/go), and the app universal-
-  // link / .well-known / deep-link paths (handled by next.config rewrites +
-  // public files — must not be rewritten into the /lt segment).
-  // The deep-link path segments below mirror `appLinkPaths` in next.config.ts
-  // (the canonical list) — keep them in sync when that list changes.
-  matcher: ["/((?!api|go|_next/static|_next/image|naudokis|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|listings/sitemap|\\.well-known|listing|profile|booking-request|billing-documents|review|chat|my-profile|rewards|ref|reset-password|verify-email|deep-link\\.html).*)"],
+  // agnostic — must reach app/go/route.ts, not /lt/go) and `.well-known` (app-link
+  // verifiers require a direct 200).
+  //
+  // The app universal-link paths are deliberately NOT excluded any more: they are
+  // real localized pages now (see app/lib/app-links.ts), so they MUST be matched to
+  // get their locale rewrite. Excluding one would make it 404 — and it would 404
+  // only for people without the app installed, which is nobody who tests it.
+  matcher: ["/((?!api|go|_next/static|_next/image|naudokis|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|listings/sitemap|\\.well-known).*)"],
 };

@@ -1,37 +1,45 @@
 # `/.well-known/` — app deep-link association files
 
-These files let the native Naudokis app claim the deep-link paths declared in
-`next.config.ts` (`appLinkPaths`). iOS AASA is served verbatim from `public/`;
-Android Asset Links is served by `app/.well-known/assetlinks.json/route.ts` so
-the real Play Console fingerprints can be injected by deployment environment.
+These files let the native Naudokis app claim its universal-link paths. iOS AASA is
+served verbatim from `public/`; Android Asset Links is served by
+`app/.well-known/assetlinks.json/route.ts` so the real Play Console fingerprints can
+be injected per deployment environment.
 
 ## `apple-app-site-association` (iOS universal links)
 
 - Extensionless on purpose — iOS fetches `/.well-known/apple-app-site-association`.
 - Must be served as `application/json` (enforced by the `headers()` rule in `next.config.ts`).
-- `appID` is `<TeamID>.<bundleID>`; `paths` mirrors `appLinkPaths` in `next.config.ts`.
-
-### `/invite` and `/cancel-deletion` are dual-purpose paths — handle them differently
-
-`/invite` (the referral bridge) and `/cancel-deletion` (the account-deletion cancel
-bridge) are listed in `paths` here **but deliberately NOT** in `appLinkPaths`
-(`next.config.ts`) **nor** in the `proxy.ts` matcher exclusion. That is intentional,
-not an oversight:
-
-- The other paths (`/listing/*`, `/booking-request/*`, …) are app-only and rewrite
-  to the static `deep-link.html` interstitial. `/invite` and `/cancel-deletion`
-  instead each have a **real localized web page** (`app/[lang]/invite/page.tsx`,
-  `app/[lang]/cancel-deletion/page.tsx`) that **is** its own fallback — adding either
-  to `appLinkPaths` would rewrite it to `deep-link.html` and the page would never
-  render; excluding it from the proxy would break its `/lt` locale rewrite.
-- So for both: app installed → the OS opens the app via this AASA entry; app not
-  installed → the browser loads the real page. `/cancel-deletion` is special — it is
-  the desktop / no-app path for a **GDPR-critical** action and completes the cancel
-  on the web (public signed-token endpoint, no login), so it must work standalone.
-- The app handles `/invite` (primary) via its intent filter; `/ref/*` remains a
-  legacy universal-link fallback the app still routes (`app/ref/[code].tsx`).
+- `appID` is `<TeamID>.<bundleID>`.
 - Apex and www must both serve this file with `200` and no redirect. The host
   redirect in `next.config.ts` deliberately excludes `/.well-known/*`.
+
+## The one invariant: every claimed path must be a real page
+
+There is no longer an `appLinkPaths` rewrite list, and no `deep-link.html`
+interstitial. **Every** path in `paths` is now a real localized page under
+`app/[lang]/` (see `app/lib/app-links.ts` for the canonical list), which means:
+
+> A path claimed here **must** (1) resolve to a page under `app/[lang]/…`, (2) be
+> *matched* by the `proxy.ts` matcher (it needs the locale rewrite — do **not** add
+> it to the exclusion list), and (3) not be shadowed by a `next.config.ts` rewrite.
+
+Break any of those and the path 404s **only for visitors without the app installed** —
+i.e. for nobody who would notice while testing, since the OS opens the app first.
+`yarn verify:app-links:static` checks all three and runs in CI on every PR.
+
+Why real pages: the backend now puts these URLs directly into transactional emails,
+and opening an email must not disclose the click to an attribution processor. So the
+browser fallback is a first-party screen — an intent-matched app-handoff card
+(`AppHandoffScreen`), or the real content where the content is public:
+
+- `/listing/:id` → redirects to the public listing page.
+- `/invite` → the referral bridge (validates the code, asks about attribution).
+- `/cancel-deletion` → completes a **GDPR-critical** action on the web itself
+  (public signed-token endpoint, no login), so it must work standalone, with no app.
+- `/ref/:code` → legacy referral path; redirects to `/invite`.
+- everything else → an app-handoff card. It never fetches the record behind the id:
+  a real id must render exactly like a made-up one, or the page becomes an oracle
+  for whether a booking / chat / document exists.
 
 ## `assetlinks.json` (Android App Links)
 

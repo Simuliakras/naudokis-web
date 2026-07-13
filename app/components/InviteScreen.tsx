@@ -1,10 +1,18 @@
 "use client";
-// Referral bridge (/invite) — reads the ?code, validates it (fail-open), shows
-// the reward honestly and routes the visitor to the right store. The code is
-// carried across the install boundary by a per-code AppsFlyer OneLink attribution
-// link (buildInstallLink); when OneLink is unconfigured it degrades to the /go
-// smart link and the static install QR. Browsing/transacting still happens in the app.
-import { useMemo } from "react";
+// Referral bridge (/invite) — reads the ?code, validates it (fail-open), shows the
+// reward honestly and routes the visitor to the install.
+//
+// PRIVACY BOUNDARY: this page must render with no AppsFlyer SDK, pixel, script,
+// identifier or URL. So it never builds a OneLink. The install CTA points at the
+// first-party /go, which hands off to AppsFlyer only if the visitor has explicitly
+// allowed it (useInstallCta asks first when no choice is stored). Refusing keeps
+// the code — it is entered in the app after signup, which is how the reward is
+// actually granted. The reward NEVER depends on allowing measurement.
+//
+// The QR stays first-party too: it encodes this same /invite?code= URL, so the
+// phone that scans it makes its own consent choice rather than inheriting a
+// desktop one it was never asked about.
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
@@ -15,7 +23,9 @@ import { useI18n } from "./I18nProvider";
 import { localePath } from "@/app/lib/i18n/config";
 import { formatPrice } from "@/app/lib/listings";
 import { normalizeCode, useValidateCode } from "@/app/lib/referrals";
-import { buildInstallLink } from "@/app/lib/onelink";
+import { goHref } from "@/app/lib/attribution";
+import { SITE_ORIGIN } from "@/app/lib/contact";
+import { useInstallCta } from "@/app/lib/use-install-cta";
 
 export function InviteScreen() {
   const { locale, dict } = useI18n();
@@ -23,24 +33,30 @@ export function InviteScreen() {
   const router = useRouter();
   const params = useSearchParams();
   const code = normalizeCode(params.get("code"));
+  const { openInstall } = useInstallCta();
+  const [copied, setCopied] = useState(false);
 
   const { data: result } = useValidateCode(code);
 
-  // Resolve the install link once per code: an absolute OneLink URL carrying the
-  // referral code, or the /go fallback when OneLink is unconfigured. Pure string
-  // construction, so no effect/state needed.
-  const installLink = useMemo(() => buildInstallLink(code), [code]);
+  // First-party install href. The code rides as `deep_link_value` — /go forwards it
+  // to AppsFlyer only on the granted path and simply ignores it otherwise, so this
+  // one href is correct whether the visitor allows measurement or refuses it.
+  const installLink = useMemo(
+    () => (code ? goHref(undefined, { deep_link_value: code, pid: "web_invite", c: "invite" }) : goHref()),
+    [code],
+  );
+  // The QR is scanned by a DIFFERENT device, which has its own (absent) consent state
+  // — send it to this page, not to /go, so it can be asked. Locale-aware: the phone
+  // should land on the page in the language the desktop visitor is reading.
+  const qrValue = code
+    ? `${SITE_ORIGIN}${localePath(locale, "/invite")}?code=${encodeURIComponent(code)}`
+    : `${SITE_ORIGIN}/go`;
 
-  // Only an absolute OneLink URL carries the referral code across the install
-  // boundary; the /go fallback (relative) can't attribute the reward. Gate the
-  // reward promise on that so the page never advertises credit it can't deliver
-  // while OneLink is unconfigured — it degrades to the optimistic headline.
-  const attributable = installLink.startsWith("http");
   // Headline by validation state — never block install. While validating (or on a
   // network/429 `unknown`) we stay optimistic; only a confirmed-invalid or missing
   // code drops to the plain install headline.
   const reward =
-    attributable && result && "valid" in result && result.valid && result.refereeRewardCents > 0
+    result && "valid" in result && result.valid && result.refereeRewardCents > 0
       ? formatPrice(result.refereeRewardCents, locale)
       : null;
   const invalid = result !== undefined && "valid" in result && !result.valid;
@@ -50,9 +66,22 @@ export function InviteScreen() {
       ? t.titleGeneric
       : t.titleUnknown;
 
-  const attributionLink = attributable ? installLink : undefined;
-  const onInstall = () => {
-    window.location.href = installLink;
+  // "Copied" is a transient confirmation, not a state the button stays in — otherwise
+  // a second copy gives no feedback at all.
+  const copyTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(copyTimer.current), []);
+  const copyCode = async () => {
+    if (!code) {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      window.clearTimeout(copyTimer.current);
+      copyTimer.current = window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard denied / unavailable — the code is on screen to be typed anyway.
+    }
   };
 
   return (
@@ -82,17 +111,19 @@ export function InviteScreen() {
                 </ul>
 
                 <div className="invite-actions">
-                  <button type="button" className="nk-btn nk-btn--primary" onClick={onInstall}>
+                  <button type="button" className="nk-btn nk-btn--primary" onClick={() => openInstall(installLink)}>
                     <Icon name="Download" size={18} stroke={2.2} />
                     {t.ctaInstall}
                   </button>
-                  <AppBadges height={50} href={attributionLink} />
+                  {/* Direct store links — untracked. The attributed path is the button
+                      above, which asks for the choice first. */}
+                  <AppBadges height={50} placement="invite" />
                 </div>
               </div>
 
               <div className="invite-cols__aside">
                 <div className="invite-qr">
-                  <QR value={attributionLink} size={172} />
+                  <QR value={qrValue} size={172} />
                   <span className="invite-qr__hint">{t.qrHint}</span>
                 </div>
 
@@ -103,6 +134,12 @@ export function InviteScreen() {
                   <div className="invite-code">
                     <span className="invite-code__label">{t.codeLabel}</span>
                     <code className="invite-code__value">{code}</code>
+                    <button type="button" className="nk-btn nk-btn--outline nk-btn--sm" onClick={copyCode}
+                      aria-live="polite">
+                      <Icon name={copied ? "Check" : "Copy"} size={16} stroke={2.2} />
+                      {copied ? t.codeCopied : t.codeCopy}
+                    </button>
+                    <span className="invite-code__hint">{t.codeHint}</span>
                   </div>
                 )}
               </div>
