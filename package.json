@@ -15,7 +15,8 @@
     "legal:shots": "node scripts/legal-audit-shots.mjs",
     "gen:qr": "node scripts/generate-install-qr.mjs",
     "verify:app-links": "node scripts/verify-app-links.mjs",
-    "verify:app-links:static": "node scripts/verify-app-links.mjs --static"
+    "verify:app-links:static": "node scripts/verify-app-links.mjs --static",
+    "verify:release": "node scripts/verify-release.mjs"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.65.0",

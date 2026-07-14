@@ -761,11 +761,6 @@ function TermsSection({ listing }: { listing: ListingDetail }) {
         <FactCard icon="ShieldCheck" title={listing.deposit ? t.depositTitle(listing.deposit) : t.depositNone} sub={t.termDepositSub} />
         <FactCard icon="Calendar" title={t.durationRange(listing.minDays, listing.maxDays)} sub={t.termDurationSub} />
         <FactCard icon="RefreshCcw" title={t.cancellationLabel(listing.cancellation)} sub={t.termCancelSub} />
-        {/* Only when the wire's insurance_included attribute affirms it — a top
-            trust signal for vehicle rentals that was buried in the spec table. */}
-        {listing.insuranceIncluded && (
-          <FactCard icon="BadgeCheck" title={t.termInsuranceTitle} sub={t.termInsuranceSub} />
-        )}
       </div>
     </Section>
   );

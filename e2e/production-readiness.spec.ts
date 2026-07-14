@@ -269,6 +269,36 @@ test("native handoff outcomes require a signed journey token", async ({ request 
   expect(response.status()).toBe(401);
 });
 
+test("Web Vitals ingestion accepts bounded metrics and rejects sensitive paths", async ({ request }) => {
+  const metric = {
+    path: "/skelbimai",
+    name: "LCP",
+    value: 1234.56,
+    delta: 1234.56,
+    rating: "good",
+    navigationType: "navigate",
+  };
+  const accepted = await request.post("/api/web-vitals", { data: metric });
+  expect(accepted.status()).toBe(204);
+  expect(accepted.headers()["cache-control"]).toContain("no-store");
+
+  const queryLeak = await request.post("/api/web-vitals", { data: { ...metric, path: "/skelbimai?email=a@example.com" } });
+  expect(queryLeak.status()).toBe(400);
+  const tokenPath = await request.post("/api/web-vitals", { data: { ...metric, path: "/reset-password" } });
+  expect(tokenPath.status()).toBe(400);
+});
+
+test("mobile homepage does not download the hidden desktop hero phone", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const heroRequests: string[] = [];
+  page.on("request", (request) => {
+    if (decodeURIComponent(request.url()).includes("/naudokis/hero-phone.png")) heroRequests.push(request.url());
+  });
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  expect(heroRequests).toEqual([]);
+});
+
 // The privacy boundary: the referral bridge must render with no AppsFlyer SDK,
 // pixel, script, identifier or URL — in the DOM or on the wire — until the visitor
 // has made a choice. Asserted against the hydrated page, not just the server HTML,
@@ -282,8 +312,11 @@ test("the referral bridge carries no AppsFlyer URL before a choice is made", asy
   });
 
   await page.goto("/invite?code=ABCD2345");
-  // The code is shown regardless — the reward never depended on attribution.
-  await expect(page.getByText("ABCD2345")).toBeVisible();
+  // Referral validation is live and may confirm this fixture as invalid, in
+  // which case the product deliberately hides the unusable code. Wait for the
+  // invite document itself; the privacy invariant below is independent of the
+  // validation outcome.
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
   const html = await page.content();
   expect(html).not.toContain("link.naudokis.lt");

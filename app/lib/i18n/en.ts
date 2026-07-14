@@ -497,8 +497,6 @@ export const en: Dict = {
       return "Standard cancellation policy";
     },
     termCancelSub: "The app shows the exact deadlines and refund amount before you pay.",
-    termInsuranceTitle: "Insurance marked by the owner",
-    termInsuranceSub: "Check the provider, cover and exclusions",
     mobileBookingNote: "Total shown in the app",
   },
   common: {
@@ -506,6 +504,9 @@ export const en: Dict = {
     delivery: "Delivery",
     perDay: "per day",
     reviewCount: (n) => `${n} review${n === 1 ? "" : "s"}`,
+    photoCount: (n) => `${n} photo${n === 1 ? "" : "s"}`,
+    discountWeek: (percent) => `−${percent}% for a week`,
+    discountDays: (percent, days) => `−${percent}% from ${days} days`,
     newListing: "No reviews yet",
     imageUnavailable: "Image unavailable",
     breadcrumbHome: "Home",

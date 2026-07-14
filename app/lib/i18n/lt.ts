@@ -529,8 +529,6 @@ export const lt: Dict = {
       return "Standartinė atšaukimo politika";
     },
     termCancelSub: "Tikslius terminus ir grąžinamą sumą matysite programėlėje prieš mokėdami.",
-    termInsuranceTitle: "Savininkas pažymėjo draudimą",
-    termInsuranceSub: "Patikrinkite draudiką, apsaugą ir išimtis",
     mobileBookingNote: "Visa suma programėlėje",
   },
   common: {
@@ -548,6 +546,19 @@ export const lt: Dict = {
             : "atsiliepimai";
       return `${n} ${word}`;
     },
+    photoCount: (n) => {
+      const d = n % 10;
+      const dd = n % 100;
+      const word =
+        (dd >= 11 && dd <= 19) || d === 0
+          ? "nuotraukų"
+          : d === 1
+            ? "nuotrauka"
+            : "nuotraukos";
+      return `${n} ${word}`;
+    },
+    discountWeek: (percent) => `−${percent}% savaitei`,
+    discountDays: (percent, days) => `−${percent}% nuo ${days} d.`,
     newListing: "Atsiliepimų dar nėra",
     imageUnavailable: "Nuotrauka nepasiekiama",
     breadcrumbHome: "Pagrindinis",

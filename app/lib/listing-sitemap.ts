@@ -31,8 +31,24 @@ function safePublicImage(url: string | undefined): string | undefined {
 // A type guard, so the `id` narrows to string and callers need no `!`.
 type SitemapItem = NonNullable<NonNullable<SitemapListings["data"]>["items"]>[number];
 
-function isProductionListing(item: SitemapItem): item is SitemapItem & { id: string } {
-  return !!item.id && !isSyntheticListing({ id: item.id, title: item.title });
+// THE eligibility rule for the listing sitemap — one definition, used by both the
+// count and the entry walk. Two copies of this drifting apart is how a record ends
+// up advertised to crawlers but hidden from the feed (see listing-url.ts: a record
+// must not be public on one surface and hidden on another).
+//
+// Deliberately identical to publicListingItems() in listings.ts: `status` must be
+// "active" (not merely "not inactive"), and the synthetic check gets the image URLs,
+// because some seed rows are only identifiable by their example.com photos. Anything
+// looser would advertise a URL the feed refuses to show and the detail page may 404.
+function isPublicSitemapListing(item: SitemapItem): item is SitemapItem & { id: string } {
+  if (!item.id || item.status !== "active") {
+    return false;
+  }
+  return !isSyntheticListing({
+    id: item.id,
+    title: item.title,
+    imageUrls: item.images?.flatMap((image) => image.url ?? []),
+  });
 }
 
 async function fetchListingsPage(token?: string): Promise<SitemapListings["data"] | null> {
@@ -41,12 +57,39 @@ async function fetchListingsPage(token?: string): Promise<SitemapListings["data"
   if (token) {
     url.searchParams.set("next_token", token);
   }
-  const res = await fetch(url, { next: { revalidate: 3600 } });
+  // Bounded: a hanging backend must not hang a robots.txt / sitemap render, which
+  // now walks the whole cursor rather than reading a single page.
+  const res = await fetch(url, { next: { revalidate: 3600 }, signal: AbortSignal.timeout(10_000) });
   if (!res.ok) {
-    return null;
+    // Must NOT be swallowed as "end of cursor": a 500 halfway through the walk would
+    // silently shorten the catalogue, dropping whole sitemap chunks for an hour.
+    throw new Error(`[listing-sitemap] ${url.pathname} responded ${res.status}`);
   }
   const body: SitemapListings = await res.json();
   return body.data ?? null;
+}
+
+// One cursor walk, shared by both surfaces below. Yields every public listing in
+// backend order; throws if any page fails, so a partial walk can never masquerade
+// as a complete one.
+async function* walkPublicListings(): AsyncGenerator<SitemapItem & { id: string }> {
+  let token: string | undefined;
+  // A broken backend cursor must never turn a route render into an unbounded loop.
+  for (let page = 0; page <= 10_000; page++) {
+    const data = await fetchListingsPage(token);
+    if (!data) {
+      return;
+    }
+    for (const item of data.items ?? []) {
+      if (isPublicSitemapListing(item)) {
+        yield item;
+      }
+    }
+    token = data.next_token;
+    if (!data.has_more || !token) {
+      return;
+    }
+  }
 }
 
 // The listing sitemap is a public SEO surface, so it is emitted only against the
@@ -61,14 +104,25 @@ function skipNonProductionApi(surface: string): boolean {
   return true;
 }
 
+// The catalogue API's `count` is the size of the current cursor page, not a global
+// total, so the only way to size the sitemap index is to walk it.
 export async function fetchListingSitemapCount(): Promise<number> {
   if (skipNonProductionApi("count")) return 0;
+  let total = 0;
   try {
-    const data = await fetchListingsPage();
-    return Math.ceil((data?.count ?? data?.items?.length ?? 0) / LISTINGS_PER_SITEMAP);
-  } catch {
+    const walk = walkPublicListings();
+    while (!(await walk.next()).done) {
+      total++;
+    }
+  } catch (error) {
+    // All-or-nothing on purpose: a partial count advertises FEWER chunks than exist,
+    // which hides every listing past the truncation point. Publishing no listing
+    // sitemap for one revalidate window is the recoverable failure; publishing a
+    // short one is not.
+    console.warn("[listing-sitemap] count walk failed; advertising no listing sitemaps this cycle.", error);
     return 0;
   }
+  return Math.ceil(total / LISTINGS_PER_SITEMAP);
 }
 
 export async function fetchListingSitemapEntries(chunkIndex: number): Promise<ListingEntry[]> {
@@ -77,45 +131,29 @@ export async function fetchListingSitemapEntries(chunkIndex: number): Promise<Li
   const end = start + LISTINGS_PER_SITEMAP;
   const entries: ListingEntry[] = [];
   let seen = 0;
-  let token: string | undefined;
 
   try {
-    for (let page = 0; ; page++) {
-      const data = await fetchListingsPage(token);
-      if (!data) {
-        break;
+    for await (const item of walkPublicListings()) {
+      if (seen >= start) {
+        const updated = item.updated_at ? new Date(item.updated_at) : undefined;
+        const image = safePublicImage(item.images?.[0]?.url);
+        entries.push({
+          id: item.id,
+          title: item.title,
+          city: item.city ?? undefined,
+          lastModified: updated && !Number.isNaN(updated.getTime()) ? updated : undefined,
+          images: image ? [image] : [],
+        });
       }
-      for (const item of data.items ?? []) {
-        if (!isProductionListing(item) || (item.status !== undefined && item.status !== "active")) {
-          continue;
-        }
-        if (seen >= start && seen < end) {
-          const updated = item.updated_at ? new Date(item.updated_at) : undefined;
-          const image = safePublicImage(item.images?.[0]?.url);
-          entries.push({
-            id: item.id,
-            title: item.title,
-            city: item.city ?? undefined,
-            lastModified: updated && !Number.isNaN(updated.getTime()) ? updated : undefined,
-            images: image ? [image] : [],
-          });
-        }
-        seen++;
-        if (seen >= end) {
-          return entries;
-        }
-      }
-      token = data.next_token;
-      if (!data.has_more || !token) {
-        break;
-      }
-      // Keep a broken backend cursor from creating an unbounded route render.
-      if (page > 10000) {
+      seen++;
+      if (seen >= end) {
         break;
       }
     }
-  } catch {
-    // Return whatever was collected. Sitemap generation should degrade, not fail.
+  } catch (error) {
+    // A short chunk is still a valid chunk (the missing URLs return next cycle), so
+    // this degrades rather than 500s the route — but never silently.
+    console.warn(`[listing-sitemap] entry walk for chunk ${chunkIndex} failed after ${entries.length} entries.`, error);
   }
 
   return entries;

@@ -6,15 +6,20 @@ import { useEffect, useId, useRef, useState } from "react";
 import { Icon, IconName, IllusName, Illustration, Pill, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { trackEvent } from "@/app/lib/analytics";
-import { formatLocation } from "@/app/lib/listings";
+// From listing-view, NOT listings: listings.ts owns the react-query hooks, and
+// importing it here would pull the whole query runtime into every page that renders
+// a card — including the home page, which issues no queries at all.
+import { formatLocation, type Discount } from "@/app/lib/listing-view";
 
 /* ---------------- Offer / listing card ----------------
-   "Aperture" 2026 design: photo-forward 4:3 frame, a category eyebrow for scent,
-   location on its own line, and a bottom row where the price is the anchor and
-   the rating (or "New" pill) sits opposite. No arrow cue — the whole card is a
-   stretched <Link>. Favorite is locked (opens the app modal). */
+   "Struktūruota" 2026 design: photo-forward 4:3 frame carrying the gallery count,
+   a top row pairing the category eyebrow with the rating (or the no-reviews pill),
+   a meta block, and a footer where a hairline separates the price anchor from the
+   long-rental discount. No arrow cue — the whole card is a stretched <Link>.
+   Favorite is locked (opens the app modal). */
 export function OfferCard({
   title, city, subdivision, price, unit, rating, ratingCount, img, href, category, categoryName, categoryIcon = "Tag", hasDelivery = false,
+  photoCount = 0, discount,
   imageLoading = "lazy",
 }: {
   title: string;
@@ -30,6 +35,8 @@ export function OfferCard({
   categoryName?: string; // localized top-level category label — surfaced as the eyebrow
   categoryIcon?: IconName; // glyph for the empty-photo placeholder (from Category.icon)
   hasDelivery?: boolean; // surfaces the delivery-available flag as a media badge
+  photoCount?: number; // gallery size — the media chip; a lone photo needs no count
+  discount?: Discount; // deepest active price break — the footer pill
   imageLoading?: "eager" | "lazy"; // above-fold landing/feed cards can opt into eager LCP loading
 }) {
   const { dict } = useI18n();
@@ -78,44 +85,63 @@ export function OfferCard({
             <span>{c.imageUnavailable}</span>
           </span>
         )}
-        {/* No carousel dots: the browse card carries a single photo, so paging
-            dots would be a false affordance. The lightbox/gallery lives on the
-            detail page where the full photo set is available. */}
-      </div>
-      <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
-        {/* Category eyebrow — scent for the eye, tinted with the house per-category accent. */}
-        {categoryName && <span className="nk-offer__eyebrow">{categoryName}</span>}
-        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, lineHeight: "25px", minHeight: 50, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
-        {/* Location on its own line (no longer sharing a row with the rating). */}
-        {city && (
-          <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)", fontFamily: "var(--nk-font-body)", fontWeight: 500, fontSize: 14.5, color: "var(--nk-text-2)" }}>
-            <Icon name="MapPin" size={15} color="var(--nk-text-2)" stroke={2} /> {formatLocation(city, subdivision)}
+        {/* Gallery affordance, not a carousel: the browse card shows one photo, so
+            paging dots would be a false affordance — the count states what the
+            detail page's gallery holds. A lone photo needs no count. */}
+        {showPhoto && photoCount > 1 && (
+          <span className="nk-offer__count" role="img" aria-label={c.photoCount(photoCount)}>
+            <Icon name="Image" size={13} stroke={2} aria-hidden />
+            <span aria-hidden>{photoCount}</span>
           </span>
         )}
-        {/* Bottom row: price is the anchor, rating (or no-reviews pill) sits opposite.
-            Wraps so the longer "New" pill drops to its own right-aligned line at
-            narrow (4-/5-up) column widths instead of clipping past the card edge. */}
-        <div className="nk-offer__pricebar" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", rowGap: "var(--nk-gap-xs)", marginTop: "auto", paddingTop: "var(--nk-gap-sm)" }}>
-          {price && (
-            <span style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)" }}>
-              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 800, fontSize: 27, letterSpacing: "-.01em", color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price}</span>
-              <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
-            </span>
-          )}
+      </div>
+      <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
+        {/* Top row: the category eyebrow (scent for the eye, tinted with the house
+            per-category accent) opposite the rating. It wraps — the no-reviews pill
+            carries a full phrase, which a narrow card can't fit beside the eyebrow. */}
+        <div className="nk-offer__toprow">
+          {categoryName && <span className="nk-offer__eyebrow">{categoryName}</span>}
           {rating ? (
             // Compact "4,8 ★ (52)" — role="img" (the APG composite-rating pattern)
             // makes the aria-label real: on a bare generic span many AT pairs
             // ignore it and would announce only "4,8" with the count hidden.
-            <span role="img" aria-label={ratingCount ? `${rating}, ${c.reviewCount(ratingCount)}` : rating}
-              style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-2xs)", marginLeft: "auto" }}>
-              <Icon name="Star" size={16} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
-              <b style={{ fontFamily: "var(--nk-font-body)", fontWeight: 700, fontSize: 14.5, color: "var(--nk-text-2)" }}>{rating}</b>
-              {ratingCount ? <span aria-hidden style={{ fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>({ratingCount})</span> : null}
+            <span className="nk-offer__rate" role="img" aria-label={ratingCount ? `${rating}, ${c.reviewCount(ratingCount)}` : rating}>
+              <Icon name="Star" size={15} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
+              <b>{rating}</b>
+              {ratingCount ? <i aria-hidden>({ratingCount})</i> : null}
             </span>
           ) : (
             // No reviews yet — state that fact without implying listing recency.
-            <span className="o-new" style={{ marginLeft: "auto" }}><Pill tone="yellow" icon="Sparkles">{c.newListing}</Pill></span>
+            <span className="o-new"><Pill tone="yellow" icon="Sparkles" size="sm">{c.newListing}</Pill></span>
           )}
+        </div>
+        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, lineHeight: "25px", minHeight: 50, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
+        {city && (
+          <span className="nk-offer__loc">
+            <Icon name="MapPin" size={14} color="var(--nk-text-2)" stroke={2} /> {formatLocation(city, subdivision)}
+          </span>
+        )}
+        {/* Footer, pinned to the bottom so cards in a row share a price baseline:
+            a hairline, then the price anchor with the long-rental break opposite. */}
+        <div className="nk-offer__foot">
+          <span className="nk-offer__rule" />
+          <div className="nk-offer__pricebar">
+            {price && (
+              <span className="nk-offer__pricemain">
+                <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 800, fontSize: 27, letterSpacing: "-.01em", color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price}</span>
+                <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
+              </span>
+            )}
+            {/* Long-rental price break. Purple (the house accent pill), so it reads as
+                information and never competes with the yellow rating opposite it. */}
+            {discount && (
+              <span className="o-discount">
+                <Pill tone="purple" icon="Tag" size="sm">
+                  {discount.minDays === 7 ? c.discountWeek(discount.percent) : c.discountDays(discount.percent, discount.minDays)}
+                </Pill>
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </article>
@@ -220,8 +246,11 @@ export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
     <article aria-hidden="true" style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-divider)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <div className={cls} style={{ aspectRatio: "4 / 3", borderRadius: "var(--nk-r-card) var(--nk-r-card) 0 0" }} />
       <div style={{ padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
-        {/* Eyebrow bar (mirrors the category label). */}
-        <div className={cls} style={{ width: "34%", height: 12 }} />
+        {/* Top row: eyebrow (left) vs rating (right). */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+          <div className={cls} style={{ width: "34%", height: 12 }} />
+          <div className={cls} style={{ width: 56, height: 14 }} />
+        </div>
         {/* Reserve two title lines (real title clamps to 2 / minHeight 50) so the
             card doesn't grow taller when a 2-line title loads (avoids CLS). */}
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -230,10 +259,13 @@ export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
         </div>
         {/* Location line placeholder. */}
         <div className={cls} style={{ width: "48%", height: 18 }} />
-        {/* Bottom row: price (left) vs rating (right) — no hairline, no round arrow. */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "var(--nk-gap-2xs)", paddingTop: "var(--nk-gap-sm)" }}>
-          <div className={cls} style={{ width: 96, height: 24 }} />
-          <div className={cls} style={{ width: 64, height: 18 }} />
+        {/* Footer: the card's hairline, then the price row (price left, discount right). */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: "auto", paddingTop: "var(--nk-gap-xs)" }}>
+          <span style={{ height: 1, background: "var(--nk-divider)" }} />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className={cls} style={{ width: 96, height: 24 }} />
+            <div className={cls} style={{ width: 64, height: 18 }} />
+          </div>
         </div>
       </div>
     </article>

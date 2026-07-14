@@ -298,8 +298,6 @@ export type Dict = {
     termDurationSub: string;
     cancellationLabel: (tier: string) => string; // policy tier name
     termCancelSub: string;
-    termInsuranceTitle: string; // insurance fact tile — only when the wire attribute says included
-    termInsuranceSub: string;
     mobileBookingNote: string;
   };
   common: {
@@ -307,6 +305,11 @@ export type Dict = {
     delivery: string; // short card badge surfacing the delivery-available flag
     perDay: string; // price unit on cards
     reviewCount: (count: number) => string; // localized, pluralized review count
+    photoCount: (count: number) => string; // SR label on the card's photo-count chip
+    // Long-rental price breaks on the card: a 7-day tier reads as "a week",
+    // any other tier states its own threshold.
+    discountWeek: (percent: number) => string;
+    discountDays: (percent: number, days: number) => string;
     // Card badge for listings with no reviews yet; never implies recency.
     newListing: string;
     imageUnavailable: string;

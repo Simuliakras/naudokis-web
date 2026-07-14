@@ -42,6 +42,7 @@ const STATIC_PATHS = [
 
 // Max simultaneous count lookups when enumerating landing candidates.
 const COUNT_CONCURRENCY = 8;
+const SITEMAP_REVALIDATE = 3600;
 
 async function listingLandingPaths(): Promise<string[]> {
   const categories = await fetchAllCategories(defaultLocale).catch(() => []);
@@ -85,7 +86,7 @@ async function listingLandingPaths(): Promise<string[]> {
       batch.map((candidate) =>
         fetchListingsCount(
           { category: candidate.category, city: candidate.city },
-          { stopAt: MIN_INDEXABLE_LISTINGS },
+          { stopAt: MIN_INDEXABLE_LISTINGS, revalidate: SITEMAP_REVALIDATE },
         ).catch(() => 0),
       ),
     );
@@ -99,11 +100,16 @@ async function listingLandingPaths(): Promise<string[]> {
 }
 
 // Re-enumerate category/city landing URLs hourly (the category fetch is cached).
+// Must remain a literal: Next 16 statically analyses route segment exports and
+// rejects even a same-module constant here.
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Only asks "is the catalogue non-empty?" — one listing settles it.
-  const hasListings = await fetchListingsCount({}, { stopAt: 1 }).then((count) => count > 0).catch(() => false);
+  const hasListings = await fetchListingsCount(
+    {},
+    { stopAt: 1, revalidate: SITEMAP_REVALIDATE },
+  ).then((count) => count > 0).catch(() => false);
   const staticEntries = STATIC_PATHS
     .filter((path) => path !== "/skelbimai" || hasListings)
     .flatMap((path) => localized(path));

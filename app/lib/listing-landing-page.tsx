@@ -16,12 +16,13 @@ import {
 } from "@/app/lib/seo";
 import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { makeQueryClient } from "@/app/lib/query";
+import { QueryProvider } from "@/app/providers";
 import {
   fetchListingsCount,
   fetchListingsPage,
   listingsInfiniteKey,
+  listingsNeededForPage,
   LISTINGS_FIRST_CURSOR,
-  LISTINGS_PAGE_SIZE,
   type ListingFilters,
   type ListingsPage,
 } from "@/app/lib/listings";
@@ -123,11 +124,14 @@ export async function listingLandingMetadata({
     : isLanding
       ? t.landingDescription({ category: categoryLabel, city: landing.city })
       : t.metaDescription;
-  // Full walk (no stopAt): the pager needs the real total, not a threshold answer.
+  // Count only far enough to prove that the requested page exists and that the
+  // landing clears the minimum-usefulness threshold. This avoids walking the
+  // full catalogue during metadata generation for every landing request.
+  const needed = listingsNeededForPage(page, MIN_INDEXABLE_LISTINGS);
   const count = await fetchListingsCount({
     category: category?.id,
     city: landing.city,
-  }).catch(() => 0);
+  }, { stopAt: needed }).catch(() => 0);
 
   const metadata = pageMetadata({
     locale,
@@ -141,14 +145,9 @@ export async function listingLandingMetadata({
     metadata.robots = NOINDEX_FOLLOW;
     return metadata;
   }
-  const totalPages = Math.ceil(count / LISTINGS_PAGE_SIZE);
-  if (page > 1 && page > totalPages) {
-    metadata.robots = NOINDEX_FOLLOW;
-    return metadata;
-  }
-  // Low-stock landings stay usable and crawlable-through, but are not useful
-  // enough to recommend as standalone organic-search results.
-  if (count < MIN_INDEXABLE_LISTINGS) {
+  // Low-stock or non-existent paginated landings stay usable and
+  // crawlable-through, but are not useful enough to recommend for indexing.
+  if (count < needed) {
     metadata.robots = NOINDEX_FOLLOW;
   }
   return metadata;
@@ -209,22 +208,24 @@ export async function ListingLandingPage({
   });
 
   return (
-    <HydrationBoundary state={dehydrate(qc)}>
-      <JsonLd data={breadcrumbJsonLd(locale, breadcrumb)} />
-      <JsonLd
-        data={collectionPageJsonLd({
-          locale,
-          name: collectionName,
-          description: collectionDescription,
-          path: landing.path,
-        })}
-      />
-      {listings.length > 0 && (
-        <JsonLd data={itemListJsonLd(locale, listings.map((l) => ({ id: l.id, name: l.title, city: l.city })))} />
-      )}
-      <Suspense>
-        <FeedScreen initialFilters={resolvedFilters} extraCategory={extraCategory} extraCategories={allCategories} />
-      </Suspense>
-    </HydrationBoundary>
+    <QueryProvider>
+      <HydrationBoundary state={dehydrate(qc)}>
+        <JsonLd data={breadcrumbJsonLd(locale, breadcrumb)} />
+        <JsonLd
+          data={collectionPageJsonLd({
+            locale,
+            name: collectionName,
+            description: collectionDescription,
+            path: landing.path,
+          })}
+        />
+        {listings.length > 0 && (
+          <JsonLd data={itemListJsonLd(locale, listings.map((l) => ({ id: l.id, name: l.title, city: l.city })))} />
+        )}
+        <Suspense>
+          <FeedScreen initialFilters={resolvedFilters} extraCategory={extraCategory} extraCategories={allCategories} />
+        </Suspense>
+      </HydrationBoundary>
+    </QueryProvider>
   );
 }

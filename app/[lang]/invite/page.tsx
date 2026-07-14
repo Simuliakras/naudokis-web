@@ -4,6 +4,7 @@ import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { pageMetadata, requireLocale, breadcrumbJsonLd } from "@/app/lib/seo";
 import { InviteScreen } from "@/app/components/InviteScreen";
 import { JsonLd } from "@/app/components/JsonLd";
+import { QueryProvider } from "@/app/providers";
 
 // Referral bridge — static shell, revalidate daily. The ?code is read client-side.
 export const revalidate = 86400;
@@ -39,9 +40,11 @@ export default async function Page({ params }: PageProps<"/[lang]/invite">) {
       <JsonLd data={breadcrumb} />
       {/* InviteScreen reads ?code via useSearchParams, which requires a Suspense
           boundary on a prerendered route (Next.js 16). */}
-      <Suspense>
-        <InviteScreen />
-      </Suspense>
+      <QueryProvider>
+        <Suspense>
+          <InviteScreen />
+        </Suspense>
+      </QueryProvider>
     </>
   );
 }

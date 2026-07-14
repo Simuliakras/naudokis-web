@@ -3,11 +3,13 @@ import { useQuery, useInfiniteQuery, keepPreviousData, skipToken } from "@tansta
 import type { Locale } from "./i18n/config";
 import { API_BASE } from "./api";
 import { cdnImage } from "./image-hosts";
+import { formatPrice, type Discount, type Offer } from "./listing-view";
 import { isSyntheticListing, isSyntheticListingParam } from "./listing-url";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiImage = { url: string; blurhash?: string };
 type ApiCategoryName = { lt: string; en: string };
+type ApiDiscountTier = { discount_percent: number; min_days: number };
 
 type ApiListing = {
   id: string;
@@ -20,6 +22,8 @@ type ApiListing = {
   status: string;
   images: ApiImage[];
   delivery_types_available?: string[];
+  discount_tiers?: ApiDiscountTier[]; // longer-rental price breaks, e.g. [{ discount_percent: 20, min_days: 7 }]
+  discount_enabled?: boolean; // owner's master switch — tiers may be present but inactive
   category_path?: string[]; // [top-level id, ...subcategories] — not guaranteed on browse items
   owner_id?: string; // groups a lister's items client-side (backend has no owner_id filter yet)
 };
@@ -149,31 +153,13 @@ export function marketplaceErrorKind(error: unknown): MarketplaceErrorKind {
   return error instanceof MarketplaceApiError ? error.kind : "server";
 }
 
-/* ---------------- View models ---------------- */
-export type Offer = {
-  id: string;
-  title: string;
-  city?: string; // absent when the backend listing has no city — the card hides the row
-  subdivision?: string; // district within the city, appended to the location line when present
-  price: string;
-  priceCents: number; // raw per-day price — the feed's client-side price bands filter on it
-  img?: string;
-  rating?: string; // formatted value, present only when ratingCount > 0
-  ratingCount: number; // raw count, for building the localized review label
-  hasDelivery: boolean; // derived client-side from delivery_types_available — see note in fetchListings
-  category?: string; // top-level category id — tints the empty-photo placeholder (optional on the wire)
-  ownerId?: string; // groups a lister's items client-side ("more from this owner" rail)
-};
-
-// Stable "photo safeguard" ordering — surface photo-bearing listings first so a feed
-// page or band isn't a wall of category-icon placeholders. Apply per page (or to a
-// one-shot list), never across accumulated infinite-scroll pages: re-sorting the
-// full list would reshuffle cards the user has already scrolled past. Array.sort is
-// stable, so order within the has-photo / no-photo groups is preserved (the
-// placeholder stays the graceful fallback for the occasional no-photo item).
-export function photoFirst<T extends { img?: string | null }>(list: T[]): T[] {
-  return [...list].sort((a, b) => (a.img ? 0 : 1) - (b.img ? 0 : 1));
-}
+/* ---------------- View models ----------------
+   The Offer/Discount shapes and the pure formatters live in listing-view.ts, which
+   imports no react-query — so a card can render a listing without pulling the query
+   runtime into its bundle. Re-exported here so this module stays the one import site
+   for anything that also needs the fetchers or hooks. */
+export { formatPrice, formatLocation, photoFirst } from "./listing-view";
+export type { Offer, Discount } from "./listing-view";
 
 /* ---------------- Filters ---------------- */
 // These values mirror the public catalogue API. The default is explicitly
@@ -270,7 +256,6 @@ export type ListingDetail = {
   minDays: number;
   maxDays: number;
   cancellation: string; // policy tier id ("flexible" | "moderate" | "strict" | …)
-  insuranceIncluded: boolean; // derived from the insurance_included display attribute
   categoryId?: string; // top-level category id (category_path[0]) — similar-items query key
   delivery: ListingDelivery;
   description: string;
@@ -285,25 +270,27 @@ export type ListingDetail = {
   ratingBreakdown: RatingBucket[]; // [5★…1★] counts; empty when no reviews
 };
 
-/* ---------------- Formatting ---------------- */
-// Cents → localized price string, in the "15 €" (lt) / "€15" (en) format.
-export function formatPrice(cents: number, locale: Locale): string {
-  const euros = cents / 100;
-  const n =
-    cents % 100 === 0
-      ? String(Math.round(euros))
-      : euros.toFixed(2).replace(".", locale === "lt" ? "," : ".");
-  return locale === "lt" ? `${n} €` : `€${n}`;
-}
-
+/* ---------------- Formatting ----------------
+   formatPrice ("15 €" / "€15") and formatLocation ("Vilnius, Žvėrynas") live in
+   listing-view.ts and are re-exported above. */
 export function formatRating(average: number, locale: Locale): string {
   return average.toFixed(1).replace(".", locale === "lt" ? "," : ".");
 }
 
-// Location line: city with its subdivision (district) appended when present —
-// "Vilnius, Žvėrynas". Either part may be missing, so filter before joining.
-export function formatLocation(city?: string, subdivision?: string): string {
-  return [city, subdivision].filter(Boolean).join(", ");
+// A listing can carry several price breaks (e.g. −5% from 2 days, −20% from 7).
+// The card has room for one, so surface the deepest — and only when the owner has
+// the discounts switched on, so an inactive leftover tier never advertises a
+// price the booking flow won't honour.
+function bestDiscount(l: ApiListing): Discount | undefined {
+  if (!l.discount_enabled) {
+    return undefined;
+  }
+  const usable = (l.discount_tiers ?? []).filter((t) => t.discount_percent > 0 && t.min_days >= 2);
+  if (usable.length === 0) {
+    return undefined;
+  }
+  const best = usable.reduce((a, b) => (b.discount_percent > a.discount_percent ? b : a));
+  return { percent: best.discount_percent, minDays: best.min_days };
 }
 
 function ratingLabel(average: number | null, count: number, locale: Locale): string | undefined {
@@ -421,6 +408,8 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
     ratingCount: l.rating_count,
     // Kept for the card badge; catalogue filtering itself is performed by the API.
     hasDelivery: (l.delivery_types_available ?? []).includes("user_delivery"),
+    photoCount: l.images?.length ?? 0,
+    discount: bestDiscount(l),
     // The wire's `category` field is a leaf id (e.g. "cars"); the accent and
     // icon maps key on the top-level id, which leads category_path.
     category: l.category_path?.[0],
@@ -517,15 +506,41 @@ const COUNT_PAGE_SIZE = 100;
 // Most callers only ask a threshold question ("are there at least N?") and would
 // otherwise page all the way to the 240 cap to answer it — which the sitemap does
 // once per landing candidate, on every hourly regeneration.
-export async function fetchListingsCount(filters: ListingFilters = {}, { stopAt }: { stopAt?: number } = {}): Promise<number> {
+type ListingCountOptions = {
+  stopAt?: number;
+  // Some callers (notably sitemap generation) have a deliberately longer cache
+  // horizon than user-facing listing pages. Keeping the TTL explicit here avoids
+  // a 5-minute data fetch silently lowering an otherwise hourly route revalidate.
+  revalidate?: number;
+};
+
+export function listingsNeededForPage(page: number, minimum = 1): number {
+  const normalizedPage = parsePageParam(page);
+  return Math.max(minimum, (normalizedPage - 1) * LISTINGS_PAGE_SIZE + 1);
+}
+
+export async function fetchListingsCount(
+  filters: ListingFilters = {},
+  { stopAt, revalidate = LISTING_REVALIDATE }: ListingCountOptions = {},
+): Promise<number> {
   const cap = Math.min(stopAt ?? Infinity, LISTINGS_MAX_PAGE * LISTINGS_PAGE_SIZE);
   let count = 0;
   let token: string | null = null;
   do {
     const url = buildListingsUrl(filters);
-    url.searchParams.set("limit", String(COUNT_PAGE_SIZE));
+    // Threshold callers usually need only 1 or 5 records, so don't ask for 100 —
+    // metadata and every sitemap landing check would transfer and parse far more
+    // than the decision requires.
+    //
+    // But never size the request by `cap - count` alone: `count` advances only for
+    // rows that survive publicListingItems, while the cursor advances by RAW rows.
+    // A leading run of non-public rows would then pin the limit at 1 and turn one
+    // request into one request PER ROW, each with its own 10s timeout. The floor
+    // keeps a filtered page cheap to skip past.
+    const limit = Math.min(COUNT_PAGE_SIZE, Math.max(cap - count, LISTINGS_PAGE_SIZE));
+    url.searchParams.set("limit", String(limit));
     if (token) url.searchParams.set("next_token", token);
-    const res = await marketplaceFetch(url, { next: { revalidate: LISTING_REVALIDATE } });
+    const res = await marketplaceFetch(url, { next: { revalidate } });
     if (!res.ok) throw new MarketplaceApiError("server", res.status);
     const body: ListingsResponse = await res.json();
     count += publicListingItems(body.data.items).length;
@@ -738,12 +753,6 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
     minDays: detail.minimum_rental_days ?? 1,
     maxDays: detail.maximum_rental_days ?? 0,
     cancellation: detail.cancellation_policy ?? "",
-    // Real wire data only: the boolean mirrors the insurance_included display
-    // attribute (canonical LT value label). The spec-table row stays; the terms
-    // tile is additive emphasis for a top-3 vehicle-rental trust signal.
-    insuranceIncluded: (detail.attributes_display ?? []).some(
-      (a) => a.id === "insurance_included" && !a.orphan && a.value_label_lt === "Taip",
-    ),
     categoryId: detail.category_path?.[0],
     delivery: mapDelivery(detail.delivery_methods, locale),
     description: detail.description,

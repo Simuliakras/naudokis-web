@@ -771,6 +771,43 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   font-family:var(--nk-font-body);font-weight:600;font-size:13px;line-height:1;color:var(--nk-text);white-space:nowrap}
 .nk-offer__badge svg{flex:none}
 
+/* ---- "Struktūruota" card anatomy (2026-07 design handoff) ----
+   Additive to the .nk-offer shell above: a photo-count chip on the media's bottom
+   edge, a top row pairing eyebrow with rating, the location line, and a footer whose
+   hairline sets the price apart. The chip rides the media's own bottom-darkening
+   gradient (.nk-offer__media:has(.nk-zoom)::after, z-index:1), so it sits at
+   z-index:2 and stays legible over any photo. */
+.nk-offer__count{position:absolute;bottom:12px;right:12px;z-index:2;display:inline-flex;align-items:center;gap:5px;
+  padding:5px 9px;border-radius:999px;
+  background:rgba(18,20,21,.55);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px);
+  font-family:var(--nk-font-body);font-weight:600;font-size:12px;line-height:1;color:var(--nk-text)}
+.nk-offer__count svg{flex:none}
+
+/* One row: the eyebrow yields (ellipsis) so the compact rating keeps its full
+   width. It only wraps for the no-reviews pill, which carries a whole phrase
+   ("Atsiliepimų dar nėra") that would otherwise ellipsize the eyebrow away. */
+.nk-offer__toprow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:nowrap;row-gap:6px}
+.nk-offer__toprow:has(.o-new){flex-wrap:wrap}
+.nk-offer__toprow .nk-offer__eyebrow{flex:1 1 auto;min-width:0}
+.nk-offer__rate{display:inline-flex;align-items:center;gap:4px;flex:none;
+  font-family:var(--nk-font-body);font-size:13.5px;color:var(--nk-text-2);white-space:nowrap}
+.nk-offer__rate b{font-weight:700}
+.nk-offer__rate i{font-style:normal;color:var(--nk-text-muted)}
+.nk-offer__rate svg{flex:none}
+.o-new{flex:none;margin-left:auto}
+
+.nk-offer__loc{display:inline-flex;align-items:center;gap:5px;min-width:0;
+  font-family:var(--nk-font-body);font-weight:500;font-size:14px;color:var(--nk-text-2)}
+.nk-offer__loc svg{flex:none}
+
+.nk-offer__foot{display:flex;flex-direction:column;gap:12px;margin-top:auto;padding-top:var(--nk-gap-xs)}
+.nk-offer__rule{height:1px;background:var(--nk-divider)}
+.nk-offer__pricebar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;row-gap:var(--nk-gap-xs)}
+.nk-offer__pricemain{display:flex;align-items:baseline;gap:5px;min-width:0}
+/* .o-discount wraps the shared <Pill tone="purple">; like .o-new it only positions
+   the pill — the fill and text color come from the Pill primitive itself. */
+.o-discount{flex:none;margin-left:auto}
+
 /* ---- category card shell (radius/border/lift/focus/active) — the v2 inner
    anatomy (.nk-catv2__*) lives in the Categories v2 layer at EOF ---- */
 /* size container: the tile's compact anatomy follows its OWN width (see the
@@ -940,6 +977,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
   padding-block:26px;border-top:1px solid var(--nk-border-soft)}
 .nk-footer__legal{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-muted)}
+/* trailing cluster: privacy control | payment marks */
+.nk-footer__meta{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.nk-footer__sep{flex:none;width:1px;height:20px;background:var(--nk-border-soft)}
 .nk-footer__pay{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 /* 2-col footer holds to 1240: the 4-col track math only breathes from ~1240 —
    engaging it at 1025 double-wrapped every Cities link for the whole band */
@@ -953,6 +993,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-footer__top{grid-template-columns:1fr;gap:var(--nk-s-10);padding-block:44px 36px}
   .nk-footer__brand{gap:var(--nk-gap-lg)}
   .nk-footer__bottom{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-md);padding-block:22px}
+  /* the cluster stacks here, and a vertical rule between stacked rows reads as a
+     stray mark — the gap already separates them */
+  .nk-footer__meta{flex-direction:column;align-items:flex-start;gap:var(--nk-gap-md)}
+  .nk-footer__sep{display:none}
   .nk-footer__pay{gap:var(--nk-gap-md) var(--nk-gap-lg)}
   .nk-footer__pattern{opacity:.05}
 }
@@ -1568,8 +1612,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-hero-panel{padding:16px;gap:14px;border-radius:18px!important}
   /* the visitor is already on a phone — drop the device mockup + QR entirely so the
      hero is a tight value-prop stack with no dead vertical space (badge → headline →
-     body → search → trust → store badges). The <Image> keeps `preload` for the
-     desktop LCP; the mobile preload cost is accepted. */
+     body → search → trust → store badges). display:none does NOT stop an <img> from
+     being fetched, so the phone image is paired with a 1×1 <source> at this same
+     breakpoint (see Hero in sections-home.tsx) — that, not this rule, is what keeps
+     the desktop PNG off the wire here. */
   .nk-hero-media{display:none}
   /* denser left-column rhythm than the desktop --nk-stack-lg gap */
   .nk-hero-panel .nk-hero-intro{gap:12px!important}
@@ -1897,7 +1943,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
      The city field also stays — a height-toggled FIELD appeared/disappeared
      mid-scroll as mobile URL bars resized the viewport across the 700px line. */
   .nk-hero-panel .nk-body{font-size:14.5px;line-height:21px}
-  .nk-hero-media{min-height:260px}
   .nk-hero-panel .nk-search{padding:6px!important}
   .nk-hero-panel .nk-search .nk-btn{min-height:46px;margin-top:2px}
   .nk-appcta{border-radius:16px}
@@ -2072,22 +2117,28 @@ svg.nk-ico{stroke-width:1.75}
   .nk-offer__body{gap:5px!important}
   .nk-offer h3{font-size:15px!important;line-height:19px!important;min-height:38px!important}
   .nk-offer__eyebrow{font-size:11px!important;letter-spacing:.1em!important}
-  .nk-offer__body>span:not(.nk-offer__eyebrow){font-size:12.5px!important}
-  .nk-offer__body>span:not(.nk-offer__eyebrow) svg.nk-ico{width:13px!important;height:13px!important}
-  .nk-offer__pricebar{padding-top:8px!important}
-  .nk-offer__pricebar>span:first-child>span:first-child{font-size:18px!important}
-  .nk-offer__pricebar>span:first-child>span:last-child{font-size:11.5px!important}
-  .nk-offer__pricebar b{font-size:12.5px!important}
-  .nk-offer__pricebar b+span{font-size:12.5px!important}
-  .nk-offer__pricebar svg.nk-ico{width:13px!important;height:13px!important}
-  /* .o-new sits on the "Naujas" pill WRAPPER in cards.tsx OfferCard; the
+  /* A ~170px card can't hold eyebrow + rating side by side without ellipsizing the
+     eyebrow down to nothing, so the top row stacks instead — both stay readable,
+     left-aligned like the meta lines below them. */
+  .nk-offer__toprow{flex-wrap:wrap!important}
+  .o-new{margin-left:0!important}
+  /* body type: the location line and the rating read one step down */
+  .nk-offer__loc,.nk-offer__rate{font-size:12.5px!important}
+  .nk-offer__loc svg.nk-ico,.nk-offer__rate svg.nk-ico{width:13px!important;height:13px!important}
+  .nk-offer__foot{gap:8px!important;padding-top:6px!important}
+  .nk-offer__pricemain>span:first-child{font-size:18px!important}
+  .nk-offer__pricemain>span:last-child{font-size:11.5px!important}
+  /* .o-new / .o-discount sit on the Pill WRAPPER in cards.tsx OfferCard; the
      inline-styled Pill span inside is the >span target. */
-  .o-new>span{padding:4px 9px!important;font-size:11.5px!important}
-  .o-new svg.nk-ico{width:12px!important;height:12px!important}
+  .o-new>span,.o-discount>span{padding:4px 9px!important;font-size:11.5px!important}
+  .o-new svg.nk-ico,.o-discount svg.nk-ico{width:12px!important;height:12px!important}
   .nk-fav{width:36px!important;height:36px!important;top:10px!important;right:10px!important;border-radius:18px!important}
   .nk-fav svg.nk-ico{width:17px!important;height:17px!important}
   .nk-offer__badge{top:10px!important;left:10px!important;padding:4px 8px!important;font-size:10.5px!important;max-width:calc(100% - 52px)!important}
   .nk-offer__badge svg.nk-ico{width:11px!important;height:11px!important}
+  /* the media's photo-count chip pulls into the same 10px inset as the top chrome */
+  .nk-offer__count{bottom:10px!important;right:10px!important;padding:4px 8px!important;font-size:10.5px!important}
+  .nk-offer__count svg.nk-ico{width:11px!important;height:11px!important}
   .nk-offer__media .nk-imgicon{width:40px!important;height:40px!important}
 }
 /* --- tablet: comfortable reading measure for detail prose --- */

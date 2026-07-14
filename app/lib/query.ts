@@ -5,7 +5,7 @@
 // (staleTime keeps it fresh). No server-only imports here, so this module is
 // safe to pull into the client provider too.
 import { QueryClient, QueryCache, type QueryClientConfig } from "@tanstack/react-query";
-import * as Sentry from "@sentry/nextjs";
+import { captureException } from "./report-error";
 
 export const queryClientConfig: QueryClientConfig = {
   defaultOptions: {
@@ -25,13 +25,32 @@ export const queryClientConfig: QueryClientConfig = {
 function makeQueryCache() {
   return new QueryCache({
     onError: (error, query) => {
-      Sentry.captureException(error, { extra: { queryKey: query.queryKey } });
+      captureException(error, { queryKey: query.queryKey });
     },
   });
 }
 
-// A fresh client per server render — prefetch into it, then dehydrate. On the
-// client, app/providers.tsx keeps a single long-lived client in state instead.
+// A fresh client per server render — prefetch into it, then dehydrate. Never call
+// this on the client: see getQueryClient().
 export function makeQueryClient() {
   return new QueryClient({ ...queryClientConfig, queryCache: makeQueryCache() });
+}
+
+// In the browser the client must be a module singleton, NOT per-provider state.
+// <QueryProvider> is mounted per page rather than in the root layout (so the home
+// page ships no query runtime at all), and a page subtree unmounts on every
+// navigation — a per-provider client would therefore throw the whole cache away
+// each time, refetching categories on every route change and dropping the feed's
+// accumulated infinite-scroll pages on Back.
+//
+// On the server there is no singleton: each request must dehydrate its own cache,
+// or one visitor's data would leak into another's HTML.
+let browserQueryClient: QueryClient | undefined;
+
+export function getQueryClient(): QueryClient {
+  if (typeof window === "undefined") {
+    return makeQueryClient();
+  }
+  browserQueryClient ??= makeQueryClient();
+  return browserQueryClient;
 }

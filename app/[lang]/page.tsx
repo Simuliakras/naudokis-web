@@ -1,8 +1,7 @@
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { requireLocale, organizationJsonLd, webSiteJsonLd, faqJsonLd, softwareApplicationJsonLd } from "@/app/lib/seo";
-import { makeQueryClient } from "@/app/lib/query";
-import { fetchListings, listingsKey } from "@/app/lib/listings";
-import { fetchCategories, categoriesKey } from "@/app/lib/categories";
+import { fetchListings } from "@/app/lib/listings";
+import { fetchCategories } from "@/app/lib/categories";
+import { captureException } from "@/app/lib/report-error";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { Chrome } from "../components/Chrome";
 import { Nav, Categories, Offers, Faq, HowItWorks } from "../components/sections";
@@ -14,25 +13,45 @@ import { JsonLd } from "../components/JsonLd";
 // fetch revalidate in app/lib/listings.ts).
 export const revalidate = 300;
 
+// One retry, because this page must not degrade over a single blip: see below.
+async function retryOnce<T>(load: () => Promise<T>): Promise<T> {
+  try {
+    return await load();
+  } catch {
+    return await load();
+  }
+}
+
 export default async function Page({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
   // Invalid locale → real 404 via requireLocale (renders app/[lang]/not-found.tsx).
   const locale = requireLocale(lang);
   const dict = getDictionary(locale);
 
-  // Prefetch the same queries the Offers/Categories home sections read so the
-  // featured cards are present in the initial HTML.
-  const qc = makeQueryClient();
-  await Promise.all([
-    qc.prefetchQuery({ queryKey: listingsKey(locale), queryFn: () => fetchListings(locale, {}) }),
-    qc.prefetchQuery({ queryKey: categoriesKey(locale), queryFn: () => fetchCategories(locale) }),
-  ]);
+  // These shelves are fully represented in the initial HTML, so pass their data
+  // straight to the sections instead of hydrating a client query cache only to
+  // read it once — that is what keeps the query runtime out of the home bundle.
+  //
+  // It also means a failed fetch must THROW rather than render a "couldn't load"
+  // shelf. This route is ISR: a degraded render produced during a background
+  // regeneration would be written to the cache and served to every visitor for the
+  // next five minutes, with no client-side query left to recover it. Throwing keeps
+  // the last good entry in place and lets Next retry on the next request.
+  const [offers, categories] = await Promise.all([
+    retryOnce(() => fetchListings(locale, {})),
+    retryOnce(() => fetchCategories(locale)),
+  ]).catch((error: unknown) => {
+    // Report explicitly: with no QueryClient on this page there is no QueryCache
+    // onError hook, so an unreported catalogue outage here would be invisible.
+    captureException(error, { route: "home", locale });
+    throw error;
+  });
 
   // Interactive sections (Nav, Categories, Offers, Faq) are client components;
   // the presentational ones render on the server and take `locale` directly
   // (sections-home.tsx) so their markup stays out of the client bundle.
   return (
-    <HydrationBoundary state={dehydrate(qc)}>
+    <>
       <JsonLd data={organizationJsonLd()} />
       <JsonLd data={softwareApplicationJsonLd()} />
       <JsonLd data={webSiteJsonLd(locale)} />
@@ -42,8 +61,8 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
           <Nav />
           <main id="nk-main">
             <Hero locale={locale} />
-            <Categories />
-            <Offers />
+            <Categories data={categories} />
+            <Offers data={offers} categories={categories} />
             <Features locale={locale} />
             <HowItWorks />
             <CtaBanner locale={locale} />
@@ -57,6 +76,6 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
           <Footer locale={locale} />
         </div>
       </Chrome>
-    </HydrationBoundary>
+    </>
   );
 }

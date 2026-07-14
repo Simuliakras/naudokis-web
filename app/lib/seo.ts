@@ -378,6 +378,10 @@ export function listingJsonLd({
     price,
     priceCurrency: "EUR",
     url,
+    // No `availability`: an active listing is not the same as an item free to rent.
+    // Booking calendars live in the app, and this site cannot see them — so stating
+    // InStock would assert a fact we do not have (see the rule on never emitting
+    // JSON-LD fields that aren't on the wire).
     priceSpecification: {
       "@type": "UnitPriceSpecification",
       price,

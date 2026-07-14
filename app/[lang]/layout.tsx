@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "../globals.css";
-import { Providers } from "../providers";
 import { I18nProvider } from "../components/I18nProvider";
 import { ScrollToTop } from "../components/ScrollToTop";
 import { Analytics } from "../components/Analytics";
+import { WebVitals } from "../components/WebVitals";
 import { defaultLocale, locales, isLocale, localeHome } from "@/app/lib/i18n/config";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { APP_STORE_ID } from "@/app/lib/contact";
@@ -121,13 +121,16 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
             forces React to client-render this subtree. Leave this as a raw <script>. */}
         <script id="nk-bridge-bootstrap" dangerouslySetInnerHTML={{ __html: BRIDGE_BOOTSTRAP }} />
         <a href="#nk-main" className="nk-skip">{dict.common.skipToContent}</a>
-        <Providers>
-          <I18nProvider locale={locale}>
-            <ScrollToTop />
-            {children}
-          </I18nProvider>
-        </Providers>
-        {plausibleDomain && <Analytics domain={plausibleDomain} src={plausibleSrc} />}
+        <I18nProvider locale={locale}>
+          <ScrollToTop />
+          {children}
+        </I18nProvider>
+        {plausibleDomain && (
+          <>
+            <Analytics domain={plausibleDomain} src={plausibleSrc} />
+            <WebVitals />
+          </>
+        )}
       </body>
     </html>
   );

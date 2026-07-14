@@ -15,6 +15,7 @@ import { localePath } from "@/app/lib/i18n/config";
 import { truncate } from "@/app/lib/legal/format";
 import { ListingScreen } from "@/app/components/ListingScreen";
 import { JsonLd } from "@/app/components/JsonLd";
+import { QueryProvider } from "@/app/providers";
 
 // Per-listing detail is unbounded dynamic data — render on demand, cache 5 min.
 // (Literal to satisfy Next's static segment-config analysis; same value as
@@ -174,10 +175,12 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
     : null;
 
   return (
-    <HydrationBoundary state={dehydrate(qc)}>
-      <JsonLd data={breadcrumb} />
-      {product && <JsonLd data={product} />}
-      <ListingScreen id={listingId} />
-    </HydrationBoundary>
+    <QueryProvider>
+      <HydrationBoundary state={dehydrate(qc)}>
+        <JsonLd data={breadcrumb} />
+        {product && <JsonLd data={product} />}
+        <ListingScreen id={listingId} />
+      </HydrationBoundary>
+    </QueryProvider>
   );
 }

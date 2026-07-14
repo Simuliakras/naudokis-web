@@ -6,11 +6,13 @@
 // inlined colors below intentionally mirror specific --nk-* tokens from
 // globals.css (--nk-bg, --nk-text, --nk-text-2, --nk-purple); keep them in sync.
 import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
+import { captureException } from "@/app/lib/report-error";
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  // Via report-error, so this boundary — which is in every page's client graph —
+  // does not statically pull the Sentry SDK into the default bundle.
   useEffect(() => {
-    Sentry.captureException(error);
+    captureException(error);
   }, [error]);
 
   return (

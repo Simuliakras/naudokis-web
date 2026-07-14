@@ -1,10 +1,12 @@
-// Sentry init for the browser, loaded lazily so DSN-less builds ship none of
-// the ~130 KB SDK. A failed chunk load must degrade to "no monitoring", never
-// to an unhandled promise rejection — hence the shared, pre-caught promise.
+// Sentry init for the browser. The SDK is loaded lazily and shared through
+// app/lib/report-error.ts — every browser-side Sentry caller goes through that one
+// promise, so DSN-less builds ship none of the ~130 KB SDK, the chunk is fetched at
+// most once, and a failed chunk load degrades to "no monitoring" rather than an
+// unhandled rejection.
+import { sentry } from "@/app/lib/report-error";
 import { scrubBreadcrumb, scrubEvent } from "@/app/lib/sentry-scrub";
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
-const sentry = dsn ? import("@sentry/nextjs").catch(() => null) : null;
 
 void sentry?.then((Sentry) =>
   Sentry?.init({

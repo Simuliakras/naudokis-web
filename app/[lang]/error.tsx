@@ -3,7 +3,7 @@
 // layout, so I18nProvider + site chrome are available. `reset()` re-renders the
 // failed segment (the retry CTA). Sentry capture is wired in instrumentation.
 import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
+import { captureException } from "@/app/lib/report-error";
 import { StatusScreen } from "@/app/components/StatusScreen";
 import { useI18nOptional } from "@/app/components/I18nProvider";
 
@@ -11,8 +11,10 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   const { dict } = useI18nOptional();
   const t = dict.errors;
 
+  // Via report-error, so this boundary — which is in every page's client graph —
+  // does not statically pull the Sentry SDK into the default bundle.
   useEffect(() => {
-    Sentry.captureException(error);
+    captureException(error);
   }, [error]);
 
   return (

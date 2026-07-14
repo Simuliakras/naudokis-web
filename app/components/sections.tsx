@@ -2,7 +2,7 @@
 // Naudokis UI kit — interactive page sections (state/hooks/handlers). The
 // presentational homepage sections live in sections-home.tsx so the home page
 // can render them as server components.
-import { useCategories } from "@/app/lib/categories";
+import type { Category } from "@/app/lib/categories";
 import { categoryIconFor, categoryNameFor } from "@/app/lib/category-style";
 import {
   barePath,
@@ -12,7 +12,9 @@ import {
   type Locale,
 } from "@/app/lib/i18n/config";
 import type { FaqItem } from "@/app/lib/i18n/types";
-import { useListings, photoFirst } from "@/app/lib/listings";
+// listing-view, not listings — see the note in cards.tsx: importing the hooks module
+// would put react-query in the home page's bundle for the sake of a sort function.
+import { photoFirst, type Offer } from "@/app/lib/listing-view";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
@@ -23,10 +25,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   CategoryCard,
-  CategoryCardSkeleton,
   FaqRow,
   OfferCard,
-  OfferCardSkeleton,
   SectionEmptyGrid,
 } from "./cards";
 import { useI18n } from "./I18nProvider";
@@ -468,15 +468,18 @@ const HOME_SHELF_IDS = [
   "electronics_tech", "audio_music_events", "events_parties", "clothing_accessories", "kids",
 ] as const;
 
-export function Categories() {
+// `data` is fetched by the home page (a server component) and passed straight in —
+// there is no loading or error state to model here: the page throws rather than
+// render a degraded shelf (see app/[lang]/page.tsx), so by the time this renders the
+// data is settled. An empty list means the catalogue really is empty.
+export function Categories({ data }: { data: Category[] }) {
   const { locale, dict } = useI18n();
+  const router = useRouter();
   const t = dict.categories;
-  const { data, isLoading, isError, refetch } = useCategories(locale);
-  const cats = data ?? [];
-  const curated = HOME_SHELF_IDS.flatMap((id) => cats.find((c) => c.id === id) ?? []);
+  const curated = HOME_SHELF_IDS.flatMap((id) => data.find((c) => c.id === id) ?? []);
   // Guard against id-vocabulary drift on the wire: never show an empty shelf
   // while the backend actually has categories.
-  const list = curated.length ? curated : cats.slice(0, HOME_SHELF_IDS.length);
+  const list = curated.length ? curated : data.slice(0, HOME_SHELF_IDS.length);
   return (
     <Section id="kategorijos" contained bottom="head">
       <SectionHead
@@ -494,23 +497,7 @@ export function Categories() {
           </Link>
         }
       />
-      {isLoading ? (
-        <div className="nk-grid-cats nk-cats-shelf">
-          {Array.from({ length: HOME_SHELF_IDS.length }).map((_, i) => (
-            <CategoryCardSkeleton key={i} />
-          ))}
-        </div>
-      ) : isError ? (
-        <SectionEmptyGrid
-          variant="categories"
-          tone="danger"
-          icon="LayoutGrid"
-          title={t.errorTitle}
-          subtitle={t.errorSubtitle}
-          primaryLabel={t.errorAction}
-          onPrimary={() => refetch()}
-        />
-      ) : list.length ? (
+      {list.length ? (
         <div className="nk-grid-cats nk-cats-shelf nk-reveal-grid">
           {list.map((c) => (
             <CategoryCard
@@ -539,7 +526,7 @@ export function Categories() {
             })
           }
           secondaryLabel={t.bandEmptyRetry}
-          onSecondary={() => refetch()}
+          onSecondary={() => router.refresh()}
         />
       )}
     </Section>
@@ -547,17 +534,14 @@ export function Categories() {
 }
 
 /* ---------------- Offers ---------------- */
-export function Offers() {
+// Server-fetched by the home page, like Categories above — no loading/error state.
+export function Offers({ data, categories }: { data: Offer[]; categories: Category[] }) {
   const { locale, dict } = useI18n();
   const router = useRouter();
   const t = dict.offers;
-  const { data, isLoading, isError, refetch } = useListings(locale);
-  // Already prefetched/cached for the Categories band — only read for the
-  // empty-photo placeholder glyphs.
-  const cats = useCategories(locale).data ?? [];
   // Photo safeguard: surface photo-bearing listings in the flagship "Popular
   // items" band so it isn't a row of category-icon placeholders.
-  const list = photoFirst(data ?? []).slice(0, 5);
+  const list = photoFirst(data).slice(0, 5);
   return (
     <Section id="skelbimai" contained top="head">
       <SectionHead
@@ -575,23 +559,7 @@ export function Offers() {
           </Link>
         }
       />
-      {isLoading ? (
-        <div className="nk-grid-4">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <OfferCardSkeleton key={i} />
-          ))}
-        </div>
-      ) : isError ? (
-        <SectionEmptyGrid
-          variant="offers"
-          tone="danger"
-          icon="SearchX"
-          title={t.errorTitle}
-          subtitle={t.errorSubtitle}
-          primaryLabel={t.errorAction}
-          onPrimary={() => refetch()}
-        />
-      ) : list.length ? (
+      {list.length ? (
         <div className="nk-grid-4 nk-reveal-grid">
           {list.map((o) => (
             <OfferCard
@@ -605,9 +573,11 @@ export function Offers() {
               rating={o.rating}
               ratingCount={o.ratingCount}
               hasDelivery={o.hasDelivery}
+              photoCount={o.photoCount}
+              discount={o.discount}
               category={o.category}
-              categoryName={categoryNameFor(cats, o.category)}
-              categoryIcon={categoryIconFor(cats, o.category)}
+              categoryName={categoryNameFor(categories, o.category)}
+              categoryIcon={categoryIconFor(categories, o.category)}
               href={localePath(locale, listingDetailPath({ id: o.id, title: o.title, city: o.city }))}
             />
           ))}

@@ -7,6 +7,7 @@ import { fetchAllCategories, categoriesKey } from "@/app/lib/categories";
 import { listingLandingPath } from "@/app/lib/landing-routes";
 import { CategoriesScreen } from "@/app/components/CategoriesScreen";
 import { JsonLd } from "@/app/components/JsonLd";
+import { QueryProvider } from "@/app/providers";
 
 // Categories change rarely — statically generate per locale, revalidate hourly.
 export const revalidate = 3600;
@@ -69,10 +70,12 @@ export default async function Page({ params }: PageProps<"/[lang]/kategorijos">)
     : null;
 
   return (
-    <HydrationBoundary state={dehydrate(qc)}>
-      <JsonLd data={breadcrumb} />
-      {collection && <JsonLd data={collection} />}
-      <CategoriesScreen allCategories={allCategories} />
-    </HydrationBoundary>
+    <QueryProvider>
+      <HydrationBoundary state={dehydrate(qc)}>
+        <JsonLd data={breadcrumb} />
+        {collection && <JsonLd data={collection} />}
+        <CategoriesScreen allCategories={allCategories} />
+      </HydrationBoundary>
+    </QueryProvider>
   );
 }

@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# naudokis.lt
 
-## Getting Started
+The public marketing site for **Naudokis** — a peer-to-peer item-rental app in Lithuania.
+Browsing and search run on live backend data; transactional actions (reserve, favourite,
+contact) are deliberately locked and open an app-install bridge instead.
 
-First, run the development server:
+Bilingual: Lithuanian is the default and is served unprefixed at `/`; English lives at `/en`.
+
+Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind 4 + the `--nk-*` design
+tokens in `app/globals.css` · TanStack Query. See `CLAUDE.md` for the architecture and
+conventions, and `AGENTS.md` before writing any Next.js code — this version has breaking
+changes from older ones.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+yarn dev         # dev server on http://localhost:3000
+yarn build       # production build
+yarn start       # serve the production build
+yarn lint
+yarn type-check
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The site reads the production catalogue by default. Point it at dev from `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://api-dev.naudokis.lt
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Release verification
 
-## Learn More
+Build and start the new site **with its production environment**, then audit that server
+(never the legacy `www.naudokis.lt` deployment) before promoting it:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+yarn build
+yarn start
+RELEASE_ORIGIN=https://new-site-preview.example \
+NEXT_PUBLIC_PLAUSIBLE_DOMAIN=naudokis.lt \
+NEXT_PUBLIC_SENTRY_DSN=https://… \
+yarn verify:release
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The gate rejects a dev catalogue, missing RUM / error-monitoring configuration, bad
+canonical or indexing output, missing listing sitemaps, and an unavailable Web Vitals
+endpoint.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`NEXT_PUBLIC_*` values are inlined at **build** time, so run this with the same environment
+the build used — otherwise the env checks pass while the served bundle still points
+somewhere else. The robots/sitemap assertions inspect the actual response and will catch a
+dev-API build regardless.
 
-## Deploy on Vercel
+## Testing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+yarn test:e2e          # Playwright — production-readiness + responsive sweeps
+yarn verify:app-links  # App Links / Universal Links association files
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Run Playwright against a production build (`yarn start`), not `next dev`, and never rebuild
+while a server is live — it swaps the chunks out from under the running app.

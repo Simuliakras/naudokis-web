@@ -339,6 +339,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     <div key={o.id} className="nk-reveal" role="listitem" style={{ display: "grid" }}>
       <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
         rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
+        photoCount={o.photoCount} discount={o.discount}
         img={o.img} category={o.category} categoryName={categoryNameFor(cats, o.category)} categoryIcon={categoryIconFor(cats, o.category)}
         imageLoading={eager && index < Math.max(1, columns) ? "eager" : "lazy"}
         href={localePath(locale, listingDetailPath({ id: o.id, title: o.title, city: o.city }))} />

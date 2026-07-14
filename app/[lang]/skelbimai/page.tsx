@@ -7,11 +7,13 @@ import { localePath } from "@/app/lib/i18n/config";
 import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding, NOINDEX_FOLLOW, MIN_INDEXABLE_LISTINGS } from "@/app/lib/seo";
 import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { makeQueryClient } from "@/app/lib/query";
-import { fetchListingsCount, fetchListingsPage, listingsInfiniteKey, LISTINGS_FIRST_CURSOR, LISTINGS_PAGE_SIZE, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
+import { fetchListingsCount, fetchListingsPage, listingsInfiniteKey, listingsNeededForPage, LISTINGS_FIRST_CURSOR, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
 import { fetchCategories, categoriesKey, type Category } from "@/app/lib/categories";
 import { catalogueFiltersFromSearch, firstValue, pageFromLandingSearch, hasNonCanonicalLandingSearch, type LandingSearchParams } from "@/app/lib/landing-params";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
+import { PageHead } from "@/app/components/headers";
+import { QueryProvider } from "@/app/providers";
 
 // Read the ?q/?cat/?city/?sort filters server-side, matching FeedScreen's hook.
 type RawSearch = LandingSearchParams;
@@ -77,13 +79,16 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
   ) {
     md.robots = NOINDEX_FOLLOW;
   } else {
-    // Full walk (no stopAt): totalPages below needs the real total.
+    // Only count far enough to prove that this page exists and, for an SEO
+    // landing, that the catalogue clears the minimum-usefulness threshold.
+    // Page 1 of the bare feed needs one public result; page N needs the first
+    // result that would land on that page.
+    const needed = listingsNeededForPage(page, isLanding ? MIN_INDEXABLE_LISTINGS : 1);
     const count = await fetchListingsCount({
       category: landing.category?.id,
       city: landing.city,
-    }).catch(() => 0);
-    const totalPages = Math.ceil(count / LISTINGS_PAGE_SIZE);
-    if ((page > 1 && page > totalPages) || (isLanding && count < MIN_INDEXABLE_LISTINGS) || (!isLanding && count <= 0)) {
+    }, { stopAt: needed }).catch(() => 0);
+    if (count < needed) {
       md.robots = NOINDEX_FOLLOW;
     }
   }
@@ -143,24 +148,34 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
   const itemList = itemListJsonLd(locale, listings.map((l) => ({ id: l.id, name: l.title, city: l.city })));
 
   return (
-    <HydrationBoundary state={dehydrate(qc)}>
-      <JsonLd data={breadcrumb} />
-      {collectionPage && <JsonLd data={collectionPage} />}
-      {listings.length > 0 && <JsonLd data={itemList} />}
-      {/* FeedScreen reads ?q/?cat/?city/?sort/?delivery via useSearchParams, which
-          requires a Suspense boundary on a prerendered route (Next.js 16). */}
-      <Suspense fallback={(
-        <main className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px" }}>
-          <h1 className="nk-h-page">{filters.q ? t.titleSearch : t.titleAll}</h1>
-          <p className="nk-subtitle">{filters.q ? t.subtitleSearch(filters.q) : t.subtitleAll}</p>
-          <form action={localePath(locale, "/skelbimai")} method="get" role="search" className="nk-search" style={{ marginTop: 24 }}>
-            <input name="q" defaultValue={filters.q} aria-label={t.searchPlaceholder} placeholder={t.searchPlaceholder} />
-            <button type="submit">{search.submit}</button>
-          </form>
-        </main>
-      )}>
-        <FeedScreen />
-      </Suspense>
-    </HydrationBoundary>
+    <QueryProvider>
+      <HydrationBoundary state={dehydrate(qc)}>
+        <JsonLd data={breadcrumb} />
+        {collectionPage && <JsonLd data={collectionPage} />}
+        {listings.length > 0 && <JsonLd data={itemList} />}
+        {/* FeedScreen reads ?q/?cat/?city/?sort/?delivery via useSearchParams, which
+            requires a Suspense boundary on a prerendered route (Next.js 16). This
+            fallback is what a crawler (or a visitor without JS) actually gets, so it
+            stays content-bearing — a real H1 and a working GET search form, not a
+            skeleton. It uses the same PageHead as FeedScreen and the route-level
+            loading.tsx so the head does not shift as the screen takes over. */}
+        <Suspense fallback={(
+          <main className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px" }}>
+            <PageHead
+              eyebrow={t.eyebrow}
+              title={filters.q ? t.titleSearch : t.titleAll}
+              subtitle={filters.q ? t.subtitleSearch(filters.q) : t.subtitleAll}
+              maxWidth="65ch"
+            />
+            <form action={localePath(locale, "/skelbimai")} method="get" role="search" className="nk-search">
+              <input name="q" defaultValue={filters.q} aria-label={t.searchPlaceholder} placeholder={t.searchPlaceholder} />
+              <button type="submit">{search.submit}</button>
+            </form>
+          </main>
+        )}>
+          <FeedScreen />
+        </Suspense>
+      </HydrationBoundary>
+    </QueryProvider>
   );
 }

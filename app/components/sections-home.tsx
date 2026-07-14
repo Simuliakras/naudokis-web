@@ -55,14 +55,24 @@ export function Hero({ locale }: { locale: Locale }) {
           </div>
           {/* right column — real app device + QR */}
           <div className="nk-hero-media" style={{ position: "relative", zIndex: 1 }}>
-            {/* LCP image: next/image serves responsive AVIF/WebP and `preload`
-                preloads the desktop candidate. The ≤560px candidate is tiny on
-                purpose — the device mockup is `display:none` there (see globals),
-                so phones don't waste bandwidth preloading an image they never show. */}
-            <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt}
-              width={714} height={968} preload
-              sizes="(max-width: 560px) 60px, (max-width: 1024px) 80vw, 420px"
-              style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
+            {/* The phone is the desktop LCP candidate, so it loads eagerly at high
+                fetch priority. It is deliberately NOT `preload`ed: preload emits a
+                <link rel=preload imagesrcset> that ignores <picture>/<source media>
+                selection, so phones would download the desktop PNG they never show.
+                `fetchPriority` alone would not do — next/image treats an Image with
+                neither `preload` nor `loading` as lazy, which is the opposite of
+                what an LCP element wants. */}
+            <picture>
+              {/* Browsers fetch an <img> even inside a display:none ancestor, and the
+                  whole media column is display:none below 560px. Selecting a 1×1 GIF
+                  there means the desktop URL is never requested on phones — the only
+                  candidate the browser resolves is this one. */}
+              <source media="(max-width: 560px)" srcSet="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" />
+              <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt}
+                width={714} height={968} loading="eager" fetchPriority="high"
+                sizes="(max-width: 1024px) 80vw, 420px"
+                style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
+            </picture>
             <div className="nk-hero-qr" style={{ position: "absolute", right: "clamp(16px, 2vw, 32px)", bottom: 0 }}><QR size={132} /></div>
           </div>
         </div>
@@ -162,16 +172,22 @@ export function Footer({ locale }: { locale: Locale }) {
 
         <div className="nk-footer__bottom">
           <span className="nk-footer__legal">{t.copyright}</span>
-          {/* Client leaf: the install-attribution choice must be changeable/withdrawable
-              from any page, so it lives in the footer rather than only in the prompt. */}
-          <PrivacyChoices />
-          {/* Payment methods accepted in the app (via Stripe) — the site itself takes
-              no payment. */}
-          <div className="nk-footer__pay">
-            {FOOTER_PAY.map(([f, a]) => (
-              <Image key={f} src={`/naudokis/${f}.png`} alt={a} width={100} height={52}
-                style={{ height: 30, width: "auto" }} />
-            ))}
+          {/* Privacy control and payment marks read as one trailing cluster, split by a
+              hairline: both answer "what does this site do with me / my money", and the
+              copyright keeps the opposite edge to itself. */}
+          <div className="nk-footer__meta">
+            {/* Client leaf: the install-attribution choice must be changeable/withdrawable
+                from any page, so it lives in the footer rather than only in the prompt. */}
+            <PrivacyChoices />
+            <span className="nk-footer__sep" aria-hidden />
+            {/* Payment methods accepted in the app (via Stripe) — the site itself takes
+                no payment. */}
+            <div className="nk-footer__pay">
+              {FOOTER_PAY.map(([f, a]) => (
+                <Image key={f} src={`/naudokis/${f}.png`} alt={a} width={100} height={52}
+                  style={{ height: 30, width: "auto" }} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
