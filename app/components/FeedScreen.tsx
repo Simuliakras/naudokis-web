@@ -462,7 +462,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
                 </span>
                 {/* mobile-only: collapses category/city/price/delivery/sort into a sheet */}
                 <button type="button" className={"nk-pillctl nk-filters-mobilebtn" + (activeFilterCount ? " is-active" : "")} onClick={() => setFiltersOpen(true)}
-                  aria-haspopup="dialog" aria-expanded={filtersOpen} style={{ alignItems: "center", gap: 8, padding: "11px 16px", borderRadius: 999, minHeight: "var(--nk-tap)", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, cursor: "pointer", whiteSpace: "nowrap" }}>
+                  aria-haspopup="dialog" aria-expanded={filtersOpen} style={{ alignItems: "center", gap: 8, padding: "11px 16px", borderRadius: 999, minHeight: "var(--nk-control-h)", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, cursor: "pointer", whiteSpace: "nowrap" }}>
                   <Icon name="SlidersHorizontal" size={17} stroke={2} color="currentColor" />
                   {t.filtersButton}
                   {activeFilterCount > 0 && <span className="nk-filters-badge">{activeFilterCount}</span>}

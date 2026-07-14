@@ -25,13 +25,13 @@ This Privacy Policy explains what personal data we process about you, why we do 
 **Registered office address:** Numėjos g. 6, LT-08402 Vilnius, Lithuania  
 **Privacy questions and requests:** info@naudokis.lt
 
-“Naudokis” is an item rental platform operating in Lithuania. This Policy applies to the “Naudokis” website, mobile application, administration tools, and related account, listing, booking, payment, payout, identity verification, messaging, support, dispute, moderation, and notification functions.
+“Naudokis” is an item rental platform operating in Lithuania. This Policy applies to the “Naudokis” website, mobile application, administration tools, and related account, listing, reservation, payment, payout, identity verification, messaging, support, dispute, moderation, and notification functions.
 
 The Terms of Use set out the rules for using the Platform and for rental transactions. This Policy explains how personal data are processed in connection with those activities. Terms defined in the Terms of Use have the same meaning in this Policy unless expressly stated otherwise.
 
 ## In brief
 
-- We process core account, listing, booking, and communication data in order to provide the Platform services.
+- We process core account, listing, reservation, and communication data in order to provide the Platform services.
 - Payments and payouts are processed by Stripe. “Naudokis” does not store the full payment card number, CVC, or PIN.
 - Didit may be used for identity and age verification, and Stripe may be used for payment or payout checks.
 - We display publicly only the information necessary for a listing and for trust. More precise contact and handover details are disclosed only when needed for a transaction.
@@ -59,8 +59,8 @@ Service providers that process data solely on our instructions are our data proc
 
 We obtain data:
 
-- **from you**, when you register, complete your profile, list an item, make a booking, pay, communicate, contact support, submit evidence, or leave a review;
-- **from other Users**, when they provide information concerning you in a booking, message, review, report, or dispute;
+- **from you**, when you register, complete your profile, list an item, make a reservation, pay, communicate, contact support, submit evidence, or leave a review;
+- **from other Users**, when they provide information concerning you in a reservation, message, review, report, or dispute;
 - **automatically**, when you use the Platform, for example from session, device, security, diagnostics, cookie, or SDK events;
 - **from service providers**, for example payment, identity-verification, social-login, address, analytics, or communications providers;
 - **from registers, authorities, or public sources**, where this is necessary to verify identity, business information, VAT status, taxes, security, or legal defence.
@@ -112,11 +112,11 @@ We may process:
 - the approximate location of the listing;
 - listing status, history, and moderation information.
 
-### 3.5. Bookings, payments, and payouts
+### 3.5. Reservations, payments, and payouts
 
 We may process:
 
-- the parties to the Booking, dates, status, and handover or delivery method;
+- the parties to the Reservation, dates, status, and handover or delivery method;
 - the rental price, Platform fee, Security Deposit, and other calculations;
 - Stripe customer, payment, refund, transfer, and payout identifiers;
 - authorisation, capture, refund, payout, and payment-dispute statuses;
@@ -155,7 +155,7 @@ We process precise device-location data only where a function uses those data an
 
 We may process:
 
-- a rating, review text, and its relationship to a Booking;
+- a rating, review text, and its relationship to a Reservation;
 - the publicly displayed name and the User’s role in the transaction;
 - verification, activity, and other trust signals displayed on the Platform;
 - favourited Listings and other account preferences.
@@ -186,13 +186,13 @@ We do not seek to collect special-category data through the Platform’s general
 
 We identify mandatory fields at the relevant stage of the Platform.
 
-Account and login data are necessary to create and protect an account. Listing, Booking, payment, handover, or return data are necessary only when you use the corresponding function. Telephone, identity, business, tax, invoicing, and payout data may be necessary because of the chosen function, payment-provider requirements, transaction risk, or law.
+Account and login data are necessary to create and protect an account. Listing, Reservation, payment, handover, or return data are necessary only when you use the corresponding function. Telephone, identity, business, tax, invoicing, and payout data may be necessary because of the chosen function, payment-provider requirements, transaction risk, or law.
 
 If you do not provide mandatory data, we may be unable to:
 
 - create or verify an account;
 - publish a Listing;
-- submit or accept a Booking;
+- submit or accept a Reservation;
 - process a payment, refund, or payout;
 - issue an accounting document;
 - provide a function for which those data are necessary.
@@ -206,7 +206,7 @@ The principal purposes and legal bases under the GDPR are set out below.
 | Purpose of processing | Main legal basis |
 | --- | --- |
 | Create and administer an account and authenticate the User | Performance of a contract or steps taken before entering into a contract |
-| List items and manage Bookings, messages, handover, return, and reviews | Performance of a contract |
+| List items and manage Reservations, messages, handover, return, and reviews | Performance of a contract |
 | Process payments, Security Deposits, refunds, and payouts | Performance of a contract; legal obligation, where applicable |
 | Verify age, identity, business representation, or entitlement to receive payouts | Performance of a contract; legitimate interest in preventing fraud; legal obligation, where specifically applicable |
 | Detect fake accounts, use of multiple accounts, stolen items, fraud, failure to return items, or attempts to circumvent the Platform | Legitimate interest in protecting Users, the Platform, and transactions |
@@ -242,11 +242,11 @@ A public Listing may display:
 
 We do not display the exact address, full telephone number, email address, or identity documents publicly.
 
-### 6.2. To registered Users or the parties to a Booking
+### 6.2. To registered Users or the parties to a Reservation
 
-When a Booking Request is submitted, limited profile, date, delivery, and request information may be shown to the other party.
+When a Reservation Request is submitted, limited profile, date, delivery, and request information may be shown to the other party.
 
-Once a Booking is confirmed, the parties may be provided with contact details, a more precise collection or delivery address, handover information, and messages necessary for the transaction.
+Once a Reservation is confirmed, the parties may be provided with contact details, a more precise collection or delivery address, handover information, and messages necessary for the transaction.
 
 During handover, return, or a dispute, the parties may be provided with condition evidence, photographs, timestamps, payment or Security Deposit information, and a summary of the decision to the extent required for the process.
 
@@ -293,7 +293,7 @@ Data may also be received by:
 
 - banks, card networks, and other payment-infrastructure participants;
 - Apple, Google, or Facebook when you choose social login;
-- the other party to a Booking, a business customer, or a Trader;
+- the other party to a Reservation, a business customer, or a Trader;
 - accounting, audit, legal, and other professional advisers;
 - the State Tax Inspectorate (VMI), VIES / European Commission systems, courts, law-enforcement bodies, supervisory authorities, and other public authorities where we are required or lawfully permitted to provide data.
 
@@ -375,7 +375,7 @@ Essential diagnostics do not, by themselves, enable Mixpanel or AppsFlyer. If a 
 
 The public website uses Plausible Analytics without analytics cookies or persistent browser-storage identifiers. It is not loaded on token-bearing account-action pages. The browser integration may process the page URL, referring page, interaction or conversion event, and technical request information such as IP address and user agent to produce aggregate audience statistics. Search and other ordinary non-token URL parameters may form part of the page URL reported by the browser integration.
 
-Redirect and native-handoff endpoints may also send a server-side event. For those events we remove the URL query string and fragment before transmission. The event may include the redirect outcome, platform, target type, placement or campaign parameters, and a pseudonymous journey identifier used to connect an app-handoff outcome. We do not send Plausible your name, email address, payment details, Booking identifier, full handoff token, or the precise address of a rental item.
+Redirect and native-handoff endpoints may also send a server-side event. For those events we remove the URL query string and fragment before transmission. The event may include the redirect outcome, platform, target type, placement or campaign parameters, and a pseudonymous journey identifier used to connect an app-handoff outcome. We do not send Plausible your name, email address, payment details, Reservation identifier, full handoff token, or the precise address of a rental item.
 
 This processing is based on our legitimate interest in measuring and improving the public website and the web-to-app bridge. The configured integration does not write analytics cookies or a persistent identifier to browser storage and currently runs independently of the Mixpanel or AppsFlyer consent choice. You may object to legitimate-interest processing as described in Section 14. If the configuration changes to use cookies, local storage, advertising identifiers, or another non-essential terminal-equipment technology—or if prior consent is otherwise required for the deployed technology—we will obtain consent before enabling that processing.
 
@@ -404,7 +404,7 @@ Depending on the configuration, AppsFlyer may receive:
 - selected actions in the App;
 - for a completed rental, a pseudonymous User identifier, event time, revenue, and currency.
 
-We do not send AppsFlyer your name, email address, full payment-card details, Booking identifier, or the precise address of the rental item.
+We do not send AppsFlyer your name, email address, full payment-card details, Reservation identifier, or the precise address of the rental item.
 
 Transactional emails and their action links are not routed through AppsFlyer. An invitation link first opens a page controlled by “Naudokis”; AppsFlyer must not be loaded from that page before consent.
 
@@ -419,7 +419,7 @@ Withdrawal does not, by itself, erase data previously received by AppsFlyer. You
 
 ### 10.6. Push notifications
 
-Push notifications may be used for Bookings, payments, messages, handover, security, support, or marketing.
+Push notifications may be used for Reservations, payments, messages, handover, security, support, or marketing.
 
 You may disable the device permission for notifications at any time. If you opt out of marketing or disable notifications, you may still receive essential information through another channel, such as email or the Platform.
 
@@ -439,7 +439,7 @@ Signals used may include age, the verification result, use of the same document 
 Possible consequences include:
 
 - identity verification is not completed or is rejected;
-- a Booking, payment, Listing, or payout function is temporarily restricted;
+- a Reservation, payment, Listing, or payout function is temporarily restricted;
 - Content is referred for additional review;
 - an account or transaction is referred for human assessment.
 
@@ -473,7 +473,7 @@ We retain data no longer than necessary for the specific purpose, legal requirem
 | Account and profile data | While the account is active. After account closure, only for as long as required for remaining legal, security, dispute, or compliance obligations |
 | Records of acceptance of legal documents | Until the end of the period during which it may be necessary to prove consent, acceptance of the Terms, or legal compliance |
 | Listings and public Content | While active; after removal, on a limited basis where required for moderation, DSA evidence, a dispute, or legal defence |
-| Bookings, payments, Security Deposits, refunds, and payouts | In accordance with accounting, tax, payment, and dispute requirements; financial and accounting documents may be retained for up to 10 years or longer if required by law |
+| Reservations, payments, Security Deposits, refunds, and payouts | In accordance with accounting, tax, payment, and dispute requirements; financial and accounting documents may be retained for up to 10 years or longer if required by law |
 | Identity-verification status and audit records | While the account is active; verification remains valid for up to 730 days from verification or until the document expires, whichever is earlier; deleted upon final account deletion if there is no other lawful basis for retention |
 | Raw identity-document images in “Naudokis” systems | Generally not retained; if received, retained only for the period necessary for a specific verification, dispute, payment, tax, security, or legal purpose |
 | Verification data retained by Didit | In accordance with the retention period set in the “Naudokis” contract and Didit account; it must correspond to what is necessary for the specific verification purpose |
@@ -503,7 +503,7 @@ If a dispute, authority investigation, security incident, or court proceeding is
 When an account is closed:
 
 - the public profile and active Listings are removed or hidden;
-- any active payment, Booking, Security Deposit, payout, or dispute must be completed;
+- any active payment, Reservation, Security Deposit, payout, or dispute must be completed;
 - financial, accounting, tax, and legal records remain for the specified period;
 - messages or evidence may remain where needed by the other party to the transaction, for a dispute, or for lawful defence;
 - message-author data may be anonymised in order to preserve the integrity of the other party’s conversation;
@@ -540,7 +540,7 @@ A data export may exclude internal fraud, risk, and security rules, legal assess
 
 We may send:
 
-- essential notifications concerning an account, Booking, payment, Security Deposit, payout, message, handover, return, dispute, security, or legal changes;
+- essential notifications concerning an account, Reservation, payment, Security Deposit, payout, message, handover, return, dispute, security, or legal changes;
 - informational notifications concerning the operation of a function you use or an important change to the service;
 - marketing, promotional, recommendation, or newsletter communications where we have consent or all conditions of the statutory existing-customer exception are met.
 
@@ -556,7 +556,7 @@ After opting out of marketing, you will still receive essential service-, transa
 
 The Platform’s transaction functions are intended only for persons aged 18 or over.
 
-At the beginning of registration, an unverified record may technically be created, for example after an email address is submitted. It does not entitle a minor to use Listing, Booking, payment, payout, Security Deposit, or handover functions.
+At the beginning of registration, an unverified record may technically be created, for example after an email address is submitted. It does not entitle a minor to use Listing, Reservation, payment, payout, Security Deposit, or handover functions.
 
 Before enabling transaction functions, we may require identity and age verification. If we determine that a person is under 18, we reject the verification, restrict the functions, and may begin closing the account.
 

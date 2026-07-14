@@ -34,8 +34,8 @@
       "num": "5"
     },
     {
-      "id": "6-bookings-payments-and-payouts",
-      "label": "Bookings, payments, and payouts",
+      "id": "6-reservations-payments-and-payouts",
+      "label": "Reservations, payments, and payouts",
       "num": "6"
     },
     {
@@ -44,8 +44,8 @@
       "num": "7"
     },
     {
-      "id": "8-handover-return-and-completion-of-the-booking",
-      "label": "Handover, return, and completion of the Booking",
+      "id": "8-handover-return-and-completion-of-the-reservation",
+      "label": "Handover, return, and completion of the Reservation",
       "num": "8"
     },
     {
@@ -100,7 +100,7 @@
     },
     {
       "t": "p",
-      "md": "The “Naudokis” platform comprises the mobile application, websites, and related functions, including listing, booking, payment, Security Deposit, identity-verification, messaging, support, dispute, and review functions (the “**Platform**”). The Platform is intended for the rental of movable items in Lithuania, payments in euros, and payouts to payment accounts that meet the applicable requirements."
+      "md": "The “Naudokis” platform comprises the mobile application, websites, and related functions, including listing, reservation, payment, Security Deposit, identity-verification, messaging, support, dispute, and review functions (the “**Platform**”). The Platform is intended for the rental of movable items in Lithuania, payments in euros, and payouts to payment accounts that meet the applicable requirements."
     },
     {
       "t": "p",
@@ -118,13 +118,13 @@
     {
       "t": "ul",
       "items": [
-        "**“Naudokis” is a platform.** We help Users find, list, book, administer, and pay for item rentals. We are generally not the owner of the rental item, the lessor, renter, seller, insurer, or a party to a particular Rental Transaction.",
+        "**“Naudokis” is a platform.** We help Users find, list, reserve, administer, and pay for item rentals. We are generally not the owner of the rental item, the lessor, renter, seller, insurer, or a party to a particular Rental Transaction.",
         "**The Rental Transaction is concluded between Users.** The Lessor is responsible for the item, the accuracy of the Listing, the right to rent out the item, its safety, and its handover. The Renter is responsible for payment, careful use, and timely return.",
-        "**The Platform is for adults only.** Only persons aged 18 or over may list items, submit or accept Booking Requests, make payments, and receive payouts.",
-        "**Payment authorisation alone does not constitute a final Booking.** A Booking is finally confirmed only when the Lessor accepts the request and Stripe successfully captures the payment, or the payment is otherwise finally confirmed in a manner clearly specified on the Platform.",
-        "**Payments are made through Stripe.** Before payment is confirmed, the Platform must display the price, fees, Security Deposit, cancellation rules, and total amount payable that apply to the specific Booking.",
+        "**The Platform is for adults only.** Only persons aged 18 or over may list items, submit or accept Reservation Requests, make payments, and receive payouts.",
+        "**Payment authorisation alone does not constitute a final Reservation.** A Reservation is finally confirmed only when the Lessor accepts the request and Stripe successfully captures the payment, or the payment is otherwise finally confirmed in a manner clearly specified on the Platform.",
+        "**Payments are made through Stripe.** Before payment is confirmed, the Platform must display the price, fees, Security Deposit, cancellation rules, and total amount payable that apply to the specific Reservation.",
         "**The Security Deposit is not insurance or a limit of liability.** It may be refunded, temporarily held through the payment process, or used to satisfy a substantiated claim for damage, loss, delay, or another breach.",
-        "**Disputes are assessed on the evidence.** We consider Booking data, photographs, messages, handover and return information, estimates, the value of the item, and other reasonable evidence.",
+        "**Disputes are assessed on the evidence.** We consider Reservation data, photographs, messages, handover and return information, estimates, the value of the item, and other reasonable evidence.",
         "**Business Users may be subject to additional obligations.** These may relate to identity, authority to represent, Trader status, consumer-information obligations, VAT, VIES, invoices, Stripe, and payouts. DAC7 applies only to reportable activities specified by law.",
         "**Safety is mandatory.** It is prohibited to list unlawful, unsafe, stolen, counterfeit, rights-infringing, or otherwise unsuitable items on the Platform."
       ]
@@ -146,7 +146,7 @@
         ],
         [
           "Payment authorisation",
-          "Stripe checks the payment method and may temporarily reserve the payment amount. The Booking is not yet final."
+          "Stripe checks the payment method and may temporarily reserve the payment amount. The Reservation is not yet final."
         ],
         [
           "Lessor’s decision",
@@ -154,7 +154,7 @@
         ],
         [
           "Confirmation",
-          "The Booking becomes final only when the request has been accepted and the payment has been successfully captured or otherwise finally confirmed in the manner specified on the Platform."
+          "The Reservation becomes final only when the request has been accepted and the payment has been successfully captured or otherwise finally confirmed in the manner specified on the Platform."
         ],
         [
           "Handover",
@@ -178,7 +178,7 @@
     {
       "t": "ul",
       "items": [
-        "**User** means a person who visits the Platform, creates an account, lists items, submits or accepts Booking Requests, makes payments, receives payouts, communicates, or otherwise uses the Platform.",
+        "**User** means a person who visits the Platform, creates an account, lists items, submits or accepts Reservation Requests, makes payments, receives payouts, communicates, or otherwise uses the Platform.",
         "**Lessor** means a User who offers an item for rent. In the Platform interface, the Lessor may be referred to as the “owner”, but that designation does not in itself establish ownership and does not alter the person’s legal status.",
         "**Renter** means a User who searches for, books, receives, or uses a rental item.",
         "**Business User** means a legal person, a self-employed person carrying on individual business activity, or another person acting for business or professional purposes.",
@@ -186,7 +186,7 @@
         "**P2P Transaction** means a rental between two natural persons acting for private purposes. **B2C Transaction** means a rental in which the Lessor acts as a Trader and the Renter acts as a consumer. **B2B Transaction** means a rental between persons acting for business or professional purposes.",
         "**App** means the “Naudokis” mobile application and, where applicable, the Platform’s web interface providing the same functions.",
         "**Listing** means information presented on the Platform concerning a rental item, including the price, Security Deposit, dates, condition, defects, handover or delivery method, and other applicable conditions.",
-        "**Booking Request** means the Renter’s request to rent a particular item for selected dates. **Booking** means the entire process for a particular rental, from submission of the request through its confirmation, performance, cancellation, completion, or resolution of a dispute.",
+        "**Reservation Request** means the Renter’s request to rent a particular item for selected dates. **Reservation** means the entire process for a particular rental, from submission of the request through its confirmation, performance, cancellation, completion, or resolution of a dispute.",
         "**Rental Transaction** means the agreement between the Lessor and the Renter concerning the rental of a specific item.",
         "**Digital Handover Record** means information concerning the handover or return of an item recorded in the App, messages, or another process supported by “Naudokis”, such as photographs, videos, an accessory list, defects, serial numbers, time, location, or confirmations by the parties. This record assists in assessing disputes but is not the only possible evidence.",
         "**Security Deposit** means the refundable amount specified in the App before payment is confirmed, which may be refunded, temporarily held through the payment process, or used to satisfy a substantiated claim. The Security Deposit is not insurance, a guarantee, a limit of liability, an escrow account, or a client-funds account.",
@@ -200,7 +200,7 @@
     },
     {
       "t": "p",
-      "md": "By using the Platform, you confirm that you have read and understood these Terms and agree to comply with them. You accept the Terms by creating an account, confirming them in the App, listing an item, submitting or accepting a Booking Request, making a payment, or using messaging, support, the dispute process, or other Platform functions."
+      "md": "By using the Platform, you confirm that you have read and understood these Terms and agree to comply with them. You accept the Terms by creating an account, confirming them in the App, listing an item, submitting or accepting a Reservation Request, making a payment, or using messaging, support, the dispute process, or other Platform functions."
     },
     {
       "t": "p",
@@ -225,7 +225,7 @@
     },
     {
       "t": "p",
-      "md": "“Naudokis” operates an item-rental Platform that helps Users find, list, book, hand over, return, and administer rental items."
+      "md": "“Naudokis” operates an item-rental Platform that helps Users find, list, reserve, hand over, return, and administer rental items."
     },
     {
       "t": "p",
@@ -258,7 +258,7 @@
         "the right to rent out the item;",
         "the item’s lawfulness, safety, cleanliness, functionality, and fitness for the purpose stated in the Listing;",
         "an accurate description of the item’s condition, included components, and known defects;",
-        "performance of confirmed Bookings, timely handover, instructions, and all agreed accessories;",
+        "performance of confirmed Reservations, timely handover, instructions, and all agreed accessories;",
         "applicable tax, VAT, accounting, invoicing, DAC7, consumer-protection, product-safety, permit, insurance, and other legal obligations."
       ]
     },
@@ -292,16 +292,16 @@
     },
     {
       "t": "h2",
-      "id": "6-bookings-payments-and-payouts",
-      "text": "6. Bookings, payments, and payouts"
+      "id": "6-reservations-payments-and-payouts",
+      "text": "6. Reservations, payments, and payouts"
     },
     {
       "t": "p",
-      "md": "Before allowing a Booking to be submitted or confirmed, “Naudokis” may check the Listing’s status and availability, the parties’ verifications, payment readiness, the Security Deposit, applicable limits, business information, the risk associated with prohibited or restricted items, and moderation, fraud, or security signals."
+      "md": "Before allowing a Reservation to be submitted or confirmed, “Naudokis” may check the Listing’s status and availability, the parties’ verifications, payment readiness, the Security Deposit, applicable limits, business information, the risk associated with prohibited or restricted items, and moderation, fraud, or security signals."
     },
     {
       "t": "p",
-      "md": "Before the Renter confirms payment, the App must clearly display the following information applicable to the specific Booking:"
+      "md": "Before the Renter confirms payment, the App must clearly display the following information applicable to the specific Reservation:"
     },
     {
       "t": "ul",
@@ -320,7 +320,7 @@
     },
     {
       "t": "p",
-      "md": "A Booking is not finally confirmed merely because the Renter has submitted a request, Stripe has authorised the payment, the dates have been temporarily marked as unavailable, or the Lessor is still reviewing the request. A Booking is finally confirmed only when the App clearly states that the Lessor has accepted the request and Stripe has successfully captured the payment, or the payment has otherwise been finally confirmed in the manner specified in the App."
+      "md": "A Reservation is not finally confirmed merely because the Renter has submitted a request, Stripe has authorised the payment, the dates have been temporarily marked as unavailable, or the Lessor is still reviewing the request. A Reservation is finally confirmed only when the App clearly states that the Lessor has accepted the request and Stripe has successfully captured the payment, or the payment has otherwise been finally confirmed in the manner specified in the App."
     },
     {
       "t": "p",
@@ -335,17 +335,17 @@
       "items": [
         "Stripe authorises the Renter’s payment and may temporarily reserve the corresponding amount on the Renter’s payment method.",
         "Once the Lessor accepts the request, Stripe captures the authorised amount if the payment is successfully completed.",
-        "If a Security Deposit applies, it is generally included in the same authorisation and captured together with the Booking payment, unless the payment screen expressly states otherwise.",
-        "Once the Booking has been properly completed and there is no basis for a hold, the amount due to the Lessor is transferred through Stripe Connect after deduction of applicable fees, refunds, holds, or adjustments."
+        "If a Security Deposit applies, it is generally included in the same authorisation and captured together with the Reservation payment, unless the payment screen expressly states otherwise.",
+        "Once the Reservation has been properly completed and there is no basis for a hold, the amount due to the Lessor is transferred through Stripe Connect after deduction of applicable fees, refunds, holds, or adjustments."
       ]
     },
     {
       "t": "p",
-      "md": "“Naudokis” may charge fees payable by the Lessor or Renter, Security Deposit processing fees, delivery fees, or other fees clearly specified in the App. Amended fees apply only to future Bookings unless applicable law, payment-provider rules, or an express agreement between the parties requires otherwise."
+      "md": "“Naudokis” may charge fees payable by the Lessor or Renter, Security Deposit processing fees, delivery fees, or other fees clearly specified in the App. Amended fees apply only to future Reservations unless applicable law, payment-provider rules, or an express agreement between the parties requires otherwise."
     },
     {
       "t": "p",
-      "md": "A payout to the Lessor is initiated only when the Booking has been properly completed, the payment has finally settled, and there is no active dispute, payment dispute, refund, compliance, tax, moderation, account, or payout restriction. The actual time at which the payout is received depends on Stripe, banks, payment networks, compliance checks, disputes, and technical processes."
+      "md": "A payout to the Lessor is initiated only when the Reservation has been properly completed, the payment has finally settled, and there is no active dispute, payment dispute, refund, compliance, tax, moderation, account, or payout restriction. The actual time at which the payout is received depends on Stripe, banks, payment networks, compliance checks, disputes, and technical processes."
     },
     {
       "t": "p",
@@ -353,7 +353,7 @@
     },
     {
       "t": "p",
-      "md": "If the information displayed on the payment or Booking screen for a particular Booking differs from general help text, the information shown on that screen before confirmation applies to that Booking, provided that it does not conflict with these Terms or mandatorily applicable law."
+      "md": "If the information displayed on the payment or Reservation screen for a particular Reservation differs from general help text, the information shown on that screen before confirmation applies to that Reservation, provided that it does not conflict with these Terms or mandatorily applicable law."
     },
     {
       "t": "h2",
@@ -362,7 +362,7 @@
     },
     {
       "t": "p",
-      "md": "The Security Deposit assists in administering substantiated claims concerning damage to or loss of the item, delay, missing accessories, abnormal wear and tear, improper use, or another breach of the Booking. The Security Deposit is not insurance, a guarantee, a limit of the Renter’s liability, a bank escrow account, a client-funds account, or an interest-bearing account."
+      "md": "The Security Deposit assists in administering substantiated claims concerning damage to or loss of the item, delay, missing accessories, abnormal wear and tear, improper use, or another breach of the Reservation. The Security Deposit is not insurance, a guarantee, a limit of the Renter’s liability, a bank escrow account, a client-funds account, or an interest-bearing account."
     },
     {
       "t": "table",
@@ -373,11 +373,11 @@
       "rows": [
         [
           "When is the Security Deposit captured?",
-          "Generally together with the Booking payment after the Lessor accepts the request, unless the payment screen states otherwise."
+          "Generally together with the Reservation payment after the Lessor accepts the request, unless the payment screen states otherwise."
         ],
         [
           "When is the Security Deposit refunded?",
-          "After the Booking ends, if no substantiated claim has been submitted within the specified period and there is no other lawful basis for a hold."
+          "After the Reservation ends, if no substantiated claim has been submitted within the specified period and there is no other lawful basis for a hold."
         ],
         [
           "When may the Security Deposit be held?",
@@ -395,7 +395,7 @@
     },
     {
       "t": "p",
-      "md": "Unless the App states otherwise for a particular Booking, the Lessor must submit the claim and initial evidence within 24 hours after the confirmed return of the item. If the return has not been confirmed, the period is calculated from the scheduled return time. The Renter is generally given 7 calendar days to respond and submit their evidence, unless the App or support communication states otherwise."
+      "md": "Unless the App states otherwise for a particular Reservation, the Lessor must submit the claim and initial evidence within 24 hours after the confirmed return of the item. If the return has not been confirmed, the period is calculated from the scheduled return time. The Renter is generally given 7 calendar days to respond and submit their evidence, unless the App or support communication states otherwise."
     },
     {
       "t": "p",
@@ -403,7 +403,7 @@
     },
     {
       "t": "p",
-      "md": "When assessing a dispute, “Naudokis” considers the Booking data, Listing description, age, condition, and market value of the item, depreciation, handover and return times, photographs, messages, instructions, defects disclosed in advance, repair or replacement costs, proportionality, Stripe’s rules, and applicable law."
+      "md": "When assessing a dispute, “Naudokis” considers the Reservation data, Listing description, age, condition, and market value of the item, depreciation, handover and return times, photographs, messages, instructions, defects disclosed in advance, repair or replacement costs, proportionality, Stripe’s rules, and applicable law."
     },
     {
       "t": "p",
@@ -431,7 +431,7 @@
     },
     {
       "t": "p",
-      "md": "If the item is not returned by the deadline specified in the Booking, the Renter may be charged, for each commenced 24-hour period of delay, a fee equal to two days’ rental price for that Booking (**2 × daily price**)."
+      "md": "If the item is not returned by the deadline specified in the Reservation, the Renter may be charged, for each commenced 24-hour period of delay, a fee equal to two days’ rental price for that Reservation (**2 × daily price**)."
     },
     {
       "t": "p",
@@ -442,11 +442,11 @@
       "items": [
         "the first period of delay begins immediately after the return deadline expires;",
         "no additional free 24-hour period applies;",
-        "the formula and maximum fee applicable to the specific Booking are displayed in the App before payment is confirmed and recorded when the Booking is concluded;",
-        "the total late fee may not exceed the lower of the following amounts: seven days’ rental price for that Booking or the item’s replacement value specified in the Listing at the time of the Booking;",
+        "the formula and maximum fee applicable to the specific Reservation are displayed in the App before payment is confirmed and recorded when the Reservation is concluded;",
+        "the total late fee may not exceed the lower of the following amounts: seven days’ rental price for that Reservation or the item’s replacement value specified in the Listing at the time of the Reservation;",
         "if no positive replacement value is specified, the limit of seven days’ rental price applies;",
         "because of this limit, the final fee may be lower than the amount obtained by multiplying 2 × the daily price by all commenced periods of delay;",
-        "the fee is calculated until the first properly recorded act of returning the item or, if there is no such record, until completion of the Booking."
+        "the fee is calculated until the first properly recorded act of returning the item or, if there is no such record, until completion of the Reservation."
       ]
     },
     {
@@ -455,8 +455,8 @@
     },
     {
       "t": "h2",
-      "id": "8-handover-return-and-completion-of-the-booking",
-      "text": "8. Handover, return, and completion of the Booking"
+      "id": "8-handover-return-and-completion-of-the-reservation",
+      "text": "8. Handover, return, and completion of the Reservation"
     },
     {
       "t": "p",
@@ -472,7 +472,7 @@
     },
     {
       "t": "p",
-      "md": "For the purposes of the Platform process, a Booking is regarded as completed when:"
+      "md": "For the purposes of the Platform process, a Reservation is regarded as completed when:"
     },
     {
       "t": "ul",
@@ -485,7 +485,7 @@
     },
     {
       "t": "p",
-      "md": "Return may be confirmed after both parties complete the relevant actions in the App. If one party marks the item as returned and the other does not submit a substantiated claim or a confirmation to the contrary within the period specified in the App, the Booking may be completed automatically. Unless the App states otherwise for the particular Booking, this waiting period is 3 calendar days."
+      "md": "Return may be confirmed after both parties complete the relevant actions in the App. If one party marks the item as returned and the other does not submit a substantiated claim or a confirmation to the contrary within the period specified in the App, the Reservation may be completed automatically. Unless the App states otherwise for the particular Reservation, this waiting period is 3 calendar days."
     },
     {
       "t": "h2",
@@ -513,7 +513,7 @@
         ],
         [
           "The Lessor cancels before handover",
-          "A refund of the full amount paid is generally initiated to the Renter. The consequences displayed to the Lessor before confirmation of the Booking may apply."
+          "A refund of the full amount paid is generally initiated to the Renter. The consequences displayed to the Lessor before confirmation of the Reservation may apply."
         ],
         [
           "The item is not handed over or, for reasons not attributable to the Renter, is unfit for use",
@@ -531,7 +531,7 @@
     },
     {
       "t": "p",
-      "md": "If the Renter cancels a confirmed Booking, the cancellation policy stated in the Listing applies. Unless the Listing states otherwise, the **Moderate** cancellation policy applies."
+      "md": "If the Renter cancels a confirmed Reservation, the cancellation policy stated in the Listing applies. Unless the Listing states otherwise, the **Moderate** cancellation policy applies."
     },
     {
       "t": "table",
@@ -564,7 +564,7 @@
     },
     {
       "t": "p",
-      "md": "The percentages in the table apply only to the rental price. Non-refundable fees clearly disclosed before payment are not refunded unless mandatory law requires a refund. If the Security Deposit has been captured, it is refunded to the Renter in full where the Booking is cancelled before handover of the item."
+      "md": "The percentages in the table apply only to the rental price. Non-refundable fees clearly disclosed before payment are not refunded unless mandatory law requires a refund. If the Security Deposit has been captured, it is refunded to the Renter in full where the Reservation is cancelled before handover of the item."
     },
     {
       "t": "h3",
@@ -621,7 +621,7 @@
     },
     {
       "t": "p",
-      "md": "Business Users and Traders are themselves responsible for applicable consumer-protection, product-safety, tax, VAT, invoicing, accounting, permit, insurance, advertising, transparency, and other legal obligations. “Naudokis” may verify submitted information through public registers, VIES, Stripe, identity-verification providers, documents, and other reasonable sources. If information is not provided, is inaccurate, or is no longer current, we may restrict Listings, acceptance of Bookings, payouts, or other functions."
+      "md": "Business Users and Traders are themselves responsible for applicable consumer-protection, product-safety, tax, VAT, invoicing, accounting, permit, insurance, advertising, transparency, and other legal obligations. “Naudokis” may verify submitted information through public registers, VIES, Stripe, identity-verification providers, documents, and other reasonable sources. If information is not provided, is inaccurate, or is no longer current, we may restrict Listings, acceptance of Reservations, payouts, or other functions."
     },
     {
       "t": "p",
@@ -637,7 +637,7 @@
     },
     {
       "t": "p",
-      "md": "Where this function applies, documents for paid Bookings may be issued through an invoicing process administered by “Naudokis” in the Lessor’s name (*self-billing*). A Lessor in whose name invoices are issued must accept the relevant agreement in advance and provide accurate tax information. The Lessor may not issue a duplicate invoice for the same Booking unless required by law or expressly agreed with “Naudokis”."
+      "md": "Where this function applies, documents for paid Reservations may be issued through an invoicing process administered by “Naudokis” in the Lessor’s name (*self-billing*). A Lessor in whose name invoices are issued must accept the relevant agreement in advance and provide accurate tax information. The Lessor may not issue a duplicate invoice for the same Reservation unless required by law or expressly agreed with “Naudokis”."
     },
     {
       "t": "h2",
@@ -646,11 +646,11 @@
     },
     {
       "t": "p",
-      "md": "Reviews must reflect a genuine rental experience. A review may be left only by the parties to a Booking completed through the Platform. Unless the App states otherwise, a review may be submitted within 14 days after completion of the Booking. “Naudokis” may use a mutually hidden review model under which one party’s review is published only after the other party has submitted their review or the review-submission period has expired."
+      "md": "Reviews must reflect a genuine rental experience. A review may be left only by the parties to a Reservation completed through the Platform. Unless the App states otherwise, a review may be submitted within 14 days after completion of the Reservation. “Naudokis” may use a mutually hidden review model under which one party’s review is published only after the other party has submitted their review or the review-submission period has expired."
     },
     {
       "t": "p",
-      "md": "False, manipulated, offensive, discriminatory, reviews based on blackmail, reviews unrelated to the Booking, reviews disclosing private information, or unlawful reviews are prohibited. We may remove or hide a review that breaches these Terms, applicable law, or moderation rules. Automated system entries, such as information concerning a cancelled Booking, may be displayed separately and clearly marked as system-generated."
+      "md": "False, manipulated, offensive, discriminatory, reviews based on blackmail, reviews unrelated to the Reservation, reviews disclosing private information, or unlawful reviews are prohibited. We may remove or hide a review that breaches these Terms, applicable law, or moderation rules. Automated system entries, such as information concerning a cancelled Reservation, may be displayed separately and clearly marked as system-generated."
     },
     {
       "t": "p",
@@ -671,7 +671,7 @@
     },
     {
       "t": "p",
-      "md": "The selected method is shown in the catalogue interface. Technical identifiers or other stable technical ordering may be used to resolve equal values and keep pagination consistent. No paid placement currently changes these catalogue positions. If paid advertising or paid visibility enhancement is introduced in the future, its effect on ranking will be clearly identified. “Naudokis” does not guarantee any particular position of a Listing in search results or any particular number of Bookings."
+      "md": "The selected method is shown in the catalogue interface. Technical identifiers or other stable technical ordering may be used to resolve equal values and keep pagination consistent. No paid placement currently changes these catalogue positions. If paid advertising or paid visibility enhancement is introduced in the future, its effect on ranking will be clearly identified. “Naudokis” does not guarantee any particular position of a Listing in search results or any particular number of Reservations."
     },
     {
       "t": "h2",
@@ -730,7 +730,7 @@
     },
     {
       "t": "p",
-      "md": "For a problem concerning a Booking, payment, Security Deposit, payout, Trader obligations, consumer rights, invoices, safety, or another matter, first contact “Naudokis” support through the App or by email to **info@naudokis.lt**. If the report relates to a specific Booking, state its number, the item, dates, a description of the problem, and provide any evidence available to you."
+      "md": "For a problem concerning a Reservation, payment, Security Deposit, payout, Trader obligations, consumer rights, invoices, safety, or another matter, first contact “Naudokis” support through the App or by email to **info@naudokis.lt**. If the report relates to a specific Reservation, state its number, the item, dates, a description of the problem, and provide any evidence available to you."
     },
     {
       "t": "p",
@@ -767,7 +767,7 @@
     },
     {
       "t": "p",
-      "md": "If we become aware of a dangerous, recalled, misleadingly described, or otherwise unsafe item, we may remove the Listing, suspend Bookings, inform affected Users, request evidence, cooperate with competent authorities, and take other lawful action. If the Renter becomes aware that an item is unsafe or may cause harm, the Renter must immediately stop using it and notify the Lessor and “Naudokis”."
+      "md": "If we become aware of a dangerous, recalled, misleadingly described, or otherwise unsafe item, we may remove the Listing, suspend Reservations, inform affected Users, request evidence, cooperate with competent authorities, and take other lawful action. If the Renter becomes aware that an item is unsafe or may cause harm, the Renter must immediately stop using it and notify the Lessor and “Naudokis”."
     },
     {
       "t": "p",
@@ -796,15 +796,15 @@
     },
     {
       "t": "p",
-      "md": "“Naudokis” may send emails, SMS messages, push notifications, in-App notifications, and support messages concerning an account, security, verification, Bookings, payments, refunds, payouts, disputes, compliance, taxes, changes to the Terms, data exports, reviews, and support."
+      "md": "“Naudokis” may send emails, SMS messages, push notifications, in-App notifications, and support messages concerning an account, security, verification, Reservations, payments, refunds, payouts, disputes, compliance, taxes, changes to the Terms, data exports, reviews, and support."
     },
     {
       "t": "p",
-      "md": "Certain communications are necessary for the operation and security of the Platform and for the performance of legal obligations, payments, or Bookings and therefore may not be capable of being fully disabled. You may opt out of optional marketing communications in the email, through App settings, or by contacting support."
+      "md": "Certain communications are necessary for the operation and security of the Platform and for the performance of legal obligations, payments, or Reservations and therefore may not be capable of being fully disabled. You may opt out of optional marketing communications in the email, through App settings, or by contacting support."
     },
     {
       "t": "p",
-      "md": "“Naudokis” processes personal data as described in the Privacy Policy. Records concerning Bookings, payments, invoices, document acceptance, disputes, compliance, taxes, and security are retained for as long as necessary to operate the Platform, perform these Terms, resolve disputes, and comply with applicable payment, tax, accounting, DAC7, VAT, anti-money-laundering, consumer-protection, product-safety, or other legal obligations. Deletion of an account does not in itself remove a right or obligation to retain data required for those purposes."
+      "md": "“Naudokis” processes personal data as described in the Privacy Policy. Records concerning Reservations, payments, invoices, document acceptance, disputes, compliance, taxes, and security are retained for as long as necessary to operate the Platform, perform these Terms, resolve disputes, and comply with applicable payment, tax, accounting, DAC7, VAT, anti-money-laundering, consumer-protection, product-safety, or other legal obligations. Deletion of an account does not in itself remove a right or obligation to retain data required for those purposes."
     },
     {
       "t": "p",
@@ -812,7 +812,7 @@
     },
     {
       "t": "p",
-      "md": "We will publish updated Terms on the Platform and, where required, ask you to accept them in the App. Material changes generally apply only prospectively and do not alter the conditions of an already confirmed Booking unless required by law, payment-provider requirements, security, compliance, or fraud-prevention needs, or unless the parties expressly agree otherwise."
+      "md": "We will publish updated Terms on the Platform and, where required, ask you to accept them in the App. Material changes generally apply only prospectively and do not alter the conditions of an already confirmed Reservation unless required by law, payment-provider requirements, security, compliance, or fraud-prevention needs, or unless the parties expressly agree otherwise."
     },
     {
       "t": "p",
@@ -820,7 +820,7 @@
     },
     {
       "t": "p",
-      "md": "You may stop using the Platform at any time. You must nevertheless perform or properly resolve active Bookings, payments, refunds, disputes, tax, compliance, and other legal obligations."
+      "md": "You may stop using the Platform at any time. You must nevertheless perform or properly resolve active Reservations, payments, refunds, disputes, tax, compliance, and other legal obligations."
     },
     {
       "t": "p",
@@ -866,11 +866,11 @@
     },
     {
       "t": "p",
-      "md": "These Terms constitute the principal standalone agreement between you and “Naudokis” concerning use of the Platform. They apply together with the Privacy Policy, Stripe’s terms where payment functions are used, and the information displayed in the App before confirmation for the specific Booking or function."
+      "md": "These Terms constitute the principal standalone agreement between you and “Naudokis” concerning use of the Platform. They apply together with the Privacy Policy, Stripe’s terms where payment functions are used, and the information displayed in the App before confirmation for the specific Reservation or function."
     },
     {
       "t": "p",
-      "md": "In the event of inconsistency, mandatory rules of law apply first. Information displayed before confirmation for a specific Booking applies to the extent that it does not conflict with these Terms or mandatory law. An interpretation more favourable to the consumer applies to the extent required by mandatory consumer-protection law."
+      "md": "In the event of inconsistency, mandatory rules of law apply first. Information displayed before confirmation for a specific Reservation applies to the extent that it does not conflict with these Terms or mandatory law. An interpretation more favourable to the consumer applies to the extent required by mandatory consumer-protection law."
     },
     {
       "t": "p",

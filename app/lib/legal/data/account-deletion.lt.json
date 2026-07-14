@@ -24,7 +24,7 @@
     { "t": "ol", "items": [
       "Atidarykite Naudokis programėlę ir prisijunkite.",
       "Eikite į Paskyra → Ištrinti paskyrą.",
-      "Patvirtinkite iš naujo prisijungdami (slaptažodžiu arba socialiniu prisijungimu).",
+      "Patvirtinkite dar kartą prisijungdami slaptažodžiu arba per „Apple“, „Google“ ar „Facebook“.",
       "Paskyra iškart išjungiama, o trynimas suplanuojamas."
     ] },
 
@@ -35,8 +35,8 @@
     { "t": "ul", "items": [
       "Profilis ir nuotrauka",
       "Tapatybės, telefono ir el. pašto patvirtinimų įrašai",
-      "Pranešimų nustatymai ir push žetonai",
-      "Mėgstamiausi, blokavimai ir nutildymai"
+      "Programėlės pranešimų nustatymai ir pranešimų identifikatoriai",
+      "Įsiminti daiktai, blokavimai ir nutildymai"
     ] },
     { "t": "p", "md": "Jūsų skelbimai, rezervacijos, pokalbių žinutės ir atsiliepimai nuasmeninami — jie lieka matomi kitai šaliai, tačiau nebeturi jūsų vardo ar kontaktinių duomenų." },
 

@@ -24,7 +24,7 @@
     { "t": "ol", "items": [
       "Open the Naudokis app and sign in.",
       "Go to Account → Delete account.",
-      "Re-authenticate (your password or social login) to confirm.",
+      "Confirm again by signing in with your password or through Apple, Google or Facebook.",
       "Your account is disabled immediately and deletion is queued."
     ] },
 
@@ -35,10 +35,10 @@
     { "t": "ul", "items": [
       "Profile and photo",
       "Identity, phone and email verification records",
-      "Notification settings and push tokens",
-      "Favorites, blocks and mutes"
+      "App notification settings and notification identifiers",
+      "Saved items, blocks and mutes"
     ] },
-    { "t": "p", "md": "Your listings, bookings, chat messages and reviews are anonymized — they remain visible to the other party but no longer carry your name or contact details." },
+    { "t": "p", "md": "Your listings, reservations, chat messages and reviews are anonymised — they remain visible to the other party but no longer carry your name or contact details." },
 
     { "t": "h2", "id": "5-what-is-retained", "text": "5. What is retained" },
     { "t": "p", "md": "Certain payment, accounting, tax, DAC7 and legal-defence records are kept as required by Lithuanian and EU law for statutory periods, which may be 5 to 10 years or longer where the law requires. Safety and content-moderation reports are kept for up to 3 years. After these periods the data is deleted." },

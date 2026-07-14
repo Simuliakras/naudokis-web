@@ -105,9 +105,11 @@ test("an install CTA asks for the choice, and dismissing aborts without storing 
   const prompt = page.getByRole("dialog");
   await expect(prompt).toBeVisible();
   // Neither choice may be preselected or dominant — refusing must be as easy as allowing.
-  await expect(prompt.getByRole("button", { name: /Leisti matavimą/ })).toBeVisible();
-  await expect(prompt.getByRole("button", { name: /Tęsti be matavimo/ })).toBeVisible();
-  await expect(prompt.getByRole("button", { name: /Leisti matavimą/ })).not.toBeFocused();
+  const allow = prompt.getByRole("button", { name: "Leisti „AppsFlyer“ matavimą" });
+  const decline = prompt.getByRole("button", { name: "Tęsti be „AppsFlyer“ matavimo" });
+  await expect(allow).toBeVisible();
+  await expect(decline).toBeVisible();
+  await expect(allow).not.toBeFocused();
 
   await page.keyboard.press("Escape");
   await expect(prompt).toBeHidden();

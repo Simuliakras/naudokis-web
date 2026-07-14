@@ -30,6 +30,7 @@ export function ListingScreen({ id }: { id: string }) {
   const router = useRouter();
   const online = useOnlineStatus();
   const [shared, setShared] = useState(false);
+  const [shareFailed, setShareFailed] = useState(false);
   const [footerInView, setFooterInView] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
   const { data: listing, isLoading, isError, error, refetch } = useListing(id, locale);
@@ -119,6 +120,7 @@ export function ListingScreen({ id }: { id: string }) {
   // where available, otherwise copy the URL and flash a transient "copied" state.
   const share = async () => {
     const url = window.location.href;
+    setShareFailed(false);
     try {
       if (navigator.share) {
         await navigator.share({ title: listing.title, url });
@@ -127,8 +129,12 @@ export function ListingScreen({ id }: { id: string }) {
         setShared(true);
         window.setTimeout(() => setShared(false), 2400);
       }
-    } catch {
-      // The user dismissed the share sheet (or clipboard was blocked) — keep state unchanged.
+    } catch (error) {
+      // Dismissing the native share sheet is not a failure; blocked or unavailable
+      // clipboard/share APIs need a visible recovery state.
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        setShareFailed(true);
+      }
     }
   };
   const reserve = () => {
@@ -150,7 +156,7 @@ export function ListingScreen({ id }: { id: string }) {
         items={detailCrumbs({ category, categoryId: listing.categoryId, title: listing.title, feedLabel: dict.feed.titleAll, locale })} />
       {/* fade in over the skeleton; the fixed mobile bar stays outside the wrapper */}
       <div className="nk-fadecontent">
-        <ListingHeader listing={listing} shared={shared} onShare={share} onFav={lockFav} />
+        <ListingHeader listing={listing} shared={shared} shareFailed={shareFailed} onShare={share} onFav={lockFav} />
         <Gallery images={listing.images} title={listing.title} hasNoReviews={hasNoReviews} appPath={appPath} />
 
         {/* The sticky sidebar booking panel is hidden on tablet/phone (≤980px);

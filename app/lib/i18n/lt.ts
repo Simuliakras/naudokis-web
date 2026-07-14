@@ -124,7 +124,7 @@ export const lt: Dict = {
     emptyAction: "Išvalyti paiešką",
     bandEmptyTitle: "Kol kas nėra nuomos pasiūlymų",
     bandEmptyBody:
-      "Nauji daiktai atsiranda nuolat. Užsukite vėliau arba pradėkite nuo kategorijų.",
+      "Pasiūlymų čia dar nėra. Peržiūrėkite kategorijas arba užsukite vėliau.",
     bandEmptyAction: "Visos kategorijos",
     bandEmptySecondary: "Atidaryti programėlėje",
   },
@@ -180,7 +180,7 @@ export const lt: Dict = {
           tag: "Programėlėje",
           tone: "green",
           screen: "reserve",
-          body: "Pasirinkite datas, peržiūrėkite galutinę sumą, mokesčius ir užstatą, tada mokėkite programėlėje per Stripe.",
+          body: "Pasirinkite datas, peržiūrėkite nuomos kainą, taikomus mokesčius, užstatą, atšaukimo sąlygas ir bendrą sumą, tada mokėkite programėlėje per Stripe.",
         },
         {
           icon: "Handshake",
@@ -229,7 +229,7 @@ export const lt: Dict = {
           tag: "Perduota",
           tone: "yellow",
           screen: "handover",
-          body: "Susitikite sutartu laiku, patikrinkite būklę ir perduokite daiktą. Užstatas ir įrodymų taisyklės suteikia aiškų procesą, jei kas nors nepavyksta.",
+          body: "Susitikite sutartu laiku, kartu užfiksuokite daikto būklę ir priedus, tada perduokite daiktą. Nuotraukos, žinutės ir perdavimo įrašai padeda, jei vėliau kyla ginčas.",
         },
         {
           icon: "Coins",
@@ -252,7 +252,7 @@ export const lt: Dict = {
       {
         icon: "Users",
         title: "Profiliai, patvirtinimai ir atsiliepimai",
-        body: "Rodomi profilio signalai ir ankstesnių nuomų atsiliepimai padeda abiem pusėms apsispręsti prieš susitikimą.",
+        body: "Atsiliepimus gali palikti tik per Naudokis užbaigtos rezervacijos dalyviai. Profilyje taip pat matomos atliktos patikros.",
       },
       {
         icon: "ShieldCheck",
@@ -441,7 +441,9 @@ export const lt: Dict = {
     },
     share: "Dalintis",
     shareCopied: "Nuoroda nukopijuota",
-    verifiedOwnerPill: "Tapatybė patikrinta",
+    shareFailed: "Nepavyko bendrinti nuorodos. Bandykite dar kartą.",
+    verifiedOwnerPill: "Tapatybė patvirtinta",
+    verifiedOwnerNote: "Patvirtinta tapatybė nepatvirtina daikto būklės ar garantuoto sandorio.",
     galleryMore: (n) => {
       const d = n % 10;
       const dd = n % 100;
@@ -515,17 +517,18 @@ export const lt: Dict = {
     deliveryZoneKm: (km) => `≈${km} km zona`,
     termRentSub: "Nuomos kaina",
     depositNone: "Be užstato",
-    termDepositSub: "Užstato sąlygos ir grąžinimas",
+    depositTitle: (amount) => `${amount} užstatas`,
+    termDepositSub: "Panaudojimo ir grąžinimo sąlygas matysite programėlėje prieš mokėdami.",
     durationRange: (min, max) =>
       !max || max <= min ? `Nuo ${min} d.` : `${min}–${max} dienų`,
     termDurationSub: "Nuomos trukmė",
     cancellationLabel: (tier) => {
-      if (tier === "flexible") return "Lanksti";
-      if (tier === "moderate") return "Vidutinė";
-      if (tier === "strict") return "Griežta";
-      return "Standartinė";
+      if (tier === "flexible") return "Lanksti atšaukimo politika";
+      if (tier === "moderate") return "Vidutinė atšaukimo politika";
+      if (tier === "strict") return "Griežta atšaukimo politika";
+      return "Standartinė atšaukimo politika";
     },
-    termCancelSub: "Peržiūrėkite terminus prieš mokėdami",
+    termCancelSub: "Tikslius terminus ir grąžinamą sumą matysite programėlėje prieš mokėdami.",
     termInsuranceTitle: "Savininkas pažymėjo draudimą",
     termInsuranceSub: "Patikrinkite draudiką, apsaugą ir išimtis",
     mobileBookingNote: "Visa suma programėlėje",
@@ -545,7 +548,7 @@ export const lt: Dict = {
             : "atsiliepimai";
       return `${n} ${word}`;
     },
-    newListing: "Atsiliepimų nėra",
+    newListing: "Atsiliepimų dar nėra",
     imageUnavailable: "Nuotrauka nepasiekiama",
     breadcrumbHome: "Pagrindinis",
     breadcrumbLabel: "Naršymo kelias",
@@ -609,7 +612,7 @@ export const lt: Dict = {
     landingDescription: ({ category, city }) => {
       const locative = city ? cityLocativeLt(city) : "";
       if (category && city) {
-        return `Naršykite ${category.toLowerCase()} nuomos pasiūlymus ${locative}. Palyginkite savininkų profilius, kainas ir perdavimo būdus, tada rezervuokite Naudokis programėlėje.`;
+        return `Peržiūrėkite ${category.toLowerCase()} nuomos pasiūlymus ${locative}. Palyginkite kainas ir sąlygas, o rezervaciją užbaikite programėlėje.`;
       }
       if (category) {
         return `Raskite ${category.toLowerCase()} nuomai visoje Lietuvoje. Filtruokite pasiūlymus pagal miestą ir kainą, tada rezervuokite Naudokis programėlėje.`;
@@ -715,10 +718,10 @@ export const lt: Dict = {
       cityTitle: (city) =>
         `${cityLocativeLt(city)} kol kas nuomos pasiūlymų nėra`,
       cityBody:
-        "Naršykite kitas kategorijas arba paskelbkite daiktą ir padėkite pradėti šią kategoriją.",
+        "Peržiūrėkite pasiūlymus kituose miestuose arba paskelbkite pirmąjį daiktą šiame mieste.",
       categoryTitle: "Šioje kategorijoje dar nėra nuomos pasiūlymų",
       categoryBody:
-        "Peržiūrėkite kitas kategorijas arba paskelbkite daiktą ir padėkite pradėti šią kategoriją.",
+        "Peržiūrėkite kitas kategorijas arba būkite pirmi – paskelbkite daiktą šioje kategorijoje.",
       categoryActionPrimary: "Paskelbti daiktą",
       categoryActionSecondary: "Visos kategorijos",
     },
@@ -772,24 +775,25 @@ export const lt: Dict = {
   // is optional, and gives both actions the same weight — the refusal must not read
   // as the lesser choice.
   consent: {
-    title: "Padėkite suprasti, kaip mus radote",
-    body: "Jei sutiksite, „AppsFlyer“ gaus techninę informaciją apie diegimą ir kampaniją. Tai neprivaloma ir niekaip neriboja naudojimosi Naudokis.",
+    title: "Leisti diegimo ir kampanijų matavimą?",
+    body: "Jei sutiksite, „AppsFlyer“ gaus diegimo identifikatorių, kampanijos ar pakvietimo šaltinį ir, kai toks matavimas įjungtas, pasirinktus programėlės konversijų įvykius, pavyzdžiui, užbaigtą nuomą ir jos vertę. „AppsFlyer“ negaus jūsų vardo, el. pašto adreso, visų kortelės duomenų, rezervacijos numerio ar tikslaus daikto adreso. Sutikimas neprivalomas ir naudojimosi Naudokis neriboja.",
     privacyLink: "Privatumo politika",
-    allow: "Leisti matavimą ir tęsti",
-    decline: "Tęsti be matavimo",
+    allow: "Leisti „AppsFlyer“ matavimą",
+    decline: "Tęsti be „AppsFlyer“ matavimo",
     close: "Uždaryti",
   },
   privacyChoices: {
     trigger: "Privatumo nustatymai",
-    title: "Diegimo atribucija",
-    body: "Leisti „AppsFlyer“ nustatyti, kuri kampanija ar pakvietimas paskatino programėlės diegimą.",
+    title: "„AppsFlyer“ atribucija",
+    body: "Leiskite „AppsFlyer“ susieti programėlės diegimą su kampanija ar pakvietimu ir, kai toks matavimas įjungtas, su pasirinktais programėlės konversijų įvykiais.",
     statusLabel: "Dabartinė būsena",
     statusAllowed: "Leidžiama",
     statusNotAllowed: "Neleidžiama",
     allow: "Leisti diegimo atribuciją",
     withdraw: "Atšaukti leidimą",
     scopeNote:
-      "Tai svetainės nustatymas. Analitiką programėlėje valdote atskirai — jos nustatymuose.",
+      "Tai svetainėje duotas „AppsFlyer“ atribucijos pasirinkimas. Kitą programėlės analitiką valdote atskirai jos nustatymuose.",
+    privacyLink: "Privatumo politika",
     close: "Uždaryti",
   },
   invite: {
@@ -822,6 +826,7 @@ export const lt: Dict = {
       "Įveskite šį kodą programėlėje po registracijos — premija priklauso nuo kodo, o ne nuo matavimo leidimo.",
     codeCopy: "Kopijuoti kodą",
     codeCopied: "Nukopijuota",
+    codeCopyFailed: "Nepavyko nukopijuoti. Pažymėkite kodą ir nukopijuokite rankiniu būdu.",
   },
   // FINAL: account-deletion cancel bridge copy.
   cancelDeletion: {
@@ -831,7 +836,7 @@ export const lt: Dict = {
         "Persigalvojote? Atšaukite paskyros ištrynimą ir toliau naudokitės Naudokis.",
     },
     title: "Norite išsaugoti paskyrą?",
-    body: "Pateikėte prašymą ištrinti Naudokis paskyrą. Norėdami sustabdyti trynimą, patvirtinkite žemiau, kol nesibaigė laikinasis laikotarpis.",
+    body: "Paskyros trynimą galite atšaukti per 30 dienų nuo prašymo pateikimo. Patvirtinkite žemiau, jei norite išsaugoti paskyrą.",
     confirm: "Atšaukti paskyros trynimą",
     successTitle: "Paskyros ištrynimas atšauktas",
     successBody:
@@ -839,10 +844,10 @@ export const lt: Dict = {
     successCta: "Atidaryti programėlę",
     invalidTitle: "Nuoroda negalioja",
     invalidBody:
-      "Ši nuoroda negalioja arba jos galiojimas baigėsi. Jei reikia pagalbos, susisiekite su mumis.",
+      "Ši nuoroda negalioja arba jos galiojimas baigėsi. Jei reikia pagalbos, parašykite info@naudokis.lt.",
     alreadyTitle: "Nuoroda nebegalioja",
     alreadyBody:
-      "Ši nuoroda nebegalioja — ištrynimas jau įvykdytas arba atšauktas.",
+      "Nuoroda jau panaudota arba 30 dienų terminas baigėsi. Jei negalite prisijungti arba nežinote paskyros būsenos, parašykite info@naudokis.lt.",
     errorTitle: "Nepavyko atšaukti",
     errorBody:
       "Įvyko laikina klaida. Bandykite dar kartą arba susisiekite su mumis.",

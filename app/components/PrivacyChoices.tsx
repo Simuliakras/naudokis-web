@@ -15,9 +15,11 @@
 // actually throw; this leaf matches the surrounding convention rather than betting the
 // footer on that staying true.
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Dialog } from "./ui";
 import { useI18nOptional } from "./I18nProvider";
 import { trackEvent } from "@/app/lib/analytics";
+import { localePath } from "@/app/lib/i18n/config";
 import {
   NK_CONSENT_CHANGE_EVENT,
   readConsent,
@@ -26,7 +28,7 @@ import {
 } from "@/app/lib/consent";
 
 export function PrivacyChoices() {
-  const { dict } = useI18nOptional();
+  const { locale, dict } = useI18nOptional();
   const t = dict.privacyChoices;
   const [open, setOpen] = useState(false);
   // Starts "unknown" so the first client render matches the server HTML; the real
@@ -64,6 +66,9 @@ export function PrivacyChoices() {
           </button>
         </div>
         <p className="nk-consent-note">{t.scopeNote}</p>
+        <Link className="nk-consent-privacy" href={localePath(locale, "/privatumo-politika")}>
+          {t.privacyLink}
+        </Link>
       </Dialog>
     </>
   );

@@ -35,6 +35,7 @@ export function InviteScreen() {
   const code = normalizeCode(params.get("code"));
   const { openInstall } = useInstallCta();
   const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
 
   const { data: result } = useValidateCode(code);
 
@@ -75,12 +76,13 @@ export function InviteScreen() {
       return;
     }
     try {
+      setCopyFailed(false);
       await navigator.clipboard.writeText(code);
       setCopied(true);
       window.clearTimeout(copyTimer.current);
       copyTimer.current = window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard denied / unavailable — the code is on screen to be typed anyway.
+      setCopyFailed(true);
     }
   };
 
@@ -140,6 +142,7 @@ export function InviteScreen() {
                       {copied ? t.codeCopied : t.codeCopy}
                     </button>
                     <span className="invite-code__hint">{t.codeHint}</span>
+                    <span className="invite-code__hint" role="status">{copyFailed ? t.codeCopyFailed : ""}</span>
                   </div>
                 )}
               </div>

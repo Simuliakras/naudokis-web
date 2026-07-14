@@ -104,7 +104,7 @@ export const en: Dict = {
     emptyAction: "Clear search",
     bandEmptyTitle: "No listings yet",
     bandEmptyBody:
-      "New items are added all the time. Check back later or start with the categories.",
+      "There are no listings here yet. Browse the categories or check back later.",
     bandEmptyAction: "All categories",
     bandEmptySecondary: "Open in the app",
   },
@@ -161,7 +161,7 @@ export const en: Dict = {
           tag: "In-app",
           tone: "green",
           screen: "reserve",
-          body: "Choose dates, review the final amount, fees and deposit, and pay in the app through Stripe.",
+          body: "Choose dates, review the rental price, applicable fees, deposit, cancellation terms and total amount, then pay in the app through Stripe.",
         },
         {
           icon: "Handshake",
@@ -210,7 +210,7 @@ export const en: Dict = {
           tag: "Handed over",
           tone: "yellow",
           screen: "handover",
-          body: "Meet at the agreed time, check the condition and hand over the item. Deposits and evidence rules give both sides a clear process if something goes wrong.",
+          body: "Meet at the agreed time, record the item’s condition and included accessories together, then hand it over. Photos, messages and handover records help if a dispute arises.",
         },
         {
           icon: "Coins",
@@ -233,7 +233,7 @@ export const en: Dict = {
       {
         icon: "Users",
         title: "Profiles, verification and reviews",
-        body: "Visible profile signals and reviews from previous rentals help both sides decide before meeting.",
+        body: "Only people who completed a reservation through Naudokis can leave a review. Completed verification is also shown on profiles.",
       },
       {
         icon: "ShieldCheck",
@@ -416,7 +416,9 @@ export const en: Dict = {
     },
     share: "Share",
     shareCopied: "Link copied",
-    verifiedOwnerPill: "Identity checked",
+    shareFailed: "Couldn’t share the link. Try again.",
+    verifiedOwnerPill: "Identity verified",
+    verifiedOwnerNote: "Identity verification does not verify the item’s condition or guarantee a transaction.",
     galleryMore: (n) => `+${n} photo${n === 1 ? "" : "s"}`,
     descHeading: "Description",
     descOriginalNote: "Provided by the owner in their original language.",
@@ -481,19 +483,20 @@ export const en: Dict = {
     deliveryZoneKm: (km) => `≈${km} km zone`,
     termRentSub: "Rental price per day",
     depositNone: "No deposit",
-    termDepositSub: "Deposit terms and release",
+    depositTitle: (amount) => `${amount} deposit`,
+    termDepositSub: "The app shows the hold, claim and return terms before you pay.",
     durationRange: (min, max) =>
       !max || max <= min
         ? `From ${min} day${min === 1 ? "" : "s"}`
         : `${min}–${max} days`,
     termDurationSub: "Rental period",
     cancellationLabel: (tier) => {
-      if (tier === "flexible") return "Flexible";
-      if (tier === "moderate") return "Moderate";
-      if (tier === "strict") return "Strict";
-      return "Standard";
+      if (tier === "flexible") return "Flexible cancellation policy";
+      if (tier === "moderate") return "Moderate cancellation policy";
+      if (tier === "strict") return "Strict cancellation policy";
+      return "Standard cancellation policy";
     },
-    termCancelSub: "Review the deadlines before paying",
+    termCancelSub: "The app shows the exact deadlines and refund amount before you pay.",
     termInsuranceTitle: "Insurance marked by the owner",
     termInsuranceSub: "Check the provider, cover and exclusions",
     mobileBookingNote: "Total shown in the app",
@@ -635,10 +638,10 @@ export const en: Dict = {
       filterAction: "Clear filters",
       cityTitle: (city) => `No listings in ${city} yet`,
       cityBody:
-        "Explore other categories or list an item to help start this category.",
+        "Browse listings in other cities or be the first to list an item here.",
       categoryTitle: "No listings in this category yet",
       categoryBody:
-        "Explore other categories or list an item to help start this category.",
+        "Browse other categories or be the first to list an item here.",
       categoryActionPrimary: "List an item",
       categoryActionSecondary: "All categories",
     },
@@ -690,25 +693,26 @@ export const en: Dict = {
   // DRAFT: attribution-consent copy — needs sign-off before the OneLink URL is
   // switched on in prod. Both actions must stay equally weighted.
   consent: {
-    title: "Help us understand how you found Naudokis",
-    body: "If you allow attribution, AppsFlyer will receive technical install and campaign information. This is optional and does not affect your ability to use Naudokis.",
+    title: "Allow install and campaign measurement?",
+    body: "If you agree, AppsFlyer will receive an install identifier, the campaign or referral source and, where enabled, selected app conversion events such as a completed rental and its value. AppsFlyer will not receive your name, email address, full card details, reservation ID or the item’s precise address. This is optional and does not limit your use of Naudokis.",
     privacyLink: "Privacy Policy",
-    allow: "Allow measurement and continue",
-    decline: "Continue without measurement",
+    allow: "Allow AppsFlyer measurement",
+    decline: "Continue without AppsFlyer measurement",
     close: "Close",
   },
   // DRAFT.
   privacyChoices: {
     trigger: "Privacy choices",
-    title: "Install attribution",
-    body: "Allow AppsFlyer to measure which campaign or referral led to an app installation.",
+    title: "AppsFlyer attribution",
+    body: "Allow AppsFlyer to connect the app installation with a campaign or referral and, where enabled, selected app conversion events.",
     statusLabel: "Current status",
     statusAllowed: "Allowed",
     statusNotAllowed: "Not allowed",
     allow: "Allow install attribution",
     withdraw: "Withdraw permission",
     scopeNote:
-      "This is a website preference. Analytics in the app are controlled separately, in the app’s settings.",
+      "This is the AppsFlyer attribution choice made on the website. Other in-app analytics are controlled separately in the app settings.",
+    privacyLink: "Privacy Policy",
     close: "Close",
   },
   invite: {
@@ -741,6 +745,7 @@ export const en: Dict = {
       "Enter this code in the app after you sign up — the reward depends on the code, not on allowing measurement.",
     codeCopy: "Copy code",
     codeCopied: "Copied",
+    codeCopyFailed: "Couldn’t copy. Select the code and copy it manually.",
   },
   // FINAL: account-deletion cancel bridge copy.
   cancelDeletion: {
@@ -749,15 +754,15 @@ export const en: Dict = {
       description: "Changed your mind? Cancel your account deletion and keep using Naudokis.",
     },
     title: "Keep your account?",
-    body: "You asked to delete your Naudokis account. To keep it, confirm below before the grace period ends.",
+    body: "You can cancel account deletion within 30 days of submitting the request. Confirm below if you want to keep your account.",
     confirm: "Cancel deletion",
-    successTitle: "Account deletion canceled",
-    successBody: "Your account deletion has been canceled. You can log in again in the app.",
+    successTitle: "Account deletion cancelled",
+    successBody: "Your account deletion has been cancelled. You can sign in again in the app.",
     successCta: "Open the app",
     invalidTitle: "Link not valid",
-    invalidBody: "This link is invalid or has expired. Contact us if you need help.",
+    invalidBody: "This link is invalid or has expired. If you need help, email info@naudokis.lt.",
     alreadyTitle: "Link no longer valid",
-    alreadyBody: "This link is no longer valid — the deletion was already processed or canceled.",
+    alreadyBody: "The link has already been used or the 30-day period has ended. If you cannot sign in or are unsure of the account status, email info@naudokis.lt.",
     errorTitle: "Couldn’t cancel",
     errorBody: "Something went wrong. Please try again or contact us.",
     retry: "Try again",

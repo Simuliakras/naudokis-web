@@ -270,8 +270,8 @@ const headerBtn: React.CSSProperties = {
 const metaItem: React.CSSProperties = { display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", whiteSpace: "nowrap" };
 const Dot = () => <span style={{ width: 3, height: 3, borderRadius: 2, background: "var(--nk-text-muted)", flex: "none" }} />;
 
-export function ListingHeader({ listing, shared, onShare, onFav }: {
-  listing: ListingDetail; shared: boolean; onShare: () => void; onFav: () => void;
+export function ListingHeader({ listing, shared, shareFailed, onShare, onFav }: {
+  listing: ListingDetail; shared: boolean; shareFailed: boolean; onShare: () => void; onFav: () => void;
 }) {
   const { dict } = useI18n();
   const t = dict.detail;
@@ -307,6 +307,9 @@ export function ListingHeader({ listing, shared, onShare, onFav }: {
         <button className="nk-lfield" style={headerBtn} onClick={onShare}><Icon name="Share2" size={17} stroke={2} color="var(--nk-text)" /> {shared ? t.shareCopied : t.share}</button>
         <button className="nk-lfield" style={headerBtn} onClick={onFav} title={dict.bridge.opensAppHint}><Icon name="Heart" size={17} stroke={2} color="var(--nk-text)" fill="none" /> {t.save}</button>
       </div>
+      <span role="status" style={{ width: "100%", fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-danger)" }}>
+        {shareFailed ? t.shareFailed : ""}
+      </span>
     </div>
   );
 }
@@ -755,7 +758,7 @@ function TermsSection({ listing }: { listing: ListingDetail }) {
     <Section id="salygos" title={t.termsHeading}>
       <div className="nk-hl-grid">
         <FactCard icon="Tag" title={`${listing.price} ${t.perDay}`} sub={t.termRentSub} />
-        <FactCard icon="ShieldCheck" title={listing.deposit ?? t.depositNone} sub={t.termDepositSub} />
+        <FactCard icon="ShieldCheck" title={listing.deposit ? t.depositTitle(listing.deposit) : t.depositNone} sub={t.termDepositSub} />
         <FactCard icon="Calendar" title={t.durationRange(listing.minDays, listing.maxDays)} sub={t.termDurationSub} />
         <FactCard icon="RefreshCcw" title={t.cancellationLabel(listing.cancellation)} sub={t.termCancelSub} />
         {/* Only when the wire's insurance_included attribute affirms it — a top
@@ -959,6 +962,11 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
           {owner.memberSince && <span>{t.hostMemberSince(owner.memberSince)}</span>}
           {owner.responseTimeHours != null && <span>{t.hostResponseTime(owner.responseTimeHours)}</span>}
         </span>
+      )}
+      {owner.verified && (
+        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 13, lineHeight: "19px", color: "var(--nk-text-muted)", textAlign: "center" }}>
+          {t.verifiedOwnerNote}
+        </p>
       )}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 1, background: "var(--nk-hairline)", borderRadius: 14, overflow: "hidden" }}>
         {stats.map((s) => (

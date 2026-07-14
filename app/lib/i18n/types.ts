@@ -229,7 +229,9 @@ export type Dict = {
     seoDescription: (parts: { title: string; city?: string; category?: string }) => string;
     share: string; // aria-label on the gallery share/more button
     shareCopied: string;
+    shareFailed: string;
     verifiedOwnerPill: string;
+    verifiedOwnerNote: string;
     galleryMore: (count: number) => string;
     descHeading: string;
     descOriginalNote: string; // shown on non-LT pages — owner text stays in its original language
@@ -290,6 +292,7 @@ export type Dict = {
     // terms fact cards
     termRentSub: string;
     depositNone: string; // shown when the listing takes no deposit
+    depositTitle: (amount: string) => string;
     termDepositSub: string;
     durationRange: (min: number, max: number) => string; // rental length, e.g. "1–30 dienų"
     termDurationSub: string;
@@ -478,6 +481,7 @@ export type Dict = {
     allow: string;
     withdraw: string;
     scopeNote: string;
+    privacyLink: string;
     close: string;
   };
   // Referral bridge (/invite) — validates a ?code, shows the reward and routes to
@@ -503,6 +507,7 @@ export type Dict = {
     codeHint: string;
     codeCopy: string; // copy-to-clipboard action
     codeCopied: string; // confirmation after copying
+    codeCopyFailed: string;
   };
   // Account-deletion cancel bridge (/cancel-deletion) — the desktop / no-app path
   // for a GDPR-critical action. The ?token in the URL authorizes a public backend
@@ -518,7 +523,7 @@ export type Dict = {
     successCta: string; // → open the app / home
     invalidTitle: string; // 400 — bad / expired / tampered link
     invalidBody: string;
-    alreadyTitle: string; // 409 — already processed or canceled
+    alreadyTitle: string; // 409 — already processed or cancelled
     alreadyBody: string;
     errorTitle: string; // network / 5xx — retryable
     errorBody: string;

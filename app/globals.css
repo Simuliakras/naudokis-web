@@ -148,7 +148,7 @@
 
   /* ---- Fixed element sizes ----------------------------------------------- */
   --nk-tap: 44px;           /* minimum interactive target (WCAG 2.5.8)              */
-  --nk-control-h: 52px;     /* shared toolbar control height (search field + filter pills) */
+  --nk-control-h: 46px;     /* shared toolbar control height (search field + filter pills) */
   --nk-nav-veil: rgba(20,22,23,.22);          /* at-rest "melted" sticky-nav glass */
   --nk-nav-veil-scrolled: rgba(20,22,23,.74); /* scrolled nav — content must not wash out the labels */
   --nk-nav-h: 76px;         /* nav bar at rest — sticky offsets derive from this    */
@@ -1108,8 +1108,11 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* ============================================================
    Rounded search field (categories + feed)
    ============================================================ */
+/* Compact next to the hero's oversized round bar: the 44px input IS the field's
+   height (no vertical padding), so the control lands at --nk-control-h and keeps
+   the WCAG tap target. Radius follows the button token, not a full pill. */
 .nk-searchfield{position:relative;display:flex;align-items:center;gap:10px;background:var(--nk-surface);
-  border:1px solid var(--nk-border);border-radius:999px;padding:13px 20px;min-height:var(--nk-control-h);
+  border:1px solid var(--nk-border);border-radius:var(--nk-r-pill);padding:0 18px;min-height:var(--nk-control-h);
   transition:border-color .15s ease,box-shadow .15s ease}
 .nk-searchfield:focus-within{border-color:var(--nk-purple);box-shadow:var(--nk-glow-accent)}
 .nk-searchfield input{min-height:var(--nk-tap)}
@@ -1169,7 +1172,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-filter-row{gap:10px}
   /* small explicit basis: flex-wrap breaks lines on BASE sizes, so a content/
      320px basis pushed the Filters pill onto its own dead row at 390px */
-  .nk-filter-row > .nk-searchfield{flex:1 1 120px;min-width:0;width:auto;padding:11px 16px}
+  .nk-filter-row > .nk-searchfield{flex:1 1 120px;min-width:0;width:auto;padding-inline:16px}
   .nk-filter-row--desktop{display:none!important}
   .nk-filter-meta{width:100%;justify-content:space-between!important;padding-top:2px}
 }
@@ -1229,10 +1232,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-grid-feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(max(var(--nk-offer-min),18%),1fr));gap:var(--nk-grid-row-gap) var(--nk-grid-gap)}
 .nk-clear{transition:color .15s ease}
 .nk-clear:hover{color:var(--nk-text)}
-/* clear (×) button inside a padded search field — full 44px hit area; the
-   negative margins absorb the field's own padding so the layout is unchanged */
+/* clear (×) button inside a search field — full 44px hit area; the negative right
+   margin eats most of the field's inline padding so the × keeps a ~6px edge gap */
 .nk-input-clear{display:flex;align-items:center;justify-content:center;flex:none;
-  width:var(--nk-tap);height:var(--nk-tap);margin:-13px -14px -13px 0;transition:color .15s ease}
+  width:var(--nk-tap);height:var(--nk-tap);margin-right:-12px;transition:color .15s ease}
 .nk-input-clear:hover{color:var(--nk-text)}
 
 /* feed interruption banner */

@@ -115,7 +115,7 @@
     },
     {
       "t": "p",
-      "md": "“Naudokis” is an item rental platform operating in Lithuania. This Policy applies to the “Naudokis” website, mobile application, administration tools, and related account, listing, booking, payment, payout, identity verification, messaging, support, dispute, moderation, and notification functions."
+      "md": "“Naudokis” is an item rental platform operating in Lithuania. This Policy applies to the “Naudokis” website, mobile application, administration tools, and related account, listing, reservation, payment, payout, identity verification, messaging, support, dispute, moderation, and notification functions."
     },
     {
       "t": "p",
@@ -129,7 +129,7 @@
     {
       "t": "ul",
       "items": [
-        "We process core account, listing, booking, and communication data in order to provide the Platform services.",
+        "We process core account, listing, reservation, and communication data in order to provide the Platform services.",
         "Payments and payouts are processed by Stripe. “Naudokis” does not store the full payment card number, CVC, or PIN.",
         "Didit may be used for identity and age verification, and Stripe may be used for payment or payout checks.",
         "We display publicly only the information necessary for a listing and for trust. More precise contact and handover details are disclosed only when needed for a transaction.",
@@ -181,8 +181,8 @@
     {
       "t": "ul",
       "items": [
-        "**from you**, when you register, complete your profile, list an item, make a booking, pay, communicate, contact support, submit evidence, or leave a review;",
-        "**from other Users**, when they provide information concerning you in a booking, message, review, report, or dispute;",
+        "**from you**, when you register, complete your profile, list an item, make a reservation, pay, communicate, contact support, submit evidence, or leave a review;",
+        "**from other Users**, when they provide information concerning you in a reservation, message, review, report, or dispute;",
         "**automatically**, when you use the Platform, for example from session, device, security, diagnostics, cookie, or SDK events;",
         "**from service providers**, for example payment, identity-verification, social-login, address, analytics, or communications providers;",
         "**from registers, authorities, or public sources**, where this is necessary to verify identity, business information, VAT status, taxes, security, or legal defence."
@@ -278,7 +278,7 @@
     },
     {
       "t": "h3",
-      "text": "3.5. Bookings, payments, and payouts"
+      "text": "3.5. Reservations, payments, and payouts"
     },
     {
       "t": "p",
@@ -287,7 +287,7 @@
     {
       "t": "ul",
       "items": [
-        "the parties to the Booking, dates, status, and handover or delivery method;",
+        "the parties to the Reservation, dates, status, and handover or delivery method;",
         "the rental price, Platform fee, Security Deposit, and other calculations;",
         "Stripe customer, payment, refund, transfer, and payout identifiers;",
         "authorisation, capture, refund, payout, and payment-dispute statuses;",
@@ -360,7 +360,7 @@
     {
       "t": "ul",
       "items": [
-        "a rating, review text, and its relationship to a Booking;",
+        "a rating, review text, and its relationship to a Reservation;",
         "the publicly displayed name and the User’s role in the transaction;",
         "verification, activity, and other trust signals displayed on the Platform;",
         "favourited Listings and other account preferences."
@@ -417,7 +417,7 @@
     },
     {
       "t": "p",
-      "md": "Account and login data are necessary to create and protect an account. Listing, Booking, payment, handover, or return data are necessary only when you use the corresponding function. Telephone, identity, business, tax, invoicing, and payout data may be necessary because of the chosen function, payment-provider requirements, transaction risk, or law."
+      "md": "Account and login data are necessary to create and protect an account. Listing, Reservation, payment, handover, or return data are necessary only when you use the corresponding function. Telephone, identity, business, tax, invoicing, and payout data may be necessary because of the chosen function, payment-provider requirements, transaction risk, or law."
     },
     {
       "t": "p",
@@ -428,7 +428,7 @@
       "items": [
         "create or verify an account;",
         "publish a Listing;",
-        "submit or accept a Booking;",
+        "submit or accept a Reservation;",
         "process a payment, refund, or payout;",
         "issue an accounting document;",
         "provide a function for which those data are necessary."
@@ -459,7 +459,7 @@
           "Performance of a contract or steps taken before entering into a contract"
         ],
         [
-          "List items and manage Bookings, messages, handover, return, and reviews",
+          "List items and manage Reservations, messages, handover, return, and reviews",
           "Performance of a contract"
         ],
         [
@@ -564,15 +564,15 @@
     },
     {
       "t": "h3",
-      "text": "6.2. To registered Users or the parties to a Booking"
+      "text": "6.2. To registered Users or the parties to a Reservation"
     },
     {
       "t": "p",
-      "md": "When a Booking Request is submitted, limited profile, date, delivery, and request information may be shown to the other party."
+      "md": "When a Reservation Request is submitted, limited profile, date, delivery, and request information may be shown to the other party."
     },
     {
       "t": "p",
-      "md": "Once a Booking is confirmed, the parties may be provided with contact details, a more precise collection or delivery address, handover information, and messages necessary for the transaction."
+      "md": "Once a Reservation is confirmed, the parties may be provided with contact details, a more precise collection or delivery address, handover information, and messages necessary for the transaction."
     },
     {
       "t": "p",
@@ -659,7 +659,7 @@
       "items": [
         "banks, card networks, and other payment-infrastructure participants;",
         "Apple, Google, or Facebook when you choose social login;",
-        "the other party to a Booking, a business customer, or a Trader;",
+        "the other party to a Reservation, a business customer, or a Trader;",
         "accounting, audit, legal, and other professional advisers;",
         "the State Tax Inspectorate (VMI), VIES / European Commission systems, courts, law-enforcement bodies, supervisory authorities, and other public authorities where we are required or lawfully permitted to provide data."
       ]
@@ -819,7 +819,7 @@
     },
     {
       "t": "p",
-      "md": "Redirect and native-handoff endpoints may also send a server-side event. For those events we remove the URL query string and fragment before transmission. The event may include the redirect outcome, platform, target type, placement or campaign parameters, and a pseudonymous journey identifier used to connect an app-handoff outcome. We do not send Plausible your name, email address, payment details, Booking identifier, full handoff token, or the precise address of a rental item."
+      "md": "Redirect and native-handoff endpoints may also send a server-side event. For those events we remove the URL query string and fragment before transmission. The event may include the redirect outcome, platform, target type, placement or campaign parameters, and a pseudonymous journey identifier used to connect an app-handoff outcome. We do not send Plausible your name, email address, payment details, Reservation identifier, full handoff token, or the precise address of a rental item."
     },
     {
       "t": "p",
@@ -874,7 +874,7 @@
     },
     {
       "t": "p",
-      "md": "We do not send AppsFlyer your name, email address, full payment-card details, Booking identifier, or the precise address of the rental item."
+      "md": "We do not send AppsFlyer your name, email address, full payment-card details, Reservation identifier, or the precise address of the rental item."
     },
     {
       "t": "p",
@@ -903,7 +903,7 @@
     },
     {
       "t": "p",
-      "md": "Push notifications may be used for Bookings, payments, messages, handover, security, support, or marketing."
+      "md": "Push notifications may be used for Reservations, payments, messages, handover, security, support, or marketing."
     },
     {
       "t": "p",
@@ -941,7 +941,7 @@
       "t": "ul",
       "items": [
         "identity verification is not completed or is rejected;",
-        "a Booking, payment, Listing, or payout function is temporarily restricted;",
+        "a Reservation, payment, Listing, or payout function is temporarily restricted;",
         "Content is referred for additional review;",
         "an account or transaction is referred for human assessment."
       ]
@@ -1017,7 +1017,7 @@
           "While active; after removal, on a limited basis where required for moderation, DSA evidence, a dispute, or legal defence"
         ],
         [
-          "Bookings, payments, Security Deposits, refunds, and payouts",
+          "Reservations, payments, Security Deposits, refunds, and payouts",
           "In accordance with accounting, tax, payment, and dispute requirements; financial and accounting documents may be retained for up to 10 years or longer if required by law"
         ],
         [
@@ -1110,7 +1110,7 @@
       "t": "ul",
       "items": [
         "the public profile and active Listings are removed or hidden;",
-        "any active payment, Booking, Security Deposit, payout, or dispute must be completed;",
+        "any active payment, Reservation, Security Deposit, payout, or dispute must be completed;",
         "financial, accounting, tax, and legal records remain for the specified period;",
         "messages or evidence may remain where needed by the other party to the transaction, for a dispute, or for lawful defence;",
         "message-author data may be anonymised in order to preserve the integrity of the other party’s conversation;",
@@ -1177,7 +1177,7 @@
     {
       "t": "ul",
       "items": [
-        "essential notifications concerning an account, Booking, payment, Security Deposit, payout, message, handover, return, dispute, security, or legal changes;",
+        "essential notifications concerning an account, Reservation, payment, Security Deposit, payout, message, handover, return, dispute, security, or legal changes;",
         "informational notifications concerning the operation of a function you use or an important change to the service;",
         "marketing, promotional, recommendation, or newsletter communications where we have consent or all conditions of the statutory existing-customer exception are met."
       ]
@@ -1209,7 +1209,7 @@
     },
     {
       "t": "p",
-      "md": "At the beginning of registration, an unverified record may technically be created, for example after an email address is submitted. It does not entitle a minor to use Listing, Booking, payment, payout, Security Deposit, or handover functions."
+      "md": "At the beginning of registration, an unverified record may technically be created, for example after an email address is submitted. It does not entitle a minor to use Listing, Reservation, payment, payout, Security Deposit, or handover functions."
     },
     {
       "t": "p",
