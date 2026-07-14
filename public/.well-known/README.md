@@ -47,16 +47,21 @@ browser fallback is a first-party screen — an intent-matched app-handoff card
 `ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS`. If the variable is missing, the route
 returns `503` instead of a fake statement; this is an intentional release gate.
 
-Get the two SHA256 values from the **Google Play Console → your app → Setup →
-App integrity → App signing**:
+Get the SHA256 value from **Google Play Console → your app → Setup → App
+integrity → App signing**:
 
-1. **App signing key certificate** → "SHA-256 certificate fingerprint"
-2. **Upload key certificate** → "SHA-256 certificate fingerprint"
+1. **App signing key certificate** → "SHA-256 certificate fingerprint".
+2. If Play signing-key rotation is active, include every certificate that may
+   sign an installed release during the migration window.
 
-Paste both (colon-separated hex, e.g. `AB:CD:…`) into
-`ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS`, separated by commas, semicolons or
-newlines. Both are needed so links verify whether Play re-signs the app or not.
+Paste the colon-separated value (for example `AB:CD:…`) into
+`ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS`; separate multiple active signing
+certificates with commas, semicolons or newlines. The upload certificate normally
+does not sign Play-distributed APKs and should not be published merely because it
+appears in Play Console.
 
 After updating, confirm the file is reachable at
 `https://www.naudokis.lt/.well-known/assetlinks.json` and validates in the
 [Statement List Tester](https://developers.google.com/digital-asset-links/tools/generator).
+Run `yarn verify:app-links https://www.naudokis.lt` against each release host; the
+check rejects redirects and compares the live JSON to the configured identifiers.

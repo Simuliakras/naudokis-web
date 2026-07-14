@@ -13,10 +13,10 @@ export const dynamic = "force-dynamic";
 
 export function GET() {
   const sha256 = fingerprints();
-  if (sha256.length < 2) {
+  if (sha256.length < 1) {
     return Response.json(
       {
-        error: "Two valid Android SHA-256 certificate fingerprints are required",
+        error: "At least one valid Android app-signing SHA-256 certificate fingerprint is required",
       },
       {
         status: 503,

@@ -1,23 +1,20 @@
-"use client";
-// Localized 404 for the [lang] segment. Rendered inside the locale layout, so
-// the I18nProvider context (and the site chrome) is available.
-import { StatusScreen } from "@/app/components/StatusScreen";
-import { useI18nOptional } from "@/app/components/I18nProvider";
-import { localePath } from "@/app/lib/i18n/config";
+import type { Metadata } from "next";
+import { LocalizedNotFoundScreen } from "@/app/components/LocalizedNotFoundScreen";
+import { SITE_URL } from "@/app/lib/seo";
+
+// A localized not-found cannot receive route params, so keep the head concise
+// and bilingual. Most importantly, do not inherit the homepage canonical or OG
+// identity for a URL that returned 404.
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: "Puslapis nerastas | Page not found | Naudokis.lt",
+  description: "Patikrinkite adresą arba grįžkite į nuomojamų daiktų sąrašą. Check the address or browse available rentals.",
+  robots: { index: false, follow: true },
+  alternates: { canonical: null },
+  openGraph: null,
+  twitter: null,
+};
 
 export default function NotFound() {
-  const { locale, dict } = useI18nOptional();
-  const t = dict.errors;
-  // No onAction: the back-home CTA falls through to StatusScreen's locale-home
-  // default. The body invites browsing, so offer a matching feed route too.
-  return (
-    <StatusScreen
-      illustration="notFound"
-      title={t.notFoundTitle}
-      body={t.notFoundBody}
-      actionLabel={t.notFoundAction}
-      secondaryLabel={t.notFoundBrowse}
-      onSecondaryAction={() => { window.location.href = localePath(locale, "/skelbimai"); }}
-    />
-  );
+  return <LocalizedNotFoundScreen />;
 }

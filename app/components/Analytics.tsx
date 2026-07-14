@@ -1,6 +1,7 @@
 "use client";
-// Plausible loader. It is cookieless and stores no identifiers, so it is not gated
-// on the attribution choice (that choice governs AppsFlyer — see app/lib/consent.ts).
+// Plausible loader. The configured script writes no analytics cookies or persistent
+// browser-storage identifier, so it runs independently of the attribution choice
+// (that choice governs AppsFlyer — see app/lib/consent.ts).
 //
 // It is, however, kept off the token-bearing account-action pages entirely. The
 // script reports `location.href`, which on those pages contains a single-use token

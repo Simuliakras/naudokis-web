@@ -1,461 +1,147 @@
 {
   "meta": {
     "title": "„Naudokis“ privatumo politika",
-    "version": "2026-06-01",
+    "version": "2026-07-14-vendor-disclosure-v4.1",
     "effective_date": "2026-06-01",
-    "last_updated": "2026-06-01",
-    "document_id": "NAUDOKIS-PRIVACY-LT-2026-06-01",
+    "last_updated": "2026-07-14",
+    "document_id": "NAUDOKIS-PRIVACY-LT-2026-07-14-VENDOR-DISCLOSURE-V4.1",
     "document_type": "privacy_policy"
   },
   "toc": [
     {
-      "id": "kur-rasti-svarbiausia-informacija",
-      "label": "Kur rasti svarbiausią informaciją",
+      "id": "trumpai",
+      "label": "Trumpai",
       "num": null
     },
     {
-      "id": "privatumo-santrauka-lenteleje",
-      "label": "Privatumo santrauka lentelėje",
-      "num": null
-    },
-    {
-      "id": "kaip-duomenys-naudojami-praktiskai",
-      "label": "Kaip duomenys naudojami praktiškai",
-      "num": null
-    },
-    {
-      "id": "privatumo-valdymo-zemelapis",
-      "label": "Privatumo valdymo žemėlapis",
-      "num": null
-    },
-    {
-      "id": "1-duomenu-valdytojas-ir-kontaktai",
-      "label": "Duomenų valdytojas ir kontaktai",
+      "id": "1-kam-taikoma-si-politika",
+      "label": "Kam taikoma ši Politika",
       "num": "1"
     },
     {
-      "id": "2-trumpa-privatumo-santrauka",
-      "label": "Trumpa privatumo santrauka",
+      "id": "2-is-kur-gauname-duomenis",
+      "label": "Iš kur gauname duomenis",
       "num": "2"
     },
     {
-      "id": "3-kam-taikoma-si-politika",
-      "label": "Kam taikoma ši Politika",
+      "id": "3-kokius-duomenis-tvarkome",
+      "label": "Kokius duomenis tvarkome",
       "num": "3"
     },
     {
-      "id": "4-pagrindines-savokos",
-      "label": "Pagrindinės sąvokos",
+      "id": "4-ar-duomenis-privalote-pateikti",
+      "label": "Ar duomenis privalote pateikti",
       "num": "4"
     },
     {
-      "id": "5-is-kur-gauname-asmens-duomenis",
-      "label": "Iš kur gauname asmens duomenis",
+      "id": "5-kodel-ir-kokiu-pagrindu-tvarkome-duomenis",
+      "label": "Kodėl ir kokiu pagrindu tvarkome duomenis",
       "num": "5"
     },
     {
-      "id": "6-kokius-asmens-duomenis-tvarkome",
-      "label": "Kokius asmens duomenis tvarkome",
+      "id": "6-kas-matoma-kitiems",
+      "label": "Kas matoma kitiems",
       "num": "6"
     },
     {
-      "id": "7-butini-ir-pasirenkami-duomenys",
-      "label": "Būtini ir pasirenkami duomenys",
+      "id": "7-kam-perduodame-duomenis",
+      "label": "Kam perduodame duomenis",
       "num": "7"
     },
     {
-      "id": "8-kodel-tvarkome-duomenis-ir-kokiais-teisiniais-pagrindais-remiames",
-      "label": "Kodėl tvarkome duomenis ir kokiais teisiniais pagrindais remiamės",
+      "id": "8-mokejimai-ismokos-ir-tapatybes-patvirtinimas",
+      "label": "Mokėjimai, išmokos ir tapatybės patvirtinimas",
       "num": "8"
     },
     {
-      "id": "9-kokiais-duomenimis-dalijamasi-su-kitais-naudotojais",
-      "label": "Kokiais duomenimis dalijamasi su kitais Naudotojais",
+      "id": "9-mokesciai-pvm-saskaitos-ir-dac7",
+      "label": "Mokesčiai, PVM, sąskaitos ir DAC7",
       "num": "9"
     },
     {
-      "id": "10-paslaugu-teikejai-gavejai-ir-ju-vaidmenys",
-      "label": "Paslaugų teikėjai, gavėjai ir jų vaidmenys",
+      "id": "10-slapukai-sdk-analitika-ir-pranesimai",
+      "label": "Slapukai, SDK, analitika ir pranešimai",
       "num": "10"
     },
     {
-      "id": "11-mokejimai-tapatybes-patvirtinimas-ir-reguliuojamas-tvarkymas",
-      "label": "Mokėjimai, tapatybės patvirtinimas ir reguliuojamas tvarkymas",
+      "id": "11-automatizuotos-patikros-profiliavimas-ir-di",
+      "label": "Automatizuotos patikros, profiliavimas ir DI",
       "num": "11"
     },
     {
-      "id": "12-tarptautinis-duomenu-perdavimas",
-      "label": "Tarptautinis duomenų perdavimas",
+      "id": "12-duomenu-perdavimas-uz-eee-ribu",
+      "label": "Duomenų perdavimas už EEE ribų",
       "num": "12"
     },
     {
-      "id": "13-automatizuotos-patikros-di-ir-zmogaus-perziura",
-      "label": "Automatizuotos patikros, DI ir žmogaus peržiūra",
+      "id": "13-kiek-laiko-saugome-duomenis",
+      "label": "Kiek laiko saugome duomenis",
       "num": "13"
     },
     {
-      "id": "14-rinkodara-su-paslauga-susije-pranesimai-ir-pranesimu-nustatymai",
-      "label": "Rinkodara, su paslauga susiję pranešimai ir pranešimų nustatymai",
+      "id": "14-jusu-teises",
+      "label": "Jūsų teisės",
       "num": "14"
     },
     {
-      "id": "15-saugojimo-terminai",
-      "label": "Saugojimo terminai",
+      "id": "15-rinkodara-ir-su-paslauga-susije-pranesimai",
+      "label": "Rinkodara ir su paslauga susiję pranešimai",
       "num": "15"
     },
     {
-      "id": "16-paskyros-istrynimas-ir-duomenu-eksportas",
-      "label": "Paskyros ištrynimas ir duomenų eksportas",
+      "id": "16-nepilnameciai",
+      "label": "Nepilnamečiai",
       "num": "16"
     },
     {
-      "id": "17-jusu-teises-pagal-bdar",
-      "label": "Jūsų teisės pagal BDAR",
+      "id": "17-saugumas-instituciju-prasymai-ir-politikos-pakeitimai",
+      "label": "Saugumas, institucijų prašymai ir Politikos pakeitimai",
       "num": "17"
     },
     {
-      "id": "18-vaikai-ir-nepilnameciai",
-      "label": "Vaikai ir nepilnamečiai",
+      "id": "18-kontaktai-ir-skundai",
+      "label": "Kontaktai ir skundai",
       "num": "18"
-    },
-    {
-      "id": "19-saugumas",
-      "label": "Saugumas",
-      "num": "19"
-    },
-    {
-      "id": "20-sios-politikos-pakeitimai",
-      "label": "Šios Politikos pakeitimai",
-      "num": "20"
-    },
-    {
-      "id": "21-skundai-ir-prieziuros-institucija",
-      "label": "Skundai ir priežiūros institucija",
-      "num": "21"
-    },
-    {
-      "id": "22-privatumo-priedai",
-      "label": "Privatumo priedai",
-      "num": "22"
-    },
-    {
-      "id": "23-kontaktai",
-      "label": "Kontaktai",
-      "num": "23"
     }
   ],
   "blocks": [
     {
       "t": "p",
-      "md": "Šioje Privatumo politikoje paaiškinama, kaip MB „Naudokis“ („Naudokis“, „mes“, „mus“, „mūsų“) renka, naudoja, saugo, atskleidžia ir kitaip tvarko asmens duomenis."
+      "md": "Šioje Privatumo politikoje paaiškiname, kokius jūsų asmens duomenis tvarkome, kodėl tai darome, kam juos perduodame, kiek laiko saugome ir kokias teises turite."
     },
     {
       "t": "p",
-      "md": "Politika taikoma, kai naudojatės mobiliąja „Naudokis“ Programėle, susijusiomis interneto svetainėmis, administravimo sąsajomis, daiktų nuomos Platformos paslaugomis, mokėjimų, tapatybės patvirtinimo, pagalbos, ginčų sprendimo ir komunikacijos funkcijomis."
+      "md": "**Duomenų valdytojas:** MB „Naudokis“ **Juridinio asmens kodas:** 307423504 **Buveinės adresas:** Numėjos g. 6, LT-08402 Vilnius, Lietuva **Privatumo klausimai ir prašymai:** info@naudokis.lt"
     },
     {
       "t": "p",
-      "md": "„Naudokis“ yra Lietuvoje veikianti mobilioji daiktų nuomos Platforma. Platformoje fiziniai asmenys ir verslo naudotojai gali skelbti nuomojamus daiktus, naršyti Skelbimus, teikti nuomos užklausas, autorizuoti mokėjimus, perduoti ir grąžinti daiktus, bendrauti su kita sandorio šalimi, palikti atsiliepimus ir per Platformą spręsti su nuoma susijusius klausimus."
+      "md": "„Naudokis“ yra Lietuvoje veikianti daiktų nuomos platforma. Ši Politika taikoma „Naudokis“ interneto svetainei, mobiliajai programėlei, administravimo priemonėms ir susijusioms paskyros, skelbimų, rezervacijų, mokėjimų, išmokų, tapatybės patvirtinimo, žinučių, pagalbos, ginčų, moderavimo ir pranešimų funkcijoms."
     },
     {
       "t": "p",
-      "md": "Platforma gali palaikyti nuomą tarp privačių asmenų (P2P), tarp verslo ir privačių asmenų (B2C) bei tarp verslo subjektų (B2B), kai tai leidžia Platformos funkcijos ir taikoma teisė."
-    },
-    {
-      "t": "p",
-      "md": "**Veiklos Lietuvoje apimtis.** „Naudokis“ veikia Lietuvos rinkoje. Su mokesčių, PVM, DAC7, VIES, verslo naudotojų, mokėjimų ar išmokų atitiktimi susiję duomenys tvarkomi tik tada, kai tokia funkcija faktiškai naudojama, reikalinga Platformos veikimui arba to reikalauja teisės aktai."
-    },
-    {
-      "t": "p",
-      "md": "**Duomenų valdytojas:** MB „Naudokis“, juridinio asmens kodas 307423504, registruotos buveinės adresas – Numėjos g. 6, LT-08402 Vilnius, Lietuva. Privatumo ir pagalbos klausimais galite kreiptis el. paštu **info@naudokis.lt**."
-    },
-    {
-      "t": "p",
-      "md": "**Paleidimo laikotarpis** šioje Politikoje suprantamas taip, kaip apibrėžta 4 skyriuje: laikotarpis, kuriuo „Naudokis“ veikia Lietuvos rinkoje su pradine funkcijų, teikėjų, mokėjimų, išmokų, kategorijų ir techninių procesų apimtimi. Tai nėra žemesnio privatumo ar saugumo lygio versija; terminas tik paaiškina, kurios funkcijos ir duomenų tvarkymo procesai šiuo metu faktiškai įjungti."
+      "md": "Naudojimosi sąlygos nustato naudojimosi Platforma ir nuomos sandorių taisykles. Ši Politika paaiškina, kaip dėl šių veiklų tvarkomi asmens duomenys. Naudojimosi sąlygose apibrėžtos sąvokos šioje Politikoje vartojamos ta pačia reikšme, nebent aiškiai nurodyta kitaip."
     },
     {
       "t": "h2",
-      "id": "kur-rasti-svarbiausia-informacija",
-      "text": "Kur rasti svarbiausią informaciją"
-    },
-    {
-      "t": "table",
-      "head": [
-        "Ieškote informacijos apie...",
-        "Skaitykite"
-      ],
-      "rows": [
-        [
-          "Kas yra duomenų valdytojas ir kaip susisiekti",
-          "1 ir 23 skyriuose"
-        ],
-        [
-          "Trumpą privatumo paaiškinimą",
-          "2 skyriuje"
-        ],
-        [
-          "Kokius duomenis renkame",
-          "6 skyriuje ir Duomenų kategorijų priede"
-        ],
-        [
-          "Kodėl naudojame duomenis ir kokiais teisiniais pagrindais remiamės",
-          "8 skyriuje"
-        ],
-        [
-          "Kokie duomenys matomi kitiems Naudotojams",
-          "9 skyriuje"
-        ],
-        [
-          "Paslaugų teikėjus, gavėjus ir jų vaidmenis",
-          "10 skyriuje ir Teikėjų, gavėjų, slapukų ir SDK priede"
-        ],
-        [
-          "Mokėjimus, tapatybės patvirtinimą ir Stripe arba Didit",
-          "11 skyriuje ir Tapatybės patvirtinimo ir sukčiavimo prevencijos privatumo priede"
-        ],
-        [
-          "Tarptautinius duomenų perdavimus",
-          "12 skyriuje"
-        ],
-        [
-          "DI, automatizuotas patikras ir žmogaus peržiūrą",
-          "13 skyriuje ir DI ir automatizuotų patikrų priede"
-        ],
-        [
-          "Saugojimo terminus ir paskyros ištrynimą",
-          "15 ir 16 skyriuose bei Saugojimo terminų ir ištrynimo priede"
-        ],
-        [
-          "Jūsų BDAR teises",
-          "17 skyriuje"
-        ],
-        [
-          "Slapukus, SDK, tiesioginius pranešimus ir mobiliąsias technologijas",
-          "Teikėjų, gavėjų, slapukų ir SDK priedą"
-        ],
-        [
-          "Verslo naudotojų, DAC7 ir mokesčių duomenis",
-          "Verslo naudotojų, Prekiautojų, DAC7 ir mokesčių privatumo priedą"
-        ]
-      ]
-    },
-    {
-      "t": "h2",
-      "id": "privatumo-santrauka-lenteleje",
-      "text": "Privatumo santrauka lentelėje"
-    },
-    {
-      "t": "table",
-      "head": [
-        "Duomenų sritis",
-        "Kodėl tvarkome",
-        "Kam gali būti perduodama",
-        "Įprasta saugojimo logika"
-      ],
-      "rows": [
-        [
-          "Paskyra, profilis ir kontaktai",
-          "Paskyrai sukurti, autentifikuoti, bendrauti ir teikti Platformos paslaugas",
-          "Infrastruktūros, komunikacijos, saugumo teikėjams; kitiems Naudotojams tik tiek, kiek būtina Platformos funkcijoms",
-          "Kol turite paskyrą ir ribotą laiką po jos uždarymo, jei reikia teisės, saugumo ar ginčų tikslais"
-        ],
-        [
-          "Tapatybės ir patvirtinimo duomenys",
-          "Amžiui, tapatybei, sukčiavimo prevencijai, mokėjimams ir atitikties reikalavimams",
-          "Didit, Stripe, atitikties užtikrinimo paslaugų teikėjams ir teisės institucijoms, kai būtina",
-          "Pagal patvirtinimo galiojimą, teisines pareigas ir ribotus audito ir saugumo terminus"
-        ],
-        [
-          "Skelbimai, rezervacijos, mokėjimai ir Užstatai",
-          "Nuomai, mokėjimams, grąžinimams, Užstatams, ginčams ir apskaitai",
-          "Stripe, Nuomotojui arba Nuomininkui, pagalbos, apskaitos, mokesčių ar teisės institucijoms",
-          "Pagal sandorio, apskaitos, mokesčių, ginčų ir mokėjimų saugojimo terminus"
-        ],
-        [
-          "Žinutės, pagalba, įrodymai ir ginčai",
-          "Bendravimui, ginčams, saugumui, moderavimui ir pagalbai",
-          "Kitai sandorio šaliai, pagalbos komandai, paslaugų teikėjams, institucijoms, kai būtina",
-          "Kol reikia ginčui, saugumui, teisinei gynybai ar privalomoms pareigoms"
-        ],
-        [
-          "Įrenginio, diagnostikos ir saugumo duomenys",
-          "Platformos veikimui, saugumui, klaidų taisymui, piktnaudžiavimo prevencijai",
-          "AWS, Sentry, Expo ir kitiems techniniams teikėjams, kai funkcija įjungta",
-          "Įprastai trumpiau nei paskyros ar sandorių duomenys, nebent reikia saugumui ar teisinei gynybai"
-        ],
-        [
-          "Verslo, PVM, VIES, DAC7 ir sąskaitų duomenys",
-          "Verslo funkcijoms, sąskaitoms, mokesčiams, DAC7, atitikties ir vartotojų informavimo pareigoms vykdyti",
-          "Stripe, mokesčių institucijoms, VIES arba Europos Komisijos sistemoms, apskaitos teikėjams, sandorio šalims, kai būtina",
-          "Pagal mokesčių, apskaitos, DAC7 ir teisės aktų terminus"
-        ]
-      ]
-    },
-    {
-      "t": "h2",
-      "id": "kaip-duomenys-naudojami-praktiskai",
-      "text": "Kaip duomenys naudojami praktiškai"
-    },
-    {
-      "t": "p",
-      "md": "Šie pavyzdžiai padeda suprasti, kada ir kodėl tvarkomi konkretūs duomenys. Jie nepakeičia išsamių toliau pateiktų skyrių."
+      "id": "trumpai",
+      "text": "Trumpai"
     },
     {
       "t": "ul",
       "items": [
-        "**Kai sukuriate paskyrą,** tvarkome paskyros, autentifikavimo, kontaktų, teisinių dokumentų priėmimo ir saugumo duomenis, kad galėtume suteikti prieigą prie Platformos ir apsaugoti paskyrą.",
-        "**Kai įkeliate Skelbimą,** tvarkome Skelbimo informaciją, nuotraukas, kategoriją, kainą, vietos ar atsiėmimo zonos duomenis, moderavimo būseną ir saugumo signalus, kad Skelbimas būtų rodomas ir galėtų būti rezervuojamas.",
-        "**Kai rezervuojate daiktą,** tvarkome Rezervacijos datas, kainą, mokesčius, Užstatą, mokėjimo būseną, perdavimo informaciją ir komunikaciją su kita sandorio šalimi, kad nuoma galėtų būti sudaryta ir įvykdyta.",
-        "**Kai patvirtinate tapatybę,** tvarkome patvirtinimo būseną, tik tam tikrus (ribotus) patvirtinimo rezultatus ir saugumo signalus. Neapdorotus dokumentų vaizdus „Naudokis“ saugo tik tada ir tik tiek, kiek būtina aiškiai nurodytam tikslui.",
-        "**Kai vyksta ginčas,** tvarkome žinutes, nuotraukas, vaizdus, paaiškinimus, būklės patvirtinimus, mokėjimo informaciją ir pagalbos komandos sprendimų įrašus, kad būtų galima įvertinti pretenziją ir administruoti Užstatą, grąžinimą ar kitą koregavimą.",
-        "**Kai ištrinate paskyrą,** dalis duomenų ištrinama ar anonimizuojama, o dalis ribotai saugoma, jei to reikia aktyvioms Rezervacijoms, ginčams, mokėjimams, mokesčiams, apskaitai, saugumui ar teisinei gynybai."
+        "Pagrindinius paskyros, skelbimų, rezervacijų ir bendravimo duomenis tvarkome tam, kad galėtume teikti Platformos paslaugas.",
+        "Mokėjimus ir išmokas apdoroja „Stripe“. „Naudokis“ nesaugo viso mokėjimo kortelės numerio, CVC ar PIN.",
+        "Tapatybės ir amžiaus patikrai gali būti naudojamas „Didit“, o mokėjimų ar išmokų patikroms – „Stripe“.",
+        "Viešai rodome tik skelbimui ir pasitikėjimui būtiną informaciją. Tikslesni kontaktiniai ir perdavimo duomenys atskleidžiami tik tada, kai jų reikia sandoriui.",
+        "„Mixpanel“ produkto analitika ir „AppsFlyer“ programėlės atribucija įjungiama tik gavus sutikimą. Viešoje svetainėje naudojamas slapukų nenaudojantis „Plausible“ lankomumo ir perėjimo į programėlę matavimas, grindžiamas toliau aprašytu teisėtu interesu.",
+        "Uždarius paskyrą ne visi duomenys ištrinami iš karto. Finansiniai, mokesčių, ginčų, saugumo ar teisinės gynybos duomenys gali būti saugomi ilgiau.",
+        "Galite prašyti susipažinti su duomenimis, juos ištaisyti, ištrinti ar apriboti, perkelti duomenis, nesutikti su tam tikru tvarkymu ir atšaukti sutikimą."
       ]
-    },
-    {
-      "t": "h3",
-      "text": "Šios Politikos struktūra"
-    },
-    {
-      "t": "p",
-      "md": "Ši Privatumo politika yra pagrindinis „Naudokis“ privatumo dokumentas. Ji taikoma kartu su atskirais privatumo priedais, kurie išsamiau paaiškina konkrečias duomenų tvarkymo sritis:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "Duomenų kategorijų priedas (Politikos 6 skyriaus priedas)",
-        "Teikėjų, gavėjų, slapukų ir SDK priedas",
-        "Saugojimo terminų ir ištrynimo priedas",
-        "Tapatybės patvirtinimo ir sukčiavimo prevencijos priedas",
-        "DI ir automatizuotų patikrų priedas",
-        "Verslo naudotojų, Prekiautojų, DAC7 ir mokesčių privatumo priedas"
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Šie priedai yra šios Politikos dalis ir turi būti aiškinami kartu su pagrindine Politika, atsižvelgiant į konkrečią Platformos funkciją ir faktiškai įjungtus teikėjus."
     },
     {
       "t": "h2",
-      "id": "privatumo-valdymo-zemelapis",
-      "text": "Privatumo valdymo žemėlapis"
-    },
-    {
-      "t": "p",
-      "md": "„Naudokis“ taiko privatumo valdymo principą, pagal kurį kiekvienas svarbus Platformos procesas turi aiškų duomenų tikslą, teisinį pagrindą, gavėjų kategoriją ir saugojimo logiką."
-    },
-    {
-      "t": "table",
-      "head": [
-        "Platformos procesas",
-        "Pagrindiniai duomenys",
-        "Pagrindinis tikslas"
-      ],
-      "rows": [
-        [
-          "Paskyros sukūrimas",
-          "vardas, kontaktai, prisijungimo duomenys",
-          "sukurti ir apsaugoti paskyrą"
-        ],
-        [
-          "Tapatybės patvirtinimas",
-          "patvirtinimo rezultatas, tik tam tikri (riboti) dokumento atributai, techninė saugumo žyma",
-          "amžiaus, tapatybės, sukčiavimo ir rizikos patikra"
-        ],
-        [
-          "Skelbimas",
-          "daikto informacija, nuotraukos, vieta, kaina, Užstatas",
-          "rodyti Skelbimą, sudaryti Rezervaciją, spręsti ginčus"
-        ],
-        [
-          "Rezervacija",
-          "datos, šalys, mokėjimas, Užstatas, perdavimas, žinutės",
-          "vykdyti nuomą ir administruoti mokėjimus"
-        ],
-        [
-          "Mokėjimai ir išmokos",
-          "Stripe mokėjimo identifikatoriai, sumos, būsena, išmokos informacija",
-          "apdoroti mokėjimus, Užstatus, grąžinimus ir išmokas"
-        ],
-        [
-          "Ginčai ir pagalba",
-          "žinutės, nuotraukos, įrodymai, sprendimai",
-          "spręsti žalą, vėlavimą, atšaukimą, grąžinimą ar saugumo klausimą"
-        ],
-        [
-          "Atsiliepimai",
-          "reitingas, tekstas, rezervacijos ryšys",
-          "rodyti realios patirties reputacijos signalus"
-        ],
-        [
-          "Moderavimas ir DSA",
-          "pranešimai, sprendimai, skundai, rizikos signalai",
-          "užtikrinti teisėtą ir saugų Platformos naudojimą"
-        ],
-        [
-          "Analitika ir diagnostika",
-          "įrenginio, našumo, klaidų, naudojimo įvykiai",
-          "palaikyti, saugoti ir gerinti Platformą"
-        ]
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Duomenys netvarkomi „visiems galimiems tikslams“. Jie naudojami tiek, kiek būtina konkrečiai funkcijai, teisinei pareigai, sutarties vykdymui, sutikimui, teisėtam interesui ar naudotojo prašymui."
-    },
-    {
-      "t": "h2",
-      "id": "1-duomenu-valdytojas-ir-kontaktai",
-      "text": "1. Duomenų valdytojas ir kontaktai"
-    },
-    {
-      "t": "p",
-      "md": "Daugumos šioje Politikoje aprašytų asmens duomenų tvarkymo veiksmų duomenų valdytojas yra:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "**MB „Naudokis“**",
-        "Juridinio asmens kodas: **307423504**",
-        "Registruotos buveinės adresas: **Numėjos g. 6, LT-08402 Vilnius, Lietuva**",
-        "Privatumo ir pagalbos kontaktas: **info@naudokis.lt**"
-      ]
-    },
-    {
-      "t": "p",
-      "md": "„Naudokis“ nėra paskyrusi atskiro duomenų apsaugos pareigūno. Visais privatumo klausimais, įskaitant prašymus įgyvendinti duomenų subjekto teises, kreipkitės el. paštu **info@naudokis.lt**. Poreikis paskirti duomenų apsaugos pareigūną pakartotinai vertinamas, jei keičiasi duomenų tvarkymo mastas, pobūdis ar rizika."
-    },
-    {
-      "t": "p",
-      "md": "Kai kurie trečiųjų šalių paslaugų teikėjai, pavyzdžiui, mokėjimo, tapatybės patvirtinimo, socialinio prisijungimo ar reguliavimo atitikties paslaugų teikėjai, tam tikrais atvejais gali veikti kaip savarankiški duomenų valdytojai. Tokiais atvejais jų atliekamam duomenų tvarkymui taikomi jų privatumo pranešimai ir sąlygos."
-    },
-    {
-      "t": "h2",
-      "id": "2-trumpa-privatumo-santrauka",
-      "text": "2. Trumpa privatumo santrauka"
-    },
-    {
-      "t": "p",
-      "md": "Ši santrauka padeda greitai susipažinti su pagrindiniais dalykais. Ji nepakeičia išsamių toliau pateiktų skyrių, o tik glaustai juos apžvelgia."
-    },
-    {
-      "t": "ul",
-      "items": [
-        "**Kas mes esame.** MB „Naudokis“ (juridinio asmens kodas 307423504, registruotos buveinės adresas – Numėjos g. 6, LT-08402 Vilnius) yra daiktų nuomos Platforma ir daugumos šioje Politikoje aprašyto tvarkymo duomenų valdytoja.",
-        "**Kokius duomenis tvarkome.** Paskyros ir profilio duomenis, tapatybės patvirtinimo rezultatus, Skelbimų, Rezervacijų, mokėjimų, Užstatų, perdavimo, grąžinimo, žinučių, atsiliepimų, vietos, įrenginio ir saugumo duomenis.",
-        "**Kodėl.** Kad galėtume teikti Platformos paslaugas, vykdyti mokėjimus ir Užstatus, užtikrinti saugumą bei pasitikėjimą, spręsti ginčus ir vykdyti teisines, apskaitos bei mokesčių (įskaitant DAC7) pareigas.",
-        "**Kam atskleidžiame.** Kitiems sandorio dalyviams (tiek, kiek būtina nuomai įvykdyti), mokėjimo ir tapatybės patvirtinimo teikėjams (Stripe, Didit), infrastruktūros ir komunikacijos teikėjams (AWS) bei institucijoms, kai to reikalauja teisės aktai.",
-        "**Kur saugoma.** Pagrindiniai duomenys saugomi Europos ekonominės erdvės teritorijoje (AWS regionas eu-north-1, Stokholmas); kai kurie teikėjai gali tvarkyti duomenis už EEE ribų taikydami BDAR apsaugos priemones.",
-        "**Jūsų teisės.** Galite prašyti susipažinti su duomenimis, juos ištaisyti, ištrinti, apriboti tvarkymą, perkelti duomenis, nesutikti su tvarkymu ar atšaukti sutikimą kreipdamiesi el. paštu **info@naudokis.lt**, taip pat pateikti skundą Valstybinei duomenų apsaugos inspekcijai."
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Išsamią informaciją apie kiekvieną iš šių dalykų rasite atitinkamuose toliau pateiktuose skyriuose."
-    },
-    {
-      "t": "h2",
-      "id": "3-kam-taikoma-si-politika",
-      "text": "3. Kam taikoma ši Politika"
+      "id": "1-kam-taikoma-si-politika",
+      "text": "1. Kam taikoma ši Politika"
     },
     {
       "t": "p",
@@ -464,735 +150,1132 @@
     {
       "t": "ul",
       "items": [
-        "svečiams, kurie naršo viešus „Naudokis“ puslapius ar viešus skelbimus;",
-        "registruotiems Naudotojams;",
-        "daiktų savininkams ir Nuomotojams;",
-        "Nuomininkams;",
-        "Verslo naudotojams, įskaitant Verslo nuomotojus, Verslo nuomininkus, Prekiautojus ir jų įgaliotus atstovus;",
-        "asmenims, kurių duomenys pateikiami žinutėse, pagalbos užklausose, pranešimuose, ginčuose, atsiliepimuose, perdavimo ar grąžinimo įrodymuose, rekomendacijose ar kitame Platformos turinyje."
+        "svetainės ir Programėlės lankytojams;",
+        "registruotiems naudotojams;",
+        "Nuomotojams ir Nuomininkams;",
+        "verslo naudotojams, Prekiautojams ir jų atstovams;",
+        "asmenims, kurių duomenys pateikiami žinutėse, pagalbos užklausose, pranešimuose, atsiliepimuose, perdavimo ar grąžinimo įrodymuose ir ginčuose."
       ]
     },
     {
-      "t": "h2",
-      "id": "4-pagrindines-savokos",
-      "text": "4. Pagrindinės sąvokos"
+      "t": "p",
+      "md": "MB „Naudokis“ yra duomenų valdytojas, kai pati nustato duomenų tvarkymo tikslus ir priemones."
     },
     {
       "t": "p",
-      "md": "Šioje Politikoje vartojamos sąvokos:"
+      "md": "Kai kurie gavėjai, pavyzdžiui, „Stripe“, socialinio prisijungimo teikėjai, bankai ar viešosios institucijos, dalį duomenų tvarko kaip savarankiški duomenų valdytojai. Jų savarankiškam tvarkymui taikomi jų privatumo pranešimai ir teisės aktai."
+    },
+    {
+      "t": "p",
+      "md": "Paslaugų teikėjai, kurie duomenis tvarko tik pagal mūsų nurodymus, yra mūsų duomenų tvarkytojai. Kito Platformos naudotojo ar verslo kliento vaidmuo priklauso nuo to, kaip ir kokiu tikslu jis naudoja gautus duomenis."
+    },
+    {
+      "t": "h2",
+      "id": "2-is-kur-gauname-duomenis",
+      "text": "2. Iš kur gauname duomenis"
+    },
+    {
+      "t": "p",
+      "md": "Duomenis gauname:"
     },
     {
       "t": "ul",
       "items": [
-        "**Platforma** – „Naudokis“ mobilioji Programėlė, interneto svetainės, administravimo sąsajos ir susijusios paslaugos.",
-        "**Paleidimo laikotarpis** – laikotarpis, kuriuo „Naudokis“ veikia Lietuvos rinkoje ir taiko šiame dokumente aprašytus pradinius teritorijos, mokėjimų, išmokų, kategorijų ar funkcijų apribojimus, nebent Programėlėje aiškiai nurodyta kitaip.",
-        "**Naudotojas** – bet kuris asmuo, kuris naudojasi Platforma.",
-        "**Nuomotojas** – Naudotojas, kuris per Platformą skelbia arba siūlo daiktą nuomai. Nuomotojas gali būti fizinis asmuo arba Verslo naudotojas.",
-        "**Nuomininkas** – Naudotojas, kuris per Platformą pateikia nuomos užklausą arba nuomojasi daiktą. Nuomininkas gali būti fizinis asmuo arba Verslo naudotojas.",
-        "**Verslo naudotojas** – Naudotojas, kuris veikia verslo ar profesinės veiklos tikslais, įskaitant atvejus, kai jis siūlo daiktus nuomai, nuomojasi daiktus arba atlieka abu vaidmenis per Platformą.",
-        "**Prekiautojas** – Verslo naudotojas ar kitas asmuo, kuris pagal taikomą vartotojų teisę laikomas prekiautoju vartotojų atžvilgiu.",
-        "**B2B Rezervacija** – Rezervacija ar Nuomos sandoris, kai tiek Nuomotojas, tiek Nuomininkas veikia verslo ar profesinės veiklos tikslais.",
-        "**Rezervacijos užklausa** – per Platformą pateikta konkretaus daikto nuomos užklausa pasirinktoms datoms.",
-        "**Rezervacija** – Rezervacijos užklausa ir jos pagrindu vykdomas nuomos procesas, įskaitant patvirtinimą, vykdymą, atšaukimą ar užbaigimą."
+        "**iš jūsų**, kai registruojatės, pildote profilį, skelbiate daiktą, rezervuojate, mokate, bendraujate, kreipiatės pagalbos, teikiate įrodymus ar paliekate atsiliepimą;",
+        "**iš kitų naudotojų**, kai jie pateikia su jumis susijusią informaciją rezervacijoje, žinutėje, atsiliepime, pranešime ar ginče;",
+        "**automatiškai**, kai naudojatės Platforma, pavyzdžiui, iš sesijos, įrenginio, saugumo, diagnostikos, slapukų ar SDK įvykių;",
+        "**iš paslaugų teikėjų**, pavyzdžiui, mokėjimų, tapatybės patvirtinimo, socialinio prisijungimo, adresų, analitikos ar komunikacijos teikėjų;",
+        "**iš registrų, institucijų ar viešų šaltinių**, kai tai būtina tapatybei, verslo duomenims, PVM statusui, mokesčiams, saugumui ar teisinei gynybai patikrinti."
       ]
     },
     {
       "t": "p",
-      "md": "Kitos didžiąja raide rašomos sąvokos (Skelbimas, Užstatas, Turinys, Sąlygos) turi „Naudokis“ naudojimosi sąlygose joms suteiktą reikšmę."
+      "md": "Kai asmens duomenis gauname ne tiesiogiai iš jūsų ir ši Politika jums dar nebuvo pateikta, informaciją pateikiame per BDAR 14 straipsnyje nustatytą terminą, nebent taikoma teisės aktuose numatyta išimtis."
     },
     {
       "t": "h2",
-      "id": "5-is-kur-gauname-asmens-duomenis",
-      "text": "5. Iš kur gauname asmens duomenis"
+      "id": "3-kokius-duomenis-tvarkome",
+      "text": "3. Kokius duomenis tvarkome"
     },
     {
       "t": "p",
-      "md": "Asmens duomenis gauname iš šių šaltinių:"
+      "md": "Tvarkomų duomenų apimtis priklauso nuo naudojamų funkcijų."
+    },
+    {
+      "t": "h3",
+      "text": "3.1. Paskyra ir profilis"
+    },
+    {
+      "t": "p",
+      "md": "Galime tvarkyti:"
     },
     {
       "t": "ul",
       "items": [
-        "tiesiogiai iš jūsų, kai sukuriate paskyrą, pildote profilį, publikuojate skelbimą, rezervuojate daiktą, atliekate mokėjimą, bendraujate, pateikiate pagalbos užklausą, inicijuojate ginčą, paliekate atsiliepimą ar pateikiate kitą informaciją;",
-        "iš kitų „Naudokis“ Naudotojų, kai jie nurodo jūsų duomenis žinutėse, rezervacijose, ginčuose, įrodymuose, atsiliepimuose ar pagalbos užklausose;",
-        "automatiškai iš jūsų įrenginio ir naudojimosi Platforma, pavyzdžiui, techninius, diagnostinius, saugumo, sesijų, pranešimų ir naudojimo įvykių duomenis;",
-        "iš mokėjimo, tapatybės patvirtinimo, socialinio prisijungimo, adresų paieškos, pristatymo, analitikos, diagnostikos, infrastruktūros ir kitų paslaugų teikėjų;",
-        "iš viešųjų institucijų, teismų, teisėsaugos, mokesčių ar vartotojų teisių institucijų, kai tai būtina teisiniams, reguliaciniams, apskaitos, ginčų nagrinėjimo ar saugumo tikslams."
+        "vardą, rodomą vardą, el. pašto adresą ir telefono numerį;",
+        "profilio nuotrauką ir pasirenkamą profilio informaciją;",
+        "prisijungimo, autentifikavimo ir paskyros atkūrimo duomenis;",
+        "paskyros būseną, nustatymus ir patvirtinimo žymas;",
+        "Naudojimosi sąlygų, Privatumo politikos ir kitų teisinių pasirinkimų priėmimo įrašus."
       ]
     },
     {
-      "t": "h2",
-      "id": "6-kokius-asmens-duomenis-tvarkome",
-      "text": "6. Kokius asmens duomenis tvarkome"
-    },
-    {
-      "t": "callout",
-      "md": "Tvarkomų duomenų apimtis priklauso nuo to, ar tik naršote, turite paskyrą, skelbiate daiktus, rezervuojate, naudojate mokėjimus, tapatybės patvirtinimą, verslo funkcijas, pagalbą ar ginčų procesus."
+      "t": "h3",
+      "text": "3.2. Tapatybė ir patvirtinimas"
     },
     {
       "t": "p",
-      "md": "Galime tvarkyti šias pagrindines duomenų grupes:"
+      "md": "Priklausomai nuo patikros galime tvarkyti:"
     },
     {
-      "t": "table",
-      "head": [
-        "Duomenų grupė",
-        "Pavyzdžiai"
-      ],
-      "rows": [
-        [
-          "Paskyros, autentifikavimo ir profilio duomenys",
-          "vardas, el. paštas, telefonas, prisijungimo duomenys, profilio informacija, teisinių dokumentų priėmimo įrašai"
-        ],
-        [
-          "Tapatybės ir patvirtinimo duomenys",
-          "patvirtinimo būsena, sesijos ID, teikėjo rezultatai, tik tam tikri (riboti) tapatybės atributai, sukčiavimo prevencijos signalai"
-        ],
-        [
-          "Verslo ir mokesčių duomenys",
-          "verslo pavadinimas, registracijos numeris, PVM statusas, mokesčių identifikatoriai, DAC7 ir sąskaitų duomenys"
-        ],
-        [
-          "Skelbimų ir nuomojamų daiktų duomenys",
-          "skelbimų tekstai, nuotraukos, kategorijos, kainos, vietos ar atsiėmimo zonos, moderavimo būsena"
-        ],
-        [
-          "Rezervacijos, mokėjimai ir Užstatai",
-          "rezervacijos datos, kaina, mokesčiai, mokėjimo būsena, Užstatai, grąžinimai, išmokos"
-        ],
-        [
-          "Perdavimas, grąžinimas ir ginčai",
-          "būklės patvirtinimai, nuotraukos, vaizdai, paaiškinimai, sprendimų ir įrodymų įrašai"
-        ],
-        [
-          "Vietos, adreso ir pristatymo duomenys",
-          "apytikslė vieta, atsiėmimo ar pristatymo adresai, perdavimo informacija"
-        ],
-        [
-          "Žinutės, pagalba ir moderavimas",
-          "pokalbiai, pagalbos užklausos, pranešimai, skundai, DSA ir saugumo signalai"
-        ],
-        [
-          "Atsiliepimai ir reputacija",
-          "reitingai, atsiliepimai, pamėgti skelbimai, rekomendacijų signalai"
-        ],
-        [
-          "Įrenginio, diagnostikos, slapukų ir SDK duomenys",
-          "įrenginio informacija, klaidų žurnalai, push tokenai, slapukai, vietinė saugykla, techniniai įvykiai"
-        ]
+      "t": "ul",
+      "items": [
+        "gimimo datą ir patvirtinimą, kad esate ne jaunesni kaip 18 metų;",
+        "patvirtinimo sesijos identifikatorių, būseną ir rezultatą;",
+        "ribotus tapatybės dokumento atributus ir jo galiojimo datą;",
+        "dokumento, veido atitikties, gyvumo ar sukčiavimo prevencijos signalus;",
+        "techninę saugumo žymą, skirtą pakartotiniam to paties dokumento ar asmens duomenų naudojimui nustatyti."
       ]
     },
     {
       "t": "p",
-      "md": "Išsamesnis šių duomenų grupių aprašymas pateikiamas Duomenų kategorijų priede."
+      "md": "Tapatybės patvirtinimo metu teikėjas gali apdoroti dokumento vaizdą, asmens atvaizdą, vaizdo įrašą ar gyvumo patikros duomenis. Ar šie duomenys laikomi biometriniais duomenimis, priklauso nuo naudojamos technologijos ir tikslo. Jei duomenys tvarkomi kaip biometriniai duomenys unikaliam asmens identifikavimui, turi būti taikoma atskira BDAR 9 straipsnyje numatyta sąlyga ir papildomos apsaugos priemonės."
     },
     {
-      "t": "h2",
-      "id": "7-butini-ir-pasirenkami-duomenys",
-      "text": "7. Būtini ir pasirenkami duomenys"
-    },
-    {
-      "t": "p",
-      "md": "Tam tikri duomenys yra būtini, kad galėtume sukurti paskyrą, patvirtinti naudotoją, publikuoti skelbimą, apdoroti rezervaciją, mokėjimą, Užstatą, išmoką, perdavimą, grąžinimą, ginčą ar pagalbos užklausą."
+      "t": "h3",
+      "text": "3.3. Verslo, mokesčių ir sąskaitų duomenys"
     },
     {
       "t": "p",
-      "md": "Jei nepateiksite būtinos informacijos, gali būti, kad negalėsite naudotis atitinkama Platformos funkcija. Pavyzdžiui, gali nepavykti publikuoti skelbimo, rezervuoti daikto, atlikti ar gauti mokėjimo, gauti išmokos, spręsti ginčo arba naudotis tam tikromis saugumo ar atitikties funkcijomis."
+      "md": "Galime tvarkyti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "juridinį ar veiklos pavadinimą, registracijos numerį ir adresą;",
+        "atstovo vardą, pareigas ir atstovavimo informaciją;",
+        "PVM mokėtojo statusą, PVM kodą ir VIES patikros rezultatą;",
+        "mokesčių identifikavimo numerius ir kitus DAC7 patikrai reikalingus duomenis;",
+        "sąskaitų, kvitų, kreditinių dokumentų, apskaitos ir mokestinių ataskaitų duomenis."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.4. Skelbimai ir nuomojami daiktai"
     },
     {
       "t": "p",
-      "md": "Kai kurie duomenys yra pasirenkami, pavyzdžiui, profilio aprašymas, papildomos skelbimo nuotraukos, tam tikri pranešimų ar analitikos pasirinkimai, rekomendacijų programos duomenys ar rinkodaros sutikimai. Jei pasirenkamų duomenų nepateiksite arba atšauksite sutikimą, atitinkama papildoma funkcija gali neveikti arba būti ribojama, tačiau vien tai neužkerta kelio naudotis pagrindinėmis Platformos funkcijomis, jeigu pateikti būtini duomenys."
+      "md": "Galime tvarkyti:"
     },
     {
-      "t": "h2",
-      "id": "8-kodel-tvarkome-duomenis-ir-kokiais-teisiniais-pagrindais-remiames",
-      "text": "8. Kodėl tvarkome duomenis ir kokiais teisiniais pagrindais remiamės"
+      "t": "ul",
+      "items": [
+        "skelbimo pavadinimą, aprašymą, kategoriją, kainą ir užstatą;",
+        "nuotraukas, vaizdo įrašus, daikto ypatybes ir prieinamumą;",
+        "apytikslę skelbimo vietą;",
+        "skelbimo būseną, istoriją ir moderavimo informaciją."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.5. Rezervacijos, mokėjimai ir išmokos"
     },
     {
       "t": "p",
-      "md": "Asmens duomenis tvarkome toliau nurodytais tikslais ir teisiniais pagrindais pagal Bendrąjį duomenų apsaugos reglamentą (BDAR)."
+      "md": "Galime tvarkyti:"
     },
     {
-      "t": "table",
-      "head": [
-        "Tikslas",
-        "Pavyzdžiai",
-        "Teisinis pagrindas"
-      ],
-      "rows": [
-        [
-          "Teikti Platformos paslaugas",
-          "paskyros sukūrimas, prisijungimas, skelbimai, rezervacijos, žinutės, perdavimas, grąžinimas, atsiliepimai ir pagalba",
-          "Sutarties vykdymas arba veiksmai iki sutarties sudarymo"
-        ],
-        [
-          "Tikrinti naudotojus ir palaikyti pasitikėjimą",
-          "el. pašto, telefono ir tapatybės patvirtinimas, paskyros saugumas, rezervacijos tinkamumo patikros",
-          "Sutarties vykdymas; teisėtas interesas užtikrinti Platformos saugumą; teisinė prievolė, kai taikoma"
-        ],
-        [
-          "Tvarkyti mokėjimus, Užstatus, grąžinimus, išmokas ir atsiskaitymą",
-          "Stripe mokėjimo ketinimai, nurašymai, grąžinimai, Užstatai, išmokos, kvitai, sąskaitos ir apskaitos įrašai",
-          "Sutarties vykdymas; teisinė prievolė; teisėtas interesas suderinti mokėjimus ir spręsti mokėjimo ginčus"
-        ],
-        [
-          "Valdyti skelbimus, rezervacijas ir Platformos taisykles",
-          "skelbimų peržiūra, prieinamumas, atšaukimai, pažeidimai, ribojimai ir sustabdymai",
-          "Sutarties vykdymas; teisėtas interesas užtikrinti saugią ir sąžiningą Platformą"
-        ],
-        [
-          "Spręsti ginčus, žalą, praradimą ir saugumo incidentus",
-          "įrodymai, nuotraukos, žinutės, ginčo terminai, Užstato paskirstymas, išmokų sulaikymas",
-          "Sutarties vykdymas; teisėtas interesas nagrinėti ginčus ir ginti teisinius reikalavimus; teisinė prievolė, kai taikoma"
-        ],
-        [
-          "Vykdyti mokesčių, apskaitos, DAC7, vartotojų teisių, reguliacines ir teisines pareigas",
-          "pardavėjo mokestiniai profiliai, savarankiško sąskaitų išrašymo sutikimai, DAC7 ataskaitos, teisinių dokumentų priėmimo įrodymai, apskaitos įrašai",
-          "Teisinė prievolė; teisėtas interesas dokumentuoti atitiktį"
-        ],
-        [
-          "Bendrauti su jumis",
-          "transakciniai el. laiškai, tiesioginiai pranešimai, pagalbos atsakymai, saugumo pranešimai, atitikties priminimai",
-          "Sutarties vykdymas; teisėtas interesas; teisinė prievolė; sutikimas pasirenkamai rinkodarai, kai jo reikia"
-        ],
-        [
-          "Siųsti rinkodaros pranešimus",
-          "naujienlaiškiai, akcijos, rekomendacijų ar produkto naujienos",
-          "Sutikimas, kai jo reikia; teisėtas interesas esamiems klientams siųsti panašių paslaugų komunikaciją, kai tai leidžia teisė ir suteikiama galimybė atsisakyti"
-        ],
-        [
-          "Tobulinti, diagnozuoti ir stabilizuoti paslaugą",
-          "diagnostika, klaidų žurnalai, našumo duomenys, produkto naudojimo įvykiai",
-          "Teisėtas interesas palaikyti ir gerinti paslaugą; sutikimas nebūtinos analitikos atvejais, kai jo reikalauja teisė"
-        ],
-        [
-          "Vykdyti rekomendacijų ir kreditų programas",
-          "rekomendacijų kodai, atlygio statusas, sukčiavimo patikros",
-          "Sutarties vykdymas; teisėtas interesas užkirsti kelią piktnaudžiavimui; sutikimas, kai komunikacija yra rinkodarinė"
-        ],
-        [
-          "Ginti teises ir vykdyti teisines pareigas",
-          "audito pėdsakai, teisiniai sulaikymai, institucijų prašymai, apskaita, mokesčiai, reikalavimai",
-          "Teisinė prievolė; teisėtas interesas pareikšti, vykdyti ar apginti teisinius reikalavimus"
-        ]
+      "t": "ul",
+      "items": [
+        "rezervacijos šalis, datas, būseną ir perdavimo ar pristatymo būdą;",
+        "nuomos kainą, Platformos mokestį, užstatą ir kitus apskaičiavimus;",
+        "„Stripe“ klientų, mokėjimų, grąžinimų, pervedimų ir išmokų identifikatorius;",
+        "autorizavimo, nurašymo, grąžinimo, išmokos ir mokėjimo ginčo būsenas;",
+        "sąskaitų ir mokėjimų suderinimo įrašus."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.6. Perdavimas, grąžinimas ir ginčai"
+    },
+    {
+      "t": "p",
+      "md": "Galime tvarkyti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "perdavimo ir grąžinimo laiką, būklės patvirtinimus ir priedų sąrašus;",
+        "daikto nuotraukas, vaizdo įrašus ir kitus įrodymus;",
+        "žalos, praradimo, vėlavimo, atšaukimo ar užstato reikalavimus;",
+        "šalių paaiškinimus, sprendimus, išmokų sulaikymą ir užstato paskirstymą."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.7. Žinutės, pagalba ir moderavimas"
+    },
+    {
+      "t": "p",
+      "md": "Galime tvarkyti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "Platformoje siunčiamas žinutes ir jų priedus;",
+        "pagalbos užklausas, skundus ir pranešimus apie naudotojus ar skelbimus;",
+        "DSA pranešimus, moderavimo sprendimus ir apeliacijas;",
+        "taisyklių pažeidimų, saugumo ir bandymų apeiti Platformą signalus."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.8. Vietos ir pristatymo duomenys"
+    },
+    {
+      "t": "p",
+      "md": "Galime tvarkyti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "apytikslę skelbimo ar paieškos vietą;",
+        "atsiėmimo, pristatymo ar perdavimo adresą;",
+        "geokodavimo ir adreso normalizavimo rezultatus;",
+        "atstumą ar pristatymo zoną."
       ]
     },
     {
       "t": "p",
-      "md": "Kai remiamės teisėtu interesu, mūsų interesai apima Platformos saugumą, sukčiavimo ir piktnaudžiavimo prevenciją, ginčų nagrinėjimą, mokėjimų suderinimą, naudotojų pasitikėjimo palaikymą, paslaugos veikimo užtikrinimą, teisinių reikalavimų gynimą ir Platformos gerinimą. Prieš remdamiesi teisėtu interesu, vertiname, ar mūsų interesai nėra viršesni už jūsų teises ir laisves."
+      "md": "Tikslaus įrenginio buvimo vietos duomenis tvarkome tik tada, kai tam naudojama funkcija ir suteikiamas reikalingas įrenginio leidimas."
+    },
+    {
+      "t": "h3",
+      "text": "3.9. Atsiliepimai ir reputacija"
     },
     {
       "t": "p",
-      "md": "Kai remiamės sutikimu, galite jį bet kada atšaukti. Sutikimo atšaukimas neturi įtakos iki atšaukimo atlikto duomenų tvarkymo teisėtumui."
+      "md": "Galime tvarkyti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "įvertinimą, atsiliepimo tekstą ir jo ryšį su Rezervacija;",
+        "viešą rodomą vardą ir naudotojo vaidmenį sandoryje;",
+        "patvirtinimo, aktyvumo ir kitus Platformoje rodomus pasitikėjimo signalus;",
+        "pamėgtus skelbimus ir kitus paskyros pasirinkimus."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.10. Įrenginys, saugumas ir diagnostika"
     },
     {
       "t": "p",
-      "md": "Papildomai, paleidimo laikotarpiu taikomi šie konkretūs pagrindai svarbiausioms rizikos sritims:"
+      "md": "Galime tvarkyti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "IP adresą, naudotojo agentą ir sesijos informaciją;",
+        "įrenginio tipą, operacinę sistemą, Programėlės versiją ir kalbą;",
+        "prisijungimo, klaidų, našumo, saugumo ir audito žurnalus;",
+        "tiesioginių pranešimų žetoną;",
+        "slapukus, vietinės saugyklos įrašus ir panašių technologijų identifikatorius."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.11. Analitika ir atribucija"
+    },
+    {
+      "t": "p",
+      "md": "Tik gavus reikiamą sutikimą galime tvarkyti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "ekrano peržiūras, pasirinktus veiksmus ir naudojamas funkcijas;",
+        "pseudoniminį vidinį naudotojo identifikatorių;",
+        "programėlės įdiegimo, atidarymo, nukreipimo ir kampanijos duomenis;",
+        "atribucijos identifikatorius, kampanijos šaltinį ir pasirinktus konversijų įvykius;",
+        "užbaigtos nuomos pajamų ir valiutos įvykį, kai toks matavimas įjungtas."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Nesiekiame rinkti specialių kategorijų duomenų per bendras Platformos funkcijas. Jei tokius duomenis savanoriškai pateikiate žinutėje, įrodyme ar pagalbos užklausoje, tvarkome juos tik tiek, kiek būtina tam konkrečiam klausimui išspręsti ir kiek tai leidžia teisė."
+    },
+    {
+      "t": "h2",
+      "id": "4-ar-duomenis-privalote-pateikti",
+      "text": "4. Ar duomenis privalote pateikti"
+    },
+    {
+      "t": "p",
+      "md": "Privalomus laukus pažymime atitinkamame Platformos etape."
+    },
+    {
+      "t": "p",
+      "md": "Paskyros ir prisijungimo duomenys būtini paskyrai sukurti ir apsaugoti. Skelbimo, rezervacijos, mokėjimo, perdavimo ar grąžinimo duomenys būtini tik tada, kai naudojatės atitinkama funkcija. Telefono, tapatybės, verslo, mokesčių, sąskaitų ir išmokų duomenys gali būti būtini dėl pasirinktos funkcijos, mokėjimų teikėjo reikalavimų, sandorio rizikos arba teisės aktų."
+    },
+    {
+      "t": "p",
+      "md": "Jei privalomų duomenų nepateiksite, galime negalėti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "sukurti ar patvirtinti paskyros;",
+        "paskelbti skelbimo;",
+        "pateikti ar priimti rezervacijos;",
+        "apdoroti mokėjimo, grąžinimo ar išmokos;",
+        "išrašyti apskaitos dokumento;",
+        "suteikti funkcijos, kuriai tie duomenys būtini."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Pasirenkami profilio laukai, rinkodara, „Mixpanel“ analitika ir „AppsFlyer“ atribucija nėra būtini pagrindinėms Platformos funkcijoms. Nedavus sutikimo atitinkama pasirenkama funkcija ar matavimas neveiks, tačiau tai neturi riboti pagrindinių nuomos funkcijų."
+    },
+    {
+      "t": "h2",
+      "id": "5-kodel-ir-kokiu-pagrindu-tvarkome-duomenis",
+      "text": "5. Kodėl ir kokiu pagrindu tvarkome duomenis"
+    },
+    {
+      "t": "p",
+      "md": "Toliau nurodyti pagrindiniai tikslai ir BDAR teisiniai pagrindai."
     },
     {
       "t": "table",
       "head": [
         "Tvarkymo tikslas",
-        "Pagrindinės duomenų kategorijos",
-        "Teisinis pagrindas",
-        "Pastabos"
+        "Pagrindinis teisinis pagrindas"
       ],
       "rows": [
         [
-          "Paskyros sukūrimas ir naudojimas",
-          "paskyros, autentifikavimo, profilio duomenys",
-          "sutarties vykdymas; teisėtas interesas saugumui",
-          "be šių duomenų negalime suteikti pagrindinių paskyros funkcijų"
+          "Sukurti ir administruoti paskyrą, autentifikuoti naudotoją",
+          "Sutarties vykdymas arba veiksmai prieš sudarant sutartį"
         ],
         [
-          "Nuomos rezervacijos ir mokėjimai",
-          "Rezervacijų, mokėjimų, Užstatų, Stripe identifikatoriai",
-          "sutarties vykdymas; teisinė prievolė apskaitai ir mokesčiams; teisėtas interesas ginčams",
-          "apima Užstato autorizavimą, nurašymą po Nuomotojo priėmimo, grąžinimą, sulaikymą ir mokėjimo ginčus"
+          "Skelbti daiktus, valdyti rezervacijas, žinutes, perdavimą, grąžinimą ir atsiliepimus",
+          "Sutarties vykdymas"
         ],
         [
-          "Nuomotojo ir Nuomininko tapatybės patvirtinimas",
-          "Didit patvirtinimo rezultatai, tik tam tikri (riboti) tapatybės atributai, gimimo data, audito įrašai",
-          "sutarties vykdymas; teisėtas interesas saugumui; teisinė prievolė mokėjimų arba KYC kontekste, kai taikoma",
-          "Nuomotojams taikomas Didit ir Stripe Connect KYC; Nuomininkams – Didit tapatybės patvirtinimas, kai reikalaujama"
+          "Apdoroti mokėjimus, užstatus, grąžinimus ir išmokas",
+          "Sutarties vykdymas; teisinė prievolė, kai taikoma"
         ],
         [
-          "Verslo naudotojų arba Prekiautojų skaidrumas",
-          "juridinis pavadinimas, registracijos numeris, šalis, PVM statusas, atstovavimo duomenys",
-          "teisinė prievolė; sutarties vykdymas",
-          "būtina B2C/B2B skaidrumui, sąskaitoms, mokestinėms ir platformos taisyklėms"
+          "Patvirtinti amžių, tapatybę, verslo atstovavimą ar teisę gauti išmokas",
+          "Sutarties vykdymas; teisėtas interesas užkirsti kelią sukčiavimui; teisinė prievolė, kai ji konkrečiai taikoma"
         ],
         [
-          "Žinutės ir siauras turinio moderavimas",
-          "žinučių tekstas, priedų metaduomenys, moderavimo signalai",
-          "sutarties vykdymas; teisėtas interesas saugumui ir taisyklių vykdymui",
-          "DI gali būti naudojamas galimų kontaktinių duomenų ar bandymų sudaryti sandorį ne per Platformą signalams aptikti; nenaudojama bendrai sukčiavimo balo sistemai"
+          "Aptikti netikras paskyras, kelių paskyrų naudojimą, pavogtus daiktus, sukčiavimą, negrąžinimą ar bandymus apeiti Platformą",
+          "Teisėtas interesas saugoti naudotojus, Platformą ir sandorius"
         ],
         [
-          "Klaidų stebėsena ir saugumas",
-          "techniniai žurnalai, įrenginio, sesijos, užklausų identifikatoriai, serverio CloudWatch ir, kai naudojama, kliento pusės Sentry įrašai",
-          "teisėtas interesas saugiai ir stabiliai Platformai",
-          "AWS CloudWatch – serverio pusėje; Sentry, jei naudojamas, – kliento pusėje (Expo programėlė); taikomas duomenų minimizavimas, prieigos ribojimas ir asmens duomenų šalinimas iš diagnostikos įrašų, kiek įmanoma"
+          "Moderuoti skelbimus, žinutes ir naudotojų elgesį; taikyti paskyros ar funkcijų apribojimus",
+          "Sutarties vykdymas; teisėtas interesas užtikrinti saugią ir sąžiningą Platformą; teisinė prievolė, kai taikoma"
         ],
         [
-          "Produkto analitika",
-          "Amplitude įvykiai ir susiję identifikatoriai",
-          "sutikimas, kai jo reikalauja teisė; kitais atvejais teisėtas interesas tik griežtai ribotai būtinos produkto metrikos apimčiai",
-          "kliento pusės technologija; paleidimo laikotarpiu „Naudokis“ serveris jos nenaudoja; neesminė analitika neįjungiama be sutikimo, kai jo reikalauja teisė"
+          "Spręsti žalą, praradimą, vėlavimą, atšaukimą, užstatą ar kitą ginčą",
+          "Sutarties vykdymas; teisėtas interesas nustatyti, pareikšti, vykdyti ar apginti reikalavimus"
         ],
         [
-          "Tiesioginė rinkodara",
-          "el. paštas, telefono numeris, tiesioginių pranešimų žetonai, rinkodaros pasirinkimai",
-          "sutikimas arba taikoma „panašių paslaugų“ išimtis, jei teisėtai taikoma; teisėtas interesas palaikyti rinkodaros atsisakymų sąrašą",
-          "galima bet kada atsisakyti rinkodaros pranešimų"
+          "Teikti pagalbą ir siųsti būtinus pranešimus",
+          "Sutarties vykdymas; teisėtas interesas administruoti paslaugą; teisinė prievolė, kai taikoma"
         ],
         [
-          "Sukčiavimo prevencija – dokumento techninė saugumo žyma",
-          "kriptografiškai apsaugota tapatybės dokumento techninė saugumo žyma (angl. hash)",
-          "teisėtas interesas užkirsti kelią kelių paskyrų kūrimui tuo pačiu dokumentu",
-          "neapdorotas dokumento numeris nesaugomas; nenaudojama profiliavimui ar rinkodarai"
+          "Tvarkyti sąskaitas, apskaitą, PVM, VIES, mokesčius ir DAC7 duomenis",
+          "Teisinė prievolė"
         ],
         [
-          "DI pagalbinės funkcijos",
-          "skelbimų aprašymų įvestys ir rezultatai, ribotas žinučių turinys",
-          "sutarties vykdymas, kai funkcija yra paslaugos dalis; teisėtas interesas teikti ir tobulinti pagalbines funkcijas",
-          "DI rezultatai pagalbiniai; netaikoma vien automatizuotiems reikšmingiems sprendimams be žmogaus peržiūros"
+          "Saugoti sutarčių, sutikimų ir teisinių pasirinkimų įrodymus",
+          "Teisinė prievolė; teisėtas interesas įrodyti atitiktį ir apginti reikalavimus"
         ],
         [
-          "Ginčų, žalos ir Užstato įrodymai",
-          "perdavimo arba grąžinimo nuotraukos, pastabos, žinutės, reikalavimų įrodymai",
-          "sutarties vykdymas; teisėtas interesas nagrinėti ginčus ir ginti teisinius reikalavimus",
-          "saugoma tik tiek, kiek būtina ginčui ir teisės reikalavimams"
+          "Užtikrinti infrastruktūros, paskyrų ir mokėjimų saugumą; tirti incidentus",
+          "Teisėtas interesas užtikrinti informacijos ir Platformos saugumą; teisinė prievolė, kai taikoma"
+        ],
+        [
+          "Vykdyti būtiną diagnostiką ir taisyti technines klaidas",
+          "Teisėtas interesas palaikyti saugią ir veikiančią paslaugą; galinio įrenginio prieigos sutikimas, kai technologija nėra griežtai būtina"
+        ],
+        [
+          "Naudojant slapukų nenaudojančią „Plausible“ analitiką matuoti apibendrintą svetainės naudojimą ir perėjimo į programėlę rezultatus",
+          "Teisėtas interesas suprasti ir tobulinti viešą svetainę bei programėlės įdiegimo tiltą"
+        ],
+        [
+          "Naudoti „Mixpanel“ produkto analitiką",
+          "Sutikimas"
+        ],
+        [
+          "Naudoti „AppsFlyer“ įdiegimo, kampanijų ir konversijų atribuciją",
+          "Sutikimas"
+        ],
+        [
+          "Siųsti elektroninę tiesioginę rinkodarą",
+          "Sutikimas arba įstatyme numatyta esamo kliento išimtis, jei tenkinamos visos jos sąlygos"
+        ],
+        [
+          "Vykdyti teisėtus institucijų reikalavimus ir teisinę gynybą",
+          "Teisinė prievolė; teisėtas interesas pareikšti, vykdyti ar apginti reikalavimus"
         ]
       ]
     },
     {
+      "t": "p",
+      "md": "Kai remiamės **teisėtu interesu**, mūsų konkretūs interesai yra Platformos ir naudotojų saugumas, sukčiavimo ir piktnaudžiavimo prevencija, mokėjimų suderinimas, ginčų nagrinėjimas, paslaugos stabilumas, teisinių reikalavimų gynimas ir atitikties įrodymas. Prieš remdamiesi šiuo pagrindu vertiname tvarkymo būtinumą, poveikį jums ir galimas apsaugos priemones."
+    },
+    {
+      "t": "p",
+      "md": "Turite teisę dėl su jūsų konkrečia situacija susijusių priežasčių nesutikti su tvarkymu, grindžiamu teisėtu interesu. Daugiau informacijos pateikta 14 skyriuje."
+    },
+    {
+      "t": "p",
+      "md": "Kai remiamės **sutikimu**, galite jį bet kada atšaukti taip pat lengvai, kaip jį davėte. Atšaukimas neturi įtakos iki atšaukimo atlikto tvarkymo teisėtumui."
+    },
+    {
       "t": "h2",
-      "id": "9-kokiais-duomenimis-dalijamasi-su-kitais-naudotojais",
-      "text": "9. Kokiais duomenimis dalijamasi su kitais Naudotojais"
+      "id": "6-kas-matoma-kitiems",
+      "text": "6. Kas matoma kitiems"
+    },
+    {
+      "t": "h3",
+      "text": "6.1. Viešai"
     },
     {
       "t": "p",
-      "md": "„Naudokis“ yra dvipusė nuomos Platforma, todėl dalis duomenų turi būti rodoma ar perduodama kitiems Naudotojams, kad būtų galima vykdyti skelbimus, rezervacijas, perdavimą, grąžinimą, mokėjimus, atsiliepimus ir ginčus. Duomenų kiekis priklauso nuo Rezervacijos etapo, sandorio tipo, naudotojų vaidmenų ir to, kas būtina konkrečiai funkcijai."
-    },
-    {
-      "t": "p",
-      "md": "Pagrindiniai principai:"
+      "md": "Viešame skelbime gali būti rodoma:"
     },
     {
       "t": "ul",
       "items": [
-        "prieš patvirtintą Rezervaciją rodoma tik ribota vieša informacija, reikalinga Skelbimui, pasitikėjimui, paieškai ir sprendimui dėl Rezervacijos priimti;",
-        "tiksli privati kontaktinė, adreso ar perdavimo informacija atskleidžiama tik tada, kai ji būtina patvirtintai Rezervacijai, perdavimui, grąžinimui, pristatymui, ginčui, saugumui, mokesčiams, B2B atsiskaitymui ar teisiniam tikslui;",
-        "ginčo metu kitai šaliai gali būti atskleista reikalavimo esmė, susiję įrodymai ir atsakymui būtina informacija, tačiau „Naudokis“ turi teisę riboti informacijos atskleidimą dėl privatumo, saugumo, sukčiavimo prevencijos, teisėsaugos, komercinių paslapčių ar trečiųjų asmenų teisių;",
-        "Verslo naudotojų ir Prekiautojų atveju gali būti rodoma daugiau viešos verslo informacijos, kai to reikalauja vartotojų apsaugos, Skaitmeninių paslaugų akto, mokesčių, sąskaitų išrašymo ar kita taikoma teisė."
+        "skelbimo informacija, nuotraukos, kaina ir užstatas;",
+        "apytikslė vieta;",
+        "ribota Nuomotojo profilio informacija;",
+        "patvirtinimo žyma, reitingai ir atsiliepimai."
       ]
     },
     {
       "t": "p",
-      "md": "Toliau pateikiama apžvalga, ką apie jus skirtingais etapais gali matyti kiti naudotojai:"
+      "md": "Tikslaus adreso, viso telefono numerio, el. pašto adreso ir tapatybės dokumentų viešai nerodome."
+    },
+    {
+      "t": "h3",
+      "text": "6.2. Registruotiems naudotojams ar rezervacijos šalims"
+    },
+    {
+      "t": "p",
+      "md": "Pateikus rezervacijos užklausą kitai šaliai gali būti rodoma ribota profilio, datų, pristatymo ir užklausos informacija."
+    },
+    {
+      "t": "p",
+      "md": "Patvirtinus rezervaciją šalims gali būti atskleisti kontaktiniai duomenys, tikslesnis atsiėmimo ar pristatymo adresas, perdavimo informacija ir sandoriui būtinos žinutės."
+    },
+    {
+      "t": "p",
+      "md": "Perdavimo, grąžinimo ar ginčo metu šalims gali būti pateikti būklės įrodymai, nuotraukos, laiko žymos, mokėjimo ar užstato informacija ir sprendimo santrauka tiek, kiek to reikia procesui."
+    },
+    {
+      "t": "h3",
+      "text": "6.3. Verslo ir apskaitos informacija"
+    },
+    {
+      "t": "p",
+      "md": "Kai sandoryje dalyvauja verslo naudotojas ar Prekiautojas, gali būti rodoma ar perduodama:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "juridinis ar veiklos pavadinimas;",
+        "registracijos numeris ir šalis;",
+        "PVM statusas ar PVM kodas;",
+        "atsiskaitymo adresas;",
+        "sąskaitoms ir vartotojų informavimui būtini duomenys."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Naudotojams draudžiama iš Platformos gautus kitų asmenų duomenis naudoti nesusijusiai rinkodarai, persekiojimui, diskriminacijai, išorinių duomenų bazių kūrimui, Platformos apėjimui ar kitam neteisėtam tikslui."
+    },
+    {
+      "t": "h2",
+      "id": "7-kam-perduodame-duomenis",
+      "text": "7. Kam perduodame duomenis"
+    },
+    {
+      "t": "p",
+      "md": "Duomenis perduodame tik tiek, kiek būtina atitinkamai funkcijai ar pareigai."
+    },
+    {
+      "t": "h3",
+      "text": "7.1. Duomenų tvarkytojai ir techniniai paslaugų teikėjai"
+    },
+    {
+      "t": "p",
+      "md": "Priklausomai nuo įjungtų funkcijų galime naudoti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "**AWS**, įskaitant eu-north-1 regioną – infrastruktūrai, duomenų bazėms, failų saugyklai, žurnalams ir saugumui;",
+        "**Sentry** ir **AWS CloudWatch** – diagnostikai, klaidoms, našumui ir saugumo incidentams;",
+        "**Expo** – mobiliosios Programėlės techninėms funkcijoms ir tiesioginiams pranešimams;",
+        "**Plausible Analytics** – slapukų nenaudojančiam viešos svetainės lankomumo ir perėjimo į programėlę rezultatų matavimui;",
+        "**Mixpanel** – sutikimu grindžiamai produkto analitikai;",
+        "**AppsFlyer** – sutikimu grindžiamai programėlės atribucijai ir kampanijų matavimui;",
+        "**Postit** – Lietuvos adresams geokoduoti ir normalizuoti;",
+        "**Google Places API** – adreso automatiniam pildymui, kai ši funkcija naudojama;",
+        "**OpenAI** ar kitus DI paslaugų teikėjus – tik konkrečioms įjungtoms pagalbinėms funkcijoms."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "„OpenStreetMap Nominatim“ naujoms vietos užklausoms nenaudojamas. Jo šaltinio žyma gali likti istoriniuose, anksčiau sukurtuose vietos įrašuose."
+    },
+    {
+      "t": "h3",
+      "text": "7.2. Mokėjimų ir tapatybės teikėjai"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "**Stripe / Stripe Connect** gali veikti ir kaip mūsų tvarkytojas, ir kaip savarankiškas duomenų valdytojas, priklausomai nuo konkretaus mokėjimo, išmokos, KYC, sankcijų ar teisės aktų vykdymo veiksmo.",
+        "**Didit** gali tvarkyti tapatybės, dokumento, veido atitikties, gyvumo ir sukčiavimo prevencijos duomenis. Vaidmuo turi būti vertinamas pagal konkrečią paslaugą ir sutartį: teikdamas patikrą pagal mūsų nurodymus teikėjas veikia kaip tvarkytojas, o savo savarankiškai nustatytiems tikslams, jei tokių yra, – kaip atskiras valdytojas."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "7.3. Savarankiški gavėjai"
+    },
+    {
+      "t": "p",
+      "md": "Duomenis taip pat gali gauti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "bankai, kortelių tinklai ir kiti mokėjimo infrastruktūros dalyviai;",
+        "„Apple“, „Google“ ar „Facebook“, kai pasirenkate socialinį prisijungimą;",
+        "kita rezervacijos šalis, verslo klientas ar Prekiautojas;",
+        "apskaitos, audito, teisės ir profesionalūs konsultantai;",
+        "VMI, VIES / Europos Komisijos sistemos, teismai, teisėsauga, priežiūros ir kitos institucijos, kai duomenis pateikti privalome ar teisėtai galime."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Aktualų pagrindinių teikėjų sąrašą galime skelbti Platformoje arba pateikti paprašius."
+    },
+    {
+      "t": "h2",
+      "id": "8-mokejimai-ismokos-ir-tapatybes-patvirtinimas",
+      "text": "8. Mokėjimai, išmokos ir tapatybės patvirtinimas"
+    },
+    {
+      "t": "h3",
+      "text": "8.1. „Stripe“"
+    },
+    {
+      "t": "p",
+      "md": "Mokėjimo kortelės duomenis įvedate „Stripe“ valdomoje mokėjimo aplinkoje. „Naudokis“ negauna ir nesaugo viso kortelės numerio, CVC ar PIN."
+    },
+    {
+      "t": "p",
+      "md": "„Naudokis“ gali gauti ir saugoti Platformai būtinus:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "„Stripe“ kliento, mokėjimo, grąžinimo, pervedimo ar išmokos identifikatorius;",
+        "sumą, valiutą ir mokėjimo būseną;",
+        "autorizavimo, nurašymo, grąžinimo, išmokos ar mokėjimo ginčo įrašus;",
+        "su prijungta paskyra ir KYC būsena susijusią ribotą informaciją."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "„Stripe“ gali savarankiškai tvarkyti duomenis dėl mokėjimų teisės aktų, sankcijų, kovos su pinigų plovimu, sukčiavimo prevencijos ir savo paslaugų saugumo."
+    },
+    {
+      "t": "h3",
+      "text": "8.2. „Didit“"
+    },
+    {
+      "t": "p",
+      "md": "„Didit“ gali apdoroti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "tapatybės dokumento vaizdą ir jame esančius duomenis;",
+        "asmens atvaizdą, veido atitikties ar gyvumo patikros duomenis;",
+        "dokumento autentiškumo, galiojimo ir sukčiavimo signalus;",
+        "IP adresą, įrenginio ir patikros sesijos duomenis."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "„Naudokis“ paprastai saugo patvirtinimo būseną, sesijos identifikatorių, galiojimo datą, audito informaciją ir ribotus patvirtinimo rezultatus, o ne nuolatinį neapdorotų dokumentų archyvą."
+    },
+    {
+      "t": "p",
+      "md": "Neapdorotus dokumentų vaizdus savo sistemose saugome tik tada ir tik tiek, kiek tai iš tikrųjų būtina konkrečiam patvirtinimo, ginčo, mokėjimo, mokesčių, saugumo ar teisiniam tikslui."
+    },
+    {
+      "t": "p",
+      "md": "Tapatybės ar gyvumo duomenų nenaudojame emocijoms atpažinti, jautrioms savybėms nustatyti, rinkodarai, biometriniam kategorizavimui ar bendram reputacijos balui kurti."
+    },
+    {
+      "t": "h3",
+      "text": "8.3. Techninė saugumo žyma"
+    },
+    {
+      "t": "p",
+      "md": "Sukčiavimo prevencijai galime saugoti kriptografiškai apsaugotą dokumento numerio ar asmens kodo techninę žymą. Ji naudojama tik tam, kad būtų galima aptikti tą patį dokumentą ar duomenis keliose paskyrose."
+    },
+    {
+      "t": "p",
+      "md": "Ši žyma nėra neapdorotas dokumento numeris ar asmens kodas. Ji nenaudojama rinkodarai ar nesusijusiam profiliavimui."
+    },
+    {
+      "t": "h2",
+      "id": "9-mokesciai-pvm-saskaitos-ir-dac7",
+      "text": "9. Mokesčiai, PVM, sąskaitos ir DAC7"
+    },
+    {
+      "t": "p",
+      "md": "Verslo, PVM, VIES, sąskaitų ir mokesčių duomenis tvarkome tik tiek, kiek reikia:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "verslo ar Prekiautojo statusui administruoti;",
+        "kvitams, sąskaitoms ir kreditiniams dokumentams parengti;",
+        "apskaitai ir PVM pareigoms vykdyti;",
+        "PVM kodui VIES sistemoje patikrinti;",
+        "mokesčių ar DAC7 pareigoms nustatyti ir vykdyti;",
+        "naudotojams informuoti apie pateiktus duomenis, kai to reikalauja teisė."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "DAC7 apima nekilnojamojo turto nuomą, asmenines paslaugas, prekių pardavimą ir bet kokios rūšies transporto priemonių nuomą. Įprasta kitų kilnojamųjų daiktų nuoma savaime nėra DAC7 praneština veikla. Vis dėlto mokesčių profilio ar apskaitos duomenys gali būti reikalingi dėl kitų teisinių pareigų."
+    },
+    {
+      "t": "p",
+      "md": "Jei veikla yra praneština pagal DAC7, galime rinkti ir VMI teikti pardavėjo tapatybės, adreso, mokesčių identifikavimo, atlygio, komisinių, mokesčių ir sąskaitos duomenis."
+    },
+    {
+      "t": "h2",
+      "id": "10-slapukai-sdk-analitika-ir-pranesimai",
+      "text": "10. Slapukai, SDK, analitika ir pranešimai"
+    },
+    {
+      "t": "p",
+      "md": "Platformoje naudojami slapukai, vietinė saugykla, mobilieji SDK, tiesioginių pranešimų žetonai ir panašios technologijos."
+    },
+    {
+      "t": "h3",
+      "text": "10.1. Būtinos technologijos"
+    },
+    {
+      "t": "p",
+      "md": "Be atskiro sutikimo galime naudoti tik technologijas, kurios yra griežtai būtinos jūsų aiškiai prašomai paslaugai arba ryšiui perduoti, pavyzdžiui:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "prisijungimui ir sesijai;",
+        "paskyros ir mokėjimo saugumui;",
+        "privatumo pasirinkimams išsaugoti;",
+        "būtinosioms Platformos funkcijoms."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Jei technologija nėra griežtai būtina pagal elektroninių ryšių taisykles, prieš ją įjungdami gauname sutikimą, net jeigu vėlesnis asmens duomenų tvarkymas pagal BDAR būtų grindžiamas kitu pagrindu."
+    },
+    {
+      "t": "h3",
+      "text": "10.2. Būtina diagnostika"
+    },
+    {
+      "t": "p",
+      "md": "„Sentry“ ir „AWS CloudWatch“ naudojame techninėms klaidoms, incidentams, našumui ir saugumui stebėti. Konfigūracija turi riboti tiesioginius identifikatorius, o prieš perduodant klaidų įvykius taikomas duomenų valymas."
+    },
+    {
+      "t": "p",
+      "md": "Būtina diagnostika savaime neįjungia „Mixpanel“ ar „AppsFlyer“. Jei konkreti diagnostikos technologija pasiekia galinį įrenginį ne vien griežtai būtinu tikslu, jai taikomas išankstinio sutikimo reikalavimas."
+    },
+    {
+      "t": "h3",
+      "text": "10.3. „Plausible“ svetainės analitika"
+    },
+    {
+      "t": "p",
+      "md": "Viešoje svetainėje „Plausible Analytics“ naudojama be analitinių slapukų ar nuolatinių naršyklės saugyklos identifikatorių. Ji neįkeliama paskyros veiksmų puslapiuose, kurių URL yra žetonas. Naršyklės integracija gali tvarkyti puslapio URL, nukreipusį puslapį, sąveikos ar konversijos įvykį ir techninę užklausos informaciją, pavyzdžiui, IP adresą ir naudotojo agentą, kad sudarytų apibendrintą lankomumo statistiką. Paieškos ir kiti įprasti, žetonų neturintys URL parametrai gali būti naršyklės integracijos perduodamo puslapio URL dalis."
+    },
+    {
+      "t": "p",
+      "md": "Nukreipimo ir perėjimo į programėlę galiniai taškai taip pat gali siųsti serverinį įvykį. Prieš tokį perdavimą iš URL pašaliname užklausos eilutę ir fragmentą. Įvykis gali apimti nukreipimo rezultatą, platformą, tikslo tipą, vietą sąsajoje ar kampanijos parametrus ir pseudoniminį kelionės identifikatorių, naudojamą perėjimo į programėlę rezultatui susieti. „Plausible“ nesiunčiame jūsų vardo, el. pašto adreso, mokėjimo duomenų, Rezervacijos identifikatoriaus, viso perėjimo žetono ar tikslaus nuomojamo daikto adreso."
+    },
+    {
+      "t": "p",
+      "md": "Šis tvarkymas grindžiamas mūsų teisėtu interesu matuoti ir tobulinti viešą svetainę bei perėjimą iš svetainės į programėlę. Sukonfigūruota integracija neįrašo analitinių slapukų ar nuolatinio identifikatoriaus į naršyklės saugyklą ir šiuo metu veikia nepriklausomai nuo „Mixpanel“ ar „AppsFlyer“ sutikimo pasirinkimo. Galite nesutikti su teisėtu interesu grindžiamu tvarkymu, kaip aprašyta 14 skyriuje. Jei konfigūracija būtų pakeista taip, kad būtų naudojami slapukai, vietinė saugykla, reklamos identifikatoriai ar kita nebūtina galinio įrenginio technologija, arba jei išankstinio sutikimo kitaip reikėtų konkrečiai įdiegtai technologijai, prieš tokį tvarkymą gautume sutikimą."
+    },
+    {
+      "t": "h3",
+      "text": "10.4. „Mixpanel“"
+    },
+    {
+      "t": "p",
+      "md": "„Mixpanel“ įjungiama tik gavus sutikimą su produkto analitika."
+    },
+    {
+      "t": "p",
+      "md": "„Mixpanel“ gali gauti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "vidinį pseudoniminį naudotojo identifikatorių;",
+        "Programėlės versiją, operacinę sistemą ir kalbą;",
+        "ekrano peržiūras ir pasirinktų veiksmų įvykius;",
+        "ribotas su funkcijų naudojimu susijusias savybes."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Naudojamas „Mixpanel“ Europos duomenų priėmimo galinis taškas. Atšaukus sutikimą naujų įvykių nebesiunčiame, išjungiame sekimą ir išvalome vietinį naudotojo susiejimą."
+    },
+    {
+      "t": "h3",
+      "text": "10.5. „AppsFlyer“"
+    },
+    {
+      "t": "p",
+      "md": "„AppsFlyer“ SDK, atribucijos identifikatoriai, konversijų ir nukreipimo duomenys, Programėlės įvykiai bei serverinis užbaigtos nuomos pajamų įvykis įjungiami tik gavus atitinkamą sutikimą."
+    },
+    {
+      "t": "p",
+      "md": "Priklausomai nuo konfigūracijos „AppsFlyer“ gali gauti:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "„AppsFlyer“ įdiegimo identifikatorių;",
+        "platformą, įrenginio ir ryšio techninę informaciją, įskaitant IP adresą;",
+        "įdiegimo, atidarymo, nukreipimo ir kampanijos duomenis;",
+        "pasirinktus Programėlės veiksmus;",
+        "apie užbaigtą nuomą – pseudoniminį naudotojo identifikatorių, įvykio laiką, pajamas ir valiutą."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "„AppsFlyer“ nesiunčiame jūsų vardo, el. pašto adreso, visų mokėjimo kortelės duomenų, rezervacijos identifikatoriaus ar tikslaus nuomojamo daikto adreso."
+    },
+    {
+      "t": "p",
+      "md": "Transakciniai el. laiškai ir jų veiksmų nuorodos per „AppsFlyer“ nenukreipiami. Kvietimo nuoroda pirmiausia atveria „Naudokis“ valdomą puslapį; „AppsFlyer“ iš šio puslapio neturi būti įkeliama iki sutikimo."
+    },
+    {
+      "t": "p",
+      "md": "Atšaukus sutikimą:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "Programėlė turi sustabdyti „AppsFlyer“ SDK ryšį;",
+        "nauji įvykiai nebesiunčiami;",
+        "paskyroje saugomas atribucijos susiejimas pašalinamas;",
+        "serveriniai „AppsFlyer“ įvykiai nebesiunčiami."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Atšaukimas savaime neištrina anksčiau „AppsFlyer“ gautų duomenų. Dėl jų ištrynimo galite kreiptis į mus naudodamiesi 14 skyriuje nurodytomis teisėmis."
+    },
+    {
+      "t": "h3",
+      "text": "10.6. Tiesioginiai pranešimai"
+    },
+    {
+      "t": "p",
+      "md": "Tiesioginiai pranešimai gali būti naudojami rezervacijoms, mokėjimams, žinutėms, perdavimui, saugumui, pagalbai ar rinkodarai."
+    },
+    {
+      "t": "p",
+      "md": "Įrenginio leidimą pranešimams galite bet kada išjungti. Atsisakę rinkodaros ar išjungę pranešimus vis tiek galite gauti būtiną informaciją kitu kanalu, pavyzdžiui, el. paštu arba Platformoje."
+    },
+    {
+      "t": "h2",
+      "id": "11-automatizuotos-patikros-profiliavimas-ir-di",
+      "text": "11. Automatizuotos patikros, profiliavimas ir DI"
+    },
+    {
+      "t": "p",
+      "md": "Galime naudoti automatizuotas priemones:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "netikroms ar pasikartojančioms paskyroms aptikti;",
+        "tapatybės, amžiaus, dokumento ar gyvumo patikrai;",
+        "mokėjimų ir sukčiavimo rizikos signalams nustatyti;",
+        "draudžiamam turiniui, kontaktinių duomenų dalijimuisi ar Platformos apėjimui aptikti;",
+        "pagalbos užklausoms klasifikuoti;",
+        "skelbimo tekstui pasiūlyti ar kitoms aiškiai nurodytoms DI pagalbinėms funkcijoms."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Naudojami signalai gali apimti amžių, patvirtinimo rezultatą, to paties dokumento naudojimą keliose paskyrose, įrenginio ar prisijungimo signalus, mokėjimo būseną, Platformos naudojimo modelius ir taisyklių pažeidimų istoriją."
+    },
+    {
+      "t": "p",
+      "md": "Galimos pasekmės:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "tapatybės patvirtinimas nebaigiamas arba atmetamas;",
+        "rezervacijos, mokėjimo, skelbimo ar išmokos funkcija laikinai apribojama;",
+        "turinys perduodamas papildomai peržiūrai;",
+        "paskyra ar sandoris perduodamas žmogaus vertinimui."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Galite prašyti žmogaus peržiūros, pateikti savo paaiškinimą ir ginčyti sprendimą per Platformos pagalbą arba el. paštu info@naudokis.lt."
+    },
+    {
+      "t": "p",
+      "md": "Jei sprendimas priimamas vien automatizuotai ir sukelia teisinių arba panašiai reikšmingų pasekmių, taikome BDAR 22 straipsnyje nustatytą pagrindą ir apsaugos priemones."
+    },
+    {
+      "t": "p",
+      "md": "Automatizuotų ar DI priemonių nenaudojame emocijoms atpažinti, biometriniam kategorizavimui, specialių kategorijų duomenims numanyti ar neteisėtai diskriminacijai."
+    },
+    {
+      "t": "h2",
+      "id": "12-duomenu-perdavimas-uz-eee-ribu",
+      "text": "12. Duomenų perdavimas už EEE ribų"
+    },
+    {
+      "t": "p",
+      "md": "MB „Naudokis“ yra įsteigta Lietuvoje. Pagrindiniai Platformos duomenys ir failų saugykla veikia „AWS“ eu-north-1 regione Stokholme, Švedijoje, t. y. EEE."
+    },
+    {
+      "t": "p",
+      "md": "Kai kurie teikėjai, jų susijusios bendrovės ar subtvarkytojai gali tvarkyti duomenis už EEE ribų. Tai gali būti susiję su mokėjimais, tapatybės patvirtinimu, socialiniu prisijungimu, diagnostika, pranešimais, analitika, atribucija, DI ar adresų funkcijomis."
+    },
+    {
+      "t": "p",
+      "md": "Kiekvienam perdavimui taikome tinkamą BDAR V skyriaus mechanizmą, pavyzdžiui:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "Europos Komisijos sprendimą dėl tinkamumo;",
+        "ES ir JAV duomenų privatumo sistemą, kai JAV gavėjas yra galiojančiai sertifikuotas;",
+        "Europos Komisijos standartines sutarčių sąlygas;",
+        "perdavimo poveikio vertinimą ir papildomas technines ar organizacines priemones, kai jų reikia."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Daugiau informacijos apie konkrečiam gavėjui taikomą mechanizmą ar standartinių sutarčių sąlygų kopiją galite gauti parašę info@naudokis.lt. Komercinę ar saugumo požiūriu jautrią informaciją galime pagrįstai paslėpti."
+    },
+    {
+      "t": "h2",
+      "id": "13-kiek-laiko-saugome-duomenis",
+      "text": "13. Kiek laiko saugome duomenis"
+    },
+    {
+      "t": "p",
+      "md": "Duomenis saugome ne ilgiau, nei reikia konkrečiam tikslui, teisės aktams, ginčams, saugumui ar teisinei gynybai. Terminą skaičiuojame nuo lentelėje nurodyto įvykio, nebent taikomas teisinis sulaikymas."
     },
     {
       "t": "table",
       "head": [
-        "Etapas arba situacija",
-        "Kitiems naudotojams matomi duomenys"
+        "Duomenys",
+        "Įprastas terminas arba kriterijus"
       ],
       "rows": [
         [
-          "Viešas Skelbimas prieš Rezervaciją",
-          "Skelbimo informacija, nuotraukos, kaina, Užstatas, prieinamumas, apytikslė vieta, ribota vieša Nuomotojo tapatybė, patvirtinimo ženklelis, reitingai, atsiliepimai ir kiti vieši pasitikėjimo signalai"
+          "Paskyros ir profilio duomenys",
+          "Kol paskyra aktyvi. Uždarius paskyrą – tik tiek, kiek reikia likusioms teisinėms, saugumo, ginčų ar atitikties pareigoms"
         ],
         [
-          "Rezervacijos užklausa",
-          "Rezervacijos datos, pasirinktas perdavimo ar pristatymo būdas, ribota šalių profilio informacija ir informacija, reikalinga Nuomotojui priimti ar atmesti užklausą"
+          "Teisinių dokumentų priėmimo įrašai",
+          "Iki laikotarpio, per kurį gali reikėti įrodyti sutikimą, Sąlygų priėmimą ar teisinę atitiktį, pabaigos"
         ],
         [
-          "Po patvirtintos Rezervacijos",
-          "Kontaktiniai duomenys, tikslesnė atsiėmimo, pristatymo ar perdavimo informacija, Rezervacijos informacija, žinutės ir kiti duomenys, būtini nuomai įvykdyti"
+          "Skelbimai ir viešas turinys",
+          "Kol aktyvūs; pašalinus – ribotai, jei reikia moderavimui, DSA įrodymams, ginčui ar teisinei gynybai"
         ],
         [
-          "Perdavimas ir grąžinimas",
-          "Perdavimo ir grąžinimo patvirtinimai, būklės nuotraukos, pastabos, priedų sąrašai, laiko žymos ir kita vykdymui būtina informacija"
+          "Rezervacijos, mokėjimai, užstatai, grąžinimai ir išmokos",
+          "Pagal apskaitos, mokesčių, mokėjimų ir ginčų reikalavimus; finansiniai ir apskaitos dokumentai gali būti saugomi iki 10 metų arba ilgiau, jei to reikalauja teisė"
         ],
         [
-          "Ginčas ar pagalbos procesas",
-          "Reikalavimo esmė, susiję įrodymai, nuotraukos, žinutės, mokėjimų ar Užstato informacija, atsakymui būtini duomenys ir administratoriaus sprendimo santrauka, kiek tai būtina ir leidžiama"
+          "Tapatybės patvirtinimo būsena ir audito įrašai",
+          "Kol paskyra aktyvi; patvirtinimas galioja iki 730 dienų nuo patvirtinimo arba iki dokumento galiojimo pabaigos, atsižvelgiant į tai, kuri data ankstesnė; galutinai ištrinant paskyrą ištrinami, jei nėra kito teisėto saugojimo pagrindo"
         ],
         [
-          "Verslo nuomotojo arba Prekiautojo profilis",
-          "Viešas verslo pavadinimas, juridinis pavadinimas, registracijos numeris, šalis, PVM statuso indikatorius, kontaktinis kanalas, vartotojų teisių informacija ir kita privaloma verslo informacija"
+          "Neapdoroti tapatybės dokumentų vaizdai „Naudokis“ sistemose",
+          "Paprastai nesaugomi; jei gaunami, saugomi tik konkrečiam patvirtinimo, ginčo, mokėjimo, mokesčių, saugumo ar teisiniam tikslui reikalingą laiką"
         ],
         [
-          "B2B Rezervacija",
-          "Juridinis ar veiklos pavadinimas, registracijos numeris, PVM mokėtojo kodas, atsiskaitymo adresas, atsiskaitymo kontaktai, sąskaitų išrašymo, PVM, apskaitos ir sutarties vykdymo duomenys"
+          "„Didit“ saugomi patikros duomenys",
+          "Pagal „Naudokis“ sutartyje ir „Didit“ paskyroje nustatytą saugojimo terminą; jis turi atitikti konkretaus patikros tikslo būtinumą"
         ],
         [
-          "Verslo nuomininkas nuomojasi iš privataus Nuomotojo",
-          "Tik ta privataus Nuomotojo kontaktinė, sandorio, mokėjimo, perdavimo, grąžinimo ar apskaitos informacija, kuri būtina konkrečiai Rezervacijai, ginčui, saugumui, mokesčiams ar teisės reikalavimams; privatus Nuomotojas gali neturėti verslo, PVM ar sąskaitų faktūrų duomenų"
+          "Dokumento techninė saugumo žyma",
+          "Kol būtina kelių paskyrų ar sukčiavimo rizikai valdyti; paprastai ištrinama su tapatybės įrašu, nebent vyksta ginčas, tyrimas ar taikoma teisinė pareiga"
         ],
         [
-          "Atsiliepimai ir reitingai",
-          "Atsiliepimai, reitingai, viešas rodomas vardas, vaidmuo ir susijęs Skelbimo ar Rezervacijos kontekstas pagal Platformos atsiliepimų paskelbimo ir moderavimo taisykles"
+          "Žinutės",
+          "365 dienas nuo žinutės sukūrimo"
+        ],
+        [
+          "Pokalbių nuotraukos",
+          "395 dienas nuo įkėlimo"
+        ],
+        [
+          "Pagalbos ir naudotojų pranešimai, moderavimo sprendimai bei apeliacijos",
+          "3 metus nuo išsprendimo arba paskutinio atnaujinimo"
+        ],
+        [
+          "Pranešimų pristatymo techniniai žurnalai",
+          "90 dienų nuo įrašo sukūrimo"
+        ],
+        [
+          "Paskyros ištrynimo prašymo audito duomenys",
+          "180 dienų nuo prašymo sukūrimo"
+        ],
+        [
+          "Rinkodaros sutikimo įrašas",
+          "Kol galioja sutikimas ir tiek, kiek vėliau reikia jo gavimui įrodyti"
+        ],
+        [
+          "Rinkodaros atsisakymo įrašas",
+          "Tiek, kiek reikia užtikrinti, kad rinkodara nebūtų siunčiama ir atsisakymas būtų įrodytas"
+        ],
+        [
+          "„Plausible“ svetainės ir perėjimo analitika",
+          "Pagal mūsų „Plausible“ paslaugoje sukonfigūruotą terminą; identifikuojami ar pseudoniminiai įvykių duomenys nesaugomi ilgiau, nei būtina apibendrintam lankomumo ir perėjimo matavimui"
+        ],
+        [
+          "„Mixpanel“ ir „AppsFlyer“ duomenys",
+          "Pagal sutikimo būseną ir sutartyse bei teikėjų nustatymuose sukonfigūruotus terminus"
+        ],
+        [
+          "DAC7 duomenys",
+          "Kai veikla praneština – 5 metus nuo ataskaitinio laikotarpio pabaigos, jei taikytinos taisyklės nereikalauja kitaip"
+        ],
+        [
+          "Kiti mokesčių ir apskaitos duomenys",
+          "Pagal konkrečiam dokumentui ar prievolei taikomą teisės aktuose nustatytą terminą"
         ]
       ]
     },
     {
       "t": "p",
-      "md": "Naudotojams draudžiama per „Naudokis“ gautus kitų asmenų duomenis naudoti su Platforma nesusijusiais tikslais. Tai apima, pavyzdžiui, nepageidaujamą rinkodarą, persekiojimą, diskriminaciją, bandymą apeiti Platformą, kreditingumo vertinimą, duomenų rinkimą į išorines duomenų bazes ar kitą neteisėtą arba nesuderinamą tikslą."
-    },
-    {
-      "t": "p",
-      "md": "Pažeidus šią pareigą, „Naudokis“ turi teisę riboti paskyrą, pašalinti Turinį, nutraukti prieigą ir, kai būtina, pranešti kompetentingoms institucijoms."
-    },
-    {
-      "t": "h2",
-      "id": "10-paslaugu-teikejai-gavejai-ir-ju-vaidmenys",
-      "text": "10. Paslaugų teikėjai, gavėjai ir jų vaidmenys"
-    },
-    {
-      "t": "callout",
-      "md": "Asmens duomenys gali būti perduodami tik tiek, kiek būtina Platformai teikti, mokėjimams, tapatybės patvirtinimui, saugumui, pagalbai, ginčams, apskaitai, mokesčiams, teisės reikalavimams ir kitoms šioje Politikoje nurodytoms funkcijoms."
-    },
-    {
-      "t": "p",
-      "md": "Duomenys gali būti perduodami kitiems sandorio dalyviams, mokėjimų, tapatybės patvirtinimo, infrastruktūros, komunikacijos, diagnostikos, saugumo, apskaitos, teisės, mokesčių ir kitiems paslaugų teikėjams, taip pat institucijoms, kai to reikalauja teisės aktai."
-    },
-    {
-      "t": "p",
-      "md": "Skelbimų puslapiuose svetainė siūlo pasirenkamą „Google Maps“ žemėlapį. Žemėlapis neįkeliamas, kol nepasirenkate **Rodyti „Google Maps“ žemėlapį**. Jį įkėlus Google gali gauti jūsų IP adresą, naršyklės ir įrenginio informaciją, prašomą miestą bei įprastus užklausos metaduomenis pagal Google privatumo sąlygas. Pasirinkimas išsaugomas naršyklėje, kad vėlesni skelbimų žemėlapiai galėtų būti rodomi neklausiant dar kartą; išvalius svetainės duomenis pasirinkimas panaikinamas."
-    },
-    {
-      "t": "p",
-      "md": "Svetainė siūlo pasirenkamą diegimo atribucijos matavimą per „AppsFlyer“. Pagal nutylėjimą svetainė neįkelia jokio „AppsFlyer“ scenarijaus, pikselio ar identifikatoriaus ir nesukuria „AppsFlyer“ nuorodos: diegimo mygtukai veda tiesiai į „App Store“ arba „Google Play“. Paspaudus diegimo mygtuką jūsų paprašoma aiškaus pasirinkimo, kurio atsisakymas yra lygiavertis sutikimui; pats mygtuko paspaudimas sutikimu nelaikomas. Tik pasirinkus **Leisti matavimą** diegimo nuoroda nukreipiama per „AppsFlyer“, kuris tuomet gali gauti jūsų IP adresą, naršyklės ir įrenginio informaciją, kampanijos ar pakvietimo kodą bei įprastus užklausos metaduomenis pagal „AppsFlyer“ privatumo sąlygas. Pasirinkimas — taip pat ir atsisakymas — išsaugomas pirmosios šalies nuostatų slapuke (`nk_attr_consent`), kuriame saugoma tik pasirinkimo būsena, politikos versija ir data; jokio reklamos identifikatoriaus jame nėra. Pasirinkimą bet kada galite pakeisti arba atšaukti svetainės poraštės skiltyje **Privatumo nustatymai**; atšaukus, diegimo nuorodos vėl veda tiesiai į parduotuves. Šis svetainės nustatymas yra atskiras nuo Programėlės analitikos ir reklamos sutikimo ir jo nekeičia. Rekomendacijų premija nuo šio pasirinkimo nepriklauso: pakvietimo kodą visada galima įvesti Programėlėje rankiniu būdu."
-    },
-    {
-      "t": "p",
-      "md": "Nuorodos operaciniuose el. laiškuose (rezervacijų užklausos, žinutės, sąskaitų dokumentai, atsiliepimai, slaptažodžio keitimas, paskyros trynimo atšaukimas) yra pirmosios šalies nuorodos į www.naudokis.lt. Tai nėra atribucijos nuorodos ir jos nenukreipiamos per „AppsFlyer“, todėl atidarius tokį el. laišką paspaudimas neatskleidžiamas atribucijos teikėjui. Kai tokioje nuorodoje yra vienkartinis žetonas, jis naudojamas tik jūsų prašomam veiksmui atlikti ir neperduodamas analitikos ar klaidų stebėsenos teikėjams."
-    },
-    {
-      "t": "p",
-      "md": "Išsamesnė teikėjų, gavėjų, slapukų, SDK ir technologijų santrauka pateikiama Teikėjų, gavėjų, slapukų ir SDK priede."
-    },
-    {
-      "t": "h2",
-      "id": "11-mokejimai-tapatybes-patvirtinimas-ir-reguliuojamas-tvarkymas",
-      "text": "11. Mokėjimai, tapatybės patvirtinimas ir reguliuojamas tvarkymas"
-    },
-    {
-      "t": "callout",
-      "md": "Mokėjimų, išmokų, tapatybės patvirtinimo, sankcijų, sukčiavimo prevencijos, mokesčių ir reguliuojamos atitikties srityse „Naudokis“ gali naudoti trečiųjų šalių teikėjus, įskaitant Stripe ir Didit."
-    },
-    {
-      "t": "p",
-      "md": "Kai kurie teikėjai tam tikrais atvejais veikia kaip savarankiški duomenų valdytojai, ypač kai jie vykdo savo reguliuojamas mokėjimų, KYC, sankcijų, sukčiavimo prevencijos, mokesčių ar teisines pareigas. Tokiam tvarkymui gali būti taikomi jų privatumo pranešimai ir sąlygos."
-    },
-    {
-      "t": "p",
-      "md": "Išsamesnės tapatybės patvirtinimo, dokumento techninės saugumo žymos, sukčiavimo prevencijos ir reguliuojamo tvarkymo taisyklės pateikiamos Tapatybės patvirtinimo ir sukčiavimo prevencijos priede."
-    },
-    {
-      "t": "h2",
-      "id": "12-tarptautinis-duomenu-perdavimas",
-      "text": "12. Tarptautinis duomenų perdavimas"
-    },
-    {
-      "t": "p",
-      "md": "„Naudokis“ yra įsteigta Lietuvoje ir pirmiausia aptarnauja Lietuvos bei Europos Sąjungos arba Europos ekonominės erdvės naudotojus. Pagrindiniai Platformos programėlės duomenys ir failų saugykla veikia Amazon Web Services regione **eu-north-1 (Stokholmas, Švedija)**, t. y. Europos ekonominėje erdvėje."
-    },
-    {
-      "t": "p",
-      "md": "Kai kurios komunikacijos, infrastruktūros ar trečiųjų šalių funkcijos gali būti tvarkomos per atitinkamų teikėjų infrastruktūrą ir jų taikomas apsaugos priemones. Tai gali apimti transakcinius el. laiškus, SMS, telekomunikacijų tinklus, mokėjimus, tapatybės patvirtinimą, socialinį prisijungimą ar kitų teikėjų paslaugas."
-    },
-    {
-      "t": "p",
-      "md": "Kai kurie 10 skyriuje nurodyti paslaugų teikėjai ar jų subrangovai gali tvarkyti duomenis už Europos ekonominės erdvės ribų, įskaitant Jungtines Amerikos Valstijas ar kitas valstybes."
-    },
-    {
-      "t": "p",
-      "md": "Priklausomai nuo įjungtų funkcijų, teikėjų konfigūracijos ir konkretaus naudojimo, tokie perdavimai gali apimti:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "Stripe mokėjimų funkcijas;",
-        "Didit tapatybės patvirtinimą;",
-        "OpenAI ar kitus DI paslaugų teikėjus, kai naudojamos DI funkcijos;",
-        "Google serverio pusės adresų automatinį pildymą per Google Places API;",
-        "Expo tiesioginius pranešimus;",
-        "socialinio prisijungimo paslaugas, įskaitant Apple, Google ir Facebook;",
-        "atvirkštinį geokodavimą per OpenStreetMap Nominatim, valdomą OpenStreetMap Foundation. Tokiu atveju perduodamos tik koordinatės, be tiesioginių identifikatorių."
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Serverio pusės Lietuvos adresų geokodavimas ir normalizavimas (Postit) vykdomas Lietuvoje, t. y. Europos ekonominėje erdvėje."
-    },
-    {
-      "t": "p",
-      "md": "Tokiems perdavimams „Naudokis“ taiko BDAR V skyriuje numatytas apsaugos priemones:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "Europos Komisijos sprendimą dėl tinkamumo, kai jis taikomas (pavyzdžiui, ES ir JAV duomenų privatumo sistema (angl. EU–U.S. Data Privacy Framework), kai konkretus gavėjas yra sertifikuotas);",
-        "Europos Komisijos patvirtintas **standartines sutarčių sąlygas (SCC)**;",
-        "duomenų tvarkymo sutartis (DPA) ir subrangovų valdymo įsipareigojimus su kiekvienu duomenų tvarkytoju;",
-        "perdavimo poveikio vertinimus (TIA), kai jų reikia;",
-        "papildomas technines (šifravimas perdavimo metu ir, kur galima, ramybėje) ir organizacines priemones."
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Aktualus subrangovų sąrašas su jiems taikomais perdavimo apsaugos mechanizmais skelbiamas „Naudokis“ interneto svetainėje, Programėlėje arba pateikiamas paprašius el. paštu **info@naudokis.lt**. Daugiau informacijos apie konkretiems perdavimams taikomas apsaugos priemones galite prašyti susisiekę su mumis el. paštu **info@naudokis.lt**."
+      "md": "Jei vyksta ginčas, institucijos tyrimas, saugumo incidentas ar teisminis procesas, susijusius duomenis galime saugoti ilgiau, kol jie pagrįstai reikalingi tam procesui."
     },
     {
       "t": "h3",
-      "text": "Poveikio duomenų apsaugai ir rizikos vertinimai"
-    },
-    {
-      "t": "p",
-      "md": "Prieš pradėdama arba reikšmingai keisdama didesnės rizikos tvarkymą, „Naudokis“ dokumentuoja poveikio duomenų apsaugai vertinimą, teisėto intereso vertinimą arba kitą proporcingą rizikos vertinimą, kai to reikalauja BDAR ar tvarkymo rizikos pobūdis."
-    },
-    {
-      "t": "p",
-      "md": "Didesnės rizikos tvarkymas gali apimti tapatybės dokumentų patikrą, tapatybės dokumento techninės saugumo žymos (angl. hash) naudojimą sukčiavimo prevencijai, žinučių turinio signalų aptikimą, sukčiavimo prevenciją, mokėjimų ar išmokų sulaikymus, DI pagalbines funkcijas ir kitus reikšmingą poveikį galinčius turėti procesus."
-    },
-    {
-      "t": "p",
-      "md": "Tokiuose vertinimuose vertinami tikslai, būtinybė, proporcingumas, duomenų minimizavimas, saugojimo terminai, prieigos kontrolė, žmogaus peržiūra, naudotojų teisių įgyvendinimas ir rizikos mažinimo priemonės."
-    },
-    {
-      "t": "h2",
-      "id": "13-automatizuotos-patikros-di-ir-zmogaus-perziura",
-      "text": "13. Automatizuotos patikros, DI ir žmogaus peržiūra"
-    },
-    {
-      "t": "callout",
-      "md": "„Naudokis“ gali naudoti automatizuotas priemones ir, kai funkcija įjungta, DI sprendimus saugumui, sukčiavimo prevencijai, moderavimui, skelbimų pagalbai, pagalbos darbo eigai ar kitoms Platformos funkcijoms."
-    },
-    {
-      "t": "p",
-      "md": "Automatizuotų priemonių nenaudojame specialių kategorijų duomenims nustatyti ar numanyti, biometriniam kategorizavimui ar neteisėtam profiliavimui. „Naudokis“ nepriima vien automatizuotų sprendimų, kurie sukelia teisines pasekmes ar panašų reikšmingą poveikį Naudotojui, be žmogaus peržiūros. Jei toks sprendimas būtų priimtas, turite teisę reikalauti žmogaus įsikišimo, pareikšti savo poziciją ir užginčyti sprendimą pagal šią Politiką, Sąlygas ir taikomą teisę."
-    },
-    {
-      "t": "p",
-      "md": "Išsamesnė informacija pateikiama DI ir automatizuotų patikrų priede."
-    },
-    {
-      "t": "h2",
-      "id": "14-rinkodara-su-paslauga-susije-pranesimai-ir-pranesimu-nustatymai",
-      "text": "14. Rinkodara, su paslauga susiję pranešimai ir pranešimų nustatymai"
-    },
-    {
-      "t": "p",
-      "md": "„Naudokis“ turi teisę siųsti:"
+      "text": "13.1. Ištrynimas, anonimizavimas ir apribojimas"
     },
     {
       "t": "ul",
       "items": [
-        "būtinus su paslauga susijusius pranešimus apie paskyrą, saugumą, teisinių dokumentų pakeitimus, rezervacijas, mokėjimus, Užstatus, išmokas, ginčus, pagalbą, perdavimą, grąžinimą ir kitus Platformos veiksmus;",
-        "informacinius produkto pranešimus apie funkcijas ar paslaugos pakeitimus;",
-        "rinkodaros, akcijų, rekomendacijų ar naujienlaiškio pranešimus, kai turime reikiamą sutikimą arba kitą teisėtą pagrindą."
+        "**Ištrynimas** reiškia, kad duomenys pašalinami iš aktyvių sistemų, o atsarginėse kopijose išnyksta pagal jų saugų perrašymo ciklą.",
+        "**Anonimizavimas** reiškia, kad duomenų nebegalima pagrįstai susieti su jumis. Tik tinkamai anonimizuoti duomenys nebelaikomi asmens duomenimis.",
+        "**Tvarkymo apribojimas** reiškia, kad duomenys išlieka, tačiau jų naudojimas apribojamas, pavyzdžiui, tik teisinių reikalavimų gynimui."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "13.2. Kas nutinka uždarius paskyrą"
+    },
+    {
+      "t": "p",
+      "md": "Uždarius paskyrą:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "viešas profilis ir aktyvūs skelbimai pašalinami arba paslepiami;",
+        "aktyvus mokėjimas, rezervacija, užstatas, išmoka ar ginčas turi būti užbaigtas;",
+        "finansiniai, apskaitos, mokesčių ir teisiniai įrašai išlieka nustatytą terminą;",
+        "žinutės ar įrodymai gali išlikti, jei jų reikia kitai sandorio šaliai, ginčui ar teisėtai gynybai;",
+        "žinučių autoriaus duomenys gali būti anonimizuojami, kad būtų išsaugotas kitos šalies pokalbio vientisumas;",
+        "analitikos duomenys, kai įmanoma, anonimizuojami arba atsiejami nuo paskyros."
       ]
     },
     {
       "t": "p",
-      "md": "Kai tiesioginė rinkodara grindžiama esamo kliento panašių paslaugų išimtimi, suteikiame aiškią galimybę nesutikti su tokiu naudojimu duomenų rinkimo metu ir kiekviename rinkodaros pranešime."
-    },
-    {
-      "t": "p",
-      "md": "Rinkodaros pranešimų galite atsisakyti paspausdami atsisakymo nuorodą el. laiške, pakeisdami pranešimų nustatymus Programėlėje, kai tokia funkcija prieinama, arba susisiekdami su mumis el. paštu **info@naudokis.lt**. Atsisakius rinkodaros pranešimų, vis tiek galime siųsti būtinus su paslauga susijusius, saugumo, teisės aktų, Rezervacijų, mokėjimų ar paskyros pranešimus."
+      "md": "Paskyros uždarymas nėra tas pats, kas visų duomenų nedelsiamas ištrynimas."
     },
     {
       "t": "h2",
-      "id": "15-saugojimo-terminai",
-      "text": "15. Saugojimo terminai"
-    },
-    {
-      "t": "callout",
-      "md": "Asmens duomenys saugomi tik tiek, kiek reikia konkrečiam tikslui, Platformos veikimui, teisiniams reikalavimams, ginčams, sukčiavimo prevencijai, apskaitai, mokesčiams, mokėjimų suderinimui, saugumui ir teisėtų interesų apsaugai."
+      "id": "14-jusu-teises",
+      "text": "14. Jūsų teisės"
     },
     {
       "t": "p",
-      "md": "Kai duomenų nebereikia, jie ištrinami, anonimizuojami arba apribojami. Kai kurie duomenys gali būti saugomi ilgiau, jei būtina dėl aktyvių Rezervacijų, ginčų, mokėjimų ginčų, skolų, mokesčių, apskaitos, teisinės gynybos ar teisėsaugos arba institucijų reikalavimų."
-    },
-    {
-      "t": "p",
-      "md": "Išsamesnė saugojimo terminų ir ištrynimo logika pateikiama Saugojimo terminų ir ištrynimo priede."
-    },
-    {
-      "t": "h2",
-      "id": "16-paskyros-istrynimas-ir-duomenu-eksportas",
-      "text": "16. Paskyros ištrynimas ir duomenų eksportas"
-    },
-    {
-      "t": "p",
-      "md": "Galite prašyti ištrinti paskyrą arba gauti duomenų kopiją, kaip aprašyta šioje Politikoje. Paskyros ištrynimas gali būti atidėtas arba dalis duomenų gali būti ribotai saugoma, jei to reikia aktyvioms Rezervacijoms, ginčams, mokėjimams, mokesčiams, apskaitai, saugumui, sukčiavimo prevencijai ar teisinei gynybai."
-    },
-    {
-      "t": "p",
-      "md": "Išsamesnė paskyros ištrynimo ir eksportavimo logika pateikiama Saugojimo terminų ir ištrynimo priede."
-    },
-    {
-      "t": "h2",
-      "id": "17-jusu-teises-pagal-bdar",
-      "text": "17. Jūsų teisės pagal BDAR"
-    },
-    {
-      "t": "callout",
-      "md": "Turite teisę susipažinti su duomenimis, juos ištaisyti, ištrinti, apriboti, perkelti, nesutikti su tam tikru tvarkymu ir atšaukti sutikimą, kai tvarkymas grindžiamas sutikimu."
-    },
-    {
-      "t": "p",
-      "md": "Pagal BDAR ir taikomas išimtis turite teisę:"
+      "md": "Atsižvelgiant į taikomas sąlygas ir išimtis, turite teisę:"
     },
     {
       "t": "ul",
       "items": [
-        "susipažinti su savo asmens duomenimis;",
-        "prašyti ištaisyti netikslius ar neišsamius duomenis;",
+        "gauti patvirtinimą, ar tvarkome jūsų duomenis, ir su jais susipažinti;",
+        "ištaisyti netikslius ar papildyti neišsamius duomenis;",
         "prašyti ištrinti duomenis;",
-        "apriboti duomenų tvarkymą;",
-        "nesutikti su tvarkymu, grindžiamu teisėtais interesais;",
-        "gauti savo pateiktus duomenis susistemintu, įprastai naudojamu ir kompiuterio skaitomu formatu, kai taikoma;",
-        "atšaukti sutikimą, kai duomenų tvarkymas grindžiamas sutikimu;",
-        "nesutikti su tiesiogine rinkodara;",
-        "prašyti žmogaus peržiūros, išreikšti savo poziciją ir ginčyti reikšmingus automatizuotus ar pusiau automatizuotus sprendimus, kai tai taikoma;",
-        "pateikti skundą priežiūros institucijai."
+        "prašyti apriboti duomenų tvarkymą;",
+        "gauti savo pateiktus duomenis susistemintu, įprastai naudojamu ir kompiuterio skaitomu formatu bei, kai techniškai įmanoma, perduoti juos kitam valdytojui;",
+        "dėl su jūsų konkrečia situacija susijusių priežasčių nesutikti su tvarkymu, grindžiamu teisėtu interesu;",
+        "bet kada nesutikti su tiesiogine rinkodara;",
+        "atšaukti sutikimą;",
+        "prašyti žmogaus peržiūros, pateikti savo nuomonę ir ginčyti BDAR 22 straipsnyje nurodytą automatizuotą sprendimą;",
+        "pateikti skundą duomenų apsaugos priežiūros institucijai."
       ]
     },
     {
       "t": "p",
-      "md": "Norėdami pasinaudoti savo teisėmis, kreipkitės el. paštu **info@naudokis.lt**. Prieš vykdydami prašymą galime paprašyti patvirtinti tapatybę. Atsakome nepagrįstai nedelsdami ir bet kuriuo atveju ne vėliau kaip per vieną mėnesį nuo prašymo gavimo. Šis terminas gali būti pratęstas dar iki dviejų mėnesių, kai tai leidžia BDAR dėl prašymo sudėtingumo ar prašymų kiekio."
+      "md": "Prašymą galite pateikti Programėlėje, kai atitinkama funkcija prieinama, arba el. paštu info@naudokis.lt."
     },
     {
       "t": "p",
-      "md": "Kai kurie prašymai gali būti apriboti, jei duomenys reikalingi mokėjimų, apskaitos, mokesčių, DAC7, teisinių reikalavimų, ginčų, sukčiavimo prevencijos, saugumo ar kitų teisėtų ir teisinių priežasčių tikslais."
+      "md": "Prieš vykdydami prašymą galime paprašyti pagrįstai patvirtinti tapatybę. Atsakome nepagrįstai nedelsdami ir ne vėliau kaip per vieną mėnesį. Sudėtingais atvejais ar gavus daug prašymų terminas gali būti pratęstas dar iki dviejų mėnesių; apie pratęsimą ir priežastį informuosime per pirmąjį mėnesį."
+    },
+    {
+      "t": "p",
+      "md": "Prašymas paprastai vykdomas nemokamai. Jei jis akivaizdžiai nepagrįstas ar neproporcingai pasikartojantis, galime taikyti pagrįstą mokestį arba atsisakyti jį vykdyti, kaip leidžia BDAR."
+    },
+    {
+      "t": "p",
+      "md": "Teisė ištrinti ar gauti duomenis nėra absoliuti. Prašymą galime apriboti tiek, kiek duomenys būtini apskaitai, mokesčiams, DAC7, mokėjimams, ginčams, sukčiavimo prevencijai, saugumui, kitų asmenų teisėms ar teisinei gynybai."
+    },
+    {
+      "t": "p",
+      "md": "Duomenų eksportas gali neapimti vidinių sukčiavimo, rizikos ir saugumo taisyklių, teisinio vertinimo, mokesčių ataskaitų rinkmenų ar kitų asmenų duomenų, kai jų atskleidimas pakenktų saugumui, pažeistų teisę ar kitų asmenų teises."
     },
     {
       "t": "h2",
-      "id": "18-vaikai-ir-nepilnameciai",
-      "text": "18. Vaikai ir nepilnamečiai"
+      "id": "15-rinkodara-ir-su-paslauga-susije-pranesimai",
+      "text": "15. Rinkodara ir su paslauga susiję pranešimai"
     },
     {
       "t": "p",
-      "md": "„Naudokis“ Platforma ir paskyros funkcijos skirtos tik ne jaunesniems kaip 18 metų asmenims. Tai apima paskyros sukūrimą, Skelbimų publikavimą, rezervavimą, mokėjimus, išmokas, Užstatus, perdavimą, grąžinimą ir nuomos susitarimų sudarymą per Platformą."
-    },
-    {
-      "t": "p",
-      "md": "„Naudokis“ sąmoningai nesiekia rinkti asmens duomenų iš jaunesnių nei 18 metų asmenų. Sukurdami paskyrą ar naudodamiesi Platforma, naudotojai pareiškia, kad atitinka amžiaus reikalavimą."
-    },
-    {
-      "t": "p",
-      "md": "Tapatybės patvirtinimo metu Didit gali nustatyti gimimo datą iš tapatybės dokumento ir perduoti „Naudokis“ patvirtinimo rezultatą ar pasirinktus atributus. Ši informacija gali būti naudojama paskyros, Nuomotojo, mokamų funkcijų, išmokų ar kitų amžiaus ribojamų funkcijų tinkamumui įvertinti."
-    },
-    {
-      "t": "p",
-      "md": "Jei sužinome, kad paskyrą sukūrė ar Platforma naudojasi jaunesnis nei 18 metų asmuo, tokio asmens tapatybės patvirtinimą atmetame, ribojame prieigą prie amžiumi ribojamų funkcijų ir inicijuojame vidinę peržiūrą. Atlikę tokią peržiūrą galime uždaryti paskyrą ir ištrinti, anonimizuoti arba apriboti susijusius asmens duomenis, kaip aprašyta šios Politikos 15 skyriuje ir kaip to reikalauja teisės aktai."
-    },
-    {
-      "t": "p",
-      "md": "Tėvai arba globėjai gali kreiptis į mus el. paštu **info@naudokis.lt**, jei mano, kad nepilnametis sukūrė paskyrą. Paprašysime pakankamai informacijos asmens tapatybei ir santykiui patvirtinti, o po to nedelsdami imsimės atitinkamų veiksmų."
-    },
-    {
-      "t": "h2",
-      "id": "19-saugumas",
-      "text": "19. Saugumas"
-    },
-    {
-      "t": "p",
-      "md": "Asmens duomenims apsaugoti taikome technines ir organizacines priemones, įskaitant autentifikavimą, prieigos kontrolę, šifruotą perdavimą, žurnalų valdymą, stebėseną, kontroliuojamą teikėjų prieigą, įrodymų įkėlimo kontrolę, viešų ir privačių Platformos duomenų atskyrimą, mokėjimo duomenų izoliavimą per mokėjimo teikėjus ir saugumo peržiūras."
-    },
-    {
-      "t": "p",
-      "md": "Su mokesčiais, apskaita ar atitiktimi susiję dokumentai, kai taikoma, saugomi taikant šifravimo ir prieigos kontrolės priemones."
-    },
-    {
-      "t": "p",
-      "md": "**Pranešimas apie asmens duomenų saugumo pažeidimą.** Pagal BDAR 33 ir 34 straipsnius, sužinoję apie asmens duomenų saugumo pažeidimą, nedelsdami ir, kai įmanoma, ne vėliau kaip per 72 valandas pranešime Valstybinei duomenų apsaugos inspekcijai, jei pažeidimas gali kelti pavojų asmenų teisėms ir laisvėms."
-    },
-    {
-      "t": "p",
-      "md": "Jei pažeidimas gali sukelti didelį pavojų jūsų teisėms ir laisvėms, be nepagrįsto delsimo informuosime ir jus pasirinktu pranešimų kanalu: el. paštu, pranešimu Programėlėje arba kitu jums prieinamu būdu. Pranešime nurodysime, kokie duomenys paveikti, kokios galimos pasekmės ir kokių priemonių rekomenduojame imtis."
-    },
-    {
-      "t": "p",
-      "md": "Nors taikome saugumo priemones, jokia interneto ar mobilioji paslauga nėra visiškai saugi. Saugokite savo prisijungimo duomenis, įrenginius ir paskyrą bei nedelsdami praneškite mums, jei įtariate neteisėtą prieigą ar paskyros saugumo pažeidimą."
-    },
-    {
-      "t": "h2",
-      "id": "20-sios-politikos-pakeitimai",
-      "text": "20. Šios Politikos pakeitimai"
-    },
-    {
-      "t": "p",
-      "md": "Galime atnaujinti šią Politiką, kai keičiasi Platforma, jos funkcijos, paslaugų teikėjai, teisiniai reikalavimai arba mūsų duomenų tvarkymo praktika. Atnaujintą versiją paskelbsime Platformoje ir nurodysime jos įsigaliojimo datą."
-    },
-    {
-      "t": "p",
-      "md": "Kai pakeitimai yra reikšmingi arba to reikalauja teisė, galime jus papildomai informuoti el. paštu, programėlės pranešimu, paskyros pranešimu arba paprašyti priimti atnaujintą versiją."
-    },
-    {
-      "t": "h2",
-      "id": "21-skundai-ir-prieziuros-institucija",
-      "text": "21. Skundai ir priežiūros institucija"
-    },
-    {
-      "t": "p",
-      "md": "Pirmiausia galite kreiptis į mus el. paštu **info@naudokis.lt**, kad galėtume išnagrinėti ir, kai įmanoma, išspręsti jūsų klausimą."
-    },
-    {
-      "t": "p",
-      "md": "Taip pat galite pateikti skundą Valstybinei duomenų apsaugos inspekcijai (VDAI) arba kitai kompetentingai ES duomenų apsaugos institucijai."
+      "md": "Galime siųsti:"
     },
     {
       "t": "ul",
       "items": [
-        "**VDAI svetainė:** https://vdai.lrv.lt/",
-        "**Adresas:** L. Sapiegos g. 17, LT-10312 Vilnius, Lietuva",
-        "**El. paštas:** ada@ada.lt (aktualų kontaktą pasitikrinkite VDAI svetainėje)",
-        "**E. pristatymo dėžutė:** 188607912, jei šis kanalas jums taikomas"
+        "būtinus pranešimus apie paskyrą, rezervaciją, mokėjimą, užstatą, išmoką, žinutę, perdavimą, grąžinimą, ginčą, saugumą ar teisinius pakeitimus;",
+        "informacinius pranešimus apie jūsų naudojamos funkcijos veikimą ar svarbų paslaugos pakeitimą;",
+        "rinkodaros, akcijų, rekomendacijų ar naujienlaiškio pranešimus, kai turime sutikimą arba tenkinamos visos įstatyme numatytos esamo kliento išimties sąlygos."
       ]
     },
     {
-      "t": "h2",
-      "id": "22-privatumo-priedai",
-      "text": "22. Privatumo priedai"
-    },
-    {
       "t": "p",
-      "md": "Šie privatumo priedai yra šios Politikos dalis ir taikomi kartu su pagrindine Politika:"
+      "md": "Rinkodaros galite atsisakyti:"
     },
     {
       "t": "ul",
       "items": [
-        "22.1 Saugojimo terminų ir ištrynimo priedas",
-        "22.2–22.3 Teikėjų, gavėjų, slapukų ir SDK priedas",
-        "22.4 Tapatybės patvirtinimo ir sukčiavimo prevencijos priedas",
-        "22.5 DI ir automatizuotų patikrų priedas",
-        "22.6 Verslo naudotojų, Prekiautojų, DAC7 ir mokesčių privatumo priedas",
-        "Duomenų kategorijų priedas (Politikos 6 skyriaus priedas)"
+        "paspausdami atsisakymo nuorodą pranešime;",
+        "pakeisdami nustatymus Programėlėje, kai ši funkcija prieinama;",
+        "parašydami info@naudokis.lt."
       ]
     },
     {
+      "t": "p",
+      "md": "Atsisakę rinkodaros vis tiek gausite būtinus su paslauga, sandoriu, saugumu ar teise susijusius pranešimus."
+    },
+    {
       "t": "h2",
-      "id": "23-kontaktai",
-      "text": "23. Kontaktai"
+      "id": "16-nepilnameciai",
+      "text": "16. Nepilnamečiai"
+    },
+    {
+      "t": "p",
+      "md": "Platformos sandorių funkcijos skirtos tik 18 metų sulaukusiems asmenims."
+    },
+    {
+      "t": "p",
+      "md": "Registracijos pradžioje gali būti techniškai sukurtas nepatvirtintas įrašas, pavyzdžiui, pateikus el. pašto adresą. Jis nesuteikia teisės nepilnamečiui naudotis skelbimų, rezervacijų, mokėjimų, išmokų, užstatų ar perdavimo funkcijomis."
+    },
+    {
+      "t": "p",
+      "md": "Prieš suteikdami sandorių funkcijas galime reikalauti patvirtinti tapatybę ir amžių. Jei nustatome, kad asmuo jaunesnis nei 18 metų, patvirtinimą atmetame, funkcijas apribojame ir galime pradėti paskyros uždarymą."
+    },
+    {
+      "t": "p",
+      "md": "Jei manote, kad nepilnametis pateikė mums savo duomenis, parašykite info@naudokis.lt."
+    },
+    {
+      "t": "h2",
+      "id": "17-saugumas-instituciju-prasymai-ir-politikos-pakeitimai",
+      "text": "17. Saugumas, institucijų prašymai ir Politikos pakeitimai"
+    },
+    {
+      "t": "p",
+      "md": "Taikome riziką atitinkančias technines ir organizacines priemones, įskaitant:"
     },
     {
       "t": "ul",
       "items": [
-        "Privatumo prašymai: **info@naudokis.lt**",
-        "Pagalba: **info@naudokis.lt**",
-        "Operatorius: **MB „Naudokis“, juridinio asmens kodas 307423504, registruotos buveinės adresas – Numėjos g. 6, LT-08402 Vilnius, Lietuva**"
+        "autentifikavimą ir prieigos kontrolę;",
+        "duomenų šifravimą juos perduodant;",
+        "viešų ir neviešų duomenų atskyrimą;",
+        "žurnalų, incidentų ir prieigų stebėseną;",
+        "ribotą darbuotojų ir teikėjų prieigą;",
+        "mokėjimo duomenų izoliavimą per mokėjimų teikėjus;",
+        "saugumo ir teikėjų peržiūras."
       ]
     },
     {
-      "t": "hr"
+      "t": "p",
+      "md": "Jokia interneto ar mobilioji paslauga nėra visiškai saugi. Saugokite prisijungimo duomenis ir nedelsdami informuokite mus apie įtariamą neteisėtą prieigą."
     },
     {
       "t": "p",
-      "md": "Ankstesnės šio dokumento versijos gali būti saugomos „Naudokis“ vidaus archyve. Jei jums reikia informacijos apie ankstesnę versiją, susisiekite su mumis el. paštu **info@naudokis.lt**."
+      "md": "Jei įvyktų asmens duomenų saugumo pažeidimas, apie jį praneštume VDAI ir, kai reikia, paveiktiems asmenims BDAR nustatyta tvarka."
+    },
+    {
+      "t": "p",
+      "md": "Institucijoms duomenis teikiame tik gavę teisiškai pagrįstą prašymą arba kai juos pateikti įpareigoja teisė. Galime saugoti prašymo, atlikto vertinimo ir atsakymo audito įrašus."
+    },
+    {
+      "t": "p",
+      "md": "Šią Politiką galime atnaujinti, kai keičiasi Platforma, duomenų tvarkymas, teikėjai ar teisė. Naują versiją paskelbsime Platformoje ir nurodysime jos įsigaliojimo datą. Apie reikšmingus pakeitimus papildomai informuosime, kai to reikalauja jų pobūdis ar teisė. Jei naujam tvarkymui reikalingas sutikimas, jo paprašysime atskirai."
+    },
+    {
+      "t": "h2",
+      "id": "18-kontaktai-ir-skundai",
+      "text": "18. Kontaktai ir skundai"
+    },
+    {
+      "t": "p",
+      "md": "Privatumo klausimais, prašymais ar skundais pirmiausia galite kreiptis:"
+    },
+    {
+      "t": "p",
+      "md": "**MB „Naudokis“** Numėjos g. 6, LT-08402 Vilnius, Lietuva info@naudokis.lt"
+    },
+    {
+      "t": "p",
+      "md": "Taip pat galite pateikti skundą Valstybinei duomenų apsaugos inspekcijai arba kitos ES valstybės narės kompetentingai duomenų apsaugos institucijai."
+    },
+    {
+      "t": "p",
+      "md": "**Valstybinė duomenų apsaugos inspekcija (VDAI)** L. Sapiegos g. 17, LT-10312 Vilnius, Lietuva El. paštas: ada@ada.lt Svetainė: https://vdai.lrv.lt/"
     }
   ]
 }

@@ -69,6 +69,11 @@ function stripBrandSuffix(s: string | undefined): string {
 // Resolve a backend node into the locale-correct view model. Every SEO field
 // falls back to a name-derived value so a brand-new, un-authored category renders
 // real copy instead of `undefined`.
+//
+// Category copy is rendered as authored. It is NOT rewritten here: a runtime
+// regex pass over backend prose silently stops matching the moment the backend
+// rewords a sentence, which is the worst possible failure mode for claim-sensitive
+// copy. Wording problems get fixed at the source.
 function toCategory(c: ApiCategory, locale: Locale): Category {
   const en = locale === "en";
   const title = en ? c.name_en : c.name_lt;

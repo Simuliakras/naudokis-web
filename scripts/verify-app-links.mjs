@@ -17,6 +17,18 @@ const args = process.argv.slice(2);
 const staticOnly = args.includes("--static");
 const base = args.find((arg) => !arg.startsWith("--"));
 const problems = [];
+const envText = (() => {
+  try { return readFileSync(".env.local", "utf8"); } catch { return ""; }
+})();
+const fileEnv = Object.fromEntries(envText.split(/\r?\n/).flatMap((line) => {
+  const match = line.match(/^([A-Z0-9_]+)=(.*)$/);
+  return match ? [[match[1], match[2].replace(/^['"]|['"]$/g, "")]] : [];
+}));
+const value = (key) => process.env[key] || fileEnv[key] || "";
+const fingerprintPattern = /^(?:[0-9A-F]{2}:){31}[0-9A-F]{2}$/;
+const configuredFingerprints = value("ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS")
+  .split(/[,;\n]/).map((item) => item.trim().toUpperCase()).filter(Boolean);
+const configuredPackage = value("ANDROID_APP_LINK_PACKAGE_NAME") || "com.naudokis.naudokis";
 
 /* ---------------- AASA ---------------- */
 const aasa = JSON.parse(readFileSync("public/.well-known/apple-app-site-association", "utf8"));
@@ -24,6 +36,10 @@ const appId = aasa?.applinks?.details?.[0]?.appID;
 const paths = aasa?.applinks?.details?.[0]?.paths;
 if (!/^[A-Z0-9]{10}\.[A-Za-z0-9.-]+$/.test(appId || "")) {
   problems.push("AASA appID must be <TeamID>.<bundleID>");
+}
+const expectedAppleAppId = value("APPLE_APP_ID");
+if (expectedAppleAppId && appId !== expectedAppleAppId) {
+  problems.push(`AASA appID ${appId} does not match APPLE_APP_ID ${expectedAppleAppId}`);
 }
 if (!Array.isArray(paths) || !paths.includes("/listing/*") || !paths.includes("/invite")) {
   problems.push("AASA is missing required listing/invite paths");
@@ -81,19 +97,11 @@ if (/deep-link\.html/.test(readFileSync("next.config.ts", "utf8"))) {
 
 /* ---------------- Release readiness (needs secrets) ---------------- */
 if (!staticOnly) {
-  const envText = (() => {
-    try { return readFileSync(".env.local", "utf8"); } catch { return ""; }
-  })();
-  const env = Object.fromEntries(envText.split(/\r?\n/).flatMap((line) => {
-    const match = line.match(/^([A-Z0-9_]+)=(.*)$/);
-    return match ? [[match[1], match[2].replace(/^['"]|['"]$/g, "")]] : [];
-  }));
-  const value = (key) => process.env[key] || env[key] || "";
-  const fingerprintPattern = /^(?:[0-9A-F]{2}:){31}[0-9A-F]{2}$/;
-  const fingerprints = value("ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS")
-    .split(/[,;\n]/).map((item) => item.trim().toUpperCase()).filter(Boolean);
-  if (fingerprints.length < 2 || fingerprints.some((item) => !fingerprintPattern.test(item))) {
-    problems.push("ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS must contain two valid SHA-256 fingerprints");
+  if (!expectedAppleAppId) {
+    problems.push("APPLE_APP_ID must be configured as <TeamID>.<bundleID>");
+  }
+  if (configuredFingerprints.length < 1 || configuredFingerprints.some((item) => !fingerprintPattern.test(item))) {
+    problems.push("ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS must contain at least one valid SHA-256 app-signing fingerprint");
   }
   const oneLink = value("NEXT_PUBLIC_ONELINK_URL");
   try {
@@ -107,6 +115,8 @@ if (!staticOnly) {
 
 /* ---------------- Live association files ---------------- */
 if (base) {
+  let liveAasa;
+  let liveAssetLinks;
   for (const path of ["/.well-known/apple-app-site-association", "/.well-known/assetlinks.json"]) {
     const response = await fetch(new URL(path, base), { redirect: "manual" });
     if (response.status !== 200) {
@@ -115,6 +125,28 @@ if (base) {
     if (!response.headers.get("content-type")?.includes("application/json")) {
       problems.push(`${path} is not application/json`);
     }
+    if (response.status === 200) {
+      try {
+        const json = await response.json();
+        if (path.endsWith("assetlinks.json")) liveAssetLinks = json;
+        else liveAasa = json;
+      } catch {
+        problems.push(`${path} did not contain valid JSON`);
+      }
+    }
+  }
+  const liveDetails = liveAasa?.applinks?.details;
+  const liveMatch = Array.isArray(liveDetails) && liveDetails.some((detail) =>
+    detail?.appID === appId && JSON.stringify(detail?.paths) === JSON.stringify(paths));
+  if (!liveMatch) {
+    problems.push("live AASA does not exactly match the repository appID and claimed paths");
+  }
+  const androidTarget = Array.isArray(liveAssetLinks)
+    ? liveAssetLinks.find((statement) => statement?.target?.namespace === "android_app" && statement.target.package_name === configuredPackage)?.target
+    : undefined;
+  const liveFingerprints = androidTarget?.sha256_cert_fingerprints?.map((item) => String(item).toUpperCase()).sort();
+  if (!androidTarget || JSON.stringify(liveFingerprints) !== JSON.stringify([...new Set(configuredFingerprints)].sort())) {
+    problems.push("live assetlinks.json does not exactly match the configured package and app-signing fingerprints");
   }
 }
 

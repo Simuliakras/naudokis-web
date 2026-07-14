@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import type { Dict } from "@/app/lib/i18n/types";
 import {
-  pageMetadata, requireLocale, breadcrumbJsonLd, listingJsonLd, NOINDEX_FOLLOW,
+  pageMetadata, requireLocale, breadcrumbJsonLd, listingJsonLd, listingLandingPath, NOINDEX_FOLLOW,
 } from "@/app/lib/seo";
 import { makeQueryClient } from "@/app/lib/query";
-import { fetchListing, listingKey, ListingNotFoundError, type ListingDetail } from "@/app/lib/listings";
+import { fetchListing, fetchListings, listingKey, listingsKey, ListingNotFoundError, type ListingDetail } from "@/app/lib/listings";
+import { categoriesKey, fetchCategories } from "@/app/lib/categories";
 import { fetchListingMeta, type ListingMeta } from "@/app/lib/listing-seo";
-import { listingDetailPath, listingIdFromParam } from "@/app/lib/listing-url";
+import { listingDetailPath, listingIdFromParam, isSyntheticListingParam } from "@/app/lib/listing-url";
+import { localePath } from "@/app/lib/i18n/config";
 import { truncate } from "@/app/lib/legal/format";
 import { ListingScreen } from "@/app/components/ListingScreen";
 import { JsonLd } from "@/app/components/JsonLd";
@@ -29,6 +31,14 @@ function cleanDescription(raw: string): string {
 function listingDescription(data: ListingMeta, fromDict: string): string {
   const clean = cleanDescription(data.description);
   return clean.length >= 80 ? truncate(clean, 160) : fromDict;
+}
+
+// Owner-authored descriptions are commonly Lithuanian. Keep the English head
+// and JSON-LD consistently English unless the API eventually exposes a reviewed
+// locale-specific description field; the visible page still shows the original
+// text with its language disclosure.
+function localizedListingDescription(locale: "lt" | "en", data: ListingMeta, fromDict: string): string {
+  return locale === "lt" ? listingDescription(data, fromDict) : fromDict;
 }
 
 // Turn a slug-style id ("bosch-gsr-18v") into a readable title ("Bosch Gsr 18v")
@@ -69,10 +79,13 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/skelbimai/
   const locale = requireLocale(lang);
   const { detail, meta } = getDictionary(locale);
   const listingId = listingIdFromParam(id);
+  if (isSyntheticListingParam(id) || isSyntheticListingParam(listingId)) {
+    notFound();
+  }
   const data = await fetchListingMeta(listingId, locale);
   const title = data ? detail.seoTitle({ title: data.title.trim(), city: data.city }) : listingFallbackTitle(id, detail);
   const description = data
-    ? listingDescription(data, detail.seoDescription({ title: data.title, city: data.city, category: data.categoryNames[0] }))
+    ? localizedListingDescription(locale, data, detail.seoDescription({ title: data.title, city: data.city, category: data.categoryNames[0] }))
     : detail.metaFallbackDescription;
   const metadata = pageMetadata({
     locale,
@@ -92,6 +105,9 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
   const locale = requireLocale(lang);
   const { common, feed, detail } = getDictionary(locale);
   const listingId = listingIdFromParam(id);
+  if (isSyntheticListingParam(id) || isSyntheticListingParam(listingId)) {
+    notFound();
+  }
 
   // Fetch the detail (so ListingScreen's useListing() hydrates from HTML) and the
   // raw meta (for the Product structured data) in parallel. Catch the detail so a
@@ -114,18 +130,46 @@ export default async function Page({ params }: PageProps<"/[lang]/skelbimai/[id]
   } else {
     qc.setQueryData<ListingDetail>(listingKey(listingId, locale), detailResult.d);
   }
+  // Redirect BEFORE prefetching: a legacy bare-UUID URL (app deep links, old
+  // shares) is about to 308 away, so any work done for it is thrown away.
   const canonicalPath = data ? listingDetailPath({ id: listingId, title: data.title, city: data.city }) : `/skelbimai/${id}`;
+  if (data && id !== canonicalPath.split("/").at(-1)) {
+    permanentRedirect(localePath(locale, canonicalPath));
+  }
+
+  // Categories feed the breadcrumb's category crumb in ListingScreen. Without this
+  // prefetch, SSR renders the tags[0] fallback and the client swaps it for the real
+  // category name after hydration — while the BreadcrumbList JSON-LD below already
+  // says a third thing. Seed it so all three agree on first paint.
+  const categoryId = data?.categoryId;
+  await Promise.all([
+    qc.prefetchQuery({ queryKey: categoriesKey(locale), queryFn: () => fetchCategories(locale) }),
+    ...(categoryId
+      ? [qc.prefetchQuery({
+          queryKey: listingsKey(locale, { category: categoryId }),
+          queryFn: () => fetchListings(locale, { category: categoryId }),
+        })]
+      : []),
+  ]);
+
+  const schemaDescription = data
+    ? localizedListingDescription(locale, data, detail.seoDescription({ title: data.title, city: data.city, category: data.categoryNames[0] }))
+    : "";
 
   const breadcrumb = breadcrumbJsonLd(locale, [
     { name: common.breadcrumbHome, path: "" },
     { name: feed.titleAll, path: "/skelbimai" },
+    ...(data?.categoryId && data.categoryNames[0]
+      ? [{ name: data.categoryNames[0], path: listingLandingPath({ category: data.categoryId }) }]
+      : []),
     { name: data?.title ?? listingFallbackTitle(id, detail), path: canonicalPath },
   ]);
   const product = data
     ? listingJsonLd({
-        locale, id: listingId, path: canonicalPath, name: data.title, description: cleanDescription(data.description), image: data.image,
+        locale, id: listingId, path: canonicalPath, name: data.title, description: schemaDescription, image: data.image,
         priceCents: data.priceCents, ratingAverage: data.ratingAverage, ratingCount: data.ratingCount,
-        itemCondition: data.itemCondition,
+        itemCondition: data.itemCondition, category: data.categoryNames[0],
+        sellerName: data.sellerName, sellerIsBusiness: data.sellerIsBusiness,
       })
     : null;
 

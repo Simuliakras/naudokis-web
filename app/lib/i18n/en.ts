@@ -24,10 +24,13 @@ const EN_CATEGORY_EXAMPLES: Record<string, string> = {
 
 export const en: Dict = {
   meta: {
-    title: "Item rental in Lithuania | Naudokis.lt",
+    title: "Rent items in Lithuania | Naudokis.lt",
     description:
-      "Find tools, vehicles, cameras and other items to rent from private and business owners in Lithuania. Compare online, then choose dates and reserve in the Naudokis app.",
-    ogLocale: "en_US",
+      "Find tools, vehicles, cameras and other items to rent across Lithuania. Compare prices and locations, then choose dates and reserve in the app.",
+    // og:locale is matched against the platforms' supported-locale lists, and
+    // "en_LT" is on none of them. en_GB is the closest supported English for an
+    // EU audience; the page's real language is carried by <html lang> + hreflang.
+    ogLocale: "en_GB",
     ogImageAlt: "Naudokis.lt",
   },
   nav: {
@@ -44,7 +47,7 @@ export const en: Dict = {
     closeMenu: "Close menu",
   },
   hero: {
-    badge: "Item rental from private and business owners across Lithuania",
+    badge: "Clear profile verification signals",
     // FINAL: de-calqued — the LT-mirroring phrasing parsed
     // as an obligation ("you need to rent").
     title: "Need it for a day? Rent it instead of buying.",
@@ -89,7 +92,7 @@ export const en: Dict = {
     // FINAL: recency framing — "picked for you"/"popular"/
     // "nearby" had no personalization, review or geo signal behind them.
     eyebrow: "Browse",
-    title: "The latest items to rent",
+    title: "Items to rent",
     all: "All items",
     errorTitle: "We couldn’t load listings",
     errorSubtitle:
@@ -109,13 +112,13 @@ export const en: Dict = {
   features: [
     {
       icon: "Users",
-      title: "A community you can trust",
-      body: "Both renters and owners verify their identity, so every rental starts with more confidence.",
+      title: "Visible verification signals",
+      body: "When a user’s identity has been checked, it is shown clearly on their profile. Additional checks may be required before a reservation.",
     },
     {
       icon: "ShieldCheck",
-      title: "No surprise fees",
-      body: "The full amount is shown before you pay: rent, platform fee and deposit — no side deals in messages.",
+      title: "Reservation amount before payment",
+      body: "Before paying in the app, you will see the rental price, platform fee and any deposit. Additional conditions are shown separately when they apply.",
     },
     {
       icon: "ScrollText",
@@ -126,7 +129,7 @@ export const en: Dict = {
   // FINAL: section header for the trust band.
   featuresHead: {
     eyebrow: "Why Naudokis",
-    title: "Rentals that don't feel risky",
+    title: "Clearer terms before you reserve",
   },
   howItWorks: {
     meta: {
@@ -391,7 +394,6 @@ export const en: Dict = {
     helpHeading: "Help & policies",
     help: [
       { label: "How it works", href: "/kaip-tai-veikia" },
-      { label: "Payments, deposits & cancellations", href: "/teisine" },
       { label: "Privacy policy", href: "/privatumo-politika" },
       { label: "Terms of use", href: "/naudojimosi-salygos" },
       { label: "Account deletion", href: "/paskyros-trynimas" },
@@ -449,7 +451,7 @@ export const en: Dict = {
       "It may have been rented out or removed. Browse other listings instead.",
     backToListings: "Items to rent",
     save: "Save",
-    newListingPill: "New listing",
+    newListingPill: "No reviews yet",
     noPhotos: "No photos",
     galleryAll: (n) => `All ${n} photos`,
     galleryExpand: "Expand photo",
@@ -479,7 +481,7 @@ export const en: Dict = {
     deliveryZoneKm: (km) => `≈${km} km zone`,
     termRentSub: "Rental price per day",
     depositNone: "No deposit",
-    termDepositSub: "Refundable if claim-free",
+    termDepositSub: "Deposit terms and release",
     durationRange: (min, max) =>
       !max || max <= min
         ? `From ${min} day${min === 1 ? "" : "s"}`
@@ -491,9 +493,9 @@ export const en: Dict = {
       if (tier === "strict") return "Strict";
       return "Standard";
     },
-    termCancelSub: "Cancellation policy",
-    termInsuranceTitle: "Insurance noted by owner",
-    termInsuranceSub: "Details in listing terms",
+    termCancelSub: "Review the deadlines before paying",
+    termInsuranceTitle: "Insurance marked by the owner",
+    termInsuranceSub: "Check the provider, cover and exclusions",
     mobileBookingNote: "Total shown in the app",
   },
   common: {
@@ -501,7 +503,7 @@ export const en: Dict = {
     delivery: "Delivery",
     perDay: "per day",
     reviewCount: (n) => `${n} review${n === 1 ? "" : "s"}`,
-    newListing: "New",
+    newListing: "No reviews yet",
     imageUnavailable: "Image unavailable",
     breadcrumbHome: "Home",
     breadcrumbLabel: "Breadcrumb",
@@ -525,6 +527,7 @@ export const en: Dict = {
     emptyAction: "Clear",
     foundCount: (n) => `${n} categor${n === 1 ? "y" : "ies"}`,
     searchItems: (query) => `Search items for “${query}”`,
+    subcategoriesHeading: "Subcategories",
     seoHeading: "Item rental by category",
     seoBody:
       "Naudokis.lt covers everyday rental categories across Lithuania, including tools, transport, photo gear, electronics, home appliances, event equipment and leisure gear. Choose a category to find items nearby without buying things you only need occasionally.",
@@ -582,7 +585,7 @@ export const en: Dict = {
     searchPlaceholder: "What do you need to rent?",
     searchLabel: "Search items to rent",
     sortLabel: "Sort",
-    sortRecommended: "Relevant first",
+    sortNewest: "Newest first",
     sortPriceAsc: "Lowest price",
     sortPriceDesc: "Highest price",
     sortRatingBest: "Highest rated",
@@ -840,8 +843,6 @@ export const en: Dict = {
     warnLabel: "Important",
     anchorLabel: "Link to this section",
     relatedHeading: "Related documents",
-    hubTitle: "Rules & privacy",
-    hubLead: "The main Naudokis rules, privacy information and account data controls in one place.",
     questionsTitle: "Questions about how this applies to your rental?",
     questionsBody:
       "Contact us by email if you have questions about a rule, payment or dispute.",

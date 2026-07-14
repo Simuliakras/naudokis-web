@@ -111,10 +111,6 @@ function AmbientGlow() {
 /* ---------------- Footer ----------------
    Multi-column marketplace sitemap: brand + Browse / Help columns, then a bottom
    bar with copyright and the payment marks. */
-const FOOTER_PAY: [string, string][] = [
-  ["pay-visa", "Visa"], ["pay-apple", "Apple Pay"], ["pay-google", "Google Pay"], ["pay-mastercard", "Mastercard"],
-];
-
 export function Footer({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).footer;
   return (
@@ -165,12 +161,6 @@ export function Footer({ locale }: { locale: Locale }) {
           {/* Client leaf: the install-attribution choice must be changeable/withdrawable
               from any page, so it lives in the footer rather than only in the prompt. */}
           <PrivacyChoices />
-          <div className="nk-footer__pay">
-            {FOOTER_PAY.map(([f, a]) => (
-              <Image key={f} src={`/naudokis/${f}.png`} alt={a} width={100} height={52}
-                style={{ height: 30, width: "auto" }} />
-            ))}
-          </div>
         </div>
       </div>
     </footer>

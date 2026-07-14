@@ -30,7 +30,6 @@ const ROUTES = [
   { id: "categories-en", path: "/en/kategorijos" },
   { id: "how-it-works", path: "/kaip-tai-veikia" },
   { id: "how-it-works-en", path: "/en/kaip-tai-veikia" },
-  { id: "legal-center", path: "/teisine" },
   { id: "terms", path: "/naudojimosi-salygos" },
   { id: "privacy", path: "/privatumo-politika" },
   { id: "account-deletion", path: "/paskyros-trynimas" },

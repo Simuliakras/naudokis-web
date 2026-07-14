@@ -3,7 +3,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { pageMetadata, requireLocale, breadcrumbJsonLd, categoriesCollectionJsonLd } from "@/app/lib/seo";
 import { makeQueryClient } from "@/app/lib/query";
-import { fetchCategories, categoriesKey } from "@/app/lib/categories";
+import { fetchAllCategories, categoriesKey } from "@/app/lib/categories";
 import { listingLandingPath } from "@/app/lib/landing-routes";
 import { CategoriesScreen } from "@/app/components/CategoriesScreen";
 import { JsonLd } from "@/app/components/JsonLd";
@@ -26,14 +26,19 @@ export default async function Page({ params }: PageProps<"/[lang]/kategorijos">)
   const locale = requireLocale(lang);
   const { common, categoriesPage: t } = getDictionary(locale);
 
-  // Fetch once, then seed the cache the same query useCategories() reads (so the
-  // tiles are in the HTML) AND feed the JSON-LD from the identical list. Fail open
-  // on a backend hiccup (matches the feed page) so an ISR revalidation can't error
-  // the whole route — but seed the cache ONLY on success: hydrating a fake-empty
-  // list would render as a successful zero-category page instead of letting the
-  // client query fetch fresh (skeleton → data or the real error state).
+  // ONE fetch of the full tree. The top-level slice is derived from it rather than
+  // fetched again, so the parents are not serialized twice into the HTML (once in
+  // the dehydrated query state, once in the CategoriesScreen prop).
+  //
+  // Fail open on a backend hiccup (matches the feed page) so an ISR revalidation
+  // can't error the whole route — but seed the cache ONLY on success: hydrating a
+  // fake-empty list would render as a successful zero-category page instead of
+  // letting the client query fetch fresh (skeleton → data, or the real error state).
   const qc = makeQueryClient();
-  const categories = await fetchCategories(locale).catch(() => null);
+  const tree = await fetchAllCategories(locale).catch(() => null);
+  const allCategories = tree ?? [];
+  // fetchCategories() is the same filter+order; deriving it keeps them in lockstep.
+  const categories = tree?.filter((category) => category.level === 0) ?? null;
   if (categories) {
     qc.setQueryData(categoriesKey(locale), categories);
   }
@@ -51,7 +56,15 @@ export default async function Page({ params }: PageProps<"/[lang]/kategorijos">)
         name: t.title,
         description: t.metaDescription,
         path: "/kategorijos",
-        items: categories.map((c) => ({ name: c.title, path: listingLandingPath({ category: c.id }) })),
+        items: allCategories.map((c) => {
+          const parent = c.parentId ? allCategories.find((candidate) => candidate.id === c.parentId) : undefined;
+          return {
+            name: c.title,
+            path: parent
+              ? listingLandingPath({ category: parent.id, subcategory: c.id })
+              : listingLandingPath({ category: c.id }),
+          };
+        }),
       })
     : null;
 
@@ -59,7 +72,7 @@ export default async function Page({ params }: PageProps<"/[lang]/kategorijos">)
     <HydrationBoundary state={dehydrate(qc)}>
       <JsonLd data={breadcrumb} />
       {collection && <JsonLd data={collection} />}
-      <CategoriesScreen />
+      <CategoriesScreen allCategories={allCategories} />
     </HydrationBoundary>
   );
 }

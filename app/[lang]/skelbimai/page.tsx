@@ -1,26 +1,27 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { notFound } from "next/navigation";
 import { dehydrate, HydrationBoundary, type InfiniteData } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { localePath } from "@/app/lib/i18n/config";
-import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding, NOINDEX_FOLLOW } from "@/app/lib/seo";
+import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding, NOINDEX_FOLLOW, MIN_INDEXABLE_LISTINGS } from "@/app/lib/seo";
 import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { makeQueryClient } from "@/app/lib/query";
-import { fetchListingsCount, fetchListingsPage, listingsInfiniteKey, LISTINGS_FIRST_CURSOR, parseSortKey, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
+import { fetchListingsCount, fetchListingsPage, listingsInfiniteKey, LISTINGS_FIRST_CURSOR, LISTINGS_PAGE_SIZE, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
 import { fetchCategories, categoriesKey, type Category } from "@/app/lib/categories";
-import { firstValue, pageFromLandingSearch, hasNonCanonicalLandingSearch, type LandingSearchParams } from "@/app/lib/landing-params";
+import { catalogueFiltersFromSearch, firstValue, pageFromLandingSearch, hasNonCanonicalLandingSearch, type LandingSearchParams } from "@/app/lib/landing-params";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 
 // Read the ?q/?cat/?city/?sort filters server-side, matching FeedScreen's hook.
 type RawSearch = LandingSearchParams;
 function filtersFromSearch(sp: RawSearch): ListingFilters {
+  // catalogueFiltersFromSearch already resolves q/sort/page/price/delivery; only
+  // the feed's own ?cat/?city param names have to be added on top.
   return {
-    q: firstValue(sp.q) ?? "",
+    ...catalogueFiltersFromSearch(sp),
     city: firstValue(sp.city) ?? "",
     category: firstValue(sp.cat) ?? "",
-    sort: parseSortKey(firstValue(sp.sort)),
-    page: pageFromLandingSearch(sp),
   };
 }
 
@@ -62,7 +63,7 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
 
   const md = pageMetadata({
     locale, path: page > 1 ? `${landing.path}?page=${page}` : landing.path, title, description,
-    ogLocale: meta.ogLocale, ogImageAlt: meta.ogImageAlt,
+    ogLocale: meta.ogLocale, ogImageAlt: title,
   });
   // Free-text searches, sort/delivery/price variants and invalid filter values
   // create duplicate or thin states. Let crawlers follow their links, but index
@@ -76,11 +77,13 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
   ) {
     md.robots = NOINDEX_FOLLOW;
   } else {
-    const count = await fetchListingsCount(locale, {
+    // Full walk (no stopAt): totalPages below needs the real total.
+    const count = await fetchListingsCount({
       category: landing.category?.id,
       city: landing.city,
     }).catch(() => 0);
-    if (count <= 0) {
+    const totalPages = Math.ceil(count / LISTINGS_PAGE_SIZE);
+    if ((page > 1 && page > totalPages) || (isLanding && count < MIN_INDEXABLE_LISTINGS) || (!isLanding && count <= 0)) {
       md.robots = NOINDEX_FOLLOW;
     }
   }
@@ -124,7 +127,9 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
 
   const cached = qc.getQueryData<InfiniteData<ListingsPage>>(key);
   const listings = cached?.pages.flatMap((p) => p.offers) ?? [];
-  const totalCount = cached?.pages[0]?.totalCount ?? listings.length;
+  if (cached && (filters.page ?? 1) > 1 && listings.length === 0 && !cached.pages[0]?.nextToken) {
+    notFound();
+  }
 
   // Same canonical trail the visible FeedScreen breadcrumb renders (and the
   // pretty-URL landing pages emit), so structured and visible data stay in step.
@@ -141,7 +146,7 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
     <HydrationBoundary state={dehydrate(qc)}>
       <JsonLd data={breadcrumb} />
       {collectionPage && <JsonLd data={collectionPage} />}
-      {totalCount > 0 && listings.length > 0 && <JsonLd data={itemList} />}
+      {listings.length > 0 && <JsonLd data={itemList} />}
       {/* FeedScreen reads ?q/?cat/?city/?sort/?delivery via useSearchParams, which
           requires a Suspense boundary on a prerendered route (Next.js 16). */}
       <Suspense fallback={(

@@ -1,24 +1,20 @@
-// Generated 1200×630 social share card (cascades to every /[lang] route; the
-// listing-detail page overrides it with the listing photo via generateMetadata).
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import { locales, defaultLocale, isLocale } from "@/app/lib/i18n/config";
+import { defaultLocale, isLocale, locales } from "@/app/lib/i18n/config";
 
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
-export const alt = "Naudokis.lt";
+const size = { width: 1200, height: 630 };
 
-// Prerender both locale cards at build time (matches the SSG pages), instead of
-// rendering the image on demand per request.
+// The card is identical for every request in a locale, so render both at build
+// time rather than paying for satori + two file reads on each cold request. (The
+// deleted opengraph-image.tsx this replaces was prerendered the same way.)
+export const dynamic = "force-static";
+
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
 
-// Static Sora 700 (full latin + latin-ext, so Lithuanian diacritics render),
-// bundled in the repo for deterministic offline builds — satori needs a TTF.
-// Returns null on failure so the card still renders (falls back to sans-serif).
 async function loadSora(): Promise<Buffer | null> {
   try {
     return await readFile(join(process.cwd(), "public/fonts/Sora-Bold.ttf"));
@@ -27,23 +23,20 @@ async function loadSora(): Promise<Buffer | null> {
   }
 }
 
-export default async function Image({ params }: { params: Promise<{ lang: string }> }) {
+// Explicit share-image endpoint. Keeping it outside Next's opengraph-image file
+// convention prevents the internal /lt segment from leaking into public OG URLs.
+export async function GET(_: Request, { params }: RouteContext<"/[lang]/social-card">) {
   const { lang } = await params;
   const { hero } = getDictionary(isLocale(lang) ? lang : defaultLocale);
-
   const logoData = await readFile(join(process.cwd(), "public/naudokis/naudokis-logo.png"), "base64");
   const logoSrc = `data:image/png;base64,${logoData}`;
   const font = await loadSora();
 
   return new ImageResponse(
     (
-      <div
-        style={{
-          width: "100%", height: "100%", display: "flex", flexDirection: "column",
-          justifyContent: "space-between", padding: 80, background: "#282C2D",
-          fontFamily: font ? "Sora" : "sans-serif", color: "#F9F9F9",
-        }}
-      >
+      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 80, background: "#282C2D", fontFamily: font ? "Sora" : "sans-serif", color: "#F9F9F9" }}>
+        {/* ImageResponse renders this data URI directly; next/image is not supported here. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logoSrc} height={64} alt="" style={{ alignSelf: "flex-start" }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
           <div style={{ fontSize: 68, fontWeight: 700, lineHeight: 1.08, maxWidth: 900 }}>{hero.title}</div>
@@ -57,6 +50,7 @@ export default async function Image({ params }: { params: Promise<{ lang: string
     {
       ...size,
       fonts: font ? [{ name: "Sora", data: font, style: "normal", weight: 700 }] : undefined,
+      headers: { "Cache-Control": "public, max-age=3600, s-maxage=86400" },
     },
   );
 }

@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      association_base_url:
+        description: "Deployed origin to verify (for example https://www.naudokis.lt)"
+        required: false
+        type: string
 
 # Resolve backend data from dev (not prod) for both the build SSG/ISR fetches and
 # the e2e `next dev` webServer, so CI never couples PRs to prod availability/data.
@@ -53,3 +59,21 @@ jobs:
           name: playwright-traces
           path: test-results/
           retention-days: 7
+
+  association-release:
+    if: github.event_name == 'workflow_dispatch' && inputs.association_base_url != ''
+    runs-on: ubuntu-latest
+    env:
+      APPLE_APP_ID: ${{ vars.APPLE_APP_ID }}
+      ANDROID_APP_LINK_PACKAGE_NAME: ${{ vars.ANDROID_APP_LINK_PACKAGE_NAME }}
+      ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS: ${{ secrets.ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS }}
+      NEXT_PUBLIC_ONELINK_URL: ${{ vars.NEXT_PUBLIC_ONELINK_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Verify live iOS and Android association files
+        run: yarn verify:app-links "${{ inputs.association_base_url }}"

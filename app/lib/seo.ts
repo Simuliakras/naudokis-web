@@ -35,6 +35,11 @@ export const SITE_URL = SITE_ORIGIN;
 // never ranks. Shared so every noindex site stays in lockstep.
 export const NOINDEX_FOLLOW: Metadata["robots"] = { index: false, follow: true };
 
+// A marketplace landing with one or two cards is not a useful search result.
+// Keep low-stock pages available to users and crawlers, but only recommend a
+// category/city landing for indexing once it has a meaningful choice set.
+export const MIN_INDEXABLE_LISTINGS = 5;
+
 // Shared guard for `[lang]` routes: narrow the segment to a valid `Locale` or
 // 404. Use in both `generateMetadata` and the page component so invalid locales
 // resolve consistently (`isLocale` is a type guard, so the return is typed
@@ -56,6 +61,13 @@ export function enPath(path: string) {
 export function canonicalFor(locale: Locale, path: string) {
   const prefix = localePrefix(locale);
   return prefix ? `${prefix}${path}` : ltPath(path);
+}
+
+// The per-locale WebSite node's stable @id, referenced by every isPartOf. One
+// definition: three hand-rolled spellings of this (two of them with a hardcoded
+// lt/en ternary) would silently disagree the moment a third locale is added.
+export function webSiteId(locale: Locale) {
+  return `${SITE_URL}${localePrefix(locale)}/#website`;
 }
 
 // Resolve the ?cat / ?city feed filters to the canonical category/city landing
@@ -114,6 +126,7 @@ export function pageMetadata({
     type: "website",
     siteName: "Naudokis.lt",
     locale: ogLocale,
+    alternateLocale: locale === "lt" ? ["en_GB"] : ["lt_LT"],
     url: `${SITE_URL}${canonical}`,
     title,
     description,
@@ -123,11 +136,15 @@ export function pageMetadata({
     title,
     description,
   };
-  // A per-page image (e.g. a listing photo) overrides the generated OG card from
-  // app/[lang]/opengraph-image.tsx; without one, that card is used automatically.
+  // A per-page image (e.g. a listing photo) overrides the explicit localized
+  // social-card endpoint.
   if (image) {
     openGraph.images = [{ url: image, alt: ogImageAlt }];
     twitter.images = [image];
+  } else {
+    const generatedImage = `${SITE_URL}${canonicalFor(locale, "/social-card")}`;
+    openGraph.images = [{ url: generatedImage, width: 1200, height: 630, alt: ogImageAlt }];
+    twitter.images = [generatedImage];
   }
   const languages = ltOnly
     ? { lt: ltPath(path), "x-default": ltPath(path) }
@@ -159,19 +176,29 @@ export function absoluteUrl(locale: Locale, path: string): string {
   return `${SITE_URL}${canonicalFor(locale, path)}`;
 }
 
-const inLanguage = (locale: Locale) => (locale === "lt" ? "lt-LT" : "en-US");
+const inLanguage = (locale: Locale) => (locale === "lt" ? "lt-LT" : "en-LT");
 
 export function organizationJsonLd(): JsonLdNode {
   const node: JsonLdNode = {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
     name: "Naudokis",
+    legalName: "MB Naudokis",
+    identifier: "307423504",
     url: SITE_URL,
     logo: `${SITE_URL}/naudokis/naudokis-logo.png`,
     // Languages the brand operates in (correct Organization property; `inLanguage`
     // belongs on CreativeWork/WebSite, not Organization).
     knowsLanguage: ["lt", "en"],
     areaServed: { "@type": "Country", name: "Lithuania" },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Numėjos g. 6",
+      postalCode: "LT-08402",
+      addressLocality: "Vilnius",
+      addressCountry: "LT",
+    },
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer support",
@@ -197,12 +224,14 @@ export function softwareApplicationJsonLd(): JsonLdNode {
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
+    "@id": `${SITE_URL}/#app`,
     name: "Naudokis",
     operatingSystem: "iOS, Android",
     applicationCategory: "LifestyleApplication",
     url: SITE_URL,
     installUrl: `${SITE_URL}/go`,
     downloadUrl: [APP_STORE_URL, PLAY_STORE_URL],
+    provider: { "@id": `${SITE_URL}/#organization` },
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
     sameAs: [APP_STORE_URL, PLAY_STORE_URL],
   };
@@ -228,17 +257,11 @@ export function webSiteJsonLd(locale: Locale): JsonLdNode {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": webSiteId(locale),
     name: "Naudokis.lt",
     url: absoluteUrl(locale, ""),
     inLanguage: inLanguage(locale),
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${absoluteUrl(locale, "/skelbimai")}?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
+    publisher: { "@id": `${SITE_URL}/#organization` },
   };
 }
 
@@ -273,6 +296,7 @@ export function collectionPageJsonLd({
     description,
     url: absoluteUrl(locale, path),
     inLanguage: inLanguage(locale),
+    isPartOf: { "@id": webSiteId(locale) },
   };
 }
 
@@ -326,7 +350,8 @@ export function itemListJsonLd(locale: Locale, items: { id: string; name: string
 // A rental listing as a Product with a per-day Offer (UnitPriceSpecification
 // keeps the daily rate honest — schema.org Offer has no native rental unit).
 export function listingJsonLd({
-  locale, id, path, name, description, image, priceCents, ratingAverage, ratingCount, itemCondition,
+  locale, id, path, name, description, image, priceCents, ratingAverage, ratingCount,
+  itemCondition, category, sellerName, sellerIsBusiness,
 }: {
   locale: Locale;
   id: string;
@@ -338,35 +363,59 @@ export function listingJsonLd({
   ratingAverage: number | null;
   ratingCount: number;
   itemCondition?: string;
+  category?: string;
+  sellerName?: string;
+  sellerIsBusiness?: boolean;
 }): JsonLdNode {
   const price = (priceCents / 100).toFixed(2);
   const url = absoluteUrl(locale, path ?? `/skelbimai/${id}`);
+  const offers: JsonLdNode = {
+    "@type": "Offer",
+    "@id": `${url}#rental-offer`,
+    // Offer defaults to Sell when businessFunction is omitted. This listing is
+    // a lease-out offer; it must never be represented as a product sale.
+    businessFunction: "http://purl.org/goodrelations/v1#LeaseOut",
+    price,
+    priceCurrency: "EUR",
+    url,
+    priceSpecification: {
+      "@type": "UnitPriceSpecification",
+      price,
+      priceCurrency: "EUR",
+      unitText: locale === "lt" ? "para" : "day",
+      referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitCode: "DAY" },
+    },
+  };
+  // Seller requires a schema.org @type, and Organization vs Person is a factual
+  // claim about the owner. Emit it ONLY when the wire states is_business —
+  // defaulting an unknown flag to Person would publish "this is a private
+  // individual" as structured data on every business listing that didn't set it.
+  if (sellerName && sellerIsBusiness !== undefined) {
+    offers.seller = {
+      "@type": sellerIsBusiness ? "Organization" : "Person",
+      name: sellerName,
+    };
+  }
   const node: JsonLdNode = {
     "@context": "https://schema.org",
     "@type": "Product",
+    "@id": `${url}#rental-item`,
+    sku: id,
     name,
     description,
     url,
-    offers: {
-      "@type": "Offer",
-      price,
-      priceCurrency: "EUR",
-      availability: "https://schema.org/InStock",
-      url,
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price,
-        priceCurrency: "EUR",
-        unitText: locale === "lt" ? "para" : "day",
-        referenceQuantity: { "@type": "QuantitativeValue", value: 1, unitCode: "DAY" },
-      },
-    },
+    inLanguage: inLanguage(locale),
+    isPartOf: { "@id": webSiteId(locale) },
+    offers,
   };
   if (image) {
     node.image = image;
   }
   if (itemCondition) {
     node.itemCondition = itemCondition;
+  }
+  if (category) {
+    node.category = category;
   }
   if (ratingAverage != null && ratingCount > 0) {
     node.aggregateRating = {

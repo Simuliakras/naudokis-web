@@ -3,6 +3,7 @@ import { useQuery, useInfiniteQuery, keepPreviousData, skipToken } from "@tansta
 import type { Locale } from "./i18n/config";
 import { API_BASE } from "./api";
 import { cdnImage } from "./image-hosts";
+import { isSyntheticListing, isSyntheticListingParam } from "./listing-url";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiImage = { url: string; blurhash?: string };
@@ -44,9 +45,13 @@ type ApiAttributeDisplay = {
 // every field but `name` is optional, and the detail owner has no completed-rentals
 // count (that lives only on the browse-card summary) — the host card uses
 // `total_listings` instead.
-type ApiOwner = {
+// Exported so the server-side metadata read (listing-seo.ts) models the owner
+// block with the SAME type rather than a parallel hand-copy — the two had already
+// drifted on whether `name` is optional.
+export type ApiOwner = {
   id?: string;
-  name: string;
+  // Contract-optional on the wire: mapDetailOwner falls back to owner_name.
+  name?: string;
   business_name?: string | null;
   is_business?: boolean;
   verified?: boolean;
@@ -171,9 +176,10 @@ export function photoFirst<T extends { img?: string | null }>(list: T[]): T[] {
 }
 
 /* ---------------- Filters ---------------- */
-// Backend `/listings` accepts q, city, category_id and a sort key. "delivery" is
-// NOT a backend param, so the "Su pristatymu" toggle is applied client-side.
-export type SortKey = "recommended" | "price_asc" | "price_desc" | "rating_desc";
+// These values mirror the public catalogue API. The default is explicitly
+// newest-first; calling it "recommended" previously implied a relevance model
+// that the API did not implement.
+export type SortKey = "newest" | "price_asc" | "price_desc" | "rating_desc";
 
 // Narrow an untrusted value (e.g. a `?sort=` query param) to a valid SortKey,
 // falling back to the backend default. Type-safe — no `as` cast needed.
@@ -181,7 +187,8 @@ export function parseSortKey(value: string | null | undefined): SortKey {
   if (value === "price_asc" || value === "price_desc" || value === "rating_desc") {
     return value;
   }
-  return "recommended";
+  // Preserve old shared URLs while presenting and executing the truthful sort.
+  return "newest";
 }
 
 // Hard ceiling on ?page=N. Because the backend paginates by opaque cursor,
@@ -205,10 +212,24 @@ export type ListingFilters = {
   city?: string;
   category?: string; // category id == backend category_id (also the URL slug)
   sort?: SortKey;
+  priceMinCents?: number;
+  priceMaxCents?: number;
+  deliveryMethods?: Array<"pickup" | "parcel_terminal" | "courier_delivery" | "user_delivery">;
   // SEO-friendly paginated result pages. The backend uses opaque cursors, so this
   // is translated by walking cursors server/client-side when page > 1.
   page?: number;
 };
+
+export const LISTING_PRICE_BANDS = [
+  { value: "0-10", min: null, max: 10 },
+  { value: "10-30", min: 10, max: 30 },
+  { value: "30-60", min: 30, max: 60 },
+  { value: "60+", min: 60, max: null },
+] as const;
+
+export function listingPriceBand(value: string | null | undefined) {
+  return LISTING_PRICE_BANDS.find((band) => band.value === value);
+}
 
 export type ListingAttribute = { id: string; label: string; value: string };
 
@@ -227,6 +248,9 @@ export type ListingOwner = {
   id?: string; // wire owner id — keys the "more from this owner" rail (names aren't unique)
   name: string;
   verified: boolean;
+  // null when the wire carries no is_business flag — the pill is then not rendered
+  // at all rather than asserting one of the two labels.
+  isBusiness: boolean | null;
   listingsCount: number; // owner.total_listings — host-card "listings" stat
   rating?: string;
   ratingCount: number;
@@ -334,8 +358,9 @@ export const LISTING_REVALIDATE = 300;
 // server components prefetching into the same cache slot, so they can't diverge.
 // listingsKey applies the same empty-filter defaults the hook does.
 export function listingsKey(locale: Locale, filters: ListingFilters = {}) {
-  const { q = "", city = "", category = "", sort = "recommended", page = 1 } = filters;
-  return ["listings", locale, q, city, category, sort, page] as const;
+  const { q = "", city = "", category = "", sort = "newest", page = 1,
+    priceMinCents = "", priceMaxCents = "", deliveryMethods = [] } = filters;
+  return ["listings", locale, q, city, category, sort, priceMinCents, priceMaxCents, deliveryMethods.join(","), page] as const;
 }
 
 export function listingKey(id: string | undefined, locale: Locale) {
@@ -351,8 +376,9 @@ export const LISTINGS_PAGE_SIZE = 12;
 export const LISTINGS_FIRST_CURSOR: string | null = null;
 
 export function listingsInfiniteKey(locale: Locale, filters: ListingFilters = {}) {
-  const { q = "", city = "", category = "", sort = "recommended", page = 1 } = filters;
-  return ["listings-infinite", locale, q, city, category, sort, page] as const;
+  const { q = "", city = "", category = "", sort = "newest", page = 1,
+    priceMinCents = "", priceMaxCents = "", deliveryMethods = [] } = filters;
+  return ["listings-infinite", locale, q, city, category, sort, priceMinCents, priceMaxCents, deliveryMethods.join(","), page] as const;
 }
 
 // Build the backend `/listings` query URL from the active filters. `limit` /
@@ -368,9 +394,15 @@ function buildListingsUrl(filters: ListingFilters): URL {
   if (filters.category) {
     url.searchParams.set("category_id", filters.category);
   }
-  // "recommended" is the backend default — only send sort for the explicit keys.
-  if (filters.sort && filters.sort !== "recommended") {
-    url.searchParams.set("sort", filters.sort);
+  url.searchParams.set("sort", filters.sort === "newest" || !filters.sort ? "created_at_desc" : filters.sort);
+  if (filters.priceMinCents !== undefined) {
+    url.searchParams.set("price_min_cents", String(filters.priceMinCents));
+  }
+  if (filters.priceMaxCents !== undefined) {
+    url.searchParams.set("price_max_cents", String(filters.priceMaxCents));
+  }
+  for (const method of filters.deliveryMethods ?? []) {
+    url.searchParams.append("delivery_methods", method);
   }
   return url;
 }
@@ -387,8 +419,7 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
     img: cdnImage(l.images?.[0]?.url),
     rating: ratingLabel(l.rating_average, l.rating_count, locale),
     ratingCount: l.rating_count,
-    // Backend has no `delivery=` filter; it exposes the per-item delivery types
-    // instead, so the "Su pristatymu" toggle filters the loaded results client-side.
+    // Kept for the card badge; catalogue filtering itself is performed by the API.
     hasDelivery: (l.delivery_types_available ?? []).includes("user_delivery"),
     // The wire's `category` field is a leaf id (e.g. "cars"); the accent and
     // icon maps key on the top-level id, which leads category_path.
@@ -397,15 +428,12 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
   };
 }
 
-// Synthetic records belong in isolated backend fixtures, never in a public
-// catalogue. Keep this defensive web boundary even after the API dataset is
-// cleaned so an accidentally seeded E2E record cannot reach cards, metadata,
-// sitemaps, or the image optimizer again.
-const SYNTHETIC_LISTING_RE = /(?:^|[/_-])e2e[-_]?test(?:[/_-]|$)/i;
-
+// Keep this defensive web boundary even after the API dataset is cleaned, so an
+// accidentally seeded E2E record cannot reach cards, metadata, sitemaps or the
+// image optimizer again. isSyntheticListing() is shared with the detail route and
+// the sitemap — one definition, so a record can't be hidden here and public there.
 function isPublicListing(l: Pick<ApiListing, "id" | "title" | "images">): boolean {
-  const values = [l.id, l.title, ...l.images.map((image) => image.url)];
-  return !values.some((value) => SYNTHETIC_LISTING_RE.test(value));
+  return !isSyntheticListing({ id: l.id, title: l.title, imageUrls: l.images.map((image) => image.url) });
 }
 
 function publicListingItems(items: ApiListing[]): ApiListing[] {
@@ -426,7 +454,7 @@ export async function fetchListings(locale: Locale, filters: ListingFilters): Pr
 }
 
 // One page of browse results plus the cursor for the next page (null at the end).
-export type ListingsPage = { offers: Offer[]; nextToken: string | null; totalCount: number };
+export type ListingsPage = { offers: Offer[]; nextToken: string | null };
 
 // Cursor-paginated browse fetch backing the feed's infinite scroll. The backend
 // uses an opaque `next_token` cursor.
@@ -460,7 +488,6 @@ export async function fetchListingsPage(
         return {
           offers: [],
           nextToken: null,
-          totalCount: cursorBody.data.count ?? 0,
         };
       }
     }
@@ -474,34 +501,46 @@ export async function fetchListingsPage(
   }
   const body: ListingsResponse = await res.json();
   const visibleItems = publicListingItems(body.data.items);
-  const removedCount = body.data.items.length - visibleItems.length;
   return {
     offers: visibleItems.map((l) => apiToOffer(l, locale)),
     nextToken: body.data.next_token ?? null,
-    totalCount: Math.max(0, (body.data.count ?? body.data.items.length) - removedCount),
   };
 }
 
-// Total number of listings matching `filters`. The backend returns the full match
-// `count` regardless of page size, so we request a single item to keep the payload
-// minimal — this runs once per category/city candidate when building the sitemap
-// and to decide whether an empty landing page should be noindexed.
-export async function fetchListingsCount(locale: Locale, filters: ListingFilters = {}): Promise<number> {
-  const url = buildListingsUrl(filters);
-  url.searchParams.set("limit", "1");
-  const res = await marketplaceFetch(url, { next: { revalidate: LISTING_REVALIDATE } });
-  if (!res.ok) {
-    throw new MarketplaceApiError("server", res.status);
-  }
-  const body: ListingsResponse = await res.json();
-  return body.data.count ?? body.data.items.length;
+const COUNT_PAGE_SIZE = 100;
+
+// Count public matching listings by following backend cursors. The API's `count`
+// is the size of the current page, not a global total. We only need enough to
+// validate the SEO pager's supported 20-page window, so cap work at that window.
+//
+// `stopAt` short-circuits the cursor walk as soon as that many are known to exist.
+// Most callers only ask a threshold question ("are there at least N?") and would
+// otherwise page all the way to the 240 cap to answer it — which the sitemap does
+// once per landing candidate, on every hourly regeneration.
+export async function fetchListingsCount(filters: ListingFilters = {}, { stopAt }: { stopAt?: number } = {}): Promise<number> {
+  const cap = Math.min(stopAt ?? Infinity, LISTINGS_MAX_PAGE * LISTINGS_PAGE_SIZE);
+  let count = 0;
+  let token: string | null = null;
+  do {
+    const url = buildListingsUrl(filters);
+    url.searchParams.set("limit", String(COUNT_PAGE_SIZE));
+    if (token) url.searchParams.set("next_token", token);
+    const res = await marketplaceFetch(url, { next: { revalidate: LISTING_REVALIDATE } });
+    if (!res.ok) throw new MarketplaceApiError("server", res.status);
+    const body: ListingsResponse = await res.json();
+    count += publicListingItems(body.data.items).length;
+    token = body.data.has_more ? (body.data.next_token ?? null) : null;
+  } while (token && count < cap);
+  return Math.min(count, cap);
 }
 
 export function useListings(locale: Locale, filters: ListingFilters = {}) {
-  const { q = "", city = "", category = "", sort = "recommended", page = 1 } = filters;
+  const { q = "", city = "", category = "", sort = "newest", page = 1,
+    priceMinCents, priceMaxCents, deliveryMethods } = filters;
+  const normalized = { q, city, category, sort, page, priceMinCents, priceMaxCents, deliveryMethods };
   return useQuery({
-    queryKey: listingsKey(locale, { q, city, category, sort, page }),
-    queryFn: () => fetchListings(locale, { q, city, category, sort, page }),
+    queryKey: listingsKey(locale, normalized),
+    queryFn: () => fetchListings(locale, normalized),
     placeholderData: keepPreviousData,
   });
 }
@@ -509,10 +548,12 @@ export function useListings(locale: Locale, filters: ListingFilters = {}) {
 // Feed hook: cursor-paginated browse with infinite scroll. keepPreviousData
 // keeps the prior result set on screen while a filter change refetches page 1.
 export function useListingsInfinite(locale: Locale, filters: ListingFilters = {}) {
-  const { q = "", city = "", category = "", sort = "recommended", page = 1 } = filters;
+  const { q = "", city = "", category = "", sort = "newest", page = 1,
+    priceMinCents, priceMaxCents, deliveryMethods } = filters;
+  const normalized = { q, city, category, sort, page, priceMinCents, priceMaxCents, deliveryMethods };
   return useInfiniteQuery({
-    queryKey: listingsInfiniteKey(locale, { q, city, category, sort, page }),
-    queryFn: ({ pageParam }) => fetchListingsPage(locale, { q, city, category, sort, page }, pageParam),
+    queryKey: listingsInfiniteKey(locale, normalized),
+    queryFn: ({ pageParam }) => fetchListingsPage(locale, normalized, pageParam),
     initialPageParam: LISTINGS_FIRST_CURSOR,
     getNextPageParam: (lastPage) => lastPage.nextToken,
     placeholderData: keepPreviousData,
@@ -617,12 +658,15 @@ function mapDetailOwner(detail: ApiListingDetail, locale: Locale): ListingOwner 
     if (!detail.owner_name) {
       return null;
     }
-    return { name: detail.owner_name, verified: false, listingsCount: 0, ratingCount: 0, avatar: null };
+    return { name: detail.owner_name, verified: false, isBusiness: null, listingsCount: 0, ratingCount: 0, avatar: null };
   }
   return {
     id: o.id,
     name: o.business_name ?? o.name ?? detail.owner_name ?? "",
     verified: o.verified ?? false,
+    // null, NOT false: "the wire didn't say" is not the same claim as "this is a
+    // private individual". Keep the distinction for any future owner-type UI.
+    isBusiness: o.is_business ?? null,
     listingsCount: o.total_listings ?? 0,
     rating: ratingLabel(o.rating_average ?? null, o.rating_count ?? 0, locale),
     ratingCount: o.rating_count ?? 0,
@@ -671,7 +715,9 @@ function localizeUnitEn(value: string, unit: string | undefined): string {
 }
 
 export async function fetchListing(id: string, locale: Locale): Promise<ListingDetail> {
-  if (SYNTHETIC_LISTING_RE.test(id)) {
+  // Same predicate the feed, the route and the sitemap use — so a record can't be
+  // rejected by generateMetadata yet still render through the client hook.
+  if (isSyntheticListingParam(id)) {
     throw new ListingNotFoundError(id);
   }
   // The detail document plus its two review endpoints, fetched in parallel. Only

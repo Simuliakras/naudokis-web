@@ -12,7 +12,7 @@ import { SectionEmpty } from "./cards";
 import { formatLocation } from "@/app/lib/listings";
 import type { ListingDetail, ListingDelivery, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
 import { RichText } from "@/app/lib/rich-text";
-import { listingSearchHref } from "@/app/lib/search";
+import { listingLandingHref } from "@/app/lib/search";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { prefersReducedMotion } from "@/app/lib/motion";
@@ -58,16 +58,25 @@ function Stars({ value, size = 14 }: { value: number; size?: number }) {
   );
 }
 
-function GalleryTile({ src, alt, big, onOpen, children }: {
-  src?: string; alt?: string; big?: boolean; onOpen?: () => void; children?: React.ReactNode;
+function GalleryTile({ src, alt, big, fullWidth, onOpen, children }: {
+  src?: string; alt?: string; big?: boolean; fullWidth?: boolean; onOpen?: () => void; children?: React.ReactNode;
 }) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const showPhoto = Boolean(src && failedSrc !== src);
+  // The big tile is the listing LCP. `preload` emits the <link rel=preload
+  // imagesrcset> that starts the fetch during head parsing; loading="eager" +
+  // fetchPriority alone only help once the element itself has been discovered.
+  // One quality for every tile: the hero must not be compressed HARDER than the
+  // thumbnails, and a single value keeps the optimizer cache shared.
   const inner = (
     <>
       {src && failedSrc !== src && (
-        <Image src={src} alt={alt ?? ""} fill preload={big}
-          sizes={big
+        <Image src={src} alt={alt ?? ""} fill
+          preload={big}
+          quality={75}
+          sizes={fullWidth
+            ? "(max-width: 980px) 100vw, min(calc(100vw - 164px), 1340px)"
+            : big
             // the detail column caps at 1340px — a bare vw kept scaling the
             // request past it (~1.5-3x pixels at wide/ultrawide)
             ? "(max-width: 980px) 100vw, min(60vw, 800px)"
@@ -306,7 +315,7 @@ export function ListingHeader({ listing, shared, onShare, onFav }: {
    Viewing photos needs no account, so the bento opens a real lightbox (prev/next,
    keyboard, focus-trap). Only the app-bound actions stay locked — the lightbox
    footer keeps the "reserve in the app" CTA. */
-export function Gallery({ images, title, isNew, appPath }: { images: string[]; title: string; isNew: boolean; appPath: string }) {
+export function Gallery({ images, title, hasNoReviews, appPath }: { images: string[]; title: string; hasNoReviews: boolean; appPath: string }) {
   const { dict } = useI18n();
   const t = dict.detail;
   const [lightbox, setLightbox] = useState<number | null>(null);
@@ -316,9 +325,9 @@ export function Gallery({ images, title, isNew, appPath }: { images: string[]; t
   const alt = (i: number) => (i === 0 ? title : `${title} — ${i + 1}`);
   const open = (i: number) => setLightbox(i);
 
-  // Solid dark glass chip (not the translucent yellow-tint Pill) so the "New"
-  // badge stays legible on any hero photo — the tile's own scrim is hover-only.
-  const newPill = isNew ? (
+  // A factual review-state chip; zero reviews must never be presented as proof
+  // that the listing itself is new.
+  const reviewPill = hasNoReviews ? (
     <span className="nk-chip-glass" style={{ position: "absolute", top: 16, left: 16, zIndex: 2, color: "var(--nk-yellow)" }}>
       <Icon name="Sparkles" size={14} color="var(--nk-yellow)" stroke={2} /> {t.newListingPill}
     </span>
@@ -330,7 +339,7 @@ export function Gallery({ images, title, isNew, appPath }: { images: string[]; t
     return (
       <div className="nk-bento" data-count="0">
         <GalleryTile big>
-          {newPill}
+          {reviewPill}
           <span style={{ position: "absolute", left: 0, right: 0, bottom: 16, textAlign: "center", pointerEvents: "none", fontFamily: "var(--nk-font-body)", fontSize: 14, color: "var(--nk-text-muted)" }}>{t.noPhotos}</span>
         </GalleryTile>
       </div>
@@ -342,10 +351,10 @@ export function Gallery({ images, title, isNew, appPath }: { images: string[]; t
       {/* data-count drives count-aware grids (1..5); ≥5 gets the "+N more" overlay. */}
       <div className="nk-bento" data-count={Math.min(count, 5)}>
         {shown.map((src, i) => (
-          <GalleryTile key={i} src={src} alt={alt(i)} big={i === 0} onOpen={() => open(i)}>
+          <GalleryTile key={i} src={src} alt={alt(i)} big={i === 0} fullWidth={count === 1} onOpen={() => open(i)}>
             {i === 0 && (
               <>
-                {newPill}
+          {reviewPill}
                 <span className="nk-gtile__hint" style={{ position: "absolute", inset: 0, borderRadius: "var(--nk-r-tile)", background: "rgba(20,22,23,.18)" }} />
                 {/* Persistent lightbox affordance on the hero for small photo sets —
                     counts ≥5 keep their "+N" chip on the last tile instead. */}
@@ -741,8 +750,7 @@ function HandoverSection({ city, subdivision, delivery }: { city: string; subdiv
 }
 
 function TermsSection({ listing }: { listing: ListingDetail }) {
-  const { dict } = useI18n();
-  const t = dict.detail;
+  const t = useI18n().dict.detail;
   return (
     <Section id="salygos" title={t.termsHeading}>
       <div className="nk-hl-grid">
@@ -937,7 +945,11 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
         </span>
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)", minWidth: 0 }}>
           <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 19, color: "var(--nk-text)" }}>{owner.name}</span>
-          {owner.verified && <Pill tone="green" icon="BadgeCheck" size="sm">{t.verifiedOwnerPill}</Pill>}
+          {owner.verified && (
+            <span style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              <Pill tone="green" icon="BadgeCheck" size="sm">{t.verifiedOwnerPill}</Pill>
+            </span>
+          )}
         </div>
       </div>
       {/* Tenure/responsiveness signals — the strongest pre-review trust facts. Only
@@ -987,7 +999,7 @@ export function MobileBar({ price, appPath, hidden, onReserve }: { price: string
 }
 
 /* ---------------- Breadcrumb items helper ----------------
-   Feed → (category search) → listing title. The feed parent matches the header's
+   Feed → canonical category landing → listing title. The feed parent matches the header's
    active-nav section, the landing pages and the page's own BreadcrumbList JSON-LD,
    so the site presents one canonical trail for a listing. */
 // The feed-root crumb on its own — what the loading states show before the
@@ -997,12 +1009,12 @@ export function feedCrumbItems({ feedLabel, locale }: { feedLabel: string; local
   return [{ label: feedLabel, href: localePath(locale, "/skelbimai") }];
 }
 
-export function detailCrumbs({ category, title, feedLabel, locale }: {
-  category?: string; title: string; feedLabel: string; locale: Locale;
+export function detailCrumbs({ category, categoryId, title, feedLabel, locale }: {
+  category?: string; categoryId?: string; title: string; feedLabel: string; locale: Locale;
 }) {
   return [
     ...feedCrumbItems({ feedLabel, locale }),
-    ...(category ? [{ label: category, href: listingSearchHref({ q: category, locale }) }] : []),
+    ...(category && categoryId ? [{ label: category, href: listingLandingHref({ category: categoryId, locale }) }] : []),
     { label: title },
   ];
 }

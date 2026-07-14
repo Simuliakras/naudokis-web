@@ -18,10 +18,10 @@
     "verify:app-links:static": "node scripts/verify-app-links.mjs --static"
   },
   "dependencies": {
-    "@sentry/nextjs": "^10.56.0",
+    "@sentry/nextjs": "^10.65.0",
     "@tanstack/react-query": "^5.100.14",
     "lucide-react": "^1.21.0",
-    "next": "16.2.7",
+    "next": "16.2.10",
     "qrcode": "^1.5.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -35,8 +35,11 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.7",
+    "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "resolutions": {
+    "postcss": "8.5.19"
   }
 }

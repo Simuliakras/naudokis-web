@@ -3,51 +3,41 @@ import { locales, defaultLocale, localePrefix } from "@/app/lib/i18n/config";
 import { fetchAllCategories } from "@/app/lib/categories";
 import { LT_CITIES } from "@/app/lib/cities";
 import { fetchListingsCount } from "@/app/lib/listings";
-import { listingLandingPath, SITE_URL } from "@/app/lib/seo";
-import { CANONICAL_PATHS, legalDocs } from "@/app/lib/legal/manifest";
+import { listingLandingPath, SITE_URL, MIN_INDEXABLE_LISTINGS } from "@/app/lib/seo";
 
 // Per-locale entries for a bare path ("" → home), with hreflang alternates.
 // `lastModified`/`images` are only set for entries with real data (listings) —
 // a fabricated build-time lastmod on static pages is worse than none.
 function localized(
   path: string,
-  priority: number,
   extra?: { lastModified?: Date; images?: string[] },
 ): MetadataRoute.Sitemap {
   const localizedPath = (locale: (typeof locales)[number]) => {
     const prefix = localePrefix(locale);
     return prefix ? `${prefix}${path}` : path || "/";
   };
-  const cleanPriority = (value: number) => Number(value.toFixed(1));
   const languages = {
     ...Object.fromEntries(locales.map((l) => [l, `${SITE_URL}${localizedPath(l)}`])),
     "x-default": `${SITE_URL}${localizedPath(defaultLocale)}`,
   };
   return locales.map((locale) => ({
     url: `${SITE_URL}${localizedPath(locale)}`,
-    changeFrequency: "weekly" as const,
-    // The unprefixed default locale is canonical, so rank it slightly higher.
-    priority: cleanPriority(locale === defaultLocale ? priority : Math.max(0.1, priority - 0.2)),
     alternates: { languages },
     ...(extra?.lastModified ? { lastModified: extra.lastModified } : {}),
     ...(extra?.images?.length ? { images: extra.images } : {}),
   }));
 }
 
-// Static, indexable routes with their default-locale priority. The two legal
-// documents keep their pretty top-level routes.
-const STATIC_PATHS: [path: string, priority: number][] = [
-  ["", 1],
-  ["/kaip-tai-veikia", 0.7],
-  ["/kategorijos", 0.8],
-  ["/skelbimai", 0.8],
-  ["/privatumo-politika", 0.3],
-  ["/naudojimosi-salygos", 0.3],
-  ["/paskyros-trynimas", 0.3],
-  ...legalDocs()
-    .map((doc) => CANONICAL_PATHS[doc.id])
-    .filter((path): path is string => path?.startsWith("/politikos/"))
-    .map((path) => [path, 0.3] as [string, number]),
+// Static, indexable routes. Every entry is emitted once per locale, with hreflang
+// alternates; `priority` is deliberately omitted (Google ignores it).
+const STATIC_PATHS = [
+  "",
+  "/kaip-tai-veikia",
+  "/kategorijos",
+  "/skelbimai",
+  "/privatumo-politika",
+  "/naudojimosi-salygos",
+  "/paskyros-trynimas",
 ];
 
 // Max simultaneous count lookups when enumerating landing candidates.
@@ -84,19 +74,23 @@ async function listingLandingPaths(): Promise<string[]> {
   // Resolve counts in bounded-concurrency batches: at full catalog this is ~100+
   // candidates (every category × city), and an hourly rebuild must not open one
   // backend connection per candidate at once. Only emit landings that have stock.
+  //
+  // `stopAt` matters here: the only question asked of each candidate is "does it
+  // clear MIN_INDEXABLE_LISTINGS?", which the first page of results answers. Without
+  // it, every one of the ~100+ candidates walks the cursor to the 240 cap.
   const paths: string[] = [];
   for (let i = 0; i < candidates.length; i += COUNT_CONCURRENCY) {
     const batch = candidates.slice(i, i + COUNT_CONCURRENCY);
     const counts = await Promise.all(
       batch.map((candidate) =>
-        fetchListingsCount(defaultLocale, {
-          category: candidate.category,
-          city: candidate.city,
-        }).catch(() => 0),
+        fetchListingsCount(
+          { category: candidate.category, city: candidate.city },
+          { stopAt: MIN_INDEXABLE_LISTINGS },
+        ).catch(() => 0),
       ),
     );
     batch.forEach((candidate, j) => {
-      if (counts[j] > 0) {
+      if (counts[j] >= MIN_INDEXABLE_LISTINGS) {
         paths.push(candidate.path);
       }
     });
@@ -108,10 +102,11 @@ async function listingLandingPaths(): Promise<string[]> {
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const hasListings = await fetchListingsCount(defaultLocale).then((count) => count > 0).catch(() => false);
+  // Only asks "is the catalogue non-empty?" — one listing settles it.
+  const hasListings = await fetchListingsCount({}, { stopAt: 1 }).then((count) => count > 0).catch(() => false);
   const staticEntries = STATIC_PATHS
-    .filter(([path]) => path !== "/skelbimai" || hasListings)
-    .flatMap(([path, priority]) => localized(path, priority));
-  const landingEntries = (await listingLandingPaths()).flatMap((path) => localized(path, 0.65));
+    .filter((path) => path !== "/skelbimai" || hasListings)
+    .flatMap((path) => localized(path));
+  const landingEntries = (await listingLandingPaths()).flatMap((path) => localized(path));
   return [...staticEntries, ...landingEntries];
 }

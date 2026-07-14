@@ -47,7 +47,7 @@ export function Inline({ text, locale }: { text: string | undefined; locale: Loc
       } else if (href.startsWith("#") || href.startsWith("mailto")) {
         nodes.push(<a key={key++} href={href}>{label}</a>);
       } else if (href.startsWith("/")) {
-        // internal app route (e.g. the /teisine legal hub) — locale-prefixed
+        // Internal app route — locale-prefixed.
         nodes.push(<a key={key++} href={localePrefix(locale) + href}>{label}</a>);
       } else {
         nodes.push(<span key={key++}>{label}</span>);

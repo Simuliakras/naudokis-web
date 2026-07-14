@@ -9,6 +9,7 @@ import {
   collectionPageJsonLd,
   itemListJsonLd,
   NOINDEX_FOLLOW,
+  MIN_INDEXABLE_LISTINGS,
   pageMetadata,
   resolveListingLanding,
   type ListingLanding,
@@ -20,6 +21,7 @@ import {
   fetchListingsPage,
   listingsInfiniteKey,
   LISTINGS_FIRST_CURSOR,
+  LISTINGS_PAGE_SIZE,
   type ListingFilters,
   type ListingsPage,
 } from "@/app/lib/listings";
@@ -31,6 +33,7 @@ import {
   type Category,
 } from "@/app/lib/categories";
 import {
+  catalogueFiltersFromSearch,
   hasNonCanonicalLandingSearch,
   pageFromLandingSearch,
   type LandingSearchParams,
@@ -120,7 +123,8 @@ export async function listingLandingMetadata({
     : isLanding
       ? t.landingDescription({ category: categoryLabel, city: landing.city })
       : t.metaDescription;
-  const count = await fetchListingsCount(locale, {
+  // Full walk (no stopAt): the pager needs the real total, not a threshold answer.
+  const count = await fetchListingsCount({
     category: category?.id,
     city: landing.city,
   }).catch(() => 0);
@@ -131,14 +135,20 @@ export async function listingLandingMetadata({
     title,
     description,
     ogLocale: meta.ogLocale,
-    ogImageAlt: meta.ogImageAlt,
+    ogImageAlt: title,
   });
   if (hasNonCanonicalLandingSearch(searchParams)) {
     metadata.robots = NOINDEX_FOLLOW;
     return metadata;
   }
-  // An empty landing is a thin page: keep it crawlable-through but out of the index.
-  if (count <= 0) {
+  const totalPages = Math.ceil(count / LISTINGS_PAGE_SIZE);
+  if (page > 1 && page > totalPages) {
+    metadata.robots = NOINDEX_FOLLOW;
+    return metadata;
+  }
+  // Low-stock landings stay usable and crawlable-through, but are not useful
+  // enough to recommend as standalone organic-search results.
+  if (count < MIN_INDEXABLE_LISTINGS) {
     metadata.robots = NOINDEX_FOLLOW;
   }
   return metadata;
@@ -158,7 +168,7 @@ export async function ListingLandingPage({
   const { common, feed: t } = getDictionary(locale);
   const qc = makeQueryClient();
   const page = pageFromLandingSearch(searchParams);
-  const resolvedFilters = { ...filters, page };
+  const resolvedFilters = { ...filters, ...catalogueFiltersFromSearch(searchParams) };
   const key = listingsInfiniteKey(locale, resolvedFilters);
 
   await Promise.all([
@@ -183,7 +193,9 @@ export async function ListingLandingPage({
 
   const cached = qc.getQueryData<InfiniteData<ListingsPage>>(key);
   const listings = cached?.pages.flatMap((p) => p.offers) ?? [];
-  const totalCount = cached?.pages[0]?.totalCount ?? listings.length;
+  if (cached && page > 1 && listings.length === 0 && !cached.pages[0]?.nextToken) {
+    notFound();
+  }
   const parentCategory = category?.parentId ? categories.find((c) => c.id === category.parentId) : undefined;
 
   const breadcrumb = listingBreadcrumbTrail({
@@ -207,7 +219,7 @@ export async function ListingLandingPage({
           path: landing.path,
         })}
       />
-      {totalCount > 0 && listings.length > 0 && (
+      {listings.length > 0 && (
         <JsonLd data={itemListJsonLd(locale, listings.map((l) => ({ id: l.id, name: l.title, city: l.city })))} />
       )}
       <Suspense>

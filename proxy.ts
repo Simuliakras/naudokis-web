@@ -77,5 +77,5 @@ export const config = {
   // real localized pages now (see app/lib/app-links.ts), so they MUST be matched to
   // get their locale rewrite. Excluding one would make it 404 — and it would 404
   // only for people without the app installed, which is nobody who tests it.
-  matcher: ["/((?!api|go|_next/static|_next/image|naudokis|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|listings/sitemap|\\.well-known).*)"],
+  matcher: ["/((?!api(?:/|$)|go(?:/|$)|_next/static|_next/image|naudokis(?:/|$)|favicon.ico$|sitemap.xml$|robots.txt$|manifest.webmanifest$|listings/sitemap(?:/|$)|\\.well-known(?:/|$)).*)"],
 };

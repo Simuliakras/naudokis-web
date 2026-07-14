@@ -110,7 +110,6 @@ const P1_ROUTES = [
 ].filter(Boolean);
 
 const P2_ROUTES = [
-  { slug: "teisine", path: "/teisine" },
   { slug: "privacy", path: "/privatumo-politika" },
   { slug: "account-deletion", path: "/paskyros-trynimas" },
   { slug: "invite-code", path: "/invite?code=RESPONSIVE2026LONGCODE" },

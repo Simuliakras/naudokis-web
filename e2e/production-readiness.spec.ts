@@ -94,6 +94,8 @@ test("an unknown locale segment 404s cleanly rather than crashing the boundary",
 // askConsent() fails closed in that window; wait it out rather than test the race.
 const consentReady = (page: import("@playwright/test").Page) =>
   page.waitForFunction(() => Reflect.get(window, "__nkConsentReady") === true);
+const bridgeReady = (page: import("@playwright/test").Page) =>
+  page.waitForFunction(() => Reflect.get(window, "__nkBridgeReady") === true);
 
 test("an install CTA asks for the choice, and dismissing aborts without storing one", async ({ page }) => {
   await page.goto("/invite?code=ABCD2345");
@@ -137,6 +139,7 @@ test("the consent prompt stacks over the bridge modal without dismissing it", as
   await page.setViewportSize({ width: 390, height: 844 }); // the smart link is mobile-only
   await page.goto("/");
   await consentReady(page);
+  await bridgeReady(page);
   // The documented bridge contract (see ui.tsx openRedirect / NK_REDIRECT_EVENT).
   await page.evaluate(() =>
     window.dispatchEvent(new CustomEvent("nk:redirect", { detail: { title: "Test", body: "Test" } })),
@@ -194,8 +197,10 @@ test("synthetic listings are excluded and broken images have a branded fallback"
   expect(imageFailures.filter((url) => /e2e[-_]?test/i.test(url))).toEqual([]);
 });
 
-test("transaction policies are independently reachable in both locales", async ({ request }) => {
+test("retired legal hub and transaction policy routes return not found", async ({ request }) => {
   for (const path of [
+    "/teisine",
+    "/en/teisine",
     "/politikos/payments-fees",
     "/politikos/cancellations-refunds",
     "/politikos/deposits-damage-disputes",
@@ -203,8 +208,32 @@ test("transaction policies are independently reachable in both locales", async (
     "/politikos/trust-safety-support",
     "/en/politikos/payments-fees",
   ]) {
-    expect((await request.get(path)).status(), path).toBe(200);
+    expect((await request.get(path)).status(), path).toBe(404);
   }
+});
+
+// The counterpart to the 404 sweep above. Without this, deleting a surviving legal
+// route would go unnoticed: the responsive sweep renders these paths but never
+// asserts a status, and the localized 404 screen carries the same nav/footer chrome,
+// so it would happily pass as a page.
+//
+// Requested in parallel, and marked slow: against the dev webServer each of these
+// routes compiles on first hit, and six cold compiles of the (large) legal
+// documents do not fit in the default 30s budget on a loaded machine.
+test("the published legal documents are reachable in both locales", async ({ request }) => {
+  test.slow();
+  const paths = [
+    "/naudojimosi-salygos",
+    "/privatumo-politika",
+    "/paskyros-trynimas",
+    "/en/naudojimosi-salygos",
+    "/en/privatumo-politika",
+    "/en/paskyros-trynimas",
+  ];
+  const responses = await Promise.all(paths.map((path) => request.get(path)));
+  responses.forEach((response, i) => {
+    expect(response.status(), paths[i]).toBe(200);
+  });
 });
 
 test("Google Maps is retained but loads only after an explicit choice", async ({ page }) => {
@@ -289,7 +318,12 @@ test("app-handoff landings leak nothing about whether the id exists", async ({ r
     request.get("/chat/00000000-0000-4000-8000-000000000000"),
   ]);
   expect(real.status()).toBe(bogus.status());
-  const strip = (html: string) => html.replace(/[0-9a-f-]{36}/gi, "<id>");
+  const strip = (html: string) => html
+    .replace(/[0-9a-f-]{36}/gi, "<id>")
+    // Next 16.2.10 emits a per-response RSC request id in development. It is
+    // transport noise, not route data, and must not make this privacy assertion
+    // compare two otherwise identical handoff documents as different.
+    .replace(/self\.__next_r="[^"]+"/g, 'self.__next_r="<request>"');
   expect(strip(await real.text())).toBe(strip(await bogus.text()));
 });
 

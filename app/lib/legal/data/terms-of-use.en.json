@@ -1,1341 +1,884 @@
 {
   "meta": {
-    "title": "Naudokis Terms of Use",
-    "version": "2026-06-01",
-    "effective_date": "2026-06-01",
-    "last_updated": "2026-06-01",
-    "document_id": "NAUDOKIS-TOS-EN-2026-06-01",
+    "title": "“Naudokis” Terms of Use",
+    "version": "2026-07-14-ranking-v4.5",
+    "effective_date": "2026-07-14",
+    "last_updated": "2026-07-14",
+    "document_id": "NAUDOKIS-TOS-EN-2026-07-14-RANKING-V4-5",
     "document_type": "terms"
   },
   "toc": [
     {
-      "id": "short-summary-of-the-terms",
-      "label": "Short summary of the Terms",
-      "num": null
-    },
-    {
-      "id": "how-rental-through-naudokis-works",
-      "label": "How rental through Naudokis works",
-      "num": null
-    },
-    {
-      "id": "where-to-find-the-most-important-information",
-      "label": "Where to find the most important information",
-      "num": null
-    },
-    {
-      "id": "platform-document-structure",
-      "label": "Platform document structure",
-      "num": null
-    },
-    {
-      "id": "1-definitions",
-      "label": "Definitions",
+      "id": "1-key-points-in-brief",
+      "label": "Key points in brief",
       "num": "1"
     },
     {
-      "id": "2-acceptance-of-the-terms",
-      "label": "Acceptance of the Terms",
+      "id": "2-definitions",
+      "label": "Definitions",
       "num": "2"
     },
     {
-      "id": "3-what-naudokis-is",
-      "label": "What Naudokis is",
+      "id": "3-acceptance-of-the-terms-and-account",
+      "label": "Acceptance of the Terms and account",
       "num": "3"
     },
     {
-      "id": "4-eligibility-and-account",
-      "label": "Eligibility and account",
+      "id": "4-the-role-of-naudokis",
+      "label": "The role of “Naudokis”",
       "num": "4"
     },
     {
-      "id": "5-user-roles",
-      "label": "User roles",
+      "id": "5-listings-items-and-user-obligations",
+      "label": "Listings, items, and User obligations",
       "num": "5"
     },
     {
-      "id": "6-verification-readiness-and-compliance",
-      "label": "Verification, readiness, and compliance",
+      "id": "6-bookings-payments-and-payouts",
+      "label": "Bookings, payments, and payouts",
       "num": "6"
     },
     {
-      "id": "7-listings-prohibited-items-and-higher-risk-categories",
-      "label": "Listings, prohibited items, and higher-risk categories",
+      "id": "7-security-deposits-damage-and-disputes",
+      "label": "Security Deposits, damage, and disputes",
       "num": "7"
     },
     {
-      "id": "8-duties-of-the-lessor-and-renter",
-      "label": "Duties of the Lessor and Renter",
+      "id": "8-handover-return-and-completion-of-the-booking",
+      "label": "Handover, return, and completion of the Booking",
       "num": "8"
     },
     {
-      "id": "9-reservations-and-conclusion-of-a-rental-transaction",
-      "label": "Reservations and conclusion of a Rental Transaction",
+      "id": "9-cancellations-refunds-and-the-consumer-s-right-of-withdrawal",
+      "label": "Cancellations, refunds, and the consumer’s right of withdrawal",
       "num": "9"
     },
     {
-      "id": "10-payments-fees-and-stripe",
-      "label": "Payments, fees, and Stripe",
+      "id": "10-business-users-traders-and-taxes",
+      "label": "Business Users, Traders, and taxes",
       "num": "10"
     },
     {
-      "id": "11-deposits",
-      "label": "Deposits",
+      "id": "11-reviews-search-and-visibility",
+      "label": "Reviews, search, and visibility",
       "num": "11"
     },
     {
-      "id": "12-cancellations-refunds-and-the-right-of-withdrawal",
-      "label": "Cancellations, refunds, and the right of withdrawal",
+      "id": "12-content-prohibited-conduct-and-moderation",
+      "label": "Content, prohibited conduct, and moderation",
       "num": "12"
     },
     {
-      "id": "13-handover-return-damage-and-disputes",
-      "label": "Handover, return, damage, and Disputes",
+      "id": "13-complaints-consumer-rights-and-authorities",
+      "label": "Complaints, consumer rights, and authorities",
       "num": "13"
     },
     {
-      "id": "14-reviews-and-ratings",
-      "label": "Reviews and ratings",
+      "id": "14-product-safety-insurance-and-liability",
+      "label": "Product safety, insurance, and liability",
       "num": "14"
     },
     {
-      "id": "15-business-users-transparency-and-search",
-      "label": "Business Users, transparency, and search",
+      "id": "15-communications-privacy-changes-to-the-terms-and-account-termination",
+      "label": "Communications, privacy, changes to the Terms, and account termination",
       "num": "15"
     },
     {
-      "id": "16-user-content-prohibited-conduct-and-safety",
-      "label": "User Content, prohibited conduct, and safety",
+      "id": "16-applicable-law-dispute-resolution-and-contact-details",
+      "label": "Applicable law, dispute resolution, and contact details",
       "num": "16"
-    },
-    {
-      "id": "17-moderation-dsa-ai-and-account-restrictions",
-      "label": "Moderation, DSA, AI, and account restrictions",
-      "num": "17"
-    },
-    {
-      "id": "18-complaints-and-consumer-rights",
-      "label": "Complaints and Consumer rights",
-      "num": "18"
-    },
-    {
-      "id": "19-liability-insurance-and-product-safety",
-      "label": "Liability, insurance, and product safety",
-      "num": "19"
-    },
-    {
-      "id": "20-communication-and-privacy",
-      "label": "Communication and privacy",
-      "num": "20"
-    },
-    {
-      "id": "21-changes-termination-and-applicable-law",
-      "label": "Changes, termination, and applicable law",
-      "num": "21"
-    },
-    {
-      "id": "22-general-provisions",
-      "label": "General provisions",
-      "num": "22"
-    },
-    {
-      "id": "23-additional-platform-rules",
-      "label": "Additional Platform rules",
-      "num": "23"
-    },
-    {
-      "id": "24-contacts",
-      "label": "Contacts",
-      "num": "24"
     }
   ],
   "blocks": [
     {
       "t": "p",
-      "md": "These Naudokis Terms of Use (\"**Terms**\") govern your access to and use of the Naudokis Platform."
+      "md": "These terms of use (the “**Terms**”) govern your access to and use of the “Naudokis” platform."
     },
     {
       "t": "p",
-      "md": "The Platform includes the Naudokis mobile App, related websites, rental functions, payments, identity verification, support, communication, and other related services (together, the \"**Platform**\")."
+      "md": "The Platform is operated by MB “Naudokis”, legal entity code 307423504, registered office address Numėjos g. 6, LT-08402 Vilnius, Lithuania (“**Naudokis**”, “**we**”, or “**our**”)."
     },
     {
       "t": "p",
-      "md": "The Platform is operated and the services are provided by MB Naudokis, legal entity code 307423504, registered office address Numėjos g. 6, LT-08402 Vilnius, Lithuania (\"**Naudokis**\", \"**we**\", \"**us**\", \"**our**\")."
+      "md": "The “Naudokis” platform comprises the mobile application, websites, and related functions, including listing, booking, payment, Security Deposit, identity-verification, messaging, support, dispute, and review functions (the “**Platform**”). The Platform is intended for the rental of movable items in Lithuania, payments in euros, and payouts to payment accounts that meet the applicable requirements."
     },
     {
       "t": "p",
-      "md": "Different models of Rental Transactions may be concluded on the Platform where permitted by Platform functions, applicable law, and the terms of the specific transaction. These may include rental between private natural persons (P2P), Business User rental to a Consumer (B2C / B2P), rental between Business Users (B2B), and rental by a private person to a Business User, which is governed by separate provisions of Section 18."
-    },
-    {
-      "t": "p",
-      "md": "**Scope of operations in Lithuania.** Naudokis operates in the Lithuanian market. The App is intended for items located in Lithuania, Lithuanian addresses, handover or delivery methods applicable in Lithuania, payments in euros, and payouts to payment accounts meeting Lithuanian requirements."
-    },
-    {
-      "t": "p",
-      "md": "Tax, VAT, DAC7, VIES, or other compliance processes apply only to the extent required for an actual Platform function, Business User status, payments, payouts, invoices, mandatory legal obligation, or a business process clearly enabled on the Platform."
-    },
-    {
-      "t": "p",
-      "md": "These Terms are not interpreted as limiting mandatory rights granted to you under applicable laws of the Republic of Lithuania, the European Union, or other mandatorily applicable legislation, including Consumer rights."
+      "md": "These Terms do not restrict any rights mandatorily granted to you under the laws of the Republic of Lithuania, the European Union, or other applicable law, including consumer rights."
     },
     {
       "t": "h2",
-      "id": "short-summary-of-the-terms",
-      "text": "Short summary of the Terms"
+      "id": "1-key-points-in-brief",
+      "text": "1. Key points in brief"
     },
     {
       "t": "p",
-      "md": "This summary helps you quickly understand the main Naudokis rules. It does not replace the full Terms, but explains the most important points in plain language."
+      "md": "This summary helps explain the principal rules but does not replace the remainder of the Terms."
     },
     {
       "t": "ul",
       "items": [
-        "**What Naudokis is.** Naudokis is the operator of an item-rental platform. Unless the App clearly states otherwise, Naudokis is not the owner, seller, lessor, renter, insurer, or party to a specific Rental Transaction.",
-        "**How a Rental Transaction is concluded.** A specific rental is concluded directly between the Lessor and the Renter, unless the App clearly states otherwise. The Lessor is responsible for the item and Listing, and the Renter is responsible for careful use, payment, and timely return.",
-        "**How payments work.** Payments are made through the Platform and Stripe. Before payment, the App must show the price, fees, Deposit, cancellation terms, and other important information.",
-        "**What the Deposit is.** If a Deposit applies, it is usually authorized together with the Reservation payment. The amount is captured only when the Lessor accepts the Reservation request and payment is successfully completed. The Deposit is not insurance, a guarantee, an escrow service, or the maximum possible liability limit.",
-        "**What rights apply.** Different rules apply to different rentals: P2P, B2C / B2P, or B2B. Mandatory Consumer rights, where they apply, always prevail over App or Listing terms.",
-        "**What happens in a Dispute.** If a Dispute arises concerning damage, loss, delay, Deposit, or payout, Naudokis administers the evidence, refund, hold, and payment adjustment process provided on the Platform. This does not remove the right to contact the payment provider, authorities, or court.",
-        "**Business Users.** Additional identity, representation, Consumer information, VAT, DAC7, invoicing, Stripe, and payout requirements apply to Business Users and Traders where required by the transaction type, Platform functions, or applicable law.",
-        "**Safety and Content.** Naudokis has the right to restrict Listings, categories, Content, accounts, payments, or payouts if there is a risk relating to law, safety, fraud, misleading Consumers, product safety, or breach of Platform rules."
+        "**“Naudokis” is a platform.** We help Users find, list, book, administer, and pay for item rentals. We are generally not the owner of the rental item, the lessor, renter, seller, insurer, or a party to a particular Rental Transaction.",
+        "**The Rental Transaction is concluded between Users.** The Lessor is responsible for the item, the accuracy of the Listing, the right to rent out the item, its safety, and its handover. The Renter is responsible for payment, careful use, and timely return.",
+        "**The Platform is for adults only.** Only persons aged 18 or over may list items, submit or accept Booking Requests, make payments, and receive payouts.",
+        "**Payment authorisation alone does not constitute a final Booking.** A Booking is finally confirmed only when the Lessor accepts the request and Stripe successfully captures the payment, or the payment is otherwise finally confirmed in a manner clearly specified on the Platform.",
+        "**Payments are made through Stripe.** Before payment is confirmed, the Platform must display the price, fees, Security Deposit, cancellation rules, and total amount payable that apply to the specific Booking.",
+        "**The Security Deposit is not insurance or a limit of liability.** It may be refunded, temporarily held through the payment process, or used to satisfy a substantiated claim for damage, loss, delay, or another breach.",
+        "**Disputes are assessed on the evidence.** We consider Booking data, photographs, messages, handover and return information, estimates, the value of the item, and other reasonable evidence.",
+        "**Business Users may be subject to additional obligations.** These may relate to identity, authority to represent, Trader status, consumer-information obligations, VAT, VIES, invoices, Stripe, and payouts. DAC7 applies only to reportable activities specified by law.",
+        "**Safety is mandatory.** It is prohibited to list unlawful, unsafe, stolen, counterfeit, rights-infringing, or otherwise unsuitable items on the Platform."
       ]
     },
     {
-      "t": "h2",
-      "id": "how-rental-through-naudokis-works",
-      "text": "How rental through Naudokis works"
-    },
-    {
-      "t": "p",
-      "md": "This short process helps explain when the most important rules apply:"
-    },
-    {
-      "t": "ol",
-      "items": [
-        "**The Lessor lists an item.** The Listing must clearly state the item's condition, price, Deposit, availability, handover method, usage restrictions, and cancellation terms.",
-        "**The Renter submits a Reservation request.** Before the request is submitted, the App must show the price, fees, Deposit, cancellation terms, and other important information.",
-        "**Payment is authorized.** If applicable, the Reservation amount and Deposit are included in a Stripe payment authorization, unless the payment interface clearly states otherwise.",
-        "**The Lessor accepts or rejects the request.** Payment is captured only after Lessor acceptance and successful payment completion, unless the payment interface clearly states otherwise.",
-        "**The item is handed over and used.** Both parties must check condition, accessories, instructions, and cooperate with the handover and return steps provided in the App.",
-        "**The item is returned.** If the item is returned on time, in proper condition, and there is no substantiated claim, Naudokis initiates the Deposit refund without undue delay after rental completion; the time for funds to return additionally depends on payment-provider, bank, and card-network timeframes.",
-        "**If an issue arises, evidence is submitted.** In the event of a damage, loss, delay, or Deposit Dispute, Naudokis administers the evidence, temporary hold, refund, and payment adjustment process. This does not remove the right to contact the payment provider, authorities, or court."
-      ]
-    },
-    {
-      "t": "h2",
-      "id": "where-to-find-the-most-important-information",
-      "text": "Where to find the most important information"
+      "t": "h3",
+      "text": "How does a rental work?"
     },
     {
       "t": "table",
       "head": [
-        "Looking for information about...",
-        "Read"
+        "Stage",
+        "What it means"
       ],
       "rows": [
         [
-          "Who Naudokis is and who is the party to the Rental Transaction",
-          "Section [3](#3-what-naudokis-is)"
+          "Request",
+          "The Renter selects the item, dates, and handover method."
         ],
         [
-          "Account, age, and identity verification",
-          "Sections [4](#4-eligibility-and-account) and [6](#6-verification-readiness-and-compliance)"
+          "Payment authorisation",
+          "Stripe checks the payment method and may temporarily reserve the payment amount. The Booking is not yet final."
         ],
         [
-          "Listings, prohibited items, and risky categories",
-          "Section [7](#7-listings-prohibited-items-and-higher-risk-categories) and the Prohibited and Restricted Items Rules"
+          "Lessor’s decision",
+          "The Lessor accepts or rejects the request within the period specified on the Platform."
         ],
         [
-          "Reservations and conclusion of a Rental Transaction",
-          "Section [9](#9-reservations-and-conclusion-of-a-rental-transaction)"
+          "Confirmation",
+          "The Booking becomes final only when the request has been accepted and the payment has been successfully captured or otherwise finally confirmed in the manner specified on the Platform."
         ],
         [
-          "Payments, fees, Stripe, and information before payment",
-          "Section [10](#10-payments-fees-and-stripe) and the [Payments, Fees, and Stripe Rules](doc:payments-fees)"
+          "Handover",
+          "The parties inspect the item, accessories, and condition and, where required, record the handover information."
         ],
         [
-          "Deposits, damage, loss, and Disputes",
-          "Sections [11](#11-deposits) and [13](#13-handover-return-damage-and-disputes) and the [Deposit, Damage, Loss, and Dispute Rules](doc:deposits-damage-disputes)"
+          "Return",
+          "The item is returned at the agreed time, place, and in the agreed condition, allowing for ordinary wear and tear."
         ],
         [
-          "Cancellation, refunds, and the right of withdrawal",
-          "Section [12](#12-cancellations-refunds-and-the-right-of-withdrawal) and the [Cancellation, Refund, and Right of Withdrawal Rules](doc:cancellations-refunds)"
-        ],
-        [
-          "Business Users, Traders, VAT, VIES, and DAC7",
-          "Section [15](#15-business-users-transparency-and-search) and the Business Users, Traders, and B2B Rules"
-        ],
-        [
-          "Content, moderation, appeals, and DSA notices",
-          "Sections [16](#16-user-content-prohibited-conduct-and-safety) and [17](#17-moderation-dsa-ai-and-account-restrictions) and the Moderation, Complaints, and DSA Rules"
-        ],
-        [
-          "Consumer complaints, authorities, and Dispute resolution",
-          "Sections [18](#18-complaints-and-consumer-rights) and [21](#21-changes-termination-and-applicable-law)"
-        ],
-        [
-          "Reservation statuses, handover, and completion process",
-          "the [Reservation, Handover, and Completion Process Rules](doc:reservation-handover)"
-        ],
-        [
-          "Identity, risk, and trust measures",
-          "the [Trust, Checks, and Safeguards Standard](doc:trust-safety-support)"
-        ],
-        [
-          "Reviews, search, and ranking",
-          "the Reviews, Search, and Ranking Rules"
-        ],
-        [
-          "Map of all legal documents",
-          "the Rules Center"
-        ],
-        [
-          "Naudokis contacts",
-          "Section [24](#24-contacts)"
+          "Completion",
+          "If there is no dispute or other lawful basis for a hold, the payout and refund of the Security Deposit are initiated through the payment process."
         ]
       ]
     },
     {
       "t": "h2",
-      "id": "platform-document-structure",
-      "text": "Platform document structure"
-    },
-    {
-      "t": "p",
-      "md": "Naudokis legal documents are structured according to mature rental-platform principles: the main Terms of Use establish the general legal relationship, and special policies clearly describe specific operational processes. This structure allows the User to quickly find the practically important rule concerning cancellation, Deposit, damage, payment, prohibited item, moderation complaint, review, or privacy matter."
-    },
-    {
-      "t": "p",
-      "md": "Special policies form part of these Terms where they are referenced in the Terms, the App, or a specific Reservation flow. The price, Deposit, dates, handover method, cancellation term, and other essential information clearly shown in the App during a specific Reservation are important for interpreting that Reservation."
-    },
-    {
-      "t": "p",
-      "md": "The map of all documents is available in the Naudokis Rules Center."
-    },
-    {
-      "t": "p",
-      "md": "The practical Reservation flow is explained in the [Reservation, Handover, and Completion Process Rules](doc:reservation-handover). User trust, identity, risk, and safety measures are described in the [Trust, Checks, and Safeguards Standard](doc:trust-safety-support)."
-    },
-    {
-      "t": "p",
-      "md": "Review, search, and visibility rules are provided in the Reviews, Search, and Ranking Rules."
-    },
-    {
-      "t": "h3",
-      "text": "How these Terms are structured"
-    },
-    {
-      "t": "p",
-      "md": "These Terms are the main document for use of the Naudokis Platform. They apply together with additional rules referenced in them and published on the Platform. Additional rules specify separate areas such as Deposits, damage, Disputes, cancellations, prohibited items, Business Users, payments, and moderation. They form part of these Terms where they are referenced in these Terms, the App, or a specific Reservation flow."
-    },
-    {
-      "t": "p",
-      "md": "If the same issue is regulated in these Terms and in additional rules, the provisions are interpreted together. If there is ambiguity in a transaction applicable to a Consumer, the interpretation more favorable to the User prevails to the extent required by mandatory law."
-    },
-    {
-      "t": "h2",
-      "id": "1-definitions",
-      "text": "1. Definitions"
-    },
-    {
-      "t": "p",
-      "md": "In these Terms:"
+      "id": "2-definitions",
+      "text": "2. Definitions"
     },
     {
       "t": "ul",
       "items": [
-        "\"**App**\" means the Naudokis mobile application through which all or part of the Platform functions are provided.",
-        "\"**User**\" means any person who visits the Platform, creates an account, lists items, submits Reservation requests, concludes or performs Rental Transactions, uses support, or otherwise uses the Platform.",
-        "\"**Lessor**\" means a User who lists or offers an item for rent through the Platform. In the App, the Lessor is called the \"owner.\" A Lessor may be a natural person or Business User.",
-        "\"**Renter**\" means a User who searches for, reserves, receives, or uses a rented item through the Platform. A Renter may be a natural person or Business User.",
-        "\"**Business User**\" means a legal person, person carrying out individual business activity, or another person acting professionally who offers items for rent, rents items, or otherwise uses the Platform for business or professional purposes.",
-        "\"**P2P transaction**\" means a Rental Transaction where both the Lessor and Renter act as private natural persons outside their business or professional activity.",
-        "\"**B2C / B2P transaction**\" means a Rental Transaction where the Lessor acts as a Business User or Trader and the Renter acts as a Consumer. \"B2P\" is a practical Platform term for business rental to a natural person; mandatory Consumer rights apply according to terms used in legislation.",
-        "\"**B2B transaction**\" means a Rental Transaction where both the Lessor and the Renter act for business or professional purposes.",
-        "\"**Scope of operations in Lithuania**\" means the explanation used in these Terms that the Naudokis Platform is intended for item rental carried out in Lithuania, items located in Lithuania, handover or delivery methods applicable in Lithuania, and payments in euros.",
-        "\"**Business Lessor**\" means a Business User who offers items for rent through the Platform.",
-        "\"**Business Renter**\" means a Business User who rents items through the Platform for its business or professional purposes.",
-        "\"**Launch Period**\" means the period during which Naudokis operates with the initial scope of features, categories, payments, payouts, and providers adapted to the Lithuanian market, as described in these Terms, special rules, and the App. We inform Users of the end of or changes to the Launch Period in the App.",
-        "\"**Trader**\" means a Business User or another person considered a trader in relation to Consumers under applicable consumer law. In the App, Trader status is displayed as \"Business.\"",
-        "\"**Listing**\" means information published on the Platform about an item for rent, its characteristics, condition, price, Deposit, availability, pickup, delivery, restrictions, and other terms.",
-        "\"**Reservation request**\" means a request submitted through the Platform for rental of a specific item on selected dates.",
-        "\"**Reservation**\" means a Reservation request and the rental process carried out on its basis, including confirmation, performance, cancellation, or completion.",
-        "\"**Rental Transaction**\" means the agreement between the Lessor and the Renter concerning item rental, concluded using Platform tools.",
-        "\"**Deposit**\" means the refundable amount stated in the App before payment confirmation."
+        "**User** means a person who visits the Platform, creates an account, lists items, submits or accepts Booking Requests, makes payments, receives payouts, communicates, or otherwise uses the Platform.",
+        "**Lessor** means a User who offers an item for rent. In the Platform interface, the Lessor may be referred to as the “owner”, but that designation does not in itself establish ownership and does not alter the person’s legal status.",
+        "**Renter** means a User who searches for, books, receives, or uses a rental item.",
+        "**Business User** means a legal person, a self-employed person carrying on individual business activity, or another person acting for business or professional purposes.",
+        "**Trader** means a Business User or another person who, in relations with a consumer, is regarded as a trader under consumer law.",
+        "**P2P Transaction** means a rental between two natural persons acting for private purposes. **B2C Transaction** means a rental in which the Lessor acts as a Trader and the Renter acts as a consumer. **B2B Transaction** means a rental between persons acting for business or professional purposes.",
+        "**App** means the “Naudokis” mobile application and, where applicable, the Platform’s web interface providing the same functions.",
+        "**Listing** means information presented on the Platform concerning a rental item, including the price, Security Deposit, dates, condition, defects, handover or delivery method, and other applicable conditions.",
+        "**Booking Request** means the Renter’s request to rent a particular item for selected dates. **Booking** means the entire process for a particular rental, from submission of the request through its confirmation, performance, cancellation, completion, or resolution of a dispute.",
+        "**Rental Transaction** means the agreement between the Lessor and the Renter concerning the rental of a specific item.",
+        "**Digital Handover Record** means information concerning the handover or return of an item recorded in the App, messages, or another process supported by “Naudokis”, such as photographs, videos, an accessory list, defects, serial numbers, time, location, or confirmations by the parties. This record assists in assessing disputes but is not the only possible evidence.",
+        "**Security Deposit** means the refundable amount specified in the App before payment is confirmed, which may be refunded, temporarily held through the payment process, or used to satisfy a substantiated claim. The Security Deposit is not insurance, a guarantee, a limit of liability, an escrow account, or a client-funds account.",
+        "**Content** means Listings, photographs, descriptions, messages, reviews, evidence, profile or business information, support requests, and other information submitted through the Platform."
       ]
     },
     {
+      "t": "h2",
+      "id": "3-acceptance-of-the-terms-and-account",
+      "text": "3. Acceptance of the Terms and account"
+    },
+    {
       "t": "p",
-      "md": "During the launch period, it is usually included in the Stripe payment authorization together with the Reservation payment and captured only after Lessor acceptance and successful payment completion. After the rental, the Deposit may be refunded, partially refunded, or used to cover substantiated claims according to these Terms, evidence, Dispute outcome, payment-provider rules, and applicable law. The Deposit is not insurance, a guarantee, a limit on the Renter's liability, a separate banking deposit, client-funds or escrow account, and is not an interest-bearing account."
+      "md": "By using the Platform, you confirm that you have read and understood these Terms and agree to comply with them. You accept the Terms by creating an account, confirming them in the App, listing an item, submitting or accepting a Booking Request, making a payment, or using messaging, support, the dispute process, or other Platform functions."
+    },
+    {
+      "t": "p",
+      "md": "By using the Platform, you also confirm that you have reviewed the Privacy Policy. We may retain information about which version of the Terms and Privacy Policy a particular User accepted. For certain functions, we may ask you to accept an updated version of a document."
+    },
+    {
+      "t": "p",
+      "md": "The Platform is intended only for persons aged 18 or over. You must provide accurate and up-to-date information, keep your account and devices secure, not permit other persons to use the account without your permission, and immediately report suspected unauthorised access, fraud, or other abuse."
+    },
+    {
+      "t": "p",
+      "md": "Use of certain functions may require verification of an email address, telephone number, identity, business profile, authority to represent, tax information, consent to invoices being issued in the Lessor’s name, Stripe registration, or other data. Identity may be verified by Didit or another service provider. Stripe may independently perform payment, identity, compliance, and payout checks."
+    },
+    {
+      "t": "p",
+      "md": "If you use the Platform on behalf of a legal person, organisation, or other business, you confirm that you are authorised to represent and bind it. We may restrict, suspend, or terminate an account or individual functions if the information provided is inaccurate, mandatory verification fails, the Terms are breached, or a reasonable security, fraud, payment, tax, consumer-deception, or other legal risk arises."
+    },
+    {
+      "t": "h2",
+      "id": "4-the-role-of-naudokis",
+      "text": "4. The role of “Naudokis”"
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” operates an item-rental Platform that helps Users find, list, book, hand over, return, and administer rental items."
+    },
+    {
+      "t": "p",
+      "md": "Unless expressly stated otherwise in the App or in a separate written agreement, “Naudokis” is not the owner of the rental item, the lessor, renter, seller, insurer, warranty provider, or a party to a particular Rental Transaction. The Rental Transaction for a specific item is concluded directly between the Lessor and the Renter."
+    },
+    {
+      "t": "p",
+      "md": "Payments on the Platform are processed by Stripe and, where applicable, Stripe Connect. Using Stripe’s technical tools, “Naudokis” may initiate or administer the Renter’s payment, Platform fees, the Security Deposit, a refund, a payout hold or adjustment, a payment dispute, and transfer of the amount due to the Lessor. “Naudokis” does not itself hold those funds in a client or escrow account, and its participation in the payment process does not in itself make it a party to the Rental Transaction."
+    },
+    {
+      "t": "p",
+      "md": "Under these Terms, the information provided in the App, the evidence collected, Stripe’s rules, and applicable law, “Naudokis” may make internal Platform decisions concerning payments, Security Deposits, refunds, payouts, Content, Listings, accounts, security, and disputes. Such decisions do not remove a User’s right to apply to a payment provider, consumer-protection or data-protection authority, law-enforcement body, or court where such a right applies."
+    },
+    {
+      "t": "h2",
+      "id": "5-listings-items-and-user-obligations",
+      "text": "5. Listings, items, and User obligations"
+    },
+    {
+      "t": "p",
+      "md": "The Lessor may list only lawful, safe, accurately described, and genuinely available items. A Listing must provide sufficient information about the item, photographs, price, Security Deposit, availability, handover or delivery options, known defects, restrictions on use, safety instructions, and the applicable cancellation policy."
+    },
+    {
+      "t": "p",
+      "md": "The Lessor is responsible for:"
     },
     {
       "t": "ul",
       "items": [
-        "\"**Content**\" means Listings, photographs, descriptions, messages, reviews, evidence, profile information, business information, support requests, and other information submitted or created by Users through the Platform."
+        "the right to rent out the item;",
+        "the item’s lawfulness, safety, cleanliness, functionality, and fitness for the purpose stated in the Listing;",
+        "an accurate description of the item’s condition, included components, and known defects;",
+        "performance of confirmed Bookings, timely handover, instructions, and all agreed accessories;",
+        "applicable tax, VAT, accounting, invoicing, DAC7, consumer-protection, product-safety, permit, insurance, and other legal obligations."
       ]
     },
     {
-      "t": "h2",
-      "id": "2-acceptance-of-the-terms",
-      "text": "2. Acceptance of the Terms"
-    },
-    {
       "t": "p",
-      "md": "By creating an account, accepting these Terms in the App, listing an item, submitting a Reservation request, making a payment, corresponding, using support, or otherwise using the Platform, you confirm that you have read these Terms, understand them, and agree to comply with them."
-    },
-    {
-      "t": "p",
-      "md": "If you log in using a social login service, a technical account may be created before separate confirmation of these Terms and the Privacy Policy in the App. In such case, the App may show that legal documents still need to be confirmed and may restrict further access to Platform functions until you accept their current versions."
-    },
-    {
-      "t": "p",
-      "md": "By using the Platform, you also confirm that you have read the Naudokis Privacy Policy. The Privacy Policy explains how Naudokis processes Personal Data."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis has the right to retain information about which version of the Terms and Privacy Policy a specific User accepted. For certain functions, we may require acceptance of updated Terms or other mandatory documents."
-    },
-    {
-      "t": "p",
-      "md": "If you use the Platform on behalf of a legal person, organization, or other business, you confirm that you have the right to represent and bind it."
-    },
-    {
-      "t": "h2",
-      "id": "3-what-naudokis-is",
-      "text": "3. What Naudokis is"
-    },
-    {
-      "t": "callout",
-      "md": "Naudokis provides Platform tools to organize the rental process, administer payments, provide support, and administer Disputes, but usually is not the owner of a specific item or a party to the Rental Transaction."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis is the operator of an item-rental platform. The Platform helps Users find, list, reserve, hand over, return, and administer item rental. Unless the App or a separate written agreement clearly states otherwise, Naudokis is not the owner, seller, lessor, renter, insurer, or party to the Rental Transaction for rented items. The Rental Transaction for a specific item is concluded directly between the Renter and the Lessor."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis provides Platform tools for Listings, Reservations, initiation and administration of payments, Deposit accounting, refunds, Disputes, taxes, payouts, support, moderation, and safety."
-    },
-    {
-      "t": "p",
-      "md": "Payments on the Platform are processed through Stripe and, where applicable, Stripe Connect infrastructure. Naudokis has the right to collect or administer the Renter's payment, apply Platform fees, hold or delay payouts, make refunds, administer Deposits, and transfer the amount due to the Lessor according to these Terms, the rules provided in the App, Stripe rules, and applicable law."
-    },
-    {
-      "t": "p",
-      "md": "The fact that a payment, Deposit, refund, Dispute, or payout is administered through the Platform does not in itself mean that Naudokis becomes the owner, seller, lessor, or party to the Rental Transaction for the rented item."
-    },
-    {
-      "t": "p",
-      "md": "Lessors are responsible for their items, Listings, prices, availability, right to offer the item for rent, item safety, handover, and tax, business, consumer protection, and other duties applicable to them. Renters are responsible for lawful, safe, and careful use of the item, payment, timely return, and cooperation in handover, return, and Dispute processes."
-    },
-    {
-      "t": "p",
-      "md": "Although Naudokis is usually not a party to the Rental Transaction, Naudokis administers Platform processes and may make decisions concerning payments, Deposits, refunds, payouts, Content, Listings, account restrictions, safety, and Disputes."
-    },
-    {
-      "t": "p",
-      "md": "Such decisions are made according to these Terms, the rules provided in the App, evidence received, payment-provider rules, and mandatory law. These provisions do not limit mandatory Naudokis obligations under consumer protection, data protection, digital services, payment, tax, product safety, or other applicable legislation."
-    },
-    {
-      "t": "p",
-      "md": "The internal Naudokis Dispute process does not replace mandatory Consumer rights, payment-provider procedures, or the right to contact competent authorities or court."
-    },
-    {
-      "t": "h2",
-      "id": "4-eligibility-and-account",
-      "text": "4. Eligibility and account"
-    },
-    {
-      "t": "callout",
-      "md": "The Platform is intended only for persons at least 18 years old. Certain functions may require identity, payment, business, or Stripe verification."
-    },
-    {
-      "t": "h3",
-      "text": "Eligibility to use the Platform"
-    },
-    {
-      "t": "p",
-      "md": "The Platform and account functions are intended only for persons at least 18 years old who, under applicable law, may conclude the relevant agreements and perform the related obligations. This includes account creation, publication of Listings, submission of Reservations, payments, Deposits, payouts, handover, return, and conclusion of Rental Transactions through the Platform."
-    },
-    {
-      "t": "p",
-      "md": "Business, Lessor, payout, and Stripe Connect functions are available only to Users who are at least 18 years old and may lawfully act on their own behalf or on behalf of the represented business."
-    },
-    {
-      "t": "p",
-      "md": "By creating an account or using the Platform, you represent and warrant that you are at least 18 years old and meet applicable capacity, representation, and other requirements."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis has the right to apply identity verification to assess age, identity, and eligibility for payment, payout, or other restricted functions. During identity verification, Didit may determine the date of birth from an identity document and transfer to Naudokis a verification result or selected attributes. Stripe additionally performs its own age, identity, and compliance checks before allowing use of certain payment or payout functions."
-    },
-    {
-      "t": "p",
-      "md": "If it becomes clear that a person does not meet age, capacity, representation, verification, payment, compliance, or other requirements, Naudokis has the right to restrict or terminate that person's access to the Platform or specific functions."
-    },
-    {
-      "t": "p",
-      "md": "If we learn that an account was created by or the Platform is being used by a person under 18 years old, that person's identity verification is rejected, access to age-restricted functions is restricted, and internal review is initiated. After such review, we may close the account and delete, anonymize, or retain related Personal Data on a limited basis as described in the Privacy Policy and as required by legislation."
-    },
-    {
-      "t": "h3",
-      "text": "Account and security"
-    },
-    {
-      "t": "p",
-      "md": "When creating an account and using the Platform, you must provide accurate, complete, and current information. You must update it if it changes."
-    },
-    {
-      "t": "p",
-      "md": "You are responsible for:"
+      "md": "The Renter is responsible for:"
     },
     {
       "t": "ul",
       "items": [
-        "the security of your account and devices used;",
-        "confidentiality of login data;",
-        "ensuring that your account is not used unlawfully or without permission;",
-        "compliance with verification, profile completion, and legal-document acceptance requirements;",
-        "promptly notifying the Naudokis team if you suspect unauthorized access, fraud, or other abuse."
+        "reading the Listing, selected dates, price, Security Deposit, cancellation policy, handover method, restrictions, and instructions;",
+        "making payment through the Platform;",
+        "inspecting the item and its accessories upon receipt;",
+        "lawful, safe, and careful use;",
+        "protecting the item against damage, loss, or unauthorised use;",
+        "returning it at the agreed time and place and with all accessories;",
+        "cooperating honestly in resolving incidents or disputes."
       ]
     },
     {
       "t": "p",
-      "md": "Naudokis has the right to restrict, suspend, or terminate use of an account or specific functions if information provided in the account is inaccurate, the account may be compromised, identity or payment verification fails, these Terms are breached, or a justified security, fraud, payment, tax, compliance, or legal risk arises."
-    },
-    {
-      "t": "h2",
-      "id": "5-user-roles",
-      "text": "5. User roles"
+      "md": "The Renter may not sell, sublet, pledge, transfer the item to another person without the Lessor’s permission, modify, conceal, leave it unattended, use it other than for its intended purpose, or remove identification markings. Both parties must communicate honestly, provide necessary information in a timely manner, and not make payments or take other actions outside the Platform where the process presented in the App or these Terms requires them to be completed through the Platform."
     },
     {
       "t": "p",
-      "md": "The Platform may involve:"
+      "md": "It is prohibited to list or rent unlawful, unsafe, stolen, counterfeit, misleadingly described, rights-infringing, recalled, unfit-for-purpose, or otherwise unsuitable items on the Platform. This includes, without limitation, weapons, ammunition, explosives, controlled substances, hazardous chemical or biological materials, stolen or counterfeit items, identity documents, payment instruments, medicines, food, alcohol, tobacco, and items that cannot be transferred safely or lawfully. Animals may be listed only if the Platform expressly permits such a category."
+    },
+    {
+      "t": "p",
+      "md": "Certain categories may be subject to additional review or special conditions. These may include drones, trailers, electric vehicles, child-safety equipment, medical or rehabilitation equipment, batteries, power tools, heating, gas, pressure, lifting, climbing, or construction equipment, expensive electronics, and professional equipment. Depending on the category and risk, we may request additional photographs, a serial number, an accessory list, instructions, insurance, a permit, qualifications, a higher Security Deposit, handover and return confirmations, or administrator review."
+    },
+    {
+      "t": "h2",
+      "id": "6-bookings-payments-and-payouts",
+      "text": "6. Bookings, payments, and payouts"
+    },
+    {
+      "t": "p",
+      "md": "Before allowing a Booking to be submitted or confirmed, “Naudokis” may check the Listing’s status and availability, the parties’ verifications, payment readiness, the Security Deposit, applicable limits, business information, the risk associated with prohibited or restricted items, and moderation, fraud, or security signals."
+    },
+    {
+      "t": "p",
+      "md": "Before the Renter confirms payment, the App must clearly display the following information applicable to the specific Booking:"
     },
     {
       "t": "ul",
       "items": [
-        "guests who may see public Platform Content but may not use protected Rental Transaction functions;",
-        "registered Users;",
-        "Lessors who list items for rent;",
-        "Renters who submit Reservation requests and use rented items;",
-        "Business Users, including Business Lessors, Business Renters, and Traders, who offer or rent items for business or professional purposes;",
-        "Naudokis support and administration staff who supervise Platform operation, moderate Content, handle requests, and apply Platform rules."
+        "the rental item and selected dates;",
+        "the Lessor’s status;",
+        "the rental price;",
+        "the delivery or collection fee;",
+        "Platform and other applicable fees;",
+        "the Security Deposit;",
+        "discounts or credits;",
+        "cancellation and refund rules;",
+        "the total amount payable;",
+        "whether the amount is authorised, captured immediately, or captured after the Lessor accepts the request."
       ]
     },
     {
       "t": "p",
-      "md": "One User may have several roles if permitted by Platform functions and applicable law."
-    },
-    {
-      "t": "h2",
-      "id": "6-verification-readiness-and-compliance",
-      "text": "6. Verification, readiness, and compliance"
+      "md": "A Booking is not finally confirmed merely because the Renter has submitted a request, Stripe has authorised the payment, the dates have been temporarily marked as unavailable, or the Lessor is still reviewing the request. A Booking is finally confirmed only when the App clearly states that the Lessor has accepted the request and Stripe has successfully captured the payment, or the payment has otherwise been finally confirmed in the manner specified in the App."
     },
     {
       "t": "p",
-      "md": "Naudokis has the right to require confirmation of email address, telephone number, identity, business profile, right of representation, self-billing consent, tax information, Stripe registration, or other data before granting access to certain functions."
+      "md": "Payments are processed by Stripe. “Naudokis” does not itself provide regulated payment services and is not a bank, credit institution, or electronic-money institution. Regulated payment services are provided by Stripe and other service providers participating in the payment chain. They may apply their own identity, compliance, payment, refund, payment-dispute, and payout rules."
     },
     {
       "t": "p",
-      "md": "Identity verification is currently provided by Didit. Verified identity status may be considered valid for up to 730 days, unless the identity document expires earlier or Naudokis reasonably requires re-verification because of security, compliance, payment, Dispute, or another risk."
-    },
-    {
-      "t": "p",
-      "md": "Before accepting paid Reservations or receiving payouts, Lessors must meet Lessor readiness requirements. This may include identity verification, creation of a Stripe Connect account, activation of payment acceptance and payout functions, provision of tax information, and absence of active account, moderation, compliance, payment, or payout restrictions."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis has the right to prevent publication of a Listing, submission or confirmation of a Reservation, sending messages, receiving payouts, using the referral program, or other functions if verification, payment, compliance, tax, moderation, or security requirements have not been met."
-    },
-    {
-      "t": "h2",
-      "id": "7-listings-prohibited-items-and-higher-risk-categories",
-      "text": "7. Listings, prohibited items, and higher-risk categories"
-    },
-    {
-      "t": "callout",
-      "md": "The Lessor must list only lawful, safe, accurately described, and actually available items. A prohibited or higher-risk item Listing may be rejected, hidden, paused, removed, or allowed only with additional conditions."
-    },
-    {
-      "t": "p",
-      "md": "A Listing must be accurate, complete, clear, and not misleading. It must provide information about the item, its condition, price, Deposit, availability, handover or delivery method, usage restrictions, defects, and safety instructions."
-    },
-    {
-      "t": "p",
-      "md": "Items that are illegal, unsafe, stolen, counterfeit, rights-infringing, recalled, or otherwise unsuitable for the Platform may not be listed. Higher-risk categories may be subject to administrator review, additional evidence, instructions, age or identity check, insurance or permit requirements, payout hold, or other proportionate safety measures."
-    },
-    {
-      "t": "p",
-      "md": "Detailed rules on prohibited, restricted, and higher-risk items are provided in the Prohibited and Restricted Items Rules."
-    },
-    {
-      "t": "h2",
-      "id": "8-duties-of-the-lessor-and-renter",
-      "text": "8. Duties of the Lessor and Renter"
-    },
-    {
-      "t": "callout",
-      "md": "The Lessor is responsible for the item, Listing, and handover, and the Renter is responsible for payment, safe use, and timely return."
-    },
-    {
-      "t": "h3",
-      "text": "Lessor duties"
-    },
-    {
-      "t": "p",
-      "md": "**This section is most important for Lessors.**"
-    },
-    {
-      "t": "p",
-      "md": "If you are a Lessor, you are responsible for:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "the right to offer the item for rent;",
-        "ensuring that the item is lawful, safe, clean, functioning, and suitable for the use stated in the Listing;",
-        "accurately describing the item condition, accessories, defects, restrictions, usage instructions, and replacement value;",
-        "updating prices, availability, pickup, delivery, and cancellation terms;",
-        "performing confirmed Reservations;",
-        "handing over the item on time and in the condition stated in the Listing;",
-        "reasonable cooperation in handover, return, support, and Dispute processes;",
-        "performance of all tax, business, VAT, consumer protection, product safety, accounting, invoicing, DAC7, and other legal obligations applicable to the Lessor."
-      ]
-    },
-    {
-      "t": "p",
-      "md": "The Lessor may not direct the Renter to pay, communicate, or complete a Reservation outside the Platform where Platform rules require acting through the Platform."
-    },
-    {
-      "t": "h3",
-      "text": "Renter duties"
-    },
-    {
-      "t": "p",
-      "md": "**This section is most important for Renters.**"
-    },
-    {
-      "t": "p",
-      "md": "If you are a Renter, you are responsible for:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "reading the Listing, dates, price, Deposit, cancellation policy, pickup or delivery method, usage restrictions, and safety instructions before submitting a Reservation request;",
-        "making sure that you can lawfully and safely use the item;",
-        "paying all amounts due through the Platform;",
-        "picking up or receiving the item in the agreed manner;",
-        "inspecting the item at receipt and immediately reporting defects or non-conformities;",
-        "using the item only for lawful, ordinary, and agreed purposes;",
-        "protecting the item from damage, loss, theft, unauthorized access, abuse, and unusual wear;",
-        "returning the item on time, with all accessories, and in the agreed condition, taking into account ordinary wear typical of rental;",
-        "reasonable cooperation in evidence, support, and Dispute processes."
-      ]
-    },
-    {
-      "t": "p",
-      "md": "The Renter may not sell, sublease, pledge, transfer to another person, modify, hide, abandon, misuse, or otherwise violate the Lessor's rights in respect of the item."
-    },
-    {
-      "t": "h2",
-      "id": "9-reservations-and-conclusion-of-a-rental-transaction",
-      "text": "9. Reservations and conclusion of a Rental Transaction"
-    },
-    {
-      "t": "callout",
-      "md": "After the Lessor accepts a Reservation request, it may be shown with the status \"Lessor accepted\" or \"Payment processing.\" A finally confirmed and paid Reservation arises only when the authorized payment is successfully captured or otherwise confirmed in the App."
-    },
-    {
-      "t": "p",
-      "md": "The Renter may submit a Reservation request for selected dates and a selected pickup or delivery method."
-    },
-    {
-      "t": "p",
-      "md": "Before allowing a Reservation to be submitted or confirmed, Naudokis has the right to check Listing status, item availability, User verification status, payment readiness, account restrictions, business account restrictions, moderation status, Reservation limits, and other security or compliance requirements."
-    },
-    {
-      "t": "p",
-      "md": "If the Renter acts as a Business Renter, Naudokis may also require business profile, right of representation, billing, VAT, invoicing, or other information required for the B2B transaction."
-    },
-    {
-      "t": "p",
-      "md": "Typical Reservation flow:"
+      "md": "A typical payment process is as follows:"
     },
     {
       "t": "ol",
       "items": [
-        "the Renter submits a Reservation request;",
-        "the Renter payment process is initiated through Stripe, and the amounts indicated in the App are usually first authorized;",
-        "the selected dates may be temporarily reserved while payment confirmation and the Lessor's decision are pending;",
-        "the Lessor accepts or rejects the request;",
-        "if the Lessor accepts the request, the Reservation may temporarily be shown with the status \"Lessor accepted\" or \"Payment processing\" while the Platform attempts to complete capture of the authorized payment;",
-        "payment is captured only after the Lessor accepts the request and payment is successfully confirmed;",
-        "if the Lessor rejects the request, the request expires, the payment process is not completed, or capture of funds fails, no finally confirmed Rental Transaction is concluded, and the initiated payment process is cancelled or expires according to Stripe and payment-network rules."
+        "Stripe authorises the Renter’s payment and may temporarily reserve the corresponding amount on the Renter’s payment method.",
+        "Once the Lessor accepts the request, Stripe captures the authorised amount if the payment is successfully completed.",
+        "If a Security Deposit applies, it is generally included in the same authorisation and captured together with the Booking payment, unless the payment screen expressly states otherwise.",
+        "Once the Booking has been properly completed and there is no basis for a hold, the amount due to the Lessor is transferred through Stripe Connect after deduction of applicable fees, refunds, holds, or adjustments."
       ]
     },
     {
       "t": "p",
-      "md": "Initiation of a payment process, payment instrument check, or temporary marking of dates alone does not mean that the Reservation is finally confirmed. Lessor acceptance alone may also mean only an interim status in which payment is still being processed. A Reservation is considered finally confirmed and paid only when the Lessor accepts it and payment is successfully captured. If a different payment confirmation method applies in a specific case, it is clearly stated in the App before payment."
+      "md": "“Naudokis” may charge fees payable by the Lessor or Renter, Security Deposit processing fees, delivery fees, or other fees clearly specified in the App. Amended fees apply only to future Bookings unless applicable law, payment-provider rules, or an express agreement between the parties requires otherwise."
     },
     {
       "t": "p",
-      "md": "The specific Lessor decision period, payment session duration, repeat payment attempt options, and Reservation price limits are shown in the App or payment flow."
+      "md": "A payout to the Lessor is initiated only when the Booking has been properly completed, the payment has finally settled, and there is no active dispute, payment dispute, refund, compliance, tax, moderation, account, or payout restriction. The actual time at which the payout is received depends on Stripe, banks, payment networks, compliance checks, disputes, and technical processes."
     },
     {
       "t": "p",
-      "md": "If the Lessor does not accept or reject the request within the indicated period, or if payment is not confirmed within the indicated time, the Reservation request may expire automatically. The initiated payment process is then cancelled, not completed, or expires according to payment-provider rules."
+      "md": "To the extent reasonably necessary to implement these Terms, Stripe’s rules, and applicable law, “Naudokis” may, through Stripe, initiate or administer a hold, deferral, set-off, cancellation, adjustment, refund, or transfer of a payment or payout. Such actions may be taken because of a refund, dispute, payment dispute, payment error, allocation of the Security Deposit, fraud prevention, tax, compliance, or another lawful basis."
     },
     {
       "t": "p",
-      "md": "Naudokis has the right to change applicable Reservation time limits, payment session duration, retry rules, and transaction limits, but such changes usually apply only to future Reservations and are indicated in the App before the Renter confirms payment."
-    },
-    {
-      "t": "p",
-      "md": "Before confirming submission of a Reservation request and payment authorization, the Renter may review and correct entered data in the App Reservation and payment flow. This may include dates, pickup or delivery method, and amounts."
-    },
-    {
-      "t": "p",
-      "md": "The Reservation request is submitted only after clicking a button clearly stating that clicking it creates an obligation to pay. Naudokis retains records of concluded Reservations and legal-document acceptance, and the User may access them through the App or support channel, as described in the Privacy Policy."
+      "md": "If the information displayed on the payment or Booking screen for a particular Booking differs from general help text, the information shown on that screen before confirmation applies to that Booking, provided that it does not conflict with these Terms or mandatorily applicable law."
     },
     {
       "t": "h2",
-      "id": "10-payments-fees-and-stripe",
-      "text": "10. Payments, fees, and Stripe"
-    },
-    {
-      "t": "callout",
-      "md": "Payments are made through Stripe. Before payment, the App must clearly show the price, applicable fees, Deposit, refund and cancellation terms, and other essential information."
+      "id": "7-security-deposits-damage-and-disputes",
+      "text": "7. Security Deposits, damage, and disputes"
     },
     {
       "t": "p",
-      "md": "Naudokis itself does not provide regulated payment services and is not a bank, credit institution, or electronic money institution. Regulated payment services are provided by Stripe and other payment participants."
+      "md": "The Security Deposit assists in administering substantiated claims concerning damage to or loss of the item, delay, missing accessories, abnormal wear and tear, improper use, or another breach of the Booking. The Security Deposit is not insurance, a guarantee, a limit of the Renter’s liability, a bank escrow account, a client-funds account, or an interest-bearing account."
+    },
+    {
+      "t": "table",
+      "head": [
+        "Question",
+        "Rule"
+      ],
+      "rows": [
+        [
+          "When is the Security Deposit captured?",
+          "Generally together with the Booking payment after the Lessor accepts the request, unless the payment screen states otherwise."
+        ],
+        [
+          "When is the Security Deposit refunded?",
+          "After the Booking ends, if no substantiated claim has been submitted within the specified period and there is no other lawful basis for a hold."
+        ],
+        [
+          "When may the Security Deposit be held?",
+          "When a substantiated claim is submitted concerning damage, loss, delay, missing accessories, or another breach."
+        ],
+        [
+          "Does the Security Deposit limit the Renter’s liability?",
+          "No. A substantiated claim may exceed the Security Deposit where permitted by applicable law and supported by evidence."
+        ]
+      ]
     },
     {
       "t": "p",
-      "md": "As the Platform operator, Naudokis may administer the Renter's payment, Platform fees, Deposits, refunds, payment Disputes, payout holds, and transfer of amounts due to the Lessor according to these Terms, the rules provided in the App, Stripe rules, and applicable law."
+      "md": "A Lessor’s request to use the Security Deposit must be supported by evidence. Appropriate evidence may include handover and return photographs or videos, the Digital Handover Record, an accessory list, messages, a repair, cleaning, or replacement estimate, purchase documents, evidence of market value, evidence of delay, documents issued by authorities, and other objective information."
     },
     {
       "t": "p",
-      "md": "Additional Stripe Connect, identity, business, tax, VAT, DAC7, invoicing, and payout requirements may apply to Lessors, Business Users, and Traders where required by the transaction type, Platform functions, or legislation."
+      "md": "Unless the App states otherwise for a particular Booking, the Lessor must submit the claim and initial evidence within 24 hours after the confirmed return of the item. If the return has not been confirmed, the period is calculated from the scheduled return time. The Renter is generally given 7 calendar days to respond and submit their evidence, unless the App or support communication states otherwise."
     },
     {
       "t": "p",
-      "md": "Detailed payment, fee, payout, Stripe, VAT, VIES, DAC7, and invoice rules are provided in the [Payments, Fees, and Stripe Rules](doc:payments-fees)."
-    },
-    {
-      "t": "h2",
-      "id": "11-deposits",
-      "text": "11. Deposits"
-    },
-    {
-      "t": "callout",
-      "md": "The Deposit is a refundable amount stated in the App before payment confirmation that may be used to cover substantiated claims for damage, loss, delay, improper use, or other cases provided in the Terms."
+      "md": "Special time limits and evidence requirements may be established in advance for certain situations or categories. These may include latent technical defects, theft, failure to return an item, high-value items, or restricted categories. In such cases, photographs, serial numbers, accessory lists, additional documents, or administrator review may be required. If the App expressly states that handover or return photographs are mandatory, failure to provide them may make it more difficult to assess, or may limit the assessment of, a claim."
     },
     {
       "t": "p",
-      "md": "The Deposit is not insurance, a guarantee, escrow, or the maximum limit of the Renter's liability. If there is no substantiated claim, Naudokis initiates the Deposit refund without undue delay after rental completion; the time for funds to return additionally depends on payment-provider, bank, and card-network timeframes. If a substantiated claim arises, the Deposit may be temporarily held, partially refunded, or used to cover the substantiated claim."
+      "md": "When assessing a dispute, “Naudokis” considers the Booking data, Listing description, age, condition, and market value of the item, depreciation, handover and return times, photographs, messages, instructions, defects disclosed in advance, repair or replacement costs, proportionality, Stripe’s rules, and applicable law."
     },
     {
       "t": "p",
-      "md": "Detailed Deposit, damage, loss, evidence, and Dispute rules are provided in the [Deposit, Damage, Loss, and Dispute Rules](doc:deposits-damage-disputes)."
-    },
-    {
-      "t": "h2",
-      "id": "12-cancellations-refunds-and-the-right-of-withdrawal",
-      "text": "12. Cancellations, refunds, and the right of withdrawal"
-    },
-    {
-      "t": "callout",
-      "md": "Cancellation, refund, and right of withdrawal rules depend on the transaction type, Lessor status, Reservation status, Consumer law, and the terms of the specific Reservation shown in the App."
-    },
-    {
-      "t": "p",
-      "md": "Different rules may apply to P2P, B2C / B2P, and B2B transactions. Where the Renter is a Consumer and the Lessor acts as a Trader, mandatory Consumer rights always prevail over App or Listing terms."
-    },
-    {
-      "t": "p",
-      "md": "Before a Reservation request is submitted, the App must show the cancellation policy, refund rules, Deposit, fees, and other essential information."
-    },
-    {
-      "t": "p",
-      "md": "Detailed cancellation, refund, and right of withdrawal rules are provided in the [Cancellation, Refund, and Right of Withdrawal Rules](doc:cancellations-refunds)."
-    },
-    {
-      "t": "h2",
-      "id": "13-handover-return-damage-and-disputes",
-      "text": "13. Handover, return, damage, and Disputes"
-    },
-    {
-      "t": "callout",
-      "md": "The Lessor and Renter must cooperate in handing over and returning the item, record condition, follow the steps provided in the App, and submit evidence if a Dispute arises."
-    },
-    {
-      "t": "p",
-      "md": "The item must be handed over and returned at the agreed time, place, or method, with agreed accessories and in a condition that corresponds to the Listing, ordinary wear, and the terms of the specific Reservation. In the event of damage, loss, late return, or improper use, Naudokis may administer the evidence, temporary hold, Deposit, money refund, payout, or other payment adjustment process."
-    },
-    {
-      "t": "p",
-      "md": "The internal Naudokis Dispute process does not remove the User's right to contact the payment provider, competent authorities, or court."
-    },
-    {
-      "t": "p",
-      "md": "Detailed handover, return, damage, loss, evidence, and Dispute rules are provided in the [Deposit, Damage, Loss, and Dispute Rules](doc:deposits-damage-disputes)."
-    },
-    {
-      "t": "h2",
-      "id": "14-reviews-and-ratings",
-      "text": "14. Reviews and ratings"
-    },
-    {
-      "t": "p",
-      "md": "After an eligible Reservation, Users may leave a review and rating if permitted by the App. The opportunity to leave a review becomes available to the parties after Reservation completion (usually after the rental end date or after a reference point set by a Naudokis administrator, for example Dispute closure). Reviews must be truthful, related to the specific rental experience, substantiated, and not misleading."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis has the right to use a double-blind review model: reviews usually become visible only when both parties leave a review or the review submission period expires. Unless the App states otherwise, the review submission period is 14 days."
-    },
-    {
-      "t": "p",
-      "md": "In implementing consumer-protection requirements on the authenticity of reviews (Directive (EU) 2019/2161 amending, among others, Directive 2005/29/EC), Naudokis informs that only the parties to a Reservation who completed the Reservation through the Platform under the established procedure may leave a review. This restriction ensures that displayed reviews are based on an actual rental experience."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis does not tolerate paid or incentive-secured reviews and applies reasonable technical, operational, and moderation measures to detect violations. This includes checking the right to leave a review against a completed Reservation."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis has the right to reject, hide, remove, moderate, or restrict reviews that are fake, offensive, discriminatory, retaliatory, unrelated, illegal, spam, misleading, privacy-infringing, violate other persons' rights, or are related to an open Dispute, fraud review, security incident, or rule breach."
-    },
-    {
-      "t": "p",
-      "md": "Manipulation of reviews, ratings, or reputation signals is prohibited, including fictitious Reservations, self-review, pressure on the other party, remuneration for reviews, or retaliatory reviews."
-    },
-    {
-      "t": "h2",
-      "id": "15-business-users-transparency-and-search",
-      "text": "15. Business Users, transparency, and search"
-    },
-    {
-      "t": "callout",
-      "md": "Additional identity, representation, Consumer information, VAT, VIES, DAC7, invoicing, Stripe, and payout requirements may apply to Business Users, Business Lessors, Business Renters, and Traders."
-    },
-    {
-      "t": "p",
-      "md": "A Business User is responsible for ensuring that its business, tax, representation, Consumer information, and Listing information is accurate, current, and not misleading. Where a Lessor is considered a Trader within the meaning of consumer law, additional duties toward Consumers may apply."
-    },
-    {
-      "t": "p",
-      "md": "Visibility of Listings, search, or recommendations on the Platform may depend on price, location, availability, category, ratings, response speed, compliance, safety, quality, and other criteria significant to Platform operation."
-    },
-    {
-      "t": "p",
-      "md": "Detailed Business User, Trader, B2B, VAT, VIES, DAC7, invoice, transparency, and complaint rules are provided in the Business Users, Traders, and B2B Rules."
-    },
-    {
-      "t": "h2",
-      "id": "16-user-content-prohibited-conduct-and-safety",
-      "text": "16. User Content, prohibited conduct, and safety"
-    },
-    {
-      "t": "callout",
-      "md": "Illegal, misleading, dangerous, rights-infringing Content or Content that bypasses Platform rules may not be uploaded to the Platform."
-    },
-    {
-      "t": "h3",
-      "text": "User Content and licence"
-    },
-    {
-      "t": "p",
-      "md": "You are responsible for Content you submit through the Platform, including Listings, photographs, descriptions, messages, support requests, evidence, notices, reviews, profile information, and business information."
-    },
-    {
-      "t": "p",
-      "md": "By submitting Content, you confirm that you have all necessary rights to submit it and that the Content does not violate legislation, third-party rights, privacy, confidentiality, intellectual property, consumer protection, product safety, or these Terms."
-    },
-    {
-      "t": "p",
-      "md": "You grant Naudokis a non-exclusive, worldwide, royalty-free, transferable, and sublicensable licence to host, store, copy, display, transmit, adapt, format, translate, moderate, and otherwise use your Content to the extent reasonably necessary to operate, provide, protect, develop, support, promote the Platform itself, and enforce these Terms."
-    },
-    {
-      "t": "p",
-      "md": "We may use publicly visible Listing Content for Platform operation, Listing display, search, Listing sharing, and Platform visibility. If we wanted to use your Content in separate advertising campaigns outside ordinary Platform operation, we would do so only where we have an appropriate legal basis or your consent, if required."
-    },
-    {
-      "t": "p",
-      "md": "You may not submit illegal, misleading, rights-infringing, confidential, private, offensive, discriminatory, dangerous, malicious, or otherwise impermissible Content."
-    },
-    {
-      "t": "h3",
-      "text": "Naudokis intellectual property"
-    },
-    {
-      "t": "p",
-      "md": "The Platform, including the App, its software code, design, user interface, logos, trademarks, the name \"Naudokis\", databases, structure, and other Content created by Naudokis or its licensors, is the property of Naudokis or the relevant rights holders and is protected by intellectual property rights. This does not apply to Content submitted by Users."
-    },
-    {
-      "t": "p",
-      "md": "These Terms do not grant you any rights to Naudokis intellectual property, except for a limited, non-exclusive, revocable, and non-transferable right to use the Platform according to these Terms."
-    },
-    {
-      "t": "p",
-      "md": "You may not copy, reproduce, modify, distribute, publicly display, decompile, perform reverse engineering, or create derivative works from the Platform or its parts, or use Naudokis trademarks, name, or logos without prior written consent from Naudokis, except where expressly permitted by applicable law."
-    },
-    {
-      "t": "p",
-      "md": "Copyright, trademark, design, trade secret, or other intellectual property rights infringements may be reported by email at **info@naudokis.lt** or through the App reporting function where available."
-    },
-    {
-      "t": "p",
-      "md": "The notice should indicate the identity of the rights holder, the protected object, the contested Content or Listing, the legal basis for infringement, contact details, and confirmation that the information in the notice is accurate and complete."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis has the right to remove or restrict the contested Content, request additional information, give the affected User an opportunity to respond, restore Content if the notice is unfounded, and apply measures to repeated infringers to the extent permitted by applicable law."
-    },
-    {
-      "t": "h3",
-      "text": "Prohibited conduct"
-    },
-    {
-      "t": "p",
-      "md": "When using the Platform, you may not:"
+      "md": "Depending on the circumstances, “Naudokis” may:"
     },
     {
       "t": "ul",
       "items": [
-        "use the Platform for fraud, deception, money laundering, illegal activity, harassment, threats, discrimination, or unsafe conduct;",
-        "bypass Platform payment, Deposit, Reservation, Dispute, or communication processes where Platform rules require use of the Platform;",
-        "share telephone numbers, email addresses, social-network accounts, payment data, or other contact information where prohibited or restricted for safety, Dispute, payment, or Platform integrity reasons;",
-        "use the Platform, Listings, payments, delivery, or payouts to bypass sanctions, export controls, anti-money laundering requirements, prohibited jurisdictions, prohibited persons, or payment-provider restrictions;",
-        "create fake accounts, impersonate other persons, manipulate reviews, abuse referrals, avoid verification, or create fictitious Reservations;",
-        "rent your own item or otherwise manipulate payments, rewards, search, statistics, ratings, or reviews;",
-        "collect data, copy, scrape automatically, reverse engineer, disrupt, overload, attack, or otherwise misuse the Platform;",
-        "submit false identity, tax, business, payment, notice, Dispute, or evidence information;",
-        "violate legislation, third-party rights, payment-provider rules, these Terms, or rules provided in the App."
+        "refund all or part of the Security Deposit;",
+        "use all or part of the Security Deposit to satisfy a substantiated claim;",
+        "temporarily hold the Security Deposit or payout through the payment process;",
+        "initiate a payment adjustment;",
+        "request additional information;",
+        "reject an insufficiently substantiated claim;",
+        "recommend that the parties apply to a competent authority or court."
       ]
     },
     {
       "t": "p",
-      "md": "If a User attempts to bypass Platform payment, Deposit, Reservation, Dispute, or communication processes, Naudokis has the right to take proportionate action to the extent permitted by applicable law."
-    },
-    {
-      "t": "p",
-      "md": "Such actions may include account restriction, cancellation of related Reservations, payout holds, refusal to provide Platform Dispute assistance, or non-application of support, reputation, or payment administration measures provided in the App. This provision does not limit mandatory Consumer rights or the right to contact competent authorities."
+      "md": "If the item is not returned, is concealed, sold, pledged, transferred to a third party, left somewhere other than the agreed location, or there are indications that it has been lost, stolen, or misappropriated, both parties must immediately cooperate with “Naudokis”, provide the evidence available to them, and, where required, contact the police or another competent authority."
     },
     {
       "t": "h3",
-      "text": "Safety"
+      "text": "Late fee"
     },
     {
       "t": "p",
-      "md": "Users are responsible for safe pickup, delivery, use, storage, and return of the item. Items must be used only for their intended purpose, in compliance with legislation, manufacturer instructions, safety requirements, and the terms stated in the Listing."
+      "md": "If the item is not returned by the deadline specified in the Booking, the Renter may be charged, for each commenced 24-hour period of delay, a fee equal to two days’ rental price for that Booking (**2 × daily price**)."
     },
     {
       "t": "p",
-      "md": "Lessors must disclose known safety restrictions, defects, and usage instructions. Renters must assess whether they have the necessary knowledge, skills, permits, or equipment to use the item safely and lawfully."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis has the right to provide safety recommendations and apply moderation measures, but does not physically inspect every item, User, location, handover, or delivery."
-    },
-    {
-      "t": "h2",
-      "id": "17-moderation-dsa-ai-and-account-restrictions",
-      "text": "17. Moderation, DSA, AI, and account restrictions"
-    },
-    {
-      "t": "callout",
-      "md": "Naudokis may moderate Content, Listings, accounts, payments, payouts, and Platform functions where there is a risk relating to law, safety, fraud, misleading Consumers, product safety, or breach of these Terms."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis accepts notices of potentially illegal Content or inappropriate Listings, assesses them, applies proportionate measures, provides decision explanations, and enables complaints about moderation decisions according to applicable law and the Moderation, Complaints, and DSA Rules. If automated or AI tools are used, they must be used according to these Terms, the Privacy Policy, and applicable law."
-    },
-    {
-      "t": "p",
-      "md": "Accounts, Listings, payments, or payouts may be restricted, suspended, or terminated if the Terms are breached, fraud or security risk arises, identity verification fails, or another justified legal, payment, tax, or compliance risk arises."
-    },
-    {
-      "t": "p",
-      "md": "Detailed rules on moderation, notices, complaints, DSA, automated tools, and account restrictions are provided in the Moderation, Complaints, and DSA Rules."
-    },
-    {
-      "t": "h2",
-      "id": "18-complaints-and-consumer-rights",
-      "text": "18. Complaints and Consumer rights"
-    },
-    {
-      "t": "h3",
-      "text": "Consumer complaints and 14-calendar-day response process"
-    },
-    {
-      "t": "p",
-      "md": "This section applies separately from Digital Services Act Content moderation complaints. Consumer complaints concerning the rental service, Trader information, payments, Deposits, refunds, cancellation, damage, item safety, non-handover of an item, improperly provided service, or other Consumer rights matters are handled under this section, Section 21, and applicable consumer protection law."
-    },
-    {
-      "t": "p",
-      "md": "A Consumer may submit a complaint through the App support functions or by email at **info@naudokis.lt**. The complaint should state the Reservation, Listing, or payment, the substance of the complaint, the desired solution, and available evidence. Naudokis has the right to request additional information if objectively needed to review the complaint."
-    },
-    {
-      "t": "p",
-      "md": "Where the complaint is submitted to Naudokis or through a Naudokis interface to a Trader and Lithuanian Consumer complaint-handling rules apply to the complaint, Naudokis or the relevant Trader must provide a reasoned response no later than within **14 calendar days** from the date of receipt of the complaint."
-    },
-    {
-      "t": "p",
-      "md": "A different period may apply only where provided by mandatory law. If information is objectively missing for complaint review, Naudokis or the Trader requests it within the same period and provides a reasoned response about the progress of the complaint review."
-    },
-    {
-      "t": "p",
-      "md": "The response usually states whether the complaint is accepted, rejected, or partially accepted, the main reasons, the proposed solution, and information about further remedy options."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis has the right to act as Platform operator and support process administrator, but this does not in itself mean that Naudokis becomes a party to the Rental Transaction or a Trader in the specific Rental Transaction if, under these Terms and the information provided in the App, the transaction party is the Lessor."
-    },
-    {
-      "t": "p",
-      "md": "This provision does not limit mandatory Naudokis obligations under consumer protection, data protection, payment, digital services, or other applicable legislation."
-    },
-    {
-      "t": "p",
-      "md": "Where Naudokis is not the Trader or party to the relevant Rental Transaction, Naudokis has the right to forward the complaint to the relevant Lessor or Trader or coordinate its handling so that the consumer receives a reasoned response within the applicable period."
-    },
-    {
-      "t": "p",
-      "md": "If the consumer disagrees with the response or the response is not provided within the applicable period, the consumer may contact the State Consumer Rights Protection Authority, the State Data Protection Inspectorate, the payment provider, another competent authority, or court where permitted by applicable law."
-    },
-    {
-      "t": "h3",
-      "text": "Consumer rights"
-    },
-    {
-      "t": "p",
-      "md": "If you use the Platform as a Consumer, mandatory consumer protection rights under the law of the Republic of Lithuania, the European Union, or your place of residence may apply to you."
-    },
-    {
-      "t": "p",
-      "md": "If you use the Platform as a Business Lessor or Business Renter for business or professional purposes, the relevant Rental Transaction may be considered a non-Consumer transaction. In such case, consumer protection rights usually do not apply to that transaction unless mandatory law provides otherwise."
-    },
-    {
-      "t": "p",
-      "md": "These Terms do not remove or limit rights that cannot be waived by contract, including rights related to misleading information, unfair terms, improper service provision, Trader duties, safety, damages, or dispute-resolution measures provided by legislation."
-    },
-    {
-      "t": "p",
-      "md": "Where a Rental Transaction is concluded between a Consumer and a Trader, the Trader is responsible for Consumer information, contract performance, guarantees, refunds, complaints, fair commercial practice, and other duties applicable to the Trader. Naudokis has the right to provide Platform tools and support, but this does not in itself mean that Naudokis assumes the Trader's statutory duties unless mandatory law provides otherwise."
-    },
-    {
-      "t": "p",
-      "md": "Where a Rental Transaction is concluded between a Business Lessor and a Business Renter, the parties are themselves responsible for their commercial arrangements, accounting, VAT, internal purchase approvals, permits, insurance, and other business obligations applicable to them. Naudokis has the right to provide Platform tools to administer such B2B transaction, but does not provide tax, legal, or accounting advice."
-    },
-    {
-      "t": "p",
-      "md": "Where a Business Renter rents from a private Lessor, such transaction is usually not considered a Consumer transaction in relation to the Business Renter. The Business Renter must assess whether such rental is suitable for its business, accounting, purchasing, VAT, insurance, and internal-control needs."
-    },
-    {
-      "t": "h2",
-      "id": "19-liability-insurance-and-product-safety",
-      "text": "19. Liability, insurance, and product safety"
-    },
-    {
-      "t": "callout",
-      "md": "Naudokis itself does not provide item, damage, theft, loss, or civil-liability insurance unless the App clearly states otherwise."
-    },
-    {
-      "t": "h3",
-      "text": "Insurance"
-    },
-    {
-      "t": "p",
-      "md": "Naudokis does not provide or intermediate insurance coverage for items, Lessors, Renters, damage, theft, loss, personal injury, delivery, lost income, or other losses, unless a specific App function clearly states otherwise. If a separate insurance, guarantee, or compensation protection is clearly implemented in the App, the terms of that function or a separate written agreement apply to it."
-    },
-    {
-      "t": "p",
-      "md": "Lessors and Renters are themselves responsible for assessing whether they need insurance and whether their existing insurance products cover rental activity through the Platform."
-    },
-    {
-      "t": "p",
-      "md": "No words used by Naudokis, such as \"safety\", \"verification\", \"trust\", \"Deposit\", \"Dispute handling\", or similar descriptions, may be interpreted as providing insurance, a guarantee, a compensation fund, or a Naudokis promise to compensate damage, unless this is clearly and separately stated in the App or a written agreement."
-    },
-    {
-      "t": "h3",
-      "text": "Product safety and liability"
-    },
-    {
-      "t": "p",
-      "md": "Lessors must ensure that rented items are safe to use for their intended purpose, comply with applicable product safety legislation (including the Law of the Republic of Lithuania on Product Safety, Regulation (EU) 2023/988 on General Product Safety, and other applicable EU product safety regulations), and are accompanied by necessary usage instructions, warnings, safety accessories, or required personal protective equipment."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis usually acts as an online platform intermediary and is not the manufacturer, importer, distributor, or seller of rented items, unless mandatory law determines otherwise in a specific case. Naudokis does not limit liability that cannot be limited under applicable product safety, consumer protection, or product liability law."
-    },
-    {
-      "t": "p",
-      "md": "Users may report unsafe, dangerous, recalled, non-compliant, counterfeit, or improperly labelled items through the App reporting functions or by email at **info@naudokis.lt**."
-    },
-    {
-      "t": "p",
-      "md": "When Naudokis receives a substantiated notice about an item that is unsafe, recalled, illegal, or dangerous to Consumers, Naudokis has the right to:"
+      "md": "The following rules apply:"
     },
     {
       "t": "ul",
       "items": [
-        "remove or restrict the Listing;",
-        "suspend related Reservations;",
-        "inform affected Users;",
-        "suspend the Lessor's account or relevant functions;",
-        "request additional information or evidence;",
-        "transfer information to competent market surveillance or other authorities;",
-        "take other measures under applicable product safety, consumer protection, or other law."
+        "the first period of delay begins immediately after the return deadline expires;",
+        "no additional free 24-hour period applies;",
+        "the formula and maximum fee applicable to the specific Booking are displayed in the App before payment is confirmed and recorded when the Booking is concluded;",
+        "the total late fee may not exceed the lower of the following amounts: seven days’ rental price for that Booking or the item’s replacement value specified in the Listing at the time of the Booking;",
+        "if no positive replacement value is specified, the limit of seven days’ rental price applies;",
+        "because of this limit, the final fee may be lower than the amount obtained by multiplying 2 × the daily price by all commenced periods of delay;",
+        "the fee is calculated until the first properly recorded act of returning the item or, if there is no such record, until completion of the Booking."
       ]
     },
     {
       "t": "p",
-      "md": "Naudokis cooperates with competent product safety authorities, performs actions provided by legislation concerning notices of unsafe items, and may remove, pause, or restrict Listings related to recalled, warned, counterfeit, or unsafe items."
-    },
-    {
-      "t": "p",
-      "md": "Notices about unsafe items may be handled both as notices of potentially illegal Content under the Digital Services Act and as product safety notices, depending on the circumstances."
-    },
-    {
-      "t": "p",
-      "md": "If Naudokis becomes aware that an item already reserved or used by a Consumer may be illegal or create a serious safety risk, Naudokis, to the extent permitted or required by law, has the right to inform affected Users through the App, by email, or another available contact channel."
-    },
-    {
-      "t": "p",
-      "md": "Such notice may provide the main known safety information, a recommendation to stop use, return or Dispute process instructions, and, where applicable, information about the Lessor or Trader and possible Consumer remedies."
-    },
-    {
-      "t": "p",
-      "md": "If the Renter learns that a rented item is unsafe, may cause harm to health or property, or has safety defects identified by the manufacturer, the Renter must immediately stop use and notify the Lessor and Naudokis through the App support functions or by email at **info@naudokis.lt**. In the event of a Dispute or damage, provisions of the Civil Code of the Republic of Lithuania and applicable consumer protection law may apply."
-    },
-    {
-      "t": "h3",
-      "text": "Disclaimers"
-    },
-    {
-      "t": "p",
-      "md": "To the extent permitted by applicable law, the Platform is provided on an \"as is\" and \"as available\" basis. Naudokis does not guarantee that Listings, Users, items, prices, availability, locations, reviews, AI outputs, support responses, handovers, returns, payments, payouts, or Dispute outcomes will always be accurate, complete, safe, lawful, uninterrupted, or error-free."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis is not liable for the accuracy of Content submitted by Users, the conduct of a Lessor or Renter, the actual condition of an item, arrangements between Users outside the Platform, or third-party services, except to the extent such liability cannot be limited under applicable law."
-    },
-    {
-      "t": "p",
-      "md": "Nothing in these Terms limits or excludes liability that cannot be limited under mandatory law, including liability for intent, gross negligence, harm to life or health, breaches of Consumer rights, or other cases where limitation of liability is prohibited."
-    },
-    {
-      "t": "h3",
-      "text": "Limitation of liability"
-    },
-    {
-      "t": "p",
-      "md": "In relation to Consumers, Naudokis liability is limited only to the extent permitted by mandatory consumer protection and other applicable law. These Terms do not limit Consumers' rights to require remedies mandatorily granted to them by law."
-    },
-    {
-      "t": "p",
-      "md": "In relation to Business Users and other non-Consumers, to the extent permitted by law, Naudokis is not liable for indirect losses, including lost profit, lost income, data loss, reputational harm, or business interruption."
-    },
-    {
-      "t": "p",
-      "md": "To the extent permitted by law, in relation to Business Users and other non-Consumers, total Naudokis liability arising from or related to the Platform is limited to the Platform fees paid by the relevant User to Naudokis during the 12 months before the event giving rise to the claim, unless mandatory law requires otherwise."
-    },
-    {
-      "t": "h3",
-      "text": "Indemnification"
-    },
-    {
-      "t": "p",
-      "md": "To the extent permitted by applicable law, you agree to indemnify Naudokis, its managers, employees, service providers, and related persons for losses, damage, fines, and expenses (including reasonable legal expenses) arising from third-party claims related to your Listings, Rental Transactions, Content, tax or business obligations, misuse of the Platform, breach of these Terms, violation of legislation, or violation of third-party rights."
-    },
-    {
-      "t": "p",
-      "md": "For Consumers, this provision applies only to the extent permitted by mandatory consumer protection and other applicable law."
+      "md": "A decision by “Naudokis” concerning the Security Deposit or late fee is not an arbitral award and does not remove the right to challenge the claim under the procedure established by the payment provider, a competent authority, or a court."
     },
     {
       "t": "h2",
-      "id": "20-communication-and-privacy",
-      "text": "20. Communication and privacy"
-    },
-    {
-      "t": "h3",
-      "text": "Communication and notices"
+      "id": "8-handover-return-and-completion-of-the-booking",
+      "text": "8. Handover, return, and completion of the Booking"
     },
     {
       "t": "p",
-      "md": "Naudokis has the right to send you emails, SMS, push notifications, in-App notices, and support messages about account security, verification, Reservations, payments, refunds, payouts, Disputes, handover, return, compliance, taxes, legislation or Terms changes, account deletion, data export, reviews, referrals, and support."
+      "md": "On handover and return of the item, the parties are advised—and, where specified as mandatory in the App, required—to inspect the item, its accessories, condition, defects, serial numbers, instructions, and the time and place of handover. The parties should also take photographs or video and record any discrepancies identified in the App or messages."
     },
     {
       "t": "p",
-      "md": "Some notices are necessary for Platform operation, security, legal compliance, payments, or Reservations and therefore may not be capable of being fully disabled. Optional marketing, news, or promotional communications are managed as follows:"
+      "md": "During the rental period, the Renter must use the item lawfully, safely, carefully, and only for the purpose stated in the Listing or instructions. Any incident, malfunction, damage, loss, theft, or anticipated delay must be reported immediately."
+    },
+    {
+      "t": "p",
+      "md": "The item must be returned at the agreed time and place, with all accessories, and in the condition in which it was handed over, allowing for ordinary wear and tear inherent in rental use."
+    },
+    {
+      "t": "p",
+      "md": "For the purposes of the Platform process, a Booking is regarded as completed when:"
     },
     {
       "t": "ul",
       "items": [
-        "in emails - by clicking the \"unsubscribe\" link at the bottom of the email or changing notification settings in the App;",
-        "in App push notifications - in device operating system settings or the App notification section;",
-        "in all other cases - by contacting support by email at **info@naudokis.lt**."
+        "the rental period has ended;",
+        "the item has been returned or is reasonably regarded as having been returned;",
+        "there is no active substantiated claim or payment dispute;",
+        "the refund of the Security Deposit and the Lessor’s payout can be initiated."
       ]
     },
     {
-      "t": "h3",
-      "text": "Privacy"
-    },
-    {
       "t": "p",
-      "md": "Naudokis processes Personal Data as described in the Naudokis Privacy Policy, which is an integral part of the relationship between Naudokis and Users. By using the Platform, you understand that Platform operation requires sharing certain information with the other Rental Transaction party, payment and other service providers, support and administration staff, authorities, or other recipients in the cases stated in the Privacy Policy."
+      "md": "Return may be confirmed after both parties complete the relevant actions in the App. If one party marks the item as returned and the other does not submit a substantiated claim or a confirmation to the contrary within the period specified in the App, the Booking may be completed automatically. Unless the App states otherwise for the particular Booking, this waiting period is 3 calendar days."
     },
     {
       "t": "h2",
-      "id": "21-changes-termination-and-applicable-law",
-      "text": "21. Changes, termination, and applicable law"
+      "id": "9-cancellations-refunds-and-the-consumer-s-right-of-withdrawal",
+      "text": "9. Cancellations, refunds, and the consumer’s right of withdrawal"
+    },
+    {
+      "t": "p",
+      "md": "The rules concerning cancellation, refund of amounts paid, and the consumer’s right of withdrawal depend on the type of transaction, the status of the parties, the rental dates, the nature of the item, commencement of performance of the service, the cancellation policy displayed in the App, and mandatorily applicable law. The cancellation policy stated in the App applies only to the extent that it does not conflict with mandatory consumer rights."
+    },
+    {
+      "t": "table",
+      "head": [
+        "Situation",
+        "General principle"
+      ],
+      "rows": [
+        [
+          "The Renter cancels before the Lessor accepts",
+          "The payment is generally not finally captured. The authorisation is released or the amount is refunded through Stripe’s process."
+        ],
+        [
+          "The Renter cancels after confirmation",
+          "The cancellation policy shown in the Listing and on the payment screen, together with mandatory law, applies."
+        ],
+        [
+          "The Lessor cancels before handover",
+          "A refund of the full amount paid is generally initiated to the Renter. The consequences displayed to the Lessor before confirmation of the Booking may apply."
+        ],
+        [
+          "The item is not handed over or, for reasons not attributable to the Renter, is unfit for use",
+          "Depending on the circumstances, the full amount or a proportionate part may be refunded."
+        ],
+        [
+          "The item is not returned on time",
+          "A late fee, a hold on the Security Deposit, compensation for substantiated additional losses, and account restrictions may apply."
+        ],
+        [
+          "Force majeure or safety circumstances",
+          "The matter is resolved proportionately, taking account of the circumstances, evidence, payment processes, and mandatory law."
+        ]
+      ]
+    },
+    {
+      "t": "p",
+      "md": "If the Renter cancels a confirmed Booking, the cancellation policy stated in the Listing applies. Unless the Listing states otherwise, the **Moderate** cancellation policy applies."
+    },
+    {
+      "t": "table",
+      "head": [
+        "Policy",
+        "Full refund of rental price",
+        "Partial refund of rental price",
+        "Rental price non-refundable"
+      ],
+      "rows": [
+        [
+          "**Flexible**",
+          "at least 24 hours before the rental starts",
+          "–",
+          "less than 24 hours before the rental starts"
+        ],
+        [
+          "**Moderate**",
+          "at least 5 calendar days before the rental starts",
+          "50 % when 1–4 calendar days remain",
+          "less than 1 day before the rental starts"
+        ],
+        [
+          "**Strict**",
+          "–",
+          "50 % at least 14 calendar days before the rental starts",
+          "less than 14 calendar days before the rental starts"
+        ]
+      ]
+    },
+    {
+      "t": "p",
+      "md": "The percentages in the table apply only to the rental price. Non-refundable fees clearly disclosed before payment are not refunded unless mandatory law requires a refund. If the Security Deposit has been captured, it is refunded to the Renter in full where the Booking is cancelled before handover of the item."
     },
     {
       "t": "h3",
-      "text": "Service changes and availability"
+      "text": "Consumer’s right to withdraw from a distance contract"
     },
     {
       "t": "p",
-      "md": "Naudokis has the right to change, improve, suspend, remove, or terminate Platform functions, limits, fees, categories, delivery methods, AI tools, verification providers, payment providers, analytics providers, support processes, or other parts of the Platform."
+      "md": "The right to withdraw from a distance contract within 14 days may apply only to a B2C Transaction where the Renter acts as a consumer and the Lessor acts as a Trader. This right generally does not apply to P2P and B2B Transactions."
     },
     {
       "t": "p",
-      "md": "We seek to ensure reliable Platform operation, but do not guarantee that the Platform will always operate uninterrupted, error-free, securely, or be available at a specific time. Platform operation may be affected by technical disruptions, maintenance, third-party services, payment providers, communication services, force majeure, or other circumstances beyond our control."
-    },
-    {
-      "t": "h3",
-      "text": "Changes to the Terms"
+      "md": "Applicable law provides exceptions to the right of withdrawal. They may be relevant, for example, to fully performed services where all prior-consent requirements have been satisfied, car rental, or certain leisure services provided on a specific date or during a specific period. An exception applies only where the particular Rental Transaction in fact satisfies the statutory conditions."
     },
     {
       "t": "p",
-      "md": "Naudokis has the right to update these Terms where the Platform, legislation, fees, payment or other service providers, Platform rules, security needs change, or where provisions need to be clarified."
+      "md": "Where the right of withdrawal applies, the Trader is responsible for properly informing the consumer and implementing that right. “Naudokis” may provide technical tools for submitting a notice and administering a payment refund, but does not thereby become a party to the Rental Transaction."
     },
     {
       "t": "p",
-      "md": "We will publish the updated Terms and, where needed, request acceptance in the App. We will notify Users of material changes having a significant effect on Users in the manner required by legislation."
+      "md": "The consumer may submit an unequivocal statement of withdrawal through App support, the withdrawal function in the App where available, or by email to **info@naudokis.lt**. Where required by law, the consumer is provided with confirmation on a durable medium."
     },
     {
       "t": "p",
-      "md": "Changes usually apply prospectively and do not change the terms of already confirmed Reservations, unless required by law, payment-provider requirements, safety, compliance, or fraud-prevention needs, or unless the parties agree otherwise."
+      "md": "If the consumer lawfully withdraws from the contract, refundable amounts are refunded without undue delay and no later than 14 calendar days after receipt of the notice of withdrawal, unless mandatory law establishes a different rule. If the consumer expressly requested that performance of the service begin during the withdrawal period, the consumer may be required to pay a proportionate amount for the part of the service actually provided before withdrawal."
     },
     {
       "t": "p",
-      "md": "Additional requirements for notice of changes to the Terms apply to Business Users under Regulation (EU) 2019/1150 on platform-to-business transparency."
-    },
-    {
-      "t": "p",
-      "md": "We notify Business Users of material changes to these Terms no later than **15 days** before they take effect. A longer period may apply if required for the relevant Business Users to adapt to the changes."
-    },
-    {
-      "t": "p",
-      "md": "A shorter notice period for Business Users may apply only where permitted by applicable law. This includes cases where the change is necessary because of a legal or regulatory obligation, to address an unforeseen and unavoidable security, fraud, cybersecurity, or technical risk, or where the Business User expressly waives the longer notice period if such waiver is permitted by law."
-    },
-    {
-      "t": "h3",
-      "text": "Applicable law and Dispute resolution"
-    },
-    {
-      "t": "p",
-      "md": "These Terms are governed by the law of the Republic of Lithuania, without prejudice to mandatory consumer protection provisions that may apply in your country of residence."
-    },
-    {
-      "t": "p",
-      "md": "We first encourage you to contact Naudokis support by email at **info@naudokis.lt** or through support functions available in the App. We will seek to resolve the matter through the Platform support or Dispute process."
-    },
-    {
-      "t": "p",
-      "md": "Consumers may have the right to contact the State Consumer Rights Protection Authority (SCRPA) or another competent consumer rights protection authority. SCRPA information is published at https://vvtat.lrv.lt/, and the Consumer Rights Information System (VTIS) is available at https://www.vtis.lt/."
-    },
-    {
-      "t": "p",
-      "md": "The European Commission Online Dispute Resolution platform has not operated since July 20, 2025, so Naudokis does not indicate it as an active complaints channel. Consumers may contact SCRPA directly through the VTIS system or, where applicable, a consumer dispute commission."
-    },
-    {
-      "t": "p",
-      "md": "**Accessibility.** If mandatory accessibility requirements apply to Naudokis services, Naudokis publishes or provides accessibility information in the App, on the website, or in another appropriate manner. You may report observed accessibility deficiencies by email at **info@naudokis.lt**."
-    },
-    {
-      "t": "p",
-      "md": "Disputes that cannot be resolved amicably are handled by the competent courts of the Republic of Lithuania, unless mandatory consumer protection or other applicable law gives you the right to apply to another forum."
+      "md": "The mere commencement of performance of the service does not in itself mean that the consumer loses an applicable right of withdrawal. Where no other statutory exception applies, the right may be lost in respect of a fully performed service only if the consumer expressly agreed in advance to commencement of performance, acknowledged that the right of withdrawal would be lost once the contract had been fully performed, and the other requirements of mandatory law were satisfied."
     },
     {
       "t": "h2",
-      "id": "22-general-provisions",
-      "text": "22. General provisions"
+      "id": "10-business-users-traders-and-taxes",
+      "text": "10. Business Users, Traders, and taxes"
     },
     {
       "t": "p",
-      "md": "**Severability.** If any provision of these Terms is recognized as invalid, unlawful, or unenforceable, this does not affect the validity of the remaining provisions. The invalid provision is, to the extent possible, interpreted or replaced by a valid provision that best corresponds to its original purpose, and all other provisions of the Terms remain in force."
+      "md": "If you use the Platform for business or professional purposes, additional identity, representation, consumer-information, VAT, VIES, DAC7, Stripe, invoicing, accounting, and payout requirements may apply to you."
     },
     {
       "t": "p",
-      "md": "**No waiver.** If Naudokis does not exercise a right provided in these Terms or legislation in any case or does not enforce it immediately, this is not considered a waiver of that or any other right and does not limit the ability to exercise it later."
+      "md": "Reportable activities under DAC7 include the rental of immovable property, personal services, the sale of goods, and the rental of any mode of transport. Ordinary rental of other movable items is not, in itself, a reportable activity under DAC7. Data may nevertheless be collected and processed to comply with other tax, accounting, or compliance obligations. These Terms do not constitute individual tax, accounting, VAT, DAC7, consumer-law, or other legal advice."
     },
     {
       "t": "p",
-      "md": "**Assignment of rights and obligations.** Naudokis has the right to assign or transfer its rights and obligations under these Terms to a third party, including in cases of reorganization, merger, business, or asset transfer, if such assignment does not materially reduce the User's rights under these Terms and applicable law."
+      "md": "A Business User must provide accurate and up-to-date information, including the legal or trading name, registration number, country, address, billing contacts, VAT status, publicly displayed business name, representation data, and other information required under applicable law, these Terms, the invoicing process, or payment-provider requirements."
     },
     {
       "t": "p",
-      "md": "The User may not assign its rights or obligations under these Terms without prior written consent from Naudokis, unless mandatory law grants such right."
+      "md": "The Lessor must correctly select the account, Trader, and tax status. If the Lessor acts for business or professional purposes, systematically offers items, seeks commercial gain, acts through a legal person or carries on individual business activity, or is to be regarded as a Trader under consumer law, the Lessor may not present themselves as a private individual."
     },
     {
       "t": "p",
-      "md": "**Entire agreement.** These Terms together with the Privacy Policy and Platform rules provided in the App and additional information related to a specific function constitute the entire agreement between you and Naudokis regarding use of the Platform. They replace previous agreements or statements concerning the same subject matter."
+      "md": "Where a Trader offers items to consumers, “Naudokis” may require and display on the Platform the information required by applicable law. This may include the Trader’s name or business name, contact details, registration number, register, VAT status, representation information, and confirmation that the items or services offered comply with applicable legal requirements."
     },
     {
       "t": "p",
-      "md": "This provision does not limit or remove mandatory Consumer rights or other rights that cannot be waived under applicable law. In the event of inconsistency, mandatory legal norms prevail."
+      "md": "Business Users and Traders are themselves responsible for applicable consumer-protection, product-safety, tax, VAT, invoicing, accounting, permit, insurance, advertising, transparency, and other legal obligations. “Naudokis” may verify submitted information through public registers, VIES, Stripe, identity-verification providers, documents, and other reasonable sources. If information is not provided, is inaccurate, or is no longer current, we may restrict Listings, acceptance of Bookings, payouts, or other functions."
+    },
+    {
+      "t": "p",
+      "md": "The Platform fee charged by “Naudokis” may be subject to VAT where required by law. The tax treatment of the rental price, the Lessor’s payout, amounts paid by the Renter, the Security Deposit, and VAT on the Platform fee depends on the status of the parties, the transaction and document type, and applicable tax rules."
+    },
+    {
+      "t": "p",
+      "md": "Where a particular activity is reportable under DAC7, “Naudokis” may collect, verify, retain for five years from the end of the reporting period, and provide mandatory information to the competent tax authority. Information may also be processed under other tax or compliance requirements."
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” may issue or assist in issuing receipts, invoices, credit documents, Platform-fee invoices, payout documents, and reports for Users. Documents may be provided electronically in the App and/or by email."
+    },
+    {
+      "t": "p",
+      "md": "Where this function applies, documents for paid Bookings may be issued through an invoicing process administered by “Naudokis” in the Lessor’s name (*self-billing*). A Lessor in whose name invoices are issued must accept the relevant agreement in advance and provide accurate tax information. The Lessor may not issue a duplicate invoice for the same Booking unless required by law or expressly agreed with “Naudokis”."
     },
     {
       "t": "h2",
-      "id": "23-additional-platform-rules",
-      "text": "23. Additional Platform rules"
+      "id": "11-reviews-search-and-visibility",
+      "text": "11. Reviews, search, and visibility"
     },
     {
       "t": "p",
-      "md": "These additional rules form part of these Terms where they are referenced in these Terms, the App, or a specific Reservation flow, and apply to the extent they relate to a specific Platform function, Reservation, Listing, User role, or Dispute:"
+      "md": "Reviews must reflect a genuine rental experience. A review may be left only by the parties to a Booking completed through the Platform. Unless the App states otherwise, a review may be submitted within 14 days after completion of the Booking. “Naudokis” may use a mutually hidden review model under which one party’s review is published only after the other party has submitted their review or the review-submission period has expired."
+    },
+    {
+      "t": "p",
+      "md": "False, manipulated, offensive, discriminatory, reviews based on blackmail, reviews unrelated to the Booking, reviews disclosing private information, or unlawful reviews are prohibited. We may remove or hide a review that breaches these Terms, applicable law, or moderation rules. Automated system entries, such as information concerning a cancelled Booking, may be displayed separately and clearly marked as system-generated."
+    },
+    {
+      "t": "p",
+      "md": "A User’s search query, selected category, location, price range, delivery method, and other available filters determine which Listings may be displayed in the website catalogue. Filters are applied before results are paginated."
+    },
+    {
+      "t": "p",
+      "md": "The principal ranking principles are:"
     },
     {
       "t": "ul",
       "items": [
-        "23.1. [Payments, Fees, and Stripe Rules](doc:payments-fees)",
-        "23.2. [Deposit, Damage, Loss, and Dispute Rules](doc:deposits-damage-disputes)",
-        "23.3. [Cancellation, Refund, and Right of Withdrawal Rules](doc:cancellations-refunds)",
-        "23.4. Business Users, Traders, and B2B Rules",
-        "23.5. Moderation, Complaints, and DSA Rules",
-        "23.6. Prohibited and Restricted Items Rules"
+        "**“Newest first” (default).** Listing creation time is the principal parameter.",
+        "**“Lowest price”.** Daily price is the principal parameter, in ascending order.",
+        "**“Highest price”.** Daily price is the principal parameter, in descending order.",
+        "**“Highest rated”.** The Listing’s average rating is the principal parameter, in descending order."
       ]
     },
     {
       "t": "p",
-      "md": "The App may provide shorter summaries of these rules, icons, tables, or confirmation screens. Such summaries help understand the rules, but do not replace these Terms or additional rules, unless the App clearly states that a special term applies to the specific Reservation."
+      "md": "The selected method is shown in the catalogue interface. Technical identifiers or other stable technical ordering may be used to resolve equal values and keep pagination consistent. No paid placement currently changes these catalogue positions. If paid advertising or paid visibility enhancement is introduced in the future, its effect on ranking will be clearly identified. “Naudokis” does not guarantee any particular position of a Listing in search results or any particular number of Bookings."
     },
     {
       "t": "h2",
-      "id": "24-contacts",
-      "text": "24. Contacts"
+      "id": "12-content-prohibited-conduct-and-moderation",
+      "text": "12. Content, prohibited conduct, and moderation"
+    },
+    {
+      "t": "p",
+      "md": "By submitting Content, you confirm that you have the right to submit it and that it does not infringe applicable law, third-party rights, privacy, intellectual property, safety requirements, or these Terms."
+    },
+    {
+      "t": "p",
+      "md": "Ownership of your Content is not transferred to “Naudokis”. However, you grant “Naudokis” a royalty-free, worldwide, non-exclusive licence to use, store, display, technically adapt, translate, copy, and distribute the Content to the extent and for as long as reasonably necessary to provide, promote, protect, moderate, and improve the Platform, perform analytics, resolve disputes, and comply with legal requirements."
+    },
+    {
+      "t": "p",
+      "md": "You must not:"
     },
     {
       "t": "ul",
       "items": [
-        "**Operator:** MB Naudokis",
-        "**Legal entity code:** 307423504",
-        "**Registered address:** Numėjos g. 6, LT-08402 Vilnius, Lithuania",
-        "**Support:** info@naudokis.lt",
-        "**Privacy:** info@naudokis.lt",
-        "**Product safety notices:** info@naudokis.lt",
-        "**DSA and platform moderation contact point:** info@naudokis.lt"
+        "use the Platform unlawfully, misleadingly, fraudulently, or unfairly;",
+        "circumvent Platform fees or the payment process;",
+        "create fake accounts;",
+        "manipulate reviews, search, or other Platform functions;",
+        "send spam or collect data by unauthorised means;",
+        "disrupt operation of the Platform or attempt to circumvent security measures;",
+        "submit false evidence;",
+        "threaten, discriminate against, harass, disclose private information about, or otherwise infringe the rights of other persons."
       ]
     },
     {
-      "t": "hr"
+      "t": "p",
+      "md": "“Naudokis” may review, reject, label, technically adapt, hide, remove, or otherwise restrict Content, a Listing, or an account where reasonably necessary under these Terms, applicable law, the Digital Services Act (DSA), consumer protection, product safety, payment-provider rules, fraud prevention, risk management, or security."
     },
     {
       "t": "p",
-      "md": "Previous versions of this document may be retained in the Naudokis internal archive. If you need information about a previous version, contact us by email at **info@naudokis.lt**."
+      "md": "Potentially unlawful Content, an unsafe item, misleading information, a Listing infringing the rights of others, fraud, abuse, or another issue may be reported through App support or by email to **info@naudokis.lt**."
+    },
+    {
+      "t": "p",
+      "md": "If we remove or restrict Content, a Listing, or an account, we provide, where applicable, the reason for the decision and information about the possibility of challenging it. This information may be withheld or limited where required by law, security, fraud prevention, an ongoing investigation, or payment-provider requirements."
+    },
+    {
+      "t": "p",
+      "md": "Where a decision materially restricts an account, Listing, payout, or access to core Platform functions, the User may request human review of the decision, except where such review is restricted by law, security or fraud-prevention needs, payment-provider requirements, or manifest abuse."
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” may use automated or artificial-intelligence-based tools for fraud prevention, security, moderation, search, recommendations, price or risk signals, support workflows, and administration. Where required by law, we provide additional information about the use of such tools. Automated and AI outputs are assistive and may be inaccurate."
+    },
+    {
+      "t": "h2",
+      "id": "13-complaints-consumer-rights-and-authorities",
+      "text": "13. Complaints, consumer rights, and authorities"
+    },
+    {
+      "t": "p",
+      "md": "For a problem concerning a Booking, payment, Security Deposit, payout, Trader obligations, consumer rights, invoices, safety, or another matter, first contact “Naudokis” support through the App or by email to **info@naudokis.lt**. If the report relates to a specific Booking, state its number, the item, dates, a description of the problem, and provide any evidence available to you."
+    },
+    {
+      "t": "p",
+      "md": "If a complaint concerns the Security Deposit, damage, or delay, Section 7 applies. If it concerns moderation of Content or a Listing, Section 12 applies. Mandatory consumer-protection rules apply to B2C Transactions regardless of anything stated in a Listing or these Terms."
+    },
+    {
+      "t": "p",
+      "md": "Depending on the nature of the dispute and the status of the parties, a consumer may have the right to apply to the State Consumer Rights Protection Authority (VVTAT) or another competent consumer-dispute-resolution body. Information about VVTAT is published on its website, and electronic applications may be submitted through the Consumer Rights Information System (VTIS)."
+    },
+    {
+      "t": "p",
+      "md": "New complaints could no longer be submitted through the European Union online dispute resolution (ODR) platform from 20 March 2025, and the EU regulation governing it was repealed with effect from 20 July 2025. “Naudokis” therefore does not identify the ODR platform as an active complaints channel."
+    },
+    {
+      "t": "p",
+      "md": "Where required by applicable law, “Naudokis” may publish information about the average monthly number of active recipients of the service in the European Union, statistics concerning Content-moderation decisions, notices and complaints received, use of automated tools, or other information required by the DSA."
+    },
+    {
+      "t": "h2",
+      "id": "14-product-safety-insurance-and-liability",
+      "text": "14. Product safety, insurance, and liability"
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” does not provide insurance for items, damage, theft, loss, or civil liability unless the App expressly states otherwise. The Lessor and the Renter must themselves assess whether they require insurance, a permit, qualifications, protective equipment, or other safety measures. The Security Deposit does not replace insurance and does not guarantee compensation for all losses."
+    },
+    {
+      "t": "p",
+      "md": "The Lessor is responsible for ensuring that the item is lawful, safe, properly maintained, and handed over with necessary instructions, warnings, and accessories. The Renter is responsible for using the item lawfully, safely, for its intended purpose, and in accordance with the manufacturer’s instructions, the Lessor’s directions, and applicable legal requirements."
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” may apply safety recommendations, category restrictions, and moderation measures, but does not physically inspect every item, User, handover location, or delivery."
+    },
+    {
+      "t": "p",
+      "md": "If we become aware of a dangerous, recalled, misleadingly described, or otherwise unsafe item, we may remove the Listing, suspend Bookings, inform affected Users, request evidence, cooperate with competent authorities, and take other lawful action. If the Renter becomes aware that an item is unsafe or may cause harm, the Renter must immediately stop using it and notify the Lessor and “Naudokis”."
+    },
+    {
+      "t": "p",
+      "md": "To the extent permitted by applicable law, the Platform is provided “as is” and “as available”. “Naudokis” does not guarantee that Listings, information provided by Users, items, prices, availability, location data, reviews, AI outputs, support responses, handovers, returns, payments, payouts, or dispute outcomes will always be accurate, complete, safe, lawful, uninterrupted, or error-free."
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” is not liable for the accuracy of User Content, the conduct of a Lessor or Renter, the actual condition of an item, agreements between Users outside the Platform, or third-party services, except to the extent that such liability cannot be limited under applicable law."
+    },
+    {
+      "t": "p",
+      "md": "Nothing in these Terms limits liability that cannot be limited under mandatory law. This includes, without limitation, liability for intentional acts, gross negligence, death or personal injury, infringements of consumer rights, and other cases in which limitation of liability is prohibited."
+    },
+    {
+      "t": "p",
+      "md": "In relation to Business Users and other non-consumers, to the extent permitted by applicable law, “Naudokis” is not liable for indirect losses, including loss of profit, loss of revenue, loss of data, reputational damage, or business interruption. The total liability of “Naudokis” to such a User is limited to the amount of Platform fees paid by that User to “Naudokis” during the 12 months preceding the event giving rise to the claim, unless mandatory law provides otherwise."
+    },
+    {
+      "t": "p",
+      "md": "To the extent permitted by applicable law, you agree to indemnify “Naudokis” against losses, damages, fines, and reasonable costs arising from third-party claims relating to your Listing, Rental Transaction, Content, tax or business obligations, misuse of the Platform, or breach of these Terms or the law. This provision applies to consumers only to the extent permitted by mandatory law."
+    },
+    {
+      "t": "h2",
+      "id": "15-communications-privacy-changes-to-the-terms-and-account-termination",
+      "text": "15. Communications, privacy, changes to the Terms, and account termination"
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” may send emails, SMS messages, push notifications, in-App notifications, and support messages concerning an account, security, verification, Bookings, payments, refunds, payouts, disputes, compliance, taxes, changes to the Terms, data exports, reviews, and support."
+    },
+    {
+      "t": "p",
+      "md": "Certain communications are necessary for the operation and security of the Platform and for the performance of legal obligations, payments, or Bookings and therefore may not be capable of being fully disabled. You may opt out of optional marketing communications in the email, through App settings, or by contacting support."
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” processes personal data as described in the Privacy Policy. Records concerning Bookings, payments, invoices, document acceptance, disputes, compliance, taxes, and security are retained for as long as necessary to operate the Platform, perform these Terms, resolve disputes, and comply with applicable payment, tax, accounting, DAC7, VAT, anti-money-laundering, consumer-protection, product-safety, or other legal obligations. Deletion of an account does not in itself remove a right or obligation to retain data required for those purposes."
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” may change, improve, suspend, or discontinue Platform functions, limits, fees, categories, delivery methods, AI tools, and verification, payment, analytics, or support processes. We may update these Terms when the Platform, applicable law, fees, payment or other service providers, or security needs change, or where provisions need to be clarified."
+    },
+    {
+      "t": "p",
+      "md": "We will publish updated Terms on the Platform and, where required, ask you to accept them in the App. Material changes generally apply only prospectively and do not alter the conditions of an already confirmed Booking unless required by law, payment-provider requirements, security, compliance, or fraud-prevention needs, or unless the parties expressly agree otherwise."
+    },
+    {
+      "t": "p",
+      "md": "Where Regulation (EU) 2019/1150 or other mandatory law applies, we notify Business Users of proposed changes to the Terms on a durable medium no later than 15 days before they take effect. Where significant technical or commercial adaptations are necessary to implement the changes, a longer proportionate period applies. A shorter period may be used only in cases permitted by law."
+    },
+    {
+      "t": "p",
+      "md": "You may stop using the Platform at any time. You must nevertheless perform or properly resolve active Bookings, payments, refunds, disputes, tax, compliance, and other legal obligations."
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” may suspend, restrict, or terminate access to the Platform or individual functions if:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "you breach these Terms or applicable law;",
+        "you fail mandatory identity, payment, or compliance checks;",
+        "you misuse the Platform;",
+        "a reasonable security, fraud, payment, tax, reputational, or other legal risk arises."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Where reasonably possible and required, we provide the reason for the decision, prior notice, and an opportunity to remedy the breach or challenge the decision. In relation to Business Users, we comply with applicable notice, statement-of-reasons, and exception requirements under Regulation (EU) 2019/1150 or other mandatory law."
+    },
+    {
+      "t": "p",
+      "md": "After suspension or termination of an account, provisions that by their nature are intended to survive continue to apply. These include provisions concerning payments, disputes, Security Deposits, taxes, the Content licence, privacy, liability, indemnification, data retention, remedies, and applicable law."
+    },
+    {
+      "t": "h2",
+      "id": "16-applicable-law-dispute-resolution-and-contact-details",
+      "text": "16. Applicable law, dispute resolution, and contact details"
+    },
+    {
+      "t": "p",
+      "md": "These Terms are governed by the laws of the Republic of Lithuania. This does not prejudice mandatory consumer-protection provisions that may apply under the law of the consumer’s place of residence or other mandatory law."
+    },
+    {
+      "t": "p",
+      "md": "We first encourage you to contact “Naudokis” support by email at **info@naudokis.lt** or through the App’s support functions. Disputes that cannot be resolved amicably are heard by the competent courts of the Republic of Lithuania, unless mandatory consumer-protection or other applicable law grants a right to apply to another court or dispute-resolution body."
+    },
+    {
+      "t": "p",
+      "md": "If any provision of these Terms is held invalid, unlawful, or unenforceable, this does not affect the validity of the remaining provisions. If “Naudokis” does not exercise a right in a particular case, or does not exercise it immediately, this does not constitute a waiver of that or any other right."
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” may assign or transfer its rights and obligations under these Terms to a third party, including in connection with a reorganisation, merger, or transfer of a business or assets, provided that the transfer does not materially reduce the User’s rights under these Terms and applicable law. A User may not assign their rights or obligations under these Terms without the prior written consent of “Naudokis”, unless such a right is granted by mandatory law."
+    },
+    {
+      "t": "p",
+      "md": "These Terms constitute the principal standalone agreement between you and “Naudokis” concerning use of the Platform. They apply together with the Privacy Policy, Stripe’s terms where payment functions are used, and the information displayed in the App before confirmation for the specific Booking or function."
+    },
+    {
+      "t": "p",
+      "md": "In the event of inconsistency, mandatory rules of law apply first. Information displayed before confirmation for a specific Booking applies to the extent that it does not conflict with these Terms or mandatory law. An interpretation more favourable to the consumer applies to the extent required by mandatory consumer-protection law."
+    },
+    {
+      "t": "p",
+      "md": "The tables, summaries, explanations of statuses, and examples in this document form part of the Terms unless expressly stated to be provided for information only. Summaries make the Terms easier to read but do not displace the more detailed rules in the relevant sections."
+    },
+    {
+      "t": "p",
+      "md": "**Contact details** MB “Naudokis” Legal entity code: 307423504 Registered office address: Numėjos g. 6, LT-08402 Vilnius, Lithuania Email: **info@naudokis.lt**"
     }
   ]
 }

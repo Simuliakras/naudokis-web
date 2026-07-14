@@ -12,22 +12,12 @@ export function getLegalDocMeta(id: string): LegalDocMeta | undefined {
   return MANIFEST.docs.find((d) => d.id === id);
 }
 
-// All published documents, in manifest order — drives the /teisine legal hub.
-export function legalDocs(): LegalDocMeta[] {
-  return MANIFEST.docs;
-}
-
-// Primary documents keep their pretty top-level routes; operational policies
-// live under /politikos so every transaction rule is independently linkable.
+// The only published legal-document routes are Terms and Privacy. Account
+// deletion remains a separate functional page and is linked directly by the
+// footer rather than being presented as another legal policy.
 export const CANONICAL_PATHS: Record<string, string> = {
   "privacy-policy": "/privatumo-politika",
   "terms-of-use": "/naudojimosi-salygos",
-  "account-deletion": "/paskyros-trynimas",
-  "payments-fees": "/politikos/payments-fees",
-  "cancellations-refunds": "/politikos/cancellations-refunds",
-  "deposits-damage-disputes": "/politikos/deposits-damage-disputes",
-  "reservation-handover": "/politikos/reservation-handover",
-  "trust-safety-support": "/politikos/trust-safety-support",
 };
 
 // In-app, locale-correct path for a published document id.

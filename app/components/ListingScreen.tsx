@@ -33,6 +33,7 @@ export function ListingScreen({ id }: { id: string }) {
   const [footerInView, setFooterInView] = useState(false);
   const footerRef = useRef<HTMLDivElement>(null);
   const { data: listing, isLoading, isError, error, refetch } = useListing(id, locale);
+  const categories = useCategories(locale).data ?? [];
   useReloadOnReconnect({ online, isError, refetch });
 
   useEffect(() => {
@@ -103,8 +104,8 @@ export function ListingScreen({ id }: { id: string }) {
       : <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body} actionLabel={dict.offline.retry} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />);
   }
 
-  const category = listing.tags[0];
-  const isNew = listing.ratingCount === 0;
+  const category = categoryNameFor(categories, listing.categoryId) ?? listing.tags[0];
+  const hasNoReviews = listing.ratingCount === 0;
 
   // Transactional actions are Locked — they open the app-redirect modal. Favoriting
   // only persists in the app, so we do NOT fill the heart here (a "saved" state the
@@ -146,11 +147,11 @@ export function ListingScreen({ id }: { id: string }) {
           during load too, so it must not re-animate when the body lands — only
           its leaf (category + title) extends past the static Home › Skelbimai prefix. */}
       <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel}
-        items={detailCrumbs({ category, title: listing.title, feedLabel: dict.feed.titleAll, locale })} />
+        items={detailCrumbs({ category, categoryId: listing.categoryId, title: listing.title, feedLabel: dict.feed.titleAll, locale })} />
       {/* fade in over the skeleton; the fixed mobile bar stays outside the wrapper */}
       <div className="nk-fadecontent">
         <ListingHeader listing={listing} shared={shared} onShare={share} onFav={lockFav} />
-        <Gallery images={listing.images} title={listing.title} isNew={isNew} appPath={appPath} />
+        <Gallery images={listing.images} title={listing.title} hasNoReviews={hasNoReviews} appPath={appPath} />
 
         {/* The sticky sidebar booking panel is hidden on tablet/phone (≤980px);
             surface the booking facts — and the owner trust card, otherwise ~8

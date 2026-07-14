@@ -92,7 +92,7 @@ export function OfferCard({
             <Icon name="MapPin" size={15} color="var(--nk-text-2)" stroke={2} /> {formatLocation(city, subdivision)}
           </span>
         )}
-        {/* Bottom row: price is the anchor, rating (or "New" pill) sits opposite.
+        {/* Bottom row: price is the anchor, rating (or no-reviews pill) sits opposite.
             Wraps so the longer "New" pill drops to its own right-aligned line at
             narrow (4-/5-up) column widths instead of clipping past the card edge. */}
         <div className="nk-offer__pricebar" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", rowGap: "var(--nk-gap-xs)", marginTop: "auto", paddingTop: "var(--nk-gap-sm)" }}>
@@ -113,7 +113,7 @@ export function OfferCard({
               {ratingCount ? <span aria-hidden style={{ fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>({ratingCount})</span> : null}
             </span>
           ) : (
-            // No reviews yet — surface that as a "New" trust signal instead of a gap.
+            // No reviews yet — state that fact without implying listing recency.
             <span className="o-new" style={{ marginLeft: "auto" }}><Pill tone="yellow" icon="Sparkles">{c.newListing}</Pill></span>
           )}
         </div>

@@ -26,51 +26,6 @@
         "en": "How to delete your Naudokis account and personal data, what is deleted, and what is retained for legal reasons.",
         "lt": "Kaip ištrinti Naudokis paskyrą ir asmens duomenis, kas ištrinama ir kas saugoma dėl teisinių reikalavimų."
       }
-    },
-    {
-      "id": "payments-fees",
-      "hasEn": true,
-      "title": { "lt": "Mokėjimai, mokesčiai ir išmokos", "en": "Payments, Fees, and Payouts" },
-      "blurb": {
-        "lt": "Kaip per Stripe apdorojami mokėjimai, platformos mokesčiai, grąžinimai ir savininkų išmokos.",
-        "en": "How Stripe payments, platform fees, refunds, and owner payouts are handled."
-      }
-    },
-    {
-      "id": "cancellations-refunds",
-      "hasEn": true,
-      "title": { "lt": "Atšaukimai ir grąžinimai", "en": "Cancellations and Refunds" },
-      "blurb": {
-        "lt": "Kada galima atšaukti rezervaciją, kaip apskaičiuojamas grąžinimas ir kokios vartotojų teisės taikomos.",
-        "en": "When a reservation can be cancelled, how refunds are calculated, and which consumer rights apply."
-      }
-    },
-    {
-      "id": "deposits-damage-disputes",
-      "hasEn": true,
-      "title": { "lt": "Užstatai, žala ir ginčai", "en": "Deposits, Damage, and Disputes" },
-      "blurb": {
-        "lt": "Užstato paskirtis, žalos įrodymai, reikalavimų nagrinėjimas ir ginčų sprendimo procesas.",
-        "en": "Deposit purpose, damage evidence, claims review, and the dispute process."
-      }
-    },
-    {
-      "id": "reservation-handover",
-      "hasEn": true,
-      "title": { "lt": "Rezervacija, perdavimas ir užbaigimas", "en": "Reservation, Handover, and Completion" },
-      "blurb": {
-        "lt": "Praktinė rezervacijos, daikto perdavimo, grąžinimo ir nuomos užbaigimo eiga.",
-        "en": "The practical reservation, item handover, return, and rental-completion process."
-      }
-    },
-    {
-      "id": "trust-safety-support",
-      "hasEn": true,
-      "title": { "lt": "Pasitikėjimas, patikros ir pagalba", "en": "Trust, Checks, and Support" },
-      "blurb": {
-        "lt": "Tapatybės patikros, platformos saugumo priemonės, pagalbos ribos ir kreipimosi tvarka.",
-        "en": "Identity checks, platform safeguards, support scope, and how to get help."
-      }
     }
   ]
 }

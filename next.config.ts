@@ -1,22 +1,27 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import { createHash } from "node:crypto";
 // Listing photos / owner avatars come from the backend's CloudFront
 // distributions, allowlisted per host. The same list feeds the image
 // remotePatterns, the CSP img-src, and the runtime cdnImage() guard so the three
 // can't drift. Add the prod distribution in that module once it exists.
 import { IMAGE_CDN_HOSTS } from "./app/lib/image-hosts";
+import { BRIDGE_BOOTSTRAP } from "./app/lib/bridge-bootstrap";
 
 const isDev = process.env.NODE_ENV === "development";
+const bridgeBootstrapHash = `sha256-${createHash("sha256").update(BRIDGE_BOOTSTRAP).digest("base64")}`;
 
-// Enforced CSP with local violation reporting. We keep 'unsafe-inline' for now
-// because the app intentionally uses inline style objects and a tiny
-// pre-hydration bridge script; removing it would require nonce-based dynamic
-// rendering (or a full CSS extraction pass) and would undo the current SSG/ISR
-// posture. 'unsafe-eval' is dev-only per the Next.js 16 CSP guide.
+// Enforced CSP with local violation reporting. The app-owned pre-hydration
+// bootstrap is hash-allowlisted in the strict policy. Next's static/ISR bootstrap still requires script
+// unsafe-inline; a nonce would force dynamic rendering and forfeit CDN/ISR cache
+// benefits, so the stricter policy remains report-only until its reports are clean.
+// Inline React styles still require style unsafe-inline. unsafe-eval is dev-only.
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://plausible.io`,
+  "script-src-attr 'none'",
   "style-src 'self' 'unsafe-inline'",
+  "style-src-attr 'unsafe-inline'",
   `img-src 'self' data: blob: ${IMAGE_CDN_HOSTS.join(" ")}`,
   "font-src 'self' data:",
   "object-src 'none'",
@@ -24,11 +29,11 @@ const csp = [
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   // Google Maps Embed API iframe on the listing-detail page.
-  "frame-src 'self' https://www.google.com",
+  "frame-src https://www.google.com",
   // Referral/install attribution is via AppsFlyer OneLink URLs, which are
   // navigations / QR values (not fetch/XHR), so connect-src needs no OneLink host.
   "connect-src 'self' https://api.naudokis.lt https://api-dev.naudokis.lt https://plausible.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
-  "frame-ancestors 'self'",
+  "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
   "report-to csp-endpoint",
@@ -42,7 +47,7 @@ const csp = [
 // Inline styles remain allowed in this first phase because the component system
 // still intentionally uses React style objects.
 const strictReportOnlyCsp = csp
-  .replace("script-src 'self' 'unsafe-inline'", "script-src 'self'")
+  .replace("script-src 'self' 'unsafe-inline'", `script-src 'self' '${bridgeBootstrapHash}'`)
   // This directive has no report-only semantics and browsers warn if it is
   // present there; it remains active in the enforced policy above.
   .replace("; upgrade-insecure-requests", "");
@@ -50,14 +55,22 @@ const strictReportOnlyCsp = csp
 // Pragmatic security headers applied to every route.
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },
-  ...(!isDev ? [{ key: "Content-Security-Policy-Report-Only", value: strictReportOnlyCsp }] : []),
+  // Shipped in dev too, so the e2e suite can assert the real policy. This header
+  // is violated by Next's own inline bootstrap on EVERY page view, so the report
+  // endpoint de-duplicates by violation signature (see app/api/csp-report) — do not
+  // add per-report logging there without keeping that de-duplication.
+  { key: "Content-Security-Policy-Report-Only", value: strictReportOnlyCsp },
   { key: "Reporting-Endpoints", value: 'csp-endpoint="/api/csp-report"' },
   // Force HTTPS for two years, including subdomains; eligible for preload lists.
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
   // Disallow MIME sniffing.
   { key: "X-Content-Type-Options", value: "nosniff" },
   // Block this site from being framed (clickjacking).
-  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  { key: "Origin-Agent-Cluster", value: "?1" },
+  { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
+  { key: "X-DNS-Prefetch-Control", value: "off" },
   // Send origin only on cross-origin navigations.
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   // No site code needs these powerful features. (browsing-topics is omitted: this
@@ -115,11 +128,15 @@ const nextConfig: NextConfig = {
       { source: "/en/naudojimo-taisykles", destination: "/en/naudojimosi-salygos", permanent: true },
     ];
   },
-  // Serve modern formats from the built-in optimizer (used by next/image for the
-  // hero/CTA phone mockups). AVIF first, WebP fallback. Static brand patterns are
+  // WebP avoids AVIF's materially slower first-request encoding on listing LCPs.
+  // Static brand patterns are
   // pre-encoded to .avif/.webp and served via <picture>, so they skip the optimizer.
   images: {
-    formats: ["image/avif", "image/webp"],
+    formats: ["image/webp"],
+    // Next 16 requires every `quality` the app requests to be allowlisted. The app
+    // uses exactly one, so every optimized variant shares a cache entry.
+    qualities: [75],
+    minimumCacheTTL: 86_400,
     // Listing cards are often 160–320 CSS pixels wide. Supplying intermediate
     // candidates prevents the default 384px floor from over-serving every
     // two-column mobile card.

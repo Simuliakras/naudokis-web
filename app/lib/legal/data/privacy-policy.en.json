@@ -1,461 +1,147 @@
 {
   "meta": {
-    "title": "Naudokis Privacy Policy",
-    "version": "2026-06-01",
+    "title": "“Naudokis” Privacy Policy",
+    "version": "2026-07-14-vendor-disclosure-v4.1",
     "effective_date": "2026-06-01",
-    "last_updated": "2026-06-01",
-    "document_id": "NAUDOKIS-PRIVACY-EN-2026-06-01",
+    "last_updated": "2026-07-14",
+    "document_id": "NAUDOKIS-PRIVACY-EN-2026-07-14-VENDOR-DISCLOSURE-V4.1",
     "document_type": "privacy_policy"
   },
   "toc": [
     {
-      "id": "where-to-find-the-most-important-information",
-      "label": "Where to find the most important information",
+      "id": "in-brief",
+      "label": "In brief",
       "num": null
     },
     {
-      "id": "privacy-summary-table",
-      "label": "Privacy summary table",
-      "num": null
-    },
-    {
-      "id": "how-data-is-used-in-practice",
-      "label": "How data is used in practice",
-      "num": null
-    },
-    {
-      "id": "privacy-governance-map",
-      "label": "Privacy governance map",
-      "num": null
-    },
-    {
-      "id": "1-controller-and-contacts",
-      "label": "Controller and contacts",
+      "id": "1-who-this-policy-applies-to",
+      "label": "Who this Policy applies to",
       "num": "1"
     },
     {
-      "id": "2-short-privacy-summary",
-      "label": "Short privacy summary",
+      "id": "2-where-we-obtain-data-from",
+      "label": "Where we obtain data from",
       "num": "2"
     },
     {
-      "id": "3-to-whom-this-policy-applies",
-      "label": "To whom this Policy applies",
+      "id": "3-what-data-we-process",
+      "label": "What data we process",
       "num": "3"
     },
     {
-      "id": "4-main-definitions",
-      "label": "Main definitions",
+      "id": "4-whether-you-are-required-to-provide-data",
+      "label": "Whether you are required to provide data",
       "num": "4"
     },
     {
-      "id": "5-sources-of-personal-data",
-      "label": "Sources of Personal Data",
+      "id": "5-why-and-on-what-basis-we-process-data",
+      "label": "Why and on what basis we process data",
       "num": "5"
     },
     {
-      "id": "6-what-personal-data-we-process",
-      "label": "What Personal Data we process",
+      "id": "6-what-is-visible-to-others",
+      "label": "What is visible to others",
       "num": "6"
     },
     {
-      "id": "7-necessary-and-optional-data",
-      "label": "Necessary and optional data",
+      "id": "7-to-whom-we-disclose-data",
+      "label": "To whom we disclose data",
       "num": "7"
     },
     {
-      "id": "8-why-we-process-data-and-what-legal-bases-we-rely-on",
-      "label": "Why we process data and what legal bases we rely on",
+      "id": "8-payments-payouts-and-identity-verification",
+      "label": "Payments, payouts, and identity verification",
       "num": "8"
     },
     {
-      "id": "9-how-data-is-shared-with-other-users",
-      "label": "How data is shared with other Users",
+      "id": "9-taxes-vat-invoices-and-dac7",
+      "label": "Taxes, VAT, invoices, and DAC7",
       "num": "9"
     },
     {
-      "id": "10-service-providers-recipients-and-their-roles",
-      "label": "Service providers, recipients, and their roles",
+      "id": "10-cookies-sdks-analytics-and-notifications",
+      "label": "Cookies, SDKs, analytics, and notifications",
       "num": "10"
     },
     {
-      "id": "11-payments-identity-verification-and-regulated-processing",
-      "label": "Payments, identity verification, and regulated Processing",
+      "id": "11-automated-checks-profiling-and-ai",
+      "label": "Automated checks, profiling, and AI",
       "num": "11"
     },
     {
-      "id": "12-international-data-transfers",
-      "label": "International data transfers",
+      "id": "12-transfers-of-data-outside-the-eea",
+      "label": "Transfers of data outside the EEA",
       "num": "12"
     },
     {
-      "id": "13-automated-checks-ai-and-human-review",
-      "label": "Automated checks, AI, and human review",
+      "id": "13-how-long-we-retain-data",
+      "label": "How long we retain data",
       "num": "13"
     },
     {
-      "id": "14-marketing-service-related-notices-and-notification-settings",
-      "label": "Marketing, service-related notices, and notification settings",
+      "id": "14-your-rights",
+      "label": "Your rights",
       "num": "14"
     },
     {
-      "id": "15-retention-periods",
-      "label": "Retention periods",
+      "id": "15-marketing-and-service-related-notifications",
+      "label": "Marketing and service-related notifications",
       "num": "15"
     },
     {
-      "id": "16-account-deletion-and-data-export",
-      "label": "Account deletion and data export",
+      "id": "16-minors",
+      "label": "Minors",
       "num": "16"
     },
     {
-      "id": "17-your-rights-under-gdpr",
-      "label": "Your rights under GDPR",
+      "id": "17-security-authority-requests-and-changes-to-the-policy",
+      "label": "Security, authority requests, and changes to the Policy",
       "num": "17"
     },
     {
-      "id": "18-children-and-minors",
-      "label": "Children and minors",
+      "id": "18-contact-details-and-complaints",
+      "label": "Contact details and complaints",
       "num": "18"
-    },
-    {
-      "id": "19-security",
-      "label": "Security",
-      "num": "19"
-    },
-    {
-      "id": "20-changes-to-this-policy",
-      "label": "Changes to this Policy",
-      "num": "20"
-    },
-    {
-      "id": "21-complaints-and-supervisory-authority",
-      "label": "Complaints and supervisory authority",
-      "num": "21"
-    },
-    {
-      "id": "22-privacy-appendices",
-      "label": "Privacy appendices",
-      "num": "22"
-    },
-    {
-      "id": "23-contacts",
-      "label": "Contacts",
-      "num": "23"
     }
   ],
   "blocks": [
     {
       "t": "p",
-      "md": "This Privacy Policy explains how MB Naudokis (\"Naudokis\", \"we\", \"us\", \"our\") collects, uses, stores, discloses, and otherwise processes Personal Data."
+      "md": "This Privacy Policy explains what personal data we process about you, why we do so, to whom we disclose it, how long we retain it, and what rights you have."
     },
     {
       "t": "p",
-      "md": "The Policy applies when you use the Naudokis mobile App, related websites, administration interfaces, item-rental Platform services, payment, identity verification, support, Dispute resolution, and communication functions."
+      "md": "**Data controller:** MB “Naudokis” **Legal entity code:** 307423504 **Registered office address:** Numėjos g. 6, LT-08402 Vilnius, Lithuania **Privacy questions and requests:** info@naudokis.lt"
     },
     {
       "t": "p",
-      "md": "Naudokis is a mobile item-rental Platform operating in Lithuania. On the Platform, natural persons and business users may list items for rent, browse Listings, submit rental requests, authorize payments, hand over and return items, communicate with the other transaction party, leave reviews, and resolve rental-related matters through the Platform."
+      "md": "“Naudokis” is an item rental platform operating in Lithuania. This Policy applies to the “Naudokis” website, mobile application, administration tools, and related account, listing, booking, payment, payout, identity verification, messaging, support, dispute, moderation, and notification functions."
     },
     {
       "t": "p",
-      "md": "The Platform may support rental between private individuals (P2P), between businesses and private individuals (B2C), and between business entities (B2B), where permitted by Platform functions and applicable law."
-    },
-    {
-      "t": "p",
-      "md": "**Scope of operations in Lithuania.** Naudokis operates in the Lithuanian market. Data related to tax, VAT, DAC7, VIES, Business User, payment, or payout compliance is processed only where such function is actually used, is required for Platform operation, or is required by legislation."
-    },
-    {
-      "t": "p",
-      "md": "**Controller:** MB Naudokis, legal entity code 307423504, registered office address Numėjos g. 6, LT-08402 Vilnius, Lithuania. For privacy and support matters, you may contact us by email at **info@naudokis.lt**."
-    },
-    {
-      "t": "p",
-      "md": "**Launch period** in this Policy means the period during which Naudokis operates in the Lithuanian market with the initial scope of functions, vendors, payments, payouts, categories, and technical processes described in this document. This is not a version with a lower level of privacy or security; the term only explains which functions and data Processing processes are currently actually enabled."
+      "md": "The Terms of Use set out the rules for using the Platform and for rental transactions. This Policy explains how personal data are processed in connection with those activities. Terms defined in the Terms of Use have the same meaning in this Policy unless expressly stated otherwise."
     },
     {
       "t": "h2",
-      "id": "where-to-find-the-most-important-information",
-      "text": "Where to find the most important information"
-    },
-    {
-      "t": "table",
-      "head": [
-        "Looking for information about...",
-        "Read"
-      ],
-      "rows": [
-        [
-          "Who the Controller is and how to contact us",
-          "Sections 1 and 23"
-        ],
-        [
-          "A short privacy explanation",
-          "Section 2"
-        ],
-        [
-          "What data we collect",
-          "Section 6 and the Data Categories Appendix"
-        ],
-        [
-          "Why we use data and what legal bases we rely on",
-          "Section 8"
-        ],
-        [
-          "What data is visible to other Users",
-          "Section 9"
-        ],
-        [
-          "Service providers, recipients, and their roles",
-          "Section 10 and the Vendors and SDK Appendix"
-        ],
-        [
-          "Payments, identity verification, and Stripe or Didit",
-          "Section 11 and the Identity and Fraud Prevention Appendix"
-        ],
-        [
-          "International data transfers",
-          "Section 12"
-        ],
-        [
-          "AI, automated checks, and human review",
-          "Section 13 and the AI and Automated Checks Appendix"
-        ],
-        [
-          "Retention periods and account deletion",
-          "Sections 15 and 16 and the Retention and Deletion Appendix"
-        ],
-        [
-          "Your GDPR rights",
-          "Section 17"
-        ],
-        [
-          "Cookies, SDKs, push notifications, and mobile technologies",
-          "the Vendors and SDK Appendix"
-        ],
-        [
-          "Business User, DAC7, and tax data",
-          "the Business Users and DAC7 Privacy Appendix"
-        ]
-      ]
-    },
-    {
-      "t": "h2",
-      "id": "privacy-summary-table",
-      "text": "Privacy summary table"
-    },
-    {
-      "t": "table",
-      "head": [
-        "Data area",
-        "Why we process it",
-        "To whom it may be transferred",
-        "Usual retention logic"
-      ],
-      "rows": [
-        [
-          "Account, profile, and contacts",
-          "To create the account, authenticate, communicate, and provide Platform services",
-          "Infrastructure, communication, and security providers; to other Users only to the extent necessary for Platform functions",
-          "While you have an account and for a limited period after closure if needed for legal, security, or Dispute purposes"
-        ],
-        [
-          "Identity and verification data",
-          "For age, identity, fraud prevention, payments, and compliance requirements",
-          "Didit, Stripe, compliance providers, and legal authorities where necessary",
-          "According to verification validity, legal obligations, and limited audit and security periods"
-        ],
-        [
-          "Listings, Reservations, payments, and Deposits",
-          "For rental, payments, refunds, Deposits, Disputes, and accounting",
-          "Stripe, Lessor or Renter, support, accounting, tax, or legal authorities",
-          "According to transaction, accounting, tax, Dispute, and payment retention periods"
-        ],
-        [
-          "Messages, support, evidence, and Disputes",
-          "For communication, Disputes, security, moderation, and support",
-          "Other transaction party, support team, service providers, authorities where necessary",
-          "While needed for Dispute, security, legal defence, or mandatory obligations"
-        ],
-        [
-          "Device, diagnostic, and security data",
-          "For Platform operation, security, error correction, abuse prevention",
-          "AWS, Sentry, Expo, and other technical providers where the function is enabled",
-          "Usually shorter than account or transaction data, unless needed for security or legal defence"
-        ],
-        [
-          "Business, VAT, VIES, DAC7, and invoice data",
-          "To perform business functions, invoices, taxes, DAC7, compliance, and Consumer information obligations",
-          "Stripe, tax authorities, VIES or European Commission systems, accounting providers, transaction parties where necessary",
-          "According to tax, accounting, DAC7, and legislative periods"
-        ]
-      ]
-    },
-    {
-      "t": "h2",
-      "id": "how-data-is-used-in-practice",
-      "text": "How data is used in practice"
-    },
-    {
-      "t": "p",
-      "md": "These examples help explain when and why specific data is processed. They do not replace the detailed sections below."
+      "id": "in-brief",
+      "text": "In brief"
     },
     {
       "t": "ul",
       "items": [
-        "**When you create an account,** we process account, authentication, contact, legal-document acceptance, and security data so that we can provide access to the Platform and protect the account.",
-        "**When you upload a Listing,** we process Listing information, photographs, category, price, location or pickup-area data, moderation status, and security signals so that the Listing can be displayed and reserved.",
-        "**When you reserve an item,** we process Reservation dates, price, fees, Deposit, payment status, handover information, and communication with the other transaction party so that the rental can be concluded and performed.",
-        "**When you verify identity,** we process verification status, selected verification results, and security signals. Naudokis retains raw document images only where and only to the extent necessary for a clearly stated purpose.",
-        "**When a Dispute takes place,** we process messages, photographs, images, explanations, condition confirmations, payment information, and support-team decision records so that the claim can be assessed and the Deposit, refund, or another adjustment administered.",
-        "**When you delete your account,** some data is deleted or anonymized, and some is retained on a limited basis where needed for active Reservations, Disputes, payments, taxes, accounting, security, or legal defence."
+        "We process core account, listing, booking, and communication data in order to provide the Platform services.",
+        "Payments and payouts are processed by Stripe. “Naudokis” does not store the full payment card number, CVC, or PIN.",
+        "Didit may be used for identity and age verification, and Stripe may be used for payment or payout checks.",
+        "We display publicly only the information necessary for a listing and for trust. More precise contact and handover details are disclosed only when needed for a transaction.",
+        "Mixpanel product analytics and AppsFlyer app attribution are enabled only with consent. The public website uses cookieless Plausible audience and app-handoff measurement on the legitimate-interests basis described below.",
+        "Closing an account does not result in all data being deleted immediately. Financial, tax, dispute, security, or legal-defence data may be retained for longer.",
+        "You may request access to, rectification, erasure, or restriction of your data, data portability, object to certain processing, and withdraw consent."
       ]
-    },
-    {
-      "t": "h3",
-      "text": "Structure of this Policy"
-    },
-    {
-      "t": "p",
-      "md": "This Privacy Policy is the main Naudokis privacy document. It applies together with separate privacy appendices that explain specific data Processing areas in more detail:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "Data Categories Appendix",
-        "Vendors, Recipients, Cookies, and SDK Appendix",
-        "Retention Periods and Deletion Appendix",
-        "Identity Verification and Fraud Prevention Appendix",
-        "AI and Automated Checks Appendix",
-        "Business Users, Traders, DAC7, and Tax Privacy Appendix"
-      ]
-    },
-    {
-      "t": "p",
-      "md": "These appendices form part of this Policy and must be interpreted together with the main Policy, taking into account the specific Platform function and vendors actually enabled."
     },
     {
       "t": "h2",
-      "id": "privacy-governance-map",
-      "text": "Privacy governance map"
-    },
-    {
-      "t": "p",
-      "md": "Naudokis applies a privacy governance principle under which each important Platform process has a clear data purpose, legal basis, recipient category, and retention logic."
-    },
-    {
-      "t": "table",
-      "head": [
-        "Platform process",
-        "Main data",
-        "Main purpose"
-      ],
-      "rows": [
-        [
-          "Account creation",
-          "name, contacts, login data",
-          "create and protect the account"
-        ],
-        [
-          "Identity verification",
-          "verification result, selected document attributes, technical security tag",
-          "age, identity, fraud, and risk check"
-        ],
-        [
-          "Listing",
-          "item information, photographs, location, price, Deposit",
-          "display the Listing, conclude a Reservation, resolve Disputes"
-        ],
-        [
-          "Reservation",
-          "dates, parties, payment, Deposit, handover, messages",
-          "perform the rental and administer payments"
-        ],
-        [
-          "Payments and payouts",
-          "Stripe payment identifiers, amounts, status, payout information",
-          "process payments, Deposits, refunds, and payouts"
-        ],
-        [
-          "Disputes and support",
-          "messages, photographs, evidence, decisions",
-          "resolve damage, delay, cancellation, refund, or security issue"
-        ],
-        [
-          "Reviews",
-          "rating, text, Reservation link",
-          "display reputation signals based on actual experience"
-        ],
-        [
-          "Moderation and DSA",
-          "notices, decisions, complaints, risk signals",
-          "ensure lawful and safe Platform use"
-        ],
-        [
-          "Analytics and diagnostics",
-          "device, performance, error, usage events",
-          "maintain, protect, and improve the Platform"
-        ]
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Data is not processed for \"all possible purposes\". It is used to the extent necessary for the specific function, legal obligation, contract performance, consent, legitimate interest, or User request."
-    },
-    {
-      "t": "h2",
-      "id": "1-controller-and-contacts",
-      "text": "1. Controller and contacts"
-    },
-    {
-      "t": "p",
-      "md": "The Controller for most Personal Data Processing described in this Policy is:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "**MB Naudokis**",
-        "Legal entity code: **307423504**",
-        "Registered office address: **Numėjos g. 6, LT-08402 Vilnius, Lithuania**",
-        "Privacy and support contact: **info@naudokis.lt**"
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Naudokis has not appointed a separate data protection officer. For all privacy matters, including requests to exercise data subject rights, contact us by email at **info@naudokis.lt**. The need to appoint a data protection officer is reassessed if the scale, nature, or risk of Processing changes."
-    },
-    {
-      "t": "p",
-      "md": "Some third-party service providers, for example payment, identity verification, social login, or regulatory compliance service providers, may in certain cases act as independent Controllers. In such cases, their Processing is subject to their privacy notices and terms."
-    },
-    {
-      "t": "h2",
-      "id": "2-short-privacy-summary",
-      "text": "2. Short privacy summary"
-    },
-    {
-      "t": "p",
-      "md": "This summary helps you quickly understand the main points. It does not replace the detailed sections below and only briefly reviews them."
-    },
-    {
-      "t": "ul",
-      "items": [
-        "**Who we are.** MB Naudokis (legal entity code 307423504, registered office address Numėjos g. 6, LT-08402 Vilnius) is an item-rental Platform and the Controller for most Processing described in this Policy.",
-        "**What data we process.** Account and profile data, identity verification results, Listing, Reservation, payment, Deposit, handover, return, message, review, location, device, and security data.",
-        "**Why.** To provide Platform services, perform payments and Deposits, ensure safety and trust, resolve Disputes, and comply with legal, accounting, and tax obligations, including DAC7.",
-        "**To whom we disclose.** To other transaction participants to the extent necessary to perform the rental, payment and identity verification providers (Stripe, Didit), infrastructure and communication providers (AWS), and authorities where required by legislation.",
-        "**Where retained.** Main data is retained in the European Economic Area (AWS region eu-north-1, Stockholm); some providers may process data outside the EEA using GDPR safeguards.",
-        "**Your rights.** You may request access, rectification, deletion, restriction of Processing, data portability, object to Processing, or withdraw consent by contacting **info@naudokis.lt**, and you may submit a complaint to the State Data Protection Inspectorate."
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Detailed information about each of these points is provided in the relevant sections below."
-    },
-    {
-      "t": "h2",
-      "id": "3-to-whom-this-policy-applies",
-      "text": "3. To whom this Policy applies"
+      "id": "1-who-this-policy-applies-to",
+      "text": "1. Who this Policy applies to"
     },
     {
       "t": "p",
@@ -464,735 +150,1132 @@
     {
       "t": "ul",
       "items": [
-        "guests who browse public Naudokis pages or public Listings;",
+        "visitors to the website and the App;",
         "registered Users;",
-        "item owners and Lessors;",
-        "Renters;",
-        "Business Users, including Business Lessors, Business Renters, Traders, and their authorized representatives;",
-        "persons whose data is provided in messages, support requests, notices, Disputes, reviews, handover or return evidence, referrals, or other Platform Content."
+        "Lessors and Renters;",
+        "Business Users, Traders, and their representatives;",
+        "persons whose data are provided in messages, support requests, reports, reviews, handover or return evidence, and disputes."
       ]
     },
     {
-      "t": "h2",
-      "id": "4-main-definitions",
-      "text": "4. Main definitions"
+      "t": "p",
+      "md": "MB “Naudokis” is the data controller where it determines the purposes and means of the processing of personal data."
     },
     {
       "t": "p",
-      "md": "Terms used in this Policy:"
+      "md": "Some recipients, such as Stripe, social-login providers, banks, or public authorities, process part of the data as independent data controllers. Their own privacy notices and applicable law govern their independent processing."
+    },
+    {
+      "t": "p",
+      "md": "Service providers that process data solely on our instructions are our data processors. The role of another Platform User or business customer depends on how and for what purpose that person uses the data received."
+    },
+    {
+      "t": "h2",
+      "id": "2-where-we-obtain-data-from",
+      "text": "2. Where we obtain data from"
+    },
+    {
+      "t": "p",
+      "md": "We obtain data:"
     },
     {
       "t": "ul",
       "items": [
-        "**Platform** - the Naudokis mobile App, websites, administration interfaces, and related services.",
-        "**Launch period** - the period during which Naudokis operates in the Lithuanian market and applies the initial territorial, payment, payout, category, or function restrictions described in this document, unless the App clearly states otherwise.",
-        "**User** - any person who uses the Platform.",
-        "**Lessor** - a User who lists or offers an item for rent through the Platform. A Lessor may be a natural person or a Business User.",
-        "**Renter** - a User who submits a rental request or rents an item through the Platform. A Renter may be a natural person or a Business User.",
-        "**Business User** - a User who acts for business or professional purposes, including cases where the User offers items for rent, rents items, or performs both roles through the Platform.",
-        "**Trader** - a Business User or another person who is considered a trader in relation to Consumers under applicable consumer law.",
-        "**B2B Reservation** - a Reservation or Rental Transaction where both the Lessor and the Renter act for business or professional purposes.",
-        "**Reservation request** - a request submitted through the Platform for rental of a specific item on selected dates.",
-        "**Reservation** - the Reservation request and the rental process carried out on its basis, including confirmation, performance, cancellation, or completion."
+        "**from you**, when you register, complete your profile, list an item, make a booking, pay, communicate, contact support, submit evidence, or leave a review;",
+        "**from other Users**, when they provide information concerning you in a booking, message, review, report, or dispute;",
+        "**automatically**, when you use the Platform, for example from session, device, security, diagnostics, cookie, or SDK events;",
+        "**from service providers**, for example payment, identity-verification, social-login, address, analytics, or communications providers;",
+        "**from registers, authorities, or public sources**, where this is necessary to verify identity, business information, VAT status, taxes, security, or legal defence."
       ]
     },
     {
       "t": "p",
-      "md": "Other capitalized terms (Listing, Deposit, Content, Terms) have the meanings given to them in the Naudokis Terms of Use."
+      "md": "Where we obtain personal data other than directly from you and this Policy has not yet been provided to you, we provide the information within the period specified in Article 14 GDPR, unless an exemption provided by law applies."
     },
     {
       "t": "h2",
-      "id": "5-sources-of-personal-data",
-      "text": "5. Sources of Personal Data"
+      "id": "3-what-data-we-process",
+      "text": "3. What data we process"
     },
     {
       "t": "p",
-      "md": "We receive Personal Data from the following sources:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "directly from you when you create an account, complete a profile, publish a Listing, reserve an item, make a payment, communicate, submit a support request, initiate a Dispute, leave a review, or provide other information;",
-        "from other Naudokis Users when they indicate your data in messages, Reservations, Disputes, evidence, reviews, or support requests;",
-        "automatically from your device and Platform use, for example technical, diagnostic, security, session, notification, and usage-event data;",
-        "from payment, identity verification, social login, address search, delivery, analytics, diagnostics, infrastructure, and other service providers;",
-        "from public authorities, courts, law enforcement, tax, or consumer rights authorities where necessary for legal, regulatory, accounting, Dispute-handling, or security purposes."
-      ]
-    },
-    {
-      "t": "h2",
-      "id": "6-what-personal-data-we-process",
-      "text": "6. What Personal Data we process"
-    },
-    {
-      "t": "callout",
-      "md": "The scope of data processed depends on whether you only browse, have an account, list items, reserve, use payments, identity verification, business functions, support, or Dispute processes."
-    },
-    {
-      "t": "p",
-      "md": "We may process the following main data groups:"
-    },
-    {
-      "t": "table",
-      "head": [
-        "Data group",
-        "Examples"
-      ],
-      "rows": [
-        [
-          "Account, authentication, and profile data",
-          "name, email, telephone, login data, profile information, legal-document acceptance records"
-        ],
-        [
-          "Identity and verification data",
-          "verification status, session ID, provider results, selected identity attributes, fraud-prevention signals"
-        ],
-        [
-          "Business and tax data",
-          "business name, registration number, VAT status, tax identifiers, DAC7 and invoice data"
-        ],
-        [
-          "Listing and rented-item data",
-          "Listing texts, photographs, categories, prices, locations or pickup areas, moderation status"
-        ],
-        [
-          "Reservations, payments, and Deposits",
-          "Reservation dates, price, fees, payment status, Deposits, refunds, payouts"
-        ],
-        [
-          "Handover, return, and Disputes",
-          "condition confirmations, photographs, images, explanations, decision and evidence records"
-        ],
-        [
-          "Location, address, and delivery data",
-          "approximate location, pickup or delivery addresses, handover information"
-        ],
-        [
-          "Messages, support, and moderation",
-          "chats, support requests, notices, complaints, DSA and security signals"
-        ],
-        [
-          "Reviews and reputation",
-          "ratings, reviews, favorite Listings, referral signals"
-        ],
-        [
-          "Device, diagnostic, Cookies, and SDK data",
-          "device information, error logs, push tokens, Cookies, local storage, technical events"
-        ]
-      ]
-    },
-    {
-      "t": "p",
-      "md": "A more detailed description of these data groups is provided in the Data Categories Appendix."
-    },
-    {
-      "t": "h2",
-      "id": "7-necessary-and-optional-data",
-      "text": "7. Necessary and optional data"
-    },
-    {
-      "t": "p",
-      "md": "Certain data is necessary so that we can create an account, verify a User, publish a Listing, process a Reservation, payment, Deposit, payout, handover, return, Dispute, or support request."
-    },
-    {
-      "t": "p",
-      "md": "If you do not provide necessary information, you may be unable to use the relevant Platform function. For example, you may be unable to publish a Listing, reserve an item, make or receive a payment, receive a payout, resolve a Dispute, or use certain security or compliance functions."
-    },
-    {
-      "t": "p",
-      "md": "Some data is optional, for example profile description, additional Listing photographs, certain notification or analytics choices, referral-program data, or marketing consents. If you do not provide optional data or withdraw consent, the relevant additional function may not work or may be limited, but this alone does not prevent use of the main Platform functions if the necessary data has been provided."
-    },
-    {
-      "t": "h2",
-      "id": "8-why-we-process-data-and-what-legal-bases-we-rely-on",
-      "text": "8. Why we process data and what legal bases we rely on"
-    },
-    {
-      "t": "p",
-      "md": "We process Personal Data for the purposes and legal bases stated below under the General Data Protection Regulation (GDPR)."
-    },
-    {
-      "t": "table",
-      "head": [
-        "Purpose",
-        "Examples",
-        "Legal basis"
-      ],
-      "rows": [
-        [
-          "Provide Platform services",
-          "account creation, login, Listings, Reservations, messages, handover, return, reviews, and support",
-          "Contract performance or steps before entering into a contract"
-        ],
-        [
-          "Verify Users and maintain trust",
-          "email, telephone, and identity verification, account security, Reservation eligibility checks",
-          "Contract performance; legitimate interest in ensuring Platform security; legal obligation where applicable"
-        ],
-        [
-          "Process payments, Deposits, refunds, payouts, and settlement",
-          "Stripe payment intents, captures, refunds, Deposits, payouts, receipts, invoices, and accounting records",
-          "Contract performance; legal obligation; legitimate interest in reconciling payments and resolving payment Disputes"
-        ],
-        [
-          "Manage Listings, Reservations, and Platform rules",
-          "Listing review, availability, cancellations, violations, restrictions, and suspensions",
-          "Contract performance; legitimate interest in ensuring a safe and fair Platform"
-        ],
-        [
-          "Resolve Disputes, damage, loss, and security incidents",
-          "evidence, photographs, messages, Dispute deadlines, Deposit allocation, payout holds",
-          "Contract performance; legitimate interest in handling Disputes and defending legal claims; legal obligation where applicable"
-        ],
-        [
-          "Perform tax, accounting, DAC7, Consumer rights, regulatory, and legal obligations",
-          "seller tax profiles, self-billing consents, DAC7 reports, evidence of legal-document acceptance, accounting records",
-          "Legal obligation; legitimate interest in documenting compliance"
-        ],
-        [
-          "Communicate with you",
-          "transactional emails, push notifications, support replies, security notices, compliance reminders",
-          "Contract performance; legitimate interest; legal obligation; consent for optional marketing where needed"
-        ],
-        [
-          "Send marketing notices",
-          "newsletters, promotions, referral or product news",
-          "Consent where needed; legitimate interest in sending similar-service communications to existing customers where permitted by law and an opt-out is provided"
-        ],
-        [
-          "Improve, diagnose, and stabilize the service",
-          "diagnostics, error logs, performance data, product usage events",
-          "Legitimate interest in maintaining and improving the service; consent or choice for non-essential analytics where needed"
-        ],
-        [
-          "Operate referral and credit programs",
-          "referral codes, reward status, fraud checks",
-          "Contract performance; legitimate interest in preventing abuse; consent where communication is marketing"
-        ],
-        [
-          "Defend rights and perform legal obligations",
-          "audit trails, legal holds, authority requests, accounting, taxes, claims",
-          "Legal obligation; legitimate interest in establishing, exercising, or defending legal claims"
-        ]
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Where we rely on legitimate interest, our interests include Platform security, fraud and abuse prevention, Dispute handling, payment reconciliation, maintaining User trust, ensuring service operation, defending legal claims, and improving the Platform. Before relying on legitimate interest, we assess whether our interests are overridden by your rights and freedoms."
-    },
-    {
-      "t": "p",
-      "md": "Where we rely on consent, you may withdraw it at any time. Withdrawal of consent does not affect the lawfulness of Processing carried out before withdrawal."
-    },
-    {
-      "t": "p",
-      "md": "In addition, during the launch period, the following specific bases apply to the main risk areas:"
-    },
-    {
-      "t": "table",
-      "head": [
-        "Processing purpose",
-        "Main data categories",
-        "Legal basis",
-        "Notes"
-      ],
-      "rows": [
-        [
-          "Account creation and use",
-          "account, authentication, profile data",
-          "contract performance; legitimate interest in security",
-          "without this data we cannot provide main account functions"
-        ],
-        [
-          "Rental Reservations and payments",
-          "Reservation, payment, Deposit, Stripe identifiers",
-          "contract performance; legal obligation for accounting and taxes; legitimate interest in Disputes",
-          "includes Deposit authorization, capture after Lessor acceptance, refund, hold, and payment Disputes"
-        ],
-        [
-          "Lessor and Renter identity verification",
-          "Didit verification results, selected identity attributes, date of birth, audit records",
-          "contract performance; legitimate interest in security; legal obligation in payment or KYC context where applicable",
-          "Didit and Stripe Connect KYC apply to Lessors; Didit identity verification applies to Renters where required"
-        ],
-        [
-          "Business User or Trader transparency",
-          "legal name, registration number, country, VAT status, representation data",
-          "legal obligation; contract performance",
-          "necessary for B2C/B2B transparency, invoices, tax, and platform rules"
-        ],
-        [
-          "Messages and narrow Content moderation",
-          "message text, attachment metadata, moderation signals",
-          "contract performance; legitimate interest in security and rule enforcement",
-          "AI may be used to detect signals of possible contact details or attempts to complete a transaction outside the Platform; not used for a general fraud-score system"
-        ],
-        [
-          "Error monitoring and security",
-          "technical logs, device, session, request identifiers, server CloudWatch and, where used, client-side Sentry records",
-          "legitimate interest in a secure and stable Platform",
-          "AWS CloudWatch is server-side; Sentry, if used, is client-side (Expo App); data minimization, access restriction, and PII removal from diagnostic records apply where possible"
-        ],
-        [
-          "Product analytics",
-          "Amplitude events and related identifiers",
-          "consent where required by law; otherwise legitimate interest only for a strictly limited scope of necessary product metrics",
-          "client-side technology; during the launch period, the Naudokis server does not use it; non-essential analytics must not be enabled without applicable consent"
-        ],
-        [
-          "Direct marketing",
-          "email, telephone number, push-notification tokens, marketing choices",
-          "consent or applicable \"similar services\" exception if lawfully applicable; legitimate interest in maintaining marketing opt-out lists",
-          "marketing notices may be refused at any time"
-        ],
-        [
-          "Fraud prevention - document technical security tag",
-          "cryptographically protected identity document technical security tag (hash)",
-          "legitimate interest in preventing creation of multiple accounts with the same document",
-          "raw document number is not retained; not used for profiling or marketing"
-        ],
-        [
-          "AI auxiliary functions",
-          "Listing description inputs and outputs, limited message Content",
-          "contract performance where the function is part of the service; legitimate interest in providing and improving auxiliary functions",
-          "AI outputs are auxiliary; not applied to solely automated significant decisions without human review"
-        ],
-        [
-          "Dispute, damage, and Deposit evidence",
-          "handover or return photographs, notes, messages, claim evidence",
-          "contract performance; legitimate interest in handling Disputes and defending legal claims",
-          "retained only to the extent necessary for the Dispute and legal requirements"
-        ]
-      ]
-    },
-    {
-      "t": "h2",
-      "id": "9-how-data-is-shared-with-other-users",
-      "text": "9. How data is shared with other Users"
-    },
-    {
-      "t": "p",
-      "md": "Naudokis is a two-sided rental Platform, so some data must be displayed or transferred to other Users in order to carry out Listings, Reservations, handover, return, payments, reviews, and Disputes. The amount of data depends on the Reservation stage, transaction type, User roles, and what is necessary for the specific function."
-    },
-    {
-      "t": "p",
-      "md": "Main principles:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "before a confirmed Reservation, only limited public information needed for the Listing, trust, search, and Reservation decision is displayed;",
-        "precise private contact, address, or handover information is disclosed only where necessary for a confirmed Reservation, handover, return, delivery, Dispute, security, taxes, B2B settlement, or legal purpose;",
-        "during a Dispute, the substance of the claim, related evidence, and information necessary to respond may be disclosed to the other party, but Naudokis has the right to limit disclosure for reasons of privacy, security, fraud prevention, law enforcement, trade secrets, or third-party rights;",
-        "for Business Users and Traders, more public business information may be displayed where required by consumer protection, the Digital Services Act, tax, invoicing, or other applicable law."
-      ]
-    },
-    {
-      "t": "p",
-      "md": "The following overview shows what other Users may see about you at different stages:"
-    },
-    {
-      "t": "table",
-      "head": [
-        "Stage or situation",
-        "Data visible to other Users"
-      ],
-      "rows": [
-        [
-          "Public Listing before Reservation",
-          "Listing information, photographs, price, Deposit, availability, approximate location, limited public Lessor identity, verification badge, ratings, reviews, and other public trust signals"
-        ],
-        [
-          "Reservation request",
-          "Reservation dates, selected handover or delivery method, limited profile information of the parties, and information needed for the Lessor to accept or reject the request"
-        ],
-        [
-          "After confirmed Reservation",
-          "Contact details, more precise pickup, delivery, or handover information, Reservation information, messages, and other data necessary to perform the rental"
-        ],
-        [
-          "Handover and return",
-          "Handover and return confirmations, condition photographs, notes, accessories lists, timestamps, and other information necessary for performance"
-        ],
-        [
-          "Dispute or support process",
-          "Substance of the claim, related evidence, photographs, messages, payment or Deposit information, data necessary to respond, and administrator decision summary to the extent necessary and permitted"
-        ],
-        [
-          "Business Lessor or Trader profile",
-          "Public business name, legal name, registration number, country, VAT status indicator, contact channel, Consumer rights information, and other mandatory business information"
-        ],
-        [
-          "B2B Reservation",
-          "Legal or trading name, registration number, VAT identification number, billing address, billing contacts, invoicing, VAT, accounting, and contract-performance data"
-        ],
-        [
-          "Business Renter rents from a private Lessor",
-          "Only the private Lessor contact, transaction, payment, handover, return, or accounting information necessary for the specific Reservation, Dispute, security, taxes, or legal requirements; a private Lessor may not have business, VAT, or invoice data"
-        ],
-        [
-          "Reviews and ratings",
-          "Reviews, ratings, public display name, role, and related Listing or Reservation context according to Platform review publication and moderation rules"
-        ]
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Users are prohibited from using other persons' data obtained through Naudokis for purposes unrelated to the Platform. This includes, for example, unsolicited marketing, stalking, discrimination, attempts to bypass the Platform, creditworthiness assessment, collection of data into external databases, or another unlawful or incompatible purpose."
-    },
-    {
-      "t": "p",
-      "md": "If this duty is breached, Naudokis has the right to restrict the account, remove Content, terminate access, and, where necessary, notify competent authorities."
-    },
-    {
-      "t": "h2",
-      "id": "10-service-providers-recipients-and-their-roles",
-      "text": "10. Service providers, recipients, and their roles"
-    },
-    {
-      "t": "callout",
-      "md": "Personal Data may be transferred only to the extent necessary to provide the Platform, payments, identity verification, security, support, Disputes, accounting, taxes, legal requirements, and other functions stated in this Policy."
-    },
-    {
-      "t": "p",
-      "md": "Data may be transferred to other transaction participants, payment, identity verification, infrastructure, communication, diagnostic, security, accounting, legal, tax, and other service providers, as well as authorities where required by legislation."
-    },
-    {
-      "t": "p",
-      "md": "On listing pages, the website offers an optional Google Maps embed. The map is not loaded until you choose **Load the Google Maps map**. If you load it, Google may receive your IP address, browser and device information, the requested city, and ordinary request metadata under Google's own privacy terms. Your choice is stored in your browser so later listing maps can load without asking again; clearing site storage resets it."
-    },
-    {
-      "t": "p",
-      "md": "The website offers optional install-attribution measurement through AppsFlyer. By default the website loads no AppsFlyer script, pixel, or identifier and creates no AppsFlyer link: install buttons lead directly to the App Store or Google Play. When you select an install button, you are asked to make an explicit choice in which refusing is as easy as allowing; selecting the install button is not itself consent. Only if you choose **Allow measurement** is the install link routed through AppsFlyer, which may then receive your IP address, browser and device information, the campaign or invite code, and ordinary request metadata under AppsFlyer's own privacy terms. Your choice — and equally a refusal — is stored in a first-party preference Cookie (`nk_attr_consent`) containing only the choice, the policy version, and the date; it contains no advertising identifier. You can change or withdraw the choice at any time under **Privacy choices** in the website footer; after withdrawal, install links again lead directly to the stores. This website preference is separate from the in-app analytics and advertising consent and does not change it. A referral reward does not depend on this choice: the invite code can always be entered manually in the App."
-    },
-    {
-      "t": "p",
-      "md": "Links in transactional emails (booking requests, messages, billing documents, reviews, password reset, account-deletion cancellation) are first-party links to www.naudokis.lt. They are not attribution links and are not routed through AppsFlyer, so opening such an email does not disclose the click to an attribution provider. Where such a link carries a single-use token, that token is used only to perform the action you requested and is not sent to analytics or error-monitoring providers."
-    },
-    {
-      "t": "p",
-      "md": "A more detailed summary of vendors, recipients, Cookies, SDKs, and technologies is provided in the Vendors, Recipients, Cookies, and SDK Appendix."
-    },
-    {
-      "t": "h2",
-      "id": "11-payments-identity-verification-and-regulated-processing",
-      "text": "11. Payments, identity verification, and regulated Processing"
-    },
-    {
-      "t": "callout",
-      "md": "In the areas of payments, payouts, identity verification, sanctions, fraud prevention, taxes, and regulated compliance, Naudokis may use third-party providers, including Stripe and Didit."
-    },
-    {
-      "t": "p",
-      "md": "Some providers act in certain cases as independent Controllers, especially when they perform their own regulated payment, KYC, sanctions, fraud-prevention, tax, or legal obligations. Their privacy notices and terms may apply to such Processing."
-    },
-    {
-      "t": "p",
-      "md": "Detailed rules on identity verification, the document technical security tag, fraud prevention, and regulated Processing are provided in the Identity Verification and Fraud Prevention Appendix."
-    },
-    {
-      "t": "h2",
-      "id": "12-international-data-transfers",
-      "text": "12. International data transfers"
-    },
-    {
-      "t": "p",
-      "md": "Naudokis is established in Lithuania and primarily serves Lithuanian and European Union or European Economic Area Users. Main Platform app data and file storage operate in the Amazon Web Services region **eu-north-1 (Stockholm, Sweden)**, i.e. in the European Economic Area."
-    },
-    {
-      "t": "p",
-      "md": "Some communication, infrastructure, or third-party functions may be processed through the infrastructure of relevant providers and the safeguards applied by them. This may include transactional emails, SMS, telecommunications networks, payments, identity verification, social login, or services of other providers."
-    },
-    {
-      "t": "p",
-      "md": "Some service providers stated in Section 10 or their subcontractors may process data outside the European Economic Area, including the United States of America or other countries."
-    },
-    {
-      "t": "p",
-      "md": "Depending on enabled functions, vendor configuration, and specific use, such transfers may include:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "Stripe payment functions;",
-        "Didit identity verification;",
-        "OpenAI or other AI service providers where AI functions are used;",
-        "Google server-side address autocomplete through Google Places API;",
-        "Expo push notifications;",
-        "social login services, including Apple, Google, and Facebook;",
-        "reverse geocoding through OpenStreetMap Nominatim, operated by the OpenStreetMap Foundation. In such case, only coordinates are transferred, without direct identifiers."
-      ]
-    },
-    {
-      "t": "p",
-      "md": "Server-side Lithuanian address geocoding and normalization (Postit) is performed in Lithuania, i.e. in the European Economic Area."
-    },
-    {
-      "t": "p",
-      "md": "For such transfers, Naudokis applies the safeguards provided in Chapter V GDPR:"
-    },
-    {
-      "t": "ul",
-      "items": [
-        "the European Commission adequacy decision where applicable (for example the EU-US Data Privacy Framework where the specific recipient is certified);",
-        "European Commission approved **standard contractual clauses (SCCs)**;",
-        "data processing agreements (DPAs) and subcontractor management commitments with each Processor;",
-        "transfer impact assessments (TIAs) where required;",
-        "additional technical (encryption in transit and, where possible, at rest) and organizational measures."
-      ]
-    },
-    {
-      "t": "p",
-      "md": "The current list of subprocessors and transfer safeguard mechanisms applicable to them is published on the Naudokis website, in the App, or provided on request by email at **info@naudokis.lt**. You may request more information about safeguards applicable to specific transfers by contacting us by email at **info@naudokis.lt**."
+      "md": "The scope of the data processed depends on the functions you use."
     },
     {
       "t": "h3",
-      "text": "Data protection impact and risk assessments"
+      "text": "3.1. Account and profile"
     },
     {
       "t": "p",
-      "md": "Before starting or materially changing higher-risk Processing, Naudokis documents a data protection impact assessment, legitimate interest assessment, or another proportionate risk assessment where required by GDPR or by the nature of the Processing risk."
-    },
-    {
-      "t": "p",
-      "md": "Higher-risk Processing may include identity document verification, use of an identity document technical security tag (hash) for fraud prevention, detection of message Content signals, fraud prevention, payment or payout holds, AI auxiliary functions, and other processes that may have a significant effect."
-    },
-    {
-      "t": "p",
-      "md": "Such assessments evaluate purposes, necessity, proportionality, data minimization, retention periods, access control, human review, exercise of User rights, and risk mitigation measures."
-    },
-    {
-      "t": "h2",
-      "id": "13-automated-checks-ai-and-human-review",
-      "text": "13. Automated checks, AI, and human review"
-    },
-    {
-      "t": "callout",
-      "md": "Naudokis may use automated tools and, where the function is enabled, AI solutions for security, fraud prevention, moderation, Listing assistance, support workflow, or other Platform functions."
-    },
-    {
-      "t": "p",
-      "md": "We do not use automated tools to identify or infer special categories of data, for biometric categorization, or for unlawful profiling. Naudokis does not make solely automated decisions that produce legal effects or a similar significant effect on a User without human review. If such a decision were made, you have the right to request human intervention, express your position, and contest the decision under this Policy, the Terms, and applicable law."
-    },
-    {
-      "t": "p",
-      "md": "More detailed information is provided in the AI and Automated Checks Appendix."
-    },
-    {
-      "t": "h2",
-      "id": "14-marketing-service-related-notices-and-notification-settings",
-      "text": "14. Marketing, service-related notices, and notification settings"
-    },
-    {
-      "t": "p",
-      "md": "Naudokis has the right to send:"
+      "md": "We may process:"
     },
     {
       "t": "ul",
       "items": [
-        "necessary service-related notices about account, security, legal-document changes, Reservations, payments, Deposits, payouts, Disputes, support, handover, return, and other Platform actions;",
-        "informational product notices about functions or service changes;",
-        "marketing, promotion, referral, or newsletter notices where we have the required consent or another lawful basis."
+        "your name, display name, email address, and telephone number;",
+        "your profile photograph and optional profile information;",
+        "login, authentication, and account-recovery data;",
+        "account status, settings, and verification badges;",
+        "records of acceptance of the Terms of Use, Privacy Policy, and other legal choices."
       ]
     },
     {
-      "t": "p",
-      "md": "Where direct marketing is based on the similar-services exception for an existing customer, we provide a clear opportunity to object to such use at the time of data collection and in every marketing notice."
+      "t": "h3",
+      "text": "3.2. Identity and verification"
     },
     {
       "t": "p",
-      "md": "You may opt out of marketing notices by clicking the unsubscribe link in an email, changing notification settings in the App where such function is available, or contacting us by email at **info@naudokis.lt**. If you opt out of marketing notices, we may still send necessary service-related, security, legal, Reservation, payment, or account notices."
-    },
-    {
-      "t": "h2",
-      "id": "15-retention-periods",
-      "text": "15. Retention periods"
-    },
-    {
-      "t": "callout",
-      "md": "Personal Data is retained only for as long as necessary for the specific purpose, Platform operation, legal requirements, Disputes, fraud prevention, accounting, taxes, payment reconciliation, security, and protection of legitimate interests."
-    },
-    {
-      "t": "p",
-      "md": "When data is no longer needed, it is deleted, anonymized, or restricted. Some data may be retained for longer where necessary because of active Reservations, Disputes, payment Disputes, debts, taxes, accounting, legal defence, law-enforcement, or authority requirements."
-    },
-    {
-      "t": "p",
-      "md": "More detailed retention period and deletion logic is provided in the Retention Periods and Deletion Appendix."
-    },
-    {
-      "t": "h2",
-      "id": "16-account-deletion-and-data-export",
-      "text": "16. Account deletion and data export"
-    },
-    {
-      "t": "p",
-      "md": "You may request account deletion or a copy of data as described in this Policy. Account deletion may be postponed or some data may be retained on a limited basis if needed for active Reservations, Disputes, payments, taxes, accounting, security, fraud prevention, or legal defence."
-    },
-    {
-      "t": "p",
-      "md": "More detailed account deletion and export logic is provided in the Retention Periods and Deletion Appendix."
-    },
-    {
-      "t": "h2",
-      "id": "17-your-rights-under-gdpr",
-      "text": "17. Your rights under GDPR"
-    },
-    {
-      "t": "callout",
-      "md": "You have the right to access data, rectify it, delete it, restrict it, transfer it, object to certain Processing, and withdraw consent where Processing is based on consent."
-    },
-    {
-      "t": "p",
-      "md": "Under GDPR and applicable exceptions, you have the right to:"
+      "md": "Depending on the check, we may process:"
     },
     {
       "t": "ul",
       "items": [
-        "access your Personal Data;",
-        "request correction of inaccurate or incomplete data;",
-        "request deletion of data;",
-        "restrict data Processing;",
-        "object to Processing based on legitimate interests;",
-        "receive data you provided in a portable format where applicable;",
-        "withdraw consent where data Processing is based on consent;",
-        "object to direct marketing;",
-        "request human review, express your position, and contest significant automated or semi-automated decisions where applicable;",
-        "submit a complaint to a supervisory authority."
+        "your date of birth and confirmation that you are at least 18 years old;",
+        "the verification-session identifier, status, and result;",
+        "limited identity-document attributes and the document’s expiry date;",
+        "document, facial-match, liveness, or fraud-prevention signals;",
+        "a technical security marker intended to identify repeated use of the same document or personal data."
       ]
     },
     {
       "t": "p",
-      "md": "To exercise your rights, contact us by email at **info@naudokis.lt**. Before fulfilling a request, we may ask you to verify your identity. We usually respond within one month from receipt of the request. This period may be extended by up to two more months where permitted by GDPR because of the complexity of the request or number of requests."
+      "md": "During identity verification, the provider may process an image of the document, an image of the person, video, or liveness-check data. Whether those data constitute biometric data depends on the technology and purpose used. If the data are processed as biometric data for the purpose of uniquely identifying a person, a separate condition under Article 9 of the GDPR and additional safeguards must apply."
+    },
+    {
+      "t": "h3",
+      "text": "3.3. Business, tax, and invoicing data"
     },
     {
       "t": "p",
-      "md": "Some requests may be restricted if data is required for payment, accounting, tax, DAC7, legal requirement, Dispute, fraud-prevention, security, or other legitimate and legal reasons."
-    },
-    {
-      "t": "h2",
-      "id": "18-children-and-minors",
-      "text": "18. Children and minors"
-    },
-    {
-      "t": "p",
-      "md": "The Naudokis Platform and account functions are intended only for persons at least 18 years old. This includes account creation, publication of Listings, reservation, payments, payouts, Deposits, handover, return, and conclusion of rental arrangements through the Platform."
-    },
-    {
-      "t": "p",
-      "md": "Naudokis does not knowingly seek to collect Personal Data from persons under 18 years old. By creating an account or using the Platform, Users declare that they meet the age requirement."
-    },
-    {
-      "t": "p",
-      "md": "During identity verification, Didit may determine the date of birth from an identity document and transfer to Naudokis a verification result or selected attributes. This information may be used to assess eligibility for account, Lessor, paid functions, payouts, or other age-restricted functions."
-    },
-    {
-      "t": "p",
-      "md": "If we learn that an account was created by or the Platform is being used by a person under 18 years old, we reject such person's identity verification, restrict access to age-restricted functions, and initiate internal review. After such review, we may close the account and delete, anonymize, or restrict related Personal Data as described in Section 15 of this Policy and as required by legislation."
-    },
-    {
-      "t": "p",
-      "md": "Parents or guardians may contact us by email at **info@naudokis.lt** if they believe that a minor created an account. We will ask for sufficient information to verify the person's identity and relationship, and then promptly take appropriate action."
-    },
-    {
-      "t": "h2",
-      "id": "19-security",
-      "text": "19. Security"
-    },
-    {
-      "t": "p",
-      "md": "We apply technical and organizational measures to protect Personal Data, including authentication, access control, encrypted transmission, log management, monitoring, controlled vendor access, evidence upload controls, separation of public and private Platform data, isolation of payment data through payment providers, and security reviews."
-    },
-    {
-      "t": "p",
-      "md": "Documents related to taxes, accounting, or compliance, where applicable, are retained using encryption and access control measures."
-    },
-    {
-      "t": "p",
-      "md": "**Notice of Personal Data breach.** Under Articles 33 and 34 GDPR, after becoming aware of a Personal Data breach, we will notify the State Data Protection Inspectorate without delay and, where possible, no later than within 72 hours if the breach may pose a risk to the rights and freedoms of persons."
-    },
-    {
-      "t": "p",
-      "md": "If the breach may cause a high risk to your rights and freedoms, we will also inform you without undue delay through the notification channel chosen: email, App notification, or another method available to you. The notice will state what data is affected, what the possible consequences are, and what measures we recommend taking."
-    },
-    {
-      "t": "p",
-      "md": "Although we apply security measures, no internet or mobile service is completely secure. Protect your login data, devices, and account, and notify us immediately if you suspect unauthorized access or an account security breach."
-    },
-    {
-      "t": "h2",
-      "id": "20-changes-to-this-policy",
-      "text": "20. Changes to this Policy"
-    },
-    {
-      "t": "p",
-      "md": "We may update this Policy when the Platform, its functions, service providers, legal requirements, or our data Processing practices change. We will publish the updated version on the Platform and indicate its effective date."
-    },
-    {
-      "t": "p",
-      "md": "Where changes are material or required by law, we may additionally inform you by email, App notification, account notice, or request that you accept the updated version."
-    },
-    {
-      "t": "h2",
-      "id": "21-complaints-and-supervisory-authority",
-      "text": "21. Complaints and supervisory authority"
-    },
-    {
-      "t": "p",
-      "md": "You may first contact us by email at **info@naudokis.lt** so that we can review and, where possible, resolve your question."
-    },
-    {
-      "t": "p",
-      "md": "You may also submit a complaint to the Lithuanian State Data Protection Inspectorate (SDPI) or another competent EU data protection authority."
+      "md": "We may process:"
     },
     {
       "t": "ul",
       "items": [
-        "**SDPI website:** https://vdai.lrv.lt/",
-        "**Address:** L. Sapiegos g. 17, LT-10312 Vilnius, Lithuania",
-        "**Email:** ada@ada.lt (the current contact is always checked on the SDPI website)",
-        "**E-delivery box:** 188607912, if this channel applies to you"
+        "the legal or trading name, registration number, and address;",
+        "the representative’s name, position, and representation information;",
+        "VAT status, VAT number, and the result of a VIES check;",
+        "tax-identification numbers and other data required for DAC7 checks;",
+        "invoice, receipt, credit-document, accounting, and tax-reporting data."
       ]
     },
     {
-      "t": "h2",
-      "id": "22-privacy-appendices",
-      "text": "22. Privacy appendices"
+      "t": "h3",
+      "text": "3.4. Listings and rental items"
     },
     {
       "t": "p",
-      "md": "These privacy appendices form part of this Policy and apply together with the main Policy:"
+      "md": "We may process:"
     },
     {
       "t": "ul",
       "items": [
-        "22.1 Retention Periods and Deletion Appendix",
-        "22.2-22.3 Vendors, Recipients, Cookies, and SDK Appendix",
-        "22.4 Identity Verification and Fraud Prevention Appendix",
-        "22.5 AI and Automated Checks Appendix",
-        "22.6 Business Users, Traders, DAC7, and Tax Privacy Appendix",
-        "Data Categories Appendix (appendix to Section 6 of the Policy)"
+        "the listing title, description, category, price, and Security Deposit;",
+        "photographs, videos, item characteristics, and availability;",
+        "the approximate location of the listing;",
+        "listing status, history, and moderation information."
       ]
     },
     {
-      "t": "h2",
-      "id": "23-contacts",
-      "text": "23. Contacts"
+      "t": "h3",
+      "text": "3.5. Bookings, payments, and payouts"
+    },
+    {
+      "t": "p",
+      "md": "We may process:"
     },
     {
       "t": "ul",
       "items": [
-        "Privacy requests: **info@naudokis.lt**",
-        "Support: **info@naudokis.lt**",
-        "Operator: **MB Naudokis, legal entity code 307423504, registered office address Numėjos g. 6, LT-08402 Vilnius, Lithuania**"
+        "the parties to the Booking, dates, status, and handover or delivery method;",
+        "the rental price, Platform fee, Security Deposit, and other calculations;",
+        "Stripe customer, payment, refund, transfer, and payout identifiers;",
+        "authorisation, capture, refund, payout, and payment-dispute statuses;",
+        "invoice and payment-reconciliation records."
       ]
     },
     {
-      "t": "hr"
+      "t": "h3",
+      "text": "3.6. Handover, return, and disputes"
     },
     {
       "t": "p",
-      "md": "Previous versions of this document may be retained in the Naudokis internal archive. If you need information about a previous version, contact us by email at **info@naudokis.lt**."
+      "md": "We may process:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "handover and return times, condition confirmations, and accessory lists;",
+        "photographs, videos, and other evidence relating to the item;",
+        "claims concerning damage, loss, delay, cancellation, or the Security Deposit;",
+        "the parties’ explanations, decisions, payout holds, and allocation of the Security Deposit."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.7. Messages, support, and moderation"
+    },
+    {
+      "t": "p",
+      "md": "We may process:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "messages sent through the Platform and their attachments;",
+        "support requests, complaints, and reports concerning Users or Listings;",
+        "DSA notices, moderation decisions, and appeals;",
+        "signals relating to rule violations, security, and attempts to circumvent the Platform."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.8. Location and delivery data"
+    },
+    {
+      "t": "p",
+      "md": "We may process:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "the approximate location of a Listing or search;",
+        "the collection, delivery, or handover address;",
+        "geocoding and address-normalisation results;",
+        "distance or delivery area."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "We process precise device-location data only where a function uses those data and the required device permission has been granted."
+    },
+    {
+      "t": "h3",
+      "text": "3.9. Reviews and reputation"
+    },
+    {
+      "t": "p",
+      "md": "We may process:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "a rating, review text, and its relationship to a Booking;",
+        "the publicly displayed name and the User’s role in the transaction;",
+        "verification, activity, and other trust signals displayed on the Platform;",
+        "favourited Listings and other account preferences."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.10. Device, security, and diagnostics"
+    },
+    {
+      "t": "p",
+      "md": "We may process:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "IP address, user agent, and session information;",
+        "device type, operating system, App version, and language;",
+        "login, error, performance, security, and audit logs;",
+        "a push-notification token;",
+        "cookies, local-storage records, and identifiers of similar technologies."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "3.11. Analytics and attribution"
+    },
+    {
+      "t": "p",
+      "md": "Only after obtaining the required consent may we process:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "screen views, selected actions, and functions used;",
+        "a pseudonymous internal User identifier;",
+        "app-installation, opening, redirection, and campaign data;",
+        "attribution identifiers, campaign source, and selected conversion events;",
+        "a completed-rental revenue and currency event, where such measurement is enabled."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "We do not seek to collect special-category data through the Platform’s general functions. If you voluntarily provide such data in a message, evidence, or support request, we process them only to the extent necessary to resolve that specific matter and to the extent permitted by law."
+    },
+    {
+      "t": "h2",
+      "id": "4-whether-you-are-required-to-provide-data",
+      "text": "4. Whether you are required to provide data"
+    },
+    {
+      "t": "p",
+      "md": "We identify mandatory fields at the relevant stage of the Platform."
+    },
+    {
+      "t": "p",
+      "md": "Account and login data are necessary to create and protect an account. Listing, Booking, payment, handover, or return data are necessary only when you use the corresponding function. Telephone, identity, business, tax, invoicing, and payout data may be necessary because of the chosen function, payment-provider requirements, transaction risk, or law."
+    },
+    {
+      "t": "p",
+      "md": "If you do not provide mandatory data, we may be unable to:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "create or verify an account;",
+        "publish a Listing;",
+        "submit or accept a Booking;",
+        "process a payment, refund, or payout;",
+        "issue an accounting document;",
+        "provide a function for which those data are necessary."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Optional profile fields, marketing, Mixpanel analytics, and AppsFlyer attribution are not necessary for the Platform’s core functions. If you do not consent, the relevant optional function or measurement will not operate, but this must not restrict the core rental functions."
+    },
+    {
+      "t": "h2",
+      "id": "5-why-and-on-what-basis-we-process-data",
+      "text": "5. Why and on what basis we process data"
+    },
+    {
+      "t": "p",
+      "md": "The principal purposes and legal bases under the GDPR are set out below."
+    },
+    {
+      "t": "table",
+      "head": [
+        "Purpose of processing",
+        "Main legal basis"
+      ],
+      "rows": [
+        [
+          "Create and administer an account and authenticate the User",
+          "Performance of a contract or steps taken before entering into a contract"
+        ],
+        [
+          "List items and manage Bookings, messages, handover, return, and reviews",
+          "Performance of a contract"
+        ],
+        [
+          "Process payments, Security Deposits, refunds, and payouts",
+          "Performance of a contract; legal obligation, where applicable"
+        ],
+        [
+          "Verify age, identity, business representation, or entitlement to receive payouts",
+          "Performance of a contract; legitimate interest in preventing fraud; legal obligation, where specifically applicable"
+        ],
+        [
+          "Detect fake accounts, use of multiple accounts, stolen items, fraud, failure to return items, or attempts to circumvent the Platform",
+          "Legitimate interest in protecting Users, the Platform, and transactions"
+        ],
+        [
+          "Moderate Listings, messages, and User conduct; apply account or function restrictions",
+          "Performance of a contract; legitimate interest in maintaining a safe and fair Platform; legal obligation, where applicable"
+        ],
+        [
+          "Resolve damage, loss, delay, cancellation, Security Deposit, or other disputes",
+          "Performance of a contract; legitimate interest in establishing, bringing, enforcing, or defending claims"
+        ],
+        [
+          "Provide support and send essential notifications",
+          "Performance of a contract; legitimate interest in administering the service; legal obligation, where applicable"
+        ],
+        [
+          "Process invoices, accounting, VAT, VIES, tax, and DAC7 data",
+          "Legal obligation"
+        ],
+        [
+          "Retain evidence of contracts, consents, and legal choices",
+          "Legal obligation; legitimate interest in demonstrating compliance and defending claims"
+        ],
+        [
+          "Ensure the security of infrastructure, accounts, and payments; investigate incidents",
+          "Legitimate interest in ensuring information and Platform security; legal obligation, where applicable"
+        ],
+        [
+          "Perform essential diagnostics and correct technical errors",
+          "Legitimate interest in maintaining a secure and functioning service; consent for access to terminal equipment where the technology is not strictly necessary"
+        ],
+        [
+          "Measure aggregate website use and app-handoff outcomes with cookieless Plausible analytics",
+          "Legitimate interest in understanding and improving the public website and app-install bridge"
+        ],
+        [
+          "Use Mixpanel product analytics",
+          "Consent"
+        ],
+        [
+          "Use AppsFlyer installation, campaign, and conversion attribution",
+          "Consent"
+        ],
+        [
+          "Send electronic direct marketing",
+          "Consent or the statutory existing-customer exception, where all its conditions are met"
+        ],
+        [
+          "Comply with lawful authority requests and conduct legal defence",
+          "Legal obligation; legitimate interest in bringing, enforcing, or defending claims"
+        ]
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Where we rely on **legitimate interests**, our specific interests are the security of the Platform and Users, prevention of fraud and abuse, payment reconciliation, dispute handling, service stability, defence of legal claims, and demonstration of compliance. Before relying on this basis, we assess the necessity of the processing, its effect on you, and possible safeguards."
+    },
+    {
+      "t": "p",
+      "md": "You have the right, on grounds relating to your particular situation, to object to processing based on legitimate interests. Further information is provided in Section 14."
+    },
+    {
+      "t": "p",
+      "md": "Where we rely on **consent**, you may withdraw it at any time as easily as you gave it. Withdrawal does not affect the lawfulness of processing carried out before withdrawal."
+    },
+    {
+      "t": "h2",
+      "id": "6-what-is-visible-to-others",
+      "text": "6. What is visible to others"
+    },
+    {
+      "t": "h3",
+      "text": "6.1. Publicly"
+    },
+    {
+      "t": "p",
+      "md": "A public Listing may display:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "Listing information, photographs, price, and Security Deposit;",
+        "approximate location;",
+        "limited Lessor profile information;",
+        "a verification badge, ratings, and reviews."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "We do not display the exact address, full telephone number, email address, or identity documents publicly."
+    },
+    {
+      "t": "h3",
+      "text": "6.2. To registered Users or the parties to a Booking"
+    },
+    {
+      "t": "p",
+      "md": "When a Booking Request is submitted, limited profile, date, delivery, and request information may be shown to the other party."
+    },
+    {
+      "t": "p",
+      "md": "Once a Booking is confirmed, the parties may be provided with contact details, a more precise collection or delivery address, handover information, and messages necessary for the transaction."
+    },
+    {
+      "t": "p",
+      "md": "During handover, return, or a dispute, the parties may be provided with condition evidence, photographs, timestamps, payment or Security Deposit information, and a summary of the decision to the extent required for the process."
+    },
+    {
+      "t": "h3",
+      "text": "6.3. Business and accounting information"
+    },
+    {
+      "t": "p",
+      "md": "Where a Business User or Trader participates in a transaction, the following may be displayed or disclosed:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "legal or trading name;",
+        "registration number and country;",
+        "VAT status or VAT number;",
+        "billing address;",
+        "information necessary for invoicing and for informing consumers."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Users are prohibited from using other persons’ data obtained through the Platform for unrelated marketing, harassment, discrimination, creation of external databases, circumvention of the Platform, or any other unlawful purpose."
+    },
+    {
+      "t": "h2",
+      "id": "7-to-whom-we-disclose-data",
+      "text": "7. To whom we disclose data"
+    },
+    {
+      "t": "p",
+      "md": "We disclose data only to the extent necessary for the relevant function or obligation."
+    },
+    {
+      "t": "h3",
+      "text": "7.1. Data processors and technical service providers"
+    },
+    {
+      "t": "p",
+      "md": "Depending on the functions enabled, we may use:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "**AWS**, including the eu-north-1 region, for infrastructure, databases, file storage, logs, and security;",
+        "**Sentry** and **AWS CloudWatch** for diagnostics, errors, performance, and security incidents;",
+        "**Expo** for technical mobile-App functions and push notifications;",
+        "**Plausible Analytics** for cookieless public-website audience measurement and app-handoff outcomes;",
+        "**Mixpanel** for consent-based product analytics;",
+        "**AppsFlyer** for consent-based app attribution and campaign measurement;",
+        "**Postit** for geocoding and normalising Lithuanian addresses;",
+        "**Google Places API** for address autocomplete where that function is used;",
+        "**OpenAI** or other AI service providers only for specific enabled assistive functions."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "OpenStreetMap Nominatim is not used for new location requests. Its source attribution may remain in historical location records created previously."
+    },
+    {
+      "t": "h3",
+      "text": "7.2. Payment and identity providers"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "**Stripe / Stripe Connect** may act both as our processor and as an independent data controller, depending on the specific payment, payout, KYC, sanctions, or legal-compliance activity.",
+        "**Didit** may process identity, document, facial-match, liveness, and fraud-prevention data. Its role must be assessed according to the specific service and contract: when providing verification on our instructions, the provider acts as a processor; for any independently determined purposes of its own, if any, it acts as a separate controller."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "7.3. Independent recipients"
+    },
+    {
+      "t": "p",
+      "md": "Data may also be received by:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "banks, card networks, and other payment-infrastructure participants;",
+        "Apple, Google, or Facebook when you choose social login;",
+        "the other party to a Booking, a business customer, or a Trader;",
+        "accounting, audit, legal, and other professional advisers;",
+        "the State Tax Inspectorate (VMI), VIES / European Commission systems, courts, law-enforcement bodies, supervisory authorities, and other public authorities where we are required or lawfully permitted to provide data."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "We may publish an up-to-date list of principal providers on the Platform or provide it upon request."
+    },
+    {
+      "t": "h2",
+      "id": "8-payments-payouts-and-identity-verification",
+      "text": "8. Payments, payouts, and identity verification"
+    },
+    {
+      "t": "h3",
+      "text": "8.1. Stripe"
+    },
+    {
+      "t": "p",
+      "md": "You enter payment-card details in a payment environment controlled by Stripe. “Naudokis” does not receive or store the full card number, CVC, or PIN."
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” may receive and retain the following information necessary for the Platform:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "Stripe customer, payment, refund, transfer, or payout identifiers;",
+        "amount, currency, and payment status;",
+        "authorisation, capture, refund, payout, or payment-dispute records;",
+        "limited information relating to the connected account and KYC status."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Stripe may independently process data for payment-law compliance, sanctions, anti-money-laundering, fraud prevention, and the security of its services."
+    },
+    {
+      "t": "h3",
+      "text": "8.2. Didit"
+    },
+    {
+      "t": "p",
+      "md": "Didit may process:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "an image of the identity document and the data contained in it;",
+        "an image of the person, facial-match, or liveness-check data;",
+        "document-authenticity, validity, and fraud signals;",
+        "IP address, device, and verification-session data."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "“Naudokis” generally stores the verification status, session identifier, expiry date, audit information, and limited verification results rather than maintaining a permanent archive of raw documents."
+    },
+    {
+      "t": "p",
+      "md": "We retain raw document images in our systems only where, and only for as long as, this is genuinely necessary for a specific verification, dispute, payment, tax, security, or legal purpose."
+    },
+    {
+      "t": "p",
+      "md": "We do not use identity or liveness data for emotion recognition, inference of sensitive characteristics, marketing, biometric categorisation, or the creation of a general reputation score."
+    },
+    {
+      "t": "h3",
+      "text": "8.3. Technical security marker"
+    },
+    {
+      "t": "p",
+      "md": "For fraud prevention, we may retain a cryptographically protected technical marker derived from a document number or personal identification number. It is used solely to detect the same document or data across multiple accounts."
+    },
+    {
+      "t": "p",
+      "md": "This marker is not the raw document number or personal identification number. It is not used for marketing or unrelated profiling."
+    },
+    {
+      "t": "h2",
+      "id": "9-taxes-vat-invoices-and-dac7",
+      "text": "9. Taxes, VAT, invoices, and DAC7"
+    },
+    {
+      "t": "p",
+      "md": "We process business, VAT, VIES, invoicing, and tax data only to the extent necessary to:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "administer Business User or Trader status;",
+        "prepare receipts, invoices, and credit documents;",
+        "comply with accounting and VAT obligations;",
+        "verify a VAT number in VIES;",
+        "determine and comply with tax or DAC7 obligations;",
+        "inform Users about submitted data where required by law."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "DAC7 covers the rental of immovable property, personal services, the sale of goods, and the rental of any mode of transport. Ordinary rental of other movable items is not, in itself, a reportable activity under DAC7. Tax-profile or accounting data may nevertheless be required for other legal obligations."
+    },
+    {
+      "t": "p",
+      "md": "Where an activity is reportable under DAC7, we may collect and provide to the State Tax Inspectorate (VMI) the seller’s identity, address, tax-identification, consideration, commission, tax, and account data."
+    },
+    {
+      "t": "h2",
+      "id": "10-cookies-sdks-analytics-and-notifications",
+      "text": "10. Cookies, SDKs, analytics, and notifications"
+    },
+    {
+      "t": "p",
+      "md": "The Platform uses cookies, local storage, mobile SDKs, push-notification tokens, and similar technologies."
+    },
+    {
+      "t": "h3",
+      "text": "10.1. Essential technologies"
+    },
+    {
+      "t": "p",
+      "md": "Without separate consent, we may use only technologies that are strictly necessary for a service explicitly requested by you or for transmitting a communication, for example:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "login and session management;",
+        "account and payment security;",
+        "saving privacy choices;",
+        "essential Platform functions."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "If a technology is not strictly necessary under electronic-communications rules, we obtain consent before enabling it, even where subsequent processing of personal data under the GDPR would be based on another legal basis."
+    },
+    {
+      "t": "h3",
+      "text": "10.2. Essential diagnostics"
+    },
+    {
+      "t": "p",
+      "md": "We use Sentry and AWS CloudWatch to monitor technical errors, incidents, performance, and security. Configuration must limit direct identifiers, and data scrubbing is applied before error events are transmitted."
+    },
+    {
+      "t": "p",
+      "md": "Essential diagnostics do not, by themselves, enable Mixpanel or AppsFlyer. If a particular diagnostic technology accesses terminal equipment for a purpose that is not solely strictly necessary, prior consent is required."
+    },
+    {
+      "t": "h3",
+      "text": "10.3. Plausible website analytics"
+    },
+    {
+      "t": "p",
+      "md": "The public website uses Plausible Analytics without analytics cookies or persistent browser-storage identifiers. It is not loaded on token-bearing account-action pages. The browser integration may process the page URL, referring page, interaction or conversion event, and technical request information such as IP address and user agent to produce aggregate audience statistics. Search and other ordinary non-token URL parameters may form part of the page URL reported by the browser integration."
+    },
+    {
+      "t": "p",
+      "md": "Redirect and native-handoff endpoints may also send a server-side event. For those events we remove the URL query string and fragment before transmission. The event may include the redirect outcome, platform, target type, placement or campaign parameters, and a pseudonymous journey identifier used to connect an app-handoff outcome. We do not send Plausible your name, email address, payment details, Booking identifier, full handoff token, or the precise address of a rental item."
+    },
+    {
+      "t": "p",
+      "md": "This processing is based on our legitimate interest in measuring and improving the public website and the web-to-app bridge. The configured integration does not write analytics cookies or a persistent identifier to browser storage and currently runs independently of the Mixpanel or AppsFlyer consent choice. You may object to legitimate-interest processing as described in Section 14. If the configuration changes to use cookies, local storage, advertising identifiers, or another non-essential terminal-equipment technology—or if prior consent is otherwise required for the deployed technology—we will obtain consent before enabling that processing."
+    },
+    {
+      "t": "h3",
+      "text": "10.4. Mixpanel"
+    },
+    {
+      "t": "p",
+      "md": "Mixpanel is enabled only after consent to product analytics has been obtained."
+    },
+    {
+      "t": "p",
+      "md": "Mixpanel may receive:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "an internal pseudonymous User identifier;",
+        "App version, operating system, and language;",
+        "screen views and selected-action events;",
+        "limited properties relating to the use of functions."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Mixpanel’s European data-ingestion endpoint is used. When consent is withdrawn, we stop sending new events, disable tracking, and clear the local User association."
+    },
+    {
+      "t": "h3",
+      "text": "10.5. AppsFlyer"
+    },
+    {
+      "t": "p",
+      "md": "The AppsFlyer SDK, attribution identifiers, conversion and redirection data, App events, and the server-side completed-rental revenue event are enabled only after the relevant consent has been obtained."
+    },
+    {
+      "t": "p",
+      "md": "Depending on the configuration, AppsFlyer may receive:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "the AppsFlyer installation identifier;",
+        "platform, device, and connection technical information, including IP address;",
+        "installation, opening, redirection, and campaign data;",
+        "selected actions in the App;",
+        "for a completed rental, a pseudonymous User identifier, event time, revenue, and currency."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "We do not send AppsFlyer your name, email address, full payment-card details, Booking identifier, or the precise address of the rental item."
+    },
+    {
+      "t": "p",
+      "md": "Transactional emails and their action links are not routed through AppsFlyer. An invitation link first opens a page controlled by “Naudokis”; AppsFlyer must not be loaded from that page before consent."
+    },
+    {
+      "t": "p",
+      "md": "When consent is withdrawn:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "the App must stop communication by the AppsFlyer SDK;",
+        "no new events are sent;",
+        "the attribution association stored in the account is removed;",
+        "server-side AppsFlyer events are no longer sent."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Withdrawal does not, by itself, erase data previously received by AppsFlyer. You may contact us regarding their erasure by exercising the rights set out in Section 14."
+    },
+    {
+      "t": "h3",
+      "text": "10.6. Push notifications"
+    },
+    {
+      "t": "p",
+      "md": "Push notifications may be used for Bookings, payments, messages, handover, security, support, or marketing."
+    },
+    {
+      "t": "p",
+      "md": "You may disable the device permission for notifications at any time. If you opt out of marketing or disable notifications, you may still receive essential information through another channel, such as email or the Platform."
+    },
+    {
+      "t": "h2",
+      "id": "11-automated-checks-profiling-and-ai",
+      "text": "11. Automated checks, profiling, and AI"
+    },
+    {
+      "t": "p",
+      "md": "We may use automated tools to:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "detect fake or duplicate accounts;",
+        "verify identity, age, documents, or liveness;",
+        "identify payment and fraud-risk signals;",
+        "detect prohibited content, sharing of contact details, or circumvention of the Platform;",
+        "classify support requests;",
+        "suggest Listing text or provide other clearly identified AI-assisted functions."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Signals used may include age, the verification result, use of the same document across multiple accounts, device or login signals, payment status, patterns of Platform use, and history of rule violations."
+    },
+    {
+      "t": "p",
+      "md": "Possible consequences include:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "identity verification is not completed or is rejected;",
+        "a Booking, payment, Listing, or payout function is temporarily restricted;",
+        "Content is referred for additional review;",
+        "an account or transaction is referred for human assessment."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "You may request human review, provide your explanation, and challenge a decision through Platform support or by email at info@naudokis.lt."
+    },
+    {
+      "t": "p",
+      "md": "If a decision is made solely by automated means and produces legal or similarly significant effects, we apply a legal basis and safeguards in accordance with Article 22 GDPR."
+    },
+    {
+      "t": "p",
+      "md": "We do not use automated or AI tools for emotion recognition, biometric categorisation, inference of special-category data, or unlawful discrimination."
+    },
+    {
+      "t": "h2",
+      "id": "12-transfers-of-data-outside-the-eea",
+      "text": "12. Transfers of data outside the EEA"
+    },
+    {
+      "t": "p",
+      "md": "MB “Naudokis” is established in Lithuania. The Platform’s principal data and file storage operate in the AWS eu-north-1 region in Stockholm, Sweden, which is within the EEA."
+    },
+    {
+      "t": "p",
+      "md": "Some providers, their affiliates, or subprocessors may process data outside the EEA. This may relate to payments, identity verification, social login, diagnostics, notifications, analytics, attribution, AI, or address functions."
+    },
+    {
+      "t": "p",
+      "md": "For each transfer, we apply an appropriate mechanism under Chapter V GDPR, such as:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "an adequacy decision of the European Commission;",
+        "the EU–US Data Privacy Framework where the US recipient is validly certified;",
+        "the European Commission’s Standard Contractual Clauses;",
+        "a transfer-impact assessment and supplementary technical or organisational measures where required."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "You may obtain more information about the mechanism applicable to a particular recipient, or a copy of the Standard Contractual Clauses, by emailing info@naudokis.lt. We may reasonably redact commercially or security-sensitive information."
+    },
+    {
+      "t": "h2",
+      "id": "13-how-long-we-retain-data",
+      "text": "13. How long we retain data"
+    },
+    {
+      "t": "p",
+      "md": "We retain data no longer than necessary for the specific purpose, legal requirements, disputes, security, or legal defence. We calculate the period from the event specified in the table, unless a legal hold applies."
+    },
+    {
+      "t": "table",
+      "head": [
+        "Data",
+        "Usual period or criterion"
+      ],
+      "rows": [
+        [
+          "Account and profile data",
+          "While the account is active. After account closure, only for as long as required for remaining legal, security, dispute, or compliance obligations"
+        ],
+        [
+          "Records of acceptance of legal documents",
+          "Until the end of the period during which it may be necessary to prove consent, acceptance of the Terms, or legal compliance"
+        ],
+        [
+          "Listings and public Content",
+          "While active; after removal, on a limited basis where required for moderation, DSA evidence, a dispute, or legal defence"
+        ],
+        [
+          "Bookings, payments, Security Deposits, refunds, and payouts",
+          "In accordance with accounting, tax, payment, and dispute requirements; financial and accounting documents may be retained for up to 10 years or longer if required by law"
+        ],
+        [
+          "Identity-verification status and audit records",
+          "While the account is active; verification remains valid for up to 730 days from verification or until the document expires, whichever is earlier; deleted upon final account deletion if there is no other lawful basis for retention"
+        ],
+        [
+          "Raw identity-document images in “Naudokis” systems",
+          "Generally not retained; if received, retained only for the period necessary for a specific verification, dispute, payment, tax, security, or legal purpose"
+        ],
+        [
+          "Verification data retained by Didit",
+          "In accordance with the retention period set in the “Naudokis” contract and Didit account; it must correspond to what is necessary for the specific verification purpose"
+        ],
+        [
+          "Technical document-security marker",
+          "For as long as necessary to manage multiple-account or fraud risk; generally deleted with the identity record unless a dispute, investigation, or legal obligation is ongoing"
+        ],
+        [
+          "Messages",
+          "365 days from creation of the message"
+        ],
+        [
+          "Chat photographs",
+          "395 days from upload"
+        ],
+        [
+          "Support and User reports, moderation decisions, and appeals",
+          "3 years from resolution or the last update"
+        ],
+        [
+          "Technical notification-delivery logs",
+          "90 days from creation of the record"
+        ],
+        [
+          "Audit data for an account-deletion request",
+          "180 days from creation of the request"
+        ],
+        [
+          "Marketing-consent record",
+          "While consent remains valid and for as long thereafter as necessary to demonstrate that it was obtained"
+        ],
+        [
+          "Marketing opt-out record",
+          "For as long as necessary to ensure that marketing is not sent and to prove the opt-out"
+        ],
+        [
+          "Plausible website and handoff analytics",
+          "According to the period configured in our Plausible service; identifiable or pseudonymous event data are not retained longer than necessary for aggregate audience and handoff measurement"
+        ],
+        [
+          "Mixpanel and AppsFlyer data",
+          "According to consent status and the periods configured in contracts and provider settings"
+        ],
+        [
+          "DAC7 data",
+          "Where the activity is reportable, 5 years from the end of the reporting period, unless the applicable rules require otherwise"
+        ],
+        [
+          "Other tax and accounting data",
+          "In accordance with the statutory period applicable to the specific document or obligation"
+        ]
+      ]
+    },
+    {
+      "t": "p",
+      "md": "If a dispute, authority investigation, security incident, or court proceeding is ongoing, we may retain the related data for longer while they are reasonably required for that process."
+    },
+    {
+      "t": "h3",
+      "text": "13.1. Erasure, anonymisation, and restriction"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "**Erasure** means that data are removed from active systems and disappear from backups in accordance with their secure-overwrite cycle.",
+        "**Anonymisation** means that the data can no longer reasonably be linked to you. Only properly anonymised data cease to be personal data.",
+        "**Restriction of processing** means that the data remain, but their use is limited, for example solely to the defence of legal claims."
+      ]
+    },
+    {
+      "t": "h3",
+      "text": "13.2. What happens when an account is closed"
+    },
+    {
+      "t": "p",
+      "md": "When an account is closed:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "the public profile and active Listings are removed or hidden;",
+        "any active payment, Booking, Security Deposit, payout, or dispute must be completed;",
+        "financial, accounting, tax, and legal records remain for the specified period;",
+        "messages or evidence may remain where needed by the other party to the transaction, for a dispute, or for lawful defence;",
+        "message-author data may be anonymised in order to preserve the integrity of the other party’s conversation;",
+        "analytics data are anonymised or disassociated from the account where possible."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "Closing an account is not the same as the immediate erasure of all data."
+    },
+    {
+      "t": "h2",
+      "id": "14-your-rights",
+      "text": "14. Your rights"
+    },
+    {
+      "t": "p",
+      "md": "Subject to applicable conditions and exemptions, you have the right to:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "obtain confirmation as to whether we process your data and access those data;",
+        "rectify inaccurate data or complete incomplete data;",
+        "request erasure of data;",
+        "request restriction of processing;",
+        "receive the data you have provided in a structured, commonly used, and machine-readable format and, where technically feasible, have those data transmitted directly to another controller;",
+        "object, on grounds relating to your particular situation, to processing based on legitimate interests;",
+        "object to direct marketing at any time;",
+        "withdraw consent;",
+        "request human review, express your point of view, and contest an automated decision referred to in Article 22 GDPR;",
+        "lodge a complaint with a data-protection supervisory authority."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "You may submit a request in the App where the relevant function is available, or by email at info@naudokis.lt."
+    },
+    {
+      "t": "p",
+      "md": "Before fulfilling a request, we may ask you to verify your identity to a reasonable extent. We respond without undue delay and no later than within one month. In complex cases or where many requests have been received, the period may be extended by up to a further two months; we will inform you of the extension and its reason within the first month."
+    },
+    {
+      "t": "p",
+      "md": "A request is generally handled free of charge. If it is manifestly unfounded or disproportionately repetitive, we may charge a reasonable fee or refuse to act on it, as permitted by the GDPR."
+    },
+    {
+      "t": "p",
+      "md": "The right to erasure or to receive data is not absolute. We may limit a request to the extent that the data are necessary for accounting, tax, DAC7, payments, disputes, fraud prevention, security, the rights of other persons, or legal defence."
+    },
+    {
+      "t": "p",
+      "md": "A data export may exclude internal fraud, risk, and security rules, legal assessments, tax-reporting files, or other persons’ data where disclosure would compromise security, breach the law, or infringe the rights of others."
+    },
+    {
+      "t": "h2",
+      "id": "15-marketing-and-service-related-notifications",
+      "text": "15. Marketing and service-related notifications"
+    },
+    {
+      "t": "p",
+      "md": "We may send:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "essential notifications concerning an account, Booking, payment, Security Deposit, payout, message, handover, return, dispute, security, or legal changes;",
+        "informational notifications concerning the operation of a function you use or an important change to the service;",
+        "marketing, promotional, recommendation, or newsletter communications where we have consent or all conditions of the statutory existing-customer exception are met."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "You may opt out of marketing by:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "clicking the unsubscribe link in a communication;",
+        "changing settings in the App where this function is available;",
+        "emailing info@naudokis.lt."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "After opting out of marketing, you will still receive essential service-, transaction-, security-, or law-related notifications."
+    },
+    {
+      "t": "h2",
+      "id": "16-minors",
+      "text": "16. Minors"
+    },
+    {
+      "t": "p",
+      "md": "The Platform’s transaction functions are intended only for persons aged 18 or over."
+    },
+    {
+      "t": "p",
+      "md": "At the beginning of registration, an unverified record may technically be created, for example after an email address is submitted. It does not entitle a minor to use Listing, Booking, payment, payout, Security Deposit, or handover functions."
+    },
+    {
+      "t": "p",
+      "md": "Before enabling transaction functions, we may require identity and age verification. If we determine that a person is under 18, we reject the verification, restrict the functions, and may begin closing the account."
+    },
+    {
+      "t": "p",
+      "md": "If you believe that a minor has provided us with their data, email info@naudokis.lt."
+    },
+    {
+      "t": "h2",
+      "id": "17-security-authority-requests-and-changes-to-the-policy",
+      "text": "17. Security, authority requests, and changes to the Policy"
+    },
+    {
+      "t": "p",
+      "md": "We apply technical and organisational measures appropriate to the risk, including:"
+    },
+    {
+      "t": "ul",
+      "items": [
+        "authentication and access controls;",
+        "encryption of data in transit;",
+        "separation of public and non-public data;",
+        "monitoring of logs, incidents, and access;",
+        "restricted access for staff and providers;",
+        "isolation of payment data through payment providers;",
+        "security and provider reviews."
+      ]
+    },
+    {
+      "t": "p",
+      "md": "No internet or mobile service is completely secure. Protect your login credentials and notify us immediately of suspected unauthorised access."
+    },
+    {
+      "t": "p",
+      "md": "If a personal-data breach were to occur, we would notify the State Data Protection Inspectorate (VDAI) and, where required, the affected persons in accordance with the GDPR."
+    },
+    {
+      "t": "p",
+      "md": "We provide data to public authorities only upon receipt of a legally valid request or where disclosure is required by law. We may retain audit records of the request, the assessment performed, and the response."
+    },
+    {
+      "t": "p",
+      "md": "We may update this Policy when the Platform, data processing, providers, or law change. We will publish the new version on the Platform and specify its effective date. We will additionally notify you of material changes where required by their nature or by law. If consent is required for new processing, we will request it separately."
+    },
+    {
+      "t": "h2",
+      "id": "18-contact-details-and-complaints",
+      "text": "18. Contact details and complaints"
+    },
+    {
+      "t": "p",
+      "md": "For privacy questions, requests, or complaints, you may first contact:"
+    },
+    {
+      "t": "p",
+      "md": "**MB “Naudokis”** Numėjos g. 6, LT-08402 Vilnius, Lithuania info@naudokis.lt"
+    },
+    {
+      "t": "p",
+      "md": "You may also lodge a complaint with the State Data Protection Inspectorate or the competent data-protection authority of another EU Member State."
+    },
+    {
+      "t": "p",
+      "md": "**State Data Protection Inspectorate (VDAI)** L. Sapiegos g. 17, LT-10312 Vilnius, Lithuania Email: ada@ada.lt Website: https://vdai.lrv.lt/"
     }
   ]
 }

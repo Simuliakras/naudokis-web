@@ -39,8 +39,7 @@ const LT_CATEGORY_EXAMPLES: Record<string, string> = {
 
 export const lt: Dict = {
   meta: {
-    title:
-      "Daiktų nuoma Lietuvoje iš privačių ir verslo savininkų | Naudokis.lt",
+    title: "Daiktų nuoma Lietuvoje | Naudokis.lt",
     description:
       "Raskite įrankius, transportą, foto techniką ir kitus daiktus nuomai iš privačių ar verslo savininkų. Palyginkite internete, rezervuokite programėlėje.",
     ogLocale: "lt_LT",
@@ -113,7 +112,7 @@ export const lt: Dict = {
     // FINAL: recency framing — "picked for you"/"popular"/
     // "nearby" had no personalization, review or geo signal behind them.
     eyebrow: "Naršykite",
-    title: "Naujausi daiktai nuomai",
+    title: "Daiktai nuomai",
     all: "Visi daiktai",
     errorTitle: "Nepavyko įkelti nuomos pasiūlymų",
     errorSubtitle:
@@ -418,7 +417,6 @@ export const lt: Dict = {
     helpHeading: "Pagalba ir taisyklės",
     help: [
       { label: "Kaip tai veikia", href: "/kaip-tai-veikia" },
-      { label: "Mokėjimai, užstatai ir atšaukimai", href: "/teisine" },
       { label: "Privatumo politika", href: "/privatumo-politika" },
       { label: "Naudojimosi sąlygos", href: "/naudojimosi-salygos" },
       { label: "Paskyros ištrynimas", href: "/paskyros-trynimas" },
@@ -485,7 +483,7 @@ export const lt: Dict = {
       "Jis galėjo būti išnuomotas arba pašalintas. Peržiūrėkite kitus nuomos pasiūlymus.",
     backToListings: "Nuomojami daiktai",
     save: "Įsiminti",
-    newListingPill: "Naujas skelbimas",
+    newListingPill: "Atsiliepimų dar nėra",
     noPhotos: "Nuotraukų nėra",
     galleryAll: (n) => `Visos ${n} nuotr.`,
     galleryExpand: "Padidinti nuotrauką",
@@ -517,7 +515,7 @@ export const lt: Dict = {
     deliveryZoneKm: (km) => `≈${km} km zona`,
     termRentSub: "Nuomos kaina",
     depositNone: "Be užstato",
-    termDepositSub: "Grąžinamas, jei nėra pretenzijų",
+    termDepositSub: "Užstato sąlygos ir grąžinimas",
     durationRange: (min, max) =>
       !max || max <= min ? `Nuo ${min} d.` : `${min}–${max} dienų`,
     termDurationSub: "Nuomos trukmė",
@@ -527,9 +525,9 @@ export const lt: Dict = {
       if (tier === "strict") return "Griežta";
       return "Standartinė";
     },
-    termCancelSub: "Atšaukimo politika",
-    termInsuranceTitle: "Draudimą nurodė savininkas",
-    termInsuranceSub: "Sąlygos skelbime",
+    termCancelSub: "Peržiūrėkite terminus prieš mokėdami",
+    termInsuranceTitle: "Savininkas pažymėjo draudimą",
+    termInsuranceSub: "Patikrinkite draudiką, apsaugą ir išimtis",
     mobileBookingNote: "Visa suma programėlėje",
   },
   common: {
@@ -547,7 +545,7 @@ export const lt: Dict = {
             : "atsiliepimai";
       return `${n} ${word}`;
     },
-    newListing: "Naujas",
+    newListing: "Atsiliepimų nėra",
     imageUnavailable: "Nuotrauka nepasiekiama",
     breadcrumbHome: "Pagrindinis",
     breadcrumbLabel: "Naršymo kelias",
@@ -583,6 +581,7 @@ export const lt: Dict = {
       return `${n} ${word}`;
     },
     searchItems: (query) => `Ieškoti „${query}“ tarp daiktų`,
+    subcategoriesHeading: "Subkategorijos",
     seoHeading: "Daiktų nuoma pagal kategorijas",
     seoBody:
       "Naudokis.lt apima kasdienes nuomos kategorijas visoje Lietuvoje — nuo įrankių ir transporto iki foto technikos, elektronikos, buitinės technikos, renginių ir laisvalaikio įrangos. Pasirinkite kategoriją ir raskite daiktus netoliese be poreikio pirkti tai, ko reikia tik kartais.",
@@ -656,7 +655,7 @@ export const lt: Dict = {
     searchPlaceholder: "Ką norite išsinuomoti?",
     searchLabel: "Ieškoti nuomojamų daiktų",
     sortLabel: "Rūšiuoti",
-    sortRecommended: "Aktualiausi",
+    sortNewest: "Naujausi pirmiausia",
     sortPriceAsc: "Mažiausia kaina",
     sortPriceDesc: "Didžiausia kaina",
     sortRatingBest: "Geriausiai įvertinti",
@@ -930,9 +929,6 @@ export const lt: Dict = {
     warnLabel: "Svarbu",
     anchorLabel: "Nuoroda į šį skyrių",
     relatedHeading: "Susiję dokumentai",
-    hubTitle: "Taisyklės ir privatumas",
-    hubLead:
-      "Pagrindinės Naudokis taisyklės, privatumo informacija ir paskyros duomenų valdymas vienoje vietoje.",
     questionsTitle: "Turite klausimų, kaip tai taikoma jūsų nuomai?",
     questionsBody:
       "Jei turite klausimų apie šį dokumentą, susisiekite su mumis el. paštu.",

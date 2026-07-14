@@ -7,8 +7,9 @@ import { Analytics } from "../components/Analytics";
 import { defaultLocale, locales, isLocale, localeHome } from "@/app/lib/i18n/config";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { APP_STORE_ID } from "@/app/lib/contact";
-import { SITE_URL } from "@/app/lib/seo";
+import { SITE_URL, canonicalFor } from "@/app/lib/seo";
 import { brandFont } from "@/app/lib/fonts";
+import { BRIDGE_BOOTSTRAP } from "@/app/lib/bridge-bootstrap";
 
 export async function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -20,6 +21,8 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
     return {};
   }
   const { meta } = getDictionary(lang);
+  // Same builder pageMetadata() uses, rather than a second hand-rolled lt/en ternary.
+  const socialCard = `${SITE_URL}${canonicalFor(lang, "/social-card")}`;
   return {
     metadataBase: new URL(SITE_URL),
     title: meta.title,
@@ -29,14 +32,6 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
     // iOS Safari Smart App Banner — Apple's own trusted install strip on the
     // highest-intent mobile segment; renders only in iOS Safari.
     itunes: { appId: APP_STORE_ID },
-    // Geo-targeting signals for Lithuania (Vilnius), carried over from the
-    // previous site so regional intent isn't lost in the migration.
-    other: {
-      "geo.region": "LT",
-      "geo.placename": "Vilnius",
-      "geo.position": "54.687157;25.279652",
-      ICBM: "54.687157, 25.279652",
-    },
     icons: {
       icon: [
         { url: "/naudokis/icon-192.png", sizes: "192x192", type: "image/png" },
@@ -59,13 +54,19 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
       url: `${SITE_URL}${localeHome(lang)}`,
       title: meta.title,
       description: meta.description,
-      // Image comes from app/[lang]/opengraph-image.tsx (generated 1200×630 card).
+      alternateLocale: lang === "lt" ? ["en_GB"] : ["lt_LT"],
+      images: [{
+        url: socialCard,
+        width: 1200,
+        height: 630,
+        alt: meta.ogImageAlt,
+      }],
     },
     twitter: {
       card: "summary_large_image",
       title: meta.title,
       description: meta.description,
-      // Image comes from app/[lang]/opengraph-image.tsx.
+      images: [socialCard],
     },
   };
 }
@@ -84,7 +85,8 @@ export const viewport: Viewport = {
 // dev and unconfigured builds ship no third-party script and write no cookies.
 const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 const plausibleSrc = process.env.NEXT_PUBLIC_PLAUSIBLE_SRC ?? "https://plausible.io/js/script.js";
-// Pre-hydration handoff for the app-redirect modal. Runs beforeInteractive so a
+// Pre-hydration handoff for the app-redirect modal. The CSP-hashed inline script
+// executes synchronously at parse time, so a
 // tap on the primary "Reserve" CTA before React hydrates still opens the modal
 // instead of doing nothing. Contract (three parts, shared with AppRedirect.tsx):
 //   1. Triggers opt in via `data-nk-redirect` + `data-nk-redirect-title|-body`
@@ -97,25 +99,6 @@ const plausibleSrc = process.env.NEXT_PUBLIC_PLAUSIBLE_SRC ?? "https://plausible
 //      `onClick={onReserve}` path (openRedirect → same event) owns every tap.
 // No double-open: pre-hydration the dispatched event has no listener yet, so the
 // single source of truth is the replayed pending payload.
-const bridgeBootstrap = `
-(() => {
-  const EVENT = "nk:redirect";
-  document.addEventListener("click", (event) => {
-    if (window.__nkBridgeReady) return;
-    const trigger = event.target && event.target.closest && event.target.closest("[data-nk-redirect]");
-    if (!trigger) return;
-    event.preventDefault();
-    const payload = {
-      title: trigger.getAttribute("data-nk-redirect-title") || "",
-      body: trigger.getAttribute("data-nk-redirect-body") || "",
-      appPath: trigger.getAttribute("data-nk-redirect-target") || undefined
-    };
-    window.__nkPendingRedirect = payload;
-    window.dispatchEvent(new CustomEvent(EVENT, { detail: payload }));
-  }, true);
-})();
-`;
-
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   const locale = isLocale(lang) ? lang : defaultLocale;
@@ -131,10 +114,12 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
             hydration. next/script's `beforeInteractive` does NOT do this for inline content
             in the App Router — it renders the script as a client-component reference with no
             parse-time tag, which silently breaks the pre-hydration contract above (verified).
+            Its exact content is SHA-256 allowlisted in the strict report-only CSP;
+            Next's static bootstrap is the only remaining inline-script blocker.
             React's dev-only "script tag in component" warning does NOT fire on a clean render
             or in production; it only appears when a browser extension mutates <body> and
             forces React to client-render this subtree. Leave this as a raw <script>. */}
-        <script id="nk-bridge-bootstrap" dangerouslySetInnerHTML={{ __html: bridgeBootstrap }} />
+        <script id="nk-bridge-bootstrap" dangerouslySetInnerHTML={{ __html: BRIDGE_BOOTSTRAP }} />
         <a href="#nk-main" className="nk-skip">{dict.common.skipToContent}</a>
         <Providers>
           <I18nProvider locale={locale}>

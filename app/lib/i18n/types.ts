@@ -39,7 +39,7 @@ export type FooterCategory = { label: string; categoryId: string };
 // carries strings only.
 export type HomeStep = { kicker: string; title: string; body: string };
 
-// Legal Policy Center — UI chrome strings only. The document content itself
+// Legal documents — UI chrome strings only. The document content itself
 // comes from app/lib/legal/data/*.json, not the dictionaries.
 export type LegalDict = {
   // doc-page chrome
@@ -55,8 +55,6 @@ export type LegalDict = {
   warnLabel: string;       // warning-callout label ("Svarbu" / "Important")
   anchorLabel: string;     // h2 permalink aria-label ("Link to this section")
   relatedHeading: string;  // "See also" heading at the bottom of a doc
-  hubTitle: string;        // /teisine legal-hub H1
-  hubLead: string;         // /teisine lede + meta description
   questionsTitle: string;  // contact card heading
   questionsBody: string;   // contact card body
   contactCta: string;      // contact card mailto label
@@ -266,7 +264,7 @@ export type Dict = {
     backToListings: string;
     // header actions + meta
     save: string; // "Įsiminti" header action
-    newListingPill: string; // gallery "Naujas skelbimas" badge
+    newListingPill: string; // factual gallery badge for a listing with no reviews
     noPhotos: string; // caption on the empty-gallery placeholder (no photos on the wire)
     galleryAll: (count: number) => string; // "Visos N nuotr."
     galleryExpand: string; // aria-label on the single-photo hero expand chip
@@ -306,9 +304,7 @@ export type Dict = {
     delivery: string; // short card badge surfacing the delivery-available flag
     perDay: string; // price unit on cards
     reviewCount: (count: number) => string; // localized, pluralized review count
-    // Card badge for listings with no reviews yet. Deliberately compact ("Naujas"),
-    // NOT detail.newListingPill's longer phrase: the badge + city must share one
-    // meta-row line at 4-up card widths (~250px), and the long form wraps it.
+    // Card badge for listings with no reviews yet; never implies recency.
     newListing: string;
     imageUnavailable: string;
     breadcrumbHome: string; // breadcrumb root label
@@ -331,6 +327,7 @@ export type Dict = {
     emptyAction: string;
     foundCount: (count: number) => string; // live "N categories" count (aria-live)
     searchItems: (query: string) => string; // explicit cross-search to the items feed
+    subcategoriesHeading: string; // crawlable subcategory-landing rail below the grid
     seoHeading: string;
     seoBody: string;
   };
@@ -362,28 +359,28 @@ export type Dict = {
     subtitleSearch: (query: string) => string;
     subtitleSearchGeneric: string; // ≤560px search subtitle — the chip row already echoes the query there
     resultCount: (count: number) => string;
-    resultCountAtLeast: (count: number) => string; // "N+ …" — true total is unknowable under the client-side delivery filter
+    resultCountAtLeast: (count: number) => string; // "N+ …" while the backend cursor has another page
     loadMore: string; // "load more results" button
     loadingMore: string; // button label while the next page is loading
     clear: string;
     searchPlaceholder: string;
     searchLabel: string;
     sortLabel: string;
-    sortRecommended: string;
+    sortNewest: string;
     sortPriceAsc: string;
     sortPriceDesc: string;
     sortRatingBest: string;
     categoryLabel: string;
     allCategories: string;
     cityLabel: string;
-    priceLabel: string; // client-side price-band filter
+    priceLabel: string;
     priceAny: string; // the band list's "no price filter" option
     priceBand: (min: number | null, max: number | null) => string; // band option label ("Iki 10 €" / "€10–30" / "Nuo 60 €")
     deliveryToggle: string;
     filtersButton: string; // mobile "Filters" trigger opening the filter sheet
     filtersTitle: string; // filter sheet heading
     // Sheet apply button previews the outcome ("Show 3 results"); null while the
-    // count is loading, atLeast for the client-filtered "N+" case.
+    // count is loading, atLeast while another backend page exists.
     filtersApply: (count: number | null, atLeast?: boolean) => string;
     introMore: string; // expands the phone-width landing-intro clamp
     introLess: string;

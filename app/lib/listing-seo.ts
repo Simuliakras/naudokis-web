@@ -3,7 +3,9 @@
 // Kept out of the page component so generateMetadata/Page stay thin.
 import type { Locale } from "@/app/lib/i18n/config";
 import { API_BASE } from "@/app/lib/api";
-import { LISTING_REVALIDATE, fetchReviewStats } from "@/app/lib/listings";
+import { LISTING_REVALIDATE, fetchReviewStats, type ApiOwner } from "@/app/lib/listings";
+import { isSyntheticListingParam } from "@/app/lib/listing-url";
+import { cdnImage } from "@/app/lib/image-hosts";
 
 export type ListingMeta = {
   title: string;
@@ -15,6 +17,9 @@ export type ListingMeta = {
   ratingAverage: number | null;
   ratingCount: number;
   itemCondition?: string;
+  categoryId?: string;
+  sellerName?: string;
+  sellerIsBusiness?: boolean;
 };
 
 // Only the raw backend fields this fetch reads. Typed so res.json() doesn't leak
@@ -37,6 +42,11 @@ type RawListing = {
   condition_label_en?: string;
   images?: { url?: string }[];
   price_per_day_cents?: number;
+  category_path?: string[];
+  // Shared with the detail view model's owner type, so the two reads of the same
+  // wire block cannot disagree about what is optional.
+  owner?: ApiOwner;
+  owner_name?: string;
 };
 
 // Map a free-text condition label (LT or EN) to a schema.org itemCondition URL.
@@ -80,6 +90,9 @@ function conditionValue(l: RawListing, locale: Locale): string | undefined {
 }
 
 export async function fetchListingMeta(id: string, locale: Locale): Promise<ListingMeta | null> {
+  if (isSyntheticListingParam(id)) {
+    return null;
+  }
   try {
     // The detail doc (title/description/price/condition) plus the review-stats
     // endpoint, which owns the listing-level rating average + count the contract's
@@ -100,11 +113,14 @@ export async function fetchListingMeta(id: string, locale: Locale): Promise<List
       categoryNames: (l.category_names ?? [])
         .map((c) => (locale === "en" ? c.en : c.lt) ?? "")
         .filter(Boolean),
-      image: l.images?.[0]?.url,
+      image: cdnImage(l.images?.[0]?.url),
       priceCents: typeof l.price_per_day_cents === "number" ? l.price_per_day_cents : 0,
       ratingAverage: stats.ratingAverage,
       ratingCount: stats.ratingCount,
       itemCondition: schemaConditionFromValue(conditionValue(l, locale)),
+      categoryId: l.category_path?.[0],
+      sellerName: l.owner?.business_name ?? l.owner?.name ?? l.owner_name,
+      sellerIsBusiness: l.owner?.is_business,
     };
   } catch {
     return null;

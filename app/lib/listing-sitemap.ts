@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
-import { API_BASE } from "@/app/lib/api";
+import { API_BASE, USES_PRODUCTION_API } from "@/app/lib/api";
 import { locales, localePrefix } from "@/app/lib/i18n/config";
 import { SITE_URL } from "@/app/lib/seo";
-import { listingDetailPath } from "@/app/lib/listing-url";
+import { isSyntheticListing, listingDetailPath } from "@/app/lib/listing-url";
 
 export const LISTINGS_PER_SITEMAP = 1000;
 const API_PAGE_SIZE = 100;
@@ -18,6 +18,23 @@ type SitemapListings = {
 
 type ListingEntry = { id: string; title?: string; city?: string; lastModified?: Date; images: string[] };
 
+function safePublicImage(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" && !parsed.hostname.endsWith("example.com") ? url : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+// A type guard, so the `id` narrows to string and callers need no `!`.
+type SitemapItem = NonNullable<NonNullable<SitemapListings["data"]>["items"]>[number];
+
+function isProductionListing(item: SitemapItem): item is SitemapItem & { id: string } {
+  return !!item.id && !isSyntheticListing({ id: item.id, title: item.title });
+}
+
 async function fetchListingsPage(token?: string): Promise<SitemapListings["data"] | null> {
   const url = new URL(`${API_BASE}/listings`);
   url.searchParams.set("limit", String(API_PAGE_SIZE));
@@ -32,7 +49,20 @@ async function fetchListingsPage(token?: string): Promise<SitemapListings["data"
   return body.data ?? null;
 }
 
+// The listing sitemap is a public SEO surface, so it is emitted only against the
+// production catalogue — a dev/staging dataset must never be advertised to
+// crawlers. The skip is loud: a silently empty sitemap is indistinguishable from
+// a healthy one with no listings.
+function skipNonProductionApi(surface: string): boolean {
+  if (USES_PRODUCTION_API) {
+    return false;
+  }
+  console.warn(`[listing-sitemap] ${surface} skipped: API_BASE is not the production catalogue (${API_BASE}).`);
+  return true;
+}
+
 export async function fetchListingSitemapCount(): Promise<number> {
+  if (skipNonProductionApi("count")) return 0;
   try {
     const data = await fetchListingsPage();
     return Math.ceil((data?.count ?? data?.items?.length ?? 0) / LISTINGS_PER_SITEMAP);
@@ -42,6 +72,7 @@ export async function fetchListingSitemapCount(): Promise<number> {
 }
 
 export async function fetchListingSitemapEntries(chunkIndex: number): Promise<ListingEntry[]> {
+  if (skipNonProductionApi("entries")) return [];
   const start = Math.max(0, chunkIndex) * LISTINGS_PER_SITEMAP;
   const end = start + LISTINGS_PER_SITEMAP;
   const entries: ListingEntry[] = [];
@@ -55,17 +86,18 @@ export async function fetchListingSitemapEntries(chunkIndex: number): Promise<Li
         break;
       }
       for (const item of data.items ?? []) {
-        if (!item.id || (item.status !== undefined && item.status !== "active")) {
+        if (!isProductionListing(item) || (item.status !== undefined && item.status !== "active")) {
           continue;
         }
         if (seen >= start && seen < end) {
           const updated = item.updated_at ? new Date(item.updated_at) : undefined;
+          const image = safePublicImage(item.images?.[0]?.url);
           entries.push({
             id: item.id,
             title: item.title,
             city: item.city ?? undefined,
             lastModified: updated && !Number.isNaN(updated.getTime()) ? updated : undefined,
-            images: item.images?.[0]?.url ? [item.images[0].url] : [],
+            images: image ? [image] : [],
           });
         }
         seen++;
@@ -95,8 +127,6 @@ export function localizedListingSitemapEntries(entries: ListingEntry[]): Metadat
       const path = listingDetailPath({ id: entry.id, title: entry.title, city: entry.city });
       return {
         url: `${SITE_URL}${localePrefix(locale)}${path}`,
-        changeFrequency: "weekly" as const,
-        priority: locale === "lt" ? 0.5 : 0.3,
         alternates: {
           languages: {
             ...Object.fromEntries(

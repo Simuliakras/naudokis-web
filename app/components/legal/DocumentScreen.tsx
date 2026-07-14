@@ -30,8 +30,7 @@ export function DocumentScreen({
 }) {
   const { legal: t, common } = getDictionary(locale);
 
-  // Cross-link to EVERY other published document (the single-sibling rail hid
-  // the most relevant neighbour, e.g. deletion → privacy) + a contact route.
+  // Cross-link the two published legal documents and include a contact route.
   const docTitle = (id: string) => {
     const meta = getLegalDocMeta(id);
     return meta?.title[locale] ?? meta?.title.lt ?? id;

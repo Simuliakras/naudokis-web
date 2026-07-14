@@ -16,7 +16,7 @@ import { ChipLinkRow, PageHead, SeoNote } from "./headers";
 import { HeroOwnerCta } from "./HeroSearch";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { dedupeById, useCategories, type Category } from "@/app/lib/categories";
-import { LISTINGS_PAGE_SIZE, useListingsInfinite, parseSortKey, parsePageParam, photoFirst, marketplaceErrorKind } from "@/app/lib/listings";
+import { LISTING_PRICE_BANDS, useListingsInfinite, parseSortKey, parsePageParam, listingPriceBand, marketplaceErrorKind } from "@/app/lib/listings";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { trackEvent } from "@/app/lib/analytics";
@@ -32,20 +32,10 @@ import { useMeasuredColumns } from "./useMeasuredColumns";
 import type { ListingFilters } from "@/app/lib/listings";
 
 type FeedScreenProps = {
-  initialFilters?: ListingFilters & { delivery?: boolean };
+  initialFilters?: ListingFilters & { delivery?: boolean; price?: string };
   extraCategory?: Category;
   extraCategories?: Category[];
 };
-
-// Honest client-side price bands over the loaded offers' real daily price (the
-// backend has no price param yet — swap for it when one lands). Values double as
-// the ?price= URL tokens; labels come from the dictionaries' priceBand().
-const PRICE_BANDS: { value: string; min: number | null; max: number | null }[] = [
-  { value: "0-10", min: null, max: 10 },
-  { value: "10-30", min: 10, max: 30 },
-  { value: "30-60", min: 30, max: 60 },
-  { value: "60+", min: 60, max: null },
-];
 
 export function FeedScreen({ initialFilters, extraCategory, extraCategories = [] }: FeedScreenProps = {}) {
   const { locale, dict } = useI18n();
@@ -64,10 +54,10 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
         q: initialFilters.q ?? "",
         cat: initialFilters.category ?? "",
         city: initialFilters.city ?? "",
-        sort: initialFilters.sort ?? "recommended",
+        sort: initialFilters.sort ?? "newest",
         page: parsePageParam(initialFilters.page),
         delivery: initialFilters.delivery ?? false,
-        price: "",
+        price: initialFilters.price ?? "",
       }
     : {
         q: sp.get("q") ?? "",
@@ -76,7 +66,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
         sort: parseSortKey(sp.get("sort")),
         page: parsePageParam(sp.get("page")),
         delivery: sp.get("delivery") === "1",
-        price: PRICE_BANDS.some((b) => b.value === sp.get("price")) ? (sp.get("price") as string) : "",
+        price: listingPriceBand(sp.get("price"))?.value ?? "",
       };
 
   const filterBarRef = useRef<HTMLDivElement>(null);
@@ -92,13 +82,13 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     if (params.q) next.set("q", params.q);
     if (params.cat) next.set("cat", params.cat);
     if (params.city) next.set("city", params.city);
-    if (params.sort && params.sort !== "recommended") next.set("sort", params.sort);
+    if (params.sort && params.sort !== "newest") next.set("sort", params.sort);
     if (params.page > 1) next.set("page", String(params.page));
     if (params.delivery) next.set("delivery", "1");
     if (params.price) next.set("price", params.price);
     const resetPage = Object.keys(patch).some((key) => key !== "page");
     for (const [k, v] of Object.entries(patch)) {
-      const isDefault = v === "" || v === false || v === "recommended";
+      const isDefault = v === "" || v === false || v === "newest";
       if (isDefault) next.delete(k);
       else next.set(k, v === true ? "1" : String(v));
     }
@@ -112,7 +102,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
       category: "cat" in patch ? String(patch.cat || "") : params.cat,
       city: "city" in patch ? String(patch.city || "") : params.city,
       delivery: "delivery" in patch ? Boolean(patch.delivery) : params.delivery,
-      sort: "sort" in patch ? String(patch.sort || "recommended") : params.sort,
+      sort: "sort" in patch ? String(patch.sort || "newest") : params.sort,
     });
     const qs = next.toString();
     const basePath = staticLanding ? localePath(locale, "/skelbimai") : pathname;
@@ -163,11 +153,19 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     () => dedupeById([...(topCats ?? []), ...extraCategories, ...(extraCategory ? [extraCategory] : [])]),
     [topCats, extraCategories, extraCategory],
   );
+  const band = listingPriceBand(params.price);
   const {
     data, isLoading, isError, error, refetch,
     fetchNextPage, hasNextPage, isFetchingNextPage, isPlaceholderData,
   } = useListingsInfinite(locale, {
-    q: params.q, city: params.city, category: params.cat, sort: params.sort, page: params.page,
+    q: params.q,
+    city: params.city,
+    category: params.cat,
+    sort: params.sort,
+    page: params.page,
+    priceMinCents: band?.min == null ? undefined : band.min * 100,
+    priceMaxCents: band?.max == null ? undefined : band.max * 100,
+    deliveryMethods: params.delivery ? ["user_delivery"] : undefined,
   });
 
   useReloadOnReconnect({ online, isError, refetch });
@@ -175,42 +173,17 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
   const errorTitle = errorKind === "timeout" ? dict.offline.timeoutTitle : dict.offline.serverTitle;
   const errorBody = errorKind === "timeout" ? dict.offline.timeoutBody : dict.offline.serverBody;
 
-  // Photo safeguard: on the default "recommended" sort, order photo-bearing
-  // listings first so a first-time visitor isn't met with a wall of category-icon
-  // placeholders. Ranked per page (not across the accumulated list) so an
-  // infinite-scroll append never reshuffles cards already on screen; other sorts
-  // keep the backend's explicit ordering.
-  const loaded = data?.pages.flatMap((p) =>
-    params.sort === "recommended" ? photoFirst(p.offers) : p.offers) ?? [];
-  // "Su pristatymu" and the price band are client-side filters over the loaded
-  // pages (the backend has neither param yet).
-  const band = PRICE_BANDS.find((b) => b.value === params.price);
-  const list = loaded.filter((o) =>
-    (!params.delivery || o.hasDelivery) &&
-    (!band ||
-      ((band.min === null || o.priceCents >= band.min * 100) &&
-        (band.max === null || o.priceCents <= band.max * 100))));
-  const clientFiltered = params.delivery || !!band;
-  // The IntersectionObserver anchor tracks the raw loaded set, not the filtered
-  // view: when the delivery filter empties the current pages but more remain, we
-  // keep pulling pages until a match surfaces or the cursor is exhausted, rather
-  // than showing a false "no results" dead-end.
-  const canLoadMore = loaded.length > 0 && !!hasNextPage;
-  // Delivery filter has hidden everything loaded so far, but more pages exist —
-  // show "scanning" skeletons instead of the empty state while the next page loads.
+  // Every visible offer already satisfies the API-side filter and sort contract.
+  // The API exposes cursor continuation rather than a full-result total, so the
+  // count is deliberately expressed as a lower bound until the cursor is exhausted.
+  const list = data?.pages.flatMap((page) => page.offers) ?? [];
+  const loaded = list;
+  // DynamoDB may evaluate a page whose records are all rejected by its backend
+  // FilterExpression while still returning a continuation cursor. Keep walking
+  // those cursors instead of presenting a false empty state.
+  const canLoadMore = !!hasNextPage;
   const scanningMore = list.length === 0 && canLoadMore;
-
-  // Result count: the backend total (pages[0].totalCount) is the honest number —
-  // list.length only reflects the pages loaded so far (12/page infinite scroll).
-  // Delivery/price are client-side filters over loaded pages, so the backend
-  // total overstates them: show "N+" of what's matched while more pages can load,
-  // and the exact loaded-filtered count once the cursor is exhausted.
-  const totalCount = data?.pages?.[0]?.totalCount;
-  const countLabel = clientFiltered
-    ? hasNextPage
-      ? t.resultCountAtLeast(list.length)
-      : t.resultCount(list.length)
-    : t.resultCount(totalCount ?? list.length);
+  const countLabel = hasNextPage ? t.resultCountAtLeast(list.length) : t.resultCount(list.length);
   // A count is a factual claim: while loading, errored, or while keepPreviousData
   // still shows the PREVIOUS query's cards under a new heading, the true count is
   // unknown — never assert one.
@@ -268,7 +241,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
   // Landing intros promise browsable inventory — once the query resolves to zero
   // items, fall back to the capability-framed generic subtitle instead of
   // asserting inventory above an empty state.
-  const landingResolvedEmpty = !isLoading && data !== undefined && (data.pages?.[0]?.totalCount ?? 0) === 0;
+  const landingResolvedEmpty = !isLoading && data !== undefined && list.length === 0 && !hasNextPage;
   const heading = isSearch
     ? t.titleSearch
     : params.city
@@ -307,13 +280,13 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
         .slice(1)
         .map((c) => ({ label: c.name, href: localePath(locale, c.path) }));
 
-  const anyActive = !!params.q || isCat || !!params.city || params.delivery || !!params.price || params.sort !== "recommended";
-  const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "recommended", page: "", delivery: false, price: "" }); };
+  const anyActive = !!params.q || isCat || !!params.city || params.delivery || !!params.price || params.sort !== "newest";
+  const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "newest", page: "", delivery: false, price: "" }); };
   // Count of secondary (sheet) filters — badges the mobile "Filters" button.
-  const activeFilterCount = [params.cat, params.city, params.delivery, params.price, params.sort !== "recommended"].filter(Boolean).length;
+  const activeFilterCount = [params.cat, params.city, params.delivery, params.price, params.sort !== "newest"].filter(Boolean).length;
 
   const sortOptions: SelectOption[] = [
-    { value: "recommended", label: t.sortRecommended },
+    { value: "newest", label: t.sortNewest },
     { value: "price_asc", label: t.sortPriceAsc },
     { value: "price_desc", label: t.sortPriceDesc },
     { value: "rating_desc", label: t.sortRatingBest },
@@ -328,7 +301,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
   const cityOptions: SelectOption[] = [{ value: "", label: dict.cityPicker.all }, ...LT_CITIES.map((c) => ({ value: c, label: c }))];
   const priceOptions: SelectOption[] = [
     { value: "", label: t.priceAny },
-    ...PRICE_BANDS.map((b) => ({ value: b.value, label: t.priceBand(b.min, b.max) })),
+    ...LISTING_PRICE_BANDS.map((b) => ({ value: b.value, label: t.priceBand(b.min, b.max) })),
   ];
 
   // Active-filter chips — each removes just its own dimension (the reset button
@@ -342,13 +315,13 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
   if (params.city) activeChips.push({ key: "city", label: params.city });
   if (params.delivery) activeChips.push({ key: "delivery", label: t.deliveryToggle });
   if (band) activeChips.push({ key: "price", label: t.priceBand(band.min, band.max) });
-  if (params.sort !== "recommended") activeChips.push({ key: "sort", label: sortLabel });
+  if (params.sort !== "newest") activeChips.push({ key: "sort", label: sortLabel });
   const clearChip = (key: ChipKey) => {
     if (key === "cat") { setParams({ cat: "" }); return; }
     if (key === "city") { setParams({ city: "" }); return; }
     if (key === "delivery") { setParams({ delivery: false }); return; }
     if (key === "price") { setParams({ price: "" }); return; }
-    setParams({ sort: "recommended" });
+    setParams({ sort: "newest" });
   };
 
   // The full-width interruption banner breaks the card row it lands on, so it must
@@ -376,7 +349,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
   // landing / L3 filters). Landing states (no user-set toggles) never blame
   // "filters" the visitor didn't set, and every dead end keeps a browse path
   // plus the owner-acquisition CTA.
-  const filtersActive = params.delivery || !!params.price || params.sort !== "recommended";
+  const filtersActive = params.delivery || !!params.price || params.sort !== "newest";
   const empty = t.empty;
   const listItem = () => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody });
   const pageHref = (page: number) => {
@@ -384,7 +357,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     if (params.q) next.set("q", params.q);
     if (!staticLanding && params.cat) next.set("cat", params.cat);
     if (!staticLanding && params.city) next.set("city", params.city);
-    if (params.sort && params.sort !== "recommended") next.set("sort", params.sort);
+    if (params.sort && params.sort !== "newest") next.set("sort", params.sort);
     if (params.delivery) next.set("delivery", "1");
     if (params.price) next.set("price", params.price);
     if (page > 1) next.set("page", String(page));
@@ -433,11 +406,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
       actionLabel={empty.filterAction} onAction={reset} />;
   };
 
-  const totalPages = totalCount ? Math.ceil(totalCount / LISTINGS_PAGE_SIZE) : null;
-  // never render a self-contradicting "Page N of M" with N > M — the beyond-end
-  // empty state carries the recovery action instead
-  const showPager = !isLoading && !isError && !clientFiltered && !params.q &&
-    (params.page > 1 || !!hasNextPage) && (totalPages === null || params.page <= totalPages);
+  const showPager = !isLoading && !isError && !params.q && (params.page > 1 || !!hasNextPage);
 
   return (
     <Chrome>
@@ -489,7 +458,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
                   {qInput && <InputClear onClick={() => setQInput("")} label={t.clear} />}
                 </span>
                 <span className="nk-filters-desktop">
-                  <FilterSelect icon="ArrowUpDown" label={t.sortLabel} value={params.sort} defaultValue="recommended" options={sortOptions} onChange={(v) => setParams({ sort: v })} align="right" />
+                  <FilterSelect icon="ArrowUpDown" label={t.sortLabel} value={params.sort} defaultValue="newest" options={sortOptions} onChange={(v) => setParams({ sort: v })} align="right" />
                 </span>
                 {/* mobile-only: collapses category/city/price/delivery/sort into a sheet */}
                 <button type="button" className={"nk-pillctl nk-filters-mobilebtn" + (activeFilterCount ? " is-active" : "")} onClick={() => setFiltersOpen(true)}
@@ -546,8 +515,8 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
             // apply live, so the parent's count is current while the sheet is open;
             // null (countless label) while it's still loading.
             applyLabel={t.filtersApply(
-              countKnown ? (clientFiltered ? list.length : (totalCount ?? list.length)) : null,
-              clientFiltered && !!hasNextPage,
+              countKnown ? list.length : null,
+              !!hasNextPage,
             )}
             clearLabel={t.clear}
             anyActive={anyActive}
@@ -659,7 +628,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
                 </Link>
               )}
               <span className="nk-seopager__status">
-                {totalPages ? t.pageStatus(params.page, totalPages) : t.pageStatusShort(params.page)}
+                {t.pageStatusShort(params.page)}
               </span>
               {hasNextPage && (
                 <Link href={pageHref(params.page + 1)} className="nk-fchip nk-fchip--link">
@@ -710,13 +679,17 @@ function RelatedLandingLinks({
   heading,
 }: {
   locale: Locale;
-  categories: Pick<Category, "id" | "title">[];
+  categories: Pick<Category, "id" | "title" | "parentId">[];
   currentCategory: string;
   currentCity: string;
   allLabel: string;
   heading: string;
 }) {
   const topCategories = categories.slice(0, 6);
+  const current = categories.find((category) => category.id === currentCategory);
+  const subcategories = current && !current.parentId
+    ? categories.filter((category) => category.parentId === current.id).slice(0, 8)
+    : [];
   const links = currentCity
     ? topCategories
         .filter((category) => category.id !== currentCategory)
@@ -724,11 +697,21 @@ function RelatedLandingLinks({
           label: `${category.title} · ${currentCity}`,
           href: listingLandingHref({ locale, category: category.id, city: currentCity }),
         }))
-    : currentCategory
-      ? LT_CITIES.slice(0, 6).map((city) => ({
-          label: city,
-          href: listingLandingHref({ locale, category: currentCategory, city }),
+    : currentCategory && subcategories.length > 0
+      ? subcategories.map((subcategory) => ({
+          label: subcategory.title,
+          href: listingLandingHref({ locale, category: currentCategory, subcategory: subcategory.id }),
         }))
+      : currentCategory
+        ? LT_CITIES.slice(0, 6).map((city) => ({
+            label: city,
+            href: listingLandingHref({
+              locale,
+              category: current?.parentId ?? currentCategory,
+              subcategory: current?.parentId ? currentCategory : undefined,
+              city,
+            }),
+          }))
       : LT_CITIES.slice(0, 6).map((city) => ({
           label: city,
           href: listingLandingHref({ locale, city }),

@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { isIP } from "node:net";
 
 type EventProps = Record<string, string | number | boolean>;
 
@@ -16,6 +17,9 @@ export async function trackServerEvent(
   }
   const endpoint = process.env.PLAUSIBLE_EVENTS_API ?? "https://plausible.io/api/event";
   try {
+    const endpointUrl = new URL(endpoint);
+    const allowInsecureLocal = process.env.NODE_ENV !== "production" && ["localhost", "127.0.0.1", "::1"].includes(endpointUrl.hostname);
+    if (endpointUrl.protocol !== "https:" && !allowInsecureLocal) return;
     const pageUrl = new URL(request.url);
     pageUrl.search = "";
     pageUrl.hash = "";
@@ -24,9 +28,7 @@ export async function trackServerEvent(
       headers: {
         "Content-Type": "application/json",
         "User-Agent": request.headers.get("user-agent") ?? "Naudokis web redirect",
-        ...(request.headers.get("x-forwarded-for")
-          ? { "X-Forwarded-For": request.headers.get("x-forwarded-for")! }
-          : {}),
+        ...validatedClientIp(request.headers.get("x-forwarded-for")),
       },
       body: JSON.stringify({ name, domain, url: pageUrl.toString(), props }),
       cache: "no-store",
@@ -35,4 +37,10 @@ export async function trackServerEvent(
   } catch {
     // Analytics must never delay or break a store/deep-link redirect.
   }
+}
+
+function validatedClientIp(forwardedFor: string | null): Record<string, string> {
+  const first = forwardedFor?.split(",", 1)[0]?.trim();
+  if (!first || !isIP(first)) return {};
+  return { "X-Forwarded-For": first };
 }

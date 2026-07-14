@@ -2,13 +2,15 @@
 // All-categories list screen — breadcrumb, live-filter search, tile grid, SEO.
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Nav } from "./sections";
 import { CtaBanner, Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, InputClear } from "./ui";
-import { PageHead, SeoNote } from "./headers";
+import { ChipLinkRow, PageHead, SeoNote } from "./headers";
 import { CategoryCard, CategoryCardSkeleton, EmptyState } from "./cards";
-import { useCategories } from "@/app/lib/categories";
+import { useCategories, type Category } from "@/app/lib/categories";
+import type { Locale } from "@/app/lib/i18n/config";
 import { listingLandingHref, listingSearchHref } from "@/app/lib/search";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { useI18n } from "./I18nProvider";
@@ -22,7 +24,7 @@ const CATEGORY_SKELETON_COUNT = 12;
 // literally see below the input.
 const fold = (s: string) => s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
 
-export function CategoriesScreen() {
+export function CategoriesScreen({ allCategories = [] }: { allCategories?: Category[] }) {
   const { locale, dict } = useI18n();
   const t = dict.categoriesPage;
   const router = useRouter();
@@ -107,6 +109,7 @@ export function CategoriesScreen() {
               secondaryLabel={t.emptyAction} onSecondaryAction={() => setQ("")} />
           )}
 
+          <CategoryHierarchy categories={allCategories} locale={locale} heading={t.subcategoriesHeading} />
           <SeoNote heading={t.seoHeading} body={t.seoBody} />
         </main>
         {/* The categories hub is a core discovery surface on an install-bridge
@@ -115,5 +118,38 @@ export function CategoriesScreen() {
         <Footer locale={locale} />
       </div>
     </Chrome>
+  );
+}
+
+/* Crawlable discovery path to the subcategory landings, which the tile grid above
+   deliberately does not show (it is top-level only). Chips reuse ChipLinkRow — the
+   same .nk-fchip--link pills as the feed SEO note and the listing similar rail. */
+function CategoryHierarchy({ categories, locale, heading }: { categories: Category[]; locale: Locale; heading: string }) {
+  const parents = categories.filter((category) => !category.parentId);
+  const groups = parents
+    .map((parent) => ({ parent, children: categories.filter((category) => category.parentId === parent.id) }))
+    .filter((group) => group.children.length > 0);
+  if (groups.length === 0) {
+    return null;
+  }
+  return (
+    <section aria-labelledby="subcategory-heading" style={{ marginTop: "var(--nk-section-y)", marginBottom: "var(--nk-section-y)" }}>
+      <h2 id="subcategory-heading" className="nk-h-section" style={{ marginBottom: "var(--nk-gap-xl)" }}>{heading}</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "var(--nk-gap-lg)" }}>
+        {groups.map(({ parent, children }) => (
+          <div key={parent.id} style={{ padding: "var(--nk-card-pad-sm)", border: "1px solid var(--nk-border)", borderRadius: "var(--nk-r-md)", background: "var(--nk-surface-glass)" }}>
+            <h3 style={{ margin: "0 0 var(--nk-gap-md)", fontFamily: "var(--nk-font-display)", fontSize: 18 }}>
+              <Link href={listingLandingHref({ locale, category: parent.id })}>{parent.title}</Link>
+            </h3>
+            <ChipLinkRow
+              links={children.map((child) => ({
+                label: child.title,
+                href: listingLandingHref({ locale, category: parent.id, subcategory: child.id }),
+              }))}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

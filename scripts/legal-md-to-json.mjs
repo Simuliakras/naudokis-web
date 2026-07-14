@@ -1,11 +1,18 @@
-// One-off converter: turns the provided legal markdown docs into the
-// LegalDocument block-JSON that app/components/legal/Blocks.tsx renders.
+// Converter: turns the legal Markdown under docs/ into the LegalDocument
+// block-JSON that app/components/legal/Blocks.tsx renders.
 //
-// Source of truth: docs/Naudokis_teisiniai_dokumentai_LT (LT) and
-// docs/Naudokis_legal_documents_EN (EN). Only the two primary documents we keep
-// (Terms of Use + Privacy Policy) are converted; their in-text references to the
-// removed specialised sub-documents are flattened to plain text, except mutual
-// links between the two kept docs, which become internal `doc:` links.
+// The Markdown under docs/ is the SOURCE OF TRUTH for the two documents in JOBS
+// below (Terms + Privacy). It is a live pipeline, not a one-off: it is idempotent,
+// so re-running it reproduces the committed JSON byte for byte. Edit the Markdown
+// and re-run — do not hand-edit the generated JSON, or the next run silently
+// reverts you.
+//
+// ONE EXCEPTION: account-deletion.{lt,en}.json is hand-authored and has NO Markdown
+// source. It is not in JOBS and this script never touches it.
+//
+// Relative links between Terms and Privacy become internal `doc:` links; links to
+// unpublished documents are flattened to their label text. (Currently dormant — the
+// present Markdown carries no links — but kept so re-adding a cross-link Just Works.)
 //
 // Run manually:  yarn legal:json   (alias for node scripts/legal-md-to-json.mjs)
 import { readFileSync, writeFileSync } from "node:fs";
@@ -13,51 +20,30 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const LT_DIR = join(ROOT, "docs/Naudokis_teisiniai_dokumentai_LT");
-const EN_DIR = join(ROOT, "docs/Naudokis_legal_documents_EN");
+const DOCS_DIR = join(ROOT, "docs");
 const OUT_DIR = join(ROOT, "app/lib/legal/data");
 
 // Map a source filename stem → the doc id we keep, so mutual cross-links between
 // Terms and Privacy survive as internal `doc:` links. Anything not listed here
 // is a removed sub-document and gets flattened to its label text.
 const KEPT_BY_FILE = {
-  "naudokis-naudojimosi-salygos-lt-2026-06-01": "terms-of-use",
-  "naudokis-terms-of-use-en-2026-06-01": "terms-of-use",
-  "naudokis-privatumo-politika-lt-2026-06-01": "privacy-policy",
-  "naudokis-privacy-policy-en-2026-06-01": "privacy-policy",
-  "naudokis-mokejimai-mokesciai-stripe-lt-2026-06-01": "payments-fees",
-  "naudokis-payments-fees-stripe-en-2026-06-01": "payments-fees",
-  "naudokis-atsaukimai-grazinimai-lt-2026-06-01": "cancellations-refunds",
-  "naudokis-cancellations-refunds-en-2026-06-01": "cancellations-refunds",
-  "naudokis-uzstatai-zala-gincai-lt-2026-06-01": "deposits-damage-disputes",
-  "naudokis-deposits-damage-disputes-en-2026-06-01": "deposits-damage-disputes",
-  "naudokis-rezervacijos-perdavimas-uzbaigimas-lt-2026-06-01": "reservation-handover",
-  "naudokis-reservation-handover-completion-en-2026-06-01": "reservation-handover",
-  "naudokis-pasitikejimas-patikros-apsauga-lt-2026-06-01": "trust-safety-support",
-  "naudokis-trust-checks-safeguards-en-2026-06-01": "trust-safety-support",
+  "terms-of-service.lt": "terms-of-use",
+  "terms-of-service.en": "terms-of-use",
+  "privacy-policy.lt": "privacy-policy",
+  "privacy-policy.en": "privacy-policy",
 };
 
 // The four conversions to run: { file, id, lang }.
 const JOBS = [
-  { file: "naudokis-naudojimosi-salygos-lt-2026-06-01.md", id: "terms-of-use", lang: "lt", dir: LT_DIR },
-  { file: "naudokis-terms-of-use-en-2026-06-01.md", id: "terms-of-use", lang: "en", dir: EN_DIR },
-  { file: "naudokis-privatumo-politika-lt-2026-06-01.md", id: "privacy-policy", lang: "lt", dir: LT_DIR },
-  { file: "naudokis-privacy-policy-en-2026-06-01.md", id: "privacy-policy", lang: "en", dir: EN_DIR },
-  { file: "naudokis-mokejimai-mokesciai-stripe-lt-2026-06-01.md", id: "payments-fees", lang: "lt", dir: LT_DIR },
-  { file: "naudokis-payments-fees-stripe-en-2026-06-01.md", id: "payments-fees", lang: "en", dir: EN_DIR },
-  { file: "naudokis-atsaukimai-grazinimai-lt-2026-06-01.md", id: "cancellations-refunds", lang: "lt", dir: LT_DIR },
-  { file: "naudokis-cancellations-refunds-en-2026-06-01.md", id: "cancellations-refunds", lang: "en", dir: EN_DIR },
-  { file: "naudokis-uzstatai-zala-gincai-lt-2026-06-01.md", id: "deposits-damage-disputes", lang: "lt", dir: LT_DIR },
-  { file: "naudokis-deposits-damage-disputes-en-2026-06-01.md", id: "deposits-damage-disputes", lang: "en", dir: EN_DIR },
-  { file: "naudokis-rezervacijos-perdavimas-uzbaigimas-lt-2026-06-01.md", id: "reservation-handover", lang: "lt", dir: LT_DIR },
-  { file: "naudokis-reservation-handover-completion-en-2026-06-01.md", id: "reservation-handover", lang: "en", dir: EN_DIR },
-  { file: "naudokis-pasitikejimas-patikros-apsauga-lt-2026-06-01.md", id: "trust-safety-support", lang: "lt", dir: LT_DIR },
-  { file: "naudokis-trust-checks-safeguards-en-2026-06-01.md", id: "trust-safety-support", lang: "en", dir: EN_DIR },
+  { file: "terms-of-service.lt.md", id: "terms-of-use", lang: "lt", dir: DOCS_DIR },
+  { file: "terms-of-service.en.md", id: "terms-of-use", lang: "en", dir: DOCS_DIR },
+  { file: "privacy-policy.lt.md", id: "privacy-policy", lang: "lt", dir: DOCS_DIR },
+  { file: "privacy-policy.en.md", id: "privacy-policy", lang: "en", dir: DOCS_DIR },
 ];
 
 const DIACRITICS = { ą: "a", č: "c", ę: "e", ė: "e", į: "i", š: "s", ų: "u", ū: "u", ž: "z" };
 const BRIEF_RE = /^\*\*(?:Trumpai|In brief):\*\*\s*/;
-const META_LINE_RE = /^(?:Įsigaliojimo data|Versija|Kalba|Paskutinį kartą atnaujinta|Dokumento ID|Effective date|Version|Language|Last updated|Document ID)\b/;
+const META_LINE_RE = /^(?:\*\*)?(?:Įsigaliojimo data|Versija|Kalba|Paskutinį kartą atnaujinta|Dokumento ID|Effective date|Version|Language|Last updated|Document ID)(?::|\*\*)/;
 
 function slugify(text) {
   return text

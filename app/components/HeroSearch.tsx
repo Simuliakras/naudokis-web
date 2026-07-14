@@ -18,8 +18,8 @@ import { useI18n } from "./I18nProvider";
 
 /* Two-sided value prop: a muted owner prompt + a "list & earn" link under the
    hero search. Client leaf (openRedirect is a client action) so it can live
-   inside the server-rendered Hero, like SearchBar. Reuses the already-authored
-   hero.ownerPrompt/ownerCta keys and the list-flow bridge modal. */
+   inside the server-rendered Hero, like SearchBar. Listing an item is an
+   app-only flow, so the CTA opens the install bridge rather than a web route. */
 export function HeroOwnerCta() {
   const { dict } = useI18n();
   // --nk-purple-bright (not -hover): the CTA sits on the translucent hero glass
