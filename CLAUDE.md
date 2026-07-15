@@ -67,7 +67,7 @@ app/
 │   ├── sections-home.tsx   # Shared (no directive) presentational sections: Hero, Features,
 │   │                       #   Testimonials, CtaBanner, HomeSeo, Footer — take a `locale` prop
 │   │                       #   and call getDictionary() so the home page renders them server-side
-│   ├── ScrollReveal.tsx    # Client leaf mounting the .nk-reveal IntersectionObserver
+│   │                       # (scroll reveal has NO component — see Motion below: it is CSS-only)
 │   ├── cards.tsx           # Cards: OfferCard, CategoryTile/Card, FeatureCard, Testimonial,
 │   │                       #   FaqRow, skeletons, EmptyState/SectionEmpty, InterruptionBanner
 │   ├── ui.tsx              # Primitives: Icon (re-exported from visual.tsx, lucide-react), Logo, buttons, SectionHead, Breadcrumb,
@@ -84,7 +84,7 @@ app/
     ├── categories.ts / listings.ts   # Data layer: fetchers + useCategories/useListings/useListing
     ├── seo.ts              # pageMetadata helper + JSON-LD builders
     ├── search.ts / cities.ts / contact.ts      # Feed URL helper, city list, contact constants
-    ├── use-debounced-value.ts / use-scroll-reveal.ts / use-online-status.ts
+    ├── use-debounced-value.ts / use-online-status.ts / motion.ts (prefersReducedMotion)
     ├── legal/              # Legal-doc manifest, loader, types + data/ JSON
     └── i18n/
         ├── config.ts       # locales ["lt","en"], defaultLocale "lt", isLocale(), path helpers
@@ -116,6 +116,15 @@ When adding or changing UI:
 2. Match the existing pattern in the file you're editing (inline styles with `var(--nk-…)`, `nk-` classes for shared/animated behaviour).
 3. The dark charcoal theme (`--nk-bg` / `--nk-surface`) is the primary identity; light tokens (`--nk-light-*`) exist for light surfaces.
 4. Use the two font families consistently: `--nk-font-display` (Archivo) for headings/UI labels/buttons, `--nk-font-body` (Sora) for body/prices/meta.
+
+### Motion
+
+All motion lives in `globals.css` (there is **no motion library and no JS observer**). Two invariants are easy to break and expensive to debug:
+
+- **Scroll reveal is CSS-only.** `.nk-reveal` / `.nk-reveal-grid` use native scroll-driven animation (`animation-timeline: view()`), guarded by `@supports` + `(scripting: enabled)`. Content is **fully visible by default** and the animation is pure progressive enhancement — browsers without support (Firefox today) and reduced-motion users just see it rendered in place. Do **not** "fix" that gap with an IntersectionObserver: an observer has to start elements at `opacity: 0` (so content depends on JS), and it would put a client leaf on the LCP-sensitive home page. Stagger is expressed through `animation-range`, not `animation-delay` — time-based delays are ignored on `view()` timelines.
+- **Reveal/entrance animations must use `animation-fill-mode: backwards`, never `both`/`forwards`.** Animation-origin declarations outrank normal author rules, so a forward fill pins the `to` keyframe's `transform: none` at animation priority *forever* once the element passes its range — which silently kills the `:hover` lift on any card carrying the class directly (`.nk-offer`, `.nk-cat`, `.nk-feature`). This shipped as a live bug once; don't reintroduce it. Same trap is documented on `.nk-fadecontent`.
+- **Anything `infinite` needs its own `animation: none` under `prefers-reduced-motion`,** and must be a class (never an inline `style`, which no selector can reach). The global blanket only collapses `animation-duration`; an infinite animation at `.001ms` strobes instead of resting. Use `.nk-spinner` for inline loaders.
+- Snap rails (`overflow-x: auto`) are block-axis scroll containers, so `view()` on their *children* resolves to the rail, not the page — a dead timeline. They opt out and reveal as one unit; see the reveal block in `globals.css`.
 
 ### Icons & images
 

@@ -6,9 +6,11 @@
 // Plain module — no React/next imports — so next.config.ts can import it during
 // config evaluation.
 //
-// Add the prod distribution here once it exists (and tighten the pathname to
-// /listings/** if the key layout allows).
+// Each distribution serves BOTH listing photos (/listings/**) and profile avatars
+// (/profiles/**), so a pathname narrowed to /listings/** would break every avatar —
+// any tightening has to allow both prefixes per host.
 export const IMAGE_CDN_HOSTS = [
+  "https://d1fr6so5096lsg.cloudfront.net", // prod
   "https://d720uc9idaijs.cloudfront.net", // dev
 ] as const;
 

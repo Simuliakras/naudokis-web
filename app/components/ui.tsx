@@ -352,6 +352,34 @@ export function Pill({
   );
 }
 
+/* ---------------- Avatar (identity disk) ----------------
+   One person, three sizes: the browse card's owner row, the review card, the host
+   card. Composes .nk-imgph (fill + sheen + centering) so those existing avatars are
+   unchanged, and adds the circle, the initials type and an optional ring.
+   Fallback chain: photo → initials → the generic person glyph.
+   The image is always alt="" — every call site renders the name as text right beside
+   it, so announcing it again would just stutter. */
+export function Avatar({
+  src, initials, size = 40, ring, className,
+}: {
+  src?: string | null; // already cdnImage()-guarded by the data layer
+  initials?: string | null; // "GB" — shown when there's no photo
+  size?: number; // px diameter
+  ring?: string; // border colour (the host card's verified ring)
+  className?: string; // lets a context (the card's compact skin) retarget the disk
+}) {
+  return (
+    <span
+      className={"nk-imgph nk-avatar" + (className ? ` ${className}` : "")}
+      style={{ width: size, height: size, fontSize: Math.round(size * 0.4), border: ring ? `2px solid ${ring}` : undefined }}
+    >
+      {src && <Image src={src} alt="" fill sizes={`${size}px`} style={{ objectFit: "cover" }} />}
+      {!src && initials && <span className="nk-avatar__initials" aria-hidden>{initials}</span>}
+      {!src && !initials && <Icon name="User" size={Math.round(size * 0.45)} stroke={1.6} color="var(--nk-avatar-icon)" />}
+    </span>
+  );
+}
+
 /* ---------------- Breadcrumb (home icon + active pill) ---------------- */
 export type Crumb = { label: string; href?: string };
 export function Breadcrumb({ items, homeLabel, label }: { items: Crumb[]; homeLabel: string; label: string }) {

@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 // Listing photos / owner avatars come from the backend's CloudFront
 // distributions, allowlisted per host. The same list feeds the image
 // remotePatterns, the CSP img-src, and the runtime cdnImage() guard so the three
-// can't drift. Add the prod distribution in that module once it exists.
+// can't drift.
 import { IMAGE_CDN_HOSTS } from "./app/lib/image-hosts";
 import { BRIDGE_BOOTSTRAP } from "./app/lib/bridge-bootstrap";
 

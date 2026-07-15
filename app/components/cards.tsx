@@ -3,23 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
-import { Icon, IconName, IllusName, Illustration, Pill, openRedirect, Pattern } from "./ui";
+import { Avatar, Icon, IconName, IllusName, Illustration, Pill, openRedirect, Pattern } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { trackEvent } from "@/app/lib/analytics";
 // From listing-view, NOT listings: listings.ts owns the react-query hooks, and
 // importing it here would pull the whole query runtime into every page that renders
 // a card — including the home page, which issues no queries at all.
-import { formatLocation, type Discount } from "@/app/lib/listing-view";
+import { formatLocation, type OfferOwner } from "@/app/lib/listing-view";
 
 /* ---------------- Offer / listing card ----------------
    "Struktūruota" 2026 design: photo-forward 4:3 frame carrying the gallery count,
    a top row pairing the category eyebrow with the rating (or the no-reviews pill),
    a meta block, and a footer where a hairline separates the price anchor from the
-   long-rental discount. No arrow cue — the whole card is a stretched <Link>.
+   refundable deposit amount. No arrow cue — the whole card is a stretched <Link>.
    Favorite is locked (opens the app modal). */
 export function OfferCard({
   title, city, subdivision, price, unit, rating, ratingCount, img, href, category, categoryName, categoryIcon = "Tag", hasDelivery = false,
-  photoCount = 0, discount,
+  photoCount = 0, deposit, owner,
   imageLoading = "lazy",
 }: {
   title: string;
@@ -36,7 +36,8 @@ export function OfferCard({
   categoryIcon?: IconName; // glyph for the empty-photo placeholder (from Category.icon)
   hasDelivery?: boolean; // surfaces the delivery-available flag as a media badge
   photoCount?: number; // gallery size — the media chip; a lone photo needs no count
-  discount?: Discount; // deepest active price break — the footer pill
+  deposit?: string; // formatted deposit amount — the footer pill; absent when the listing takes none
+  owner?: OfferOwner; // owner identity row; absent until the backend embeds it on browse items
   imageLoading?: "eager" | "lazy"; // above-fold landing/feed cards can opt into eager LCP loading
 }) {
   const { dict } = useI18n();
@@ -74,10 +75,15 @@ export function OfferCard({
           aria-label={`${c.favorite} (${dict.bridge.opensAppHint})`}>
           <Icon name="Heart" size={22} color="var(--nk-text)" fill="none" stroke={2} />
         </button>
+        {/* Media fact chip: the delivery-available flag. Riding the media keeps it off
+            the body — no added height, no CLS. The deposit amount rides the footer
+            price row instead (see below). */}
         {hasDelivery && (
-          <span className="nk-offer__badge">
-            <Icon name="Truck" size={14} color="var(--nk-text)" stroke={2} /> {c.delivery}
-          </span>
+          <div className="nk-offer__badges">
+            <span className="nk-offer__badge">
+              <Icon name="Truck" size={14} color="var(--nk-text)" stroke={2} /> {c.delivery}
+            </span>
+          </div>
         )}
         {!showPhoto && (
           <span className="nk-imgfallback" role="img" aria-label={c.imageUnavailable}>
@@ -96,11 +102,24 @@ export function OfferCard({
         )}
       </div>
       <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
-        {/* Top row: the category eyebrow (scent for the eye, tinted with the house
-            per-category accent) opposite the rating. It wraps — the no-reviews pill
-            carries a full phrase, which a narrow card can't fit beside the eyebrow. */}
-        <div className="nk-offer__toprow">
-          {categoryName && <span className="nk-offer__eyebrow">{categoryName}</span>}
+        {/* Category eyebrow — scent for the eye, tinted with the house per-category
+            accent. On its own row: the rating rides the location line below now. */}
+        {categoryName && (
+          <div className="nk-offer__toprow">
+            <span className="nk-offer__eyebrow">{categoryName}</span>
+          </div>
+        )}
+        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, lineHeight: "25px", minHeight: 50, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
+        {/* Location paired with the review status on one line: the place on the left,
+            the rating opposite it. Listings without a rating just show the place —
+            no "no reviews yet" pill, which reads as a negative signal on a fresh card. */}
+        <div className="nk-offer__locrow">
+          {city && (
+            <span className="nk-offer__loc">
+              <Icon name="MapPin" size={14} color="var(--nk-text-2)" stroke={2} />
+              <span className="nk-offer__loctext">{formatLocation(city, subdivision)}</span>
+            </span>
+          )}
           {rating ? (
             // Compact "4,8 ★ (52)" — role="img" (the APG composite-rating pattern)
             // makes the aria-label real: on a bare generic span many AT pairs
@@ -110,34 +129,37 @@ export function OfferCard({
               <b>{rating}</b>
               {ratingCount ? <i aria-hidden>({ratingCount})</i> : null}
             </span>
-          ) : (
-            // No reviews yet — state that fact without implying listing recency.
-            <span className="o-new"><Pill tone="yellow" icon="Sparkles" size="sm">{c.newListing}</Pill></span>
-          )}
+          ) : null}
         </div>
-        <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, lineHeight: "25px", minHeight: 50, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
-        {city && (
-          <span className="nk-offer__loc">
-            <Icon name="MapPin" size={14} color="var(--nk-text-2)" stroke={2} /> {formatLocation(city, subdivision)}
+        {/* Who you'd be renting from. Gated on the wire actually carrying an owner —
+            until the backend embeds one, this is undefined and the card renders exactly
+            as it did before. Plain text, never a link: the card is a single stretched
+            <Link>, so an anchor here would nest one interactive element in another. */}
+        {owner && (
+          <span className="nk-offer__owner">
+            <Avatar src={owner.avatar} initials={owner.initials} size={24} className="nk-offer__avatar" />
+            <span className="nk-sr-only">{`${c.ownerLabel}: `}</span>
+            <span className="nk-offer__ownername">{owner.name}</span>
           </span>
         )}
         {/* Footer, pinned to the bottom so cards in a row share a price baseline:
-            a hairline, then the price anchor with the long-rental break opposite. */}
+            a hairline, then the price anchor with the deposit amount opposite. */}
         <div className="nk-offer__foot">
           <span className="nk-offer__rule" />
           <div className="nk-offer__pricebar">
             {price && (
               <span className="nk-offer__pricemain">
-                <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 800, fontSize: 27, letterSpacing: "-.01em", color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price}</span>
+                <span style={{ fontFamily: "var(--nk-font-price)", fontWeight: 700, fontSize: 27, letterSpacing: "-.01em", color: "var(--nk-text)", whiteSpace: "nowrap" }}>{price}</span>
                 <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-muted)", whiteSpace: "nowrap" }}>{unit ?? c.perDay}</span>
               </span>
             )}
-            {/* Long-rental price break. Purple (the house accent pill), so it reads as
-                information and never competes with the yellow rating opposite it. */}
-            {discount && (
-              <span className="o-discount">
-                <Pill tone="purple" icon="Tag" size="sm">
-                  {discount.minDays === 7 ? c.discountWeek(discount.percent) : c.discountDays(discount.percent, discount.minDays)}
+            {/* Refundable deposit — the AMOUNT only (Coins, never a shield: the Terms
+                disclaim insurance, so no "protected" framing). Purple (the house accent
+                pill), so it reads as information beside the price. */}
+            {deposit && (
+              <span className="o-deposit">
+                <Pill tone="purple" icon="Coins" size="sm">
+                  {c.depositAmount(deposit)}
                 </Pill>
               </span>
             )}
@@ -243,22 +265,30 @@ export function FaqRow({
 export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
   const cls = ghost ? "nk-ghost" : "nk-skel";
   return (
-    <article aria-hidden="true" style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-divider)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+    // A size container like the real card, so the compact skin can shrink the owner
+    // reservation in step with the card it stands in for.
+    <article aria-hidden="true" style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-divider)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column", containerType: "inline-size", containerName: "nk-card" }}>
       <div className={cls} style={{ aspectRatio: "4 / 3", borderRadius: "var(--nk-r-card) var(--nk-r-card) 0 0" }} />
-      <div style={{ padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
-        {/* Top row: eyebrow (left) vs rating (right). */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
-          <div className={cls} style={{ width: "34%", height: 12 }} />
-          <div className={cls} style={{ width: 56, height: 14 }} />
-        </div>
+      <div className="nk-offer-skel__body" style={{ padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
+        {/* Top row: the lone category eyebrow. */}
+        <div className={cls} style={{ width: "34%", height: 12 }} />
         {/* Reserve two title lines (real title clamps to 2 / minHeight 50) so the
             card doesn't grow taller when a 2-line title loads (avoids CLS). */}
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <div className={cls} style={{ width: "92%", height: 20 }} />
           <div className={cls} style={{ width: "58%", height: 20 }} />
         </div>
-        {/* Location line placeholder. */}
-        <div className={cls} style={{ width: "48%", height: 18 }} />
+        {/* Location line (left) paired with the rating (right), matching the real card. */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+          <div className={cls} style={{ width: "48%", height: 18 }} />
+          <div className={cls} style={{ width: 56, height: 14 }} />
+        </div>
+        {/* Owner row placeholder — reserves exactly --nk-offer-owner-h, the height
+            .nk-offer__owner is pinned to, so cards don't grow when owner data lands. */}
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", height: "var(--nk-offer-owner-h)" }}>
+          <div className={cls} style={{ width: "var(--nk-offer-owner-h)", height: "var(--nk-offer-owner-h)", borderRadius: 999, flex: "none" }} />
+          <div className={cls} style={{ width: "42%", height: 12 }} />
+        </div>
         {/* Footer: the card's hairline, then the price row (price left, discount right). */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: "auto", paddingTop: "var(--nk-gap-xs)" }}>
           <span style={{ height: 1, background: "var(--nk-divider)" }} />
@@ -275,6 +305,11 @@ export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
 /* ---------------- Skeleton category card ----------------
    A plain shimmer block — height is driven by CSS (`.nk-cat-skel`, via the shared
    --nk-cat-h token) so the skeleton tracks the real tile at every breakpoint. */
+
+// The live backend always returns 12 top-level categories — the skeleton must
+// reserve the same row count (4/3/2/2-up grids) or every cold load shifts layout.
+export const CATEGORY_SKELETON_COUNT = 12;
+
 export function CategoryCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
   const cls = ghost ? "nk-ghost" : "nk-skel";
   return <div aria-hidden="true" className={`${cls} nk-cat-skel`} />;

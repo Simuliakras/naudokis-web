@@ -31,10 +31,29 @@ browsers are installed).
 
 ## Gotchas (each cost a debugging round)
 
+- **Mock listing ids MUST be UUID-shaped.** `listingIdFromParam()` (`app/lib/listing-url.ts`)
+  anchors on a UUID *suffix*, so a friendly id like `mock-1` is never recognised: the detail
+  route re-canonicalises the whole slug as if it were the id, and the URL grows a copy of the
+  slug on every redirect (`…-mock-1` → `…-testinis-…-testinis-…-mock-1` → …) until Playwright
+  times out. It looks exactly like a redirect-loop bug in the app; it is not.
+- **A stale `.next` 404s every route**, including `/`. If the whole site suddenly 404s while
+  the dev server reports "Ready" and only compiles `/_not-found`, `rm -rf .next` and restart —
+  don't go hunting in `proxy.ts`.
 - **next/image allowlist**: mock image URLs must be on an allowlisted CDN host
-  (`next.config.ts` → `imageCdnHosts`; currently the dev CloudFront
-  `d720uc9idaijs.cloudfront.net`). Harvest real URLs from
-  `https://api-dev.naudokis.lt/listings?limit=50`. A non-allowlisted host 500s SSR.
+  (`next.config.ts` → `imageCdnHosts`; both the dev `d720uc9idaijs.cloudfront.net` and the prod
+  `d1fr6so5096lsg.cloudfront.net` are allowed). Harvest real URLs from
+  `https://api.naudokis.lt/listings?limit=50`. A non-allowlisted host 500s SSR.
+- **Catching a route-level `loading.tsx` needs a slow SERVER fetch AND a cold fetch cache.**
+  Playwright's `page.route()` only stalls the *browser's* requests — it cannot slow the RSC
+  render, which is what the loading shell is waiting on. Make the *mock* stall, and
+  `rm -rf .next/cache/fetch-cache` **from inside the script, immediately before the goto**:
+  any earlier request (even a `curl`) re-warms it and the shell is gone in 100ms.
+  When even that races, skip the browser — `curl` the route and read the streamed HTML: the
+  fallback `<main aria-busy="true" style="…">` is right there, and its inline style is directly
+  comparable to the real screen's.
+- **`getComputedStyle(table).borderSpacing` reports `2px` even under `border-collapse:collapse`**
+  — that is Chromium's UA default for `<table>`, not a leftover declaration. Assert on the
+  *rendered* gap between cells, never on the property.
 - **Next server-side fetch cache**: data fetchers use `next: { revalidate: 300 }`, so
   the dev server caches mock responses **per URL** across requests — mode toggles do
   NOT invalidate it. To force a fresh SSR prefetch, vary the query (`/skelbimai?q=<unique>`

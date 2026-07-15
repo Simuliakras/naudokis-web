@@ -46,6 +46,31 @@ export function isHandoffPath(pathname: string): boolean {
   return HANDOFF_SEGMENTS.includes(pathname.split("/")[1]);
 }
 
+// Does the native app read `start_date` / `end_date` off a /listing/:id deep link?
+//
+// OFF until the app team confirms it, the same way `deep_link_value` was confirmed
+// before the referral bridge shipped. The web plumbing needs no changes either way —
+// /go already preserves the query on the target (see app/go/route.ts, which returns
+// `${pathname}${search}${hash}`), and APP_PATH there only tests the pathname — so
+// flipping this to `true` is the whole change.
+//
+// Keeping it off is not a no-op we can shrug at: shipping dates the app silently
+// drops would send a renter who picked 18–21 July into an empty booking form, which
+// is worse than never having asked. So it stays false until someone has watched the
+// app open on the right dates.
+export const APP_READS_DEEPLINK_DATES = false;
+
+// The app-side path for a listing, optionally carrying the dates the visitor chose.
+// One definition, so the reserve button, the mobile bar and the redirect modal's QR
+// can never encode three different targets.
+export function listingAppPath(id: string, range?: { start: string; end: string } | null): string {
+  const path = `/listing/${id}`;
+  if (!range || !APP_READS_DEEPLINK_DATES) {
+    return path;
+  }
+  return `${path}?start_date=${range.start}&end_date=${range.end}`;
+}
+
 // Paths whose query carries a single-use token (password reset, email verification,
 // deletion cancel). The token authorizes a real account action, so it must not be
 // forwarded to a third party — not to analytics, not to error reporting.

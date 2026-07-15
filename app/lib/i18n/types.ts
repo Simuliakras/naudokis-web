@@ -182,14 +182,14 @@ export type Dict = {
       completedPill: string;
     };
   };
-  // Homepage numbered-stepper band. One fixed, role-neutral set of three steps
+  // Homepage numbered-stepper band. One fixed, role-neutral set of four steps
   // that speaks to both renting and lending; icons/tones/numbers are
   // component-side constants.
   homeSteps: {
     eyebrow: string;
     title: string;
     lead: string;
-    steps: [HomeStep, HomeStep, HomeStep];
+    steps: [HomeStep, HomeStep, HomeStep, HomeStep];
     ctaLabel: string; // funnel exit into the full /kaip-tai-veikia walkthrough
   };
   cta: {
@@ -231,7 +231,6 @@ export type Dict = {
     shareCopied: string;
     shareFailed: string;
     verifiedOwnerPill: string;
-    verifiedOwnerNote: string;
     galleryMore: (count: number) => string;
     descHeading: string;
     descOriginalNote: string; // shown on non-LT pages — owner text stays in its original language
@@ -278,6 +277,50 @@ export type Dict = {
     perDayShort: string; // "/ diena"
     // booking panel
     confirmInApp: string; // one-line reassurance — dates + final price confirmed in the app
+    // date-range picker
+    //
+    // Copy rule, and it is not negotiable: this calendar may say a day is TAKEN. It
+    // may never say a day is FREE. The availability endpoint tells us what is booked;
+    // "not booked" is not the same fact as "available" (the owner may decline, and
+    // when the endpoint fails we know nothing at all). So there is a `calBooked`
+    // label and deliberately no "available" one — an unbooked day is simply
+    // unlabelled and selectable, under the confirmInApp promise.
+    datesLabel: string; // field label above the trigger — "Datos"
+    datesFrom: string; // "Nuo"
+    datesTo: string; // "Iki"
+    datesPlaceholder: string; // empty-field text — "Pasirinkite"
+    datesTriggerLabel: string; // trigger aria-label
+    datesPanelTitle: string; // sheet heading + popover aria-label
+    datesClose: string;
+    datesClear: string;
+    datesApply: string;
+    calPrevMonth: string;
+    calNextMonth: string;
+    calDays: (n: number) => string; // "3 dienos" — LT plural
+    calLimits: (min: number, max: number) => string; // rental-length hint under the grid
+    calBooked: string; // legend + the disabled-cell suffix. The ONLY state label.
+    calToday: string; // aria suffix for today's cell
+    calSelectStart: string; // prompt while no start is picked
+    calSelectEnd: string; // prompt while picking the end
+    calStartSelected: (date: string) => string; // live-region announcement
+    calRangeSelected: (parts: { start: string; end: string; days: string }) => string;
+    // Why a day cannot be picked — used both as the cell's aria suffix and as the
+    // live-region message when a keyboard user presses Enter on a disabled cell.
+    calBlocked: (reason: "past" | "booked" | "tooShort" | "tooLong" | "spansBooked", n: number) => string;
+    // Availability could not be read. Not optional chrome: with no "available"
+    // affordance, an unknown grid is visually identical to an all-free one, so the
+    // banner is the only thing standing between the user and a false impression.
+    calUnknownTitle: string;
+    calUnknownBody: string;
+    calUnknownRetry: string;
+    calUnknownNote: string; // short form, shown under the trigger
+    calLoading: string;
+    // rental estimate — a subtotal, never a total (see RentalEstimate in listing-view.ts)
+    estimateRental: (days: string) => string; // row label, e.g. "Nuoma (3 dienos)"
+    estimateDiscount: (percent: number) => string; // "Nuolaida −20%"
+    estimateDeposit: string; // "Užstatas (grąžinamas)"
+    bookingDepositSuffix: string; // booking-card deposit sub-line, after the amount: "užstatas (grąžinamas po sėkmingos nuomos)"
+    estimateFees: string; // the disclosure: fees + final sum are settled in the app
     // host card
     hostStatRating: string;
     hostStatReviews: string;
@@ -298,6 +341,9 @@ export type Dict = {
     termDurationSub: string;
     cancellationLabel: (tier: string) => string; // policy tier name
     termCancelSub: string;
+    // longer-rental discount ladder (Terms section) — subtotal never a total
+    discountsLabel: string; // muted card label, "Nuolaidos ilgesnei nuomai"
+    discountFrom: (minDays: number) => string; // per-tier threshold, "Nuo 7 d."
     mobileBookingNote: string;
   };
   common: {
@@ -306,12 +352,13 @@ export type Dict = {
     perDay: string; // price unit on cards
     reviewCount: (count: number) => string; // localized, pluralized review count
     photoCount: (count: number) => string; // SR label on the card's photo-count chip
-    // Long-rental price breaks on the card: a 7-day tier reads as "a week",
-    // any other tier states its own threshold.
-    discountWeek: (percent: number) => string;
-    discountDays: (percent: number, days: number) => string;
-    // Card badge for listings with no reviews yet; never implies recency.
-    newListing: string;
+    // Card deposit badge — states the AMOUNT the renter leaves and nothing more.
+    // Never frame it as protection or insurance: the Terms disclaim both. `amount` is
+    // a pre-formatted currency string ("50 €" / "€50") from formatPrice, not a number.
+    depositAmount: (amount: string) => string;
+    // SR-only prefix on the card's owner row — the avatar is decorative, so a bare
+    // name between the location and the price needs its role stated.
+    ownerLabel: string;
     imageUnavailable: string;
     breadcrumbHome: string; // breadcrumb root label
     breadcrumbLabel: string; // accessible name for the breadcrumb <nav> landmark

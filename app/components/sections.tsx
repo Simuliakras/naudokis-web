@@ -574,7 +574,7 @@ export function Offers({ data, categories }: { data: Offer[]; categories: Catego
               ratingCount={o.ratingCount}
               hasDelivery={o.hasDelivery}
               photoCount={o.photoCount}
-              discount={o.discount}
+              deposit={o.deposit} owner={o.owner}
               category={o.category}
               categoryName={categoryNameFor(categories, o.category)}
               categoryIcon={categoryIconFor(categories, o.category)}
@@ -604,16 +604,16 @@ export function Offers({ data, categories }: { data: Offer[]; categories: Catego
 }
 
 /* ---------------- How it works (numbered stepper) ----------------
-   Three role-neutral steps on a purple→yellow→green connector line. Icons and
+   Four role-neutral steps on a purple→yellow→green connector line. Icons and
    the step number are positional design constants; the dictionary carries the
    copy only. */
 
 // Per-step accent, positional: each index maps to the matching stop on the
 // connector-line gradient (purple → yellow → green).
-const STEP_ACCENTS = ["var(--nk-purple-hover)", "var(--nk-yellow)", "var(--nk-green)"] as const;
+const STEP_ACCENTS = ["var(--nk-purple-hover)", "var(--nk-yellow)", "var(--nk-green)", "var(--nk-green)"] as const;
 
-// Per-step icons, positional (find → secure → use).
-const STEP_ICONS: [IconName, IconName, IconName] = ["Search", "ShieldCheck", "Package"];
+// Per-step icons, positional (find → request → hand over → complete).
+const STEP_ICONS: [IconName, IconName, IconName, IconName] = ["Search", "BadgeCheck", "Handshake", "Coins"];
 
 export function HowItWorks() {
   const { locale, dict } = useI18n();

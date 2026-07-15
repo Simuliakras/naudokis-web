@@ -13,8 +13,13 @@ import { ChipLinkRow, RowHead } from "./headers";
 import { EmptyState, OfferCard } from "./cards";
 import {
   ListingSkeleton, ListingHeader, Gallery, DetailBody, ReviewsSection,
-  BookingPanel, HostCard, MobileBar, detailCrumbs, feedCrumbItems,
+  BookingPanel, HostCard, MobileBar, detailCrumbs, feedCrumbItems, type DatesControl,
 } from "./ListingDetail";
+import type { DateRange } from "./DateRangePicker";
+import { useAvailability, type Availability } from "@/app/lib/availability";
+import { useMarketToday } from "@/app/lib/use-market-today";
+import { listingAppPath } from "@/app/lib/app-links";
+import { rentalDays } from "@/app/lib/dates";
 import { useListing, useListings, ListingNotFoundError, marketplaceErrorKind } from "@/app/lib/listings";
 import { useCategories } from "@/app/lib/categories";
 import { categoryIconFor, categoryNameFor } from "@/app/lib/category-style";
@@ -36,6 +41,31 @@ export function ListingScreen({ id }: { id: string }) {
   const { data: listing, isLoading, isError, error, refetch } = useListing(id, locale);
   const categories = useCategories(locale).data ?? [];
   useReloadOnReconnect({ online, isError, refetch });
+
+  // Rental dates. The state is lifted here because BookingPanel renders twice (sticky
+  // sidebar + mobile inline) and both must show the same range, and because the
+  // reserve/contact handlers below need it to build the app deep link.
+  //
+  // Availability is fetched only once the user opens the picker: the detail page's
+  // critical path keeps its current request count, and a below-the-fold, high-intent
+  // interaction pays for its own data.
+  const today = useMarketToday();
+  const [range, setRange] = useState<DateRange | null>(null);
+  const [datesArmed, setDatesArmed] = useState(false);
+  const availabilityQuery = useAvailability(datesArmed ? id : undefined, today);
+  // A transient failure (network/5xx, retries exhausted) lands in the same place as an
+  // unreadable payload: we do not know. Never "everything is free".
+  const availability: Availability | undefined = availabilityQuery.data
+    ?? (availabilityQuery.isError ? { status: "unknown", reason: "fetch-failed" } : undefined);
+  const dates: DatesControl = {
+    today,
+    range,
+    onChange: setRange,
+    availability,
+    isLoading: availabilityQuery.isLoading,
+    onOpen: () => setDatesArmed(true),
+    onRetry: () => availabilityQuery.refetch(),
+  };
 
   useEffect(() => {
     const footer = footerRef.current;
@@ -114,7 +144,12 @@ export function ListingScreen({ id }: { id: string }) {
   // Every trigger carries the listing context so the modal can keep the user's
   // intent (item + price) visible across the install handoff.
   const listingCtx = { title: listing.title, thumb: listing.images[0], priceLabel: `${listing.price} ${dict.detail.perDay}` };
-  const appPath = `/listing/${listing.id}`;
+  // Carries the chosen dates into the app — but only once the app is known to read
+  // them (APP_READS_DEEPLINK_DATES, currently false). /go already preserves the query
+  // on the target, so no other plumbing changes. Note the dates survive the handoff
+  // only for visitors who allowed attribution: /go fails closed and drops the target
+  // otherwise, which is the deliberate consent trade-off, not a bug.
+  const appPath = listingAppPath(listing.id, range);
   const lockFav = () => openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody, listing: listingCtx, appPath });
   // Sharing is a real web action (not app-locked): use the native share sheet
   // where available, otherwise copy the URL and flash a transient "copied" state.
@@ -138,7 +173,14 @@ export function ListingScreen({ id }: { id: string }) {
     }
   };
   const reserve = () => {
-    trackEvent("Renter Booking Intent", { placement: "listing", category: listing.categoryId ?? "unknown" });
+    trackEvent("Renter Booking Intent", {
+      placement: "listing",
+      category: listing.categoryId ?? "unknown",
+      // Whether people actually pick dates before handing off is the single number
+      // that tells us if this calendar was worth building.
+      hasDates: Boolean(range),
+      ...(range ? { days: rentalDays(range.start, range.end) } : {}),
+    });
     openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: listingCtx, appPath });
   };
   const contact = () => {
@@ -166,7 +208,7 @@ export function ListingScreen({ id }: { id: string }) {
             fixed MobileBar remains the persistent reserve CTA; the aside copy of
             both cards is hidden ≤980 so nothing renders twice. */}
         <div className="nk-booking-inline">
-          <BookingPanel listing={listing} variant="facts" onReserve={reserve} />
+          <BookingPanel listing={listing} variant="facts" onReserve={reserve} dates={dates} appPath={appPath} />
           {listing.owner && (
             <div style={{ marginTop: "var(--nk-gap-md)" }}>
               <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />
@@ -178,7 +220,7 @@ export function ListingScreen({ id }: { id: string }) {
           <DetailBody listing={listing} />
           <aside className="nk-reserve">
             <div className="nk-reserve__booking">
-              <BookingPanel listing={listing} onReserve={reserve} />
+              <BookingPanel listing={listing} onReserve={reserve} dates={dates} appPath={appPath} />
             </div>
             {listing.owner && <HostCard owner={listing.owner} rating={listing.rating} ratingCount={listing.ratingCount} onContact={contact} />}
           </aside>
@@ -257,7 +299,7 @@ function SimilarRail({
           <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
             <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
               rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
-              photoCount={o.photoCount} discount={o.discount}
+              photoCount={o.photoCount} deposit={o.deposit} owner={o.owner}
               img={o.img} category={o.category} categoryName={categoryNameFor(cats, o.category)} categoryIcon={categoryIconFor(cats, o.category)}
               href={localePath(locale, listingDetailPath({ id: o.id, title: o.title, city: o.city }))} />
           </div>

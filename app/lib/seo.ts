@@ -378,10 +378,21 @@ export function listingJsonLd({
     price,
     priceCurrency: "EUR",
     url,
-    // No `availability`: an active listing is not the same as an item free to rent.
-    // Booking calendars live in the app, and this site cannot see them — so stating
-    // InStock would assert a fact we do not have (see the rule on never emitting
-    // JSON-LD fields that aren't on the wire).
+    // Still no `availability` — but no longer because we cannot see the calendar.
+    //
+    // This site CAN now read a listing's booked days (GET /listings/{id}/availability;
+    // see app/lib/availability.ts, which backs the date picker). The reason to stay
+    // silent here is different, and stronger: schema.org's Offer.availability is a
+    // DATE-INDEPENDENT claim ("InStock"), while a rental's availability is a fact
+    // about particular days. This page is ISR-cached (revalidate 300) and crawler-
+    // cached far longer, so a baked "InStock" would keep asserting the item is free
+    // to rent long after it was booked out — something we would be publishing, not
+    // observing. There is no rental-calendar vocabulary here that consumers act on,
+    // so there is nothing truthful to emit.
+    //
+    // This is also why the visible calendar is client-only and no-store: availability
+    // is the one fact on this page that must never be frozen into a cached document.
+    // The JSON-LD is server-rendered and the calendar is not, so the two cannot drift.
     priceSpecification: {
       "@type": "UnitPriceSpecification",
       price,

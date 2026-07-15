@@ -2,6 +2,21 @@
 import { cityLocativeLt } from "../cities";
 import type { Dict } from "./types";
 
+// "N dienų" in the nominative — 1 diena · 2–9 dienos · 10–20 dienų · 21 diena · 30 dienų.
+// The same plural dance resultCount/reviewCount/filtersApply each do inline; hoisted
+// here because the date picker needs it from four different keys.
+//
+// Every sentence built on this must keep the count in the NOMINATIVE ("Trumpiausia
+// nuoma — 3 dienos"), never in a construction that would govern the genitive, or it
+// would need a second set of forms.
+const ltDays = (n: number): string => {
+  const d = n % 10;
+  const dd = n % 100;
+  const word =
+    (dd >= 11 && dd <= 19) || d === 0 ? "dienų" : d === 1 ? "diena" : "dienos";
+  return `${n} ${word}`;
+};
+
 // Genitive category labels for SEO landing titles/descriptions ("Įrankių ir statybos
 // įrangos nuoma Vilniuje"). Keyed by top-level category id; falls back to the plain
 // (nominative) title when an id is missing.
@@ -41,7 +56,7 @@ export const lt: Dict = {
   meta: {
     title: "Daiktų nuoma Lietuvoje | Naudokis.lt",
     description:
-      "Raskite įrankius, transportą, foto techniką ir kitus daiktus nuomai iš privačių ar verslo savininkų. Palyginkite internete, rezervuokite programėlėje.",
+      "Raskite daiktus nuomai iš privačių ar verslo savininkų Lietuvoje. Palyginkite pasiūlymus internete ir tęskite rezervacijos užklausą programėlėje.",
     ogLocale: "lt_LT",
     ogImageAlt: "Naudokis.lt",
   },
@@ -60,12 +75,10 @@ export const lt: Dict = {
   },
   hero: {
     badge: "Nuoma iš patvirtintų naudotojų",
-    title: "Reikia trumpam? Išsinuomokite, o ne pirkite.",
-    // FINAL (2026-07 bilingual content pass): tightened — the long lede pushed the search
-    // card ~2 screens down at phone widths.
-    body: "Raskite įrankius, transportą, foto techniką ar laisvalaikio įrangą iš savininkų Lietuvoje. Palyginkite internete, o datas, galutinę sumą ir mokėjimą patvirtinkite programėlėje.",
-    ownerPrompt: "Daiktas stovi nenaudojamas?",
-    ownerCta: "Įkelkite skelbimą",
+    title: "Aiškesnė daiktų nuoma nuo paieškos iki grąžinimo.",
+    body: "Raskite daiktą iš privačių ar verslo savininkų. Svetainėje palyginkite pasiūlymus, o programėlėje matykite visą rezervacijos sumą, pateikite užklausą ir fiksuokite perdavimą bei grąžinimą.",
+    ownerPrompt: "Turite nenaudojamą daiktą?",
+    ownerCta: "Paskelbti programėlėje",
     phoneAlt: "Naudokis programėlėje rodomi daiktų nuomos pasiūlymai",
   },
   search: {
@@ -79,7 +92,7 @@ export const lt: Dict = {
   },
   categories: {
     eyebrow: "Naršykite",
-    title: "Populiarios nuomos kategorijos",
+    title: "Nuomos kategorijos",
     all: "Visos kategorijos",
     examples: (id) => LT_CATEGORY_EXAMPLES[id],
     // Use the genitive category label (already inflected) so the copy reads as
@@ -88,7 +101,7 @@ export const lt: Dict = {
     // name only for an unknown id.
     seoFallbackBody: (name, id) => {
       const label = (id && LT_CATEGORY_SEO_LABELS[id]) || name;
-      return `Naršykite ${label.toLowerCase()} nuomos pasiūlymus visoje Lietuvoje. Palyginkite kainas, vietą, savininko profilį ir rezervuokite programėlėje.`;
+      return `Naršykite ${label.toLowerCase()} nuomos pasiūlymus visoje Lietuvoje. Palyginkite kainas, vietą bei savininko profilį ir tęskite rezervacijos užklausą programėlėje.`;
     },
     metaTitleFallback: (name, id) => {
       const label = (id && LT_CATEGORY_SEO_LABELS[id]) || name;
@@ -154,90 +167,90 @@ export const lt: Dict = {
     meta: {
       title: "Kaip veikia daiktų nuoma ir paskelbimas | Naudokis.lt",
       description:
-        "Sužinokite, kaip per Naudokis išsinuomoti arba išnuomoti daiktą: paieška, rezervacija, mokėjimas, perdavimas, grąžinimas ir išmoka.",
+        "Sužinokite, kaip per Naudokis pateikti arba priimti rezervacijos užklausą, užfiksuoti perdavimą bei grąžinimą ir užbaigti nuomą.",
     },
     eyebrow: "Kaip tai veikia",
     title: "Nuomokitės tai, ko reikia. Uždirbkite iš to, ką turite.",
-    lead: "Naudokis sujungia tuos, kam daikto reikia trumpam, su savininkais, pasirengusiais jį išnuomoti. Pasirinkite vaidmenį ir peržiūrėkite visą kelią.",
+    lead: "„Naudokis“ suteikia prekyvietę ir nuomos proceso įrankius, o sandorį tiesiogiai sudaro nuomininkas ir privatus arba verslo savininkas. Pasirinkite vaidmenį ir peržiūrėkite visą kelią.",
     renter: {
       label: "Nuomininkas",
       lead: "Nuo paieškos iki grąžinimo — taip išsinuomosite daiktą dienai, savaitgaliui ar projektui.",
-      ctaTitle: "Pasiruošę rezervuoti? Tęskite programėlėje",
+      ctaTitle: "Tęskite rezervacijos užklausą programėlėje",
       ctaBody:
-        "Pasirinkite datas, susirašykite su savininku, peržiūrėkite užstatą ir mokėkite per Stripe vienoje vietoje.",
+        "Pasirinkite datas ir perdavimo būdą, peržiūrėkite visą sumą bei patvirtinkite mokėjimo autorizaciją. Tada užklausa bus išsiųsta savininkui.",
       steps: [
         {
           icon: "Search",
-          title: "Raskite daiktą netoliese",
-          tag: "Greita",
+          title: "Raskite ir palyginkite",
+          tag: "Paieška",
           tone: "yellow",
           screen: "search",
-          body: "Naršykite pasiūlymus ir filtruokite pagal miestą, kategoriją ar kainą. Pasiūlymų paieška ir peržiūra nemokama.",
+          body: "Peržiūrėkite aprašymą, būklę, vietą, perdavimo būdus, savininko statusą, atliktas patikras ir užbaigtų rezervacijų atsiliepimus.",
         },
         {
           icon: "Calendar",
-          title: "Rezervuokite programėlėje",
-          tag: "Programėlėje",
+          title: "Peržiūrėkite sumą ir pateikite užklausą",
+          tag: "Užklausa",
           tone: "green",
           screen: "reserve",
-          body: "Pasirinkite datas, peržiūrėkite nuomos kainą, taikomus mokesčius, užstatą, atšaukimo sąlygas ir bendrą sumą, tada mokėkite programėlėje per Stripe.",
+          body: "Pasirinkite datas bei perdavimo būdą ir patikrinkite kainą, mokesčius, užstatą, atšaukimo sąlygas bei bendrą sumą. Stripe autorizuoja mokėjimą, o savininkas priima arba atmeta užklausą.",
         },
         {
           icon: "Handshake",
-          title: "Pasiimkite ir patikrinkite",
-          tag: "Netoliese",
+          title: "Perimkite daiktą su būklės įrašu",
+          tag: "Perdavimas",
           tone: "yellow",
           screen: "pickup",
-          body: "Susitikite sutartoje vietoje, patikrinkite daiktą ir naudokitės juo sutartą laiką.",
+          body: "Susitikę ar gavę pristatymą patikrinkite daikto būklę ir priedus. Nuotraukas bei pastabas išsaugokite programėlėje.",
         },
         {
           icon: "Star",
-          title: "Grąžinkite ir įvertinkite",
-          tag: "Užbaigta",
+          title: "Grąžinkite, užbaikite ir įvertinkite",
+          tag: "Užbaigimas",
           tone: "purple",
           screen: "review",
-          body: "Grąžinkite daiktą, užbaikite nuomą ir palikite atsiliepimą, kuris padės kitam nuomininkui.",
+          body: "Grąžindami dar kartą užfiksuokite būklę. Užbaigtos rezervacijos dalyviai gali palikti atsiliepimą.",
         },
       ],
     },
     owner: {
       label: "Savininkas",
       lead: "Nuo skelbimo iki išmokos — taip nenaudojamus daiktus paversite pajamomis.",
-      ctaTitle: "Pasiruošę išnuomoti? Įkelkite skelbimą programėlėje",
+      ctaTitle: "Paskelbkite daiktą programėlėje",
       ctaBody:
         "Programėlėje įkelsite daiktą, valdysite užklausas, susirašysite su nuomininkais ir gausite išmokas vienoje vietoje.",
       steps: [
         {
           icon: "Camera",
-          title: "Sukurkite aiškų skelbimą",
-          tag: "Lengva",
+          title: "Paskelbkite tikslias sąlygas",
+          tag: "Skelbimas",
           tone: "yellow",
           screen: "list",
-          body: "Įkelkite nuotraukas, aprašykite komplektaciją ir nustatykite kainą bei užstatą.",
+          body: "Įkelkite tikras nuotraukas, aprašykite būklę ir priedus, nustatykite kainą, užstatą, pristatymo bei atšaukimo sąlygas.",
         },
         {
           icon: "BadgeCheck",
-          title: "Patvirtinkite rezervaciją",
-          tag: "Patvirtinta",
+          title: "Priimkite arba atmeskite užklausą",
+          tag: "Sprendimas",
           tone: "green",
           screen: "accept",
-          body: "Peržiūrėkite užklausą, patvirtinkite laiką ir visą susirašinėjimą laikykite programėlėje.",
+          body: "Peržiūrėkite nuomininko profilį, datas ir sumas, tada iki rodomo termino nuspręskite, ar priimti užklausą.",
         },
         {
           icon: "Handshake",
-          title: "Perduokite užtikrintai",
-          tag: "Perduota",
+          title: "Užfiksuokite perdavimą ir grąžinimą",
+          tag: "Būklė",
           tone: "yellow",
           screen: "handover",
-          body: "Susitikite sutartu laiku, kartu užfiksuokite daikto būklę ir priedus, tada perduokite daiktą. Nuotraukos, žinutės ir perdavimo įrašai padeda, jei vėliau kyla ginčas.",
+          body: "Abiem etapais išsaugokite daikto būklės, nuotraukų, pastabų ir perduodamų priedų įrašą.",
         },
         {
           icon: "Coins",
-          title: "Gaukite išmoką",
-          tag: "Išmokėta",
+          title: "Užbaikite nuomą ir gaukite išmoką",
+          tag: "Išmoka",
           tone: "purple",
           screen: "payout",
-          body: "Užbaigus nuomą ir įvykdžius išmokos sąlygas, išmoka pervedama jums. Taikomi platformos mokesčiai parodomi iš anksto.",
+          body: "Įvykdžius užbaigimo ir išmokos sąlygas, inicijuojama išmoka. Jei kilo problema, per programėlėje rodomą terminą pateikite reikalavimą ir įrodymus.",
         },
       ],
     },
@@ -269,19 +282,19 @@ export const lt: Dict = {
     faq: [
       {
         q: "Ar naršymas nemokamas?",
-        a: "Taip. Ieškoti ir peržiūrėti nuomos pasiūlymus svetainėje nemokama. Visi konkrečiai rezervacijai taikomi mokesčiai ir užstatas parodomi programėlėje prieš patvirtinant.",
+        a: "Taip. Ieškoti ir peržiūrėti nuomos pasiūlymus svetainėje nemokama. Konkrečios rezervacijos mokesčiai, užstatas, atšaukimo sąlygos ir bendra suma parodomi prieš pateikiant užklausą.",
       },
       {
         q: "Kaip tvarkomi mokėjimai?",
-        a: "Mokėjimai programėlėje apdorojami per Stripe. Prieš patvirtinant rodoma nuomos kaina, taikomi mokesčiai ir grąžinamas užstatas; išmokoms taikoma Naudojimosi sąlygose nurodyta tvarka.",
+        a: "Mokėjimus apdoroja Stripe. Pateikiant užklausą mokėjimas autorizuojamas; rezervacija tampa galutinė savininkui ją priėmus ir mokėjimui sėkmingai įvykus.",
       },
       {
         q: "Kas atsako už galimą žalą daiktui?",
         a: "Prieš nuomą gali būti taikomas grąžinamas užstatas, tačiau jis nėra draudimas ar atsakomybės riba. Kilus nesutarimui, abi pusės pateikia įrodymus, o Naudokis administruoja platformos ginčo procesą.",
       },
       {
-        q: "Kodėl rezervuoti reikia programėlėje?",
-        a: "Programėlėje pasirenkamos datos, rodomos galutinės sumos, tvarkomi mokėjimai, žinutės, rezervacijos ir pranešimai. Svetainėje galite patogiai naršyti ir palyginti pasiūlymus.",
+        q: "Kodėl rezervacijos užklausa teikiama programėlėje?",
+        a: "Programėlėje pasirenkamos datos, rodoma visa suma, autorizuojamas mokėjimas, pateikiama užklausa, saugomos žinutės, būklės įrašai ir pranešimai. Svetainėje galite naršyti ir palyginti pasiūlymus.",
       },
     ],
     // FINAL product copy: owner-side FAQ — payouts, fees, damage,
@@ -294,32 +307,32 @@ export const lt: Dict = {
       },
       {
         q: "Kiek kainuoja paskelbti daiktą?",
-        a: "Skelbti daiktą nemokama. Konkrečiai rezervacijai taikomi platformos mokesčiai parodomi iš anksto, prieš patvirtinant.",
+        a: "Daiktui paskelbti išankstinis mokestis netaikomas. Konkrečiai rezervacijai taikomi platformos mokesčiai parodomi prieš priimant užklausą.",
       },
       {
         q: "Kas, jei daiktas grąžinamas sugadintas?",
         a: "Padeda grąžinamas užstatas ir ginčų procesas: pateikiate įrodymus programėlėje, o Naudokis administruoja ginčą pagal taisykles.",
       },
       {
-        q: "Ar privalau patvirtinti kiekvieną užklausą?",
-        a: "Ne — rezervacijų užklausas tvirtinate arba atmetate programėlėje, prieš tai galite susirašyti su nuomininku.",
+        q: "Ar privalau priimti kiekvieną užklausą?",
+        a: "Ne. Peržiūrėkite nuomininko profilį, datas ir sumas, tada iki rodomo termino priimkite arba atmeskite užklausą.",
       },
     ],
     ctaEyebrow: "Programėlė",
     ctaPhoneAlt: "Naudokis programėlė",
     screen: {
       searchPlaceholder: "Ką norite išsinuomoti?",
-      reserveCta: "Rezervuoti",
+      reserveCta: "Pateikti užklausą",
       // hold-state (mirrors EN "Held") — "Rezervuota" contradicted the Reserve
       // button right under it (completed state above the action that causes it)
-      frozenPill: "Laikoma jums",
+      frozenPill: "Mokėjimas autorizuotas",
       pickupCta: "Susitikti su savininku",
       reviewCta: "Palikti atsiliepimą",
       listUpload: "Įkelkite nuotraukas",
       listPrice: "50 € / diena",
       listCta: "Skelbti",
-      acceptCta: "Patvirtinti rezervaciją",
-      handoverCta: "Perduoti daiktą",
+      acceptCta: "Priimti užklausą",
+      handoverCta: "Fiksuoti perdavimą",
       // multi-day amount (≠ 1× the mock's daily price) + explicit after-fees
       // qualifier, so the illustration can't read as a fee-free gross payout
       payoutAmount: "+ 120 €",
@@ -330,45 +343,50 @@ export const lt: Dict = {
   homeSteps: {
     eyebrow: "Kaip tai veikia",
     title: "Kaip vyksta nuoma",
-    lead: "Trys aiškūs žingsniai nuo paieškos ar skelbimo iki perdavimo ir grąžinimo.",
+    lead: "Keturi aiškūs etapai nuo paieškos ar skelbimo iki grąžinimo ir užbaigimo.",
     steps: [
       {
         kicker: "Pradžia",
-        title: "Atraskite arba paskelbkite",
-        body: "Naršykite daiktus netoliese arba per kelias minutes paskelbkite savąjį.",
+        title: "Raskite arba paskelbkite",
+        body: "Palyginkite pasiūlymus svetainėje arba paskelbkite savo daiktą programėlėje.",
       },
       {
-        kicker: "Aišku",
-        title: "Suderinkite sąlygas",
-        body: "Datos, kaina, mokesčiai ir užstatas matomi prieš patvirtinant programėlėje.",
+        kicker: "Sprendimas",
+        title: "Pateikite arba patvirtinkite užklausą",
+        body: "Nuomininkas mato visą sumą ir pateikia užklausą, o savininkas ją priima arba atmeta.",
       },
       {
-        kicker: "Gatava",
-        title: "Naudokitės",
-        body: "Pasiimkite ir naudokitės — arba perduokite daiktą ir gaukite išmoką po užbaigimo.",
+        kicker: "Įrašas",
+        title: "Perduokite ir grąžinkite su įrašu",
+        body: "Abiem etapais užfiksuokite daikto būklę, nuotraukas, pastabas ir priedus.",
+      },
+      {
+        kicker: "Pabaiga",
+        title: "Užbaikite nuomą",
+        body: "Patvirtinkite grąžinimą, prireikus pateikite įrodymus, o po užbaigimo palikite atsiliepimą.",
       },
     ],
     ctaLabel: "Visas procesas",
   },
   cta: {
     eyebrow: "Programėlė",
-    title: "Naršykite internete. Rezervuokite programėlėje.",
-    body: "Programėlėje pasirinksite datas, peržiūrėsite galutinę sumą, mokesčius, užstatą ir atšaukimo sąlygas, susirašysite su savininku, mokėsite per Stripe ir valdysite nuomą vienoje vietoje.",
+    title: "Naršykite internete. Užklausą pateikite programėlėje.",
+    body: "Programėlėje pasirinksite datas ir perdavimo būdą, peržiūrėsite visą sumą bei patvirtinsite mokėjimo autorizaciją. Užklausa bus išsiųsta savininkui; rezervacija taps galutinė tik ją priėmus ir mokėjimui sėkmingai įvykus. Žinutes, perdavimą ir grąžinimą valdysite vienoje vietoje.",
     phoneAlt: "Naudokis programėlės rezervacijos ekranas",
   },
   faq: {
     eyebrow: "Turite klausimų?",
     heading: "Ką verta žinoti prieš nuomojantis",
     subheading:
-      "Trumpi atsakymai apie kainas, rezervacijas, užstatus, mokėjimus ir nuomą programėlėje.",
+      "Trumpi atsakymai apie sandorį, rezervacijos būseną, patikras, užstatą ir atsakomybę.",
     items: [
       {
-        q: "Ar naršymas nemokamas?",
-        a: "Taip. Ieškoti ir peržiūrėti nuomos pasiūlymus svetainėje nemokama. Konkrečiai rezervacijai taikomi mokesčiai ir užstatas parodomi programėlėje prieš patvirtinant.",
+        q: "Kas sudaro nuomos sandorį?",
+        a: "Nuomos sandorį tiesiogiai sudaro nuomininkas ir daiktą siūlantis privatus arba verslo savininkas. „Naudokis“ suteikia prekyvietę, mokėjimo ir nuomos proceso įrankius.",
       },
       {
-        q: "Kaip tvarkomi mokėjimai?",
-        a: "Mokėjimai apdorojami per Stripe. Prieš patvirtinant rodoma nuomos kaina, taikomi platformos mokesčiai ir grąžinamas užstatas; išmokoms taikoma Naudojimosi sąlygose nurodyta tvarka.",
+        q: "Kada rezervacija tampa galutinė?",
+        a: "Pirmiausia Stripe autorizuoja mokėjimą ir užklausa išsiunčiama savininkui. Rezervacija tampa galutinė tik savininkui ją priėmus ir mokėjimui sėkmingai įvykus.",
       },
       {
         q: "Ką galima išsinuomoti per Naudokis?",
@@ -383,12 +401,24 @@ export const lt: Dict = {
         a: "Savininkai gali palyginti panašius nuomos pasiūlymus ir naudotis rekomendacijomis, bet galutinę kainą bei užstatą nustato patys.",
       },
       {
+        q: "Kas nutinka sugadinus ar negrąžinus daikto?",
+        a: "Padeda grąžinamas užstatas ir ginčų procesas: abi pusės gali pateikti įrodymus programėlėje, o Naudokis administruoja ginčą pagal taisykles.",
+      },
+      {
         q: "Ar daiktus gali siūlyti privatūs žmonės ir verslai?",
         a: "Taip. Daiktus gali siūlyti privatūs ir verslo savininkai. Kai savininkas veikia kaip verslas, jo statusas turi būti nurodytas profilyje ar rezervacijos eigoje, o vartotojams taikoma privaloma vartotojų teisių apsauga.",
       },
       {
-        q: "Kodėl rezervacijos vyksta programėlėje?",
-        a: "Žinutės, datos, mokėjimo informacija, užstatai, pranešimai ir atsiliepimai lieka vienoje vietoje programėlėje.",
+        q: "Kodėl rezervacijos užklausa teikiama programėlėje?",
+        a: "Programėlėje vienoje vietoje pasirenkamos datos, rodoma visa suma, autorizuojamas mokėjimas, saugomos žinutės, būklės įrašai ir pranešimai.",
+      },
+      {
+        q: "Kada savininkas gauna išmoką?",
+        a: "Išmoka inicijuojama užbaigus nuomą ir įvykdžius išmokos sąlygas. Faktinis pervedimo laikas priklauso nuo mokėjimo paslaugų teikėjo ir taikomų patikrų.",
+      },
+      {
+        q: "Ar naršymas ir skelbimas mokami?",
+        a: "Pasiūlymų paieškai ir peržiūrai svetainėje bei daikto paskelbimui išankstinis mokestis netaikomas. Konkrečios rezervacijos mokesčiai parodomi prieš pateikiant užklausą.",
       },
     ],
   },
@@ -429,7 +459,7 @@ export const lt: Dict = {
     metaFallbackTitleForId: (readableId) =>
       `„${readableId}“ nuoma | Naudokis.lt`,
     metaFallbackDescription:
-      "Peržiūrėkite daikto nuomos kainą, vietą ir sąlygas Naudokis.lt, o datas bei galutinę rezervacijos sumą patvirtinkite programėlėje.",
+      "Peržiūrėkite daikto nuomos kainą, vietą ir sąlygas Naudokis.lt, o rezervacijos užklausą tęskite programėlėje.",
     // Quoted citation form: the raw nominative title stays indeclinable, so
     // "Elektrinis paspirtukas" can never render as broken "…paspirtukas nuoma".
     seoTitle: ({ title, city }) =>
@@ -437,13 +467,12 @@ export const lt: Dict = {
     seoDescription: ({ title, city, category }) => {
       const location = city ? ` ${cityLocativeLt(city)}` : " Lietuvoje";
       const categoryText = category ? ` (${category.toLowerCase()})` : "";
-      return `„${title}“${categoryText} — išsinuomokite${location} per Naudokis.lt. Peržiūrėkite paros kainą, savininko profilį ir perdavimo būdus, o datas bei galutinę sumą patvirtinkite programėlėje.`;
+      return `„${title}“${categoryText} — išsinuomokite${location} per Naudokis.lt. Peržiūrėkite paros kainą, savininko profilį ir perdavimo būdus, o rezervacijos užklausą tęskite programėlėje.`;
     },
     share: "Dalintis",
     shareCopied: "Nuoroda nukopijuota",
     shareFailed: "Nepavyko bendrinti nuorodos. Bandykite dar kartą.",
     verifiedOwnerPill: "Tapatybė patvirtinta",
-    verifiedOwnerNote: "Patvirtinta tapatybė nepatvirtina daikto būklės ar garantuoto sandorio.",
     galleryMore: (n) => {
       const d = n % 10;
       const dd = n % 100;
@@ -459,7 +488,8 @@ export const lt: Dict = {
     handoverHeading: "Daikto perdavimas",
     mapTitle: (city) => `${city} žemėlapyje`,
     mapLoad: "Rodyti „Google Maps“ žemėlapį",
-    mapNotice: "Žemėlapis įkeliamas tik jums pasirinkus. Google gali gauti jūsų IP adresą ir įrenginio duomenis.",
+    mapNotice:
+      "Žemėlapis įkeliamas tik jums pasirinkus. Google gali gauti jūsų IP adresą ir įrenginio duomenis.",
     mapPrivacy: "Privatumo informacija",
     pickupLabel: "Atsiėmimas",
     pickupFree: "Nemokama",
@@ -473,11 +503,11 @@ export const lt: Dict = {
     moreItemsHeading: "Daugiau daiktų nuomai",
     reviewsEmptyTitle: "Šis daiktas dar neturi atsiliepimų",
     reviewsEmptyBody:
-      "Atsiliepimų dar nėra. Prieš rezervuodami peržiūrėkite savininko profilį ir sąlygas.",
+      "Atsiliepimų dar nėra. Prieš pateikdami užklausą peržiūrėkite savininko profilį ir sąlygas.",
     reviewsInApp: (n) => `Visi atsiliepimai programėlėje (${n})`,
     perDay: "/ diena",
-    reserve: "Rezervuoti programėlėje",
-    reserveMobile: "Rezervuoti",
+    reserve: "Pateikti rezervacijos užklausą",
+    reserveMobile: "Pateikti užklausą",
     loadErrorTitle: "Nepavyko įkelti nuomos pasiūlymo",
     loadErrorBody: "Patikrinkite ryšį ir bandykite dar kartą.",
     goneTitle: "Šio skelbimo nebėra",
@@ -496,7 +526,57 @@ export const lt: Dict = {
     galleryImageError: "Nepavyko įkelti nuotraukos",
     perDayShort: "/ diena",
     confirmInApp:
-      "Datas, mokesčius, užstatą ir galutinę sumą matysite prieš mokėjimą programėlėje.",
+      "Programėlėje pasirinksite datas ir perdavimo būdą, matysite mokesčius, užstatą, atšaukimo sąlygas ir bendrą sumą prieš pateikdami užklausą.",
+    datesLabel: "Nuomos datos",
+    datesFrom: "Nuo",
+    datesTo: "Iki",
+    datesPlaceholder: "Pasirinkite",
+    datesTriggerLabel: "Pasirinkti nuomos datas",
+    datesPanelTitle: "Nuomos datos",
+    datesClose: "Uždaryti kalendorių",
+    datesClear: "Išvalyti",
+    datesApply: "Patvirtinti",
+    calPrevMonth: "Ankstesnis mėnuo",
+    calNextMonth: "Kitas mėnuo",
+    calDays: ltDays,
+    calLimits: (min, max) =>
+      max > 0
+        ? `Nuoma nuo ${ltDays(min)} iki ${ltDays(max)}`
+        : `Trumpiausia nuoma — ${ltDays(min)}`,
+    calBooked: "Užimta",
+    calToday: "šiandien",
+    calSelectStart: "Pasirinkite pradžios datą",
+    calSelectEnd: "Pasirinkite pabaigos datą",
+    calStartSelected: (date) => `Pradžia: ${date}. Pasirinkite pabaigos datą.`,
+    calRangeSelected: ({ start, end, days }) =>
+      `Pasirinkta ${start}–${end}, ${days}.`,
+    calBlocked: (reason, n) => {
+      if (reason === "past") {
+        return "Data jau praėjo";
+      }
+      if (reason === "booked") {
+        return "Užimta";
+      }
+      if (reason === "tooShort") {
+        return `Trumpiausia nuoma — ${ltDays(n)}`;
+      }
+      if (reason === "tooLong") {
+        return `Ilgiausia nuoma — ${ltDays(n)}`;
+      }
+      return "Tarp šių datų yra užimtų dienų";
+    },
+    calUnknownTitle: "Nepavyko patikrinti užimtumo",
+    calUnknownBody:
+      "Nematome, kurios dienos užimtos. Datas ir galutinę sumą patvirtinsite programėlėje.",
+    calUnknownRetry: "Bandyti dar kartą",
+    calUnknownNote: "Užimtumas nepatikrintas",
+    calLoading: "Tikriname užimtumą…",
+    estimateRental: (days) => `Nuoma (${days})`,
+    estimateDiscount: (percent) => `Ilgesnės nuomos nuolaida −${percent}%`,
+    estimateDeposit: "Užstatas (grąžinamas)",
+    bookingDepositSuffix: "užstatas (grąžinamas po nuomos)",
+    estimateFees:
+      "Tai preliminari nuomos suma. Pristatymas, taikomi mokesčiai, užstatas, atšaukimo sąlygos ir galutinė suma bus parodyti programėlėje prieš pateikiant užklausą.",
     hostStatRating: "Įvertinimas",
     hostStatReviews: "Atsiliepimai",
     hostStatListings: "Daiktai",
@@ -517,8 +597,8 @@ export const lt: Dict = {
     deliveryZoneKm: (km) => `≈${km} km zona`,
     termRentSub: "Nuomos kaina",
     depositNone: "Be užstato",
-    depositTitle: (amount) => `${amount} užstatas`,
-    termDepositSub: "Panaudojimo ir grąžinimo sąlygas matysite programėlėje prieš mokėdami.",
+    depositTitle: (amount) => `${amount}`,
+    termDepositSub: "Užstatas (grąžinamas po tvarkingos nuomos)",
     durationRange: (min, max) =>
       !max || max <= min ? `Nuo ${min} d.` : `${min}–${max} dienų`,
     termDurationSub: "Nuomos trukmė",
@@ -528,8 +608,10 @@ export const lt: Dict = {
       if (tier === "strict") return "Griežta atšaukimo politika";
       return "Standartinė atšaukimo politika";
     },
-    termCancelSub: "Tikslius terminus ir grąžinamą sumą matysite programėlėje prieš mokėdami.",
-    mobileBookingNote: "Visa suma programėlėje",
+    termCancelSub: "Rezervacijos atšaukimo sąlygos",
+    discountsLabel: "Nuolaidos ilgesnei nuomai",
+    discountFrom: (n) => `Nuo ${n} d.`,
+    mobileBookingNote: "Galutinė suma — programėlėje",
   },
   common: {
     favorite: "Įsiminti",
@@ -557,9 +639,8 @@ export const lt: Dict = {
             : "nuotraukos";
       return `${n} ${word}`;
     },
-    discountWeek: (percent) => `−${percent}% savaitei`,
-    discountDays: (percent, days) => `−${percent}% nuo ${days} d.`,
-    newListing: "Atsiliepimų dar nėra",
+    depositAmount: (amount) => `${amount} užstatas`,
+    ownerLabel: "Savininkas",
     imageUnavailable: "Nuotrauka nepasiekiama",
     breadcrumbHome: "Pagrindinis",
     breadcrumbLabel: "Naršymo kelias",
@@ -573,7 +654,7 @@ export const lt: Dict = {
     crumb: "Kategorijos",
     eyebrow: "Naršykite",
     title: "Visos nuomos kategorijos",
-    body: "Pasirinkite kategoriją, palyginkite kainas, vietą ir savininkų profilius, o rezervaciją užbaikite programėlėje.",
+    body: "Pasirinkite kategoriją, palyginkite kainas, vietą ir savininkų profilius, o rezervacijos užklausą tęskite programėlėje.",
     searchPlaceholder: "Ieškoti kategorijos",
     searchLabel: "Ieškoti daiktų nuomos kategorijų",
     submit: "Ieškoti",
@@ -603,7 +684,7 @@ export const lt: Dict = {
   feed: {
     metaTitle: "Nuomojami daiktai Lietuvoje | Naudokis.lt",
     metaDescription:
-      "Naršykite nuomojamus daiktus visoje Lietuvoje pagal kategoriją, miestą ir kainą. Palyginkite savininkų profilius ir rezervuokite Naudokis programėlėje.",
+      "Naršykite nuomojamus daiktus visoje Lietuvoje pagal kategoriją, miestą ir kainą. Palyginkite savininkų profilius ir tęskite rezervacijos užklausą programėlėje.",
     categorySeoLabel: (id, fallback) => LT_CATEGORY_SEO_LABELS[id] ?? fallback,
     landingTitle: ({ category, city }) => {
       const locative = city ? cityLocativeLt(city) : "";
@@ -623,10 +704,10 @@ export const lt: Dict = {
     landingDescription: ({ category, city }) => {
       const locative = city ? cityLocativeLt(city) : "";
       if (category && city) {
-        return `Peržiūrėkite ${category.toLowerCase()} nuomos pasiūlymus ${locative}. Palyginkite kainas ir sąlygas, o rezervaciją užbaikite programėlėje.`;
+        return `Peržiūrėkite ${category.toLowerCase()} nuomos pasiūlymus ${locative}. Palyginkite kainas ir sąlygas, o rezervacijos užklausą tęskite programėlėje.`;
       }
       if (category) {
-        return `Raskite ${category.toLowerCase()} nuomai visoje Lietuvoje. Filtruokite pasiūlymus pagal miestą ir kainą, tada rezervuokite Naudokis programėlėje.`;
+        return `Raskite ${category.toLowerCase()} nuomai visoje Lietuvoje. Filtruokite pasiūlymus pagal miestą ir kainą, tada tęskite rezervacijos užklausą programėlėje.`;
       }
       return `Naršykite daiktų nuomos pasiūlymus ${locative || "visoje Lietuvoje"}: įrankius, transportą, foto techniką, elektroniką ir laisvalaikio įrangą iš privačių ir verslo savininkų.`;
     },
@@ -707,7 +788,8 @@ export const lt: Dict = {
     pageStatus: (page, totalPages) => `${page} puslapis iš ${totalPages}`,
     pageStatusShort: (page) => `${page} puslapis`,
     pageEmptyTitle: "Tokio puslapio nebėra",
-    pageEmptyBody: "Skelbimų sąrašas pasikeitė, todėl šis puslapis nebeegzistuoja. Grįžkite į sąrašo pradžią.",
+    pageEmptyBody:
+      "Skelbimų sąrašas pasikeitė, todėl šis puslapis nebeegzistuoja. Grįžkite į sąrašo pradžią.",
     pageEmptyAction: "Į pirmą puslapį",
     backToTop: "Į viršų",
     seoHeading: "Daiktų nuoma Lietuvoje",
@@ -736,9 +818,9 @@ export const lt: Dict = {
       categoryActionPrimary: "Paskelbti daiktą",
       categoryActionSecondary: "Visos kategorijos",
     },
-    interruptTitle: "Rezervuokite programėlėje matydami galutinę sumą",
+    interruptTitle: "Tęskite rezervacijos užklausą programėlėje",
     interruptBody:
-      "Pasirinkite datas, rašykite savininkams, peržiūrėkite mokesčius, užstatą ir galutinę sumą, tada mokėkite per Stripe.",
+      "Pasirinkite datas ir perdavimo būdą, peržiūrėkite visą sumą, autorizuokite mokėjimą ir pateikite užklausą savininkui.",
     interruptCta: "Atsisiųsti programėlę",
   },
   offline: {
@@ -746,28 +828,31 @@ export const lt: Dict = {
     body: "Prisijunkite prie interneto, kad galėtumėte įkelti nuomos pasiūlymus ir tęsti naršymą.",
     retry: "Bandyti dar kartą",
     timeoutTitle: "Serveris atsako per lėtai",
-    timeoutBody: "Jūsų paieška ir filtrai išsaugoti. Patikrinkite ryšį ir bandykite dar kartą.",
+    timeoutBody:
+      "Jūsų paieška ir filtrai išsaugoti. Patikrinkite ryšį ir bandykite dar kartą.",
     serverTitle: "Paslauga laikinai nepasiekiama",
-    serverBody: "Jūsų paieška ir filtrai išsaugoti. Po akimirkos bandykite dar kartą.",
+    serverBody:
+      "Jūsų paieška ir filtrai išsaugoti. Po akimirkos bandykite dar kartą.",
   },
   bridge: {
-    defaultTitle: "Tęskite nuomą programėlėje",
+    defaultTitle: "Tęskite nuomos užklausą programėlėje",
     // FINAL: role-neutral — covers both marketplace sides.
     defaultBody:
-      "Programėlėje pasirinksite datas, rašysite savininkui, matysite mokesčius, užstatą ir galutinę sumą, tada mokėsite per Stripe.",
+      "Programėlėje pasirinksite datas ir perdavimo būdą, matysite visą sumą, autorizuosite mokėjimą ir pateiksite užklausą savininkui.",
     qrHint: "Nuskenuokite QR kodą telefonu ir atidarykite Naudokis.",
     qrTitle: "Nuskenuokite ir tęskite telefone",
     installCta: "Atsisiųsti programėlę",
     storesAlso: "Taip pat:",
-    appOpenFallback: "Programėlė neatsidarė? Bandykite dar kartą arba pasirinkite programėlių parduotuvę.",
+    appOpenFallback:
+      "Programėlė neatsidarė? Bandykite dar kartą arba pasirinkite programėlių parduotuvę.",
     retryOpen: "Bandyti atidaryti dar kartą",
     close: "Uždaryti",
     opensAppHint: "Atsidarys programėlėje",
     googlePlayAlt: "Gaukite „Google Play“ parduotuvėje",
     appStoreAlt: "Atsisiųskite iš „App Store“",
-    reserveTitle: "Rezervuokite programėlėje",
+    reserveTitle: "Tęskite rezervacijos užklausą programėlėje",
     reserveBody:
-      "Pasirinkite datas, peržiūrėkite galutinę sumą, mokesčius, užstatą ir atšaukimo sąlygas, tada patvirtinkite rezervaciją programėlėje.",
+      "Pasirinkite datas ir perdavimo būdą, peržiūrėkite visą sumą bei patvirtinkite mokėjimo autorizaciją. Užklausa bus išsiųsta savininkui. Rezervacija taps galutinė tik savininkui priėmus ir mokėjimui sėkmingai įvykus.",
     contactTitle: "Paklauskite savininko programėlėje",
     contactBody:
       "Žinutės, datos ir rezervacijos informacija lieka vienoje vietoje.",
@@ -837,7 +922,8 @@ export const lt: Dict = {
       "Įveskite šį kodą programėlėje po registracijos — premija priklauso nuo kodo, o ne nuo matavimo leidimo.",
     codeCopy: "Kopijuoti kodą",
     codeCopied: "Nukopijuota",
-    codeCopyFailed: "Nepavyko nukopijuoti. Pažymėkite kodą ir nukopijuokite rankiniu būdu.",
+    codeCopyFailed:
+      "Nepavyko nukopijuoti. Pažymėkite kodą ir nukopijuokite rankiniu būdu.",
   },
   // FINAL: account-deletion cancel bridge copy.
   cancelDeletion: {
@@ -875,7 +961,7 @@ export const lt: Dict = {
     kinds: {
       bookingRequest: {
         title: "Jūsų rezervacijos užklausa laukia programėlėje",
-        body: "Rezervacijas tvirtinate, keičiate ir atšaukiate Naudokis programėlėje.",
+        body: "Rezervacijos užklausą priimsite arba atmesite, pakeisite ar atšauksite Naudokis programėlėje.",
       },
       chat: {
         title: "Tęskite pokalbį programėlėje",
@@ -911,7 +997,8 @@ export const lt: Dict = {
       },
     },
     openApp: "Atidaryti programėlėje",
-    openHint: "Niekas neatsidarė? Vadinasi, programėlės dar neturite — atsisiųskite ją žemiau.",
+    openHint:
+      "Niekas neatsidarė? Vadinasi, programėlės dar neturite — atsisiųskite ją žemiau.",
     installLead: "Neturite programėlės? Atsisiųskite nemokamai.",
     installCta: "Atsisiųsti programėlę",
     qrHint: "Nuskenuokite telefonu",

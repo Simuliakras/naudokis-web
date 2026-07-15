@@ -3,12 +3,12 @@ import Link from "next/link";
 import type React from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUp, ArrowUpDown, Baby, BadgeCheck, Calendar, Camera, Car,
-  Check, ChevronDown, ChevronRight, Coins, Copy, CreditCard, Download, Dumbbell, Euro, Expand, Flag, Globe,
+  Check, ChevronDown, ChevronLeft, ChevronRight, Coins, Copy, CreditCard, Download, Dumbbell, Euro, Expand, Flag, Globe,
   Handshake, Heart, HeartPulse,
   Home, Image as ImageIcon, ImageOff, Inbox, Info, Laptop, LayoutGrid, LoaderCircle, type LucideIcon, Mail,
   MapPin, Menu, MessageCircle, MoreHorizontal, Package, PartyPopper, Phone, RefreshCcw, ScrollText, Search,
   SearchX, Share2, ShieldCheck, Shirt, SlidersHorizontal, Smartphone, Sparkles,
-  Speaker, Star, Tag, Truck, User, Users, Wrench, X,
+  Speaker, Star, Tag, TriangleAlert, Truck, User, Users, Wrench, X,
 } from "lucide-react";
 import { localeHome, type Locale } from "@/app/lib/i18n/config";
 import { DynamicQR } from "./DynamicQR";
@@ -53,6 +53,7 @@ const ICONS = {
   Truck: lucide(Truck), LoaderCircle: lucide(LoaderCircle), ImageOff: lucide(ImageOff),
   CreditCard: lucide(CreditCard), ScrollText: lucide(ScrollText), Globe: lucide(Globe),
   Flag: lucide(Flag), Expand: lucide(Expand), Package: lucide(Package), Euro: lucide(Euro),
+  ChevronLeft: lucide(ChevronLeft), TriangleAlert: lucide(TriangleAlert),
 
   // Inline glyphs Lucide can't supply (brand marks + the solid Play triangle).
   Play:      glyph({ f: "M6 3v18l15-9z" }),

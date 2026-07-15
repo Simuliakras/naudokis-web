@@ -8,16 +8,12 @@ import { CtaBanner, Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, InputClear } from "./ui";
 import { ChipLinkRow, PageHead, SeoNote } from "./headers";
-import { CategoryCard, CategoryCardSkeleton, EmptyState } from "./cards";
+import { CATEGORY_SKELETON_COUNT, CategoryCard, CategoryCardSkeleton, EmptyState } from "./cards";
 import { useCategories, type Category } from "@/app/lib/categories";
 import type { Locale } from "@/app/lib/i18n/config";
 import { listingLandingHref, listingSearchHref } from "@/app/lib/search";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { useI18n } from "./I18nProvider";
-
-// The live backend always returns 12 top-level categories — the skeleton must
-// reserve the same row count (4/3/2/2-up grids) or every cold load shifts layout.
-const CATEGORY_SKELETON_COUNT = 12;
 
 // Lithuanians commonly type without diacritics ("irankiai", "sventes") — fold
 // both sides of the match so the filter never zero-results a list the user can

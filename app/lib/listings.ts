@@ -1,9 +1,9 @@
 // Listing data layer — browse listings + single-listing detail from the Naudokis backend.
 import { useQuery, useInfiniteQuery, keepPreviousData, skipToken } from "@tanstack/react-query";
 import type { Locale } from "./i18n/config";
-import { API_BASE } from "./api";
+import { API_BASE, MarketplaceApiError, marketplaceFetch } from "./api";
 import { cdnImage } from "./image-hosts";
-import { formatPrice, type Discount, type Offer } from "./listing-view";
+import { formatPrice, ownerInitials, type Discount, type Offer, type OfferOwner } from "./listing-view";
 import { isSyntheticListing, isSyntheticListingParam } from "./listing-url";
 
 /* ---------------- Backend shapes ---------------- */
@@ -26,6 +26,13 @@ type ApiListing = {
   discount_enabled?: boolean; // owner's master switch — tiers may be present but inactive
   category_path?: string[]; // [top-level id, ...subcategories] — not guaranteed on browse items
   owner_id?: string; // groups a lister's items client-side (backend has no owner_id filter yet)
+  deposit_amount_cents?: number | null; // refundable deposit; null/0 both mean "this listing takes none"
+  // Owner summary embedded on the browse item. Contract-optional: the wire carries no
+  // owner block yet, so until it does this is undefined and the card renders no owner
+  // row. Typed with the SAME ApiOwner as the detail block — the browse summary is a
+  // strict subset of it (every field there is optional), so there is one owner shape
+  // rather than two that drift.
+  owner?: ApiOwner;
 };
 
 type ListingsResponse = {
@@ -45,10 +52,10 @@ type ApiAttributeDisplay = {
   value_label_en?: string;
 };
 
-// Owner block on the detail endpoint. Per the backend `ListingOwner` contract
-// every field but `name` is optional, and the detail owner has no completed-rentals
-// count (that lives only on the browse-card summary) — the host card uses
-// `total_listings` instead.
+// Owner block on the detail endpoint, and (once the backend embeds it) the owner
+// summary on each browse item. Per the backend `ListingOwner` contract every field
+// is optional, which is exactly why one type can model both: the browse summary is a
+// strict subset of the detail block.
 // Exported so the server-side metadata read (listing-seo.ts) models the owner
 // block with the SAME type rather than a parallel hand-copy — the two had already
 // drifted on whether `name` is optional.
@@ -58,11 +65,13 @@ export type ApiOwner = {
   name?: string;
   business_name?: string | null;
   is_business?: boolean;
-  verified?: boolean;
+  verified?: boolean; // === the profile endpoint's identity_verified (NOT badges.verified, which disagrees)
   rating_average?: number;
   rating_count?: number;
   total_listings?: number;
+  completed_rentals?: number; // finished rentals — on the detail owner today; nothing renders it yet
   avatar?: string;
+  initials?: string; // "GB" — the browse card's avatar fallback; derived from the name when absent
   member_since?: string; // ISO date — host-card tenure line, rendered only when present
   avg_response_time_hours?: number | null;
 };
@@ -91,6 +100,10 @@ type ApiListingDetail = {
   minimum_rental_days?: number;
   maximum_rental_days?: number;
   cancellation_policy?: string;
+  // The detail document carries these too — they were only ever modelled on the
+  // browse item because nothing on this page needed them until the date picker.
+  discount_tiers?: ApiDiscountTier[];
+  discount_enabled?: boolean;
   delivery_methods?: ApiDeliveryMethod[];
   images?: ApiImage[];
   category_names: ApiCategoryName[];
@@ -129,37 +142,21 @@ type PublicReviewsResponse = {
   data: { reviews: ApiPublicReview[]; count: number; has_more: boolean; next_token?: string };
 };
 
-export type MarketplaceErrorKind = "timeout" | "network" | "server";
-
-export class MarketplaceApiError extends Error {
-  constructor(public readonly kind: MarketplaceErrorKind, public readonly status?: number) {
-    super(kind === "server" && status ? `Marketplace API error: ${status}` : `Marketplace API ${kind} error`);
-    this.name = "MarketplaceApiError";
-  }
-}
-
-async function marketplaceFetch(input: string | URL, init?: Parameters<typeof fetch>[1]): Promise<Response> {
-  try {
-    return await fetch(input, { ...init, signal: AbortSignal.timeout(10_000) });
-  } catch (error) {
-    if (error instanceof DOMException && (error.name === "TimeoutError" || error.name === "AbortError")) {
-      throw new MarketplaceApiError("timeout");
-    }
-    throw new MarketplaceApiError("network");
-  }
-}
-
-export function marketplaceErrorKind(error: unknown): MarketplaceErrorKind {
-  return error instanceof MarketplaceApiError ? error.kind : "server";
-}
+/* ---------------- The fetch boundary ----------------
+   Lives in api.ts (the dependency-free base) so availability.ts can share it without
+   importing this whole module. Re-exported here because this file is the established
+   import site for everything listings-shaped, and the existing callers should not have
+   to care that the wrapper moved. */
+export { MarketplaceApiError, marketplaceFetch, marketplaceErrorKind } from "./api";
+export type { MarketplaceErrorKind } from "./api";
 
 /* ---------------- View models ----------------
    The Offer/Discount shapes and the pure formatters live in listing-view.ts, which
    imports no react-query — so a card can render a listing without pulling the query
    runtime into its bundle. Re-exported here so this module stays the one import site
    for anything that also needs the fetchers or hooks. */
-export { formatPrice, formatLocation, photoFirst } from "./listing-view";
-export type { Offer, Discount } from "./listing-view";
+export { formatPrice, formatLocation, photoFirst, ownerInitials } from "./listing-view";
+export type { Offer, Discount, OfferOwner } from "./listing-view";
 
 /* ---------------- Filters ---------------- */
 // These values mirror the public catalogue API. The default is explicitly
@@ -253,7 +250,14 @@ export type ListingDetail = {
   price: string;
   priceCents: number; // raw per-day price, for the booking-panel breakdown math
   deposit: string | null; // formatted refundable deposit; null when the listing takes none
+  depositCents: number; // raw deposit (0 when none) — the rental estimate needs cents
+  // The owner's ACTIVE price breaks (empty when discounts are switched off — the
+  // master switch is already applied, see discountTiers()). The date picker applies
+  // the tier a chosen length actually qualifies for, which is not necessarily the
+  // deepest one the card advertises.
+  discountTiers: Discount[];
   minDays: number;
+  // 0 means "no ceiling on the wire" — treat it as unset, never as "zero days".
   maxDays: number;
   cancellation: string; // policy tier id ("flexible" | "moderate" | "strict" | …)
   categoryId?: string; // top-level category id (category_path[0]) — similar-items query key
@@ -277,20 +281,19 @@ export function formatRating(average: number, locale: Locale): string {
   return average.toFixed(1).replace(".", locale === "lt" ? "," : ".");
 }
 
-// A listing can carry several price breaks (e.g. −5% from 2 days, −20% from 7).
-// The card has room for one, so surface the deepest — and only when the owner has
-// the discounts switched on, so an inactive leftover tier never advertises a
-// price the booking flow won't honour.
-function bestDiscount(l: ApiListing): Discount | undefined {
+// The owner's active price breaks, in view-model form.
+//
+// This is the ONE place `discount_enabled` is read — the master switch is applied
+// here so it cannot escape the module, and no downstream caller can forget it and
+// quote a price the booking flow won't honour. Everything past this point may assume
+// every tier it holds is live.
+function discountTiers(l: Pick<ApiListing, "discount_tiers" | "discount_enabled">): Discount[] {
   if (!l.discount_enabled) {
-    return undefined;
+    return [];
   }
-  const usable = (l.discount_tiers ?? []).filter((t) => t.discount_percent > 0 && t.min_days >= 2);
-  if (usable.length === 0) {
-    return undefined;
-  }
-  const best = usable.reduce((a, b) => (b.discount_percent > a.discount_percent ? b : a));
-  return { percent: best.discount_percent, minDays: best.min_days };
+  return (l.discount_tiers ?? [])
+    .filter((t) => t.discount_percent > 0)
+    .map((t) => ({ percent: t.discount_percent, minDays: t.min_days }));
 }
 
 function ratingLabel(average: number | null, count: number, locale: Locale): string | undefined {
@@ -394,6 +397,33 @@ function buildListingsUrl(filters: ListingFilters): URL {
   return url;
 }
 
+// The browse item's embedded owner summary → the card's owner row. Returns undefined
+// when the wire carries no owner block (today's backend) or no usable name, so the
+// card degrades to exactly what it renders now. Display name prefers the business
+// name — the same rule mapDetailOwner applies.
+function mapOfferOwner(l: ApiListing): OfferOwner | undefined {
+  const o = l.owner;
+  if (!o) {
+    return undefined;
+  }
+  const name = o.business_name ?? o.name;
+  if (!name) {
+    return undefined; // an owner row with no name is nothing to render
+  }
+  return {
+    id: o.id ?? l.owner_id,
+    name,
+    // The wire's initials win; derive from the name only as a fallback (an empty
+    // string on the wire is "no value", not a value).
+    initials: o.initials || ownerInitials(name),
+    avatar: cdnImage(o.avatar),
+    // null, NOT false — see OfferOwner. This deliberately differs from
+    // ListingOwner.verified, which coerces to false because the detail page renders a
+    // pill off it; the card renders nothing off this, so keep the honest tri-state.
+    verified: o.verified ?? null,
+  };
+}
+
 // Map a backend browse item to the Offer view model.
 function apiToOffer(l: ApiListing, locale: Locale): Offer {
   return {
@@ -409,11 +439,14 @@ function apiToOffer(l: ApiListing, locale: Locale): Offer {
     // Kept for the card badge; catalogue filtering itself is performed by the API.
     hasDelivery: (l.delivery_types_available ?? []).includes("user_delivery"),
     photoCount: l.images?.length ?? 0,
-    discount: bestDiscount(l),
     // The wire's `category` field is a leaf id (e.g. "cars"); the accent and
     // icon maps key on the top-level id, which leads category_path.
     category: l.category_path?.[0],
     ownerId: l.owner_id,
+    // Same formatter as the detail fact card, so the two can never show a different
+    // number for the same listing — and neither can ever render "0 €".
+    deposit: formatDeposit(l.deposit_amount_cents, locale) ?? undefined,
+    owner: mapOfferOwner(l),
   };
 }
 
@@ -750,6 +783,8 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
     price: formatPrice(detail.price_per_day_cents, locale),
     priceCents: detail.price_per_day_cents,
     deposit: formatDeposit(detail.deposit_amount_cents, locale),
+    depositCents: detail.deposit_amount_cents ?? 0,
+    discountTiers: discountTiers(detail),
     minDays: detail.minimum_rental_days ?? 1,
     maxDays: detail.maximum_rental_days ?? 0,
     cancellation: detail.cancellation_policy ?? "",

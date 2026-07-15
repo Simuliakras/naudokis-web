@@ -77,8 +77,7 @@ export function CancelDeletionScreen() {
               </div>
               <button type="button" className="nk-btn nk-btn--primary" onClick={submit} disabled={state === "submitting"}>
                 {state === "submitting" ? (
-                  // Reuse the shared nk-spin keyframe (see globals.css) so the loader spins.
-                  <span style={{ display: "inline-flex", animation: "nk-spin .8s linear infinite" }}>
+                  <span className="nk-spinner">
                     <Icon name="LoaderCircle" size={18} stroke={2.2} />
                   </span>
                 ) : (

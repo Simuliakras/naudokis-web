@@ -39,9 +39,9 @@ function FeatureCard({
       padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-stack-lg)", textAlign: "center",
     }}>
       <span style={{ width: "var(--nk-size-icon-lg)", height: "var(--nk-size-icon-lg)", borderRadius: "50%", background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Icon name={icon} size={36} color="var(--nk-yellow)" stroke={2} />
+        <Icon name={icon} size={44} color="var(--nk-yellow)" stroke={2} />
       </span>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
         {/* reserve ~2 lines so a card whose title wraps to 3 lines doesn't push its
             body below the neighbours' — flex-start keeps 1-line titles on the SAME
             first baseline as 2-line neighbours (centred slots jogged up-down-up) */}

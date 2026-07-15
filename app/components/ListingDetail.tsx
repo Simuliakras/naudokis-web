@@ -6,10 +6,14 @@
 // gallery, sticky in-page sub-nav, booking panel, trust-rich host card.
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Icon, IconName, Pill, openRedirect } from "./ui";
+import { Avatar, Icon, IconName, Pill, openRedirect } from "./ui";
 import { RowHead } from "./headers";
 import { SectionEmpty } from "./cards";
+import { DateRangePicker, type DateRange } from "./DateRangePicker";
 import { formatLocation } from "@/app/lib/listings";
+import { rentalEstimate, discountTierViews } from "@/app/lib/listing-view";
+import { rentalDays, type IsoDate } from "@/app/lib/dates";
+import type { Availability } from "@/app/lib/availability";
 import type { ListingDetail, ListingDelivery, ListingOwner, ListingReview, RatingBucket } from "@/app/lib/listings";
 import { RichText } from "@/app/lib/rich-text";
 import { listingLandingHref } from "@/app/lib/search";
@@ -20,6 +24,19 @@ import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
 import { goHref } from "@/app/lib/attribution";
 import { useI18n } from "./I18nProvider";
 import { trackEvent } from "@/app/lib/analytics";
+
+// Everything the booking panel needs to run the date field. Bundled into one prop
+// because BookingPanel is rendered twice (sticky sidebar + mobile inline) and both
+// copies must be driven by the SAME state, which therefore lives in ListingScreen.
+export type DatesControl = {
+  today: IsoDate | undefined; // client-only; undefined until mount (see use-market-today)
+  range: DateRange | null;
+  onChange: (range: DateRange | null) => void;
+  availability: Availability | undefined;
+  isLoading: boolean;
+  onOpen: () => void; // arms the lazily-enabled availability query
+  onRetry: () => void;
+};
 
 /* ---------------- Shared primitives ---------------- */
 function Section({ id, title, sub, first, children }: {
@@ -134,11 +151,18 @@ export function ListingSkeleton() {
   const card: React.CSSProperties = { borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" };
   // Booking card skeleton — rendered in the sticky sidebar (with the reserve
   // button) and inline on mobile (facts-only, no button), mirroring the real
-  // BookingPanel in order and height — price header → confirmInApp reassurance
-  // line → reserve CTA — so neither breakpoint reflows when the content lands.
+  // BookingPanel in order and height — price header → date field → confirmInApp
+  // reassurance line → reserve CTA — so neither breakpoint reflows when the content
+  // lands. The date field's 58px + its 12.5px uppercase label are the real trigger's
+  // dimensions (see .nk-cal-trigger); the picker itself mounts client-side but the
+  // FIELD renders server-side, so this space is genuinely reclaimed, not deferred.
   const bookingSkel = (withButton: boolean) => (
     <div style={{ ...card, background: "var(--nk-surface)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><Skel w={130} h={32} r={9} /><Skel w={70} h={16} /></div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+        <Skel w={100} h={13} r={7} />
+        <Skel h={58} r={14} />
+      </div>
       {/* the muted confirmInApp line — one sentence that wraps to ~2 lines */}
       <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
         <Skel w="100%" h={13} r={7} />
@@ -170,11 +194,9 @@ export function ListingSkeleton() {
       <div className="nk-detail-grid">
         {/* DetailBody: description → specs → handover → terms → reviews (gap:0, spaced by SkelSection) */}
         <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
-          {/* description */}
+          {/* description — leads the focus column, same width as specs */}
           <SkelSection first titleW={170}>
-            <div style={{ maxWidth: 720 }}>
-              <SkelLines rows={4} last="45%" />
-            </div>
+            <SkelLines rows={4} last="45%" />
           </SkelSection>
           {/* specs */}
           <SkelSection titleW={210}>
@@ -516,7 +538,7 @@ function GalleryLightbox({ images, title, appPath, start, onClose }: {
 
   return (
     <div className="nk-lightbox" role="dialog" aria-modal="true" aria-label={t.galleryViewLabel} onClick={onClose}>
-      <div ref={panelRef} className="nk-lightbox__panel" onClick={(e) => e.stopPropagation()}>
+      <div ref={panelRef} className={"nk-lightbox__panel" + (many ? " is-multi" : "")} onClick={(e) => e.stopPropagation()}>
         <button ref={closeRef} className="nk-lightbox__close" onClick={onClose} aria-label={t.galleryClose}>
           <Icon name="X" size={20} color="var(--nk-text)" />
         </button>
@@ -552,25 +574,24 @@ function GalleryLightbox({ images, title, appPath, start, onClose }: {
             ))}
           </div>
         )}
+        {/* Count + thumbnail scrubber ride together in one row directly below the
+            photo; the count is dead chrome on single-photo sets, so the whole row
+            only renders when there's more than one image. */}
         {many && (
-          <div ref={thumbsRef} className="nk-lightbox__thumbs">
-            {images.map((src, idx) => (
-              <button key={idx} type="button" onClick={() => setI(idx)} aria-current={idx === i}
-                aria-label={`${idx + 1} / ${images.length}`}
-                className={"nk-lightbox__thumb" + (idx === i ? " is-active" : "")}>
-                <Image src={src} alt="" fill sizes="64px" style={{ objectFit: "cover" }} />
-              </button>
-            ))}
+          <div className="nk-lightbox__preview">
+            <span className="nk-lightbox__count" aria-live="polite">{i + 1} / {images.length}</span>
+            <div ref={thumbsRef} className="nk-lightbox__thumbs">
+              {images.map((src, idx) => (
+                <button key={idx} type="button" onClick={() => setI(idx)} aria-current={idx === i}
+                  aria-label={`${idx + 1} / ${images.length}`}
+                  className={"nk-lightbox__thumb" + (idx === i ? " is-active" : "")}>
+                  <Image src={src} alt="" fill sizes="64px" style={{ objectFit: "cover" }} />
+                </button>
+              ))}
+            </div>
           </div>
         )}
         <div className="nk-lightbox__bar">
-          {/* "1 / 1" is dead chrome on single-photo sets — the empty span keeps the
-              reserve CTA right-aligned in the space-between bar. */}
-          {many ? (
-            <span className="nk-lightbox__count" aria-live="polite">{i + 1} / {images.length}</span>
-          ) : (
-            <span aria-hidden />
-          )}
           <button className="nk-btn nk-btn--primary nk-btn--sm" title={dict.bridge.opensAppHint}
             onClick={() => openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: { title, thumb: images[i] }, appPath })}>
             <Icon name="Smartphone" size={16} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
@@ -611,7 +632,7 @@ function DescriptionSection({ description }: { description: string }) {
       {locale !== "lt" && (
         <p style={{ margin: "0 0 var(--nk-gap-sm)", fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>{t.descOriginalNote}</p>
       )}
-      <div ref={bodyRef} className={"nk-prose" + (expanded ? "" : " nk-desc-clamp")} style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty" }}><RichText html={description} /></div>
+      <div ref={bodyRef} className={"nk-prose" + (expanded ? "" : " nk-desc-clamp")} style={{ margin: 0, maxWidth: "none", fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "30px", color: "var(--nk-text-2)", textWrap: "pretty" }}><RichText html={description} /></div>
       {(overflowing || expanded) && (
         <button type="button" onClick={() => setExpanded((v) => !v)} aria-expanded={expanded}
           style={{ marginTop: "var(--nk-gap-xs)", padding: "10px 0", minHeight: "var(--nk-tap)", border: 0, background: "none", cursor: "pointer", alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-purple-hover)" }}>
@@ -753,7 +774,11 @@ function HandoverSection({ city, subdivision, delivery }: { city: string; subdiv
 }
 
 function TermsSection({ listing }: { listing: ListingDetail }) {
-  const t = useI18n().dict.detail;
+  const { locale, dict } = useI18n();
+  const t = dict.detail;
+  // Static longer-rental price breaks — visible without touching the date picker,
+  // unlike the booking-panel estimate which only shows the single applied tier.
+  const discounts = discountTierViews(listing.discountTiers, listing.priceCents, locale);
   return (
     <Section id="salygos" title={t.termsHeading}>
       <div className="nk-hl-grid">
@@ -761,6 +786,25 @@ function TermsSection({ listing }: { listing: ListingDetail }) {
         <FactCard icon="ShieldCheck" title={listing.deposit ? t.depositTitle(listing.deposit) : t.depositNone} sub={t.termDepositSub} />
         <FactCard icon="Calendar" title={t.durationRange(listing.minDays, listing.maxDays)} sub={t.termDurationSub} />
         <FactCard icon="RefreshCcw" title={t.cancellationLabel(listing.cancellation)} sub={t.termCancelSub} />
+        {discounts.length > 0 && (
+          <div className="nk-fact nk-breaks" style={{ gridColumn: "1 / -1", alignItems: "flex-start" }}>
+            <span className="nk-fact__disk" style={{ width: 46, height: 46, borderRadius: 13, flex: "none", background: "var(--nk-purple-tag)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Icon name="Tag" size={22} stroke={2} color="var(--nk-purple-hover)" />
+            </span>
+            <div className="nk-breaks__body">
+              <span className="nk-breaks__label">{t.discountsLabel}</span>
+              <ul className="nk-breaks__list">
+                {discounts.map((tier) => (
+                  <li key={tier.minDays} className="nk-breaks__tier">
+                    <span className="nk-breaks__from">{t.discountFrom(tier.minDays)}</span>
+                    <span className="nk-breaks__price nk-tnum">{tier.perDay} {t.perDayShort}</span>
+                    <span className="nk-breaks__pct nk-tnum">−{tier.percent}%</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </Section>
   );
@@ -811,10 +855,7 @@ function ReviewsBreakdown({ rating, ratingValue, ratingCount, breakdown, reviews
         {reviews.map((r) => (
           <div key={r.name} style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", padding: "var(--nk-card-pad-sm)", borderRadius: 16, background: "var(--nk-surface)", border: "1px solid var(--nk-border)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-sm)" }}>
-              <span className="nk-imgph" style={{ width: 42, height: 42, borderRadius: 21, flex: "none" }}>
-                {r.avatar && <Image src={r.avatar} alt={r.name} fill sizes="42px" style={{ objectFit: "cover" }} />}
-                {!r.avatar && <Icon name="User" size={20} stroke={1.6} color="var(--nk-avatar-icon)" />}
-              </span>
+              <Avatar src={r.avatar} size={42} />
               <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)", flex: 1, minWidth: 0 }}>
                 <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 16, color: "var(--nk-text)", overflowWrap: "anywhere", hyphens: "auto" }}>{r.name}</span>
                 <span style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)" }}>
@@ -859,6 +900,9 @@ export function ReviewsSection({ listing, onShowReviews }: { listing: ListingDet
 // full width beneath the two-column grid (see ListingScreen) so the reviews module
 // never sits marooned in the narrow column with dead space under the sidebar.
 export function DetailBody({ listing }: { listing: ListingDetail }) {
+  // Description leads the focus column so it shares the Specs section's width — both
+  // sit in the grid's minmax(620px,1fr) column, not the full container. It renders
+  // `first`, so it sits flush with the sidebar's top.
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0 }}>
       <DescriptionSection description={listing.description} />
@@ -870,41 +914,124 @@ export function DetailBody({ listing }: { listing: ListingDetail }) {
 }
 
 /* ---------------- Sidebar: booking panel ----------------
-   Sticky reserve card (desktop): per-day price, one honest in-app reassurance line
-   (nothing transacts on the bridge — dates + final price are confirmed in the app),
-   and the reserve CTA.
+   Sticky reserve card (desktop): per-day price, the date-range field, an honest
+   estimate for the chosen days, one in-app reassurance line (nothing transacts on the
+   bridge — fees and the final price are settled in the app), and the reserve CTA.
    variant="facts" drops the reserve button — used inline on mobile (≤980px), where
    the sticky sidebar is hidden and the fixed MobileBar carries the reserve CTA, so
-   the price + reassurance line still travel to phone users. */
-export function BookingPanel({ listing, onReserve, variant = "full" }: {
+   the price + dates + reassurance still travel to phone users. */
+export function BookingPanel({ listing, onReserve, dates, appPath, variant = "full" }: {
   listing: ListingDetail;
   onReserve: () => void;
+  dates: DatesControl;
+  appPath: string;
   variant?: "full" | "facts";
 }) {
-  const { dict } = useI18n();
+  const { locale, dict } = useI18n();
   const t = dict.detail;
+  // Both copies of the panel (sidebar + mobile inline) read the SAME lifted range, so
+  // the two triggers can never disagree — only one is ever visible, but both are
+  // mounted, exactly like the double-rendered HostCard.
+  const estimate = dates.range
+    ? rentalEstimate({
+        days: rentalDays(dates.range.start, dates.range.end),
+        pricePerDayCents: listing.priceCents,
+        depositCents: listing.depositCents,
+        tiers: listing.discountTiers,
+      }, locale)
+    : null;
   return (
     <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)" }}>
-      {/* flexWrap: at the 981px sidebar minimum a max price + 5-digit review count
-          overflowed the card — the rating chip drops to its own line instead */}
-      <div style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)", flexWrap: "wrap" }}>
-        <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 33, color: "var(--nk-text)", whiteSpace: "nowrap" }}>{listing.price}</span>
-        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{t.perDay}</span>
-        {listing.rating && (
-          <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-2)" }}>
-            <Icon name="Star" size={14} color="var(--nk-yellow)" fill="var(--nk-yellow)" /> {listing.rating} · {listing.ratingCount}
+      {/* Price block: the headline price and the refundable deposit read as one unit.
+          The deposit is a quiet sub-line beneath — the fact renters weigh before
+          committing — deliberately subordinate to the 33px price. It hides once an
+          estimate is on screen (like confirmInApp below), since the estimate carries
+          its own deposit row and the same line must not render twice. */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+        {/* flexWrap: at the 981px sidebar minimum a max price + 5-digit review count
+            overflowed the card — the rating chip drops to its own line instead */}
+        <div style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)", flexWrap: "wrap" }}>
+          <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-price)", fontWeight: 700, fontSize: 33, color: "var(--nk-yellow)", whiteSpace: "nowrap" }}>{listing.price}</span>
+          <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text-2)" }}>{t.perDay}</span>
+          {listing.rating && (
+            <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-2)" }}>
+              <Icon name="Star" size={14} color="var(--nk-yellow)" fill="var(--nk-yellow)" /> {listing.rating} · {listing.ratingCount}
+            </span>
+          )}
+        </div>
+        {/* Deposit as a plain sub-line: the amount up front (the fact renters weigh
+            before committing), then the refund condition. No icon and no protection/
+            insurance framing — the Terms disclaim both (see the depositAmount note in
+            i18n/types.ts). Hidden once an estimate is on screen (like confirmInApp
+            below): the estimate carries its own deposit row, so the line never doubles. */}
+        {!estimate && (
+          <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, lineHeight: "20px", color: "var(--nk-text-2)" }}>
+            {listing.deposit ? (
+              <>
+                <span className="nk-tnum" style={{ color: "var(--nk-text)", fontWeight: 700 }}>+ {listing.deposit}</span>{" "}
+                {t.bookingDepositSuffix}
+              </>
+            ) : (
+              t.depositNone
+            )}
           </span>
         )}
       </div>
-      {/* One honest line: nothing transacts on the bridge — dates and the final
-          price are confirmed in the app. Replaces the old fee "table" whose every
-          value just read "Programėlėje". */}
-      <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, lineHeight: "18px", color: "var(--nk-text-muted)" }}>{t.confirmInApp}</span>
+
+      <DateRangePicker
+        value={dates.range} onChange={dates.onChange}
+        availability={dates.availability} isLoading={dates.isLoading}
+        onOpen={dates.onOpen} onRetry={dates.onRetry}
+        today={dates.today} minDays={listing.minDays} maxDays={listing.maxDays}
+      />
+
+      {/* The estimate is arithmetic over facts already on this page — the per-day
+          price, the owner's advertised price break, the deposit. There is deliberately
+          no total: the app adds service fees this site cannot see, so a summed row
+          would be a number we invented. RentalEstimate has no `total` field precisely
+          so this cannot be added by accident. */}
+      {estimate && (
+        <div className="nk-est">
+          <div className="nk-est__row">
+            <span>{t.estimateRental(t.calDays(estimate.days))}</span>
+            <span className="nk-est__val nk-tnum">
+              {estimate.discount && <span className="nk-est__was">{estimate.fullSubtotal}</span>}
+              {estimate.rentalSubtotal}
+            </span>
+          </div>
+          {estimate.discount && estimate.savings && (
+            <div className="nk-est__row is-discount">
+              <span>{t.estimateDiscount(estimate.discount.percent)}</span>
+              <span className="nk-tnum">−{estimate.savings}</span>
+            </div>
+          )}
+          {estimate.deposit && (
+            <div className="nk-est__row">
+              <span>{t.estimateDeposit}</span>
+              <span className="nk-est__val nk-tnum">{estimate.deposit}</span>
+            </div>
+          )}
+          <span className="nk-est__note">{t.estimateFees}</span>
+        </div>
+      )}
+
+      {/* One honest line: nothing transacts on the bridge — dates and the final price
+          are confirmed in the app. Replaces the old fee "table" whose every value just
+          read "Programėlėje".
+          Hidden once an estimate is on screen: the estimate carries its own, sharper
+          version of the same promise (estimateFees), and running both stacked two
+          near-identical sentences about fees and the final sum on top of each other. */}
+      {!estimate && (
+        <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, lineHeight: "18px", color: "var(--nk-text-muted)" }}>{t.confirmInApp}</span>
+      )}
       {variant !== "facts" && (
-        <a className="nk-btn nk-btn--primary" href={goHref(`/listing/${listing.id}`)}
+        // The dates ride into the app on this target — see listingAppPath(). Reserve
+        // is never gated on picking them: the bridge's job is the handoff, and a
+        // picker that blocks the funnel would be a bug, not a feature.
+        <a className="nk-btn nk-btn--primary" href={goHref(appPath)}
           onClick={(event) => { event.preventDefault(); onReserve(); }} title={dict.bridge.opensAppHint}
           data-nk-redirect data-nk-redirect-title={dict.bridge.reserveTitle} data-nk-redirect-body={dict.bridge.reserveBody}
-          data-nk-redirect-target={`/listing/${listing.id}`}
+          data-nk-redirect-target={appPath}
           style={{ width: "100%", padding: 16, fontSize: 17 }}>
           <Icon name="Smartphone" size={17} stroke={2.2} color="var(--nk-text)" /> {t.reserve}
         </a>
@@ -937,10 +1064,7 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
   return (
     <div style={{ background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad-sm)", border: "1px solid var(--nk-border)", boxShadow: "var(--nk-edge-top)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-md)" }}>
-        <span className="nk-imgph" style={{ width: 58, height: 58, borderRadius: 29, flex: "none", border: "2px solid var(--nk-green-soft)" }}>
-          {owner.avatar && <Image src={owner.avatar} alt={owner.name} fill sizes="58px" style={{ objectFit: "cover" }} />}
-          {!owner.avatar && <Icon name="User" size={26} stroke={1.6} color="var(--nk-avatar-icon)" />}
-        </span>
+        <Avatar src={owner.avatar} size={58} ring="var(--nk-green-soft)" />
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)", minWidth: 0 }}>
           <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 19, color: "var(--nk-text)" }}>{owner.name}</span>
           {owner.verified && (
@@ -953,15 +1077,10 @@ export function HostCard({ owner, rating, ratingCount, onContact }: {
       {/* Tenure/responsiveness signals — the strongest pre-review trust facts. Only
           rendered when the wire actually carries them (never fabricated). */}
       {(owner.memberSince || owner.responseTimeHours != null) && (
-        <span style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "4px 14px", fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)", textAlign: "center" }}>
+        <span style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "4px 14px", marginTop: "var(--nk-gap-xs)", fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)", textAlign: "center" }}>
           {owner.memberSince && <span>{t.hostMemberSince(owner.memberSince)}</span>}
           {owner.responseTimeHours != null && <span>{t.hostResponseTime(owner.responseTimeHours)}</span>}
         </span>
-      )}
-      {owner.verified && (
-        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 13, lineHeight: "19px", color: "var(--nk-text-muted)", textAlign: "center" }}>
-          {t.verifiedOwnerNote}
-        </p>
       )}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 1, background: "var(--nk-hairline)", borderRadius: 14, overflow: "hidden" }}>
         {stats.map((s) => (
@@ -987,7 +1106,7 @@ export function MobileBar({ price, appPath, hidden, onReserve }: { price: string
   return (
     <div className={"nk-mbar" + (hidden ? " is-hidden" : "")}>
       <span style={{ display: "flex", flexDirection: "column" }}>
-        <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, color: "var(--nk-text)" }}>{price} <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 400, fontSize: 15, color: "var(--nk-text-2)" }}>{t.perDayShort}</span></span>
+        <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-price)", fontWeight: 700, fontSize: 21, color: "var(--nk-text)" }}>{price} <span style={{ fontFamily: "var(--nk-font-body)", fontWeight: 400, fontSize: 15, color: "var(--nk-text-2)" }}>{t.perDayShort}</span></span>
         <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 13, color: "var(--nk-text-muted)" }}>{t.mobileBookingNote}</span>
       </span>
       <a className="nk-btn nk-btn--primary" href={goHref(appPath)}

@@ -8,7 +8,7 @@ import { defaultLocale, locales, isLocale, localeHome } from "@/app/lib/i18n/con
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { APP_STORE_ID } from "@/app/lib/contact";
 import { SITE_URL, canonicalFor } from "@/app/lib/seo";
-import { brandFont } from "@/app/lib/fonts";
+import { brandFont, priceFont } from "@/app/lib/fonts";
 import { BRIDGE_BOOTSTRAP } from "@/app/lib/bridge-bootstrap";
 
 export async function generateStaticParams() {
@@ -104,7 +104,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   const locale = isLocale(lang) ? lang : defaultLocale;
   const dict = getDictionary(locale);
   return (
-    <html lang={locale} className={brandFont.variable} data-scroll-behavior="smooth">
+    <html lang={locale} className={`${brandFont.variable} ${priceFont.variable}`} data-scroll-behavior="smooth">
       {/* suppressHydrationWarning: browser extensions (Grammarly, dark-reader, …)
           inject attributes onto <body> before React hydrates; this silences the
           resulting one-level attribute mismatch without hiding it for children. */}
