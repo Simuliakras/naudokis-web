@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "type-check": "next typegen && tsc --noEmit",
+    "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "responsive:audit": "node scripts/responsive-audit.mjs",
     "responsive:audit:quick": "node scripts/responsive-audit.mjs --quick",
@@ -38,7 +39,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   },
   "resolutions": {
     "postcss": "8.5.19"

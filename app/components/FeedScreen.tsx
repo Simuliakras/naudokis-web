@@ -16,7 +16,12 @@ import { ChipLinkRow, PageHead, SeoNote } from "./headers";
 import { HeroOwnerCta } from "./HeroSearch";
 import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
 import { dedupeById, useCategories, type Category } from "@/app/lib/categories";
-import { LISTING_PRICE_BANDS, useListingsInfinite, parseSortKey, parsePageParam, listingPriceBand, marketplaceErrorKind } from "@/app/lib/listings";
+import { useListingsInfinite, parseSortKey, parsePageParam, marketplaceErrorKind } from "@/app/lib/listings";
+import { parsePriceParam, priceToCents, serializePriceParam, priceBandArgs, type PriceRange } from "@/app/lib/price-range";
+import { PriceRangeControl, PriceRangePanel } from "./PriceRange";
+import { clampRangeToToday, dateBandArgs, datesToApiParams, parseDatesParam, serializeDatesParam, type DateFilterRange } from "@/app/lib/date-filter";
+import { DateRangeFilterControl, DateRangeFilterPanel } from "./DateRangeFilter";
+import { useMarketToday } from "@/app/lib/use-market-today";
 import { useDebouncedValue } from "@/app/lib/use-debounced-value";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { trackEvent } from "@/app/lib/analytics";
@@ -29,15 +34,34 @@ import { LT_CITIES } from "@/app/lib/cities";
 import { useI18n } from "./I18nProvider";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { useMeasuredColumns } from "./useMeasuredColumns";
+import type { IsoDate } from "@/app/lib/dates";
 import type { ListingFilters } from "@/app/lib/listings";
 
 type FeedScreenProps = {
-  initialFilters?: ListingFilters & { delivery?: boolean; price?: string };
+  initialFilters?: ListingFilters & { delivery?: boolean; price?: string; dates?: string };
+  // The market "today" the SERVER already clamped `?dates=` against, handed down so the
+  // first client render can reproduce that window before useMarketToday() resolves. Only
+  // a route that (a) prefetches a date-filtered query and (b) renders this screen without
+  // `initialFilters` needs it — see the `today` binding below.
+  serverToday?: IsoDate;
   extraCategory?: Category;
   extraCategories?: Category[];
 };
 
-export function FeedScreen({ initialFilters, extraCategory, extraCategories = [] }: FeedScreenProps = {}) {
+// A raw `?price=` value → its canonical token ("" when it filters nothing), so the URL
+// the feed writes and the pager links it builds never carry a non-canonical variant.
+function priceParamToken(raw: string | null): string {
+  const range = parsePriceParam(raw);
+  return range ? serializePriceParam(range) : "";
+}
+
+// A raw `?dates=` value → its canonical token ("" when unusable), same role as
+// priceParamToken. Structural only (no "today") so it matches the server-prefetch token.
+function datesParamToken(raw: string | null): string {
+  return serializeDatesParam(parseDatesParam(raw));
+}
+
+export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCategories = [] }: FeedScreenProps = {}) {
   const { locale, dict } = useI18n();
   const t = dict.feed;
   const sp = useSearchParams();
@@ -58,6 +82,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
         page: parsePageParam(initialFilters.page),
         delivery: initialFilters.delivery ?? false,
         price: initialFilters.price ?? "",
+        dates: initialFilters.dates ?? "",
       }
     : {
         q: sp.get("q") ?? "",
@@ -66,7 +91,8 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
         sort: parseSortKey(sp.get("sort")),
         page: parsePageParam(sp.get("page")),
         delivery: sp.get("delivery") === "1",
-        price: listingPriceBand(sp.get("price"))?.value ?? "",
+        price: priceParamToken(sp.get("price")),
+        dates: datesParamToken(sp.get("dates")),
       };
 
   const filterBarRef = useRef<HTMLDivElement>(null);
@@ -86,6 +112,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     if (params.page > 1) next.set("page", String(params.page));
     if (params.delivery) next.set("delivery", "1");
     if (params.price) next.set("price", params.price);
+    if (params.dates) next.set("dates", params.dates);
     const resetPage = Object.keys(patch).some((key) => key !== "page");
     for (const [k, v] of Object.entries(patch)) {
       const isDefault = v === "" || v === false || v === "newest";
@@ -95,6 +122,18 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     if (resetPage) {
       next.delete("page");
     }
+    const qs = next.toString();
+    const basePath = staticLanding ? localePath(locale, "/skelbimai") : pathname;
+    const url = qs ? `${basePath}?${qs}` : basePath;
+    // A patch that changes nothing is not a filter change. Committing a range is a
+    // discrete act, so re-picking the window/price already in the URL is ordinary (click
+    // the start date twice, or Clear with nothing set) — and without this it would push a
+    // duplicate history entry the Back button then has to eat through, fire a phantom
+    // "Listing Filter Change", and scroll-jump the feed. Guarding here rather than in each
+    // panel is what keeps the two controls honest: neither can forget it.
+    if (url === window.location.pathname + window.location.search) {
+      return;
+    }
     trackEvent("Listing Filter Change", {
       locale,
       patch: Object.keys(patch).join(","),
@@ -103,10 +142,8 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
       city: "city" in patch ? String(patch.city || "") : params.city,
       delivery: "delivery" in patch ? Boolean(patch.delivery) : params.delivery,
       sort: "sort" in patch ? String(patch.sort || "newest") : params.sort,
+      hasDates: Boolean("dates" in patch ? String(patch.dates ?? "") : params.dates),
     });
-    const qs = next.toString();
-    const basePath = staticLanding ? localePath(locale, "/skelbimai") : pathname;
-    const url = qs ? `${basePath}?${qs}` : basePath;
     if (replace) {
       // replace = debounced typing into the search input — don't scroll under
       // the user's cursor on every keystroke.
@@ -153,7 +190,23 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     () => dedupeById([...(topCats ?? []), ...extraCategories, ...(extraCategory ? [extraCategory] : [])]),
     [topCats, extraCategories, extraCategory],
   );
-  const band = listingPriceBand(params.price);
+  const priceRange = parsePriceParam(params.price);
+  // "Today" cannot be a server fact (use-market-today.ts explains why), so this is
+  // undefined on the server AND on the first client render unless a caller hands down the
+  // date IT already clamped against. That first render has to agree with the server,
+  // because the clamped window is part of the React Query key: with `serverToday` it
+  // reproduces the server's window exactly and HITS the dehydrated prefetch, and the live
+  // value takes over on mount. Routes that pass `initialFilters` need no serverToday —
+  // their `dates` token arrives already clamped, and re-clamping it is idempotent.
+  const today = useMarketToday(serverToday);
+  // ONE range drives the calendar, the pill/chip AND the wire — they must not disagree.
+  // The clamp is what keeps a stale `?dates=` honest: the backend answers a window whose
+  // start is already past with an EMPTY page, so sending an unclamped one would strand the
+  // user on a blank feed while the pill claimed "Any dates" and offered nothing to clear.
+  // Clamping first means a fully-past window simply drops the filter, and a straddling one
+  // ("this weekend", opened next week) filters the days that remain.
+  const parsedDates = parseDatesParam(params.dates);
+  const dateRange = today ? clampRangeToToday(parsedDates, today) : parsedDates;
   const {
     data, isLoading, isError, error, refetch,
     fetchNextPage, hasNextPage, isFetchingNextPage, isPlaceholderData,
@@ -163,8 +216,11 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     category: params.cat,
     sort: params.sort,
     page: params.page,
-    priceMinCents: band?.min == null ? undefined : band.min * 100,
-    priceMaxCents: band?.max == null ? undefined : band.max * 100,
+    // Open ends are omitted (not sent as 0 / 20000): the backend applies the bounds
+    // inclusively, so an absent side is what keeps the filter open there.
+    ...(priceRange ? priceToCents(priceRange) : {}),
+    // The clamped window — never the raw URL one — so the wire and the pill agree.
+    ...datesToApiParams(dateRange),
     deliveryMethods: params.delivery ? ["user_delivery"] : undefined,
   });
 
@@ -280,10 +336,15 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
         .slice(1)
         .map((c) => ({ label: c.name, href: localePath(locale, c.path) }));
 
-  const anyActive = !!params.q || isCat || !!params.city || params.delivery || !!params.price || params.sort !== "newest";
-  const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "newest", page: "", delivery: false, price: "" }); };
+  // Every "is a filter visibly active?" flag reads the CLAMPED dateRange, never the raw
+  // params.dates token — the pill and chip already do, and a fully-past `?dates=` (a
+  // shared link opened next week) clamps away to nothing. Reading the token here instead
+  // would badge and offer to "clear" a filter the page never shows.
+  const dateActive = !!dateRange;
+  const anyActive = !!params.q || isCat || !!params.city || params.delivery || !!params.price || dateActive || params.sort !== "newest";
+  const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "newest", page: "", delivery: false, price: "", dates: "" }); };
   // Count of secondary (sheet) filters — badges the mobile "Filters" button.
-  const activeFilterCount = [params.cat, params.city, params.delivery, params.price, params.sort !== "newest"].filter(Boolean).length;
+  const activeFilterCount = [params.cat, params.city, params.delivery, params.price, dateActive, params.sort !== "newest"].filter(Boolean).length;
 
   const sortOptions: SelectOption[] = [
     { value: "newest", label: t.sortNewest },
@@ -299,28 +360,26 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     ...dedupeById([...(topCats ?? []), ...(cat ? [cat] : [])]).map((c) => ({ value: c.id, label: c.title })),
   ];
   const cityOptions: SelectOption[] = [{ value: "", label: dict.cityPicker.all }, ...LT_CITIES.map((c) => ({ value: c, label: c }))];
-  const priceOptions: SelectOption[] = [
-    { value: "", label: t.priceAny },
-    ...LISTING_PRICE_BANDS.map((b) => ({ value: b.value, label: t.priceBand(b.min, b.max) })),
-  ];
 
   // Active-filter chips — each removes just its own dimension (the reset button
   // clears everything). The free-text query is NOT mirrored as a chip: the input's
   // own × plus the global clear already cover it, and three parallel clear
   // affordances for one action read as noise. Labels derive from the option lists.
   const sortLabel = sortOptions.find((o) => o.value === params.sort)?.label ?? params.sort;
-  type ChipKey = "cat" | "city" | "delivery" | "price" | "sort";
+  type ChipKey = "cat" | "city" | "delivery" | "price" | "dates" | "sort";
   const activeChips: { key: ChipKey; label: string }[] = [];
   if (isCat) activeChips.push({ key: "cat", label: catTitle ?? params.cat });
   if (params.city) activeChips.push({ key: "city", label: params.city });
   if (params.delivery) activeChips.push({ key: "delivery", label: t.deliveryToggle });
-  if (band) activeChips.push({ key: "price", label: t.priceBand(band.min, band.max) });
+  if (priceRange) activeChips.push({ key: "price", label: t.priceBand(...priceBandArgs(priceRange)) });
+  if (dateRange) activeChips.push({ key: "dates", label: t.dateBand(...dateBandArgs(dateRange, locale)) });
   if (params.sort !== "newest") activeChips.push({ key: "sort", label: sortLabel });
   const clearChip = (key: ChipKey) => {
     if (key === "cat") { setParams({ cat: "" }); return; }
     if (key === "city") { setParams({ city: "" }); return; }
     if (key === "delivery") { setParams({ delivery: false }); return; }
     if (key === "price") { setParams({ price: "" }); return; }
+    if (key === "dates") { setParams({ dates: "" }); return; }
     setParams({ sort: "newest" });
   };
 
@@ -350,7 +409,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
   // landing / L3 filters). Landing states (no user-set toggles) never blame
   // "filters" the visitor didn't set, and every dead end keeps a browse path
   // plus the owner-acquisition CTA.
-  const filtersActive = params.delivery || !!params.price || params.sort !== "newest";
+  const filtersActive = params.delivery || !!params.price || dateActive || params.sort !== "newest";
   const empty = t.empty;
   const listItem = () => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody });
   const pageHref = (page: number) => {
@@ -361,6 +420,7 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
     if (params.sort && params.sort !== "newest") next.set("sort", params.sort);
     if (params.delivery) next.set("delivery", "1");
     if (params.price) next.set("price", params.price);
+    if (params.dates) next.set("dates", params.dates);
     if (page > 1) next.set("page", String(page));
     const qs = next.toString();
     return qs ? `${pathname}?${qs}` : pathname;
@@ -474,7 +534,8 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
                     only the right-edge sort control needs align="right". */}
                 <FilterSelect icon="LayoutGrid" label={t.categoryLabel} value={params.cat} defaultValue="" options={catOptions} onChange={(v) => setParams({ cat: v })} />
                 <FilterSelect icon="MapPin" label={t.cityLabel} value={params.city} defaultValue="" options={cityOptions} onChange={(v) => setParams({ city: v })} />
-                <FilterSelect icon="Tag" label={t.priceLabel} value={params.price} defaultValue="" options={priceOptions} onChange={(v) => setParams({ price: v })} />
+                <PriceRangeControl value={priceRange} onChange={(r) => setParams({ price: serializePriceParam(r) })} />
+                <DateRangeFilterControl value={dateRange} onChange={(r) => setParams({ dates: serializeDatesParam(r) })} />
                 <Toggle icon="Truck" on={params.delivery} onChange={(on) => setParams({ delivery: on })}>{t.deliveryToggle}</Toggle>
               </div>
             </div>
@@ -535,9 +596,11 @@ export function FeedScreen({ initialFilters, extraCategory, extraCategories = []
             cityOptions={cityOptions}
             onCity={(v) => setParams({ city: v })}
             priceLabel={t.priceLabel}
-            priceValue={params.price}
-            priceOptions={priceOptions}
-            onPrice={(v) => setParams({ price: v })}
+            priceRange={priceRange}
+            onPrice={(r) => setParams({ price: serializePriceParam(r) })}
+            dateLabel={t.dateLabel}
+            dateRange={dateRange}
+            onDate={(r) => setParams({ dates: serializeDatesParam(r) })}
             deliveryLabel={t.deliveryToggle}
             delivery={params.delivery}
             onDelivery={(on) => setParams({ delivery: on })}
@@ -783,7 +846,8 @@ function FeedFilterSheet({
   sortLabel, sortValue, sortOptions, onSort,
   categoryLabel, categoryValue, categoryOptions, onCategory,
   cityLabel, cityValue, cityOptions, onCity,
-  priceLabel, priceValue, priceOptions, onPrice,
+  priceLabel, priceRange, onPrice,
+  dateLabel, dateRange, onDate,
   deliveryLabel, delivery, onDelivery,
 }: {
   open: boolean;
@@ -807,9 +871,11 @@ function FeedFilterSheet({
   cityOptions: SelectOption[];
   onCity: (v: string) => void;
   priceLabel: string;
-  priceValue: string;
-  priceOptions: SelectOption[];
-  onPrice: (v: string) => void;
+  priceRange: PriceRange | null;
+  onPrice: (r: PriceRange) => void;
+  dateLabel: string;
+  dateRange: DateFilterRange | null;
+  onDate: (r: DateFilterRange | null) => void;
   deliveryLabel: string;
   delivery: boolean;
   onDelivery: (on: boolean) => void;
@@ -855,7 +921,17 @@ function FeedFilterSheet({
             first screen. */}
         <FilterSheetGroup label={categoryLabel} value={categoryValue} options={categoryOptions} onChange={onCategory} />
         <FilterSheetGroup label={cityLabel} value={cityValue} options={cityOptions} onChange={onCity} />
-        <FilterSheetGroup label={priceLabel} value={priceValue} options={priceOptions} onChange={onPrice} />
+        {/* Price is a range, not a radiogroup — render the dual-thumb panel inline
+            (no nested layer inside the sheet's own scroll container). */}
+        <div className="nk-filtersheet__group">
+          <span className="nk-filtersheet__label">{priceLabel}</span>
+          <PriceRangePanel value={priceRange} onChange={onPrice} variant="inline" />
+        </div>
+        {/* Dates are a range too — same inline treatment as price. */}
+        <div className="nk-filtersheet__group">
+          <span className="nk-filtersheet__label">{dateLabel}</span>
+          <DateRangeFilterPanel value={dateRange} onChange={onDate} variant="inline" />
+        </div>
         <div className="nk-filtersheet__group">
           <Toggle icon="Truck" on={delivery} onChange={onDelivery}>{deliveryLabel}</Toggle>
         </div>

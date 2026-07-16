@@ -764,6 +764,33 @@ export const lt: Dict = {
       if (max === null) return `Nuo ${min} €`;
       return `${min}–${max} €`;
     },
+    priceRangeAria: "Kainos intervalas",
+    priceMinAria: "Mažiausia kaina",
+    priceMaxAria: "Didžiausia kaina",
+    priceDone: "Atlikta",
+    dateLabel: "Datos",
+    dateAny: "Bet kokios datos",
+    dateBand: (from, to) => (from === to ? from : `${from}–${to}`),
+    datePanelTitle: "Nuomos datos",
+    datePrevMonth: "Ankstesnis mėnuo",
+    dateNextMonth: "Kitas mėnuo",
+    dateToday: "šiandien",
+    dateSelectStart: "Pasirinkite pradžios datą",
+    dateSelectEnd: "Pasirinkite pabaigos datą",
+    dateWindowHint: (max) => `Iki ${ltDays(max)}`,
+    dateDays: ltDays,
+    dateStartSelected: (date) => `Pradžia: ${date}. Pasirinkite pabaigos datą.`,
+    dateRangeSelected: ({ start, end, days }) =>
+      `Pasirinkta ${start}–${end}, ${days}.`,
+    dateBlocked: (reason, n) => {
+      if (reason === "past") {
+        return "Data jau praėjo";
+      }
+      if (reason === "tooLong") {
+        return `Ilgiausias laikotarpis — ${ltDays(n)}`;
+      }
+      return "Data nepasiekiama";
+    },
     deliveryToggle: "Pristatymas galimas",
     filtersButton: "Filtrai",
     filtersTitle: "Filtrai",

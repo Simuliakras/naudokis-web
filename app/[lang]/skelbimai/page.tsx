@@ -10,6 +10,7 @@ import { makeQueryClient } from "@/app/lib/query";
 import { fetchListingsCount, fetchListingsPage, listingsInfiniteKey, listingsNeededForPage, LISTINGS_FIRST_CURSOR, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
 import { fetchCategories, categoriesKey, type Category } from "@/app/lib/categories";
 import { catalogueFiltersFromSearch, firstValue, pageFromLandingSearch, hasNonCanonicalLandingSearch, type LandingSearchParams } from "@/app/lib/landing-params";
+import { todayInMarket } from "@/app/lib/dates";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 import { PageHead } from "@/app/components/headers";
@@ -99,7 +100,8 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
   const { lang } = await params;
   const locale = requireLocale(lang);
   const { common, feed: t, search } = getDictionary(locale);
-  const filters = filtersFromSearch(await searchParams);
+  const sp = await searchParams;
+  const filters = filtersFromSearch(sp);
 
   const qc = makeQueryClient();
   const key = listingsInfiniteKey(locale, filters);
@@ -173,7 +175,12 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
             </form>
           </main>
         )}>
-          <FeedScreen />
+          {/* Unlike the pretty-URL landings this screen reads its filters from the URL
+              itself, so it must be told which "today" the prefetch above clamped `?dates=`
+              against — otherwise its first render keys off the RAW window, misses the
+              dehydrated page and fires a throwaway request. Read only when a date token is
+              actually present: an undated render stays time-independent. */}
+          <FeedScreen serverToday={firstValue(sp.dates) ? todayInMarket() : undefined} />
         </Suspense>
       </HydrationBoundary>
     </QueryProvider>

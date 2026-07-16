@@ -12,10 +12,10 @@ import { trackEvent } from "@/app/lib/analytics";
 import { formatLocation, type OfferOwner } from "@/app/lib/listing-view";
 
 /* ---------------- Offer / listing card ----------------
-   "Struktūruota" 2026 design: photo-forward 4:3 frame carrying the gallery count,
-   a top row pairing the category eyebrow with the rating (or the no-reviews pill),
-   a meta block, and a footer where a hairline separates the price anchor from the
-   refundable deposit amount. No arrow cue — the whole card is a stretched <Link>.
+   "Struktūruota" 2026 design: photo-forward 4:3 frame whose bottom edge pairs the
+   rating with the gallery count, a meta block led by the category eyebrow, and a
+   footer where a hairline separates the price anchor from the refundable deposit
+   amount. No arrow cue — the whole card is a stretched <Link>.
    Favorite is locked (opens the app modal). */
 export function OfferCard({
   title, city, subdivision, price, unit, rating, ratingCount, img, href, category, categoryName, categoryIcon = "Tag", hasDelivery = false,
@@ -100,37 +100,39 @@ export function OfferCard({
             <span aria-hidden>{photoCount}</span>
           </span>
         )}
+        {/* Rating, on the media's bottom-left opposite the count. Unlike the count it
+            is NOT gated on a photo: a rating is a fact about the listing, not about
+            its gallery, so it rides the empty-photo placeholder too — the chip's own
+            fill carries it where the photo scrim doesn't reach. */}
+        {rating ? (
+          // Compact "4,8 ★ (52)" — role="img" (the APG composite-rating pattern)
+          // makes the aria-label real: on a bare generic span many AT pairs
+          // ignore it and would announce only "4,8" with the count hidden.
+          <span className="nk-offer__rate" role="img" aria-label={ratingCount ? `${rating}, ${c.reviewCount(ratingCount)}` : rating}>
+            <Icon name="Star" size={13} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
+            <b>{rating}</b>
+            {ratingCount ? <i aria-hidden>({ratingCount})</i> : null}
+          </span>
+        ) : null}
       </div>
       <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
         {/* Category eyebrow — scent for the eye, tinted with the house per-category
-            accent. On its own row: the rating rides the location line below now. */}
+            accent. On its own row: the rating rides the photo above now. */}
         {categoryName && (
           <div className="nk-offer__toprow">
             <span className="nk-offer__eyebrow">{categoryName}</span>
           </div>
         )}
         <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, lineHeight: "25px", minHeight: 50, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
-        {/* Location paired with the review status on one line: the place on the left,
-            the rating opposite it. Listings without a rating just show the place —
-            no "no reviews yet" pill, which reads as a negative signal on a fresh card. */}
-        <div className="nk-offer__locrow">
-          {city && (
-            <span className="nk-offer__loc">
-              <Icon name="MapPin" size={14} color="var(--nk-text-2)" stroke={2} />
-              <span className="nk-offer__loctext">{formatLocation(city, subdivision)}</span>
-            </span>
-          )}
-          {rating ? (
-            // Compact "4,8 ★ (52)" — role="img" (the APG composite-rating pattern)
-            // makes the aria-label real: on a bare generic span many AT pairs
-            // ignore it and would announce only "4,8" with the count hidden.
-            <span className="nk-offer__rate" role="img" aria-label={ratingCount ? `${rating}, ${c.reviewCount(ratingCount)}` : rating}>
-              <Icon name="Star" size={15} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
-              <b>{rating}</b>
-              {ratingCount ? <i aria-hidden>({ratingCount})</i> : null}
-            </span>
-          ) : null}
-        </div>
+        {/* Where the item is — the line is the place alone now, the rating having moved
+            onto the photo. A listing without one shows no badge at all: no "no reviews
+            yet" pill, which reads as a negative signal on a fresh card. */}
+        {city && (
+          <span className="nk-offer__loc">
+            <Icon name="MapPin" size={14} color="var(--nk-text-2)" stroke={2} />
+            <span className="nk-offer__loctext">{formatLocation(city, subdivision)}</span>
+          </span>
+        )}
         {/* Who you'd be renting from. Gated on the wire actually carrying an owner —
             until the backend embeds one, this is undefined and the card renders exactly
             as it did before. Plain text, never a link: the card is a single stretched
@@ -278,11 +280,9 @@ export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
           <div className={cls} style={{ width: "92%", height: 20 }} />
           <div className={cls} style={{ width: "58%", height: 20 }} />
         </div>
-        {/* Location line (left) paired with the rating (right), matching the real card. */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
-          <div className={cls} style={{ width: "48%", height: 18 }} />
-          <div className={cls} style={{ width: 56, height: 14 }} />
-        </div>
+        {/* Location line, matching the real card. Nothing reserves the rating: it rides
+            the media absolutely now, so it costs the body no height. */}
+        <div className={cls} style={{ width: "48%", height: 18 }} />
         {/* Owner row placeholder — reserves exactly --nk-offer-owner-h, the height
             .nk-offer__owner is pinned to, so cards don't grow when owner data lands. */}
         <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", height: "var(--nk-offer-owner-h)" }}>

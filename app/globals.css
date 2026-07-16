@@ -454,6 +454,11 @@ a,button,input,textarea,select{touch-action:manipulation}
   font-variant-ligatures:none}
 .nk-avatar__initials{position:relative;z-index:1}
 .nk-imgfallback{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:16px;text-align:center;font-family:var(--nk-font-display);font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--nk-text-muted)}
+/* The fallback centres in the media, so a bottom chip lands on top of it. Reserve the
+   chip row so it centres in the space ABOVE the chips instead. Gated on :has() — a
+   photoless card with no rating carries no bottom chip at all (the count needs a photo),
+   and must stay optically centred exactly as before. */
+.nk-offer__media--empty:has(.nk-offer__rate) .nk-imgfallback{padding-bottom:44px}
 .nk-imgfallback__mark{display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:18px;background:linear-gradient(145deg,var(--nk-purple-soft),var(--nk-surface));border:1px solid var(--nk-accent-border);color:var(--nk-purple-bright);box-shadow:var(--nk-edge-top)}
 .nk-map-consent{position:relative;min-height:200px;border-radius:16px;overflow:hidden}
 .nk-map-consent>div:first-child{filter:saturate(.7) brightness(.68)}
@@ -752,6 +757,17 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-pillctl[aria-expanded="true"]{border-color:var(--nk-accent-border)}
 .nk-pillctl.is-active{background:var(--nk-accent-bg);color:var(--nk-accent-text);border-color:var(--nk-accent-border)}
 .nk-pillctl__label{min-width:0;overflow-wrap:anywhere;hyphens:auto;line-height:1.15}
+
+/* ---- shared range popover shell (RangePillControl: the price + date filters) ----
+   Emitted by the control itself, so the twins get ONE shell and cannot drift apart on
+   width, padding or elevation. Each caller's own class rides alongside it purely as a
+   skin hook and an e2e handle. left:0 anchors to the trigger's left edge — both range
+   pills sit in the toolbar's left cluster. The single child is the caller's panel. */
+.nk-rangepop{position:absolute;top:calc(100% + 10px);left:0;z-index:50;width:320px;
+  max-width:calc(100vw - 2*var(--nk-gutter));padding:16px;background:var(--nk-surface);
+  border:1px solid var(--nk-border-strong);border-radius:var(--nk-r-lg);
+  box-shadow:var(--nk-shadow-3);display:flex}
+.nk-rangepop>*{flex:1;min-width:0}
 .nk-locale-trigger{min-width:var(--nk-tap);min-height:var(--nk-tap);justify-content:center;
   transition:background .15s ease}
 .nk-locale-trigger:hover,.nk-locale-trigger[aria-expanded="true"]{background:var(--nk-hover-wash)}
@@ -853,31 +869,35 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-offer__badge svg{flex:none}
 
 /* ---- "Struktūruota" card anatomy (2026-07 design handoff) ----
-   Additive to the .nk-offer shell above: a photo-count chip on the media's bottom
-   edge, a top row pairing eyebrow with rating, the location line, and a footer whose
-   hairline sets the price apart. The chip rides the media's own bottom-darkening
-   gradient (.nk-offer__media:has(.nk-zoom)::after, z-index:1), so it sits at
-   z-index:2 and stays legible over any photo. */
-.nk-offer__count{position:absolute;bottom:12px;right:12px;z-index:2;display:inline-flex;align-items:center;gap:5px;
+   Additive to the .nk-offer shell above: the media's bottom edge carries a chip at each
+   corner — the rating left, the photo count right — then the eyebrow row, the location
+   line, and a footer whose hairline sets the price apart. Both chips ride the media's
+   own bottom-darkening gradient (.nk-offer__media:has(.nk-zoom)::after, z-index:1), so
+   they sit at z-index:2 and stay legible over any photo.
+
+   One skin, two corners: they share an edge, so any drift between them reads as a bug.
+   pointer-events:none on both — neither chip carries interaction, so neither may punch
+   a dead zone in the card's stretched <Link> (.nk-stretch, z-index:1) beneath them. */
+.nk-offer__count,.nk-offer__rate{position:absolute;bottom:12px;z-index:2;pointer-events:none;
+  display:inline-flex;align-items:center;gap:5px;
   padding:5px 9px;border-radius:999px;
   background:rgba(18,20,21,.55);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px);
-  font-family:var(--nk-font-body);font-weight:600;font-size:12px;line-height:1;color:var(--nk-text)}
-.nk-offer__count svg{flex:none}
+  font-family:var(--nk-font-body);font-weight:600;font-size:12px;line-height:1;color:var(--nk-text);
+  white-space:nowrap}
+.nk-offer__count{right:12px}
+.nk-offer__rate{left:12px}
+.nk-offer__count svg,.nk-offer__rate svg{flex:none}
+.nk-offer__rate b{font-weight:700}
+/* the review count dims via opacity, not --nk-text-muted: that token is tuned against
+   the card surface and goes muddy on dark glass over a photo */
+.nk-offer__rate i{font-style:normal;opacity:.72}
 
-/* The eyebrow sits on its own row now (the rating moved down to the location line).
+/* The eyebrow sits on its own row (the rating rides the photo above).
    It still yields with an ellipsis if a long category name would overflow. */
 .nk-offer__toprow{display:flex;align-items:center;gap:10px;min-width:0}
 .nk-offer__toprow .nk-offer__eyebrow{flex:1 1 auto;min-width:0}
-.nk-offer__rate{display:inline-flex;align-items:center;gap:4px;flex:none;
-  font-family:var(--nk-font-body);font-size:13.5px;color:var(--nk-text-2);white-space:nowrap}
-.nk-offer__rate b{font-weight:700}
-.nk-offer__rate i{font-style:normal;color:var(--nk-text-muted)}
-.nk-offer__rate svg{flex:none}
 
-/* Location + review status on one row: the place yields (ellipsis) so the compact
-   rating keeps its full width opposite it. Cards without a rating just show the place. */
-.nk-offer__locrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:nowrap;row-gap:6px}
-.nk-offer__locrow .nk-offer__loc{flex:1 1 auto}
+/* Location line — the place alone, free to use the full width (ellipsis if long). */
 .nk-offer__loc{display:inline-flex;align-items:center;gap:5px;min-width:0;
   font-family:var(--nk-font-body);font-weight:500;font-size:14px;color:var(--nk-text-2)}
 .nk-offer__loc svg{flex:none}
@@ -1593,8 +1613,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-cal__retry{grid-column:2;justify-self:start;background:none;border:0;cursor:pointer;padding:2px 0;
   font-family:var(--nk-font-display);font-weight:700;font-size:13px;color:var(--nk-text);text-decoration:underline;
   text-underline-offset:3px}
-.nk-cal__foot{display:flex;align-items:center;gap:10px;padding-top:2px}
-.nk-cal__foot .nk-btn{flex:1;justify-content:center}
+/* Panel action row — the calendar's and the price panel's are the same object
+   (equal-width buttons across the panel's foot), so they share one rule. */
+.nk-cal__foot,.nk-price-foot{display:flex;align-items:center;gap:10px;padding-top:2px}
+.nk-cal__foot .nk-btn,.nk-price-foot .nk-btn{flex:1;justify-content:center}
 .nk-cal__foot .nk-btn:disabled{opacity:.4;pointer-events:none}
 /* Phones: a 40px circle inside a 44px cell — the touch-target floor. */
 @media(max-width:560px){.nk-cal__grid{--nk-cal-day:40px}.nk-cal__day{font-size:15.5px}}
@@ -1608,6 +1630,71 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-est__val{font-family:var(--nk-font-body);font-size:14.5px;color:var(--nk-text);white-space:nowrap}
 .nk-est__was{margin-right:7px;color:var(--nk-text-muted);text-decoration:line-through}
 .nk-est__note{font-family:var(--nk-font-body);font-size:12.5px;line-height:17px;color:var(--nk-text-muted)}
+
+/* ============================================================
+   Price-range filter (dual-thumb slider + min/max EUR inputs)
+   Desktop: the shared .nk-rangepop shell behind the "Price" pill.
+   Mobile: the SAME panel rendered inline inside the filter sheet.
+   The popover shell, its anchoring and the panel's flex sizing all come from
+   .nk-rangepop — only the panel's own internals are here.
+   ============================================================ */
+.nk-price-panel{display:flex;flex-direction:column;gap:16px;min-width:0}
+.nk-price-panel.is-inline{gap:14px}
+/* live read-out of the current range (aria-hidden — the thumbs carry the value for AT) */
+.nk-price-panel__head{display:flex;align-items:center;gap:8px;font-family:var(--nk-font-body);font-weight:600;
+  font-size:15px;color:var(--nk-text)}
+.nk-price-panel__val{font-variant-numeric:tabular-nums}
+.nk-price-panel__dash{color:var(--nk-text-muted)}
+
+/* The row is --nk-tap tall so tapping anywhere on it grabs the nearer thumb. The end
+   padding is HALF a thumb: a thumb at 0% / 100% is centred on the rail's end, so it
+   would otherwise hang outside the panel. Both are driven off one local var — sized
+   independently they drift apart at the touch breakpoint, and the ends overhang again. */
+.nk-price-slider{--nk-price-thumb:24px;position:relative;display:flex;align-items:center;
+  min-height:var(--nk-tap);padding:0 calc(var(--nk-price-thumb)/2)}
+.nk-price-track{position:relative;flex:1;height:5px;border-radius:999px;background:var(--nk-divider);
+  touch-action:none;cursor:pointer}
+.nk-price-fill{position:absolute;top:0;bottom:0;border-radius:999px;background:var(--nk-accent-bg)}
+.nk-price-thumb{position:absolute;top:50%;width:var(--nk-price-thumb);height:var(--nk-price-thumb);
+  transform:translate(-50%,-50%);border-radius:999px;
+  background:var(--nk-text);border:2px solid var(--nk-accent-bg);cursor:grab;touch-action:none;padding:0;
+  box-shadow:var(--nk-shadow-1);transition:box-shadow .15s ease,transform var(--nk-dur-fast) var(--nk-ease-spring)}
+/* extend the vertical pointer target without widening the circle, so two close thumbs
+   stay individually grabbable */
+.nk-price-thumb::before{content:"";position:absolute;inset:-11px -2px}
+.nk-price-thumb:hover{box-shadow:var(--nk-glow-accent)}
+.nk-price-thumb:active{cursor:grabbing;transform:translate(-50%,-50%) scale(1.08)}
+.nk-price-thumb:focus-visible{outline:none;box-shadow:0 0 0 3px var(--nk-purple-hover)}
+
+.nk-price-inputs{display:flex;align-items:center;gap:10px}
+.nk-price-input{display:flex;align-items:center;gap:6px;flex:1;min-width:0;height:var(--nk-control-h);padding:0 12px;
+  background:var(--nk-input-bg);border:1px solid var(--nk-border);border-radius:var(--nk-r-sm);
+  transition:border-color .15s ease,box-shadow .15s ease}
+.nk-price-input:focus-within{border-color:var(--nk-purple);box-shadow:var(--nk-glow-accent)}
+.nk-price-input__affix{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-muted);flex:none}
+/* 16px keeps iOS from zooming the viewport on focus */
+.nk-price-input input{width:100%;min-width:0;border:none;outline:none;background:transparent;
+  font-family:var(--nk-font-body);font-size:16px;color:var(--nk-text)}
+.nk-price-sep{color:var(--nk-text-muted);flex:none}
+
+/* Phones (inline in the sheet): a larger thumb for touch — the rail's end padding
+   follows it automatically. */
+@media(max-width:560px){
+  .nk-price-slider{--nk-price-thumb:28px}
+}
+@media(prefers-reduced-motion:reduce){
+  .nk-price-thumb{transition:none}
+}
+
+/* ============================================================
+   Date-range filter (feed) — a calendar behind the "Dates" pill.
+   Desktop: the shared .nk-rangepop shell, exactly as the price twin.
+   Mobile: the SAME panel rendered inline inside the filter sheet.
+   The month grid reuses the shared .nk-cal-* styling as-is, so all that is left
+   here is the wrapper that lets the grid fill either container.
+   ============================================================ */
+.nk-datefilter-panel{display:flex;min-width:0}
+.nk-datefilter-panel .nk-cal-panel{flex:1;min-width:0}
 
 /* ---- Longer-rental discount ladder (Terms section, full-width fact card) ---- */
 .nk-breaks__body{display:flex;flex-direction:column;gap:9px;min-width:0}
@@ -2396,13 +2483,9 @@ svg.nk-ico{stroke-width:1.75}
   .nk-offer__body{gap:5px!important}
   .nk-offer h3{font-size:15px!important;line-height:19px!important;min-height:38px!important}
   .nk-offer__eyebrow{font-size:11px!important;letter-spacing:.1em!important}
-  /* A ~170px card can't hold the place + rating side by side without ellipsizing the
-     location down to nothing, so the row stacks instead — both stay readable,
-     left-aligned like the meta lines around them. */
-  .nk-offer__locrow{flex-wrap:wrap!important}
-  /* body type: the location line and the rating read one step down */
-  .nk-offer__loc,.nk-offer__rate{font-size:12.5px!important}
-  .nk-offer__loc svg.nk-ico,.nk-offer__rate svg.nk-ico{width:13px!important;height:13px!important}
+  /* body type: the location line reads one step down */
+  .nk-offer__loc{font-size:12.5px!important}
+  .nk-offer__loc svg.nk-ico{width:13px!important;height:13px!important}
   .nk-offer__foot{gap:8px!important;padding-top:6px!important}
   .nk-offer__pricemain>span:first-child{font-size:18px!important}
   .nk-offer__pricemain>span:last-child{font-size:11.5px!important}
@@ -2426,10 +2509,21 @@ svg.nk-ico{stroke-width:1.75}
   .nk-offer-skel__body{gap:5px!important}
   .nk-offer__avatar{width:20px!important;height:20px!important;font-size:9px!important}
   .nk-offer__ownername{font-size:12.5px!important}
-  /* the media's photo-count chip pulls into the same 10px inset as the top chrome */
-  .nk-offer__count{bottom:10px!important;right:10px!important;padding:4px 8px!important;font-size:10.5px!important}
-  .nk-offer__count svg.nk-ico{width:11px!important;height:11px!important}
+  /* the media's bottom chips pull into the same 10px inset as the top chrome, and
+     shrink as a pair — they share an edge, so they must stay identical */
+  .nk-offer__count,.nk-offer__rate{bottom:10px!important;padding:4px 8px!important;font-size:10.5px!important}
+  .nk-offer__count{right:10px!important}
+  .nk-offer__rate{left:10px!important}
+  .nk-offer__count svg.nk-ico,.nk-offer__rate svg.nk-ico{width:11px!important;height:11px!important}
   .nk-offer__media .nk-imgicon{width:40px!important;height:40px!important}
+  /* The no-photo fallback must shrink with the card: at ~167px a 56px mark plus a
+     label that wraps to two lines overflows the ~123px media on its own, before any
+     chip is involved. Trimming the padding also buys the label enough width to stay
+     on one line, which is what keeps it clear of the rating badge below. */
+  .nk-offer__media--empty .nk-imgfallback{padding:8px!important;gap:6px!important}
+  .nk-offer__media--empty:has(.nk-offer__rate) .nk-imgfallback{padding-bottom:34px!important}
+  .nk-offer__media--empty .nk-imgfallback__mark{width:40px!important;height:40px!important;border-radius:13px!important}
+  .nk-offer__media--empty .nk-imgfallback__mark svg.nk-ico{width:24px!important;height:24px!important}
 }
 /* --- tablet: comfortable reading measure for detail prose --- */
 @media(min-width:561px) and (max-width:1024px){

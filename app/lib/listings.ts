@@ -5,6 +5,7 @@ import { API_BASE, MarketplaceApiError, marketplaceFetch } from "./api";
 import { cdnImage } from "./image-hosts";
 import { formatPrice, ownerInitials, type Discount, type Offer, type OfferOwner } from "./listing-view";
 import { isSyntheticListing, isSyntheticListingParam } from "./listing-url";
+import type { IsoDate } from "./dates";
 
 /* ---------------- Backend shapes ---------------- */
 type ApiImage = { url: string; blurhash?: string };
@@ -198,21 +199,15 @@ export type ListingFilters = {
   priceMinCents?: number;
   priceMaxCents?: number;
   deliveryMethods?: Array<"pickup" | "parcel_terminal" | "courier_delivery" | "user_delivery">;
+  // Inclusive availability window (the feed's date filter). Emitted as
+  // available_from/available_to, both or neither (the backend contract 400s a lone
+  // bound), and capped at 60 days — see app/lib/date-filter.ts.
+  availableFrom?: IsoDate;
+  availableTo?: IsoDate;
   // SEO-friendly paginated result pages. The backend uses opaque cursors, so this
   // is translated by walking cursors server/client-side when page > 1.
   page?: number;
 };
-
-export const LISTING_PRICE_BANDS = [
-  { value: "0-10", min: null, max: 10 },
-  { value: "10-30", min: 10, max: 30 },
-  { value: "30-60", min: 30, max: 60 },
-  { value: "60+", min: 60, max: null },
-] as const;
-
-export function listingPriceBand(value: string | null | undefined) {
-  return LISTING_PRICE_BANDS.find((band) => band.value === value);
-}
 
 export type ListingAttribute = { id: string; label: string; value: string };
 
@@ -349,8 +344,8 @@ export const LISTING_REVALIDATE = 300;
 // listingsKey applies the same empty-filter defaults the hook does.
 export function listingsKey(locale: Locale, filters: ListingFilters = {}) {
   const { q = "", city = "", category = "", sort = "newest", page = 1,
-    priceMinCents = "", priceMaxCents = "", deliveryMethods = [] } = filters;
-  return ["listings", locale, q, city, category, sort, priceMinCents, priceMaxCents, deliveryMethods.join(","), page] as const;
+    priceMinCents = "", priceMaxCents = "", deliveryMethods = [], availableFrom = "", availableTo = "" } = filters;
+  return ["listings", locale, q, city, category, sort, priceMinCents, priceMaxCents, deliveryMethods.join(","), availableFrom, availableTo, page] as const;
 }
 
 export function listingKey(id: string | undefined, locale: Locale) {
@@ -367,13 +362,15 @@ export const LISTINGS_FIRST_CURSOR: string | null = null;
 
 export function listingsInfiniteKey(locale: Locale, filters: ListingFilters = {}) {
   const { q = "", city = "", category = "", sort = "newest", page = 1,
-    priceMinCents = "", priceMaxCents = "", deliveryMethods = [] } = filters;
-  return ["listings-infinite", locale, q, city, category, sort, priceMinCents, priceMaxCents, deliveryMethods.join(","), page] as const;
+    priceMinCents = "", priceMaxCents = "", deliveryMethods = [], availableFrom = "", availableTo = "" } = filters;
+  return ["listings-infinite", locale, q, city, category, sort, priceMinCents, priceMaxCents, deliveryMethods.join(","), availableFrom, availableTo, page] as const;
 }
 
 // Build the backend `/listings` query URL from the active filters. `limit` /
 // `next_token` (cursor) are appended by the paginated fetcher when present.
-function buildListingsUrl(filters: ListingFilters): URL {
+// Exported for the same reason listingsKey is: it encodes a wire contract that must be
+// pinnable by a test (see listing-filters.test.ts), not just read.
+export function buildListingsUrl(filters: ListingFilters): URL {
   const url = new URL(`${API_BASE}/listings`);
   if (filters.q) {
     url.searchParams.set("q", filters.q);
@@ -393,6 +390,11 @@ function buildListingsUrl(filters: ListingFilters): URL {
   }
   for (const method of filters.deliveryMethods ?? []) {
     url.searchParams.append("delivery_methods", method);
+  }
+  // Both or neither — a lone bound is a 400 under the documented backend contract.
+  if (filters.availableFrom && filters.availableTo) {
+    url.searchParams.set("available_from", filters.availableFrom);
+    url.searchParams.set("available_to", filters.availableTo);
   }
   return url;
 }
@@ -584,8 +586,8 @@ export async function fetchListingsCount(
 
 export function useListings(locale: Locale, filters: ListingFilters = {}) {
   const { q = "", city = "", category = "", sort = "newest", page = 1,
-    priceMinCents, priceMaxCents, deliveryMethods } = filters;
-  const normalized = { q, city, category, sort, page, priceMinCents, priceMaxCents, deliveryMethods };
+    priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo } = filters;
+  const normalized = { q, city, category, sort, page, priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo };
   return useQuery({
     queryKey: listingsKey(locale, normalized),
     queryFn: () => fetchListings(locale, normalized),
@@ -597,8 +599,8 @@ export function useListings(locale: Locale, filters: ListingFilters = {}) {
 // keeps the prior result set on screen while a filter change refetches page 1.
 export function useListingsInfinite(locale: Locale, filters: ListingFilters = {}) {
   const { q = "", city = "", category = "", sort = "newest", page = 1,
-    priceMinCents, priceMaxCents, deliveryMethods } = filters;
-  const normalized = { q, city, category, sort, page, priceMinCents, priceMaxCents, deliveryMethods };
+    priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo } = filters;
+  const normalized = { q, city, category, sort, page, priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo };
   return useInfiniteQuery({
     queryKey: listingsInfiniteKey(locale, normalized),
     queryFn: ({ pageParam }) => fetchListingsPage(locale, normalized, pageParam),

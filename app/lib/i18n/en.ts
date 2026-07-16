@@ -663,6 +663,33 @@ export const en: Dict = {
       if (max === null) return `€${min}+`;
       return `€${min}–${max}`;
     },
+    priceRangeAria: "Price range",
+    priceMinAria: "Minimum price",
+    priceMaxAria: "Maximum price",
+    priceDone: "Done",
+    dateLabel: "Dates",
+    dateAny: "Any dates",
+    dateBand: (from, to) => (from === to ? from : `${from}–${to}`),
+    datePanelTitle: "Rental dates",
+    datePrevMonth: "Previous month",
+    dateNextMonth: "Next month",
+    dateToday: "today",
+    dateSelectStart: "Pick a start date",
+    dateSelectEnd: "Pick an end date",
+    dateWindowHint: (max) => `Up to ${max} days`,
+    dateDays: (n) => `${n} day${n === 1 ? "" : "s"}`,
+    dateStartSelected: (date) => `Start: ${date}. Now pick an end date.`,
+    dateRangeSelected: ({ start, end, days }) =>
+      `Selected ${start}–${end}, ${days}.`,
+    dateBlocked: (reason, n) => {
+      if (reason === "past") {
+        return "Date has passed";
+      }
+      if (reason === "tooLong") {
+        return `Longest window is ${n} day${n === 1 ? "" : "s"}`;
+      }
+      return "Unavailable date";
+    },
     deliveryToggle: "Delivery available",
     filtersButton: "Filters",
     filtersTitle: "Filters",

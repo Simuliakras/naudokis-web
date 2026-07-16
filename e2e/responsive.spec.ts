@@ -49,6 +49,15 @@ async function settle(page: Page) {
   await page.evaluate(() => document.fonts?.ready);
 }
 
+// The @state tests DRIVE the page rather than just photograph it, and settle() does not
+// imply hydration — until the client bundle attaches, a click is a no-op and the panel
+// simply never opens. Under parallel workers on a cold dev server that loses the race
+// often enough to matter (CI's retries would only paper over it). Same gate the
+// price-range / date-filter specs open with.
+async function hydrated(page: Page) {
+  await page.waitForFunction(() => (window as Window & { __nkNavReady?: boolean }).__nkNavReady === true);
+}
+
 async function overflowAt(page: Page): Promise<number> {
   return page.evaluate(() => {
     const el = document.scrollingElement || document.documentElement;
@@ -113,7 +122,7 @@ test("states: nav mobile drawer @state", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await settle(page);
-  await page.waitForFunction(() => (window as Window & { __nkNavReady?: boolean }).__nkNavReady === true);
+  await hydrated(page);
   await page.locator(".nk-nav-burger").click();
   await expect(page.locator(".nk-nav-burger")).toHaveAttribute("aria-expanded", "true");
   await expect(page.locator(".nk-nav-drawer")).toHaveClass(/open/);
@@ -125,6 +134,7 @@ test("states: legal mobile TOC drawer @state", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/naudojimosi-salygos", { waitUntil: "domcontentloaded" });
   await settle(page);
+  await hydrated(page);
   await expect(page.locator(".nk-appbanner")).toHaveCount(0);
   await page.locator(".nk-lg-fab-toc").click();
   await page.waitForTimeout(300);
@@ -135,8 +145,49 @@ test("states: filter sheet controls are readable @state", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/skelbimai", { waitUntil: "domcontentloaded" });
   await settle(page);
+  await hydrated(page);
   await page.locator(".nk-filters-mobilebtn").click();
   await page.waitForTimeout(300);
   await expect.poll(() => clippedKnownControls(page)).toEqual([]);
+  // The price-range panel renders inline in the sheet — capture it in view.
+  await expect(page.locator(".nk-filtersheet .nk-price-panel")).toBeVisible();
   await page.screenshot({ path: path.join(OUT, "state-filtersheet-390.png"), fullPage: false });
+});
+
+test("states: price-range popover (desktop) @state", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/skelbimai", { waitUntil: "domcontentloaded" });
+  await settle(page);
+  await hydrated(page);
+  await page.locator(".nk-price-field > button").click();
+  await expect(page.locator(".nk-price-pop")).toBeVisible();
+  await expect(page.getByRole("slider")).toHaveCount(2);
+  // The popover must not push the page into horizontal overflow at any anchor edge.
+  expect(await overflowAt(page)).toBeLessThanOrEqual(1);
+  await page.screenshot({ path: path.join(OUT, "state-pricerange-1280.png"), fullPage: false });
+});
+
+test("states: price-range slider survives the 320px floor @state", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.goto("/skelbimai", { waitUntil: "domcontentloaded" });
+  await settle(page);
+  await hydrated(page);
+  await page.locator(".nk-filters-mobilebtn").click();
+  await expect(page.locator(".nk-filtersheet .nk-price-panel")).toBeVisible();
+  await page.waitForTimeout(300);
+  // Both thumbs are still there and still grabbable — the rail is the thing the 320px
+  // floor squeezes, so asserting only "no overflow" would pass on a collapsed slider.
+  const thumbs = page.locator(".nk-filtersheet").getByRole("slider");
+  await expect(thumbs).toHaveCount(2);
+  const track = await page.locator(".nk-filtersheet .nk-price-track").boundingBox();
+  expect(track?.width ?? 0).toBeGreaterThan(120);
+  // The thumbs sit at the rail's ends at rest; neither may hang outside the sheet.
+  const sheet = await page.locator(".nk-filtersheet").boundingBox();
+  for (const box of await thumbs.all()) {
+    const thumb = await box.boundingBox();
+    expect(thumb?.x ?? 0).toBeGreaterThanOrEqual(sheet?.x ?? 0);
+    expect((thumb?.x ?? 0) + (thumb?.width ?? 0)).toBeLessThanOrEqual((sheet?.x ?? 0) + (sheet?.width ?? 0));
+  }
+  await expect.poll(() => overflowAt(page)).toBeLessThanOrEqual(1);
+  await page.screenshot({ path: path.join(OUT, "state-pricerange-320.png"), fullPage: false });
 });

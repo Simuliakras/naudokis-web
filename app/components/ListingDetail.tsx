@@ -947,7 +947,7 @@ export function BookingPanel({ listing, onReserve, dates, appPath, variant = "fu
           committing — deliberately subordinate to the 33px price. It hides once an
           estimate is on screen (like confirmInApp below), since the estimate carries
           its own deposit row and the same line must not render twice. */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
         {/* flexWrap: at the 981px sidebar minimum a max price + 5-digit review count
             overflowed the card — the rating chip drops to its own line instead */}
         <div style={{ display: "flex", alignItems: "baseline", gap: "var(--nk-gap-xs)", flexWrap: "wrap" }}>
@@ -968,7 +968,7 @@ export function BookingPanel({ listing, onReserve, dates, appPath, variant = "fu
           <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15, lineHeight: "20px", color: "var(--nk-text-2)" }}>
             {listing.deposit ? (
               <>
-                <span className="nk-tnum" style={{ color: "var(--nk-text)", fontWeight: 700 }}>+ {listing.deposit}</span>{" "}
+                <span className="nk-tnum" style={{ fontSize: 18, color: "var(--nk-text)", fontWeight: 700 }}>+ {listing.deposit}</span>{" "}
                 {t.bookingDepositSuffix}
               </>
             ) : (

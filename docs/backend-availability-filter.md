@@ -1,8 +1,25 @@
 # Backend request: availability filtering + a documented availability contract
 
+> ## ⚠️ Ask #1 below is ANSWERED, and its premise was WRONG. Read [`backend-date-filter-contract.md`](./backend-date-filter-contract.md) first.
+>
+> **`GET /listings` has filtered by date all along** (`available_from` / `available_to`,
+> since commit `30832a00`) — inclusive, applied before pagination, `minimum_rental_days`-aware,
+> and it `400`s a lone bound / reversed range / over-long window. Section 1's claim that it
+> "silently ignores date params" is **false**, and the evidence for it was a bad probe: a
+> **2020** window matches every listing *because nothing has availability rows in 2020*, which
+> is indistinguishable from the filter being ignored. **Prod holds zero availability rows**, so
+> nothing can be excluded there either — test on **dev**, against a listing with a future owner
+> block. Confirmed live 2026-07-16.
+>
+> The real ceiling is **60 days**, not the 90 requested below (it is pinned to
+> `MAX_RENTAL_DAYS` — a longer span can never be booked).
+>
+> **Ask #2 (documenting `GET /listings/{id}/availability`) is still open** and still worth
+> answering; section 2 stands.
+
 **From:** naudokis-web (the marketing/bridge site)
-**Date:** 2026-07-14
-**Status:** blocking the hero date search; the per-listing calendar shipped without it
+**Date:** 2026-07-14 (§1 superseded 2026-07-16)
+**Status:** §1 answered — see the banner above. §2 still open.
 
 ## Why
 

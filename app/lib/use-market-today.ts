@@ -16,7 +16,16 @@ import { todayInMarket, type IsoDate } from "./dates";
 // once-computed timeout drifts by an hour across a DST change, and the tab may sleep
 // through it entirely. A minute's granularity on a date that changes once a day is
 // free, and it self-corrects.
-export function useMarketToday(): IsoDate | undefined {
+//
+// `serverFallback` covers the one case where `undefined` is not good enough: a render
+// that ALREADY committed to a date server-side — a `?dates=` prefetch clamped against
+// todayInMarket() — and whose client half must reproduce it exactly or land in a
+// different React Query key. Such a page is dynamic and noindex, so no "today" is baked
+// into a cached render; pass nothing anywhere else and the ISR reasoning above holds.
+// The fallback resolves HERE rather than at the call site so callers see an opaque hook
+// return: `useMarketToday() ?? props.x` in a component body makes every value derived
+// from it prop-reactive, which defeats the manual memoization around it.
+export function useMarketToday(serverFallback?: IsoDate): IsoDate | undefined {
   const [today, setToday] = useState<IsoDate>();
 
   useEffect(() => {
@@ -31,5 +40,5 @@ export function useMarketToday(): IsoDate | undefined {
     return () => window.clearInterval(timer);
   }, []);
 
-  return today;
+  return today ?? serverFallback;
 }

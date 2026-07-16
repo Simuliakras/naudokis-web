@@ -1,6 +1,6 @@
 "use client";
 // Naudokis UI kit — primitives.
-import React, { useEffect, useId, useRef, useState } from "react";
+import React, { useCallback, useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -605,6 +605,159 @@ export function FilterSelect({
             );
           })}
         </span>
+      )}
+    </span>
+  );
+}
+
+/* ---------------- Trigger + non-modal popover (range filters, booking picker) ----------------
+   The dismissal contract every "pill opens a panel" control on the site shares. It is
+   precise, and each clause is here because getting it wrong shipped a bug once:
+
+   - The containment test runs against the FIELD, which wraps the trigger as well as the
+     panel. Test it against the panel alone and a mousedown on the trigger reads as
+     "outside": the popover closes, the click that follows re-opens it, and the button can
+     never dismiss its own panel.
+   - The trigger is a real TOGGLE, which is the other half of that.
+   - close() vs dismiss(): an internal close (Escape, the close button, committing)
+     restores focus to the trigger, or focus falls to the top of the document. An outside
+     click or a Tab-out just closes — the user is already on their way elsewhere, and
+     stealing focus mid-mousedown would fight them. Same split FilterSelect makes.
+   - Escape stops propagating, so an Escape meant for this panel does not also close the
+     app-redirect modal or any layer above it. */
+
+// The open/close/dismiss/toggle state machine. `onBeforeOpen` runs before the panel
+// mounts — the booking picker uses it to choose its layer and arm its availability query.
+export function useTriggerPopover<T extends HTMLElement>(onBeforeOpen?: () => void) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<T>(null);
+  // Stable: dismiss lands in RangePopoverLayer's effect deps, and a fresh identity every
+  // render would tear down and re-attach the document listener on every parent render.
+  const close = useCallback(() => { setOpen(false); triggerRef.current?.focus(); }, []);
+  const dismiss = useCallback(() => setOpen(false), []);
+  const toggle = () => {
+    if (open) {
+      close();
+      return;
+    }
+    onBeforeOpen?.();
+    setOpen(true);
+  };
+  return { open, setOpen, triggerRef, close, dismiss, toggle };
+}
+
+// Tabbing out of an open panel closes it (the WAI-ARIA pattern FilterSelect follows) —
+// otherwise the dialog is left orphaned over the page with focus already past it.
+//
+// Takes the FIELD node from the event rather than a ref, so it can be built during render
+// without reading one (react-hooks/refs). currentTarget IS the field: this only ever hangs
+// off the element the popover is anchored in.
+//
+// relatedTarget is null when focus leaves the document entirely (window blur, devtools):
+// the user has not gone anywhere on the page, so leave the panel open.
+export function tabOutDismiss(open: boolean, onDismiss: () => void) {
+  return (event: React.FocusEvent<HTMLElement>) => {
+    if (open && event.relatedTarget instanceof Node && !event.currentTarget.contains(event.relatedTarget)) {
+      onDismiss();
+    }
+  };
+}
+
+// The desktop popover shell. Deliberately NOT useDismissableLayer — that locks body
+// scroll, which a non-modal layer must not do.
+export function RangePopoverLayer({
+  className, ariaLabel, onClose, onDismiss, fieldRef, children,
+}: {
+  className: string;
+  ariaLabel: string;
+  onClose: () => void;
+  onDismiss: () => void; // must be stable — it is an effect dependency
+  fieldRef: React.RefObject<HTMLElement | null>;
+  children: React.ReactNode;
+}) {
+  useEffect(() => {
+    const onDown = (event: MouseEvent) => {
+      const node = event.target;
+      if (node instanceof Node && !fieldRef.current?.contains(node)) {
+        onDismiss();
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [onDismiss, fieldRef]);
+
+  return (
+    <div className={className} role="dialog" aria-label={ariaLabel}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") {
+          event.stopPropagation();
+          onClose();
+        }
+      }}>
+      {children}
+    </div>
+  );
+}
+
+/* ---------------- RangePillControl (pill trigger + range popover) ----------------
+   The shared shell behind the feed's RANGE filters — the price slider and the date
+   calendar. They are deliberate twins, so the parts that are easy to drift apart live
+   here once: the pill, the state machine and the dismissal contract above. Each caller
+   keeps only what is genuinely its own — the label it computes and the panel it renders
+   (which it also renders inline in the mobile filter sheet, a layer this knows nothing
+   about).
+
+   The panel arrives through `renderPanel(onDone)` rather than as a typed value/onChange
+   pair: the caller closes over its own range type, so this needs no generics, and the
+   panel is only built while the popover is open. */
+export function RangePillControl({
+  icon, label, active, triggerAriaLabel, panelAriaLabel,
+  fieldClassName, popClassName, renderPanel,
+}: {
+  icon: IconName;
+  label: string;
+  active: boolean;
+  triggerAriaLabel: string; // "Kaina: 10–60 €" when set, else the bare label
+  panelAriaLabel: string; // the popover's role="dialog" label
+  fieldClassName: string; // the caller's field class — also the e2e handle
+  popClassName: string; // the caller's popover class (owns width/padding/anchoring)
+  renderPanel: (onDone: () => void) => React.ReactNode;
+}) {
+  // The FIELD, not the panel: it wraps the trigger and the popover both, which is what
+  // the outside-click and Tab-out tests have to measure against.
+  const fieldRef = useRef<HTMLSpanElement>(null);
+  const { open, setOpen, triggerRef, close, dismiss, toggle } = useTriggerPopover<HTMLButtonElement>();
+
+  return (
+    // The popover anchors against this span, so its positioning is THIS component's
+    // contract, not the caller's — hence inline rather than in `fieldClassName`, which is
+    // only a hook for the caller's own skin and the e2e handle.
+    <span ref={fieldRef} className={fieldClassName} onBlur={tabOutDismiss(open, dismiss)}
+      style={{ position: "relative", display: "inline-flex" }}>
+      <button ref={triggerRef} type="button" className={"nk-pillctl" + (active ? " is-active" : "")}
+        onClick={toggle}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown" && !open) { e.preventDefault(); setOpen(true); }
+          else if (e.key === "Escape" && open) { e.preventDefault(); e.stopPropagation(); close(); }
+        }}
+        aria-haspopup="dialog" aria-expanded={open} aria-label={triggerAriaLabel}
+        style={{
+          display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px",
+          minHeight: "var(--nk-control-h)", cursor: "pointer", whiteSpace: "normal",
+          fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5,
+        }}>
+        <Icon name={icon} size={16} stroke={2} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />
+        <span className="nk-pillctl__label">{label}</span>
+        <Icon name="ChevronDown" size={15} stroke={2.4} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"}
+          style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }} />
+      </button>
+      {open && (
+        // .nk-rangepop is the shared shell (width/padding/anchoring/elevation); the
+        // caller's class rides alongside it as a skin hook and the e2e handle.
+        <RangePopoverLayer className={`nk-rangepop ${popClassName}`} ariaLabel={panelAriaLabel}
+          onClose={close} onDismiss={dismiss} fieldRef={fieldRef}>
+          {renderPanel(close)}
+        </RangePopoverLayer>
       )}
     </span>
   );

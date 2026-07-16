@@ -427,8 +427,33 @@ export type Dict = {
     allCategories: string;
     cityLabel: string;
     priceLabel: string;
-    priceAny: string; // the band list's "no price filter" option
-    priceBand: (min: number | null, max: number | null) => string; // band option label ("Iki 10 €" / "€10–30" / "Nuo 60 €")
+    priceAny: string; // the slider's "no price filter" state (trigger label when fully open)
+    priceBand: (min: number | null, max: number | null) => string; // chip + trigger label ("Iki 10 €" / "€10–30" / "Nuo 60 €")
+    // Dual-thumb price slider: the group label, the two thumb/input labels, and the
+    // desktop popover's close/apply button.
+    priceRangeAria: string;
+    priceMinAria: string;
+    priceMaxAria: string;
+    priceDone: string;
+    // Calendar date-range filter (feed). Mirrors the price-filter keys — a control
+    // label, an "any" placeholder and an active-range band — plus the calendar grid's
+    // own copy (feed-owned; the booking calendar keeps its dict.detail set). The grid's
+    // clear button reuses `feed.clear`, and it never shows an Apply button (the sheet
+    // owns it) or a booked/loading state (the feed reads no per-listing availability).
+    dateLabel: string; // pill label / sheet group heading + aria prefix
+    dateAny: string; // pill label when no date filter is set
+    dateBand: (from: string, to: string) => string; // chip + active pill label (from===to → single day)
+    datePanelTitle: string; // popover + sheet-group aria-label
+    datePrevMonth: string;
+    dateNextMonth: string;
+    dateToday: string; // aria suffix on today's cell
+    dateSelectStart: string;
+    dateSelectEnd: string;
+    dateWindowHint: (max: number) => string; // hint under the grid once a start is picked
+    dateDays: (n: number) => string; // "3 dienos" — LT plural
+    dateStartSelected: (date: string) => string; // live-region
+    dateRangeSelected: (parts: { start: string; end: string; days: string }) => string;
+    dateBlocked: (reason: "past" | "booked" | "tooShort" | "tooLong" | "spansBooked", n: number) => string;
     deliveryToggle: string;
     filtersButton: string; // mobile "Filters" trigger opening the filter sheet
     filtersTitle: string; // filter sheet heading
