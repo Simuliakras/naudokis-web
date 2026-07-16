@@ -338,7 +338,7 @@ export function Pill({
 }) {
   const tones: Record<string, { bg: string; fg: string }> = {
     accent: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
-    purple: { bg: "var(--nk-accent-bg)", fg: "var(--nk-accent-text)" },
+    purple: { bg: "var(--nk-purple-pill)", fg: "var(--nk-purple-tag-text)" },
     yellow: { bg: "var(--nk-yellow-tint)", fg: "var(--nk-yellow)" },
     green: { bg: "var(--nk-green-tint)", fg: "var(--nk-green-text)" },
   };
@@ -578,7 +578,7 @@ export function FilterSelect({
         onKeyDown={listboxTriggerKeyNav(open, setOpen)}
         aria-haspopup="listbox" aria-expanded={open}
         aria-label={active && selected ? `${label}: ${selected.label}` : label} style={{
-        display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-control-h)", cursor: "pointer", whiteSpace: "normal",
+        display: "inline-flex", alignItems: "center", gap: 9, borderRadius: "var(--nk-r-pill)", padding: "11px 16px", minHeight: "var(--nk-control-h)", cursor: "pointer", whiteSpace: "normal",
         fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5,
       }}>
         {icon && <Icon name={icon} size={16} stroke={2} color={active ? "var(--nk-accent-text)" : "var(--nk-text-muted)"} />}
@@ -742,7 +742,7 @@ export function RangePillControl({
         }}
         aria-haspopup="dialog" aria-expanded={open} aria-label={triggerAriaLabel}
         style={{
-          display: "inline-flex", alignItems: "center", gap: 9, borderRadius: 999, padding: "11px 16px",
+          display: "inline-flex", alignItems: "center", gap: 9, borderRadius: "var(--nk-r-pill)", padding: "11px 16px",
           minHeight: "var(--nk-control-h)", cursor: "pointer", whiteSpace: "normal",
           fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5,
         }}>
@@ -774,7 +774,7 @@ export function Toggle({
 }) {
   return (
     <button type="button" className={"nk-pillctl nk-toggle" + (on ? " is-active" : "")} onClick={() => onChange(!on)} aria-pressed={on} style={{
-      display: "inline-flex", alignItems: "center", gap: 12, borderRadius: 999, padding: "11px 16px", minHeight: "var(--nk-control-h)", cursor: "pointer",
+      display: "inline-flex", alignItems: "center", gap: 12, borderRadius: "var(--nk-r-pill)", padding: "11px 16px", minHeight: "var(--nk-control-h)", cursor: "pointer",
       fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, whiteSpace: "normal",
     }}>
       <span className="nk-toggle__lead" style={{ display: "inline-flex", alignItems: "center", gap: 9, minWidth: 0 }}>

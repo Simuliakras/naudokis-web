@@ -102,7 +102,6 @@ const plausibleSrc = process.env.NEXT_PUBLIC_PLAUSIBLE_SRC ?? "https://plausible
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   const locale = isLocale(lang) ? lang : defaultLocale;
-  const dict = getDictionary(locale);
   return (
     <html lang={locale} className={`${brandFont.variable} ${priceFont.variable}`} data-scroll-behavior="smooth">
       {/* suppressHydrationWarning: browser extensions (Grammarly, dark-reader, …)
@@ -120,7 +119,6 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
             or in production; it only appears when a browser extension mutates <body> and
             forces React to client-render this subtree. Leave this as a raw <script>. */}
         <script id="nk-bridge-bootstrap" dangerouslySetInnerHTML={{ __html: BRIDGE_BOOTSTRAP }} />
-        <a href="#nk-main" className="nk-skip">{dict.common.skipToContent}</a>
         <I18nProvider locale={locale}>
           <ScrollToTop />
           {children}

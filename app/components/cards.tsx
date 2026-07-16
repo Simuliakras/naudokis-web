@@ -115,7 +115,7 @@ export function OfferCard({
           </span>
         ) : null}
       </div>
-      <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
+      <div className="nk-offer__body" style={{ flex: 1, padding: "var(--nk-offer-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
         {/* Category eyebrow — scent for the eye, tinted with the house per-category
             accent. On its own row: the rating rides the photo above now. */}
         {categoryName && (
@@ -124,24 +124,27 @@ export function OfferCard({
           </div>
         )}
         <h3 title={title} style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 20, lineHeight: "25px", minHeight: 50, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", color: "var(--nk-text)" }}>{title}</h3>
-        {/* Where the item is — the line is the place alone now, the rating having moved
-            onto the photo. A listing without one shows no badge at all: no "no reviews
-            yet" pill, which reads as a negative signal on a fresh card. */}
-        {city && (
-          <span className="nk-offer__loc">
-            <Icon name="MapPin" size={14} color="var(--nk-text-2)" stroke={2} />
-            <span className="nk-offer__loctext">{formatLocation(city, subdivision)}</span>
-          </span>
-        )}
-        {/* Who you'd be renting from. Gated on the wire actually carrying an owner —
-            until the backend embeds one, this is undefined and the card renders exactly
-            as it did before. Plain text, never a link: the card is a single stretched
-            <Link>, so an anchor here would nest one interactive element in another. */}
-        {owner && (
+        {/* Who and where, on one row: the owner identity (avatar + name), a ·
+            separator, then the place (city, subdivision). Either half hides when its
+            data is absent — the dot only renders between the two. Plain text, never
+            a link: the card is a single stretched <Link>, so an anchor here would
+            nest one interactive element in another. */}
+        {(owner || city) && (
           <span className="nk-offer__owner">
-            <Avatar src={owner.avatar} initials={owner.initials} size={24} className="nk-offer__avatar" />
-            <span className="nk-sr-only">{`${c.ownerLabel}: `}</span>
-            <span className="nk-offer__ownername">{owner.name}</span>
+            {owner && (
+              <>
+                <Avatar src={owner.avatar} initials={owner.initials} size={24} className="nk-offer__avatar" />
+                <span className="nk-sr-only">{`${c.ownerLabel}: `}</span>
+                <span className="nk-offer__ownername">{owner.name}</span>
+              </>
+            )}
+            {owner && city && <span className="nk-offer__sep" aria-hidden>·</span>}
+            {city && (
+              <span className="nk-offer__loc">
+                <Icon name="MapPin" size={14} color="var(--nk-text-2)" stroke={2} />
+                <span className="nk-offer__loctext">{formatLocation(city, subdivision)}</span>
+              </span>
+            )}
           </span>
         )}
         {/* Footer, pinned to the bottom so cards in a row share a price baseline:
@@ -156,8 +159,8 @@ export function OfferCard({
               </span>
             )}
             {/* Refundable deposit — the AMOUNT only (Coins, never a shield: the Terms
-                disclaim insurance, so no "protected" framing). Purple (the house accent
-                pill), so it reads as information beside the price. */}
+                disclaim insurance, so no "protected" framing). Purple tint wash, so it
+                reads as information beside the price, not a selected control. */}
             {deposit && (
               <span className="o-deposit">
                 <Pill tone="purple" icon="Coins" size="sm">
@@ -271,7 +274,7 @@ export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
     // reservation in step with the card it stands in for.
     <article aria-hidden="true" style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-divider)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column", containerType: "inline-size", containerName: "nk-card" }}>
       <div className={cls} style={{ aspectRatio: "4 / 3", borderRadius: "var(--nk-r-card) var(--nk-r-card) 0 0" }} />
-      <div className="nk-offer-skel__body" style={{ padding: "var(--nk-card-pad) var(--nk-card-pad) var(--nk-card-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
+      <div className="nk-offer-skel__body" style={{ padding: "var(--nk-offer-pad)", display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
         {/* Top row: the lone category eyebrow. */}
         <div className={cls} style={{ width: "34%", height: 12 }} />
         {/* Reserve two title lines (real title clamps to 2 / minHeight 50) so the
@@ -280,14 +283,14 @@ export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
           <div className={cls} style={{ width: "92%", height: 20 }} />
           <div className={cls} style={{ width: "58%", height: 20 }} />
         </div>
-        {/* Location line, matching the real card. Nothing reserves the rating: it rides
-            the media absolutely now, so it costs the body no height. */}
-        <div className={cls} style={{ width: "48%", height: 18 }} />
-        {/* Owner row placeholder — reserves exactly --nk-offer-owner-h, the height
-            .nk-offer__owner is pinned to, so cards don't grow when owner data lands. */}
+        {/* Owner + location row placeholder — reserves exactly --nk-offer-owner-h, the
+            height .nk-offer__owner is pinned to, so cards don't grow when data lands.
+            Two bars: name, then place. Nothing reserves the rating: it rides the media
+            absolutely, so it costs the body no height. */}
         <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", height: "var(--nk-offer-owner-h)" }}>
           <div className={cls} style={{ width: "var(--nk-offer-owner-h)", height: "var(--nk-offer-owner-h)", borderRadius: 999, flex: "none" }} />
-          <div className={cls} style={{ width: "42%", height: 12 }} />
+          <div className={cls} style={{ width: "34%", height: 12 }} />
+          <div className={cls} style={{ width: "30%", height: 12 }} />
         </div>
         {/* Footer: the card's hairline, then the price row (price left, discount right). */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: "auto", paddingTop: "var(--nk-gap-xs)" }}>

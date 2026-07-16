@@ -3,6 +3,7 @@
 // non-canonical (noindex) variant can never disagree between them.
 import { parsePageParam, parseSortKey } from "@/app/lib/listings";
 import { parsePriceParam, priceToCents, serializePriceParam } from "@/app/lib/price-range";
+import { depositToParams, parseDepositParam, serializeDepositParam } from "@/app/lib/deposit-filter";
 import { clampRangeToToday, datesToApiParams, parseDatesParam, serializeDatesParam } from "@/app/lib/date-filter";
 import { todayInMarket } from "@/app/lib/dates";
 
@@ -23,6 +24,7 @@ export function pageFromLandingSearch(sp: LandingSearchParams = {}): number {
 export function catalogueFiltersFromSearch(sp: LandingSearchParams = {}) {
   const priceRange = parsePriceParam(firstValue(sp.price));
   const priceCents = priceRange ? priceToCents(priceRange) : {};
+  const depositFilter = parseDepositParam(firstValue(sp.deposit));
   const delivery = firstValue(sp.delivery) === "1";
   // Clamp to the market's "today" so a stale past window never reaches the backend, which
   // answers a past-opening window with an empty page.
@@ -46,13 +48,15 @@ export function catalogueFiltersFromSearch(sp: LandingSearchParams = {}) {
     price: priceRange ? serializePriceParam(priceRange) : "",
     priceMinCents: priceCents.priceMinCents,
     priceMaxCents: priceCents.priceMaxCents,
+    deposit: serializeDepositParam(depositFilter),
+    ...depositToParams(depositFilter),
     dates: serializeDatesParam(dateRange),
     ...datesToApiParams(dateRange),
     deliveryMethods: delivery ? ["user_delivery" as const] : undefined,
   };
 }
 
-// Free-text searches and sort/delivery/price variants create duplicate or thin
+// Free-text searches and sort/delivery/price/deposit variants create duplicate or thin
 // states — crawlers may follow their links, but only the stable browse /
 // category / city / category+city landing URLs get indexed.
 export function hasNonCanonicalLandingSearch(sp: LandingSearchParams = {}): boolean {
@@ -63,6 +67,7 @@ export function hasNonCanonicalLandingSearch(sp: LandingSearchParams = {}): bool
     (sort && sort !== "newest" && sort !== "recommended") ||
     firstValue(sp.delivery) === "1" ||
     firstValue(sp.price) ||
+    firstValue(sp.deposit) ||
     firstValue(sp.dates),
   );
 }

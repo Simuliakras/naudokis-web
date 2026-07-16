@@ -644,7 +644,6 @@ export const lt: Dict = {
     imageUnavailable: "Nuotrauka nepasiekiama",
     breadcrumbHome: "Pagrindinis",
     breadcrumbLabel: "Naršymo kelias",
-    skipToContent: "Pereiti prie turinio",
     loading: "Kraunama…",
   },
   categoriesPage: {
@@ -791,7 +790,9 @@ export const lt: Dict = {
       }
       return "Data nepasiekiama";
     },
-    deliveryToggle: "Pristatymas galimas",
+    deliveryToggle: "Pristatymas",
+    depositToggle: "Be užstato",
+    depositUpTo: (max) => `Užstatas iki ${max} €`,
     filtersButton: "Filtrai",
     filtersTitle: "Filtrai",
     filtersApply: (n, atLeast) => {

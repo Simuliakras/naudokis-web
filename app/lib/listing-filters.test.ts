@@ -12,6 +12,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { catalogueFiltersFromSearch } from "@/app/lib/landing-params";
 import { buildListingsUrl, listingsInfiniteKey, listingsKey } from "@/app/lib/listings";
 import { clampRangeToToday, datesToApiParams, parseDatesParam, serializeDatesParam } from "@/app/lib/date-filter";
+import { depositToParams, parseDepositParam, serializeDepositParam } from "@/app/lib/deposit-filter";
 import { todayInMarket } from "@/app/lib/dates";
 
 // 12:00 in Vilnius — comfortably inside one market day, so "today" is unambiguous.
@@ -101,6 +102,15 @@ describe("listingsKey / listingsInfiniteKey", () => {
     expect(listingsKey("lt", { priceMaxCents: 6000 })).not.toEqual(listingsKey("lt", {}));
   });
 
+  // The deposit spec's #1 trap: a deposit filter absent from the key would serve
+  // "No deposit" and "Any" from the same cache entry.
+  it("carry the deposit filter", () => {
+    expect(listingsKey("lt", { depositRequired: false })).not.toEqual(listingsKey("lt", {}));
+    expect(listingsKey("lt", { depositMaxCents: 5000 })).not.toEqual(listingsKey("lt", {}));
+    expect(listingsInfiniteKey("lt", { depositRequired: false })).not.toEqual(listingsInfiniteKey("lt", {}));
+    expect(listingsInfiniteKey("lt", { depositMaxCents: 5000 })).not.toEqual(listingsInfiniteKey("lt", {}));
+  });
+
   it("separate the two caches and keep locale significant", () => {
     expect(listingsKey("lt", {})).not.toEqual(listingsInfiniteKey("lt", {}));
     expect(listingsKey("lt", {})).not.toEqual(listingsKey("en", {}));
@@ -144,5 +154,38 @@ describe("buildListingsUrl", () => {
   it("passes the catalogue filters through", () => {
     expect(params({ q: "grąžtas", city: "Vilnius", category: "tools", deliveryMethods: ["user_delivery"] }))
       .toEqual({ ...SORT, q: "grąžtas", city: "Vilnius", category_id: "tools", delivery_methods: "user_delivery" });
+  });
+
+  it("emits the deposit filter's two exclusive shapes", () => {
+    expect(params({ depositRequired: false })).toEqual({ ...SORT, deposit_required: "false" });
+    // A ceiling goes out ALONE: pairing it with deposit_required=true would drop the
+    // no-deposit listings a ceiling is defined to admit.
+    expect(params({ depositMaxCents: 15000 })).toEqual({ ...SORT, deposit_max_cents: "15000" });
+  });
+});
+
+describe("?deposit= across the server prefetch and the client's first render", () => {
+  // FeedScreen's first render: depositParamToken (raw → canonical token) → parse →
+  // wire params. Deposit is time-independent, so unlike dates there is no serverToday
+  // — this pins that catalogueFiltersFromSearch and the feed derive the same key
+  // from the same URL, junk tokens included.
+  function feedDepositKey(rawToken: string) {
+    const token = serializeDepositParam(parseDepositParam(rawToken));
+    return listingsInfiniteKey("lt", { ...depositToParams(parseDepositParam(token)) });
+  }
+
+  it("agree for every token shape", () => {
+    for (const token of ["none", "50", "500", "", "junk", "0", "49.5", "501"]) {
+      expect(feedDepositKey(token)).toEqual(listingsInfiniteKey("lt", catalogueFiltersFromSearch({ deposit: token })));
+    }
+  });
+
+  it("drop an unusable token back to the unfiltered key", () => {
+    // "500" is unusable too: an at-ceiling bound admits everything, so it must
+    // collapse rather than occupy a distinct cache slot for identical results.
+    for (const token of ["junk", "500", "49.5"]) {
+      expect(listingsInfiniteKey("lt", catalogueFiltersFromSearch({ deposit: token })))
+        .toEqual(listingsInfiniteKey("lt", {}));
+    }
   });
 });

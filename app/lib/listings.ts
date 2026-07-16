@@ -204,6 +204,12 @@ export type ListingFilters = {
   // bound), and capped at 60 days — see app/lib/date-filter.ts.
   availableFrom?: IsoDate;
   availableTo?: IsoDate;
+  // Deposit filter — see app/lib/deposit-filter.ts. depositRequired is tri-state:
+  // undefined means "don't care", never default it to false ("no deposit only").
+  // A ceiling deliberately admits no-deposit listings, so the two are never sent
+  // together (deposit_required=true would silently drop them).
+  depositMaxCents?: number;
+  depositRequired?: boolean;
   // SEO-friendly paginated result pages. The backend uses opaque cursors, so this
   // is translated by walking cursors server/client-side when page > 1.
   page?: number;
@@ -344,8 +350,9 @@ export const LISTING_REVALIDATE = 300;
 // listingsKey applies the same empty-filter defaults the hook does.
 export function listingsKey(locale: Locale, filters: ListingFilters = {}) {
   const { q = "", city = "", category = "", sort = "newest", page = 1,
-    priceMinCents = "", priceMaxCents = "", deliveryMethods = [], availableFrom = "", availableTo = "" } = filters;
-  return ["listings", locale, q, city, category, sort, priceMinCents, priceMaxCents, deliveryMethods.join(","), availableFrom, availableTo, page] as const;
+    priceMinCents = "", priceMaxCents = "", deliveryMethods = [], availableFrom = "", availableTo = "",
+    depositMaxCents = "", depositRequired = "" } = filters;
+  return ["listings", locale, q, city, category, sort, priceMinCents, priceMaxCents, deliveryMethods.join(","), availableFrom, availableTo, depositMaxCents, depositRequired, page] as const;
 }
 
 export function listingKey(id: string | undefined, locale: Locale) {
@@ -362,8 +369,9 @@ export const LISTINGS_FIRST_CURSOR: string | null = null;
 
 export function listingsInfiniteKey(locale: Locale, filters: ListingFilters = {}) {
   const { q = "", city = "", category = "", sort = "newest", page = 1,
-    priceMinCents = "", priceMaxCents = "", deliveryMethods = [], availableFrom = "", availableTo = "" } = filters;
-  return ["listings-infinite", locale, q, city, category, sort, priceMinCents, priceMaxCents, deliveryMethods.join(","), availableFrom, availableTo, page] as const;
+    priceMinCents = "", priceMaxCents = "", deliveryMethods = [], availableFrom = "", availableTo = "",
+    depositMaxCents = "", depositRequired = "" } = filters;
+  return ["listings-infinite", locale, q, city, category, sort, priceMinCents, priceMaxCents, deliveryMethods.join(","), availableFrom, availableTo, depositMaxCents, depositRequired, page] as const;
 }
 
 // Build the backend `/listings` query URL from the active filters. `limit` /
@@ -395,6 +403,14 @@ export function buildListingsUrl(filters: ListingFilters): URL {
   if (filters.availableFrom && filters.availableTo) {
     url.searchParams.set("available_from", filters.availableFrom);
     url.searchParams.set("available_to", filters.availableTo);
+  }
+  // A ceiling admits no-deposit listings on the backend, so it is never paired
+  // with deposit_required — see the ListingFilters comment.
+  if (filters.depositMaxCents !== undefined) {
+    url.searchParams.set("deposit_max_cents", String(filters.depositMaxCents));
+  }
+  if (filters.depositRequired !== undefined) {
+    url.searchParams.set("deposit_required", String(filters.depositRequired));
   }
   return url;
 }
@@ -586,8 +602,8 @@ export async function fetchListingsCount(
 
 export function useListings(locale: Locale, filters: ListingFilters = {}) {
   const { q = "", city = "", category = "", sort = "newest", page = 1,
-    priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo } = filters;
-  const normalized = { q, city, category, sort, page, priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo };
+    priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo, depositMaxCents, depositRequired } = filters;
+  const normalized = { q, city, category, sort, page, priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo, depositMaxCents, depositRequired };
   return useQuery({
     queryKey: listingsKey(locale, normalized),
     queryFn: () => fetchListings(locale, normalized),
@@ -599,8 +615,8 @@ export function useListings(locale: Locale, filters: ListingFilters = {}) {
 // keeps the prior result set on screen while a filter change refetches page 1.
 export function useListingsInfinite(locale: Locale, filters: ListingFilters = {}) {
   const { q = "", city = "", category = "", sort = "newest", page = 1,
-    priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo } = filters;
-  const normalized = { q, city, category, sort, page, priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo };
+    priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo, depositMaxCents, depositRequired } = filters;
+  const normalized = { q, city, category, sort, page, priceMinCents, priceMaxCents, deliveryMethods, availableFrom, availableTo, depositMaxCents, depositRequired };
   return useInfiniteQuery({
     queryKey: listingsInfiniteKey(locale, normalized),
     queryFn: ({ pageParam }) => fetchListingsPage(locale, normalized, pageParam),

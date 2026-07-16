@@ -57,7 +57,7 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
       <JsonLd data={webSiteJsonLd(locale)} />
       <JsonLd data={faqJsonLd(dict.faq.items)} />
       <Chrome>
-        <div className="nk-page">
+        <div className="nk-page nk-home">
           <Nav />
           <main id="nk-main">
             <Hero locale={locale} />

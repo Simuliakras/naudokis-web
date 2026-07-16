@@ -208,8 +208,9 @@
   --nk-section-y:     clamp(72px,9vw,124px);  /* standard section padding-y */
   --nk-section-y-lg:  clamp(80px,10vw,136px);  /* hero / feature heavy bands */
   --nk-section-head:  clamp(40px, 5vw, 60px);   /* section head → content gap */
-  --nk-card-pad:      clamp(20px,1.5vw,26px); /* listing-card body padding   */
+  --nk-card-pad:      clamp(20px,1.5vw,26px); /* card body padding (detail/insight cards) */
   --nk-card-pad-sm:   clamp(16px, 1.2vw, 20px); /* compact cards (fact/host/booking) */
+  --nk-offer-pad:     var(--nk-card-pad-sm);  /* listing-card body — one compact step below --nk-card-pad */
   --nk-block-pad:     clamp(32px, 4vw, 56px);   /* feature / testimonial card  */
   --nk-panel-pad:     clamp(28px, 4.4vw, 60px); /* hero panel / large blocks   */
   --nk-stack-lg:      clamp(28px, 3.4vw, 40px); /* large vertical stacks       */
@@ -630,12 +631,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
 .nk-appbadges img{max-width:100%;height:auto}
 .nk-redirect-storestext a{display:inline-flex;align-items:center;min-height:24px}
 
-/* ---- skip-to-content link (visually hidden until keyboard-focused) ---- */
-.nk-skip{position:fixed;top:14px;left:14px;z-index:300;padding:13px 22px;border-radius:999px;
-  background:var(--nk-purple);color:var(--nk-text);font-family:var(--nk-font-display);font-weight:600;font-size:15px;
-  text-decoration:none;transform:translateY(calc(-100% - 20px));transition:transform .15s ease}
-.nk-skip:focus-visible{transform:none}
-
 /* ---- visually-hidden (SR-only) — e.g. aria-live loading status ---- */
 .nk-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0,0,0,0);white-space:nowrap;border:0}
@@ -698,14 +693,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
   .nk-nav-cta{width:var(--nk-tap);min-width:var(--nk-tap);padding:0;gap:0}
 }
 
-/* ---- nav links + underline (purple) ----
-   text uses --nk-purple-hover (#8A89FF, ≥4.5:1 on bg); the underline keeps brand purple */
-.nk-link{position:relative;text-decoration:none;transition:color .15s ease}
-.nk-link:hover{color:var(--nk-purple-hover)}
-.nk-link::after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:2px;background:var(--nk-purple);transition:right .25s ease}
-.nk-link:hover::after,.nk-link:focus-visible::after{right:0}
+/* ---- nav links (purple) ----
+   text uses --nk-purple-hover (#8A89FF, ≥4.5:1 on bg) */
+.nk-link{text-decoration:none;transition:color .15s ease}
+.nk-link:hover,.nk-link:active{color:var(--nk-purple-hover)}
 .nk-link[aria-current="page"]{color:var(--nk-purple-hover)}
-.nk-link[aria-current="page"]::after{display:none}
 footer .nk-link:hover{color:var(--nk-purple-hover)}
 
 /* ---- city picker (hero light dropdown) ----
@@ -897,21 +889,25 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-offer__toprow{display:flex;align-items:center;gap:10px;min-width:0}
 .nk-offer__toprow .nk-offer__eyebrow{flex:1 1 auto;min-width:0}
 
-/* Location line — the place alone, free to use the full width (ellipsis if long). */
-.nk-offer__loc{display:inline-flex;align-items:center;gap:5px;min-width:0;
-  font-family:var(--nk-font-body);font-weight:500;font-size:14px;color:var(--nk-text-2)}
-.nk-offer__loc svg{flex:none}
-.nk-offer__loctext{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-
-/* ---- owner identity row ----
-   Text only. The whole card is one stretched <Link>, so an <a> here would nest an
-   interactive element inside an interactive one. The height is pinned to
-   --nk-offer-owner-h so OfferCardSkeleton can reserve exactly this row. */
+/* ---- owner + location row ----
+   One row: avatar + owner name · city, subdivision. Text only — the whole card is
+   one stretched <Link>, so an <a> here would nest an interactive element inside an
+   interactive one. The height is pinned to --nk-offer-owner-h so OfferCardSkeleton
+   can reserve exactly this row. Name and place both ellipsize; the dot never shrinks. */
 .nk-offer__owner{display:flex;align-items:center;gap:var(--nk-gap-xs);min-width:0;
   height:var(--nk-offer-owner-h)}
 .nk-offer__ownername{min-width:0;font-family:var(--nk-font-body);font-weight:600;
   font-size:14px;line-height:1.2;color:var(--nk-text-2);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* The · between name and place — oversized relative to the row type so it reads
+   as a deliberate divider, not a stray period; line-height 1 keeps it from
+   stretching the pinned row. */
+.nk-offer__sep{flex:none;font-family:var(--nk-font-body);font-weight:700;font-size:18px;
+  line-height:1;color:var(--nk-text-muted)}
+.nk-offer__loc{display:inline-flex;align-items:center;gap:5px;min-width:0;
+  font-family:var(--nk-font-body);font-weight:500;font-size:14px;color:var(--nk-text-2)}
+.nk-offer__loc svg{flex:none}
+.nk-offer__loctext{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 
 .nk-offer__foot{display:flex;flex-direction:column;gap:12px;margin-top:auto;padding-top:var(--nk-gap-xs)}
 .nk-offer__rule{height:1px;background:var(--nk-divider)}
@@ -1062,12 +1058,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__brand{display:flex;flex-direction:column;gap:var(--nk-gap-xl);max-width:380px}
 .nk-footer__tagline{margin:0;font-family:var(--nk-font-body);font-size:18px;line-height:28px;color:var(--nk-text-muted);max-width:340px}
 .nk-footer__contact{display:flex;flex-direction:column;gap:var(--nk-gap-sm)}
-.nk-footer__contact a{position:relative;display:inline-flex;align-items:center;gap:11px;min-height:24px;font-family:var(--nk-font-body);font-size:17px;color:var(--nk-text-2);text-decoration:none;transition:color .15s ease;width:fit-content}
-.nk-footer__contact a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--nk-purple);transition:right .25s ease}
-.nk-footer__contact a:hover::after,.nk-footer__contact a:focus-visible::after{right:0}
+.nk-footer__contact a{display:inline-flex;align-items:center;gap:11px;min-height:24px;font-family:var(--nk-font-body);font-size:17px;color:var(--nk-text-2);text-decoration:none;transition:color .15s ease;width:fit-content}
 .nk-footer__contact a svg{color:var(--nk-text-muted)}      /* icon sits a shade quieter than the label */
-.nk-footer__contact a:hover{color:var(--nk-purple-hover)}
-.nk-footer__contact a:hover svg,.nk-footer__contact a:focus-visible svg{color:var(--nk-purple-hover)}
+.nk-footer__contact a:hover,.nk-footer__contact a:active{color:var(--nk-purple-hover)}
+.nk-footer__contact a:hover svg,.nk-footer__contact a:focus-visible svg,.nk-footer__contact a:active svg{color:var(--nk-purple-hover)}
 .nk-footer__social{display:flex;gap:var(--nk-gap-sm)}
 .nk-footer__social a,.nk-footer__social span{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;
   color:var(--nk-text-2);background:var(--nk-surface-2);border:1px solid var(--nk-border);transition:background .15s ease,border-color .15s ease,transform .15s ease,color .15s ease}
@@ -1081,13 +1075,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
      the slack splits evenly between the Categories block and the Help column */
   .nk-footer__col--center{justify-self:center}}
 .nk-footer__col h2{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:19px;color:var(--nk-text);letter-spacing:.01em}
-.nk-footer__col a{position:relative;display:inline-flex;align-items:center;min-height:24px;font-family:var(--nk-font-body);font-size:18px;line-height:1.25;color:var(--nk-text-muted);text-decoration:none;
+.nk-footer__col a{display:inline-flex;align-items:center;min-height:24px;font-family:var(--nk-font-body);font-size:18px;line-height:1.25;color:var(--nk-text-muted);text-decoration:none;
   transition:color .15s ease;width:fit-content}
-.nk-footer__col a::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;background:var(--nk-purple);transition:right .25s ease}
-.nk-footer__col a:hover::after,.nk-footer__col a:focus-visible::after{right:0}
-.nk-footer__col a:hover{color:var(--nk-purple-hover)}
+.nk-footer__col a:hover,.nk-footer__col a:active{color:var(--nk-purple-hover)}
 .nk-footer__col a[aria-current="page"]{color:var(--nk-purple-hover)}
-.nk-footer__col a[aria-current="page"]::after{display:none}
 .nk-footer__bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
   padding-block:26px;border-top:1px solid var(--nk-border-soft)}
 .nk-footer__legal{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-muted)}
@@ -1132,7 +1123,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
       50  .nk-cal-pop (in-flow popover) 150  .nk-lightbox
       60  .nk-citypick__panel           200  .nk-redirect-scrim   ← the app handoff, above everything
       60  .nk-backtotop                 210  .nk-dialog-scrim     ← can open ON TOP of the handoff
-      60  .nk-mbar (mobile bottom bar)  300  .nk-skip (skip link) ← must outrank every layer
+      60  .nk-mbar (mobile bottom bar)
 
    Escape and focus are NOT ordered by z-index — they run off the runtime layer stack in
    app/lib/layer-stack.ts (useDismissableLayer / useFocusTrap), so the top-most OPEN layer
@@ -2167,8 +2158,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    Shared by the home page and the How-It-Works page (see AppCtaBanner). Overrides
    for this family live in the breakpoint blocks below, beside the htw- rules. */
 .nk-appcta-wrap{padding-block:clamp(12px,2vw,24px) var(--nk-section-y)}
-/* HIW: the CTA follows the trust band — give it a fuller breather above. */
-.htw-page .nk-appcta-wrap{padding-top:var(--nk-section-y)}
+/* HIW (after the trust band) & home (after the stepper): full breather above. */
+.htw-page .nk-appcta-wrap,
+.nk-home .nk-appcta-wrap{padding-top:var(--nk-section-y)}
 .nk-appcta{position:relative;border-radius:20px;overflow:hidden;min-height:660px;
   background:
     radial-gradient(680px 680px at -6% -18%, var(--nk-glow-purple), transparent 66%),
@@ -2384,16 +2376,12 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-consent-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}
 .nk-consent-actions .nk-btn{flex:1 1 180px;justify-content:center}
 
-/* Footer trigger — a quiet text link among the legal row, not a CTA. No static
-   underline; on hover it matches the footer nav links (.nk-footer__col a): purple
-   text plus a purple bar that grows in left→right. */
-.nk-privacy-trigger{position:relative;min-height:24px;display:inline-flex;align-items:center;padding:0;
+/* Footer trigger — a quiet text link among the legal row, not a CTA. Matches the
+   footer nav links (.nk-footer__col a): plain purple text on hover/active. */
+.nk-privacy-trigger{min-height:24px;display:inline-flex;align-items:center;padding:0;
   background:none;border:0;cursor:pointer;font-family:var(--nk-font-body);font-size:14px;
   color:var(--nk-text-muted);text-decoration:none;transition:color .15s ease}
-.nk-privacy-trigger::after{content:"";position:absolute;left:0;right:100%;bottom:-4px;height:2px;
-  background:var(--nk-purple);transition:right .25s ease}
-.nk-privacy-trigger:hover{color:var(--nk-purple-hover)}
-.nk-privacy-trigger:hover::after,.nk-privacy-trigger:focus-visible::after{right:0}
+.nk-privacy-trigger:hover,.nk-privacy-trigger:active{color:var(--nk-purple-hover)}
 
 /* ============================================================================
    "Quiet Luxe" finish layer (2026-07 design handoff)
@@ -2402,7 +2390,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    primary button, hover motion, imagery tinting and texture opacities.
    ========================================================================== */
 /* type finish: tracked micro-eyebrow, tighter display headings */
-.nk-eyebrow{font-size:16px;line-height:21px;font-weight:700;letter-spacing:.18em;color:color-mix(in srgb,var(--nk-yellow) 78%,white)}
+.nk-eyebrow{font-size:16px;line-height:21px;font-weight:700;letter-spacing:.18em;color:var(--nk-yellow)}
 .nk-h-hero{letter-spacing:-.018em}
 .nk-h-section,.nk-head h2,.nk-h-page{letter-spacing:-.014em}
 .nk-h-card,.nk-h-row{letter-spacing:-.008em}
@@ -2454,7 +2442,7 @@ svg.nk-ico{stroke-width:1.75}
    (cards.tsx OfferCard type/geometry).
    ============================================================ */
 @media(max-width:560px){
-  :root{--nk-card-pad:14px}
+  :root{--nk-card-pad:14px;--nk-offer-pad:12px}
   /* --- 1. dense 2-up browsing grids --- */
   .nk-grid-feed,.nk-grid-4{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 10px}
   /* --- 4. calmer mobile type on fixed-size text --- */
@@ -2483,9 +2471,10 @@ svg.nk-ico{stroke-width:1.75}
   .nk-offer__body{gap:5px!important}
   .nk-offer h3{font-size:15px!important;line-height:19px!important;min-height:38px!important}
   .nk-offer__eyebrow{font-size:11px!important;letter-spacing:.1em!important}
-  /* body type: the location line reads one step down */
+  /* body type: the owner-row place half (pin + text) and its · read one step down */
   .nk-offer__loc{font-size:12.5px!important}
   .nk-offer__loc svg.nk-ico{width:13px!important;height:13px!important}
+  .nk-offer__sep{font-size:16px!important}
   .nk-offer__foot{gap:8px!important;padding-top:6px!important}
   .nk-offer__pricemain>span:first-child{font-size:18px!important}
   .nk-offer__pricemain>span:last-child{font-size:11.5px!important}

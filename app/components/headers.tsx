@@ -170,8 +170,9 @@ export function ChipLinkRow({
 
 /* ---------------- SEO note ----------------
    The closing "authored intro" block shared verbatim by the feed and categories
-   screens (24px display H2 + 65ch small body). `children` carries the feed's
-   related-landing ChipLinkRow; categories passes none. */
+   screens (24px display H2 + 80ch small body — matches the PageHead subtitle
+   measure). `children` carries the feed's related-landing ChipLinkRow; categories
+   passes none. */
 export function SeoNote({
   heading, body, children,
 }: {
@@ -181,10 +182,10 @@ export function SeoNote({
 }) {
   return (
     <Section top="head" bottom="section">
-      <div style={{ maxWidth: 900, display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
+      <div style={{ maxWidth: 1200, display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
         <RowHead title={heading} color="var(--nk-text-2)" />
-        {/* 65ch reading measure (matches .nk-prose / the header intro) */}
-        <p style={{ margin: 0, maxWidth: "65ch", fontFamily: "var(--nk-font-body)", fontSize: "var(--nk-fs-sm)", lineHeight: "26px", color: "var(--nk-text-muted)" }}>{body}</p>
+        {/* 80ch reading measure (matches the PageHead subtitle above) */}
+        <p style={{ margin: 0, maxWidth: "80ch", fontFamily: "var(--nk-font-body)", fontSize: "var(--nk-fs-sm)", lineHeight: "26px", color: "var(--nk-text-muted)" }}>{body}</p>
         {children}
       </div>
     </Section>

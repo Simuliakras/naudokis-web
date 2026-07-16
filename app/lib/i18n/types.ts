@@ -362,7 +362,6 @@ export type Dict = {
     imageUnavailable: string;
     breadcrumbHome: string; // breadcrumb root label
     breadcrumbLabel: string; // accessible name for the breadcrumb <nav> landmark
-    skipToContent: string; // skip-link label (first focusable element on the page)
     loading: string; // SR-only status announced while a list/page is loading
   };
   categoriesPage: {
@@ -455,6 +454,8 @@ export type Dict = {
     dateRangeSelected: (parts: { start: string; end: string; days: string }) => string;
     dateBlocked: (reason: "past" | "booked" | "tooShort" | "tooLong" | "spansBooked", n: number) => string;
     deliveryToggle: string;
+    depositToggle: string; // "no deposit" toggle + its chip label
+    depositUpTo: (max: number) => string; // chip label for a deep-linked ?deposit=<euros> ceiling
     filtersButton: string; // mobile "Filters" trigger opening the filter sheet
     filtersTitle: string; // filter sheet heading
     // Sheet apply button previews the outcome ("Show 3 results"); null while the

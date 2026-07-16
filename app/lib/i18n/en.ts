@@ -571,7 +571,6 @@ export const en: Dict = {
     imageUnavailable: "Image unavailable",
     breadcrumbHome: "Home",
     breadcrumbLabel: "Breadcrumb",
-    skipToContent: "Skip to content",
     loading: "Loading…",
   },
   categoriesPage: {
@@ -691,6 +690,8 @@ export const en: Dict = {
       return "Unavailable date";
     },
     deliveryToggle: "Delivery available",
+    depositToggle: "No deposit",
+    depositUpTo: (max) => `Deposit up to €${max}`,
     filtersButton: "Filters",
     filtersTitle: "Filters",
     filtersApply: (n, atLeast) =>

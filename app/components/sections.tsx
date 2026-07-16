@@ -621,12 +621,7 @@ export function HowItWorks() {
   const steps = t.steps;
 
   return (
-    // extra bottom breathing room below the stepper before the FAQ band
-    <Section
-      contained
-      top="section"
-      style={{ paddingBottom: "calc(var(--nk-section-y) + clamp(32px,4vw,64px))" }}
-    >
+    <Section contained>
       <SectionHead
         eyebrow={t.eyebrow}
         title={t.title}

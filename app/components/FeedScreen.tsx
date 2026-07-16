@@ -18,6 +18,7 @@ import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./
 import { dedupeById, useCategories, type Category } from "@/app/lib/categories";
 import { useListingsInfinite, parseSortKey, parsePageParam, marketplaceErrorKind } from "@/app/lib/listings";
 import { parsePriceParam, priceToCents, serializePriceParam, priceBandArgs, type PriceRange } from "@/app/lib/price-range";
+import { depositToParams, parseDepositParam, serializeDepositParam } from "@/app/lib/deposit-filter";
 import { PriceRangeControl, PriceRangePanel } from "./PriceRange";
 import { clampRangeToToday, dateBandArgs, datesToApiParams, parseDatesParam, serializeDatesParam, type DateFilterRange } from "@/app/lib/date-filter";
 import { DateRangeFilterControl, DateRangeFilterPanel } from "./DateRangeFilter";
@@ -38,7 +39,7 @@ import type { IsoDate } from "@/app/lib/dates";
 import type { ListingFilters } from "@/app/lib/listings";
 
 type FeedScreenProps = {
-  initialFilters?: ListingFilters & { delivery?: boolean; price?: string; dates?: string };
+  initialFilters?: ListingFilters & { delivery?: boolean; price?: string; dates?: string; deposit?: string };
   // The market "today" the SERVER already clamped `?dates=` against, handed down so the
   // first client render can reproduce that window before useMarketToday() resolves. Only
   // a route that (a) prefetches a date-filtered query and (b) renders this screen without
@@ -59,6 +60,11 @@ function priceParamToken(raw: string | null): string {
 // priceParamToken. Structural only (no "today") so it matches the server-prefetch token.
 function datesParamToken(raw: string | null): string {
   return serializeDatesParam(parseDatesParam(raw));
+}
+
+// A raw `?deposit=` value → its canonical token, same role as priceParamToken.
+function depositParamToken(raw: string | null): string {
+  return serializeDepositParam(parseDepositParam(raw));
 }
 
 export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCategories = [] }: FeedScreenProps = {}) {
@@ -83,6 +89,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
         delivery: initialFilters.delivery ?? false,
         price: initialFilters.price ?? "",
         dates: initialFilters.dates ?? "",
+        deposit: initialFilters.deposit ?? "",
       }
     : {
         q: sp.get("q") ?? "",
@@ -93,6 +100,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
         delivery: sp.get("delivery") === "1",
         price: priceParamToken(sp.get("price")),
         dates: datesParamToken(sp.get("dates")),
+        deposit: depositParamToken(sp.get("deposit")),
       };
 
   const filterBarRef = useRef<HTMLDivElement>(null);
@@ -113,6 +121,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
     if (params.delivery) next.set("delivery", "1");
     if (params.price) next.set("price", params.price);
     if (params.dates) next.set("dates", params.dates);
+    if (params.deposit) next.set("deposit", params.deposit);
     const resetPage = Object.keys(patch).some((key) => key !== "page");
     for (const [k, v] of Object.entries(patch)) {
       const isDefault = v === "" || v === false || v === "newest";
@@ -143,6 +152,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
       delivery: "delivery" in patch ? Boolean(patch.delivery) : params.delivery,
       sort: "sort" in patch ? String(patch.sort || "newest") : params.sort,
       hasDates: Boolean("dates" in patch ? String(patch.dates ?? "") : params.dates),
+      deposit: "deposit" in patch ? String(patch.deposit || "") : params.deposit,
     });
     if (replace) {
       // replace = debounced typing into the search input — don't scroll under
@@ -191,6 +201,14 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
     [topCats, extraCategories, extraCategory],
   );
   const priceRange = parsePriceParam(params.price);
+  // Token → the three-state deposit filter. Only "none" is producible from the UI
+  // (the toggle); a deep-linked "?deposit=<euros>" ceiling still reaches the wire
+  // — see app/lib/deposit-filter.ts. Either active state shows on the toggle (the
+  // chips row is mobile-only, so the toggle is the ceiling's ONLY desktop surface;
+  // an invisible-but-live filter would leave thinned results with no visible cause).
+  const depositFilter = parseDepositParam(params.deposit);
+  const depositActive = depositFilter.kind !== "any";
+  const depositLabel = depositFilter.kind === "max" ? t.depositUpTo(depositFilter.euros) : t.depositToggle;
   // "Today" cannot be a server fact (use-market-today.ts explains why), so this is
   // undefined on the server AND on the first client render unless a caller hands down the
   // date IT already clamped against. That first render has to agree with the server,
@@ -221,6 +239,9 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
     ...(priceRange ? priceToCents(priceRange) : {}),
     // The clamped window — never the raw URL one — so the wire and the pill agree.
     ...datesToApiParams(dateRange),
+    // "none" → deposit_required=false; a ceiling → deposit_max_cents alone (it
+    // admits no-deposit listings, so it is never paired with deposit_required).
+    ...depositToParams(depositFilter),
     deliveryMethods: params.delivery ? ["user_delivery"] : undefined,
   });
 
@@ -341,10 +362,10 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
   // shared link opened next week) clamps away to nothing. Reading the token here instead
   // would badge and offer to "clear" a filter the page never shows.
   const dateActive = !!dateRange;
-  const anyActive = !!params.q || isCat || !!params.city || params.delivery || !!params.price || dateActive || params.sort !== "newest";
-  const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "newest", page: "", delivery: false, price: "", dates: "" }); };
+  const anyActive = !!params.q || isCat || !!params.city || params.delivery || !!params.price || dateActive || depositActive || params.sort !== "newest";
+  const reset = () => { setQInput(""); setParams({ q: "", cat: "", city: "", sort: "newest", page: "", delivery: false, price: "", dates: "", deposit: "" }); };
   // Count of secondary (sheet) filters — badges the mobile "Filters" button.
-  const activeFilterCount = [params.cat, params.city, params.delivery, params.price, dateActive, params.sort !== "newest"].filter(Boolean).length;
+  const activeFilterCount = [params.cat, params.city, params.delivery, params.price, dateActive, depositActive, params.sort !== "newest"].filter(Boolean).length;
 
   const sortOptions: SelectOption[] = [
     { value: "newest", label: t.sortNewest },
@@ -366,13 +387,14 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
   // own × plus the global clear already cover it, and three parallel clear
   // affordances for one action read as noise. Labels derive from the option lists.
   const sortLabel = sortOptions.find((o) => o.value === params.sort)?.label ?? params.sort;
-  type ChipKey = "cat" | "city" | "delivery" | "price" | "dates" | "sort";
+  type ChipKey = "cat" | "city" | "delivery" | "price" | "dates" | "deposit" | "sort";
   const activeChips: { key: ChipKey; label: string }[] = [];
   if (isCat) activeChips.push({ key: "cat", label: catTitle ?? params.cat });
   if (params.city) activeChips.push({ key: "city", label: params.city });
   if (params.delivery) activeChips.push({ key: "delivery", label: t.deliveryToggle });
   if (priceRange) activeChips.push({ key: "price", label: t.priceBand(...priceBandArgs(priceRange)) });
   if (dateRange) activeChips.push({ key: "dates", label: t.dateBand(...dateBandArgs(dateRange, locale)) });
+  if (depositActive) activeChips.push({ key: "deposit", label: depositLabel });
   if (params.sort !== "newest") activeChips.push({ key: "sort", label: sortLabel });
   const clearChip = (key: ChipKey) => {
     if (key === "cat") { setParams({ cat: "" }); return; }
@@ -380,6 +402,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
     if (key === "delivery") { setParams({ delivery: false }); return; }
     if (key === "price") { setParams({ price: "" }); return; }
     if (key === "dates") { setParams({ dates: "" }); return; }
+    if (key === "deposit") { setParams({ deposit: "" }); return; }
     setParams({ sort: "newest" });
   };
 
@@ -409,7 +432,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
   // landing / L3 filters). Landing states (no user-set toggles) never blame
   // "filters" the visitor didn't set, and every dead end keeps a browse path
   // plus the owner-acquisition CTA.
-  const filtersActive = params.delivery || !!params.price || dateActive || params.sort !== "newest";
+  const filtersActive = params.delivery || !!params.price || dateActive || depositActive || params.sort !== "newest";
   const empty = t.empty;
   const listItem = () => openRedirect({ title: dict.bridge.listTitle, body: dict.bridge.listBody });
   const pageHref = (page: number) => {
@@ -421,6 +444,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
     if (params.delivery) next.set("delivery", "1");
     if (params.price) next.set("price", params.price);
     if (params.dates) next.set("dates", params.dates);
+    if (params.deposit) next.set("deposit", params.deposit);
     if (page > 1) next.set("page", String(page));
     const qs = next.toString();
     return qs ? `${pathname}?${qs}` : pathname;
@@ -475,12 +499,16 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
         <Nav onSearch={() => document.getElementById("nk-feed-search-input")?.focus()} />
         <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px" }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={crumbs} />
-          {/* 65ch caps the line length so a long authored category intro (seoBody,
+          {/* 80ch caps the line length so a long authored category intro (seoBody,
               up to ~600 chars) stays readable; short browse/search subtitles never
-              reach it. Matches the .nk-prose measure used elsewhere. The subtitle
+              reach it. Wider than the 65ch .nk-prose measure used elsewhere — the
+              feed head has the room and wraps fewer lines — but held at the
+              readable upper bound (WCAG 1.4.8's 80-char figure). The subtitle
               branches (search echo vs clamped landing intro) ride in PageHead's
-              children slot below the shared eyebrow + H1. */}
-          <PageHead eyebrow={t.eyebrow} title={heading} maxWidth="65ch">
+              children slot below the shared eyebrow + H1. Kept in sync with the
+              matching maxWidth in CatalogueLoading.tsx / skelbimai/page.tsx so
+              the head does not shift as the screen takes over. */}
+          <PageHead eyebrow={t.eyebrow} title={heading} maxWidth="80ch">
             {isSearch ? (
               // ≤560 the chip row already echoes the query — a generic line there
               // avoids four echoes of the same string in one screen.
@@ -523,7 +551,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
                 </span>
                 {/* mobile-only: collapses category/city/price/delivery/sort into a sheet */}
                 <button type="button" className={"nk-pillctl nk-filters-mobilebtn" + (activeFilterCount ? " is-active" : "")} onClick={() => setFiltersOpen(true)}
-                  aria-haspopup="dialog" aria-expanded={filtersOpen} style={{ alignItems: "center", gap: 8, padding: "11px 16px", borderRadius: 999, minHeight: "var(--nk-control-h)", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, cursor: "pointer", whiteSpace: "nowrap" }}>
+                  aria-haspopup="dialog" aria-expanded={filtersOpen} style={{ alignItems: "center", gap: 8, padding: "11px 16px", borderRadius: "var(--nk-r-pill)", minHeight: "var(--nk-control-h)", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15.5, cursor: "pointer", whiteSpace: "nowrap" }}>
                   <Icon name="SlidersHorizontal" size={17} stroke={2} color="currentColor" />
                   {t.filtersButton}
                   {activeFilterCount > 0 && <span className="nk-filters-badge">{activeFilterCount}</span>}
@@ -537,6 +565,12 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
                 <PriceRangeControl value={priceRange} onChange={(r) => setParams({ price: serializePriceParam(r) })} />
                 <DateRangeFilterControl value={dateRange} onChange={(r) => setParams({ dates: serializeDatesParam(r) })} />
                 <Toggle icon="Truck" on={params.delivery} onChange={(on) => setParams({ delivery: on })}>{t.deliveryToggle}</Toggle>
+                {/* ON for "none" AND for a deep-linked ceiling (labelled with it) —
+                    like the price/date pills, the trigger wears the active state.
+                    Clicking an active toggle clears either state; from rest it sets
+                    "none", the only UI-producible filter. Coins, never a shield:
+                    the Terms disclaim insurance (see the card deposit pill). */}
+                <Toggle icon="Coins" on={depositActive} onChange={(on) => setParams({ deposit: on ? "none" : "" })}>{depositLabel}</Toggle>
               </div>
             </div>
           </div>
@@ -604,6 +638,9 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
             deliveryLabel={t.deliveryToggle}
             delivery={params.delivery}
             onDelivery={(on) => setParams({ delivery: on })}
+            depositLabel={depositLabel}
+            depositOn={depositActive}
+            onDeposit={(on) => setParams({ deposit: on ? "none" : "" })}
           />
 
           {activeChips.length > 0 && (
@@ -849,6 +886,7 @@ function FeedFilterSheet({
   priceLabel, priceRange, onPrice,
   dateLabel, dateRange, onDate,
   deliveryLabel, delivery, onDelivery,
+  depositLabel, depositOn, onDeposit,
 }: {
   open: boolean;
   onClose: () => void;
@@ -879,6 +917,9 @@ function FeedFilterSheet({
   deliveryLabel: string;
   delivery: boolean;
   onDelivery: (on: boolean) => void;
+  depositLabel: string;
+  depositOn: boolean;
+  onDeposit: (on: boolean) => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const grabRef = useRef<HTMLDivElement>(null);
@@ -934,6 +975,9 @@ function FeedFilterSheet({
         </div>
         <div className="nk-filtersheet__group">
           <Toggle icon="Truck" on={delivery} onChange={onDelivery}>{deliveryLabel}</Toggle>
+        </div>
+        <div className="nk-filtersheet__group">
+          <Toggle icon="Coins" on={depositOn} onChange={onDeposit}>{depositLabel}</Toggle>
         </div>
         <FilterSheetGroup label={sortLabel} value={sortValue} options={sortOptions} onChange={onSort} />
         <div className="nk-filtersheet__foot">
