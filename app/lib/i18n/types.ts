@@ -1,6 +1,7 @@
 // The translation contract. Both dictionaries must satisfy `Dict`, so adding a
 // string here forces both locales to provide it (compile-time safety).
 import type { IconName } from "@/app/components/ui";
+import type { CancellationTier } from "@/app/lib/listing-view";
 
 export type FaqItem = { q: string; a: string };
 export type FeatureItem = { icon: IconName; title: string; body: string };
@@ -266,6 +267,7 @@ export type Dict = {
     // header actions + meta
     save: string; // "Įsiminti" header action
     newListingPill: string; // factual gallery badge for a listing with no reviews
+    noReviewsYet: string; // star-slot label (header meta + booking card) when ratingCount is 0
     noPhotos: string; // caption on the empty-gallery placeholder (no photos on the wire)
     galleryAll: (count: number) => string; // "Visos N nuotr."
     galleryExpand: string; // aria-label on the single-photo hero expand chip
@@ -276,7 +278,10 @@ export type Dict = {
     galleryImageError: string; // shown when a lightbox photo fails to load
     perDayShort: string; // "/ diena"
     // booking panel
-    confirmInApp: string; // one-line reassurance — dates + final price confirmed in the app
+    ratingLinkLabel: (parts: { rating: string; count: number }) => string; // aria-label on the "4,9 · 24" reviews link
+    // Empty-state trust rows (no dates picked)
+    trustDepositRest: string; // refund condition after the bold amount the component renders first
+    reserveNote: string; // under the CTA — nothing is charged until the owner confirms
     // date-range picker
     //
     // Copy rule, and it is not negotiable: this calendar may say a day is TAKEN. It
@@ -284,8 +289,7 @@ export type Dict = {
     // "not booked" is not the same fact as "available" (the owner may decline, and
     // when the endpoint fails we know nothing at all). So there is a `calBooked`
     // label and deliberately no "available" one — an unbooked day is simply
-    // unlabelled and selectable, under the confirmInApp promise.
-    datesLabel: string; // field label above the trigger — "Datos"
+    // unlabelled and selectable, under the estimateFees in-app disclosure.
     datesFrom: string; // "Nuo"
     datesTo: string; // "Iki"
     datesPlaceholder: string; // empty-field text — "Pasirinkite"
@@ -315,12 +319,21 @@ export type Dict = {
     calUnknownRetry: string;
     calUnknownNote: string; // short form, shown under the trigger
     calLoading: string;
-    // rental estimate — a subtotal, never a total (see RentalEstimate in listing-view.ts)
-    estimateRental: (days: string) => string; // row label, e.g. "Nuoma (3 dienos)"
+    // rental estimate — "Iš viso" is rent − discount + the refundable deposit; only
+    // the app-side fees stay out of the sum (see RentalEstimate in listing-view.ts)
+    estimateRental: (parts: { price: string; days: number }) => string; // rent row, "15 € × 5 dienų"; its value column is the full undiscounted sum
     estimateDiscount: (percent: number) => string; // "Nuolaida −20%"
-    estimateDeposit: string; // "Užstatas (grąžinamas)"
-    bookingDepositSuffix: string; // booking-card deposit sub-line, after the amount: "užstatas (grąžinamas po sėkmingos nuomos)"
-    estimateFees: string; // the disclosure: fees + final sum are settled in the app
+    estimateTotal: string; // "Iš viso" — bold row, rent − discount + deposit
+    estimateDeposit: string; // "Užstatas (grąžinamas po nuomos)" — muted row ABOVE the total, summed into it
+    estimateFees: string; // short disclosure: final sum with delivery + fees lands in the app
+    // The estimate's cancellation line — the CancellationNotice for the picked start
+    // date rendered in words (see cancellationNotice in listing-view.ts). `date` is a
+    // pre-localized formatShortDate string, complete with LT's own "d." suffix
+    // ("liepos 15 d." / "July 15") — locales must not append day markers of their own.
+    estimateCancelHours: string; // flexible: restates the 24 h rule, no computed date
+    estimateCancelFree: (date: string) => string; // full refund if cancelled by {date}
+    estimateCancelHalf: (date: string) => string; // 50 % refund if cancelled by {date}
+    estimateCancelNone: string; // every refund window has passed
     // host card
     hostStatRating: string;
     hostStatReviews: string;
@@ -339,11 +352,26 @@ export type Dict = {
     termDepositSub: string;
     durationRange: (min: number, max: number) => string; // rental length, e.g. "1–30 dienų"
     termDurationSub: string;
-    cancellationLabel: (tier: string) => string; // policy tier name
-    termCancelSub: string;
+    // Cancellation copy states the ACTUAL per-tier terms, not the tier's name. The
+    // thresholds (24 h / 5 d / 1–4 d / 14 d) hard-mirror Terms of Use §9 — if the
+    // legal doc changes, every cancellation entry here changes in lockstep (see the
+    // Cancellation policy banner in listing-view.ts).
+    termCancelLabel: string; // fact-card eyebrow above the rule — "Rezervacijos atšaukimo sąlygos"
+    termCancelTitle: (tier: CancellationTier) => string; // fact-card headline: the tier's key rule
+    termCancelDetail: (tier: CancellationTier) => string; // fact-card line under the rule: the tier's remaining nuance
+    trustCancellation: (tier: CancellationTier) => string; // booking-panel trust row one-liner
     // longer-rental discount ladder (Terms section) — subtotal never a total
-    discountsLabel: string; // muted card label, "Nuolaidos ilgesnei nuomai"
-    discountFrom: (minDays: number) => string; // per-tier threshold, "Nuo 7 d."
+    discountsLabel: string; // card title, "Nuolaidos ilgesnei nuomai"
+    discountFrom: (minDays: number) => string; // per-tier threshold, "Nuo 7 dienų"
+    // Tightest per-day unit for the tier cells ("13,50 € / d."); perDayShort above
+    // ("/ diena") is too wide for a 160px cell.
+    perDayAbbr: string;
+    // The ladder's live hint line. Raw numbers, not preformatted strings: the LT
+    // below-hint governs the GENITIVE for the threshold ("nuolaida nuo 3 dienų"),
+    // which nominative-only calDays cannot produce — each locale declines internally.
+    discountsHintIdle: string; // no dates picked
+    discountsHintBelow: (parts: { days: number; minDays: number }) => string;
+    discountsHintActive: (parts: { days: number; percent: number }) => string;
     mobileBookingNote: string;
   };
   common: {

@@ -3,7 +3,15 @@ import { useQuery, useInfiniteQuery, keepPreviousData, skipToken } from "@tansta
 import type { Locale } from "./i18n/config";
 import { API_BASE, MarketplaceApiError, marketplaceFetch } from "./api";
 import { cdnImage } from "./image-hosts";
-import { formatPrice, ownerInitials, type Discount, type Offer, type OfferOwner } from "./listing-view";
+import {
+  cancellationTier,
+  formatPrice,
+  ownerInitials,
+  type CancellationTier,
+  type Discount,
+  type Offer,
+  type OfferOwner,
+} from "./listing-view";
 import { isSyntheticListing, isSyntheticListingParam } from "./listing-url";
 import type { IsoDate } from "./dates";
 
@@ -260,7 +268,7 @@ export type ListingDetail = {
   minDays: number;
   // 0 means "no ceiling on the wire" — treat it as unset, never as "zero days".
   maxDays: number;
-  cancellation: string; // policy tier id ("flexible" | "moderate" | "strict" | …)
+  cancellation: CancellationTier; // absent/unknown on the wire already normalized to "moderate"
   categoryId?: string; // top-level category id (category_path[0]) — similar-items query key
   delivery: ListingDelivery;
   description: string;
@@ -805,7 +813,7 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
     discountTiers: discountTiers(detail),
     minDays: detail.minimum_rental_days ?? 1,
     maxDays: detail.maximum_rental_days ?? 0,
-    cancellation: detail.cancellation_policy ?? "",
+    cancellation: cancellationTier(detail.cancellation_policy),
     categoryId: detail.category_path?.[0],
     delivery: mapDelivery(detail.delivery_methods, locale),
     description: detail.description,

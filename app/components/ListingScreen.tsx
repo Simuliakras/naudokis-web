@@ -66,6 +66,9 @@ export function ListingScreen({ id }: { id: string }) {
     onOpen: () => setDatesArmed(true),
     onRetry: () => availabilityQuery.refetch(),
   };
+  // Derived once for everything outside the booking panel that reacts to the
+  // picked range — today that is the Terms section's discount-tier highlight.
+  const selectedDays = range ? rentalDays(range.start, range.end) : null;
 
   useEffect(() => {
     const footer = footerRef.current;
@@ -217,7 +220,7 @@ export function ListingScreen({ id }: { id: string }) {
         </div>
 
         <div className="nk-detail-grid">
-          <DetailBody listing={listing} />
+          <DetailBody listing={listing} selectedDays={selectedDays} />
           <aside className="nk-reserve">
             <div className="nk-reserve__booking">
               <BookingPanel listing={listing} onReserve={reserve} dates={dates} appPath={appPath} />

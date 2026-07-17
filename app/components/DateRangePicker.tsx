@@ -26,7 +26,7 @@ import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { useSheetDrag } from "@/app/lib/use-sheet-drag";
 import { type Availability } from "@/app/lib/availability";
-import { formatShortDate, rentalDays, type IsoDate } from "@/app/lib/dates";
+import { formatShortDate, type IsoDate } from "@/app/lib/dates";
 import type { Dict } from "@/app/lib/i18n/types";
 import { CalendarPanel, type CalendarCopy, type DateRange } from "./Calendar";
 
@@ -113,18 +113,16 @@ export function DateRangePicker(props: PickerProps) {
     props.onOpen();
   });
 
-  const summary = value
-    ? t.calDays(rentalDays(value.start, value.end))
-    : availability?.status === "unknown"
-      ? t.calUnknownNote
-      : null;
+  // Only the availability-unknown disclosure lives under the trigger — the day
+  // count is already narrated by the estimate's rent row once dates are set.
+  const summary =
+    !value && availability?.status === "unknown" ? t.calUnknownNote : null;
 
   return (
     <div ref={fieldRef} className="nk-cal-field" onBlur={tabOutDismiss(open, dismiss)}>
-      <span className="nk-cal-field__label">{t.datesLabel}</span>
       <button ref={triggerRef} type="button" className={"nk-cal-trigger" + (open ? " is-open" : "")}
         onClick={toggle} aria-haspopup="dialog" aria-expanded={open} aria-label={t.datesTriggerLabel}>
-        <Icon name="Calendar" size={18} stroke={1.9} color="var(--nk-text-2)" />
+        <Icon name="Calendar" size={24} stroke={1.4} color="var(--nk-text-2)" />
         <span className="nk-cal-trigger__cols">
           <Field label={t.datesFrom} value={value?.start} placeholder={t.datesPlaceholder} />
           <span className="nk-cal-trigger__sep" aria-hidden="true" />
@@ -132,8 +130,8 @@ export function DateRangePicker(props: PickerProps) {
         </span>
       </button>
       {summary && (
-        <span className={"nk-cal-summary" + (value ? "" : " is-warn")}>
-          {!value && <Icon name="TriangleAlert" size={13} color="var(--nk-yellow)" />}
+        <span className="nk-cal-summary">
+          <Icon name="TriangleAlert" size={13} color="var(--nk-yellow)" />
           {summary}
         </span>
       )}

@@ -178,7 +178,8 @@ export function formatFullDate(iso: IsoDate, locale: string): string {
     .format(new Date(utcMidnight(iso)));
 }
 
-// Compact date for the picker's two fields: "liepos 15" / "15 July".
+// Compact date for the picker's two fields: "liepos 15 d." / "July 15" — LT's
+// CLDR pattern carries the "d." day marker itself; never append another.
 //
 // `month: "long"`, not "short" — Lithuanian's abbreviated month IS numeric, so a
 // "short" format renders "07-15", which reads as an ambiguous number rather than a

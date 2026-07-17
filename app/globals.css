@@ -1485,12 +1485,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 
 /* ---- Rental date-range picker (booking panel) ----
    Honesty constraint made visual: there is a "booked" state and no "available" one.
-   A day that isn't struck out is simply not-known-to-be-taken — the panel's
-   confirmInApp line carries the rest. Booked is distinguished from a plain past day
+   A day that isn't struck out is simply not-known-to-be-taken — the estimate's
+   in-app note carries the rest. Booked is distinguished from a plain past day
    by a diagonal strike, not by colour alone (WCAG 1.4.1). No new tokens. */
 .nk-cal-field{display:flex;flex-direction:column;gap:7px}
-.nk-cal-field__label{font-family:var(--nk-font-display);font-weight:700;font-size:12.5px;letter-spacing:.07em;
-  text-transform:uppercase;color:var(--nk-text-muted)}
 .nk-cal-trigger{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:10px 16px;cursor:pointer;
   background:var(--nk-input-bg);border:1px solid var(--nk-border);border-radius:var(--nk-r-md);
   transition:border-color .16s var(--nk-ease),background .16s var(--nk-ease)}
@@ -1503,9 +1501,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-cal-trigger__val{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-tertiary);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nk-cal-trigger__val.is-set{color:var(--nk-text);font-weight:500}
+/* only rendered for the availability-unknown warning, hence the warn colour lives
+   on the base class — reintroduce a modifier if a neutral summary ever returns */
 .nk-cal-summary{display:inline-flex;align-items:center;gap:6px;font-family:var(--nk-font-body);font-size:13px;
-  color:var(--nk-text-muted)}
-.nk-cal-summary.is-warn{color:var(--nk-yellow-deep)}
+  color:var(--nk-yellow-deep)}
 
 /* desktop popover — FilterSelect's panel skin, anchored to the field */
 .nk-cal-field{position:relative}
@@ -1613,14 +1612,43 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 @media(max-width:560px){.nk-cal__grid{--nk-cal-day:40px}.nk-cal__day{font-size:15.5px}}
 @media(prefers-reduced-motion:reduce){.nk-cal__day>span,.nk-cal-trigger,.nk-cal__nav{transition:none}}
 
-/* ---- Rental estimate (booking panel, under the date field) ---- */
-.nk-est{display:flex;flex-direction:column;gap:7px;padding:14px 0 0;border-top:1px solid var(--nk-divider)}
+/* ---- Booking-panel rating link ("4,9 · 24" → #atsiliepimai) ----
+   Underline surfaces on hover only; the transparent resting state keeps the
+   panel's price header quiet. */
+.nk-rating-link{text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;
+  transition:text-decoration-color .16s var(--nk-ease)}
+.nk-rating-link:hover{text-decoration-color:var(--nk-text-muted)}
+
+/* ---- Rental estimate (booking panel, under the date field) ----
+   Row order: rent × days at full value, the discount, the refundable deposit in
+   its own band, then the "Iš viso" total (rent − discount + deposit — see
+   RentalEstimate). */
+.nk-est{display:flex;flex-direction:column;gap:7px}
 .nk-est__row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
   font-family:var(--nk-font-body);font-size:14px;color:var(--nk-text-2)}
 .nk-est__row.is-discount{color:var(--nk-green-text)}
 .nk-est__val{font-family:var(--nk-font-body);font-size:14.5px;color:var(--nk-text);white-space:nowrap}
-.nk-est__was{margin-right:7px;color:var(--nk-text-muted);text-decoration:line-through}
 .nk-est__note{font-family:var(--nk-font-body);font-size:12.5px;line-height:17px;color:var(--nk-text-muted)}
+/* The deposit opens its own band: it is refundable — money that comes back when
+   the rental ends well — so a rule separates it from the rent+discount rows and
+   its value stays a shade quieter than the rent row's. */
+.nk-est__row--deposit{margin-top:3px;padding-top:12px;border-top:1px solid var(--nk-divider)}
+.nk-est__row--deposit .nk-est__val{color:var(--nk-text-2)}
+.nk-est__row--total{margin-top:3px;padding-top:12px;border-top:1px solid var(--nk-divider);align-items:center}
+.nk-est__row--total>span:first-child{font-family:var(--nk-font-display);font-weight:700;font-size:15px;color:var(--nk-text)}
+.nk-est__row--total>span:last-child{font-family:var(--nk-font-price);font-weight:700;font-size:20px;color:var(--nk-text)}
+
+/* ---- Trust rows (booking panel, empty state) ----
+   Swapped 1:1 with .nk-est once dates are picked — neither adds its own top
+   padding, the panel's gap spaces both states. Icon color rides on the Icon
+   component's inline style, not here. */
+.nk-trust{display:flex;flex-direction:column;gap:10px}
+.nk-trust__row{display:flex;align-items:flex-start;gap:10px;font-family:var(--nk-font-body);
+  font-size:15px;line-height:20px;color:var(--nk-text-2)}
+.nk-trust__row svg{flex:none;margin-top:2.5px}
+
+/* ---- CTA reassurance line (booking panel, full variant only) ---- */
+.nk-cta-note{font-family:var(--nk-font-body);font-size:12.5px;line-height:17px;color:var(--nk-text-muted);text-align:center}
 
 /* ============================================================
    Price-range filter (dual-thumb slider + min/max EUR inputs)
@@ -1687,14 +1715,38 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-datefilter-panel{display:flex;min-width:0}
 .nk-datefilter-panel .nk-cal-panel{flex:1;min-width:0}
 
-/* ---- Longer-rental discount ladder (Terms section, full-width fact card) ---- */
-.nk-breaks__body{display:flex;flex-direction:column;gap:9px;min-width:0}
-.nk-breaks__label{font-family:var(--nk-font-body);font-size:14px;color:var(--nk-text-muted)}
-.nk-breaks__list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:9px 24px}
-.nk-breaks__tier{display:inline-flex;align-items:baseline;gap:9px}
-.nk-breaks__from{font-family:var(--nk-font-body);font-size:13.5px;color:var(--nk-text-muted)}
-.nk-breaks__price{font-family:var(--nk-font-display);font-weight:700;font-size:15px;color:var(--nk-text);white-space:nowrap}
-.nk-breaks__pct{font-family:var(--nk-font-body);font-size:14px;color:var(--nk-green-text)}
+/* ---- Longer-rental discount ladder (Terms section, full-width fact card) ----
+   Tier cells light up (.is-active) for the break the selected dates earn; the
+   __hint line narrates the same fact. Max 4-up: each cell's minimum is a quarter
+   of the row minus its share of the 10px gaps, floored at 160px so cells wrap to
+   fewer-up on narrow screens. auto-fill (not auto-fit) keeps the unused tracks,
+   so with fewer tiers each cell still caps at a quarter of the row. Mobile
+   compaction rides the .nk-fact !important block below, same as the sibling
+   fact cards. */
+.nk-breaks{display:flex;flex-direction:column;align-items:stretch;gap:14px;
+  padding:var(--nk-card-pad-sm);border-radius:16px;
+  background:var(--nk-surface-glass);border:1px solid var(--nk-border)}
+.nk-breaks__head{display:flex;align-items:center;gap:var(--nk-gap-md)}
+.nk-breaks__headtext{display:flex;flex-direction:column;gap:var(--nk-gap-2xs);min-width:0}
+.nk-breaks__label{font-family:var(--nk-font-display);font-weight:700;font-size:16px;color:var(--nk-text)}
+.nk-breaks__hint{font-family:var(--nk-font-body);font-size:14px;color:var(--nk-text-muted)}
+.nk-breaks__list{list-style:none;margin:0;padding:0;display:grid;gap:10px;
+  grid-template-columns:repeat(auto-fill,minmax(max(160px,25% - 7.5px),1fr))}
+.nk-breaks__tier{display:flex;flex-direction:column;gap:10px;padding:14px 16px;
+  border-radius:14px;border:1px solid var(--nk-border);background:var(--nk-input-bg);
+  transition:border-color .18s var(--nk-ease),background-color .18s var(--nk-ease)}
+.nk-breaks__top{display:flex;align-items:center;gap:7px;min-height:20px}
+.nk-breaks__from{font-family:var(--nk-font-body);font-weight:500;font-size:14.5px;line-height:1;color:var(--nk-text-muted);white-space:nowrap}
+.nk-breaks__pct{margin-left:auto;background:var(--nk-green-tint);color:var(--nk-green-text);
+  border-radius:999px;padding:4px 9px;font-family:var(--nk-font-display);font-weight:700;
+  font-size:12.5px;line-height:1;white-space:nowrap}
+.nk-breaks__prices{display:flex;align-items:baseline;gap:6px;white-space:nowrap}
+.nk-breaks__price{font-family:var(--nk-font-price);font-weight:700;font-size:19px;color:var(--nk-text)}
+.nk-breaks__unit{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-2)}
+.nk-breaks__was{font-family:var(--nk-font-body);font-weight:600;font-size:15px;color:var(--nk-text-muted);text-decoration:line-through}
+.nk-breaks__wasunit{font-weight:400;font-size:13px}
+.nk-breaks__tier.is-active{border-color:var(--nk-purple);background:var(--nk-purple-tag)}
+.nk-breaks__tier.is-active .nk-breaks__from{color:var(--nk-purple-bright)}
 
 /* ---- Gallery lightbox (full-screen photo viewer) ---- */
 .nk-lightbox{position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;
@@ -1887,11 +1939,14 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-hiw-node{position:relative;z-index:2;width:88px;height:88px;border-radius:44px;background:var(--nk-surface);border:1.5px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center}
 .nk-hiw-idx{display:flex;align-items:center;gap:11px;font-family:var(--nk-font-body);font-size:var(--nk-fs-sm);font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--nk-text-muted)}
 .nk-hiw-idx b{font-family:var(--nk-font-display);font-weight:700;font-size:19px}
-.nk-hiw-h{font-family:var(--nk-font-display);font-weight:700;font-size:var(--nk-fs-card);line-height:1.12;color:var(--nk-text);margin:0}
+/* reserve two title rows (2 × 1.12 line-height) so step bodies start on one baseline */
+.nk-hiw-h{font-family:var(--nk-font-display);font-weight:700;font-size:var(--nk-fs-card);line-height:1.12;color:var(--nk-text);margin:0;min-height:2.24em}
 .nk-hiw-p{font-family:var(--nk-font-body);font-size:var(--nk-fs-body);line-height:29px;color:var(--nk-text-muted);margin:0;max-width:32ch}
 @media(max-width:900px){
   .nk-hiw-grid{display:flex;flex-direction:column;gap:20px}
   .nk-hiw-line{display:none}
+  /* stacked steps have no cross-column baseline to align — don't hold blank rows */
+  .nk-hiw-h{min-height:0}
 }
 
 /* hero panel layout (visual skin stays inline in <Hero>) — fluid min-height avoids a forced-tall 2-col on landscape tablets */

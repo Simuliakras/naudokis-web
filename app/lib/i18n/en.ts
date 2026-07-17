@@ -465,6 +465,7 @@ export const en: Dict = {
     backToListings: "Items to rent",
     save: "Save",
     newListingPill: "No reviews yet",
+    noReviewsYet: "No reviews yet",
     noPhotos: "No photos",
     galleryAll: (n) => `All ${n} photos`,
     galleryExpand: "Expand photo",
@@ -474,8 +475,12 @@ export const en: Dict = {
     galleryNext: "Next photo",
     galleryImageError: "Couldn’t load this photo",
     perDayShort: "per day",
-    confirmInApp: "In the app, choose dates and handover, then see fees, deposit, cancellation terms and the total before sending a request.",
-    datesLabel: "Rental dates",
+    // DRAFT — marketing sign-off pending (booking-panel trust rows + CTA note)
+    ratingLinkLabel: ({ rating, count }) =>
+      `Rated ${rating} out of 5, ${count} review${count === 1 ? "" : "s"} — go to reviews`,
+    trustDepositRest: "deposit, refunded after the rental",
+    reserveNote:
+      "You won't be charged yet — the amount is only reserved until the owner confirms",
     datesFrom: "From",
     datesTo: "To",
     datesPlaceholder: "Choose",
@@ -518,11 +523,16 @@ export const en: Dict = {
     calUnknownRetry: "Try again",
     calUnknownNote: "Availability not checked",
     calLoading: "Checking availability…",
-    estimateRental: (days) => `Rental (${days})`,
+    estimateRental: ({ price, days }) =>
+      `${price} × ${days} day${days === 1 ? "" : "s"}`,
     estimateDiscount: (percent) => `Longer-rental discount −${percent}%`,
-    estimateDeposit: "Deposit (refundable)",
-    bookingDepositSuffix: "deposit (refundable after a successful rental)",
-    estimateFees: "This is a preliminary rental amount. Delivery, applicable fees, deposit, cancellation terms and the final total are shown in the app before you send a request.",
+    estimateTotal: "Total",
+    estimateDeposit: "Deposit (refunded after the rental)",
+    estimateFees: "The final total with delivery and fees will be shown in the app.",
+    estimateCancelHours: "Free cancellation until 24 h before the rental starts",
+    estimateCancelFree: (date) => `Free cancellation until ${date}`,
+    estimateCancelHalf: (date) => `Cancel by ${date} for a 50% refund`,
+    estimateCancelNone: "The rental price is non-refundable if cancelled",
     hostStatRating: "Rating",
     hostStatReviews: "Reviews",
     hostStatListings: "Items",
@@ -549,15 +559,30 @@ export const en: Dict = {
         ? `From ${min} day${min === 1 ? "" : "s"}`
         : `${min}–${max} days`,
     termDurationSub: "Rental period",
-    cancellationLabel: (tier) => {
-      if (tier === "flexible") return "Flexible cancellation policy";
-      if (tier === "moderate") return "Moderate cancellation policy";
-      if (tier === "strict") return "Strict cancellation policy";
-      return "Standard cancellation policy";
+    termCancelLabel: "Cancellation terms",
+    termCancelTitle: (tier) => {
+      if (tier === "flexible") return "Free cancellation until 24 h before";
+      if (tier === "strict") return "50% refund if cancelled 14+ days ahead";
+      return "Free cancellation up to 5 days before";
     },
-    termCancelSub: "Cancellation terms",
+    termCancelDetail: (tier) => {
+      if (tier === "moderate") return "50% refund when 1–4 days remain";
+      return "No refund after that";
+    },
+    trustCancellation: (tier) => {
+      if (tier === "flexible")
+        return "Free cancellation until 24 h before the rental";
+      if (tier === "strict") return "50% refund if cancelled 14+ days ahead";
+      return "Free cancellation up to 5 days before the rental";
+    },
     discountsLabel: "Longer-rental discounts",
     discountFrom: (n) => `From ${n} day${n === 1 ? "" : "s"}`,
+    perDayAbbr: "/ day",
+    discountsHintIdle: "Applied automatically based on rental length",
+    discountsHintBelow: ({ days, minDays }) =>
+      `${days} day${days === 1 ? "" : "s"} selected — discounts start at ${minDays} days`,
+    discountsHintActive: ({ days, percent }) =>
+      `Your ${days}-day rental gets −${percent}% off`,
     mobileBookingNote: "Final total in the app",
   },
   common: {
