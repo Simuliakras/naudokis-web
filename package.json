@@ -15,6 +15,7 @@
     "legal:json": "node scripts/legal-md-to-json.mjs",
     "legal:shots": "node scripts/legal-audit-shots.mjs",
     "gen:qr": "node scripts/generate-install-qr.mjs",
+    "gen:favicon": "node scripts/generate-favicon.mjs",
     "verify:app-links": "node scripts/verify-app-links.mjs",
     "verify:app-links:static": "node scripts/verify-app-links.mjs --static",
     "verify:release": "node scripts/verify-release.mjs"

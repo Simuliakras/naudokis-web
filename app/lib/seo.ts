@@ -4,7 +4,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { defaultLocale, isLocale, localePrefix, type Locale } from "@/app/lib/i18n/config";
-import { CONTACT_EMAIL, CONTACT_PHONE, SITE_ORIGIN, SOCIAL_LINKS, APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
+import { CONTACT_EMAIL, CONTACT_PHONE, SITE_ORIGIN, SOCIAL_LINKS, APP_STORE_URL, PLAY_STORE_URL, LEGAL_NAME, COMPANY_CODE } from "@/app/lib/contact";
 import type { FaqItem } from "@/app/lib/i18n/types";
 import { LT_CITIES, type City } from "@/app/lib/cities";
 import type { Category } from "@/app/lib/categories";
@@ -105,6 +105,28 @@ export function resolveListingLanding({
   };
 }
 
+// Search-engine ownership proof, read from the environment so no verification
+// token is ever committed. Returns undefined when nothing is configured, which
+// keeps the tag out of the document entirely — an unconfigured build renders
+// byte-identical HTML. Server-only vars (not NEXT_PUBLIC_): these are read
+// during metadata generation, so there is no reason to inline them into the
+// client bundle.
+export function verificationMeta(): Metadata["verification"] {
+  const google = process.env.GOOGLE_SITE_VERIFICATION;
+  const bing = process.env.BING_SITE_VERIFICATION;
+  if (!google && !bing) {
+    return undefined;
+  }
+  const verification: NonNullable<Metadata["verification"]> = {};
+  if (google) {
+    verification.google = google;
+  }
+  if (bing) {
+    verification.other = { "msvalidate.01": bing };
+  }
+  return verification;
+}
+
 export function pageMetadata({
   locale, path, title, description, ogLocale, ogImageAlt, image, ltOnly,
 }: {
@@ -184,8 +206,9 @@ export function organizationJsonLd(): JsonLdNode {
     "@type": "Organization",
     "@id": `${SITE_URL}/#organization`,
     name: "Naudokis",
-    legalName: "MB Naudokis",
-    identifier: "307423504",
+    // Same constants the footer renders — see LEGAL_NAME in contact.ts.
+    legalName: LEGAL_NAME,
+    identifier: COMPANY_CODE,
     url: SITE_URL,
     logo: `${SITE_URL}/naudokis/naudokis-logo.png`,
     // Languages the brand operates in (correct Organization property; `inLanguage`

@@ -429,6 +429,7 @@ export const en: Dict = {
       { label: "Account deletion", href: "/paskyros-trynimas" },
     ],
     copyright: "© 2026 Naudokis.lt. All rights reserved.",
+    company: ({ legalName, code }) => `${legalName} · Company code ${code}`,
     socialLabel: "Social media",
   },
   detail: {

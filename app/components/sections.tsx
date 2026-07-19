@@ -30,6 +30,7 @@ import {
   SectionEmptyGrid,
 } from "./cards";
 import { useI18n } from "./I18nProvider";
+import { useMeasuredColumns } from "./useMeasuredColumns";
 import {
   closeListbox,
   focusListboxSelection,
@@ -539,9 +540,14 @@ export function Offers({ data, categories }: { data: Offer[]; categories: Catego
   const { locale, dict } = useI18n();
   const router = useRouter();
   const t = dict.offers;
+  // nk-grid-4 is a fluid auto-fill grid (no fixed column breakpoints besides
+  // mobile), so "two rows" isn't a constant count — it's 2x however many
+  // columns actually render at the current width. Measure it live rather than
+  // hardcoding a count that would leave an orphaned partial row at most widths.
+  const [gridRef, columns] = useMeasuredColumns<HTMLDivElement>();
   // Photo safeguard: surface photo-bearing listings in the flagship "Popular
   // items" band so it isn't a row of category-icon placeholders.
-  const list = photoFirst(data).slice(0, 5);
+  const list = photoFirst(data).slice(0, columns * 2);
   return (
     <Section id="skelbimai" contained top="head">
       <SectionHead
@@ -560,7 +566,7 @@ export function Offers({ data, categories }: { data: Offer[]; categories: Catego
         }
       />
       {list.length ? (
-        <div className="nk-grid-4 nk-reveal-grid">
+        <div className="nk-grid-4 nk-reveal-grid" ref={gridRef}>
           {list.map((o) => (
             <OfferCard
               key={o.id}

@@ -47,7 +47,7 @@ export function Blocks({
             const m = b.text.match(/^(\d+)\.\s*(.*)$/);
             return (
               <h2 key={i} id={b.id} className="nk-lg-h2">
-                {m && <span className="nk-lg-h2__num">{m[1]}</span>}
+                {m && <span className="nk-lg-h2__num">{m[1]}.</span>}
                 <span><Inline text={m ? m[2] : b.text} locale={locale} /></span>
                 <a href={"#" + b.id} className="nk-lg-anchor" aria-label={anchorLabel}>
                   <Icon name="hash" size={16} />

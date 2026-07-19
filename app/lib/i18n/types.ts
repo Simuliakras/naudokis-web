@@ -217,6 +217,11 @@ export type Dict = {
     helpHeading: string;
     help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
     copyright: string;
+    // Registered trading entity, shown next to the copyright. Takes the legal
+    // name and company code as arguments — the values are brand constants in
+    // contact.ts (shared with the Organization JSON-LD), so only the label and
+    // its word order are translated here.
+    company: (parts: { legalName: string; code: string }) => string;
     socialLabel: string; // aria-label for the social-links group
   };
   detail: {

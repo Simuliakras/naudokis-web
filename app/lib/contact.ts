@@ -1,6 +1,15 @@
 // Single source of truth for Naudokis contact details. These are brand
 // constants (not translatable copy), so they live here rather than in the
 // dictionaries — shared by the marketing footer and the legal pages.
+
+// Registered trading entity. Published two ways that must never disagree: the
+// Organization JSON-LD (legalName / identifier, app/lib/seo.ts) and the visible
+// footer line. Structured data has to mirror what the page states, and an
+// operating entity is exactly the sort of claim that must not drift between the
+// two — hence one definition rather than a literal in each place.
+export const LEGAL_NAME = "MB Naudokis";
+export const COMPANY_CODE = "307423504";
+
 export const CONTACT_EMAIL = "info@naudokis.lt";
 export const CONTACT_PRIVACY_EMAIL = "privacy@naudokis.lt";
 export const CONTACT_PHONE = "+370 643 49559";

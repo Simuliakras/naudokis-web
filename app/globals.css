@@ -1082,6 +1082,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
   padding-block:26px;border-top:1px solid var(--nk-border-soft)}
 .nk-footer__legal{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-muted)}
+/* registered entity, under the copyright — a quieter second line, since it is a
+   disclosure rather than something a visitor is looking for */
+.nk-footer__company{display:block;margin-top:4px;font-size:13px}
 /* trailing cluster: privacy control | payment marks */
 .nk-footer__meta{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .nk-footer__sep{flex:none;width:1px;height:20px;background:var(--nk-border-soft)}
@@ -2004,6 +2007,11 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    narrower context (e.g. the detail-page similar rail) gets fewer, full-size
    cards instead of viewport-ladder slivers. ≤560 is the Quiet Luxe 2-up rule. */
 .nk-grid-4{display:grid;grid-template-columns:repeat(auto-fill,minmax(max(var(--nk-offer-min),18%),1fr));gap:var(--nk-grid-gap);width:100%}
+/* Home band only: cards get a visibly-defined edge (default --nk-offer border
+   is a near-invisible 6% wash) so two stacked rows read as a grid rather than
+   a blur of photos. Scoped to #skelbimai — the feed grid and the similar-items
+   rail share .nk-offer/.nk-grid-4 and keep the quieter default. */
+#skelbimai .nk-offer{border-color:var(--nk-border-strong)}
 
 @media(max-width:1024px){
   .nk-hero-panel{grid-template-columns:1fr;padding:36px;min-height:0;gap:32px}
@@ -2784,8 +2792,35 @@ svg.nk-ico{stroke-width:1.75}
    top-4 on desktop, header-only ≤640px. Search-filtered rows use [hidden] instead;
    the two never combine (an active term removes .is-collapsed). */
 .nk-dircard__subs{position:relative;z-index:1;list-style:none;margin:12px 0 0;padding:0;
-  display:flex;flex-direction:column}
+  display:flex;flex-direction:column;transition:margin-top var(--nk-dur-med) var(--nk-ease)}
 .nk-dircard__subs.is-collapsed>li:nth-child(n+5){display:none}
+/* Expand/collapse motion: rows grow/shrink (height 0↔auto, Chromium via
+   interpolate-size — min-height:0 lifts the flex-item content floor that would
+   otherwise clamp the animated height) and cross-fade, with the fade offset so
+   rows are near-transparent while mid-animation heights make them overlap — no
+   overflow clip, which would cut the 3px-offset focus ring on the sub links.
+   Browsers without interpolate-size keep the fade-in and snap the height.
+   The collapse direction holds display until the shrink ends (allow-discrete);
+   that transition lives ONLY on the .is-collapsed rules, and it is
+   @supports-gated: without an animating height, held-open rows would pile onto
+   one line while fading.
+   Rows enter from display:none, so @starting-style is what arms the animation —
+   and its selectors decide which reveals animate. Two paths, deliberately split:
+   the expander only ever reveals n+5 (all rows in the ≤640px header-only
+   variant), while a search term reveals rows at any position. Scoping the second
+   path behind .is-filtering keeps them uniform while filtering AND keeps the
+   top-4 unarmed at first paint — those ARE rendered on desktop load, so a bare
+   >li rule would animate every visible row on every page load and cost CLS. */
+.nk-dircard__subs>li{interpolate-size:allow-keywords;min-height:0;
+  transition:height var(--nk-dur-med) var(--nk-ease),opacity .18s ease .08s}
+@starting-style{
+  .nk-dircard__subs>li:nth-child(n+5){height:0;opacity:0}
+  .nk-dircard__subs.is-filtering>li{height:0;opacity:0}
+}
+@supports (interpolate-size: allow-keywords){
+  .nk-dircard__subs.is-collapsed>li:nth-child(n+5){height:0;opacity:0;
+    transition:height var(--nk-dur-med) var(--nk-ease),opacity .18s ease,display var(--nk-dur-med) allow-discrete}
+}
 .nk-dircard__sub{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:40px;
   padding:8px 10px;margin-inline:-10px;border-radius:10px;
   font-family:var(--nk-font-body);font-size:15.5px;line-height:20px;color:var(--nk-text-2);text-decoration:none;
@@ -2801,6 +2836,10 @@ svg.nk-ico{stroke-width:1.75}
    showing), "Dar N" below (header-only). --sm marks ≤4-sub cards, whose button
    only exists for the mobile header-only collapse. */
 .nk-dircard__more--sm,.nk-dircard__more-all{display:none}
+/* single ChevronDown glyph: points down collapsed (more below), animates a
+   half-turn to up when expanded — rotation keys off aria-expanded */
+.nk-dircard__more svg{transition:transform var(--nk-dur-fast) var(--nk-ease)}
+.nk-dircard__more[aria-expanded="true"] svg{transform:rotate(180deg)}
 /* skeleton rides .nk-skel for the shimmer; height ≈ header + 4 rows + expander */
 .nk-dircard-skel{height:304px;border-radius:var(--nk-r-card)}
 /* "Populiaru dabar" pills — .nk-pillctl supplies the rest/hover skin (layout
@@ -2811,6 +2850,15 @@ svg.nk-ico{stroke-width:1.75}
   .nk-dircard__subs.is-collapsed>li{display:none}
   /* header-only card: the zero-height list must not leave a dangling 12px gap */
   .nk-dircard__subs.is-collapsed{margin-top:0}
+  /* header-only collapse hides EVERY row, so they all enter animated (safe at
+     this width: collapsed-by-default means none are rendered at first paint) */
+  @starting-style{
+    .nk-dircard__subs>li{height:0;opacity:0}
+  }
+  @supports (interpolate-size: allow-keywords){
+    .nk-dircard__subs.is-collapsed>li{height:0;opacity:0;
+      transition:height var(--nk-dur-med) var(--nk-ease),opacity .18s ease,display var(--nk-dur-med) allow-discrete}
+  }
   .nk-dircard__more--sm{display:flex}
   .nk-dircard__more-rest{display:none}
   .nk-dircard__more-all{display:inline}

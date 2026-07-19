@@ -163,7 +163,7 @@ export function ChipLinkRow({
   const pill = variant === "pill";
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--nk-gap-sm)", ...style }}>
-      {label && <span style={{ width: "100%", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12.5, letterSpacing: ".07em", textTransform: "uppercase", color: "var(--nk-text-muted)" }}>{label}</span>}
+      {label && <span style={{ width: "100%", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12.5, letterSpacing: ".07em", textTransform: "uppercase", color: "var(--nk-yellow)" }}>{label}</span>}
       {links.map((link) => (
         <Link key={link.href} href={link.href} className={pill ? "nk-pillctl nk-pillrow__pill" : "nk-fchip nk-fchip--link"}>
           {pill && link.icon && <Icon name={link.icon} size={15} stroke={2} color="var(--nk-purple-hover)" />}

@@ -2,16 +2,18 @@
 // heading and a row of glass cards (centered yellow-tint icon disk, title, body).
 // Presentational (no directive, no hooks) so it renders in both the home server
 // tree and the "Kaip tai veikia" client tree; each call site passes its own copy.
+import type React from "react";
 import { Icon, type IconName, Pattern } from "./visual";
 import { SectionHead } from "./headers";
 
-export function FeatureBand({ eyebrow, title, items }: {
+export function FeatureBand({ eyebrow, title, items, style }: {
   eyebrow: string;
   title: string;
   items: readonly { icon: IconName; title: string; body: string }[];
+  style?: React.CSSProperties;
 }) {
   return (
-    <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden" }}>
+    <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden", ...style }}>
       <Pattern name="section-pattern" className="nk-brand-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
       <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y)" }}>
         {/* the page's strongest trust content gets the sitewide eyebrow+H2 anatomy

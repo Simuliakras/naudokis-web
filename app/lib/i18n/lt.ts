@@ -484,6 +484,7 @@ export const lt: Dict = {
       { label: "Paskyros ištrynimas", href: "/paskyros-trynimas" },
     ],
     copyright: "© 2026 Naudokis.lt. Visos teisės saugomos.",
+    company: ({ legalName, code }) => `${legalName} · Įmonės kodas ${code}`,
     socialLabel: "Socialiniai tinklai",
   },
   detail: {
@@ -505,7 +506,8 @@ export const lt: Dict = {
     shareCopied: "Nuoroda nukopijuota",
     shareFailed: "Nepavyko bendrinti nuorodos. Bandykite dar kartą.",
     verifiedOwnerPill: "Tapatybė patvirtinta",
-    galleryMore: (n) => `+${n} ${ltWord(n, "nuotrauka", "nuotraukos", "nuotraukų")}`,
+    galleryMore: (n) =>
+      `+${n} ${ltWord(n, "nuotrauka", "nuotraukos", "nuotraukų")}`,
     descHeading: "Aprašymas",
     descOriginalNote: "Aprašymą savininkas pateikė originalo kalba.",
     descMore: "Rodyti daugiau",
@@ -588,7 +590,9 @@ export const lt: Dict = {
         max > 0
           ? `Nuoma nuo ${min} iki ${ltDaysGen(max)}`
           : `Trumpiausia nuoma — ${ltDays(min)}`;
-      return discountMin !== null ? `${base} · nuo ${discountMin} d. pigiau` : base;
+      return discountMin !== null
+        ? `${base} · nuo ${discountMin} d. pigiau`
+        : base;
     },
     calPopSubStart: ({ start, max }) =>
       max > 0 ? `Nuo ${start} · nuoma iki ${ltDaysGen(max)}` : `Nuo ${start}`,
@@ -702,7 +706,8 @@ export const lt: Dict = {
     countLabel: (cats, subs) =>
       `${cats} ${ltWord(cats, "kategorija", "kategorijos", "kategorijų")} · ${subs} ${ltWord(subs, "pogrupis", "pogrupiai", "pogrupių")}`,
     subCount: (n) => `${n} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupių")}`,
-    moreCount: (n) => `Dar ${n} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupių")}`,
+    moreCount: (n) =>
+      `Dar ${n} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupių")}`,
     showLess: "Rodyti mažiau",
     popularHeading: "Populiaru dabar",
     allListingsLabel: (title) => `Visi „${title}“ skelbimai`,
@@ -772,8 +777,8 @@ export const lt: Dict = {
     clear: "Išvalyti",
     searchPlaceholder: "Ką norite išsinuomoti?",
     searchLabel: "Ieškoti nuomojamų daiktų",
-    sortLabel: "Rūšiuoti",
-    sortNewest: "Naujausi pirmiausia",
+    sortLabel: "Rikiuoti",
+    sortNewest: "Naujausi",
     sortPriceAsc: "Mažiausia kaina",
     sortPriceDesc: "Didžiausia kaina",
     sortRatingBest: "Geriausiai įvertinti",

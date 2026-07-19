@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import { pageMetadata, requireLocale, breadcrumbJsonLd } from "@/app/lib/seo";
+import { pageMetadata, requireLocale, breadcrumbJsonLd, NOINDEX_FOLLOW } from "@/app/lib/seo";
 import { InviteScreen } from "@/app/components/InviteScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 import { QueryProvider } from "@/app/providers";
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/invite">):
       locale, path: "/invite", title: t.meta.title, description: t.meta.description,
       ogLocale: meta.ogLocale, ogImageAlt: meta.ogImageAlt,
     }),
-    robots: { index: false, follow: true },
+    robots: NOINDEX_FOLLOW,
   };
 }
 

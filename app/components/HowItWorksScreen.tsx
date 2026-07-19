@@ -130,7 +130,7 @@ export function HowItWorksScreen() {
           </section>
 
           {/* TRUST STRIP */}
-          <FeatureBand eyebrow={t.trustEyebrow} title={t.trustTitle} items={t.trust} />
+          <FeatureBand eyebrow={t.trustEyebrow} title={t.trustTitle} items={t.trust} style={{ marginBottom: "var(--nk-section-y)" }} />
 
           {/* CTA (green) */}
           <AppCtaBanner eyebrow={t.ctaEyebrow} title={data.ctaTitle} body={data.ctaBody} phoneAlt={t.ctaPhoneAlt} placement="hiw_cta" />

@@ -46,7 +46,7 @@
 .nk-lg-crumbs{ padding:clamp(22px,3vw,36px) 0 0; }
 .nk-lg-dochead{ padding:6px 0 0; }
 .nk-lg-title{ font-family:var(--nk-font-display); font-weight:700; letter-spacing:0;
-  color:var(--nk-text); margin:0; font-size:clamp(30px,4.6vw,50px); line-height:1.05; max-width:26ch;
+  color:var(--nk-text); margin:0; font-size:var(--nk-fs-h1); line-height:1.05; max-width:36ch;
   overflow-wrap:anywhere; text-wrap:balance; }
 .nk-lg-intro{ font-family:var(--nk-font-body); font-size:clamp(16px,1.5vw,19px); line-height:1.7;
   color:var(--nk-text-2); margin:20px 0 0; max-width:62ch; }
@@ -85,8 +85,7 @@
   font-family:var(--nk-font-body); font-size:13.5px; line-height:1.4; transition:color .15s, border-color .15s; }
 .nk-lg-toc__list a:hover{ color:var(--nk-text); }
 .nk-lg-toc__list a.is-active{ color:var(--nk-text); border-left-color:var(--nk-purple); }
-.nk-lg-toc__num{ color:var(--nk-text-tertiary); font-size:12px; min-width:1.4em; font-variant-numeric:tabular-nums; }
-.nk-lg-toc__list a.is-active .nk-lg-toc__num{ color:var(--nk-purple-light); }
+.nk-lg-toc__num{ color:var(--nk-text); font-size:12px; min-width:1.4em; font-variant-numeric:tabular-nums; }
 
 /* article body typography */
 .nk-lg-article{ max-width:var(--lg-read); min-width:0; }
@@ -102,7 +101,7 @@
 @media (hover:none){ .nk-lg-anchor{ opacity:.5; } }
 .nk-lg-h2:first-child{ margin-top:6px; }
 .nk-lg-h2__num{ font-family:var(--nk-font-body); font-weight:700; font-size:1.2em;
-  color:var(--nk-purple-light); font-variant-numeric:tabular-nums; flex:none; line-height:1.18; }
+  color:var(--nk-text); font-variant-numeric:tabular-nums; flex:none; line-height:1.18; }
 /* The heading text is a flex child; without min-width:0 its min-content (the
    longest Lithuanian word) can't shrink and overflows the narrow-column measure. */
 .nk-lg-h2 > span:not(.nk-lg-h2__num){ min-width:0; overflow-wrap:anywhere; text-wrap:balance; }

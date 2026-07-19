@@ -43,7 +43,7 @@ export function TocSidebar({ toc, heading }: { toc: TocItem[]; heading: string }
               className={s.id === activeId ? "is-active" : ""}
               onClick={(e) => { e.preventDefault(); smoothScrollTo(s.id); }}
             >
-              {s.num && <span className="nk-lg-toc__num">{s.num}</span>}
+              {s.num && <span className="nk-lg-toc__num">{s.num}.</span>}
               <span>{s.label}</span>
             </a>
           </li>
@@ -126,7 +126,7 @@ export function LegalChrome({
               className={s.id === activeId ? "is-active" : ""}
               onClick={(e) => { e.preventDefault(); onDrawerLink(s.id); }}
             >
-              {s.num && <span className="nk-lg-toc__num">{s.num}</span>}<span>{s.label}</span>
+              {s.num && <span className="nk-lg-toc__num">{s.num}.</span>}<span>{s.label}</span>
             </a>
           ))}
         </nav>

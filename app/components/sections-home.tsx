@@ -15,7 +15,7 @@ import { SearchBar, HeroOwnerCta } from "./HeroSearch";
 import { AppCtaBanner } from "./AppCtaBanner";
 import { FeatureBand } from "./FeatureBand";
 import { PrivacyChoices } from "./PrivacyChoices";
-import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, SOCIAL_PROFILES } from "@/app/lib/contact";
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, SOCIAL_PROFILES, LEGAL_NAME, COMPANY_CODE } from "@/app/lib/contact";
 import { LT_CITIES } from "@/app/lib/cities";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
@@ -171,7 +171,14 @@ export function Footer({ locale }: { locale: Locale }) {
         </div>
 
         <div className="nk-footer__bottom">
-          <span className="nk-footer__legal">{t.copyright}</span>
+          {/* Copyright + the registered entity. The trading entity is a factual
+              disclosure the Organization JSON-LD already publishes; stating it
+              here keeps the structured data mirroring visible content, and is
+              what an EU marketplace visitor should be able to read directly. */}
+          <span className="nk-footer__legal">
+            {t.copyright}
+            <span className="nk-footer__company">{t.company({ legalName: LEGAL_NAME, code: COMPANY_CODE })}</span>
+          </span>
           {/* Privacy control and payment marks read as one trailing cluster, split by a
               hairline: both answer "what does this site do with me / my money", and the
               copyright keeps the opposite edge to itself. */}

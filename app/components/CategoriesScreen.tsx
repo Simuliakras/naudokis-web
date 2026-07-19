@@ -83,7 +83,7 @@ export function CategoriesScreen() {
           {/* Quick-access rail into the highest-traffic subcategory landings;
               hidden while a term is active so filter results start at the grid. */}
           {!searching && popular.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-10)" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-20)" }}>
               <span className="nk-eyebrow" style={{ fontSize: 13 }}>{t.popularHeading}</span>
               <ChipLinkRow
                 variant="pill"
@@ -157,6 +157,11 @@ function DirectoryCard({
   const listId = useId();
   const landing = listingLandingHref({ category: parent.id, locale });
   const collapsed = !searching && !expanded;
+  // Three mutually exclusive list states (collapsed is false whenever searching,
+  // so the two markers can never co-occur). `is-filtering` exists purely for the
+  // entry animation: it lets @starting-style treat a row revealed by the search
+  // the same as any other, without arming the top-4 rows at first paint.
+  const listState = collapsed ? " is-collapsed" : searching ? " is-filtering" : "";
 
   return (
     <section className="nk-dircard" data-cat={parent.id} aria-label={parent.title}>
@@ -173,7 +178,7 @@ function DirectoryCard({
         </Link>
       </div>
       {subs.length > 0 && (
-        <ul id={listId} className={collapsed ? "nk-dircard__subs is-collapsed" : "nk-dircard__subs"}>
+        <ul id={listId} className={`nk-dircard__subs${listState}`}>
           {subs.map((sub) => (
             <li key={sub.id} hidden={visibleSubIds ? !visibleSubIds.has(sub.id) : false}>
               <Link className="nk-dircard__sub" href={listingLandingHref({ category: parent.id, subcategory: sub.id, locale })}>
@@ -197,7 +202,8 @@ function DirectoryCard({
               <span className="nk-dircard__more-all">{t.moreCount(subs.length)}</span>
             </>
           )}
-          <Icon name={expanded ? "ChevronDown" : "ChevronRight"} size={14} stroke={2.2} />
+          {/* one glyph, rotated by CSS off aria-expanded, so the turn animates */}
+          <Icon name="ChevronDown" size={14} stroke={2.2} />
         </button>
       )}
     </section>

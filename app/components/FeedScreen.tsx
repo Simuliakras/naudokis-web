@@ -561,9 +561,9 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
                 {/* Both left-cluster panels anchor to their triggers' left edges;
                     only the right-edge sort control needs align="right". */}
                 <FilterSelect icon="LayoutGrid" label={t.categoryLabel} value={params.cat} defaultValue="" options={catOptions} onChange={(v) => setParams({ cat: v })} />
+                <DateRangeFilterControl value={dateRange} onChange={(r) => setParams({ dates: serializeDatesParam(r) })} />
                 <FilterSelect icon="MapPin" label={t.cityLabel} value={params.city} defaultValue="" options={cityOptions} onChange={(v) => setParams({ city: v })} />
                 <PriceRangeControl value={priceRange} onChange={(r) => setParams({ price: serializePriceParam(r) })} />
-                <DateRangeFilterControl value={dateRange} onChange={(r) => setParams({ dates: serializeDatesParam(r) })} />
                 <Toggle icon="Truck" on={params.delivery} onChange={(on) => setParams({ delivery: on })}>{t.deliveryToggle}</Toggle>
                 {/* ON for "none" AND for a deep-linked ceiling (labelled with it) —
                     like the price/date pills, the trigger wears the active state.
@@ -956,22 +956,22 @@ function FeedFilterSheet({
           <h2 className="nk-filtersheet__title">{title}</h2>
           <CloseButton ref={closeRef} onClick={onClose} label={closeLabel} />
         </div>
-        {/* Section order mirrors the desktop toolbar (category → city → price →
-            delivery), leading with the decision-critical dimensions; sort — a
-            presentation control, not a filter — goes last instead of eating the
+        {/* Section order mirrors the desktop toolbar (category → date → city →
+            price → delivery), leading with the decision-critical dimensions; sort —
+            a presentation control, not a filter — goes last instead of eating the
             first screen. */}
         <FilterSheetGroup label={categoryLabel} value={categoryValue} options={categoryOptions} onChange={onCategory} />
-        <FilterSheetGroup label={cityLabel} value={cityValue} options={cityOptions} onChange={onCity} />
-        {/* Price is a range, not a radiogroup — render the dual-thumb panel inline
+        {/* Dates are a range, not a radiogroup — render the dual-thumb panel inline
             (no nested layer inside the sheet's own scroll container). */}
-        <div className="nk-filtersheet__group">
-          <span className="nk-filtersheet__label">{priceLabel}</span>
-          <PriceRangePanel value={priceRange} onChange={onPrice} variant="inline" />
-        </div>
-        {/* Dates are a range too — same inline treatment as price. */}
         <div className="nk-filtersheet__group">
           <span className="nk-filtersheet__label">{dateLabel}</span>
           <DateRangeFilterPanel value={dateRange} onChange={onDate} variant="inline" />
+        </div>
+        <FilterSheetGroup label={cityLabel} value={cityValue} options={cityOptions} onChange={onCity} />
+        {/* Price is a range too — same inline treatment as dates. */}
+        <div className="nk-filtersheet__group">
+          <span className="nk-filtersheet__label">{priceLabel}</span>
+          <PriceRangePanel value={priceRange} onChange={onPrice} variant="inline" />
         </div>
         <div className="nk-filtersheet__group">
           <Toggle icon="Truck" on={delivery} onChange={onDelivery}>{deliveryLabel}</Toggle>
