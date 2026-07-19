@@ -9,7 +9,6 @@
 //
 // listings.ts re-exports all of this, so existing `from "@/app/lib/listings"` imports
 // keep working; components that need only the view layer should import it from here.
-import { addDays, type IsoDate } from "./dates";
 import type { Locale } from "./i18n/config";
 
 export type Offer = {
@@ -66,8 +65,7 @@ export function ownerInitials(name: string): string {
 }
 
 // One of a listing's long-rental price breaks ("−20% from 7 days"). The detail page's
-// rental estimate and discount ladder consume these — see applicableDiscount and
-// discountTierViews below.
+// discount ladder consumes these — see applicableDiscount and discountTierViews below.
 export type Discount = {
   percent: number;
   minDays: number;
@@ -98,90 +96,36 @@ export function applicableDiscount(tiers: Discount[], days: number): Discount | 
 }
 
 // A tier as shown on the detail page's discount ladder: the threshold, the percent
-// off, and the effective discounted per-day price. Same rounding as the estimate.
+// off, and the effective discounted per-day price.
 export type DiscountTierView = {
   percent: number;
   minDays: number;
   perDay: string; // effective discounted per-day rate, formatted for the locale
 };
 
-// The advertised ladder for the detail page: every genuine longer-rental break
-// (minDays >= 2 — a break that applies from day one isn't a break, it's just the
-// price), cheapest-threshold first, each with its effective per-day price. Never sums
-// days — there is no total here.
+// The tiers a listing may ADVERTISE as longer-rental breaks, cheapest threshold
+// first: percent > 0 (the wire strips these already — kept as a guard) and
+// minDays >= 2 — a break that applies from day one isn't a break, it's just the
+// price. The single source of that rule for the Terms ladder AND the date
+// picker's "cheaper from N days" teaser, so the two surfaces can never disagree.
+export function advertisedTiers(tiers: Discount[]): Discount[] {
+  return tiers
+    .filter((tier) => tier.percent > 0 && tier.minDays >= 2)
+    .sort((a, b) => a.minDays - b.minDays);
+}
+
+// The advertised ladder for the detail page: each break with its effective
+// per-day price. Never sums days — there is no total here.
 export function discountTierViews(
   tiers: Discount[],
   pricePerDayCents: number,
   locale: Locale,
 ): DiscountTierView[] {
-  return tiers
-    .filter((tier) => tier.percent > 0 && tier.minDays >= 2)
-    .sort((a, b) => a.minDays - b.minDays)
-    .map((tier) => ({
-      percent: tier.percent,
-      minDays: tier.minDays,
-      perDay: formatPrice(Math.round(pricePerDayCents * (1 - tier.percent / 100)), locale),
-    }));
-}
-
-/* ---------------- The rental estimate ----------------
-   What the bridge site can honestly compute for a chosen date range — and nothing
-   more.
-
-   The panel's "Iš viso" row is `total`: the rent minus the owner's advertised
-   price break, plus the listing's deposit — every euro amount already on this
-   page, and nothing else. The deposit is itemized above the total and folded in
-   (2026-07 user decision — it is refundable, but it is money the renter puts
-   down). The app's service fees stay OUT, because this site cannot see them:
-   the copy right under the row says so in as many words
-   (dict.detail.estimateFees, dict.offers.interruptBody) — the final amount with
-   delivery and fees lands in the app. */
-export type RentalEstimate = {
-  days: number;
-  // days × per-day price, before any break — the rent row's face value. Equal to
-  // rentalSubtotal when no discount applies.
-  fullSubtotalCents: number;
-  fullSubtotal: string;
-  // The rental minus the applied break ONLY — never the deposit, never fees.
-  rentalSubtotalCents: number;
-  rentalSubtotal: string;
-  discount?: Discount; // the tier actually applied, if any
-  savings?: string; // formatted value of that break
-  // Refundable; itemized as its own row and summed into the total below.
-  deposit: string | null; // null when the listing takes none
-  // The "Iš viso" row: rentalSubtotal + deposit. Never the app's fees.
-  totalCents: number;
-  total: string;
-};
-
-export function rentalEstimate(
-  { days, pricePerDayCents, depositCents, tiers }: {
-    days: number;
-    pricePerDayCents: number;
-    depositCents: number;
-    tiers: Discount[];
-  },
-  locale: Locale,
-): RentalEstimate {
-  const fullSubtotalCents = days * pricePerDayCents;
-  const discount = applicableDiscount(tiers, days);
-  const rentalSubtotalCents = discount
-    ? Math.round(fullSubtotalCents * (1 - discount.percent / 100))
-    : fullSubtotalCents;
-  const savedCents = fullSubtotalCents - rentalSubtotalCents;
-  const totalCents = rentalSubtotalCents + depositCents;
-  return {
-    days,
-    fullSubtotalCents,
-    fullSubtotal: formatPrice(fullSubtotalCents, locale),
-    rentalSubtotalCents,
-    rentalSubtotal: formatPrice(rentalSubtotalCents, locale),
-    discount,
-    savings: savedCents > 0 ? formatPrice(savedCents, locale) : undefined,
-    deposit: depositCents > 0 ? formatPrice(depositCents, locale) : null,
-    totalCents,
-    total: formatPrice(totalCents, locale),
-  };
+  return advertisedTiers(tiers).map((tier) => ({
+    percent: tier.percent,
+    minDays: tier.minDays,
+    perDay: formatPrice(Math.round(pricePerDayCents * (1 - tier.percent / 100)), locale),
+  }));
 }
 
 /* ---------------- Cancellation policy ----------------
@@ -204,42 +148,6 @@ export function cancellationTier(raw: string | null | undefined): CancellationTi
     return raw;
   }
   return "moderate";
-}
-
-// What the booking panel can still promise about cancelling, given a chosen start
-// date — the estimate's cancellation line renders one of these.
-export type CancellationNotice =
-  | { kind: "hours" } // flexible: the 24 h rule, restated (see below)
-  | { kind: "freeUntil"; deadline: IsoDate } // full refund if cancelled by this date
-  | { kind: "halfUntil"; deadline: IsoDate } // only the 50 % window is still open
-  | { kind: "none" }; // every refund window has passed
-
-export function cancellationNotice({ tier, start, today }: {
-  tier: CancellationTier;
-  start: IsoDate;
-  today: IsoDate;
-}): CancellationNotice {
-  // Flexible's 24 h threshold is clock-based, and this page only knows dates — a
-  // computed calendar deadline would overpromise (cancelling late on start−1 can
-  // already be inside the 24 h), so the notice restates the rule instead. The one
-  // date-only certainty is a rental starting today: the 24 h mark is unambiguously
-  // past, so restating the rule there would overpromise too.
-  if (tier === "flexible") {
-    return today >= start ? { kind: "none" } : { kind: "hours" };
-  }
-  if (tier === "strict") {
-    const deadline = addDays(start, -14);
-    return today <= deadline ? { kind: "halfUntil", deadline } : { kind: "none" };
-  }
-  const freeDeadline = addDays(start, -5);
-  if (today <= freeDeadline) {
-    return { kind: "freeUntil", deadline: freeDeadline };
-  }
-  const halfDeadline = addDays(start, -1);
-  if (today <= halfDeadline) {
-    return { kind: "halfUntil", deadline: halfDeadline };
-  }
-  return { kind: "none" };
 }
 
 export function formatPrice(cents: number, locale: Locale): string {

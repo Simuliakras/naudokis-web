@@ -27,6 +27,7 @@ import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { useSheetDrag } from "@/app/lib/use-sheet-drag";
 import { type Availability } from "@/app/lib/availability";
 import { formatShortDate, type IsoDate } from "@/app/lib/dates";
+import { advertisedTiers, applicableDiscount, type Discount } from "@/app/lib/listing-view";
 import type { Dict } from "@/app/lib/i18n/types";
 import { CalendarPanel, type CalendarCopy, type DateRange } from "./Calendar";
 
@@ -43,6 +44,7 @@ type PanelProps = {
   today: IsoDate;
   minDays: number;
   maxDays: number; // 0 = no ceiling on the wire
+  discounts: Discount[]; // the listing's active tiers — feeds the pophead's live readout
 };
 
 // `today` is a client-only fact (see use-market-today.ts), so it is undefined on the
@@ -58,7 +60,19 @@ type PickerProps = Omit<PanelProps, "today"> & {
 };
 
 // dict.detail → the calendar's injected copy. One mapping, shared by both layers.
-function detailCalendarCopy(t: Dict["detail"]): CalendarCopy {
+// The pophead's idle line is precomputed here — the listing's limits and its cheapest
+// advertised tier are fixed facts, so only the range readout stays a function.
+function detailCalendarCopy({
+  t, minDays, maxDays, discounts,
+}: {
+  t: Dict["detail"];
+  minDays: number;
+  maxDays: number;
+  discounts: Discount[];
+}): CalendarCopy {
+  // Only advertised breaks feed the "cheaper from N days" teaser — the same
+  // advertisedTiers rule (and sort) the Terms ladder renders from.
+  const discountMin = advertisedTiers(discounts)[0]?.minDays ?? null;
   return {
     prevMonth: t.calPrevMonth,
     nextMonth: t.calNextMonth,
@@ -74,6 +88,12 @@ function detailCalendarCopy(t: Dict["detail"]): CalendarCopy {
     clear: t.datesClear,
     apply: t.datesApply,
     loading: t.calLoading,
+    popTitle: t.calPopTitle,
+    popSubIdle: t.calPopSubIdle({ min: minDays, max: maxDays, discountMin }),
+    popSubStart: (start) => t.calPopSubStart({ start, max: maxDays }),
+    popSubRange: t.calPopSubRange,
+    clearAll: t.datesClearAll,
+    done: t.datesDone,
   };
 }
 
@@ -113,8 +133,7 @@ export function DateRangePicker(props: PickerProps) {
     props.onOpen();
   });
 
-  // Only the availability-unknown disclosure lives under the trigger — the day
-  // count is already narrated by the estimate's rent row once dates are set.
+  // Only the availability-unknown disclosure lives under the trigger.
   const summary =
     !value && availability?.status === "unknown" ? t.calUnknownNote : null;
 
@@ -153,33 +172,47 @@ function Field({ label, value, placeholder }: { label: string; value?: IsoDate; 
   );
 }
 
+// The one booking calendar, shared verbatim by both layers below — the duo variant,
+// the injected copy and the discount readout are identical by construction; only
+// commitCloses differs (the popover commits-and-closes, the sheet stays open).
+function BookingCalendar({
+  value, onChange, availability, isLoading, onRetry, today, minDays, maxDays, discounts, onClose, commitCloses,
+}: PanelProps & { onClose: () => void; commitCloses: boolean }) {
+  const { dict } = useI18n();
+  const t = dict.detail;
+  const notice = availability?.status === "unknown" ? <UnknownNotice t={t} onRetry={onRetry} /> : undefined;
+
+  return (
+    <CalendarPanel value={value} onChange={onChange} availability={availability} isLoading={isLoading}
+      today={today} minDays={minDays} maxDays={maxDays} notice={notice}
+      copy={detailCalendarCopy({ t, minDays, maxDays, discounts })} variant="duo"
+      discountPercent={(days) => applicableDiscount(discounts, days)?.percent ?? null}
+      onClose={onClose} commitCloses={commitCloses} />
+  );
+}
+
 // Desktop: the shared non-modal popover shell (ui.tsx owns the dismissal contract — the
 // same one the feed's range filters run on). All this adds is the booking calendar.
 function RangePopover({
-  value, onChange, availability, isLoading, onRetry, today, minDays, maxDays, onClose, onDismiss, fieldRef,
+  onDismiss, fieldRef, ...panel
 }: PanelProps & {
   onClose: () => void;
   onDismiss: () => void;
   fieldRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const { dict } = useI18n();
-  const t = dict.detail;
-  const notice = availability?.status === "unknown" ? <UnknownNotice t={t} onRetry={onRetry} /> : undefined;
 
   return (
-    <RangePopoverLayer className="nk-cal-pop" ariaLabel={t.datesPanelTitle}
-      onClose={onClose} onDismiss={onDismiss} fieldRef={fieldRef}>
-      <CalendarPanel value={value} onChange={onChange} availability={availability} isLoading={isLoading}
-        today={today} minDays={minDays} maxDays={maxDays} copy={detailCalendarCopy(t)} notice={notice}
-        onClose={onClose} commitCloses />
+    <RangePopoverLayer className="nk-cal-pop nk-cal-pop--wide" ariaLabel={dict.detail.datesPanelTitle}
+      onClose={panel.onClose} onDismiss={onDismiss} fieldRef={fieldRef}>
+      <BookingCalendar {...panel} commitCloses />
     </RangePopoverLayer>
   );
 }
 
 // Mobile: the bottom sheet, same construction as the feed's filter sheet.
-function RangeSheet({
-  value, onChange, availability, isLoading, onRetry, today, minDays, maxDays, onClose,
-}: PanelProps & { onClose: () => void }) {
+function RangeSheet(props: PanelProps & { onClose: () => void }) {
+  const { onClose } = props;
   const { dict } = useI18n();
   const t = dict.detail;
   const panelRef = useRef<HTMLDivElement>(null);
@@ -196,8 +229,6 @@ function RangeSheet({
     return () => cancelAnimationFrame(frame);
   }, []);
 
-  const notice = availability?.status === "unknown" ? <UnknownNotice t={t} onRetry={onRetry} /> : undefined;
-
   return (
     <div className={"nk-modal-scrim nk-cal-sheet-scrim" + (shown ? " open" : "")}
       role="dialog" aria-modal="true" aria-label={t.datesPanelTitle}
@@ -212,9 +243,9 @@ function RangeSheet({
           <h2 className="nk-cal-sheet__title">{t.datesPanelTitle}</h2>
           <CloseButton ref={closeRef} label={t.datesClose} onClick={onClose} />
         </div>
-        <CalendarPanel value={value} onChange={onChange} availability={availability} isLoading={isLoading}
-          today={today} minDays={minDays} maxDays={maxDays} copy={detailCalendarCopy(t)} notice={notice}
-          onClose={onClose} commitCloses={false} />
+        {/* Same duo panel as the popover — CSS collapses the spread to month A at
+            sheet widths, so the sheet gets the live pophead and actions bar for free. */}
+        <BookingCalendar {...props} commitCloses={false} />
       </div>
     </div>
   );

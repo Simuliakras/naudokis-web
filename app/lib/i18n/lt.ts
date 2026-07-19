@@ -21,8 +21,8 @@ const ltWord = (n: number, one: string, few: string, many: string): string => {
 const ltDays = (n: number): string =>
   `${n} ${ltWord(n, "diena", "dienos", "dienų")}`;
 
-// "nuo N dienų" / "× N dienų" — the GENITIVE, for counts governed by a preposition
-// or the multiplication sign (the discount hint and the estimate's rent row).
+// "nuo N dienų" — the GENITIVE, for counts governed by a preposition (the
+// discount hint and the tier ladder's "Nuo" cells).
 const ltDaysGen = (n: number): string =>
   `${n} ${ltWord(n, "dienos", "dienų", "dienų")}`;
 
@@ -63,6 +63,25 @@ const LT_CATEGORY_EXAMPLES: Record<string, string> = {
   kids: "Vežimėliai, kėdutės, žaislai",
   health_medical: "Ramentai, vežimėliai, masažuokliai",
   other: "Viskas, kas netelpa kitur",
+};
+
+// Unaccented search aliases per top-level category id (Kategorijos directory) —
+// the type-in words users reach a category by ("remontas" → Įrankiai ir statyba).
+// Matched folded, alongside the title and sub names. Prototype-authored strings
+// from the 2026-07 "Kategorijos v2" handoff.
+const LT_CATEGORY_SYNONYMS: Record<string, string> = {
+  transport: "automobiliai masinos",
+  photo_video: "foto kameros",
+  tools_construction: "irankiai remontas",
+  sports_leisure: "sportas turizmas zygiai",
+  home_garden: "sodas kiemas vejapjove",
+  electronics_tech: "kompiuteriai technika",
+  audio_music_events: "garso aparatura muzika dj",
+  events_parties: "sventes vestuves gimtadieniai",
+  clothing_accessories: "apranga mados",
+  kids: "vaikai kudikiai",
+  health_medical: "slauga reabilitacija",
+  other: "ivairus",
 };
 
 export const lt: Dict = {
@@ -546,6 +565,8 @@ export const lt: Dict = {
     datesClose: "Uždaryti kalendorių",
     datesClear: "Išvalyti",
     datesApply: "Patvirtinti",
+    datesClearAll: "Išvalyti datas",
+    datesDone: "Baigta",
     calPrevMonth: "Ankstesnis mėnuo",
     calNextMonth: "Kitas mėnuo",
     calDays: ltDays,
@@ -560,6 +581,21 @@ export const lt: Dict = {
     calStartSelected: (date) => `Pradžia: ${date}. Pasirinkite pabaigos datą.`,
     calRangeSelected: ({ start, end, days }) =>
       `Pasirinkta ${start}–${end}, ${days}.`,
+    calPopTitle: "Pasirinkite nuomos datas",
+    calPopSubIdle: ({ min, max, discountMin }) => {
+      // "iki" governs the genitive — ltDaysGen, never nominative ltDays here.
+      const base =
+        max > 0
+          ? `Nuoma nuo ${min} iki ${ltDaysGen(max)}`
+          : `Trumpiausia nuoma — ${ltDays(min)}`;
+      return discountMin !== null ? `${base} · nuo ${discountMin} d. pigiau` : base;
+    },
+    calPopSubStart: ({ start, max }) =>
+      max > 0 ? `Nuo ${start} · nuoma iki ${ltDaysGen(max)}` : `Nuo ${start}`,
+    calPopSubRange: ({ start, end, percent }) =>
+      percent !== null
+        ? `${start} – ${end} · −${percent}% nuolaida`
+        : `${start} – ${end}`,
     calBlocked: (reason, n) => {
       if (reason === "past") {
         return "Data jau praėjo";
@@ -581,19 +617,6 @@ export const lt: Dict = {
     calUnknownRetry: "Bandyti dar kartą",
     calUnknownNote: "Užimtumas nepatikrintas",
     calLoading: "Tikriname užimtumą…",
-    estimateRental: ({ price, days }) => `${price} × ${ltDaysGen(days)}`,
-    estimateDiscount: (percent) => `Ilgesnės nuomos nuolaida −${percent}%`,
-    estimateTotal: "Iš viso",
-    estimateDeposit: "Užstatas (grąžinamas po nuomos)",
-    estimateFees:
-      "Galutinė suma su pristatymu ir mokesčiais bus parodyta programėlėje.",
-    estimateCancelHours: "Nemokamas atšaukimas iki 24 val. prieš nuomos pradžią",
-    // `date` arrives as "liepos 15 d." — LT's CLDR day-month pattern carries the
-    // "d." itself, so appending one here would double it.
-    estimateCancelFree: (date) => `Nemokamas atšaukimas iki ${date}`,
-    estimateCancelHalf: (date) =>
-      `Atšaukus iki ${date} grąžinama 50 % nuomos kainos`,
-    estimateCancelNone: "Atšaukus nuomos kaina negrąžinama",
     hostStatRating: "Įvertinimas",
     hostStatReviews: "Atsiliepimai",
     hostStatListings: "Daiktai",
@@ -626,7 +649,7 @@ export const lt: Dict = {
       return "Nemokamas atšaukimas iki 5 d.";
     },
     termCancelDetail: (tier) => {
-      if (tier === "flexible") return "Vėliau atšaukus nuomos kaina negrąžinama";
+      if (tier === "flexible") return null;
       if (tier === "strict") return "Vėliau nuomos kaina negrąžinama";
       return "50 % grąžinama likus 1–4 d. iki nuomos";
     },
@@ -667,23 +690,28 @@ export const lt: Dict = {
     crumb: "Kategorijos",
     eyebrow: "Naršykite",
     title: "Visos nuomos kategorijos",
-    body: "Pasirinkite kategoriją, palyginkite kainas, vietą ir savininkų profilius, o rezervacijos užklausą tęskite programėlėje.",
-    searchPlaceholder: "Ieškoti kategorijos",
-    searchLabel: "Ieškoti daiktų nuomos kategorijų",
-    submit: "Ieškoti",
+    body: "Pasirinkite kategoriją arba eikite tiesiai į pogrupį — kiekviena kategorija atsidaro kaip pilnas skelbimų sąrašas su filtrais.",
+    searchPlaceholder: "Ieškoti kategorijos ar pogrupio",
+    searchLabel: "Ieškoti nuomos kategorijų ir pogrupių",
     emptyTitle: "Kategorijų nerasta",
     emptySubtitle: (query) =>
-      `Pagal „${query}“ kategorijų neradome. Pabandykite platesnę paiešką.`,
-    emptyAction: "Išvalyti",
-    // Bare count (no verb): the line renders on initial page load, where a
+      `Pagal „${query}“ kategorijų ar pogrupių neradome. Pabandykite platesnę paiešką.`,
+    emptyAction: "Rodyti visas kategorijas",
+    // Bare counts (no verb): the line renders on initial page load, where a
     // "found N" reads as a search result before any query was typed.
-    foundCount: (n) =>
-      `${n} ${ltWord(n, "kategorija", "kategorijos", "kategorijų")}`,
+    countLabel: (cats, subs) =>
+      `${cats} ${ltWord(cats, "kategorija", "kategorijos", "kategorijų")} · ${subs} ${ltWord(subs, "pogrupis", "pogrupiai", "pogrupių")}`,
+    subCount: (n) => `${n} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupių")}`,
+    moreCount: (n) => `Dar ${n} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupių")}`,
+    showLess: "Rodyti mažiau",
+    popularHeading: "Populiaru dabar",
+    allListingsLabel: (title) => `Visi „${title}“ skelbimai`,
+    gridHeading: "Kategorijos ir pogrupiai",
+    synonyms: (id) => LT_CATEGORY_SYNONYMS[id],
     searchItems: (query) => `Ieškoti „${query}“ tarp daiktų`,
-    subcategoriesHeading: "Subkategorijos",
     seoHeading: "Daiktų nuoma pagal kategorijas",
     seoBody:
-      "Naudokis.lt apima kasdienes nuomos kategorijas visoje Lietuvoje — nuo įrankių ir transporto iki foto technikos, elektronikos, buitinės technikos, renginių ir laisvalaikio įrangos. Pasirinkite kategoriją ir raskite daiktus netoliese be poreikio pirkti tai, ko reikia tik kartais.",
+      "Naudokis.lt apima kasdienes nuomos kategorijas visoje Lietuvoje — nuo įrankių ir transporto iki foto technikos, elektronikos, buitinės technikos, renginių ir laisvalaikio įrangos. Pasirinkite kategoriją arba konkretų pogrupį ir raskite daiktus netoliese be poreikio pirkti tai, ko reikia tik kartais.",
   },
   feed: {
     metaTitle: "Nuomojami daiktai Lietuvoje | Naudokis.lt",

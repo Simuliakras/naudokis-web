@@ -257,9 +257,8 @@ export type ListingDetail = {
   city: string;
   subdivision?: string; // district within the city, appended to the location line when present
   price: string;
-  priceCents: number; // raw per-day price, for the booking-panel breakdown math
+  priceCents: number; // raw per-day price — the discount ladder derives per-tier rates from it
   deposit: string | null; // formatted refundable deposit; null when the listing takes none
-  depositCents: number; // raw deposit (0 when none) — the rental estimate needs cents
   // The owner's ACTIVE price breaks (empty when discounts are switched off — the
   // master switch is already applied, see discountTiers()). The date picker applies
   // the tier a chosen length actually qualifies for, which is not necessarily the
@@ -809,7 +808,6 @@ export async function fetchListing(id: string, locale: Locale): Promise<ListingD
     price: formatPrice(detail.price_per_day_cents, locale),
     priceCents: detail.price_per_day_cents,
     deposit: formatDeposit(detail.deposit_amount_cents, locale),
-    depositCents: detail.deposit_amount_cents ?? 0,
     discountTiers: discountTiers(detail),
     minDays: detail.minimum_rental_days ?? 1,
     maxDays: detail.maximum_rental_days ?? 0,

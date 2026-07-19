@@ -267,7 +267,7 @@ export type Dict = {
     // header actions + meta
     save: string; // "Įsiminti" header action
     newListingPill: string; // factual gallery badge for a listing with no reviews
-    noReviewsYet: string; // star-slot label (header meta + booking card) when ratingCount is 0
+    noReviewsYet: string; // header-meta star-slot label when ratingCount is 0 (the booking card just omits its rating link)
     noPhotos: string; // caption on the empty-gallery placeholder (no photos on the wire)
     galleryAll: (count: number) => string; // "Visos N nuotr."
     galleryExpand: string; // aria-label on the single-photo hero expand chip
@@ -289,7 +289,7 @@ export type Dict = {
     // "not booked" is not the same fact as "available" (the owner may decline, and
     // when the endpoint fails we know nothing at all). So there is a `calBooked`
     // label and deliberately no "available" one — an unbooked day is simply
-    // unlabelled and selectable, under the estimateFees in-app disclosure.
+    // unlabelled and selectable.
     datesFrom: string; // "Nuo"
     datesTo: string; // "Iki"
     datesPlaceholder: string; // empty-field text — "Pasirinkite"
@@ -298,6 +298,8 @@ export type Dict = {
     datesClose: string;
     datesClear: string;
     datesApply: string;
+    datesClearAll: string; // the wide popover's text-link clear — "Išvalyti datas"
+    datesDone: string; // the wide popover's explicit close — "Baigta"
     calPrevMonth: string;
     calNextMonth: string;
     calDays: (n: number) => string; // "3 dienos" — LT plural
@@ -308,6 +310,14 @@ export type Dict = {
     calSelectEnd: string; // prompt while picking the end
     calStartSelected: (date: string) => string; // live-region announcement
     calRangeSelected: (parts: { start: string; end: string; days: string }) => string;
+    // The wide popover's live header. Title: calPopTitle → calSelectEnd → calDays(n)
+    // as the pick progresses; the subtitle tracks it with a readout that updates on
+    // hover. `discountMin`/`percent` are null when the listing has no active tiers —
+    // the discount fragment is simply omitted, never fabricated.
+    calPopTitle: string; // idle state line — "Pasirinkite nuomos datas"
+    calPopSubIdle: (parts: { min: number; max: number; discountMin: number | null }) => string;
+    calPopSubStart: (parts: { start: string; max: number }) => string;
+    calPopSubRange: (parts: { start: string; end: string; percent: number | null }) => string;
     // Why a day cannot be picked — used both as the cell's aria suffix and as the
     // live-region message when a keyboard user presses Enter on a disabled cell.
     calBlocked: (reason: "past" | "booked" | "tooShort" | "tooLong" | "spansBooked", n: number) => string;
@@ -319,21 +329,8 @@ export type Dict = {
     calUnknownRetry: string;
     calUnknownNote: string; // short form, shown under the trigger
     calLoading: string;
-    // rental estimate — "Iš viso" is rent − discount + the refundable deposit; only
-    // the app-side fees stay out of the sum (see RentalEstimate in listing-view.ts)
-    estimateRental: (parts: { price: string; days: number }) => string; // rent row, "15 € × 5 dienų"; its value column is the full undiscounted sum
-    estimateDiscount: (percent: number) => string; // "Nuolaida −20%"
-    estimateTotal: string; // "Iš viso" — bold row, rent − discount + deposit
-    estimateDeposit: string; // "Užstatas (grąžinamas po nuomos)" — muted row ABOVE the total, summed into it
-    estimateFees: string; // short disclosure: final sum with delivery + fees lands in the app
-    // The estimate's cancellation line — the CancellationNotice for the picked start
-    // date rendered in words (see cancellationNotice in listing-view.ts). `date` is a
-    // pre-localized formatShortDate string, complete with LT's own "d." suffix
-    // ("liepos 15 d." / "July 15") — locales must not append day markers of their own.
-    estimateCancelHours: string; // flexible: restates the 24 h rule, no computed date
-    estimateCancelFree: (date: string) => string; // full refund if cancelled by {date}
-    estimateCancelHalf: (date: string) => string; // 50 % refund if cancelled by {date}
-    estimateCancelNone: string; // every refund window has passed
+    // (no rental-estimate breakdown — the booking card states facts only; pricing
+    // math is the app's job)
     // host card
     hostStatRating: string;
     hostStatReviews: string;
@@ -358,7 +355,7 @@ export type Dict = {
     // Cancellation policy banner in listing-view.ts).
     termCancelLabel: string; // fact-card eyebrow above the rule — "Rezervacijos atšaukimo sąlygos"
     termCancelTitle: (tier: CancellationTier) => string; // fact-card headline: the tier's key rule
-    termCancelDetail: (tier: CancellationTier) => string; // fact-card line under the rule: the tier's remaining nuance
+    termCancelDetail: (tier: CancellationTier) => string | null; // fact-card line under the rule: the tier's remaining nuance; null when the rule stands alone (flexible)
     trustCancellation: (tier: CancellationTier) => string; // booking-panel trust row one-liner
     // longer-rental discount ladder (Terms section) — subtotal never a total
     discountsLabel: string; // card title, "Nuolaidos ilgesnei nuomai"
@@ -401,13 +398,20 @@ export type Dict = {
     body: string;
     searchPlaceholder: string;
     searchLabel: string;
-    submit: string;
     emptyTitle: string;
     emptySubtitle: (query: string) => string;
     emptyAction: string;
-    foundCount: (count: number) => string; // live "N categories" count (aria-live)
+    countLabel: (cats: number, subs: number) => string; // live "N categories · M subcategories" (aria-live)
+    subCount: (n: number) => string; // per-card count line under the title
+    moreCount: (n: number) => string; // collapsed expander label ("N more…")
+    showLess: string; // expanded expander label
+    popularHeading: string; // "Popular right now" eyebrow above the pill row
+    allListingsLabel: (title: string) => string; // aria-label on the card's arrow link
+    gridHeading: string; // sr-only h2 above the directory grid
+    // Unaccented search aliases per top-level category id — matched alongside the
+    // title and sub names so type-in words like "remontas" reach the category.
+    synonyms: (id: string) => string | undefined;
     searchItems: (query: string) => string; // explicit cross-search to the items feed
-    subcategoriesHeading: string; // crawlable subcategory-landing rail below the grid
     seoHeading: string;
     seoBody: string;
   };

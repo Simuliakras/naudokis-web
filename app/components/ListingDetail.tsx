@@ -8,16 +8,9 @@ import { trackEvent } from "@/app/lib/analytics";
 import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
 import { goHref } from "@/app/lib/attribution";
 import type { Availability } from "@/app/lib/availability";
-import { formatShortDate, rentalDays, type IsoDate } from "@/app/lib/dates";
+import type { IsoDate } from "@/app/lib/dates";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
-import type { Dict } from "@/app/lib/i18n/types";
-import {
-  applicableDiscount,
-  cancellationNotice,
-  discountTierViews,
-  rentalEstimate,
-  type CancellationTier,
-} from "@/app/lib/listing-view";
+import { applicableDiscount, discountTierViews } from "@/app/lib/listing-view";
 import type {
   ListingDelivery,
   ListingDetail,
@@ -90,7 +83,7 @@ function FactCard({
   icon: IconName;
   title: string;
   sub: string;
-  detail?: string;
+  detail?: string | null;
 }) {
   return (
     <div
@@ -789,11 +782,13 @@ export function ListingHeader({
           }}
         >
           <span style={metaItem}>
+            {/* the star goes quiet with the empty-state text — a lit star beside
+                "no reviews yet" would read as a rating */}
             <Icon
               name="Star"
               size={16}
-              color="var(--nk-yellow)"
-              fill="var(--nk-yellow)"
+              color={listing.rating ? "var(--nk-yellow)" : "var(--nk-text-muted)"}
+              fill={listing.rating ? "var(--nk-yellow)" : "var(--nk-text-muted)"}
             />
             {listing.rating ? (
               <>
@@ -1892,11 +1887,10 @@ function TermsSection({
 }) {
   const { locale, dict } = useI18n();
   const t = dict.detail;
-  // The full longer-rental ladder — visible without touching the date picker,
-  // unlike the booking-panel estimate which only shows the single applied tier.
-  // Once dates ARE picked, the tier they earn lights up and the hint line narrates
-  // it, via the same applicableDiscount the estimate uses — the highlighted cell,
-  // the hint percent and the estimate row can never disagree.
+  // The full longer-rental ladder — visible without touching the date picker.
+  // Once dates ARE picked, the tier they earn lights up and the hint line
+  // narrates it, via applicableDiscount — the highlighted cell and the hint
+  // percent can never disagree.
   const discounts = discountTierViews(
     listing.discountTiers,
     listing.priceCents,
@@ -1974,10 +1968,9 @@ function TermsSection({
             </div>
             <ul className="nk-breaks__list">
               {discounts.map((tier) => {
-                // A sub-2-day break can be APPLIED (and narrated by the hint,
-                // matching the booking estimate) while highlighting no cell — the
-                // ladder only advertises genuine longer-rental breaks (minDays
-                // >= 2). Intended.
+                // A sub-2-day break can be APPLIED (and narrated by the hint)
+                // while highlighting no cell — the ladder only advertises
+                // genuine longer-rental breaks (minDays >= 2). Intended.
                 const active =
                   applied !== undefined &&
                   applied.minDays === tier.minDays &&
@@ -2362,51 +2355,12 @@ export function DetailBody({
 
 /* ---------------- Sidebar: booking panel ----------------
    Sticky reserve card (desktop): per-day price with a rating link into the reviews
-   section, the date-range field, then one of two states in the same slot — trust
-   rows (the listing's deposit and its cancellation policy) while no dates are
-   picked, or the estimate breakdown (rent × days, discount, the refundable deposit,
-   then an "Iš viso" total that folds it in) once they are — and the reserve CTA
-   with a nothing-charged-yet reassurance line. Nothing transacts on the bridge; the
-   final sum with delivery and fees is settled in the app (estimateFees).
+   section, the date-range field, trust rows (the listing's deposit and its
+   cancellation policy — no estimate breakdown: pricing math lives in the app),
+   and the reserve CTA with a nothing-charged-yet reassurance line.
    variant="facts" drops the reserve button + its note — used inline on mobile
    (≤980px), where the sticky sidebar is hidden and the fixed MobileBar carries the
    reserve CTA, so the price + dates + facts still travel to phone users. */
-
-// The estimate's cancellation note: what cancelling can still refund for the
-// picked start date, with the actual deadline computed (cancellationNotice).
-// `today` is client-only and undefined until mount — fall back to the tier's
-// dateless trust-row line rather than doing date math against nothing.
-function cancellationNoteText({
-  tier,
-  range,
-  today,
-  locale,
-  t,
-}: {
-  tier: CancellationTier;
-  range: DateRange | null;
-  today: IsoDate | undefined;
-  locale: Locale;
-  t: Dict["detail"];
-}): string | null {
-  if (!range) {
-    return null;
-  }
-  if (!today) {
-    return t.trustCancellation(tier);
-  }
-  const notice = cancellationNotice({ tier, start: range.start, today });
-  if (notice.kind === "hours") {
-    return t.estimateCancelHours;
-  }
-  if (notice.kind === "freeUntil") {
-    return t.estimateCancelFree(formatShortDate(notice.deadline, locale));
-  }
-  if (notice.kind === "halfUntil") {
-    return t.estimateCancelHalf(formatShortDate(notice.deadline, locale));
-  }
-  return t.estimateCancelNone;
-}
 
 export function BookingPanel({
   listing,
@@ -2421,43 +2375,8 @@ export function BookingPanel({
   appPath: string;
   variant?: "full" | "facts";
 }) {
-  const { locale, dict } = useI18n();
+  const { dict } = useI18n();
   const t = dict.detail;
-  // Both copies of the panel (sidebar + mobile inline) read the SAME lifted range, so
-  // the two triggers can never disagree — only one is ever visible, but both are
-  // mounted, exactly like the double-rendered HostCard.
-  const estimate = dates.range
-    ? rentalEstimate(
-        {
-          days: rentalDays(dates.range.start, dates.range.end),
-          pricePerDayCents: listing.priceCents,
-          depositCents: listing.depositCents,
-          tiers: listing.discountTiers,
-        },
-        locale,
-      )
-    : null;
-  const cancelNote = cancellationNoteText({
-    tier: listing.cancellation,
-    range: dates.range,
-    today: dates.today,
-    locale,
-    t,
-  });
-  // One skin for the header's rating slot — a link into the reviews section when
-  // there are reviews, a muted label when there are none.
-  const ratingChip: React.CSSProperties = {
-    marginLeft: "auto",
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 5,
-    fontFamily: "var(--nk-font-body)",
-    fontSize: 13.5,
-    whiteSpace: "nowrap",
-  };
-  const ratingStar = (
-    <Icon name="Star" size={14} color="var(--nk-yellow)" fill="var(--nk-yellow)" />
-  );
   return (
     <div
       style={{
@@ -2471,8 +2390,8 @@ export function BookingPanel({
         boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)",
       }}
     >
-      {/* Price block: the 33px price owns the header alone — the deposit fact moved
-          down (trust row while no dates are picked, breakdown row once they are).
+      {/* Price block: the 33px price owns the header alone — the deposit fact lives
+          in the trust rows below.
           flexWrap: at the 981px sidebar minimum a max price + 5-digit review count
           overflowed the card — the rating link drops to its own line instead */}
       <div
@@ -2504,7 +2423,9 @@ export function BookingPanel({
         >
           {t.perDay}
         </span>
-        {listing.rating ? (
+        {/* Rendered only when reviews exist — no empty-state label in this card;
+            the title meta already carries the no-reviews fact. */}
+        {listing.rating && (
           <a
             href="#atsiliepimai"
             className="nk-rating-link"
@@ -2512,14 +2433,25 @@ export function BookingPanel({
               rating: listing.rating,
               count: listing.ratingCount,
             })}
-            style={{ ...ratingChip, color: "var(--nk-text-2)" }}
+            style={{
+              marginLeft: "auto",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 5,
+              fontFamily: "var(--nk-font-body)",
+              fontSize: 13.5,
+              color: "var(--nk-text-2)",
+              whiteSpace: "nowrap",
+            }}
           >
-            {ratingStar} {listing.rating} · {listing.ratingCount}
+            <Icon
+              name="Star"
+              size={14}
+              color="var(--nk-yellow)"
+              fill="var(--nk-yellow)"
+            />{" "}
+            {listing.rating} · {listing.ratingCount}
           </a>
-        ) : (
-          <span style={{ ...ratingChip, color: "var(--nk-text-muted)" }}>
-            {ratingStar} {t.noReviewsYet}
-          </span>
         )}
       </div>
 
@@ -2533,67 +2465,31 @@ export function BookingPanel({
         today={dates.today}
         minDays={listing.minDays}
         maxDays={listing.maxDays}
+        discounts={listing.discountTiers}
       />
 
-      {/* The estimate is arithmetic over facts already on this page — the per-day
-          price, the owner's advertised price break, the deposit. "Iš viso" is the
-          rent minus that break plus the refundable deposit (itemized right
-          above); only the app's service fees stay out, and the note right under
-          carries that disclosure (see RentalEstimate). */}
-      {estimate && (
-        <div className="nk-est">
-          <div className="nk-est__row">
-            <span>
-              {t.estimateRental({ price: listing.price, days: estimate.days })}
-            </span>
-            <span className="nk-est__val nk-tnum">{estimate.fullSubtotal}</span>
-          </div>
-          {estimate.discount && estimate.savings && (
-            <div className="nk-est__row is-discount">
-              <span>{t.estimateDiscount(estimate.discount.percent)}</span>
-              <span className="nk-tnum">−{estimate.savings}</span>
-            </div>
-          )}
-          {estimate.deposit && (
-            <div className="nk-est__row nk-est__row--deposit">
-              <span>{t.estimateDeposit}</span>
-              <span className="nk-est__val nk-tnum">+{estimate.deposit}</span>
-            </div>
-          )}
-          <div className="nk-est__row nk-est__row--total">
-            <span>{t.estimateTotal}</span>
-            <span className="nk-tnum">{estimate.total}</span>
-          </div>
-          <span className="nk-est__note">{t.estimateFees}</span>
-          {cancelNote && <span className="nk-est__note">{cancelNote}</span>}
-        </div>
-      )}
-
-      {/* Trust rows while no dates are picked — only facts this listing actually
-          carries: its deposit (or the absence of one) and its real cancellation
-          tier's terms — the same rule the Terms card states, never a hardcoded
-          "flexible". Swapped for the estimate breakdown once dates land; the
-          panel's own gap spaces both states identically. */}
-      {!estimate && (
-        <div className="nk-trust">
-          <span className="nk-trust__row">
-            <Icon name="ShieldCheck" size={15} color="var(--nk-text-muted)" />
-            <span>
-              {listing.deposit ? (
-                <>
-                  <strong>{listing.deposit}</strong> {t.trustDepositRest}
-                </>
-              ) : (
-                t.depositNone
-              )}
-            </span>
+      {/* Trust rows — only facts this listing actually carries: its deposit (or
+          the absence of one) and its real cancellation tier's terms — the same
+          rule the Terms card states, never a hardcoded "flexible". No estimate
+          breakdown when dates land: the app owns pricing math. */}
+      <div className="nk-trust">
+        <span className="nk-trust__row">
+          <Icon name="ShieldCheck" size={15} color="var(--nk-text-muted)" />
+          <span>
+            {listing.deposit ? (
+              <>
+                <strong>{listing.deposit}</strong> {t.trustDepositRest}
+              </>
+            ) : (
+              t.depositNone
+            )}
           </span>
-          <span className="nk-trust__row">
-            <Icon name="RefreshCcw" size={15} color="var(--nk-text-muted)" />
-            <span>{t.trustCancellation(listing.cancellation)}</span>
-          </span>
-        </div>
-      )}
+        </span>
+        <span className="nk-trust__row">
+          <Icon name="RefreshCcw" size={15} color="var(--nk-text-muted)" />
+          <span>{t.trustCancellation(listing.cancellation)}</span>
+        </span>
+      </div>
       {variant !== "facts" && (
         <div
           style={{
@@ -2749,7 +2645,9 @@ export function HostCard({
           display: "grid",
           gridTemplateColumns: "1fr 1fr 1fr",
           gap: 1,
-          background: "var(--nk-hairline)",
+          // Centered 58%-tall paint so the 1px gaps read as short dividers, not full-height rules.
+          background:
+            "linear-gradient(var(--nk-hairline), var(--nk-hairline)) center / 100% 58% no-repeat",
           borderRadius: 14,
           overflow: "hidden",
         }}

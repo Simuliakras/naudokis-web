@@ -22,6 +22,24 @@ const EN_CATEGORY_EXAMPLES: Record<string, string> = {
   other: "Anything that doesn’t fit elsewhere",
 };
 
+// Unaccented search aliases per top-level category id (Kategorijos directory) —
+// matched folded, alongside the title and sub names.
+// DRAFT (2026-07): EN aliases pending marketing sign-off.
+const EN_CATEGORY_SYNONYMS: Record<string, string> = {
+  transport: "cars vehicles",
+  photo_video: "photo cameras",
+  tools_construction: "tools repair diy",
+  sports_leisure: "sports outdoors hiking",
+  home_garden: "garden yard lawnmower",
+  electronics_tech: "computers gadgets",
+  audio_music_events: "audio sound music dj",
+  events_parties: "parties weddings birthdays",
+  clothing_accessories: "clothes fashion",
+  kids: "children babies",
+  health_medical: "care rehabilitation",
+  other: "misc",
+};
+
 export const en: Dict = {
   meta: {
     title: "Rent items in Lithuania | Naudokis.lt",
@@ -489,6 +507,8 @@ export const en: Dict = {
     datesClose: "Close calendar",
     datesClear: "Clear",
     datesApply: "Done",
+    datesClearAll: "Clear dates",
+    datesDone: "Done",
     calPrevMonth: "Previous month",
     calNextMonth: "Next month",
     calDays: (n) => `${n} day${n === 1 ? "" : "s"}`,
@@ -502,6 +522,18 @@ export const en: Dict = {
     calSelectEnd: "Pick an end date",
     calStartSelected: (date) => `Start: ${date}. Now pick an end date.`,
     calRangeSelected: ({ start, end, days }) => `Selected ${start}–${end}, ${days}.`,
+    calPopTitle: "Choose rental dates",
+    calPopSubIdle: ({ min, max, discountMin }) => {
+      const base =
+        max > 0
+          ? `Rent for ${min}–${max} days`
+          : `Minimum rental ${min} day${min === 1 ? "" : "s"}`;
+      return discountMin !== null ? `${base} · cheaper from ${discountMin} days` : base;
+    },
+    calPopSubStart: ({ start, max }) =>
+      max > 0 ? `From ${start} · up to ${max} days` : `From ${start}`,
+    calPopSubRange: ({ start, end, percent }) =>
+      percent !== null ? `${start} – ${end} · −${percent}% off` : `${start} – ${end}`,
     calBlocked: (reason, n) => {
       if (reason === "past") {
         return "Date has passed";
@@ -523,16 +555,6 @@ export const en: Dict = {
     calUnknownRetry: "Try again",
     calUnknownNote: "Availability not checked",
     calLoading: "Checking availability…",
-    estimateRental: ({ price, days }) =>
-      `${price} × ${days} day${days === 1 ? "" : "s"}`,
-    estimateDiscount: (percent) => `Longer-rental discount −${percent}%`,
-    estimateTotal: "Total",
-    estimateDeposit: "Deposit (refunded after the rental)",
-    estimateFees: "The final total with delivery and fees will be shown in the app.",
-    estimateCancelHours: "Free cancellation until 24 h before the rental starts",
-    estimateCancelFree: (date) => `Free cancellation until ${date}`,
-    estimateCancelHalf: (date) => `Cancel by ${date} for a 50% refund`,
-    estimateCancelNone: "The rental price is non-refundable if cancelled",
     hostStatRating: "Rating",
     hostStatReviews: "Reviews",
     hostStatListings: "Items",
@@ -566,6 +588,7 @@ export const en: Dict = {
       return "Free cancellation up to 5 days before";
     },
     termCancelDetail: (tier) => {
+      if (tier === "flexible") return null;
       if (tier === "moderate") return "50% refund when 1–4 days remain";
       return "No refund after that";
     },
@@ -605,20 +628,27 @@ export const en: Dict = {
     crumb: "Categories",
     eyebrow: "Browse",
     title: "All rental categories",
-    body: "Choose a category, compare prices, locations and owner profiles, then continue your reservation request in the app.",
-    searchPlaceholder: "Search categories",
-    searchLabel: "Search item rental categories",
-    submit: "Search",
+    // DRAFT (2026-07 Kategorijos v2 directory): EN copy pending marketing sign-off.
+    body: "Pick a category or go straight to a subcategory — each one opens as a full listings feed with filters.",
+    searchPlaceholder: "Search categories or subcategories",
+    searchLabel: "Search rental categories and subcategories",
     emptyTitle: "No categories found",
     emptySubtitle: (query) =>
-      `No categories matched “${query}”. Try a broader search.`,
-    emptyAction: "Clear",
-    foundCount: (n) => `${n} categor${n === 1 ? "y" : "ies"}`,
+      `No categories or subcategories matched “${query}”. Try a broader search.`,
+    emptyAction: "Show all categories",
+    countLabel: (cats, subs) =>
+      `${cats} categor${cats === 1 ? "y" : "ies"} · ${subs} subcategor${subs === 1 ? "y" : "ies"}`,
+    subCount: (n) => `${n} subcategor${n === 1 ? "y" : "ies"}`,
+    moreCount: (n) => `${n} more subcategor${n === 1 ? "y" : "ies"}`,
+    showLess: "Show less",
+    popularHeading: "Popular right now",
+    allListingsLabel: (title) => `All “${title}” listings`,
+    gridHeading: "Categories and subcategories",
+    synonyms: (id) => EN_CATEGORY_SYNONYMS[id],
     searchItems: (query) => `Search items for “${query}”`,
-    subcategoriesHeading: "Subcategories",
     seoHeading: "Item rental by category",
     seoBody:
-      "Naudokis.lt covers everyday rental categories across Lithuania, including tools, transport, photo gear, electronics, home appliances, event equipment and leisure gear. Choose a category to find items nearby without buying things you only need occasionally.",
+      "Naudokis.lt covers everyday rental categories across Lithuania, including tools, transport, photo gear, electronics, home appliances, event equipment and leisure gear. Choose a category or a specific subcategory to find items nearby without buying things you only need occasionally.",
   },
   feed: {
     metaTitle: "Items to rent in Lithuania | Naudokis.lt",

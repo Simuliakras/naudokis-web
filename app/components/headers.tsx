@@ -9,6 +9,7 @@
 // for back-compat with older import sites.
 import React from "react";
 import Link from "next/link";
+import { Icon, type IconName } from "./visual";
 
 /* ---------------- Section spacing wrapper ----------------
    One place to spend the fluid rhythm tokens instead of inlining paddingBlock on
@@ -143,24 +144,29 @@ export function RowHead({
 }
 
 /* ---------------- Chip-link row ----------------
-   Crawlable landing-link pills (.nk-fchip--link) shared by the feed SEO note and
-   the listing-detail similar rail. Optional `label` renders the full-width
-   uppercase micro-label ("Populiarios paieškos") on its own line. */
+   Crawlable landing-link pills shared by the feed SEO note, the listing-detail
+   similar rail and the categories popular row. Optional `label` renders the
+   full-width uppercase micro-label ("Populiarios paieškos") on its own line.
+   Variants: "chip" (default) — the .nk-fchip--link pills; "pill" — .nk-pillctl
+   anchors with an optional leading accent icon (Kategorijos "Populiaru dabar"). */
 export function ChipLinkRow({
-  label, links, style,
+  label, links, style, variant = "chip",
 }: {
   label?: string;
-  links: { label: string; href: string }[];
+  links: { label: string; href: string; icon?: IconName }[];
   style?: React.CSSProperties;
+  variant?: "chip" | "pill";
 }) {
   if (links.length === 0) {
     return null;
   }
+  const pill = variant === "pill";
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--nk-gap-sm)", ...style }}>
       {label && <span style={{ width: "100%", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12.5, letterSpacing: ".07em", textTransform: "uppercase", color: "var(--nk-text-muted)" }}>{label}</span>}
       {links.map((link) => (
-        <Link key={link.href} href={link.href} className="nk-fchip nk-fchip--link">
+        <Link key={link.href} href={link.href} className={pill ? "nk-pillctl nk-pillrow__pill" : "nk-fchip nk-fchip--link"}>
+          {pill && link.icon && <Icon name={link.icon} size={15} stroke={2} color="var(--nk-purple-hover)" />}
           <span>{link.label}</span>
         </Link>
       ))}

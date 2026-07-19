@@ -1,6 +1,7 @@
 "use client";
-// All-categories list screen — breadcrumb, live-filter search, tile grid, SEO.
-import { useState } from "react";
+// All-categories directory screen — breadcrumb, live-filter search, popular
+// pills, per-category cards with inline subcategory lists, SEO note.
+import { useId, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Nav } from "./sections";
@@ -8,44 +9,50 @@ import { CtaBanner, Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, InputClear } from "./ui";
 import { ChipLinkRow, PageHead, SeoNote } from "./headers";
-import { CATEGORY_SKELETON_COUNT, CategoryCard, CategoryCardSkeleton, EmptyState } from "./cards";
-import { useCategories, type Category } from "@/app/lib/categories";
-import type { Locale } from "@/app/lib/i18n/config";
+import { CATEGORY_SKELETON_COUNT, EmptyState } from "./cards";
+import { useAllCategories, type Category } from "@/app/lib/categories";
+import {
+  POPULAR_SUB_IDS,
+  filterDirectory,
+  groupDirectory,
+  resolvePopularSubs,
+} from "@/app/lib/categories-directory";
 import { listingLandingHref, listingSearchHref } from "@/app/lib/search";
 import { useOnlineStatus, useReloadOnReconnect } from "@/app/lib/use-online-status";
 import { useI18n } from "./I18nProvider";
 
-// Lithuanians commonly type without diacritics ("irankiai", "sventes") — fold
-// both sides of the match so the filter never zero-results a list the user can
-// literally see below the input.
-const fold = (s: string) => s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
-
-export function CategoriesScreen({ allCategories = [] }: { allCategories?: Category[] }) {
+export function CategoriesScreen() {
   const { locale, dict } = useI18n();
   const t = dict.categoriesPage;
   const router = useRouter();
   const online = useOnlineStatus();
   const [q, setQ] = useState("");
-  const { data, isLoading, isError, refetch } = useCategories(locale);
+  const { data, isLoading, isError, refetch } = useAllCategories(locale);
 
   useReloadOnReconnect({ online, isError, refetch });
 
   const focusSearch = () => document.getElementById("nk-cats-search-input")?.focus();
-  // The field is a pure category filter — Enter must not navigate. Cross-search
+  // The field is a pure directory filter — Enter must not navigate. Cross-search
   // to the items feed is an explicit affordance from the no-results empty state.
   const searchItems = () => { if (q.trim()) { router.push(listingSearchHref({ q, locale })); } };
-  const term = fold(q.trim());
-  const all = data ?? [];
-  // Titles + authored intros: the intros carry the synonyms users actually type
-  // ("dronus", "fotoaparatus"), so they count as matches too.
-  const list = all.filter((c) => fold(c.title).includes(term) || fold(c.seoBody).includes(term));
+
+  const all = useMemo(() => data ?? [], [data]);
+  const groups = useMemo(() => groupDirectory(all), [all]);
+  // Matches parent titles, curated synonyms and sub names (folded); a parent hit
+  // shows the whole card, a sub-only hit narrows the list to the matches.
+  const { groups: shown, shownSubCount } = useMemo(
+    () => filterDirectory({ groups, query: q, synonymsFor: t.synonyms }),
+    [groups, q, t],
+  );
+  const popular = useMemo(() => resolvePopularSubs({ all, ids: POPULAR_SUB_IDS }), [all]);
+  const searching = q.trim().length > 0;
 
   return (
     <Chrome>
       <div className="nk-page">
         <Nav onSearch={focusSearch} />
-        {/* max-width caps the content column on ultrawide so 4-up tiles stay a
-            scannable ~300px rather than stretching to letterboxes near 1920 */}
+        {/* max-width caps the content column on ultrawide so 4-up cards stay a
+            scannable ~310px rather than stretching to letterboxes near 1920 */}
         <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px", maxWidth: 1520 }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={[{ label: t.crumb }]} />
           <PageHead
@@ -56,7 +63,7 @@ export function CategoriesScreen({ allCategories = [] }: { allCategories?: Categ
             marginBottom="var(--nk-s-10)"
           />
 
-          <form onSubmit={(e) => e.preventDefault()} role="search" style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-10)" }}>
+          <form onSubmit={(e) => e.preventDefault()} role="search" style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-8)" }}>
             <span className="nk-searchfield" style={{ width: "100%", maxWidth: 560 }}>
               <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
               <input id="nk-cats-search-input" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.searchPlaceholder}
@@ -69,16 +76,32 @@ export function CategoriesScreen({ allCategories = [] }: { allCategories?: Categ
                 count change is reliably announced on every keystroke; it also carries
                 the loading announcement (a region born WITH content never fires). */}
             <span aria-live="polite" role="status" className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
-              {isLoading ? dict.common.loading : !isError && all.length > 0 ? t.foundCount(list.length) : ""}
+              {isLoading ? dict.common.loading : !isError && all.length > 0 ? t.countLabel(shown.length, shownSubCount) : ""}
             </span>
           </form>
 
-          {/* sr-only section heading so the outline is h1 → h2 → h3(tiles) instead
-              of skipping a level straight to the tile <h3>s */}
-          <h2 className="nk-sr-only">{t.crumb}</h2>
+          {/* Quick-access rail into the highest-traffic subcategory landings;
+              hidden while a term is active so filter results start at the grid. */}
+          {!searching && popular.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-10)" }}>
+              <span className="nk-eyebrow" style={{ fontSize: 13 }}>{t.popularHeading}</span>
+              <ChipLinkRow
+                variant="pill"
+                links={popular.map(({ sub, parent }) => ({
+                  label: sub.title,
+                  icon: parent.icon,
+                  href: listingLandingHref({ category: parent.id, subcategory: sub.id, locale }),
+                }))}
+              />
+            </div>
+          )}
+
+          {/* sr-only section heading so the outline is h1 → h2 → h3(cards) instead
+              of skipping a level straight to the card <h3>s */}
+          <h2 className="nk-sr-only">{t.gridHeading}</h2>
           {isLoading ? (
-            <div className="nk-grid-cats" aria-hidden="true">
-              {Array.from({ length: CATEGORY_SKELETON_COUNT }).map((_, i) => <CategoryCardSkeleton key={i} />)}
+            <div className="nk-dirgrid" aria-hidden="true">
+              {Array.from({ length: CATEGORY_SKELETON_COUNT }).map((_, i) => <div key={i} className="nk-skel nk-dircard-skel" />)}
             </div>
           ) : !online && (isError || all.length === 0) ? (
             <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body}
@@ -92,11 +115,10 @@ export function CategoriesScreen({ allCategories = [] }: { allCategories?: Categ
             // one would interpolate empty quotes and offer a no-op search CTA.
             <EmptyState illustration="error" title={dict.categories.errorTitle} subtitle={dict.categories.errorSubtitle}
               actionLabel={dict.categories.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
-          ) : list.length ? (
-            <div className="nk-grid-cats nk-reveal-grid">
-              {list.map((c) => (
-                <CategoryCard key={c.id} id={c.id} icon={c.icon} title={c.title} href={listingLandingHref({ category: c.id, locale })}
-                  examples={dict.categories.examples(c.id)} />
+          ) : shown.length ? (
+            <div className="nk-dirgrid nk-reveal-grid">
+              {shown.map((g) => (
+                <DirectoryCard key={g.parent.id} parent={g.parent} subs={g.subs} visibleSubIds={g.visibleSubIds} searching={searching} />
               ))}
             </div>
           ) : (
@@ -105,7 +127,6 @@ export function CategoriesScreen({ allCategories = [] }: { allCategories?: Categ
               secondaryLabel={t.emptyAction} onSecondaryAction={() => setQ("")} />
           )}
 
-          <CategoryHierarchy categories={allCategories} locale={locale} heading={t.subcategoriesHeading} />
           <SeoNote heading={t.seoHeading} body={t.seoBody} />
         </main>
         {/* The categories hub is a core discovery surface on an install-bridge
@@ -117,35 +138,68 @@ export function CategoriesScreen({ allCategories = [] }: { allCategories?: Categ
   );
 }
 
-/* Crawlable discovery path to the subcategory landings, which the tile grid above
-   deliberately does not show (it is top-level only). Chips reuse ChipLinkRow — the
-   same .nk-fchip--link pills as the feed SEO note and the listing similar rail. */
-function CategoryHierarchy({ categories, locale, heading }: { categories: Category[]; locale: Locale; heading: string }) {
-  const parents = categories.filter((category) => !category.parentId);
-  const groups = parents
-    .map((parent) => ({ parent, children: categories.filter((category) => category.parentId === parent.id) }))
-    .filter((group) => group.children.length > 0);
-  if (groups.length === 0) {
-    return null;
-  }
+/* One parent category card: header (accent chip, title link, sub count, arrow
+   to the full feed) + the inline subcategory list. EVERY sub renders in the DOM
+   (crawlable, handoff §10); the collapsed state hides rows with CSS only — top 4
+   on desktop, header-only ≤640px — and an active search term hides non-matching
+   rows via [hidden] instead (the term also drops the collapse entirely). */
+function DirectoryCard({
+  parent, subs, visibleSubIds, searching,
+}: {
+  parent: Category;
+  subs: Category[]; // full taxonomy-order list — never pre-sliced
+  visibleSubIds: ReadonlySet<string> | null; // null = all visible
+  searching: boolean; // term active: force-expanded, expander unmounted
+}) {
+  const { locale, dict } = useI18n();
+  const t = dict.categoriesPage;
+  const [expanded, setExpanded] = useState(false);
+  const listId = useId();
+  const landing = listingLandingHref({ category: parent.id, locale });
+  const collapsed = !searching && !expanded;
+
   return (
-    <section aria-labelledby="subcategory-heading" style={{ marginTop: "var(--nk-section-y)", marginBottom: "var(--nk-section-y)" }}>
-      <h2 id="subcategory-heading" className="nk-h-section" style={{ marginBottom: "var(--nk-gap-xl)" }}>{heading}</h2>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "var(--nk-gap-lg)" }}>
-        {groups.map(({ parent, children }) => (
-          <div key={parent.id} style={{ padding: "var(--nk-card-pad-sm)", border: "1px solid var(--nk-border)", borderRadius: "var(--nk-r-md)", background: "var(--nk-surface-glass)" }}>
-            <h3 style={{ margin: "0 0 var(--nk-gap-md)", fontFamily: "var(--nk-font-display)", fontSize: 18 }}>
-              <Link href={listingLandingHref({ locale, category: parent.id })}>{parent.title}</Link>
-            </h3>
-            <ChipLinkRow
-              links={children.map((child) => ({
-                label: child.title,
-                href: listingLandingHref({ locale, category: parent.id, subcategory: child.id }),
-              }))}
-            />
-          </div>
-        ))}
+    <section className="nk-dircard" data-cat={parent.id} aria-label={parent.title}>
+      <div className="nk-catv2__bg" />
+      <div className="nk-dircard__head">
+        {/* bare Icon: the chip's CSS sizes the svg (24px, 20px in compact tiles) */}
+        <span className="nk-catv2__chip"><Icon name={parent.icon} /></span>
+        <div className="nk-dircard__titleblock">
+          <h3 className="nk-dircard__title"><Link href={landing}>{parent.title}</Link></h3>
+          {subs.length > 0 && <span className="nk-dircard__count nk-tnum">{t.subCount(subs.length)}</span>}
+        </div>
+        <Link href={landing} className="nk-dircard__go" aria-label={t.allListingsLabel(parent.title)}>
+          <Icon name="ArrowRight" size={15} stroke={2} />
+        </Link>
       </div>
+      {subs.length > 0 && (
+        <ul id={listId} className={collapsed ? "nk-dircard__subs is-collapsed" : "nk-dircard__subs"}>
+          {subs.map((sub) => (
+            <li key={sub.id} hidden={visibleSubIds ? !visibleSubIds.has(sub.id) : false}>
+              <Link className="nk-dircard__sub" href={listingLandingHref({ category: parent.id, subcategory: sub.id, locale })}>
+                <span className="nk-dircard__subname">{sub.title}</span>
+                {/* stays tertiary on row hover (only the label brightens) */}
+                <Icon name="ChevronRight" size={14} stroke={2} color="var(--nk-text-tertiary)" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+      {/* the __more--sm variant exists only for the ≤640px header-only collapse;
+          CSS swaps which "Dar N" span shows (N−4 above 640px, all N below) */}
+      {!searching && subs.length > 0 && (
+        <button type="button" aria-expanded={expanded} aria-controls={listId}
+          className={subs.length > 4 ? "nk-dircard__more" : "nk-dircard__more nk-dircard__more--sm"}
+          onClick={() => setExpanded((v) => !v)}>
+          {expanded ? t.showLess : (
+            <>
+              {subs.length > 4 && <span className="nk-dircard__more-rest">{t.moreCount(subs.length - 4)}</span>}
+              <span className="nk-dircard__more-all">{t.moreCount(subs.length)}</span>
+            </>
+          )}
+          <Icon name={expanded ? "ChevronDown" : "ChevronRight"} size={14} stroke={2.2} />
+        </button>
+      )}
     </section>
   );
 }

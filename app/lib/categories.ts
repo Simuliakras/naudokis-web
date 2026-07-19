@@ -138,3 +138,14 @@ export function dedupeById<T extends { id: string }>(items: T[]): T[] {
 export function useCategories(locale: Locale) {
   return useQuery({ queryKey: categoriesKey(locale), queryFn: () => fetchCategories(locale) });
 }
+
+// Full flat tree (parents + subs, shallow-to-deep) — what the Kategorijos
+// directory reads. Server pages seed this slot via allCategoriesKey so the
+// dehydrated HTML already carries every subcategory link.
+export function allCategoriesKey(locale: Locale) {
+  return ["categories", "all", locale] as const;
+}
+
+export function useAllCategories(locale: Locale) {
+  return useQuery({ queryKey: allCategoriesKey(locale), queryFn: () => fetchAllCategories(locale) });
+}
