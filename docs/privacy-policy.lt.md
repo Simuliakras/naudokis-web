@@ -18,7 +18,7 @@ review_status: "Parengta publikavimui po teisinių ir techninių patikrų, nurod
 **Paskutinį kartą atnaujinta:** 2026 m. liepos 14 d.  
 **Versija:** 2026-07-14-vendor-disclosure-v4.1
 
-Šioje Privatumo politikoje paaiškiname, kokius jūsų asmens duomenis tvarkome, kodėl tai darome, kam juos perduodame, kiek laiko saugome ir kokias teises turite.
+Šioje Privatumo politikoje paaiškiname, kokius jūsų asmens duomenis tvarkome, kodėl tai darome, kam juos perduodame, kiek laiko juos saugome ir kokias teises turite.
 
 **Duomenų valdytojas:** MB „Naudokis“  
 **Juridinio asmens kodas:** 307423504  

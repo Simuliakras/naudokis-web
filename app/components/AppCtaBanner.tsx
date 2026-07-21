@@ -8,7 +8,7 @@ import { AppBadges, QR } from "./ui";
 export function AppCtaBanner({ eyebrow, title, body, phoneAlt, placement }: { eyebrow?: string; title: string; body: string; phoneAlt: string; placement: string }) {
   return (
     <section className="nk-container nk-appcta-wrap">
-      <div className="nk-appcta nk-reveal nk-grain">
+      <div className="nk-appcta nk-reveal nk-grain nk-gborder">
         <Image className="nk-appcta__phone" src="/naudokis/download-phone.png" alt={phoneAlt} width={899} height={705} sizes="(max-width: 980px) 60vw, 480px" />
         <div className="nk-appcta__spark" aria-hidden="true">
           <span style={{ left: "45%", top: "16%" }} /><span style={{ left: "60%", top: "26%" }} /><span style={{ left: "40%", top: "40%" }} /><span style={{ left: "53%", top: "52%" }} /><span style={{ left: "44%", top: "68%" }} /><span style={{ left: "84%", top: "7%" }} />

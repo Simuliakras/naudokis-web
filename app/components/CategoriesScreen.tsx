@@ -59,31 +59,20 @@ export function CategoriesScreen() {
             eyebrow={t.eyebrow}
             title={t.title}
             subtitle={t.body}
-            subtitleMaxWidth={620}
+            subtitleMaxWidth="100ch"
             marginBottom="var(--nk-s-10)"
+            // Matches the feed's head and SeoNote's body below, so the opening
+            // and closing prose on this page share one column.
+            maxWidth="100ch"
           />
 
-          <form onSubmit={(e) => e.preventDefault()} role="search" style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-8)" }}>
-            <span className="nk-searchfield" style={{ width: "100%", maxWidth: 560 }}>
-              <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
-              <input id="nk-cats-search-input" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.searchPlaceholder}
-                aria-label={t.searchLabel}
-                style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text)" }} />
-              {/* named like the feed's identical clear-× ("Clear", not "Close") */}
-              {q && <InputClear onClick={() => setQ("")} label={dict.feed.clear} />}
-            </span>
-            {/* Always-mounted live region (toggle its text, not its existence) so the
-                count change is reliably announced on every keystroke; it also carries
-                the loading announcement (a region born WITH content never fires). */}
-            <span aria-live="polite" role="status" className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 14.5, color: "var(--nk-text-muted)" }}>
-              {isLoading ? dict.common.loading : !isError && all.length > 0 ? t.countLabel(shown.length, shownSubCount) : ""}
-            </span>
-          </form>
-
-          {/* Quick-access rail into the highest-traffic subcategory landings;
-              hidden while a term is active so filter results start at the grid. */}
-          {!searching && popular.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-20)" }}>
+          {/* Quick-access rail into the highest-traffic subcategory landings. It
+              sits above the field, so it stays mounted while a term is active —
+              unmounting it here would yank the search input upward mid-typing.
+              100ch keeps the pills wrapping within the same reading column as
+              the PageHead above and the SeoNote below. */}
+          {popular.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-8)", maxWidth: "100ch" }}>
               <span className="nk-eyebrow" style={{ fontSize: 13 }}>{t.popularHeading}</span>
               <ChipLinkRow
                 variant="pill"
@@ -95,6 +84,28 @@ export function CategoriesScreen() {
               />
             </div>
           )}
+
+          <form onSubmit={(e) => e.preventDefault()} role="search" style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-20)" }}>
+            {/* 100ch — the same reading column the PageHead, the popular rail and
+                the closing SeoNote sit in, so the page has one left-to-right edge. */}
+            <span className="nk-searchfield" style={{ width: "100%", maxWidth: "100ch" }}>
+              <Icon name="Search" size={19} color="var(--nk-text-muted)" stroke={2} />
+              <input id="nk-cats-search-input" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.searchPlaceholder}
+                aria-label={t.searchLabel}
+                style={{ flex: 1, minWidth: 0, border: "none", outline: "none", background: "transparent", fontFamily: "var(--nk-font-body)", fontSize: 16, color: "var(--nk-text)" }} />
+              {/* named like the feed's identical clear-× ("Clear", not "Close") */}
+              {q && <InputClear onClick={() => setQ("")} label={dict.feed.clear} />}
+            </span>
+            {/* Announced only — the visible count was dropped, but a filter-as-you-
+                type screen still has to tell a screen-reader user how many results
+                a keystroke produced, so this mirrors the feed's sr-only status.
+                Always-mounted live region (toggle its text, not its existence) so
+                it fires on every keystroke; it also carries the loading
+                announcement (a region born WITH content never fires). */}
+            <span aria-live="polite" role="status" className="nk-sr-only">
+              {isLoading ? dict.common.loading : !isError && all.length > 0 ? t.countLabel(shown.length, shownSubCount) : ""}
+            </span>
+          </form>
 
           {/* sr-only section heading so the outline is h1 → h2 → h3(cards) instead
               of skipping a level straight to the card <h3>s */}

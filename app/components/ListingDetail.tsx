@@ -29,7 +29,7 @@ import { SectionEmpty } from "./cards";
 import { DateRangePicker, type DateRange } from "./DateRangePicker";
 import { RowHead } from "./headers";
 import { useI18n } from "./I18nProvider";
-import { Avatar, Icon, IconName, Pill, openRedirect } from "./ui";
+import { Avatar, Icon, IconName, Pill, openRedirect, type RedirectListingContext } from "./ui";
 
 // Everything the booking panel needs to run the date field. Bundled into one prop
 // because BookingPanel is rendered twice (sticky sidebar + mobile inline) and both
@@ -62,7 +62,9 @@ function Section({
     <section
       id={id}
       className="nk-sec"
-      style={{ marginTop: first ? 0 : 32, paddingTop: first ? 0 : 32 }}
+      // Every section after the first opens with a rule, centred in a 64px break
+      // (32 above + 32 below) so the divider reads as shared, not as a top border.
+      style={first ? undefined : { marginTop: 32, paddingTop: 32, borderTop: "1px solid var(--nk-divider)" }}
     >
       <RowHead title={title} sub={sub} marginBottom="var(--nk-gap-xl)" />
       {children}
@@ -337,7 +339,7 @@ export function ListingSkeleton() {
         ...card,
         background: "var(--nk-surface)",
         border: "1px solid var(--nk-border-strong)",
-        boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)",
+        boxShadow: "var(--nk-edge-accent), var(--nk-shadow-3)",
       }}
     >
       <div
@@ -439,13 +441,13 @@ export function ListingSkeleton() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
+                  className="nk-spec-row"
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
                     gap: 16,
                     padding: "15px 0",
-                    borderBottom: "1px solid var(--nk-divider)",
                   }}
                 >
                   <Skel w={120} h={14} />
@@ -764,7 +766,7 @@ export function ListingHeader({
             fontWeight: 700,
             fontSize: "clamp(34px, 4vw, 44px)",
             lineHeight: 1.04,
-            letterSpacing: 0,
+            letterSpacing: "-0.01em",
             color: "var(--nk-text)",
             textWrap: "balance",
             overflowWrap: "anywhere",
@@ -895,12 +897,15 @@ export function ListingHeader({
    footer keeps the "reserve in the app" CTA. */
 export function Gallery({
   images,
-  title,
+  redirectCtx,
   hasNoReviews,
   appPath,
 }: {
   images: string[];
-  title: string;
+  // The whole redirect context rather than a bare title: the lightbox's reserve
+  // button opens the same modal as every other trigger on the page, so it must
+  // carry the identical item row (see listingCtx in ListingScreen).
+  redirectCtx: RedirectListingContext;
   hasNoReviews: boolean;
   appPath: string;
 }) {
@@ -910,7 +915,7 @@ export function Gallery({
   const count = images.length;
   const shown = images.slice(0, 5); // render only real tiles — never empty placeholders
   const extra = count > 5 ? count - 5 : 0;
-  const alt = (i: number) => (i === 0 ? title : `${title} — ${i + 1}`);
+  const alt = (i: number) => (i === 0 ? redirectCtx.title : `${redirectCtx.title} — ${i + 1}`);
   const open = (i: number) => setLightbox(i);
 
   // A factual review-state chip; zero reviews must never be presented as proof
@@ -1029,7 +1034,7 @@ export function Gallery({
       {lightbox !== null && (
         <GalleryLightbox
           images={images}
-          title={title}
+          redirectCtx={redirectCtx}
           appPath={appPath}
           start={lightbox}
           onClose={() => setLightbox(null)}
@@ -1142,13 +1147,13 @@ function LightboxImage({
 
 function GalleryLightbox({
   images,
-  title,
+  redirectCtx,
   appPath,
   start,
   onClose,
 }: {
   images: string[];
-  title: string;
+  redirectCtx: RedirectListingContext;
   appPath: string;
   start: number;
   onClose: () => void;
@@ -1294,7 +1299,7 @@ function GalleryLightbox({
           <LightboxImage
             key={i}
             src={images[i]}
-            alt={i === 0 ? title : `${title} — ${i + 1}`}
+            alt={i === 0 ? redirectCtx.title : `${redirectCtx.title} — ${i + 1}`}
             errorLabel={t.galleryImageError}
           />
           {many && (
@@ -1388,7 +1393,8 @@ function GalleryLightbox({
               openRedirect({
                 title: dict.bridge.reserveTitle,
                 body: dict.bridge.reserveBody,
-                listing: { title, thumb: images[i] },
+                // the photo the user is actually looking at, not the cover shot
+                listing: { ...redirectCtx, thumb: images[i] },
                 appPath,
               })
             }
@@ -1510,13 +1516,13 @@ function SpecsSection({
         {attributes.map((a) => (
           <div
             key={a.id}
+            className="nk-spec-row"
             style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
               gap: "var(--nk-gap-md)",
               padding: "15px 0",
-              borderBottom: "1px solid var(--nk-divider)",
             }}
           >
             <span
@@ -1905,7 +1911,7 @@ function TermsSection({
       <div className="nk-hl-grid">
         <FactCard
           icon="Tag"
-          title={`${listing.price} ${t.perDay}`}
+          title={`${listing.price} ${t.perDayAbbr}`}
           sub={t.termRentSub}
         />
         <FactCard
@@ -2279,9 +2285,16 @@ function ReviewsBreakdown({
 
 export function ReviewsSection({
   listing,
+  redirectCtx,
+  appPath,
   onShowReviews,
 }: {
   listing: ListingDetail;
+  // Same object every other trigger on the page uses. Deriving a second context
+  // here (e.g. from listing.tags[0]) would let one listing show two different
+  // category labels depending on which button opened the modal.
+  redirectCtx: RedirectListingContext;
+  appPath: string;
   onShowReviews: () => void;
 }) {
   const { dict } = useI18n();
@@ -2309,11 +2322,8 @@ export function ReviewsSection({
             openRedirect({
               title: dict.bridge.reserveTitle,
               body: dict.bridge.reserveBody,
-              listing: {
-                title: listing.title,
-                thumb: listing.images[0],
-                priceLabel: `${listing.price} ${t.perDay}`,
-              },
+              listing: redirectCtx,
+              appPath,
             })
           }
         />
@@ -2387,7 +2397,7 @@ export function BookingPanel({
         flexDirection: "column",
         gap: "var(--nk-gap-md)",
         border: "1px solid var(--nk-border-strong)",
-        boxShadow: "var(--nk-edge-top), var(--nk-shadow-2)",
+        boxShadow: "var(--nk-edge-accent), var(--nk-shadow-3)",
       }}
     >
       {/* Price block: the 33px price owns the header alone — the deposit fact lives
@@ -2465,7 +2475,6 @@ export function BookingPanel({
         today={dates.today}
         minDays={listing.minDays}
         maxDays={listing.maxDays}
-        discounts={listing.discountTiers}
       />
 
       {/* Trust rows — only facts this listing actually carries: its deposit (or
@@ -2752,7 +2761,7 @@ export function MobileBar({
               color: "var(--nk-text-2)",
             }}
           >
-            {t.perDayShort}
+            {t.perDayAbbr}
           </span>
         </span>
         <span

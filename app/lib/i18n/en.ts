@@ -345,7 +345,7 @@ export const en: Dict = {
         body: "Confirm the return, provide evidence if needed, and leave a review after completion.",
       },
     ],
-    ctaLabel: "See the whole process",
+    ctaLabel: "Read more",
   },
   cta: {
     eyebrow: "The app",
@@ -356,7 +356,8 @@ export const en: Dict = {
   faq: {
     eyebrow: "Questions?",
     heading: "What to know before renting",
-    subheading: "Quick answers about the agreement, reservation status, checks, deposits and responsibility.",
+    subheading:
+      "Quick answers about the agreement, reservation status, checks, deposits and responsibility.",
     items: [
       {
         q: "Who enters into the rental agreement?",
@@ -428,8 +429,8 @@ export const en: Dict = {
       { label: "Terms of use", href: "/naudojimosi-salygos" },
       { label: "Account deletion", href: "/paskyros-trynimas" },
     ],
-    copyright: "© 2026 Naudokis.lt. All rights reserved.",
-    company: ({ legalName, code }) => `${legalName} · Company code ${code}`,
+    copyright: ({ year, legalName }) =>
+      `© ${year} ${legalName}. All rights reserved.`,
     socialLabel: "Social media",
   },
   detail: {
@@ -458,7 +459,8 @@ export const en: Dict = {
     handoverHeading: "Item handover",
     mapTitle: (city) => `${city} on the map`,
     mapLoad: "Load the Google Maps map",
-    mapNotice: "The map loads only after you choose it. Google may receive your IP address and device data.",
+    mapNotice:
+      "The map loads only after you choose it. Google may receive your IP address and device data.",
     mapPrivacy: "Privacy information",
     pickupLabel: "Pickup",
     pickupFree: "Free",
@@ -471,7 +473,8 @@ export const en: Dict = {
     similarHeading: "Similar items",
     moreItemsHeading: "More items to rent",
     reviewsEmptyTitle: "No reviews for this item yet",
-    reviewsEmptyBody: "No reviews yet. Review the owner profile and terms before sending a request.",
+    reviewsEmptyBody:
+      "No reviews yet. Review the owner profile and terms before sending a request.",
     reviewsInApp: (n) => `All ${n} reviews in the app`,
     perDay: "per day",
     reserve: "Send reservation request",
@@ -493,7 +496,6 @@ export const en: Dict = {
     galleryPrev: "Previous photo",
     galleryNext: "Next photo",
     galleryImageError: "Couldn’t load this photo",
-    perDayShort: "per day",
     // DRAFT — marketing sign-off pending (booking-panel trust rows + CTA note)
     ratingLinkLabel: ({ rating, count }) =>
       `Rated ${rating} out of 5, ${count} review${count === 1 ? "" : "s"} — go to reviews`,
@@ -508,8 +510,6 @@ export const en: Dict = {
     datesClose: "Close calendar",
     datesClear: "Clear",
     datesApply: "Done",
-    datesClearAll: "Clear dates",
-    datesDone: "Done",
     calPrevMonth: "Previous month",
     calNextMonth: "Next month",
     calDays: (n) => `${n} day${n === 1 ? "" : "s"}`,
@@ -522,19 +522,8 @@ export const en: Dict = {
     calSelectStart: "Pick a start date",
     calSelectEnd: "Pick an end date",
     calStartSelected: (date) => `Start: ${date}. Now pick an end date.`,
-    calRangeSelected: ({ start, end, days }) => `Selected ${start}–${end}, ${days}.`,
-    calPopTitle: "Choose rental dates",
-    calPopSubIdle: ({ min, max, discountMin }) => {
-      const base =
-        max > 0
-          ? `Rent for ${min}–${max} days`
-          : `Minimum rental ${min} day${min === 1 ? "" : "s"}`;
-      return discountMin !== null ? `${base} · cheaper from ${discountMin} days` : base;
-    },
-    calPopSubStart: ({ start, max }) =>
-      max > 0 ? `From ${start} · up to ${max} days` : `From ${start}`,
-    calPopSubRange: ({ start, end, percent }) =>
-      percent !== null ? `${start} – ${end} · −${percent}% off` : `${start} – ${end}`,
+    calRangeSelected: ({ start, end, days }) =>
+      `Selected ${start}–${end}, ${days}.`,
     calBlocked: (reason, n) => {
       if (reason === "past") {
         return "Date has passed";
@@ -621,6 +610,7 @@ export const en: Dict = {
     breadcrumbHome: "Home",
     breadcrumbLabel: "Breadcrumb",
     loading: "Loading…",
+    backToTop: "Back to top",
   },
   categoriesPage: {
     metaTitle: "Item rental categories in Lithuania | Naudokis.lt",
@@ -693,7 +683,8 @@ export const en: Dict = {
     eyebrow: "Rentals across Lithuania",
     titleAll: "Items to rent",
     titleSearch: "Search results",
-    subtitleAll: "Compare prices, locations, handover options and owner profiles across Lithuania.",
+    subtitleAll:
+      "Compare prices, locations, handover options and owner profiles across Lithuania.",
     subtitleSearch: (q) => `Results for “${q}” across Lithuania.`,
     subtitleSearchGeneric: "Search results across Lithuania.",
     resultCount: (n) => `${n} listing${n === 1 ? "" : "s"}`,
@@ -763,9 +754,9 @@ export const en: Dict = {
     pageStatus: (page, totalPages) => `Page ${page} of ${totalPages}`,
     pageStatusShort: (page) => `Page ${page}`,
     pageEmptyTitle: "This page no longer exists",
-    pageEmptyBody: "The list of listings has changed, so this page is out of range. Head back to the start of the list.",
+    pageEmptyBody:
+      "The list of listings has changed, so this page is out of range. Head back to the start of the list.",
     pageEmptyAction: "Back to page 1",
-    backToTop: "Back to top",
     seoHeading: "Item rental in Lithuania",
     seoBody:
       "Naudokis.lt connects people and businesses that need items for a short time with private and business owners across Lithuania. Browse by category, city or price, then manage dates, messages, the final amount and payment in the app.",
@@ -790,19 +781,17 @@ export const en: Dict = {
       categoryActionPrimary: "List an item",
       categoryActionSecondary: "All categories",
     },
-    interruptTitle: "Continue your reservation request in the app",
-    interruptBody:
-      "Choose dates and handover, review the full amount, authorise payment and send your request to the owner.",
-    interruptCta: "Get the app",
   },
   offline: {
     title: "You’re offline",
     body: "Reconnect to load rentals and continue browsing.",
     retry: "Try again",
     timeoutTitle: "The server is taking too long",
-    timeoutBody: "Your search and filters are preserved. Check your connection and try again.",
+    timeoutBody:
+      "Your search and filters are preserved. Check your connection and try again.",
     serverTitle: "The service is temporarily unavailable",
-    serverBody: "Your search and filters are preserved. Please try again in a moment.",
+    serverBody:
+      "Your search and filters are preserved. Please try again in a moment.",
   },
   bridge: {
     defaultTitle: "Continue this rental request in the app",
@@ -813,6 +802,7 @@ export const en: Dict = {
     qrTitle: "Scan to continue on your phone",
     installCta: "Get the app",
     storesAlso: "Also on:",
+    storesDivider: "Also on",
     appOpenFallback: "Didn’t open? Try again or choose your app store below.",
     retryOpen: "Try opening again",
     close: "Close",
@@ -833,7 +823,8 @@ export const en: Dict = {
     shareTitle: "Open this item in the app",
     shareBody: "Download Naudokis to open this item on your phone.",
     listTitle: "List your item for rent",
-    listBody: "Add photos, describe the condition and what is included, set the price and deposit. You approve each request.",
+    listBody:
+      "Add photos, describe the condition and what is included, set the price and deposit. You approve each request.",
   },
   // DRAFT: attribution-consent copy — needs sign-off before the OneLink URL is
   // switched on in prod. Both actions must stay equally weighted.
@@ -896,18 +887,22 @@ export const en: Dict = {
   cancelDeletion: {
     meta: {
       title: "Cancel account deletion — Naudokis",
-      description: "Changed your mind? Cancel your account deletion and keep using Naudokis.",
+      description:
+        "Changed your mind? Cancel your account deletion and keep using Naudokis.",
     },
     title: "Keep your account?",
     body: "You can cancel account deletion within 30 days of submitting the request. Confirm below if you want to keep your account.",
     confirm: "Cancel deletion",
     successTitle: "Account deletion cancelled",
-    successBody: "Your account deletion has been cancelled. You can sign in again in the app.",
+    successBody:
+      "Your account deletion has been cancelled. You can sign in again in the app.",
     successCta: "Open the app",
     invalidTitle: "Link not valid",
-    invalidBody: "This link is invalid or has expired. If you need help, email info@naudokis.lt.",
+    invalidBody:
+      "This link is invalid or has expired. If you need help, email info@naudokis.lt.",
     alreadyTitle: "Link no longer valid",
-    alreadyBody: "The link has already been used or the 30-day period has ended. If you cannot sign in or are unsure of the account status, email info@naudokis.lt.",
+    alreadyBody:
+      "The link has already been used or the 30-day period has ended. If you cannot sign in or are unsure of the account status, email info@naudokis.lt.",
     errorTitle: "Couldn’t cancel",
     errorBody: "Something went wrong. Please try again or contact us.",
     retry: "Try again",
@@ -959,7 +954,8 @@ export const en: Dict = {
       },
     },
     openApp: "Open in the app",
-    openHint: "Nothing happened? Then you don’t have the app yet — get it below.",
+    openHint:
+      "Nothing happened? Then you don’t have the app yet — get it below.",
     installLead: "Don’t have the app? Get it free.",
     installCta: "Get the app",
     qrHint: "Scan with your phone",

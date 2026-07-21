@@ -69,7 +69,7 @@ app/
 │   │                       #   and call getDictionary() so the home page renders them server-side
 │   │                       # (scroll reveal has NO component — see Motion below: it is CSS-only)
 │   ├── cards.tsx           # Cards: OfferCard, CategoryTile/Card, FeatureCard, Testimonial,
-│   │                       #   FaqRow, skeletons, EmptyState/SectionEmpty, InterruptionBanner
+│   │                       #   FaqRow, skeletons, EmptyState/SectionEmpty
 │   ├── ui.tsx              # Primitives: Icon (re-exported from visual.tsx, lucide-react), Logo, buttons, SectionHead, Breadcrumb,
 │   │                       #   FilterSelect, StoreBadge, AppBadges, QR, openRedirect()
 │   ├── FeedScreen.tsx / CategoriesScreen.tsx / HowItWorksScreen.tsx   # Page orchestrators

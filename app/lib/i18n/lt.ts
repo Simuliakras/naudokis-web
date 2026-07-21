@@ -110,7 +110,7 @@ export const lt: Dict = {
     title: "Aiškesnė daiktų nuoma nuo paieškos iki grąžinimo.",
     body: "Raskite daiktą iš privačių ar verslo savininkų. Svetainėje palyginkite pasiūlymus, o programėlėje matykite visą rezervacijos sumą, pateikite užklausą ir fiksuokite perdavimą bei grąžinimą.",
     ownerPrompt: "Turite nenaudojamą daiktą?",
-    ownerCta: "Paskelbti programėlėje",
+    ownerCta: "Įkelkite skelbimą programėlėje",
     phoneAlt: "Naudokis programėlėje rodomi daiktų nuomos pasiūlymai",
   },
   search: {
@@ -398,7 +398,7 @@ export const lt: Dict = {
         body: "Patvirtinkite grąžinimą, prireikus pateikite įrodymus, o po užbaigimo palikite atsiliepimą.",
       },
     ],
-    ctaLabel: "Visas procesas",
+    ctaLabel: "Skaityti daugiau",
   },
   cta: {
     eyebrow: "Programėlė",
@@ -483,8 +483,8 @@ export const lt: Dict = {
       { label: "Naudojimosi sąlygos", href: "/naudojimosi-salygos" },
       { label: "Paskyros ištrynimas", href: "/paskyros-trynimas" },
     ],
-    copyright: "© 2026 Naudokis.lt. Visos teisės saugomos.",
-    company: ({ legalName, code }) => `${legalName} · Įmonės kodas ${code}`,
+    copyright: ({ year, legalName }) =>
+      `© ${year} ${legalName}. Visos teisės saugomos.`,
     socialLabel: "Socialiniai tinklai",
   },
   detail: {
@@ -543,8 +543,8 @@ export const lt: Dict = {
       "Jis galėjo būti išnuomotas arba pašalintas. Peržiūrėkite kitus nuomos pasiūlymus.",
     backToListings: "Nuomojami daiktai",
     save: "Įsiminti",
-    newListingPill: "Atsiliepimų dar nėra",
-    noReviewsYet: "Atsiliepimų dar nėra",
+    newListingPill: "Dar nėra atsiliepimų",
+    noReviewsYet: "Dar nėra atsiliepimų",
     noPhotos: "Nuotraukų nėra",
     galleryAll: (n) => `Visos ${n} nuotr.`,
     galleryExpand: "Padidinti nuotrauką",
@@ -553,7 +553,6 @@ export const lt: Dict = {
     galleryPrev: "Ankstesnė nuotrauka",
     galleryNext: "Kita nuotrauka",
     galleryImageError: "Nepavyko įkelti nuotraukos",
-    perDayShort: "/ diena",
     ratingLinkLabel: ({ rating, count }) =>
       `Įvertinimas ${rating} iš 5, ${ltReviews(count)} — rodyti atsiliepimus`,
     trustDepositRest: "užstatas (grąžinamas po nuomos)",
@@ -567,8 +566,6 @@ export const lt: Dict = {
     datesClose: "Uždaryti kalendorių",
     datesClear: "Išvalyti",
     datesApply: "Patvirtinti",
-    datesClearAll: "Išvalyti datas",
-    datesDone: "Baigta",
     calPrevMonth: "Ankstesnis mėnuo",
     calNextMonth: "Kitas mėnuo",
     calDays: ltDays,
@@ -583,23 +580,6 @@ export const lt: Dict = {
     calStartSelected: (date) => `Pradžia: ${date}. Pasirinkite pabaigos datą.`,
     calRangeSelected: ({ start, end, days }) =>
       `Pasirinkta ${start}–${end}, ${days}.`,
-    calPopTitle: "Pasirinkite nuomos datas",
-    calPopSubIdle: ({ min, max, discountMin }) => {
-      // "iki" governs the genitive — ltDaysGen, never nominative ltDays here.
-      const base =
-        max > 0
-          ? `Nuoma nuo ${min} iki ${ltDaysGen(max)}`
-          : `Trumpiausia nuoma — ${ltDays(min)}`;
-      return discountMin !== null
-        ? `${base} · nuo ${discountMin} d. pigiau`
-        : base;
-    },
-    calPopSubStart: ({ start, max }) =>
-      max > 0 ? `Nuo ${start} · nuoma iki ${ltDaysGen(max)}` : `Nuo ${start}`,
-    calPopSubRange: ({ start, end, percent }) =>
-      percent !== null
-        ? `${start} – ${end} · −${percent}% nuolaida`
-        : `${start} – ${end}`,
     calBlocked: (reason, n) => {
       if (reason === "past") {
         return "Data jau praėjo";
@@ -676,7 +656,7 @@ export const lt: Dict = {
   common: {
     favorite: "Įsiminti",
     delivery: "Pristatymas",
-    perDay: "/ diena",
+    perDay: "/ d.",
     reviewCount: ltReviews,
     photoCount: (n) =>
       `${n} ${ltWord(n, "nuotrauka", "nuotraukos", "nuotraukų")}`,
@@ -686,6 +666,7 @@ export const lt: Dict = {
     breadcrumbHome: "Pagrindinis",
     breadcrumbLabel: "Naršymo kelias",
     loading: "Kraunama…",
+    backToTop: "Į viršų",
   },
   categoriesPage: {
     metaTitle: "Daiktų nuomos kategorijos Lietuvoje | Naudokis.lt",
@@ -716,7 +697,7 @@ export const lt: Dict = {
     searchItems: (query) => `Ieškoti „${query}“ tarp daiktų`,
     seoHeading: "Daiktų nuoma pagal kategorijas",
     seoBody:
-      "Naudokis.lt apima kasdienes nuomos kategorijas visoje Lietuvoje — nuo įrankių ir transporto iki foto technikos, elektronikos, buitinės technikos, renginių ir laisvalaikio įrangos. Pasirinkite kategoriją arba konkretų pogrupį ir raskite daiktus netoliese be poreikio pirkti tai, ko reikia tik kartais.",
+      "Naudokis.lt apima kasdienes daiktų nuomos kategorijas visoje Lietuvoje — nuo įrankių ir transporto iki foto technikos, elektronikos, buitinės technikos, renginių ir laisvalaikio įrangos. Pasirinkite kategoriją arba konkretų pogrupį ir raskite daiktus netoliese be poreikio pirkti tai, ko reikia tik kartais.",
   },
   feed: {
     metaTitle: "Nuomojami daiktai Lietuvoje | Naudokis.lt",
@@ -797,7 +778,7 @@ export const lt: Dict = {
     priceMaxAria: "Didžiausia kaina",
     priceDone: "Atlikta",
     dateLabel: "Datos",
-    dateAny: "Bet kokios datos",
+    dateAny: "Nuomos datos",
     dateBand: (from, to) => (from === to ? from : `${from}–${to}`),
     datePanelTitle: "Nuomos datos",
     datePrevMonth: "Ankstesnis mėnuo",
@@ -841,7 +822,6 @@ export const lt: Dict = {
     pageEmptyBody:
       "Skelbimų sąrašas pasikeitė, todėl šis puslapis nebeegzistuoja. Grįžkite į sąrašo pradžią.",
     pageEmptyAction: "Į pirmą puslapį",
-    backToTop: "Į viršų",
     seoHeading: "Daiktų nuoma Lietuvoje",
     seoBody:
       "Naudokis.lt jungia žmones ir verslus, kuriems daikto reikia trumpam, su privačiais ir verslo savininkais visoje Lietuvoje. Naršykite pagal kategoriją, miestą ar kainą, o datas, žinutes, galutinę sumą ir mokėjimą valdykite programėlėje.",
@@ -868,10 +848,6 @@ export const lt: Dict = {
       categoryActionPrimary: "Paskelbti daiktą",
       categoryActionSecondary: "Visos kategorijos",
     },
-    interruptTitle: "Tęskite rezervacijos užklausą programėlėje",
-    interruptBody:
-      "Pasirinkite datas ir perdavimo būdą, peržiūrėkite visą sumą, autorizuokite mokėjimą ir pateikite užklausą savininkui.",
-    interruptCta: "Atsisiųsti programėlę",
   },
   offline: {
     title: "Nėra interneto ryšio",
@@ -892,7 +868,8 @@ export const lt: Dict = {
     qrHint: "Nuskenuokite QR kodą telefonu ir atidarykite Naudokis.",
     qrTitle: "Nuskenuokite ir tęskite telefone",
     installCta: "Atsisiųsti programėlę",
-    storesAlso: "Taip pat:",
+    storesAlso: "arba atsisiųskite per:",
+    storesDivider: "Taip pat",
     appOpenFallback:
       "Programėlė neatsidarė? Bandykite dar kartą arba pasirinkite programėlių parduotuvę.",
     retryOpen: "Bandyti atidaryti dar kartą",

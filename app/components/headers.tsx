@@ -22,7 +22,7 @@ const RHYTHM = {
   page: "var(--nk-page-top)",
   none: "0px",
 } as const;
-type Rhythm = keyof typeof RHYTHM;
+export type Rhythm = keyof typeof RHYTHM;
 
 export function Section({
   top = "section", bottom = "section", contained = false,
@@ -163,7 +163,10 @@ export function ChipLinkRow({
   const pill = variant === "pill";
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--nk-gap-sm)", ...style }}>
-      {label && <span style={{ width: "100%", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12.5, letterSpacing: ".07em", textTransform: "uppercase", color: "var(--nk-yellow)" }}>{label}</span>}
+      {/* Muted, not the yellow eyebrow accent: this micro-label sits in the
+          closing SEO block, where a brand accent would out-shout the section
+          heading above it. */}
+      {label && <span style={{ width: "100%", fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 12.5, letterSpacing: ".07em", textTransform: "uppercase", color: "var(--nk-text-muted)" }}>{label}</span>}
       {links.map((link) => (
         <Link key={link.href} href={link.href} className={pill ? "nk-pillctl nk-pillrow__pill" : "nk-fchip nk-fchip--link"}>
           {pill && link.icon && <Icon name={link.icon} size={15} stroke={2} color="var(--nk-purple-hover)" />}
@@ -176,22 +179,30 @@ export function ChipLinkRow({
 
 /* ---------------- SEO note ----------------
    The closing "authored intro" block shared verbatim by the feed and categories
-   screens (24px display H2 + 80ch small body — matches the PageHead subtitle
-   measure). `children` carries the feed's related-landing ChipLinkRow; categories
-   passes none. */
+   screens (24px display H2 + 100ch small body). Both callers set maxWidth="100ch"
+   on their PageHead, so the opening head and this closing block share one column —
+   .nk-pagehead has no default max-width, so that has to be passed at each call
+   site, not assumed here. `children` carries the feed's related-landing
+   ChipLinkRow; categories passes none.
+
+   `top` exists because the two callers arrive at this block differently:
+   categories lands straight off the directory grid and wants the tight default,
+   while the feed has an owner-CTA line directly above and needs a full section
+   break — see the call site in FeedScreen. */
 export function SeoNote({
-  heading, body, children,
+  heading, body, top = "head", children,
 }: {
   heading: string;
   body: string;
+  top?: Rhythm;
   children?: React.ReactNode;
 }) {
   return (
-    <Section top="head" bottom="section">
+    <Section top={top} bottom="section">
       <div style={{ maxWidth: 1200, display: "flex", flexDirection: "column", gap: "var(--nk-gap-md)" }}>
         <RowHead title={heading} color="var(--nk-text-2)" />
-        {/* 80ch reading measure (matches the PageHead subtitle above) */}
-        <p style={{ margin: 0, maxWidth: "80ch", fontFamily: "var(--nk-font-body)", fontSize: "var(--nk-fs-sm)", lineHeight: "26px", color: "var(--nk-text-muted)" }}>{body}</p>
+        {/* 100ch reading measure — kept in step with the PageHead above it */}
+        <p style={{ margin: 0, maxWidth: "100ch", fontFamily: "var(--nk-font-body)", fontSize: "var(--nk-fs-sm)", lineHeight: "26px", color: "var(--nk-text-muted)" }}>{body}</p>
         {children}
       </div>
     </Section>

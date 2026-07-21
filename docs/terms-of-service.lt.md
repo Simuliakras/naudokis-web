@@ -19,7 +19,7 @@ Versija: 2026-07-14-ranking-v4.5
 Kalba: lietuvių  
 Dokumento ID: **NAUDOKIS-TOS-LT-2026-07-14-RANKING-V4-5**
 
-Šios naudojimosi sąlygos („**Sąlygos**“) reglamentuoja jūsų prieigą prie „Naudokis“ platformos ir naudojimąsi ja.
+Šios naudojimosi sąlygos reglamentuoja jūsų prieigą prie „Naudokis“ platformos ir naudojimąsi ja.
 
 Platformą valdo MB „Naudokis“, juridinio asmens kodas 307423504, registruotos buveinės adresas Numėjos g. 6, LT-08402 Vilnius, Lietuva („**Naudokis**“, „**mes**“, „**mūsų**“).
 

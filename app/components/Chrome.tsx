@@ -2,6 +2,7 @@
 // Site chrome for Locked-mode pages: renders the page body plus the shared
 // app-redirect modal.
 import dynamic from "next/dynamic";
+import { BackToTop } from "./BackToTop";
 
 const AppRedirect = dynamic(() => import("./AppRedirect").then((m) => m.AppRedirect), {
   ssr: false,
@@ -13,12 +14,13 @@ const ConsentSheet = dynamic(() => import("./ConsentSheet").then((m) => m.Consen
   ssr: false,
 });
 
-export function Chrome({ children }: { children: React.ReactNode }) {
+export function Chrome({ children, backToTop = true }: { children: React.ReactNode; backToTop?: boolean }) {
   return (
     <>
       {children}
       <AppRedirect />
       <ConsentSheet />
+      <BackToTop enabled={backToTop} />
     </>
   );
 }

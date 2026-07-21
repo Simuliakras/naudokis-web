@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
-import { Avatar, Icon, IconName, IllusName, Illustration, Pill, openRedirect, Pattern } from "./ui";
+import { Avatar, Icon, IconName, IllusName, Illustration, Pill, openRedirect } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { trackEvent } from "@/app/lib/analytics";
 // From listing-view, NOT listings: listings.ts owns the react-query hooks, and
@@ -47,7 +47,21 @@ export function OfferCard({
   const lockFav = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody });
+    // Same item row the listing-detail triggers build (see listingCtx in
+    // ListingScreen): favouriting from a card and from the detail page must open
+    // the same modal for the same listing, down to the category eyebrow's hue.
+    // Everything here is card props — nothing is derived or fabricated.
+    openRedirect({
+      title: dict.bridge.favoriteTitle,
+      body: dict.bridge.favoriteBody,
+      listing: {
+        title,
+        thumb: img,
+        priceLabel: price ? [price, unit].filter(Boolean).join(" ") : undefined,
+        category: categoryName,
+        categoryId: category,
+      },
+    });
   };
   return (
     <article className="nk-offer" data-cat={category} style={{ position: "relative", background: "var(--nk-surface)", borderRadius: "var(--nk-r-card)", overflow: "hidden", display: "flex", flexDirection: "column", cursor: href ? "pointer" : "default" }}>
@@ -205,30 +219,6 @@ export function CategoryCard({
   );
 }
 
-/* ---------------- Feed interruption banner (app-redirect CTA) ---------------- */
-export function InterruptionBanner() {
-  const { dict } = useI18n();
-  const t = dict.feed;
-  return (
-    <div className="nk-interrupt nk-grain">
-      <Pattern name="section-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.25 }} />
-      <Image src="/naudokis/icon.png" alt="" width={409} height={409}
-        style={{ position: "relative", width: 64, height: 64, borderRadius: 15, flex: "none" }} />
-      <div style={{ position: "relative", flex: 1, minWidth: 240, display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
-        {/* CTA banner, not a document section — a <p> keeps the feed's heading
-            outline clean (an h3 here landed before the page's first h2). */}
-        <p style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", color: "var(--nk-text)" }}>{t.interruptTitle}</p>
-        <p style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "26px", color: "var(--nk-text-2)" }}>{t.interruptBody}</p>
-      </div>
-      <button className="nk-btn nk-btn--primary" style={{ position: "relative", padding: "16px 28px" }}
-        onClick={() => openRedirect({ title: dict.bridge.defaultTitle, body: dict.bridge.defaultBody })}>
-        <Icon name="Download" size={17} stroke={2.2} color="var(--nk-text)" />{" "}
-        {t.interruptCta}
-      </button>
-    </div>
-  );
-}
-
 /* ---------------- FAQ accordion row ---------------- */
 export function FaqRow({
   q, a, open, onToggle,
@@ -240,15 +230,15 @@ export function FaqRow({
 }) {
   const panelId = useId();
   return (
-    <div className="nk-faq" style={{
+    <div className="nk-faq" data-open={open} style={{
       border: "1px solid " + (open ? "var(--nk-purple)" : "var(--nk-border-soft)"),
       borderRadius: open ? "var(--nk-r-card)" : "var(--nk-r-lg)", background: "var(--nk-surface)", transition: "border-radius .2s ease, border-color .2s ease, background .2s ease",
       overflow: "hidden",
     }}>
       {/* Semantic heading wraps the disclosure button (standard accordion pattern). */}
       <h3 style={{ margin: 0 }}>
-        <button type="button" onClick={onToggle} aria-expanded={open} aria-controls={panelId} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--nk-gap-md)", padding: "18px clamp(20px,5vw,40px) 18px clamp(22px,6vw,40px)", textAlign: "left", font: "inherit" }}>
-          <span className="nk-h-row" style={{ paddingTop: 5 }}>{q}</span>
+        <button type="button" onClick={onToggle} aria-expanded={open} aria-controls={panelId} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "var(--nk-gap-md)", padding: "18px clamp(20px,5vw,40px) 18px clamp(22px,6vw,40px)", textAlign: "left", font: "inherit" }}>
+          <span className="nk-h-row">{q}</span>
           <span style={{ width: 44, height: 44, borderRadius: 22, flex: "none", marginRight: -8, display: "flex", alignItems: "center", justifyContent: "center",
             transition: "transform .2s ease", transform: open ? "rotate(180deg)" : "none" }}>
             <Icon name="ChevronDown" size={22} color={open ? "var(--nk-purple-hover)" : "var(--nk-text)"} stroke={2.2} />

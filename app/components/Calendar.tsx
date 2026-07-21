@@ -17,17 +17,12 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 import { useI18n } from "./I18nProvider";
 import { Icon } from "./ui";
 import { type Availability } from "@/app/lib/availability";
-import { useMediaQuery } from "@/app/lib/use-media-query";
 import {
-  addDays, addMonths, clampDate, dayOfMonth, formatFullDate, formatMonthHeading, formatShortDate,
+  addDays, addMonths, clampDate, dayOfMonth, formatFullDate, formatMonthHeading,
   monthWeeks, rentalDays, startOfMonth, startOfWeek, endOfWeek, weekdayNames, type IsoDate,
 } from "@/app/lib/dates";
 
 export type DateRange = { start: IsoDate; end: IsoDate };
-
-// The duo spread's collapse threshold — must mirror the 759px max-width rule in
-// globals.css that hides .nk-cal-duo__month--b.
-const DUO_MEDIA = "(min-width: 760px)";
 
 // Why a day cannot be picked. Ordered by how much it tells the user: `booked` is tested
 // before the length rules, so a taken day inside the minimum window announces the useful
@@ -54,14 +49,6 @@ export type CalendarCopy = {
   booked?: string; // legend + disabled-cell suffix (availability callers only)
   apply?: string; // the sheet's Apply button (showApply callers only)
   loading?: string; // live-region while availability is fetching
-  // The duo layout's live header + actions bar. Only a `variant="duo"` caller (the
-  // booking picker) supplies these; the single layout never renders them.
-  popTitle?: string; // header state line while nothing is picked
-  popSubIdle?: string; // idle readout: rental limits + cheapest-tier teaser
-  popSubStart?: (start: string) => string; // start picked, no end hovered yet
-  popSubRange?: (parts: { start: string; end: string; percent: number | null }) => string;
-  clearAll?: string; // the actions bar's text-link clear
-  done?: string; // the actions bar's explicit close
 };
 
 export type CalendarPanelProps = {
@@ -87,31 +74,15 @@ export type CalendarPanelProps = {
   // Move focus onto the roving day cell on mount, so a keyboard user who opened a
   // popover via ArrowDown lands in the grid (mirrors the price slider's autofocus).
   autoFocus?: boolean;
-  // "single" (default) is the feed filter's one-month layout: nav-in-head, hint row,
-  // full-width foot buttons. "duo" is the booking card's two-month spread: a live
-  // pophead, one arrow pair over both months, and the legend+clear+done actions bar.
-  // Below 760px CSS collapses the duo to month A alone — the markup never changes.
-  variant?: "single" | "duo";
-  // Booking only: the discount a rental of N days earns (null = none), feeding the
-  // pophead's live readout. A callback, not a tier list — the engine stays ignorant
-  // of listing pricing shapes.
-  discountPercent?: (days: number) => number | null;
 };
 
 /* ---------------- The calendar ---------------- */
 export function CalendarPanel({
   value, onChange, availability, isLoading = false, today, minDays, maxDays,
   copy, notice, onClose, commitCloses, showApply, autoFocus = false,
-  variant = "single", discountPercent,
 }: CalendarPanelProps) {
   const { locale } = useI18n();
-  const duo = variant === "duo";
-  // The roving-focus root: the single layout's <table>, or the duo wrapper holding
-  // both month tables — whichever is mounted claims the one ref.
-  const gridRef = useRef<HTMLElement | null>(null);
-  const setGridRef = useCallback((element: HTMLElement | null) => {
-    gridRef.current = element;
-  }, []);
+  const gridRef = useRef<HTMLTableElement>(null);
   const captionId = useId();
   const showApplyBtn = showApply ?? !commitCloses;
 
@@ -250,32 +221,14 @@ export function CalendarPanel({
     focusRovingCell();
   };
 
-  // How many month grids are actually VISIBLE right now. The duo spread collapses to
-  // month A alone below 760px by CSS — the markup never changes — so keyboard paging
-  // and the next-arrow cap must ask the viewport, not the variant. Reactive, not an
-  // event-time read: the arrow's disabled state renders from it, and a resize while
-  // open must re-enable paging into months a hidden month B was covering.
-  const twoUp = useMediaQuery(DUO_MEDIA);
-  const monthsShown = duo && twoUp ? 2 : 1;
-
   // Navigation is by DATE, not by DOM position — which is why rovingKeyNav can't be
   // reused. Arrowing off the edge of a month must land on a real day in the NEXT month,
   // an element that does not exist yet; so the handler moves a date, React re-renders
-  // (possibly paging the month), and the focus effect below re-attaches.
+  // (paging the month when the date left it), and the focus effect below re-attaches.
   const go = (target: IsoDate) => {
     const next = clampDate(target, today, horizonEnd);
     setFocusDate(next);
-    const month = startOfMonth(next);
-    const lastVisible = addMonths(monthAnchor, monthsShown - 1);
-    if (month < monthAnchor) {
-      setMonthAnchor(month);
-      return;
-    }
-    if (month > lastVisible) {
-      // The smallest forward shift that brings the date into view: arrowing off
-      // month B's end slides the duo spread by one month, never two.
-      setMonthAnchor(addMonths(month, 1 - monthsShown));
-    }
+    setMonthAnchor(startOfMonth(next));
   };
 
   const onGridKeyDown = (event: React.KeyboardEvent) => {
@@ -303,8 +256,8 @@ export function CalendarPanel({
 
   // Re-attach focus to the roving cell after a date move — but only when focus is
   // already ON A DAY CELL, so opening the panel or clicking elsewhere never yanks it.
-  // The role check matters in the duo, whose nav buttons live inside the grid wrapper:
-  // mere containment would steal focus from a just-clicked arrow.
+  // The gridcell check is not redundant with the containment check: the ref is the
+  // <table>, which also holds the sr-only <caption> and the weekday header row.
   useEffect(() => {
     const grid = gridRef.current;
     const active = document.activeElement;
@@ -339,17 +292,10 @@ export function CalendarPanel({
   const trail = draft.start && draft.end ? "has-range" : showPreview ? "has-preview" : "";
 
   const weeks = useMemo(() => monthWeeks(monthAnchor), [monthAnchor]);
-  // Month B of the duo spread is always anchor+1 — one arrow pair steps the anchor by
-  // exactly one month, so "next" turns month B into month A.
-  const monthB = addMonths(monthAnchor, 1);
-  const weeksB = useMemo(() => (duo ? monthWeeks(monthB) : null), [duo, monthB]);
   const weekdays = useMemo(() => weekdayNames(locale), [locale]);
   const atFirstMonth = monthAnchor <= startOfMonth(today);
-  // "Next" caps on the last VISIBLE month — month B on the wide duo, the anchor
-  // itself when the spread is collapsed (or single) — so the spread never pages
-  // entirely past the booking horizon AND the horizon month itself stays reachable.
-  // Capping on a hidden month B stranded the final weeks of the window on phones.
-  const atLastMonth = addMonths(monthAnchor, monthsShown - 1) >= startOfMonth(horizonEnd);
+  // The horizon's own month stays reachable — the cap is on paging PAST it.
+  const atLastMonth = monthAnchor >= startOfMonth(horizonEnd);
 
   const cellClass = (iso: IsoDate, reason: CalendarBlockedReason | null) => {
     const { start, end } = draft;
@@ -386,34 +332,11 @@ export function CalendarPanel({
     return parts.join(", ");
   };
 
-  // The duo pophead: a bold state line plus a readout that tracks the committed range
-  // or, failing that, the live hover/keyboard preview. Committed wins — once both ends
-  // are down the preview is gone by construction (phase is back to "start").
-  const previewRange = showPreview && draft.start && previewEnd
-    ? { start: draft.start, end: previewEnd }
-    : null;
-  const headRange = draft.start && draft.end ? { start: draft.start, end: draft.end } : previewRange;
-  let headTitle = copy.popTitle ?? "";
-  let headSub = copy.popSubIdle ?? "";
-  if (headRange) {
-    const days = rentalDays(headRange.start, headRange.end);
-    headTitle = copy.days(days);
-    headSub = copy.popSubRange?.({
-      start: formatShortDate(headRange.start, locale),
-      end: formatShortDate(headRange.end, locale),
-      percent: discountPercent?.(days) ?? null,
-    }) ?? "";
-  } else if (draft.start) {
-    headTitle = copy.selectEnd;
-    headSub = copy.popSubStart?.(formatShortDate(draft.start, locale)) ?? "";
-  }
-
   /* The trail class tells the CSS whether there is a wash to draw between the two
      end-caps, and which one — a committed range or the lighter hover/arrow preview.
      The start cell's half-wash is gated on it: a start with nothing yet on its right
      has nothing to connect to, and a bar leaking out of it would be a promise the
-     calendar has not made. Both duo tables carry it, so a range straddling the fold
-     paints one continuous wash across the two grids. */
+     calendar has not made. */
   const gridClass = ["nk-cal__grid", isLoading && "is-loading", trail].filter(Boolean).join(" ");
 
   const weekdayHead = (
@@ -465,101 +388,42 @@ export function CalendarPanel({
 
   return (
     <div className="nk-cal-panel">
-      {duo && (
-        // Visual readout only — NOT a live region: it re-renders on every hover
-        // while an end is being picked, and the sr-only region below already
-        // narrates start picks and committed ranges exactly once.
-        <div className="nk-cal-pophead">
-          <span className="nk-cal-pophead__title">{headTitle}</span>
-          <span className="nk-cal-pophead__sub">{headSub}</span>
-        </div>
-      )}
       {notice}
 
-      {!duo && (
-        <div className="nk-cal__head">
-          <button type="button" className="nk-cal__nav" onClick={() => setMonthAnchor(addMonths(monthAnchor, -1))}
-            disabled={atFirstMonth} aria-label={copy.prevMonth}>
-            <Icon name="ChevronLeft" size={18} color="var(--nk-text)" />
-          </button>
-          <span className="nk-cal__title">{formatMonthHeading(monthAnchor, locale)}</span>
-          <button type="button" className="nk-cal__nav" onClick={() => setMonthAnchor(addMonths(monthAnchor, 1))}
-            disabled={atLastMonth} aria-label={copy.nextMonth}>
-            <Icon name="ChevronRight" size={18} color="var(--nk-text)" />
-          </button>
-        </div>
-      )}
+      <div className="nk-cal__head">
+        <button type="button" className="nk-cal__nav" onClick={() => setMonthAnchor(addMonths(monthAnchor, -1))}
+          disabled={atFirstMonth} aria-label={copy.prevMonth}>
+          <Icon name="ChevronLeft" size={18} color="var(--nk-text)" />
+        </button>
+        <span className="nk-cal__title">{formatMonthHeading(monthAnchor, locale)}</span>
+        <button type="button" className="nk-cal__nav" onClick={() => setMonthAnchor(addMonths(monthAnchor, 1))}
+          disabled={atLastMonth} aria-label={copy.nextMonth}>
+          <Icon name="ChevronRight" size={18} color="var(--nk-text)" />
+        </button>
+      </div>
 
-      {!duo && (
-        <table ref={setGridRef} role="grid" className={gridClass}
-          aria-labelledby={captionId} aria-busy={isLoading || undefined}
-          onKeyDown={onGridKeyDown} onMouseLeave={() => setHover(null)}>
-          <caption id={captionId} className="nk-sr-only">{formatMonthHeading(monthAnchor, locale)}</caption>
-          {weekdayHead}
-          <tbody>{renderWeeks(weeks)}</tbody>
-        </table>
-      )}
+      <table ref={gridRef} role="grid" className={gridClass}
+        aria-labelledby={captionId} aria-busy={isLoading || undefined}
+        onKeyDown={onGridKeyDown} onMouseLeave={() => setHover(null)}>
+        <caption id={captionId} className="nk-sr-only">{formatMonthHeading(monthAnchor, locale)}</caption>
+        {weekdayHead}
+        <tbody>{renderWeeks(weeks)}</tbody>
+      </table>
 
-      {duo && weeksB && (
-        // One arrow pair, absolutely placed at the spread's top corners, steps BOTH
-        // months. Leaving the whole spread drops the hover preview.
-        <div ref={setGridRef} className="nk-cal-duo" onMouseLeave={() => setHover(null)}>
-          <button type="button" className="nk-cal__nav nk-cal-duo__nav is-prev"
-            onClick={() => setMonthAnchor(addMonths(monthAnchor, -1))}
-            disabled={atFirstMonth} aria-label={copy.prevMonth}>
-            <Icon name="ChevronLeft" size={18} color="var(--nk-text)" />
-          </button>
-          <button type="button" className="nk-cal__nav nk-cal-duo__nav is-next"
-            onClick={() => setMonthAnchor(addMonths(monthAnchor, 1))}
-            disabled={atLastMonth} aria-label={copy.nextMonth}>
-            <Icon name="ChevronRight" size={18} color="var(--nk-text)" />
-          </button>
-          <div className="nk-cal-duo__month">
-            <span className="nk-cal__mtitle" id={`${captionId}-a`}>{formatMonthHeading(monthAnchor, locale)}</span>
-            <table role="grid" className={gridClass} aria-labelledby={`${captionId}-a`}
-              aria-busy={isLoading || undefined} onKeyDown={onGridKeyDown}>
-              {weekdayHead}
-              <tbody>{renderWeeks(weeks)}</tbody>
-            </table>
-          </div>
-          <div className="nk-cal-duo__month nk-cal-duo__month--b">
-            <span className="nk-cal__mtitle" id={`${captionId}-b`}>{formatMonthHeading(monthB, locale)}</span>
-            <table role="grid" className={gridClass} aria-labelledby={`${captionId}-b`}
-              aria-busy={isLoading || undefined} onKeyDown={onGridKeyDown}>
-              {weekdayHead}
-              <tbody>{renderWeeks(weeksB)}</tbody>
-            </table>
-          </div>
-        </div>
-      )}
+      <div className="nk-cal__meta">
+        <span className="nk-cal__hint">
+          {phase === "end" ? copy.selectEnd : draft.start ? copy.limits(minDays, maxDays) : copy.selectStart}
+        </span>
+        {legend}
+      </div>
 
-      {!duo && (
-        <div className="nk-cal__meta">
-          <span className="nk-cal__hint">
-            {phase === "end" ? copy.selectEnd : draft.start ? copy.limits(minDays, maxDays) : copy.selectStart}
-          </span>
-          {legend}
-        </div>
-      )}
-
-      {duo ? (
-        <div className="nk-cal__actions">
-          {legend}
-          <div className="nk-cal__actions-btns">
-            <button type="button" className="nk-cal__clearlink" onClick={clear}
-              disabled={!draft.start && !value}>{copy.clearAll}</button>
-            <button type="button" className="nk-btn nk-btn--primary nk-btn--sm" onClick={onClose}>{copy.done}</button>
-          </div>
-        </div>
-      ) : (
-        <div className="nk-cal__foot">
-          <button type="button" className="nk-btn nk-btn--ghost" onClick={clear}
-            disabled={!draft.start && !value}>{copy.clear}</button>
-          {showApplyBtn && (
-            <button type="button" className="nk-btn nk-btn--primary" onClick={onClose}>{copy.apply}</button>
-          )}
-        </div>
-      )}
+      <div className="nk-cal__foot">
+        <button type="button" className="nk-btn nk-btn--ghost" onClick={clear}
+          disabled={!draft.start && !value}>{copy.clear}</button>
+        {showApplyBtn && (
+          <button type="button" className="nk-btn nk-btn--primary" onClick={onClose}>{copy.apply}</button>
+        )}
+      </div>
 
       {/* Mounted empty and filled on change — a live region that arrives already
           populated is not announced. */}

@@ -15,10 +15,11 @@
 // availability cannot be read at all, a banner says so — it has to, because with no
 // "available" affordance an unknown grid looks exactly like a wide-open one.
 //
-// This file is now a thin booking WRAPPER: the month grid lives in Calendar.tsx (shared
-// with the feed's date filter). Here we own the trigger field, the desktop popover and
-// mobile sheet layers, and the mapping from dict.detail into the calendar's injected
-// copy — plus the unknown-availability banner, which is booking-only and so stays here.
+// This file is a thin booking WRAPPER: the month grid lives in Calendar.tsx, shared
+// verbatim with the feed's date filter — same one-month layout, same nav, same foot.
+// Here we own the trigger field, the desktop popover and mobile sheet layers, and the
+// mapping from dict.detail into the calendar's injected copy — plus the
+// unknown-availability banner, which is booking-only and so stays here.
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "./I18nProvider";
 import { CloseButton, Icon, RangePopoverLayer, tabOutDismiss, useTriggerPopover } from "./ui";
@@ -27,7 +28,6 @@ import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { useSheetDrag } from "@/app/lib/use-sheet-drag";
 import { type Availability } from "@/app/lib/availability";
 import { formatShortDate, type IsoDate } from "@/app/lib/dates";
-import { advertisedTiers, applicableDiscount, type Discount } from "@/app/lib/listing-view";
 import type { Dict } from "@/app/lib/i18n/types";
 import { CalendarPanel, type CalendarCopy, type DateRange } from "./Calendar";
 
@@ -44,7 +44,6 @@ type PanelProps = {
   today: IsoDate;
   minDays: number;
   maxDays: number; // 0 = no ceiling on the wire
-  discounts: Discount[]; // the listing's active tiers — feeds the pophead's live readout
 };
 
 // `today` is a client-only fact (see use-market-today.ts), so it is undefined on the
@@ -60,19 +59,7 @@ type PickerProps = Omit<PanelProps, "today"> & {
 };
 
 // dict.detail → the calendar's injected copy. One mapping, shared by both layers.
-// The pophead's idle line is precomputed here — the listing's limits and its cheapest
-// advertised tier are fixed facts, so only the range readout stays a function.
-function detailCalendarCopy({
-  t, minDays, maxDays, discounts,
-}: {
-  t: Dict["detail"];
-  minDays: number;
-  maxDays: number;
-  discounts: Discount[];
-}): CalendarCopy {
-  // Only advertised breaks feed the "cheaper from N days" teaser — the same
-  // advertisedTiers rule (and sort) the Terms ladder renders from.
-  const discountMin = advertisedTiers(discounts)[0]?.minDays ?? null;
+function detailCalendarCopy(t: Dict["detail"]): CalendarCopy {
   return {
     prevMonth: t.calPrevMonth,
     nextMonth: t.calNextMonth,
@@ -88,12 +75,6 @@ function detailCalendarCopy({
     clear: t.datesClear,
     apply: t.datesApply,
     loading: t.calLoading,
-    popTitle: t.calPopTitle,
-    popSubIdle: t.calPopSubIdle({ min: minDays, max: maxDays, discountMin }),
-    popSubStart: (start) => t.calPopSubStart({ start, max: maxDays }),
-    popSubRange: t.calPopSubRange,
-    clearAll: t.datesClearAll,
-    done: t.datesDone,
   };
 }
 
@@ -172,11 +153,11 @@ function Field({ label, value, placeholder }: { label: string; value?: IsoDate; 
   );
 }
 
-// The one booking calendar, shared verbatim by both layers below — the duo variant,
-// the injected copy and the discount readout are identical by construction; only
-// commitCloses differs (the popover commits-and-closes, the sheet stays open).
+// The one booking calendar, shared verbatim by both layers below — the injected copy
+// is identical by construction; only commitCloses differs (the popover commits-and-
+// closes, the sheet stays open and keeps its Apply button).
 function BookingCalendar({
-  value, onChange, availability, isLoading, onRetry, today, minDays, maxDays, discounts, onClose, commitCloses,
+  value, onChange, availability, isLoading, onRetry, today, minDays, maxDays, onClose, commitCloses,
 }: PanelProps & { onClose: () => void; commitCloses: boolean }) {
   const { dict } = useI18n();
   const t = dict.detail;
@@ -185,9 +166,7 @@ function BookingCalendar({
   return (
     <CalendarPanel value={value} onChange={onChange} availability={availability} isLoading={isLoading}
       today={today} minDays={minDays} maxDays={maxDays} notice={notice}
-      copy={detailCalendarCopy({ t, minDays, maxDays, discounts })} variant="duo"
-      discountPercent={(days) => applicableDiscount(discounts, days)?.percent ?? null}
-      onClose={onClose} commitCloses={commitCloses} />
+      copy={detailCalendarCopy(t)} onClose={onClose} commitCloses={commitCloses} />
   );
 }
 
@@ -203,7 +182,7 @@ function RangePopover({
   const { dict } = useI18n();
 
   return (
-    <RangePopoverLayer className="nk-cal-pop nk-cal-pop--wide" ariaLabel={dict.detail.datesPanelTitle}
+    <RangePopoverLayer className="nk-cal-pop" ariaLabel={dict.detail.datesPanelTitle}
       onClose={panel.onClose} onDismiss={onDismiss} fieldRef={fieldRef}>
       <BookingCalendar {...panel} commitCloses />
     </RangePopoverLayer>
@@ -243,8 +222,8 @@ function RangeSheet(props: PanelProps & { onClose: () => void }) {
           <h2 className="nk-cal-sheet__title">{t.datesPanelTitle}</h2>
           <CloseButton ref={closeRef} label={t.datesClose} onClick={onClose} />
         </div>
-        {/* Same duo panel as the popover — CSS collapses the spread to month A at
-            sheet widths, so the sheet gets the live pophead and actions bar for free. */}
+        {/* Same panel as the popover; commitCloses={false} is what gives the sheet its
+            Apply button (CalendarPanel defaults showApply to !commitCloses). */}
         <BookingCalendar {...props} commitCloses={false} />
       </div>
     </div>

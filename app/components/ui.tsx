@@ -247,9 +247,17 @@ export function Illustration({
    to open the shared <AppRedirect/> modal (mounted via <Chrome/>).
    ============================================================ */
 // Optional listing context keeps the user's intent visible across the handoff
-// (compact item row in the modal). Real wire data only — title/thumb/price come
-// from the listing view models, never fabricated.
-export type RedirectListingContext = { title: string; thumb?: string; priceLabel?: string };
+// (compact item row in the modal). Real wire data only — title/thumb/price/category
+// come from the listing view models, never fabricated. `categoryId` is the raw
+// top-level id rather than a second label: it feeds [data-cat], so the modal tints
+// the eyebrow with the same --cat-accent the card the user came from was using.
+export type RedirectListingContext = {
+  title: string;
+  thumb?: string;
+  priceLabel?: string;
+  category?: string;
+  categoryId?: string;
+};
 export type RedirectPayload = {
   title: string;
   body: string;

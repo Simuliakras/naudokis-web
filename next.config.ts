@@ -87,6 +87,14 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Build-time constants inlined into BOTH bundles (that is what `env` does —
+  // unlike .env vars, no NEXT_PUBLIC_ prefix is involved and it cannot be
+  // overridden at runtime). The footer's rights notice needs the year to be one
+  // frozen literal on the server and the client; see COPYRIGHT_YEAR in
+  // app/lib/contact.ts for why computing it at render time breaks hydration.
+  env: {
+    BUILD_YEAR: String(new Date().getFullYear()),
+  },
   experimental: {
     globalNotFound: true,
   },

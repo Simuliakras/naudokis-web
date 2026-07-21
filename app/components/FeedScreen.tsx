@@ -14,7 +14,7 @@ import { Chrome } from "./Chrome";
 import { Icon, Breadcrumb, CloseButton, FilterSelect, InputClear, Toggle, openRedirect, rovingKeyNav, type SelectOption } from "./ui";
 import { ChipLinkRow, PageHead, SeoNote } from "./headers";
 import { HeroOwnerCta } from "./HeroSearch";
-import { OfferCard, OfferCardSkeleton, InterruptionBanner, EmptyState } from "./cards";
+import { OfferCard, OfferCardSkeleton, EmptyState } from "./cards";
 import { dedupeById, useCategories, type Category } from "@/app/lib/categories";
 import { useListingsInfinite, parseSortKey, parsePageParam, marketplaceErrorKind } from "@/app/lib/listings";
 import { parsePriceParam, priceToCents, serializePriceParam, priceBandArgs, type PriceRange } from "@/app/lib/price-range";
@@ -106,7 +106,6 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
   const filterBarRef = useRef<HTMLDivElement>(null);
   const [gridRef, columns] = useMeasuredColumns<HTMLDivElement>();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [showTop, setShowTop] = useState(false);
   // Phone-width landing-intro clamp (long authored SEO intros pushed the results
   // ~13 lines down); the toggle lifts it, full text stays SSR'd for crawlers.
   const [introOpen, setIntroOpen] = useState(false);
@@ -283,14 +282,6 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
     return () => io.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Floating "back to top" appears once the user has scrolled a couple of rows.
-  useEffect(() => {
-    const onScroll = () => setShowTop(window.scrollY > 900);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   // Keep the selected chip visible in the mobile category rail — landing on a
   // filtered URL used to render the rail scrolled to the start, so the active
   // selection (often far down the taxonomy) was invisible.
@@ -406,24 +397,18 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
     setParams({ sort: "newest" });
   };
 
-  // The full-width interruption banner breaks the card row it lands on, so it must
-  // sit on a real row boundary at every column count. Split at the whole number of
-  // rows closest to 6 cards for the live column count (measured from the grid), so
-  // e.g. 3-up→6 and 4-up→8 — never a ragged partial row before the banner. Until
-  // the first measurement lands (SSR + the loading pass) the split defaults to 6,
-  // so the banner may shift one row once the real count is read.
-  const splitAt = Math.max(columns, Math.round(6 / columns) * columns);
-  const head = list.slice(0, splitAt);
-  const tail = list.slice(splitAt);
-  const card = (o: (typeof list)[number], index = 0, eager = false) => (
+  const card = (o: (typeof list)[number], index: number) => (
     // grid-display wrapper so the card stretches to the row height; listitem role
-    // pairs with the grids' role="list" so AT gets "list, N items" + position
+    // pairs with the grid's role="list" so AT gets "list, N items" + position
     <div key={o.id} className="nk-reveal" role="listitem" style={{ display: "grid" }}>
       <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
         rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
         photoCount={o.photoCount} deposit={o.deposit} owner={o.owner}
         img={o.img} category={o.category} categoryName={categoryNameFor(cats, o.category)} categoryIcon={categoryIconFor(cats, o.category)}
-        imageLoading={eager && index < Math.max(1, columns) ? "eager" : "lazy"}
+        // Only the first rendered row is above the fold; everything the infinite
+        // feed appends below it lazy-loads. `columns` is measured off the grid,
+        // so before the first measurement lands this eagerly loads one card.
+        imageLoading={index < Math.max(1, columns) ? "eager" : "lazy"}
         href={localePath(locale, listingDetailPath({ id: o.id, title: o.title, city: o.city }))} />
     </div>
   );
@@ -499,16 +484,16 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
         <Nav onSearch={() => document.getElementById("nk-feed-search-input")?.focus()} />
         <main id="nk-main" className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px" }}>
           <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel} items={crumbs} />
-          {/* 80ch caps the line length so a long authored category intro (seoBody,
+          {/* 100ch caps the line length so a long authored category intro (seoBody,
               up to ~600 chars) stays readable; short browse/search subtitles never
               reach it. Wider than the 65ch .nk-prose measure used elsewhere — the
-              feed head has the room and wraps fewer lines — but held at the
-              readable upper bound (WCAG 1.4.8's 80-char figure). The subtitle
-              branches (search echo vs clamped landing intro) ride in PageHead's
-              children slot below the shared eyebrow + H1. Kept in sync with the
-              matching maxWidth in CatalogueLoading.tsx / skelbimai/page.tsx so
-              the head does not shift as the screen takes over. */}
-          <PageHead eyebrow={t.eyebrow} title={heading} maxWidth="80ch">
+              feed head has the room and wraps fewer lines. The subtitle branches
+              (search echo vs clamped landing intro) ride in PageHead's children
+              slot below the shared eyebrow + H1. Kept in sync with the matching
+              maxWidth in CatalogueLoading.tsx / skelbimai/page.tsx so the head
+              does not shift as the screen takes over, and with SeoNote's body
+              measure so the head and the closing block share one column. */}
+          <PageHead eyebrow={t.eyebrow} title={heading} maxWidth="100ch">
             {isSearch ? (
               // ≤560 the chip row already echoes the query — a generic line there
               // avoids four echoes of the same string in one screen.
@@ -591,8 +576,11 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
             {/* em-dash while the count is unknown (loading / error / stale
                 placeholder pages behind a changed query) — a count is a claim */}
             <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", fontWeight: 600, whiteSpace: "nowrap" }}>{countKnown ? countLabel : "—"}</span>
+            {/* Horizontal-only padding keeps the label on the count's baseline;
+                minHeight puts the hit area back (WCAG 2.5.8) without adding the
+                vertical padding that would break that alignment. */}
             {anyActive && (
-              <button onClick={reset} className="nk-clear" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 999, background: "transparent", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text-muted)" }}>
+              <button type="button" onClick={reset} className="nk-clear" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "0 12px", minHeight: "var(--nk-tap)", borderRadius: 999, background: "transparent", fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text-muted)" }}>
                 <Icon name="X" size={15} stroke={2.2} color="currentColor" /> {t.clear}
               </button>
             )}
@@ -675,15 +663,10 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
             <EmptyState illustration="error" tone="danger" title={errorTitle} subtitle={errorBody}
               actionLabel={dict.offers.errorAction} actionPrimary actionIcon="RefreshCcw" onAction={() => refetch()} />
           ) : list.length ? (
-            // The interruption banner sits between two grids (not inside one) so no
-            // column count ever orphans a card; with a short result set it follows
-            // the grid so the feed never dead-ends straight into the SEO block.
             // While placeholder pages back a CHANGED query, the grid dims so the
             // previous results are never presented as the new query's answer.
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-grid-row-gap)", opacity: isPlaceholderData ? 0.55 : undefined, transition: "opacity .2s ease" }}>
-              <div className="nk-grid-feed" role="list" ref={gridRef}>{head.map((o, i) => card(o, i, true))}</div>
-              <InterruptionBanner />
-              {tail.length > 0 && <div className="nk-grid-feed" role="list">{tail.map((o, i) => card(o, i))}</div>}
+              <div className="nk-grid-feed" role="list" ref={gridRef}>{list.map(card)}</div>
               {isFetchingNextPage && (
                 <div className="nk-grid-feed" aria-hidden="true">
                   {Array.from({ length: 4 }).map((_, i) => <OfferCardSkeleton key={`more-${i}`} />)}
@@ -748,7 +731,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
             </div>
           )}
 
-          <SeoNote heading={seoHeading} body={seoBody}>
+          <SeoNote heading={seoHeading} body={seoBody} top="section">
             <RelatedLandingLinks
               locale={locale}
               categories={cats}
@@ -759,12 +742,6 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
             />
           </SeoNote>
         </main>
-        {showTop && (
-          <button type="button" className="nk-round nk-round--solid nk-backtotop" aria-label={t.backToTop}
-            onClick={() => window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" })}>
-            <Icon name="ArrowUp" size={22} stroke={2.2} color="var(--nk-text)" />
-          </button>
-        )}
         <Footer locale={locale} />
       </div>
     </Chrome>

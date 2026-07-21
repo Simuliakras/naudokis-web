@@ -126,7 +126,7 @@
 .nk-lg-li{ font-family:var(--nk-font-body); font-size:16.5px; line-height:1.72; color:var(--nk-text-2);
   position:relative; padding-left:26px; text-wrap:pretty; overflow-wrap:anywhere; }
 .nk-lg-ul > .nk-lg-li::before{ content:""; position:absolute; left:7px; top:.72em; width:6px; height:6px;
-  border-radius:50%; background:var(--nk-purple); opacity:.85; }
+  border-radius:50%; background:var(--nk-text); opacity:.85; }
 .nk-lg-ol{ counter-reset:li; }
 .nk-lg-ol > .nk-lg-li{ counter-increment:li; padding-left:34px; }
 .nk-lg-ol > .nk-lg-li::before{ content:counter(li); position:absolute; left:0; top:.05em;

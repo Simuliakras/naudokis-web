@@ -10,6 +10,14 @@
 export const LEGAL_NAME = "MB Naudokis";
 export const COMPANY_CODE = "307423504";
 
+// Year in the footer rights notice. Injected by next.config.ts `env` so the SAME
+// literal is inlined into the server and client bundles: the Footer renders
+// inside "use client" screens (feed, categories, status…), so computing the year
+// at render time would print the build year in the prerendered HTML and the
+// current year during hydration — a mismatch that would persist all year, not
+// just over New Year. The fallback only runs outside a Next build (unit tests).
+export const COPYRIGHT_YEAR = process.env.BUILD_YEAR ?? String(new Date().getFullYear());
+
 export const CONTACT_EMAIL = "info@naudokis.lt";
 export const CONTACT_PRIVACY_EMAIL = "privacy@naudokis.lt";
 export const CONTACT_PHONE = "+370 643 49559";

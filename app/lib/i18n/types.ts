@@ -216,12 +216,12 @@ export type Dict = {
     cityLink: (city: string) => string;
     helpHeading: string;
     help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
-    copyright: string;
-    // Registered trading entity, shown next to the copyright. Takes the legal
-    // name and company code as arguments — the values are brand constants in
-    // contact.ts (shared with the Organization JSON-LD), so only the label and
-    // its word order are translated here.
-    company: (parts: { legalName: string; code: string }) => string;
+    // Rights notice. Names the LEGAL entity, not the domain: a copyright notice
+    // asserts who owns the rights, and "Naudokis.lt" is a brand, not a legal
+    // person. Both values are injected — the year from the build (see
+    // COPYRIGHT_YEAR in contact.ts) and the name from the same brand constant the
+    // Organization JSON-LD publishes — so only the sentence is translated here.
+    copyright: (parts: { year: string; legalName: string }) => string;
     socialLabel: string; // aria-label for the social-links group
   };
   detail: {
@@ -281,7 +281,6 @@ export type Dict = {
     galleryPrev: string; // lightbox previous-photo aria-label
     galleryNext: string; // lightbox next-photo aria-label
     galleryImageError: string; // shown when a lightbox photo fails to load
-    perDayShort: string; // "/ diena"
     // booking panel
     ratingLinkLabel: (parts: { rating: string; count: number }) => string; // aria-label on the "4,9 · 24" reviews link
     // Empty-state trust rows (no dates picked)
@@ -303,8 +302,6 @@ export type Dict = {
     datesClose: string;
     datesClear: string;
     datesApply: string;
-    datesClearAll: string; // the wide popover's text-link clear — "Išvalyti datas"
-    datesDone: string; // the wide popover's explicit close — "Baigta"
     calPrevMonth: string;
     calNextMonth: string;
     calDays: (n: number) => string; // "3 dienos" — LT plural
@@ -315,14 +312,6 @@ export type Dict = {
     calSelectEnd: string; // prompt while picking the end
     calStartSelected: (date: string) => string; // live-region announcement
     calRangeSelected: (parts: { start: string; end: string; days: string }) => string;
-    // The wide popover's live header. Title: calPopTitle → calSelectEnd → calDays(n)
-    // as the pick progresses; the subtitle tracks it with a readout that updates on
-    // hover. `discountMin`/`percent` are null when the listing has no active tiers —
-    // the discount fragment is simply omitted, never fabricated.
-    calPopTitle: string; // idle state line — "Pasirinkite nuomos datas"
-    calPopSubIdle: (parts: { min: number; max: number; discountMin: number | null }) => string;
-    calPopSubStart: (parts: { start: string; max: number }) => string;
-    calPopSubRange: (parts: { start: string; end: string; percent: number | null }) => string;
     // Why a day cannot be picked — used both as the cell's aria suffix and as the
     // live-region message when a keyboard user presses Enter on a disabled cell.
     calBlocked: (reason: "past" | "booked" | "tooShort" | "tooLong" | "spansBooked", n: number) => string;
@@ -365,8 +354,10 @@ export type Dict = {
     // longer-rental discount ladder (Terms section) — subtotal never a total
     discountsLabel: string; // card title, "Nuolaidos ilgesnei nuomai"
     discountFrom: (minDays: number) => string; // per-tier threshold, "Nuo 7 dienų"
-    // Tightest per-day unit for the tier cells ("13,50 € / d."); perDayShort above
-    // ("/ diena") is too wide for a 160px cell.
+    // Tightest per-day unit, for every cramped surface on this page: the tier
+    // cells (a 160px box), the fixed mobile bar, the terms fact card and the
+    // app-redirect modal's item row. `perDay` above stays the roomy prose form
+    // and is used ONLY by the booking panel's price header.
     perDayAbbr: string;
     // The ladder's live hint line. Raw numbers, not preformatted strings: the LT
     // below-hint governs the GENITIVE for the threshold ("nuolaida nuo 3 dienų"),
@@ -393,6 +384,7 @@ export type Dict = {
     breadcrumbHome: string; // breadcrumb root label
     breadcrumbLabel: string; // accessible name for the breadcrumb <nav> landmark
     loading: string; // SR-only status announced while a list/page is loading
+    backToTop: string; // floating back-to-top button — sitewide, mounted by <Chrome>
   };
   categoriesPage: {
     metaTitle: string;
@@ -511,7 +503,6 @@ export type Dict = {
     pageEmptyTitle: string;
     pageEmptyBody: string;
     pageEmptyAction: string;
-    backToTop: string; // floating back-to-top button label
     seoHeading: string;
     seoBody: string;
     // Zero-result empty states, split by reason (mirrors the design's L2/L3/L4).
@@ -530,9 +521,6 @@ export type Dict = {
       categoryActionPrimary: string;
       categoryActionSecondary: string;
     };
-    interruptTitle: string;
-    interruptBody: string;
-    interruptCta: string;
   };
   // Offline / no-connection empty state (L6) — shared by the feed and categories.
   offline: {
@@ -551,7 +539,12 @@ export type Dict = {
     qrHint: string;
     qrTitle: string; // desktop-modal hero heading over the QR ("scan to continue on your phone")
     installCta: string; // primary install button in the bridge modal (mobile-only — /go resolves a store only on phones)
-    storesAlso: string; // mobile lead-in for the quiet store text links ("Also on:")
+    // Two positions, two strings — one value cannot serve both. `storesAlso` is an
+    // inline lead-in immediately before the store links, so it ends in a colon and
+    // may be a sentence fragment; `storesDivider` stands alone as a centred rule
+    // label, so it has to read as a complete label on its own.
+    storesAlso: string; // inline lead-in ("Also on:")
+    storesDivider: string; // standalone divider label, no trailing colon ("Also on")
     appOpenFallback: string;
     retryOpen: string;
     close: string;

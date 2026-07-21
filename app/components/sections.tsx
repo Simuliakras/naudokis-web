@@ -612,7 +612,8 @@ export function Offers({ data, categories }: { data: Offer[]; categories: Catego
 /* ---------------- How it works (numbered stepper) ----------------
    Four role-neutral steps on a purple→yellow→green connector line. Icons and
    the step number are positional design constants; the dictionary carries the
-   copy only. */
+   copy only. The rail is CSS-only in both orientations — horizontal above the lg
+   cliff, vertical (segment per step) at ≤1024px; see .nk-hiw-* in globals.css. */
 
 // Per-step accent, positional: each index maps to the matching stop on the
 // connector-line gradient (purple → yellow → green).

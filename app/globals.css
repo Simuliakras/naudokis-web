@@ -165,11 +165,23 @@
   --nk-blur:          blur(40px);                            /* glass        */
   /* elevation tiers — every raised dark surface picks one of these */
   --nk-edge-top:      inset 0 1px 0 rgba(255,255,255,.04);   /* lit-from-above highlight */
+  --nk-edge-btn:      inset 0 1px 0 rgba(255,255,255,.12);   /* brighter edge for gradient buttons */
+  --nk-edge-accent:   inset 0 1px 0 rgba(160,158,255,.18);   /* --nk-purple-hover at 18% — the same
+                                                                highlight, brand-tinted: marks the one
+                                                                surface that owns the page (booking card) */
   --nk-shadow-1:      0 1px 2px rgba(0,0,0,.16),0 6px 18px rgba(0,0,0,.12);
   --nk-shadow-2:      0 14px 34px rgba(0,0,0,.26);           /* resting panels */
   --nk-shadow-3:      0 26px 60px rgba(0,0,0,.36);           /* card hover / popovers */
   --nk-shadow-modal:  0 34px 90px rgba(0,0,0,.46);            /* dialogs */
-  --nk-glow-accent:   0 8px 26px rgba(94,92,230,.22);      /* focused fields / primary hover */
+  --nk-shadow-up:     0 -12px 30px rgba(0,0,0,.30);          /* upward cast — the only bottom-fixed
+                                                                surface (mobile reserve bar) */
+  --nk-glow-accent:   0 6px 18px rgba(94,92,230,.16);      /* focused fields / small-button hover */
+  /* Full-size primary buttons carry a heavier brand glow so the page's main action
+     reads as lit rather than merely tinted; --nk-glow-accent stays the quiet tier.
+     Kept tight and low-alpha on purpose — the tier ordering (quiet < lift < lift-hover)
+     is what sells "lit", not raw bloom. */
+  --nk-glow-accent-lift:       0 6px 16px rgba(94,92,230,.20);
+  --nk-glow-accent-lift-hover: 0 9px 22px rgba(94,92,230,.28);
   --nk-glow-purple:   rgba(94,92,230,.32);                 /* ambient CTA radials — brand purple */
   --nk-shadow-phone-hero: drop-shadow(10px 15px 42px rgba(22,22,22,.50)); /* hero phone img */
   --nk-shadow-phone-cta:  drop-shadow(0 26px 50px rgba(0,0,0,.5));        /* CTA phone img  */
@@ -241,10 +253,25 @@
   --nk-fs-card:       28px;   /* .nk-h-card                                          */
   --nk-fs-row:        24px;   /* .nk-h-row + shared 24px section titles (similar/SEO)*/
   --nk-fs-eyebrow:    18px;   /* .nk-eyebrow                                         */
+  --nk-eyebrow-lh:    21px;   /* .nk-eyebrow line box — SectionHead's action centres
+                                 on it, so the two must not drift apart          */
   --nk-fs-body:       20px;   /* .nk-body                                            */
   --nk-fs-body-sm:    18px;   /* .nk-body-sm / .nk-meta                              */
   --nk-fs-subtitle:   18px;   /* .nk-subtitle — page / section subtitles            */
   --nk-fs-sm:         16px;   /* small body (SEO copy, inputs)                       */
+}
+
+/* Wider card floor once two full-size tracks actually fit. The offer card's price
+   row is the constraint: the worst realistic pairing ("100 € /d." + a 3-digit
+   "300 € užstatas" pill) needs ~226px, and below a ~260px card that overruns the
+   body's inner width and wraps the deposit onto its own line — measured, not
+   guessed. 272px keeps a margin for 4-digit deposits.
+   Floor at 680px, not 561: two 272px tracks plus gutters and gap don't fit under
+   ~645px, so raising it any earlier would collapse small tablets to a single
+   full-bleed column. Phones are unaffected either way — the ≤560 polish layer
+   hard-sets the 2-up grid with repeat(2), so this token never reaches them. */
+@media(min-width:680px){
+  :root{--nk-offer-min:272px}
 }
 
 /* ============================================================================
@@ -352,11 +379,31 @@ a,button,input,textarea,select{touch-action:manipulation}
 .nk-page{width:100%;overflow-x:clip}
 .nk-container{width:100%;max-width:1920px;margin:0 auto;padding-inline:var(--nk-gutter)}
 .nk-hero-pattern{right:0!important;width:min(1000px,100vw)!important}
-/* Branded background pattern — shared subtle opacity so every dark section
-   matches the footer's texture; steps down on smaller viewports. */
+/* Branded background pattern — texture on flat dark sections (FeatureBand),
+   stepping down on smaller viewports. Note this used to be dead: a later
+   `.nk-brand-pattern{opacity:.055}` in the polish layer had equal specificity
+   and flattened all three values at every viewport. That override is gone, so
+   these are live again — do not reintroduce a bare single-class override. */
 .nk-brand-pattern{opacity:.09}
-@media(max-width:1024px){.nk-brand-pattern{opacity:.07}}
-@media(max-width:560px){.nk-brand-pattern{opacity:.05}}
+@media(max-width:1024px){.nk-brand-pattern{opacity:.075}}
+@media(max-width:560px){.nk-brand-pattern{opacity:.06}}
+/* Hero bands opt down. Home's hero pattern sits behind .nk-hero-panel's
+   backdrop-filter:blur(35px) glass, where the blur smears the brighter texture
+   into a hazy wash behind the headline; the Invite/HowItWorks bands have no
+   glass but do set headline type straight onto the pattern. Either way the
+   texture must stay under the words. Two classes beats the shared single-class
+   rule on specificity (order-independent), so only the flat, text-free
+   surfaces take the bumped value above. */
+.nk-brand-pattern.nk-hero-pattern,
+.nk-brand-pattern.nk-hero-band__pattern{opacity:.09}
+@media(max-width:1024px){
+  .nk-brand-pattern.nk-hero-pattern,
+  .nk-brand-pattern.nk-hero-band__pattern{opacity:.07}
+}
+@media(max-width:560px){
+  .nk-brand-pattern.nk-hero-pattern,
+  .nk-brand-pattern.nk-hero-band__pattern{opacity:.05}
+}
 
 /* ---- Logo ---- */
 .nk-logo{display:flex;align-items:center;gap:14px;text-decoration:none}
@@ -418,7 +465,17 @@ a,button,input,textarea,select{touch-action:manipulation}
 
 /* ---- Section scaffolding ---- */
 .nk-section{padding-block:var(--nk-section-y)}
-.nk-section__top{display:flex;justify-content:space-between;align-items:center;gap:var(--nk-gap-xl);margin-bottom:var(--nk-section-head)}
+/* flex-start, not center: the view-all action rides the EYEBROW's line instead of
+   floating against the middle of the eyebrow+title+lede block (which put it beside
+   the title on short heads and beside the lede on tall ones). .nk-head is a flex
+   column whose first item is the eyebrow, so its line box owns the top
+   --nk-eyebrow-lh of the row — giving the action that exact height centres the two
+   on one axis. Baseline alignment would only match their text baselines, which
+   still reads as off-centre because the action's type is a few px larger. */
+.nk-section__top{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--nk-gap-xl);margin-bottom:var(--nk-section-head)}
+/* Scoped with :has — on an eyebrow-less head the top of the row is the h2's line
+   box, and pinning the action to a 21px slot there would read as mis-set. */
+.nk-section__top:has(.nk-eyebrow) .nk-head__action{display:flex;align-items:center;height:var(--nk-eyebrow-lh)}
 /* full-screen page head cluster (eyebrow + H1 + subtitle) — <PageHead size="page"> */
 .nk-pagehead{display:flex;flex-direction:column;gap:var(--nk-gap-sm)}
 /* centered head variant — <SectionHead center> (Faq): mirror the row/head onto
@@ -622,10 +679,18 @@ a:focus-visible,button:focus-visible,input:focus-visible,[role="button"]:focus-v
   outline:2px solid var(--nk-purple-hover);outline-offset:3px}
 
 /* ---- app-store badge button (opens the install bridge) ---- */
+/* --nk-ease, not --nk-ease-spring: the spring curve overshoots to 1.45 and then
+   settles, which on a scale reads as a pop. The house curve just eases in. Both
+   properties share one duration so the fade and the growth land together instead
+   of the opacity finishing first. */
 .nk-badgebtn{display:inline-flex;padding:0;border-radius:8px;
-  transition:transform var(--nk-dur-fast) var(--nk-ease-spring),opacity .15s ease}
+  transition:transform var(--nk-dur-med) var(--nk-ease),opacity var(--nk-dur-med) var(--nk-ease)}
 .nk-badgebtn:hover{opacity:.92}
-@media(hover:hover) and (pointer:fine){.nk-badgebtn:hover{transform:translateY(-2px)}}
+/* Grows rather than lifts: the badges sit in a row (footer, hero, handoff sheet)
+   where a translate reads as the row breaking alignment, while a scale reads as
+   the badge itself responding. Safe on the raster art — both PNGs render at ≥2.4x
+   their displayed size, so this is still sampling down. */
+@media(hover:hover) and (pointer:fine){.nk-badgebtn:hover{transform:scale(1.02)}}
 .nk-badgebtn:active{transform:scale(.97)}
 .nk-appbadges{display:flex;align-items:center;flex-wrap:wrap;max-width:100%}
 .nk-appbadges img{max-width:100%;height:auto}
@@ -815,8 +880,13 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-offer h3,.nk-cat h3{overflow-wrap:anywhere;hyphens:auto}
 .nk-offer__body,.nk-offer__pricebar{min-width:0}
 .nk-offer__pricebar{gap:var(--nk-gap-sm)}
-/* category eyebrow — house per-category accent, lightened for legibility on dark */
-.nk-offer__eyebrow{font-family:var(--nk-font-display);font-size:11.5px;font-weight:700;
+/* Category eyebrow — house per-category accent, lightened for legibility on dark.
+   Shared with the app-redirect modal's listing row so the category the user just
+   tapped keeps its hue across the handoff; both carry [data-cat] for --cat-accent.
+   NB: the font-size/weight/letter-spacing/color set here are all re-declared by the
+   Quiet Luxe layer near the end of this file (42% mix, weight 600) — that is what
+   actually paints. Only the layout half below (line-height, ellipsis) survives. */
+.nk-offer__eyebrow,.nk-redirect__eyebrow{font-family:var(--nk-font-display);font-size:11.5px;font-weight:700;
   letter-spacing:.13em;text-transform:uppercase;line-height:1;
   color:color-mix(in oklab, var(--cat-accent, var(--nk-purple)) 62%, white);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -893,10 +963,12 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    One row: avatar + owner name · city, subdivision. Text only — the whole card is
    one stretched <Link>, so an <a> here would nest an interactive element inside an
    interactive one. The height is pinned to --nk-offer-owner-h so OfferCardSkeleton
-   can reserve exactly this row. Name and place both ellipsize; the dot never shrinks. */
+   can reserve exactly this row. Only the place ellipsizes — the name holds its
+   width (capped so a pathological name can't push the place out entirely) and the
+   dot never shrinks. */
 .nk-offer__owner{display:flex;align-items:center;gap:var(--nk-gap-xs);min-width:0;
   height:var(--nk-offer-owner-h)}
-.nk-offer__ownername{min-width:0;font-family:var(--nk-font-body);font-weight:600;
+.nk-offer__ownername{flex:none;max-width:55%;font-family:var(--nk-font-body);font-weight:600;
   font-size:14px;line-height:1.2;color:var(--nk-text-2);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* The · between name and place — oversized relative to the row type so it reads
@@ -904,7 +976,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    stretching the pinned row. */
 .nk-offer__sep{flex:none;font-family:var(--nk-font-body);font-weight:700;font-size:18px;
   line-height:1;color:var(--nk-text-muted)}
-.nk-offer__loc{display:inline-flex;align-items:center;gap:5px;min-width:0;
+.nk-offer__loc{display:inline-flex;align-items:center;gap:5px;min-width:0;flex:1 1 auto;
   font-family:var(--nk-font-body);font-weight:500;font-size:14px;color:var(--nk-text-2)}
 .nk-offer__loc svg{flex:none}
 .nk-offer__loctext{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
@@ -980,8 +1052,13 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-faq{transition:border-color .2s ease,background .2s ease,border-radius .2s ease}
 .nk-faq:hover{background:var(--nk-faq-hover)}
 /* The row clips overflow (rounded hover bg), which swallows the global outside
-   outline — mirror the offer/category cards' :focus-within ring instead. */
+   outline — mirror the offer/category cards' :focus-within ring instead. An
+   open row already carries a solid --nk-purple border; ringing it with the
+   lighter --nk-purple-hover (the sitewide focus-ring color) reads as if the
+   whole row went light-purple, so the open state keeps the ring at the same
+   --nk-purple as its border instead. */
 .nk-faq:focus-within{box-shadow:0 0 0 3px var(--nk-purple-hover)}
+.nk-faq[data-open="true"]:focus-within{box-shadow:0 0 0 3px var(--nk-purple)}
 .nk-faq button:focus-visible{outline:none}
 
 /* ---- skeleton / shimmer ---- */
@@ -1082,9 +1159,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-footer__bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
   padding-block:26px;border-top:1px solid var(--nk-border-soft)}
 .nk-footer__legal{font-family:var(--nk-font-body);font-size:15px;color:var(--nk-text-muted)}
-/* registered entity, under the copyright — a quieter second line, since it is a
-   disclosure rather than something a visitor is looking for */
-.nk-footer__company{display:block;margin-top:4px;font-size:13px}
 /* trailing cluster: privacy control | payment marks */
 .nk-footer__meta{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .nk-footer__sep{flex:none;width:1px;height:20px;background:var(--nk-border-soft)}
@@ -1164,8 +1238,12 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* footer pair shares one height + radius so Clear never reads as a runt button */
 .nk-filtersheet__foot .nk-btn--ghost{padding-block:16px;border-radius:var(--nk-r-pill)}
 
-/* floating back-to-top (feed) — the feed has no bottom bar, so bottom-right is free */
-.nk-backtotop{position:fixed;right:calc(clamp(16px,4vw,32px) + var(--nk-safe-right));bottom:calc(20px + var(--nk-safe-bottom));z-index:60;
+/* floating back-to-top — mounted sitewide by <Chrome>, so it has to clear the
+   listing detail's mobile bottom bar (see the :has rule beside .nk-mbar).
+   Sits closer to the edge than a normal gutter: at the old 32px its left edge
+   landed within ~2px of where the footer's payment marks end, so the floating
+   button read as part of that cluster instead of over it. */
+.nk-backtotop{position:fixed;right:calc(clamp(12px,2vw,20px) + var(--nk-safe-right));bottom:calc(20px + var(--nk-safe-bottom));z-index:60;
   width:48px;height:48px;box-shadow:var(--nk-edge-top),var(--nk-shadow-2);animation:nk-pop-in .2s var(--nk-ease-spring) both}
 
 /* ============================================================
@@ -1205,11 +1283,11 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    drag-to-dismiss behaviour lives in app/lib/use-sheet-drag.ts. */
 .nk-sheet-grabzone{display:none}
 /* Desktop hero: the QR is the working handoff path (the /go smart link only
-   resolves to a store on a phone), so it reads as the primary action — carded,
-   large, with its own heading. */
-.nk-redirect-qr{display:flex;align-items:center;gap:18px;padding:18px;
-  background:var(--nk-surface-2);border:1px solid var(--nk-glass-card-border);border-radius:var(--nk-r-md);
-  box-shadow:var(--nk-edge-top)}
+   resolves to a store on a phone), so it reads as the primary action — large,
+   with its own heading. Sits flush on the panel (no card chrome): the QR's own
+   white tile is already the visual anchor here, and a second nested card behind
+   it just doubled up on the listing-row card above. */
+.nk-redirect-qr{display:flex;align-items:center;gap:18px}
 /* Clickable store badges — the desktop click path beside the QR. Just centres the
    inner .nk-appbadges (which owns its own flex/gap via <AppBadges gap={12}/>). */
 .nk-redirect-stores{display:flex;justify-content:center}
@@ -1409,17 +1487,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   width:var(--nk-tap);height:var(--nk-tap);margin-right:-12px;transition:color .15s ease}
 .nk-input-clear:hover{color:var(--nk-text)}
 
-/* feed interruption banner */
-.nk-interrupt{position:relative;overflow:hidden;display:flex;align-items:center;gap:var(--nk-gap-xl);flex-wrap:wrap;
-  background:linear-gradient(135deg,var(--nk-card-grad-1),var(--nk-card-grad-2));
-  border:1px solid var(--nk-accent-border);border-radius:20px;padding:28px 32px;box-shadow:var(--nk-edge-top)}
-.nk-interrupt .nk-btn{margin-left:auto}
-@media(max-width:560px){
-  .nk-interrupt{padding:22px;gap:var(--nk-gap-md)}
-  .nk-interrupt img{width:64px!important;height:64px!important;border-radius:16px!important}
-  .nk-interrupt .nk-btn{width:100%;margin-left:0}
-}
-
 /* ============================================================
    Listing detail page
    ============================================================ */
@@ -1469,13 +1536,23 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-lhead__actions .nk-lfield{flex:1 1 0;justify-content:center}
 }
 .nk-spec-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:48px;row-gap:0}
+.nk-spec-row{border-bottom:1px solid var(--nk-divider)}
+/* Last row shouldn't carry the row divider. The true last item always qualifies;
+   its left-column row-mate only does when the count is even — nth-last-child(2)
+   landing on an odd position proves the two are paired in the final row (below,
+   the grid drops to one column at 768px, where :last-child alone is correct). */
+.nk-spec-grid>.nk-spec-row:last-child{border-bottom:none}
+@media(min-width:769px){
+  .nk-spec-grid>.nk-spec-row:nth-last-child(2):nth-child(odd){border-bottom:none}
+}
 .nk-tworow{display:grid;grid-template-columns:1.1fr 1fr;column-gap:48px}
 .nk-hl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--nk-gap-md)}
 .nk-reserve{position:sticky;top:calc(var(--nk-nav-h-scrolled) + 28px);display:flex;flex-direction:column;gap:var(--nk-gap-md);align-self:start;min-width:0}
 .nk-sec{scroll-margin-top:calc(var(--nk-nav-h-scrolled) + 28px)}
 /* interactive listing-detail control (header buttons, date pickers) */
-.nk-lfield{min-width:0;transition:background .15s ease,border-color .15s ease}
+.nk-lfield{min-width:0;transition:background .15s ease,border-color .15s ease,transform .12s var(--nk-ease-spring)}
 .nk-lfield:hover{background:var(--nk-purple-soft);border-color:var(--nk-accent-border)}
+.nk-lfield:active{transform:scale(.97)}
 /* gallery tile hover — scrim + subtle photo zoom (matches the offer cards) */
 .nk-gtile__hint{opacity:0;transition:opacity .2s ease;pointer-events:none}
 .nk-gtile:hover .nk-gtile__hint{opacity:1}
@@ -1488,6 +1565,11 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-gtile__more{position:absolute;right:14px;bottom:14px;pointer-events:none;display:inline-flex;align-items:center;gap:8px;
   padding:10px 16px;border-radius:12px;background:var(--nk-overlay);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
   border:1px solid var(--nk-border-strong);font-family:var(--nk-font-display);font-weight:700;font-size:14.5px;color:var(--nk-text)}
+/* Fact cards — quiet hover so the spec row reads as scannable. Deliberately NOT
+   extended to the review cards: a review card is shaped like a link target, so
+   hover feedback there promises a click the card doesn't handle. */
+.nk-fact{transition:border-color .18s var(--nk-ease),background .18s var(--nk-ease)}
+.nk-fact:hover{border-color:var(--nk-accent-border);background:var(--nk-surface-2)}
 
 /* ---- Rental date-range picker (booking panel) ----
    Honesty constraint made visual: there is a "booked" state and no "available" one.
@@ -1525,12 +1607,6 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   gap:16px;padding:18px 0 14px;background:var(--nk-bg)}
 .nk-cal-sheet__title{margin:0;font-family:var(--nk-font-display);font-weight:700;font-size:22px;line-height:26px;
   color:var(--nk-text)}
-/* The grabzone's negative margins put the sticky head's natural slot 8px above the
-   scroller top, so top:0 sticks it 8px down over the panel even at rest — invisible
-   while the panel opened with the nav row's dead space, glyph-clipping now that it
-   opens with the pophead's text. Pad the slack back. */
-.nk-cal-sheet .nk-cal-panel{padding-top:8px}
-
 .nk-cal-panel{display:flex;flex-direction:column;gap:12px}
 .nk-cal__head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .nk-cal__title{font-family:var(--nk-font-display);font-weight:700;font-size:16.5px;color:var(--nk-text)}
@@ -1627,44 +1703,10 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-cal__foot .nk-btn,.nk-price-foot .nk-btn{flex:1;justify-content:center}
 .nk-cal__foot .nk-btn:disabled{opacity:.4;pointer-events:none}
 
-/* ---- Wide two-month popover (listing booking card) ----
-   The sidebar is ~370px; a range of days wants a two-month spread, so the popover
-   anchors to the field's right edge and grows leftward over the page content. */
-.nk-cal-pop--wide{left:auto;right:0;width:min(604px,calc(100vw - 32px));padding:20px 20px 16px;
-  transform-origin:top right;animation:nk-calpop-in .18s var(--nk-ease) both}
-@keyframes nk-calpop-in{from{opacity:0;transform:translateY(7px) scale(.985)}}
-/* live selection header: bold state line + a date/discount readout that updates on hover */
-.nk-cal-pophead{display:flex;flex-direction:column;gap:2px;padding-bottom:4px}
-.nk-cal-pophead__title{font-family:var(--nk-font-display);font-weight:700;font-size:18px;line-height:24px;color:var(--nk-text)}
-.nk-cal-pophead__sub{font-family:var(--nk-font-body);font-size:13.5px;line-height:18px;color:var(--nk-text-muted);min-height:18px}
-.nk-cal-duo{position:relative;display:grid;grid-template-columns:1fr 1fr;column-gap:32px;align-items:start}
-.nk-cal-duo__month{display:flex;flex-direction:column;gap:6px;min-width:0}
-.nk-cal__mtitle{display:flex;align-items:center;justify-content:center;height:36px;
-  font-family:var(--nk-font-display);font-weight:700;font-size:15.5px;color:var(--nk-text)}
-.nk-cal-duo__nav{position:absolute;top:0;z-index:1}
-.nk-cal-duo__nav.is-prev{left:-6px}
-.nk-cal-duo__nav.is-next{right:-6px}
-/* footer bar: legend left, quiet clear-link + explicit close right */
-.nk-cal__actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-  padding-top:12px;border-top:1px solid var(--nk-divider);
-  font-family:var(--nk-font-body);font-size:12.5px;color:var(--nk-text-muted)}
-.nk-cal__actions-btns{display:flex;align-items:center;gap:16px;margin-left:auto}
-.nk-cal__clearlink{background:none;border:0;padding:6px 0;cursor:pointer;
-  font-family:var(--nk-font-display);font-weight:700;font-size:13.5px;color:var(--nk-text);
-  text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--nk-text-muted);
-  transition:text-decoration-color .16s var(--nk-ease)}
-.nk-cal__clearlink:hover{text-decoration-color:var(--nk-text)}
-.nk-cal__clearlink:disabled{opacity:.4;cursor:default;pointer-events:none}
-/* one month below ~760px — the spread no longer fits the inline booking block */
-@media(max-width:759px){
-  .nk-cal-pop--wide{left:0;right:0;width:auto;padding:16px;transform-origin:top center}
-  .nk-cal-duo{grid-template-columns:1fr}
-  .nk-cal-duo__month--b{display:none}
-}
 /* Phones: a 40px circle inside a 44px cell — the touch-target floor. */
 @media(max-width:560px){.nk-cal__grid{--nk-cal-day:40px}.nk-cal__day{font-size:15.5px}}
 @media(prefers-reduced-motion:reduce){.nk-cal__day>span,.nk-cal-trigger,.nk-cal__nav{transition:none}
-  .nk-cal-pop--wide{animation:none}.nk-cal__day.is-start>span,.nk-cal__day.is-end>span{animation:none}}
+  .nk-cal__day.is-start>span,.nk-cal__day.is-end>span{animation:none}}
 
 /* ---- Booking-panel rating link ("4,9 · 24" → #atsiliepimai) ----
    Underline surfaces on hover only; the transparent resting state keeps the
@@ -1760,6 +1802,12 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 .nk-breaks{display:flex;flex-direction:column;align-items:stretch;gap:14px;
   padding:var(--nk-card-pad-sm);border-radius:16px;
   background:var(--nk-surface-glass);border:1px solid var(--nk-border)}
+/* Opt out of the shared .nk-fact:hover treatment — the ladder isn't a single
+   scannable fact, it's a container around its own tier cells, so a hover
+   border/bg on the outer card read as a stray click affordance. Both classes in
+   the selector on purpose: the element carries "nk-fact nk-breaks", so a bare
+   .nk-breaks:hover would only tie .nk-fact:hover and win on source order alone. */
+.nk-fact.nk-breaks:hover{border-color:var(--nk-border);background:var(--nk-surface-glass)}
 .nk-breaks__head{display:flex;align-items:center;gap:var(--nk-gap-md)}
 .nk-breaks__headtext{display:flex;flex-direction:column;gap:var(--nk-gap-2xs);min-width:0}
 .nk-breaks__label{font-family:var(--nk-font-display);font-weight:700;font-size:16px;color:var(--nk-text)}
@@ -1873,6 +1921,7 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   align-items:center;justify-content:space-between;gap:16px;
   padding:14px calc(20px + var(--nk-safe-right)) calc(14px + var(--nk-safe-bottom)) calc(20px + var(--nk-safe-left));
   min-height:calc(72px + var(--nk-safe-bottom));
+  box-shadow:var(--nk-shadow-up);
   transition:transform .22s var(--nk-ease),opacity .18s ease,visibility .22s}
 /* visibility (a discrete transition step) removes the hidden bar's Reserve button
    from the Tab order once the slide-out finishes — opacity alone left it focusable */
@@ -1896,6 +1945,9 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
   .nk-booking-inline{display:block;margin-top:24px}
   .nk-mbar{display:flex}
   body:has(.nk-mbar) .nk-page{padding-bottom:calc(104px + var(--nk-safe-bottom))}
+  /* the sitewide back-to-top would otherwise sit UNDER the bar (both z-index:60,
+     and the bar wins on paint order) — lift it clear of the bar's min-height */
+  body:has(.nk-mbar) .nk-backtotop{bottom:calc(92px + var(--nk-safe-bottom))}
   /* grid-template-rows:auto (not none) — row 1 must size to the oversized hero
      tile, otherwise the hero paints over the inline booking card below the grid */
   .nk-bento{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:auto;grid-auto-rows:clamp(150px,22vw,190px)}
@@ -1960,10 +2012,11 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 }
 
 /* ---- home "Kaip tai veikia" numbered stepper ----
-   Four role-neutral steps on a purple→yellow→green connector line. The section
-   shell (container width, section-y rhythm) comes from .nk-container; these rules
-   reproduce the handoff's inner composition on the --nk-* tokens. Head is the
-   shared <SectionHead> (eyebrow + title + view-all action + lead). */
+   Four role-neutral steps on a purple→yellow→green connector line: horizontal above
+   the lg cliff, vertical at ≤1024px (see the media block below). The section shell
+   (container width, section-y rhythm) comes from .nk-container; these rules reproduce
+   the handoff's inner composition on the --nk-* tokens. Head is the shared
+   <SectionHead> (eyebrow + title + view-all action + lead). */
 /* track + connector line + grid — the top margin restores the head→timeline gap
    the removed role-toggle row used to carry */
 .nk-hiw-track{position:relative;margin-top:clamp(40px,5vw,72px)}
@@ -1976,11 +2029,53 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
 /* reserve two title rows (2 × 1.12 line-height) so step bodies start on one baseline */
 .nk-hiw-h{font-family:var(--nk-font-display);font-weight:700;font-size:var(--nk-fs-card);line-height:1.12;color:var(--nk-text);margin:0;min-height:2.24em}
 .nk-hiw-p{font-family:var(--nk-font-body);font-size:var(--nk-fs-body);line-height:29px;color:var(--nk-text-muted);margin:0;max-width:32ch}
-@media(max-width:900px){
-  .nk-hiw-grid{display:flex;flex-direction:column;gap:20px}
+/* ≤lg: the timeline rotates — rail runs down through the nodes, copy sits beside them.
+   The desktop bar can't just be rotated: its end would have to land on node 04's centre,
+   but node 04 is followed by its own title+body, so it would overshoot. Instead each step
+   draws a segment from its own node centre to the NEXT node's centre (negative bottom
+   spans the row gap) and the last step draws none — geometry falls out of layout, so it
+   survives any copy length without measuring anything. Nodes stay opaque + z-index:2 and
+   punch over the rail exactly as they do on desktop. */
+@media(max-width:1024px){
+  .nk-hiw-grid{display:flex;flex-direction:column;gap:var(--hiw-rowgap);
+    /* rail geometry derives from these two — the phone tier only resizes the node.
+       rowgap runs a step above --nk-stack-lg: stacked steps are separated only by
+       whitespace (no card edge), so they need more of it than a plain stack to read
+       as four discrete steps rather than one running column. */
+    --hiw-node:88px;--hiw-rowgap:clamp(44px,5vw,64px)}
   .nk-hiw-line{display:none}
+  /* row-gap carries the tight eyebrow→title pairing (a label belongs to the
+     heading under it); .nk-hiw-p adds the rest back so title→body keeps the
+     looser 12px it had when one gap served both. */
+  .nk-hiw-step{position:relative;display:grid;grid-template-columns:var(--hiw-node) 1fr;
+    column-gap:var(--nk-gap-xl);row-gap:4px;align-items:start}
+  /* size the node FROM the var too, or the phone tier resizes the track and the rail
+     offset while the circle itself stays 88px and drifts off its own rail */
+  .nk-hiw-node{grid-column:1;grid-row:1/span 3;
+    width:var(--hiw-node);height:var(--hiw-node);border-radius:calc(var(--hiw-node)/2)}
+  .nk-hiw-idx,.nk-hiw-h,.nk-hiw-p{grid-column:2}
+  /* opacity mirrors .nk-hiw-line's base value for symmetry, but like that rule it is
+     overridden to .22 by the polish layer at the end of this file — change it there */
+  .nk-hiw-step::before{content:"";position:absolute;width:3px;
+    left:calc(var(--hiw-node)/2 - 1.5px);top:calc(var(--hiw-node)/2);
+    bottom:calc(-1 * (var(--hiw-rowgap) + var(--hiw-node)/2));opacity:.4}
+  /* one gradient stop per node it touches (homeSteps.steps is a pinned 4-tuple), so the
+     vertical run reads as the same purple→yellow→green sweep as the desktop bar */
+  .nk-hiw-step:nth-child(1)::before{background:linear-gradient(180deg,var(--nk-purple),var(--nk-yellow))}
+  .nk-hiw-step:nth-child(2)::before{background:linear-gradient(180deg,var(--nk-yellow),var(--nk-green))}
+  .nk-hiw-step:nth-child(3)::before{background:var(--nk-green)}
+  .nk-hiw-step:last-child::before{content:none}
   /* stacked steps have no cross-column baseline to align — don't hold blank rows */
   .nk-hiw-h{min-height:0}
+  .nk-hiw-p{margin-top:8px}
+}
+@media(max-width:560px){
+  /* narrower text column: shrink the node (every rail offset recomputes) and let the
+     title scale, so a 37-char LT title doesn't wrap five times beside the circle */
+  .nk-hiw-grid{--hiw-node:64px}
+  .nk-hiw-step{column-gap:var(--nk-gap-md)}
+  .nk-hiw-node svg{width:30px;height:30px}
+  .nk-hiw-h{font-size:clamp(21px,5.6vw,28px)}
 }
 
 /* hero panel layout (visual skin stays inline in <Hero>) — fluid min-height avoids a forced-tall 2-col on landscape tablets */
@@ -2484,18 +2579,41 @@ footer .nk-link:hover{color:var(--nk-purple-hover)}
    primary button, hover motion, imagery tinting and texture opacities.
    ========================================================================== */
 /* type finish: tracked micro-eyebrow, tighter display headings */
-.nk-eyebrow{font-size:16px;line-height:21px;font-weight:700;letter-spacing:.18em;color:var(--nk-yellow)}
+.nk-eyebrow{font-size:16px;line-height:var(--nk-eyebrow-lh);font-weight:700;letter-spacing:.18em;color:var(--nk-yellow)}
 .nk-h-hero{letter-spacing:-.018em}
 .nk-h-section,.nk-head h2,.nk-h-page{letter-spacing:-.014em}
 .nk-h-card,.nk-h-row{letter-spacing:-.008em}
 .nk-offer h3{letter-spacing:-.01em}
-.nk-offer__eyebrow{font-size:11.5px;letter-spacing:.14em;font-weight:600;color:color-mix(in oklab,var(--cat-accent,var(--nk-purple)) 42%,white)}
+.nk-offer__eyebrow,.nk-redirect__eyebrow{font-size:11.5px;letter-spacing:.14em;font-weight:600;color:color-mix(in oklab,var(--cat-accent,var(--nk-purple)) 42%,white)}
 /* icons: lighter 1.75px stroke */
 svg.nk-ico{stroke-width:1.75}
 /* buttons: composed, less springy; one confident gradient conversion accent */
 .nk-btn{font-weight:600;letter-spacing:.01em}
-.nk-btn--primary{background:linear-gradient(180deg,#6E6CF2 0%,#5350D6 100%);border:1px solid #4543BE;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 1px 2px rgba(0,0,0,.22)}
-.nk-btn--primary:hover{background:linear-gradient(180deg,#7B79F7 0%,#5D5AE0 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),var(--nk-glow-accent)}
+.nk-btn--primary{background:linear-gradient(180deg,#6E6CF2 0%,#5350D6 100%);border:1px solid #4543BE;
+  box-shadow:var(--nk-edge-btn),var(--nk-glow-accent-lift)}
+.nk-btn--primary:hover{background:linear-gradient(180deg,#7B79F7 0%,#5D5AE0 100%);
+  box-shadow:var(--nk-edge-btn),var(--nk-glow-accent-lift-hover)}
+/* Quiet glow tier for primaries inside dense chrome, where the full lift would bloom
+   over a neighbour a few px away. Two signals, deliberately kept separate:
+
+   - .nk-btn--sm — the lightbox reserve bar, the one genuinely small primary.
+   - the popover/sheet footers — full-SIZE primaries that must keep their 18px type to
+     match the --ghost "Clear" sitting beside them, so they cannot just take --sm. Size
+     and glow are different concerns; keying the quiet tier to a size class would force
+     a layout change to buy a shadow change.
+
+   Both are stated as positive rules rather than a :not() on the rule above: a :not()
+   would tie it on specificity and silently disable whichever came first in source
+   order. These win outright (0-2-0 vs 0-1-0), so they hold wherever they sit in the
+   file. The :hover pairs need the extra class/ancestor to outrank the :hover above. */
+.nk-btn--primary.nk-btn--sm,
+.nk-cal__foot .nk-btn--primary,
+.nk-price-foot .nk-btn--primary,
+.nk-filtersheet__foot .nk-btn--primary{box-shadow:var(--nk-edge-btn),0 1px 2px rgba(0,0,0,.22)}
+.nk-btn--primary.nk-btn--sm:hover,
+.nk-cal__foot .nk-btn--primary:hover,
+.nk-price-foot .nk-btn--primary:hover,
+.nk-filtersheet__foot .nk-btn--primary:hover{box-shadow:var(--nk-edge-btn),var(--nk-glow-accent)}
 /* hero search submit keeps the original full-pill radius (sits inside the 34px-radius search bar) */
 .nk-search .nk-btn{border-radius:25px}
 .nk-btn:active{transform:scale(.985)}
@@ -2515,9 +2633,9 @@ svg.nk-ico{stroke-width:1.75}
 .nk-offer__media--empty .nk-imgicon{opacity:.34}
 /* texture: whisper grain, dimmer patterns */
 .nk-grain::after{opacity:.028}
-.nk-brand-pattern{opacity:.055}
 .nk-footer__pattern{opacity:.07}
-.nk-hiw-line{opacity:.22}
+/* both stepper rails dim together — horizontal bar and the ≤1024 vertical segments */
+.nk-hiw-line,.nk-hiw-step::before{opacity:.22}
 /* nav: crisper condensed state */
 .nk-nav-bar.nk-scrolled{box-shadow:0 1px 0 rgba(255,255,255,.05),0 10px 30px rgba(0,0,0,.25)}
 
@@ -2541,8 +2659,6 @@ svg.nk-ico{stroke-width:1.75}
   .nk-grid-feed,.nk-grid-4{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 10px}
   /* --- 4. calmer mobile type on fixed-size text --- */
   .nk-detail h1{font-size:28px!important;line-height:1.12!important}
-  .nk-interrupt div p:first-child{font-size:21px!important;line-height:26px!important}
-  .nk-interrupt div p:last-child{font-size:15px!important;line-height:22px!important}
   .nk-faq .nk-h-row{font-size:19px;line-height:24px}
   .nk-empty__ill{width:156px;height:156px}
   .nk-h-hero{hyphens:auto;-webkit-hyphens:auto}
@@ -2561,9 +2677,22 @@ svg.nk-ico{stroke-width:1.75}
    (--nk-offer-min 206px), so only genuinely narrow cards compact.
    !important is required where cards.tsx carries inline styles.
    ============================================================ */
+/* Mid tier — price row only. A 3-digit price beside a 3-digit deposit ("100 €
+   /d." + "300 € užstatas") overruns a ~265px card's inner width by a hair and
+   wraps the pill onto its own line. The deposit is the secondary half of the
+   row, so it compacts and the 27px price anchor keeps its prominence; that buys
+   ~11px, enough for the widest realistic amounts at the 4-up desktop density.
+   Sits ABOVE the 202px block on purpose: both are single-class !important, so
+   source order is what lets the narrower tier win for cards matching both. */
+@container nk-card (max-width:300px){
+  .o-deposit>span{gap:4px!important;padding:4px 8px!important;font-size:12px!important}
+  .o-deposit svg.nk-ico{width:12px!important;height:12px!important}
+}
 @container nk-card (max-width:202px){
   .nk-offer__body{gap:5px!important}
   .nk-offer h3{font-size:15px!important;line-height:19px!important;min-height:38px!important}
+  /* offer eyebrow only — .nk-redirect__eyebrow lives in the modal, which is not
+     inside an .nk-offer, so a nk-card container query can never reach it */
   .nk-offer__eyebrow{font-size:11px!important;letter-spacing:.1em!important}
   /* body type: the owner-row place half (pin + text) and its · read one step down */
   .nk-offer__loc{font-size:12.5px!important}

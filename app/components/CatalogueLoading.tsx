@@ -87,7 +87,7 @@ function FeedBody({ dict, locale }: { dict: Dict; locale: Locale }) {
     <>
       <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel}
         items={feedCrumbItems({ feedLabel: t.titleAll, locale })} />
-      <PageHead eyebrow={t.eyebrow} title={t.titleAll} subtitle={t.subtitleAll} maxWidth="80ch" />
+      <PageHead eyebrow={t.eyebrow} title={t.titleAll} subtitle={t.subtitleAll} maxWidth="100ch" />
       <span className="nk-skel" style={{ display: "block", height: 58, borderRadius: 14, marginBottom: "var(--nk-gap-lg)" }} />
       <div className="nk-grid-feed" aria-hidden="true">
         {Array.from({ length: FEED_SKELETON_CARDS }, (_, index) => <OfferCardSkeleton key={index} />)}

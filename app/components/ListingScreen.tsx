@@ -146,7 +146,16 @@ export function ListingScreen({ id }: { id: string }) {
   // web can't keep would be a false success signal); the modal is the feedback.
   // Every trigger carries the listing context so the modal can keep the user's
   // intent (item + price) visible across the install handoff.
-  const listingCtx = { title: listing.title, thumb: listing.images[0], priceLabel: `${listing.price} ${dict.detail.perDay}` };
+  // Single source for the modal's item row: every trigger on this page — header,
+  // booking panel, gallery lightbox, reviews empty state — passes this same object,
+  // so the category label can never differ between two openings of one listing.
+  const listingCtx = {
+    title: listing.title,
+    thumb: listing.images[0],
+    priceLabel: `${listing.price} ${dict.detail.perDayAbbr}`,
+    category,
+    categoryId: listing.categoryId,
+  };
   // Carries the chosen dates into the app — but only once the app is known to read
   // them (APP_READS_DEEPLINK_DATES, currently false). /go already preserves the query
   // on the target, so no other plumbing changes. Note the dates survive the handoff
@@ -202,7 +211,7 @@ export function ListingScreen({ id }: { id: string }) {
       {/* fade in over the skeleton; the fixed mobile bar stays outside the wrapper */}
       <div className="nk-fadecontent">
         <ListingHeader listing={listing} shared={shared} shareFailed={shareFailed} onShare={share} onFav={lockFav} />
-        <Gallery images={listing.images} title={listing.title} hasNoReviews={hasNoReviews} appPath={appPath} />
+        <Gallery images={listing.images} redirectCtx={listingCtx} hasNoReviews={hasNoReviews} appPath={appPath} />
 
         {/* The sticky sidebar booking panel is hidden on tablet/phone (≤980px);
             surface the booking facts — and the owner trust card, otherwise ~8
@@ -231,7 +240,7 @@ export function ListingScreen({ id }: { id: string }) {
 
         {/* Reviews break out to full width beneath the two-column area (the narrow
             column left a dead region under the sidebar once reviews grow). */}
-        <ReviewsSection listing={listing} onShowReviews={showReviews} />
+        <ReviewsSection listing={listing} redirectCtx={listingCtx} appPath={appPath} onShowReviews={showReviews} />
 
         {listing.categoryId && (
           <SimilarRail

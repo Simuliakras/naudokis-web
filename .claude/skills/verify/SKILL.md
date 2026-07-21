@@ -6,7 +6,7 @@ description: Runtime-verify changes to this site by driving it with Playwright a
 # Verifying naudokis-web changes at runtime
 
 Live backends (prod + dev) hold only ~3-4 listings, which cannot exercise pagination,
-the feed's interruption-banner split, ranking, or most edge states. Stand up a local
+infinite-scroll page appends, ranking, or most edge states. Stand up a local
 mock API and drive the real app with Playwright (`playwright` is in devDependencies;
 browsers are installed).
 
@@ -28,6 +28,32 @@ browsers are installed).
    ENFORCED `connect-src` CSP that only allows the real API hosts, so browser fetches
    to the mock are refused otherwise (they hang in React Query retries and the feed
    then swaps to its error state).
+
+### Mock response shapes that are easy to get wrong
+
+Verified 2026-07-21 against `app/lib/listings.ts` / `availability.ts`:
+
+- `GET /listings/:id` → **`{ success, data: <listing> }`** — `fetchListingDetailRaw` returns
+  `body.data` *directly*. Wrapping it as `data: { listing }` yields a detail page stuck on its
+  route-level loading shell forever, with no console error: the query resolves to an object
+  whose every field is `undefined`.
+- `GET /listings/:id/review-stats` → `data: { rating_average, rating_count, rating_distribution }`
+  — the per-star map is `rating_distribution`, **not** `breakdown`.
+- `GET /listings/:id/availability` → `data: { listing_id, start_date, end_date, booked_dates: [] }`.
+  The blocked-day array key must be one of `UNAVAILABLE_KEYS` (`availability.ts:51`); any *other*
+  non-empty array makes the parser bail to "unknown availability" on purpose, since it cannot know
+  the array's polarity.
+- Categories can be served straight from a live `curl https://api.naudokis.lt/listings/categories`
+  dump — that keeps the real taxonomy ids, which is what `POPULAR_SUB_IDS` and the `[data-cat]`
+  accent map key on.
+
+### Which calendars actually mount an Apply button
+
+`showApplyBtn = showApply ?? !commitCloses` (`Calendar.tsx:87`). The desktop booking popover and
+the feed's date popover both pass `commitCloses`, so they render **only** the ghost Clear —
+`.nk-cal__foot .nk-btn--primary` exists solely in the **mobile** booking sheet. Asserting on it at
+a desktop viewport looks like a regression and is not one. Reaching it needs `.nk-cal-trigger`;
+at ≤980px `.nk-lfield` resolves to the header's Share/Save buttons instead.
 
 ## Gotchas (each cost a debugging round)
 

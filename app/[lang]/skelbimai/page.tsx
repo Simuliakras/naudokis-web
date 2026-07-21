@@ -167,7 +167,7 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
               eyebrow={t.eyebrow}
               title={filters.q ? t.titleSearch : t.titleAll}
               subtitle={filters.q ? t.subtitleSearch(filters.q) : t.subtitleAll}
-              maxWidth="80ch"
+              maxWidth="100ch"
             />
             <form action={localePath(locale, "/skelbimai")} method="get" role="search" className="nk-search">
               <input name="q" defaultValue={filters.q} aria-label={t.searchPlaceholder} placeholder={t.searchPlaceholder} />

@@ -149,9 +149,6 @@ export function AppRedirect() {
       }
     }, 1800);
   };
-  // Same string as the mobile "Also on:" row, minus the trailing colon so it sits
-  // cleanly as a centred divider label (both locales end in ":").
-  const storeLabel = dict.bridge.storesAlso.replace(/[:：]+\s*$/, "");
   return (
     <div className={state.closing ? "nk-redirect-scrim is-closing" : "nk-redirect-scrim"} onClick={close} role="dialog" aria-modal="true" aria-labelledby="nk-redirect-title" aria-describedby="nk-redirect-body">
       <div ref={panelRef} className={state.instant ? "nk-redirect-panel nk-redirect-panel--instant" : "nk-redirect-panel"} onClick={(e) => e.stopPropagation()}>
@@ -167,12 +164,19 @@ export function AppRedirect() {
         {/* Intent preservation: the item the user was acting on stays visible
             across the handoff (real listing data passed by the trigger). */}
         {state.listing && (
-          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 12, borderRadius: "var(--nk-r-md)", background: "var(--nk-surface-2)", border: "1px solid var(--nk-glass-card-border)", boxShadow: "var(--nk-edge-top)" }}>
-            <span className="nk-imgph" style={{ width: 56, height: 44, borderRadius: 8, flex: "none", position: "relative", overflow: "hidden" }}>
-              {state.listing.thumb && !thumbFailed && <Image src={state.listing.thumb} alt="" fill sizes="56px" style={{ objectFit: "cover" }} onError={() => setThumbFailed(true)} />}
+          /* data-cat drives --cat-accent for the eyebrow below — same per-category
+             hue the offer card used, so the item keeps its identity in the modal. */
+          <div data-cat={state.listing.categoryId} style={{ display: "flex", alignItems: "center", gap: 12, padding: 12, borderRadius: "var(--nk-r-md)", background: "var(--nk-surface-2)", border: "1px solid var(--nk-glass-card-border)", boxShadow: "var(--nk-edge-top)" }}>
+            {/* 4:3, the house listing-photo ratio (see .nk-offer__media) — a taller
+                box would crop the sides of the very photo the card showed uncropped */}
+            <span className="nk-imgph" style={{ width: 64, height: 48, borderRadius: 8, flex: "none", position: "relative", overflow: "hidden" }}>
+              {state.listing.thumb && !thumbFailed && <Image src={state.listing.thumb} alt="" fill sizes="64px" style={{ objectFit: "cover" }} onError={() => setThumbFailed(true)} />}
               {(!state.listing.thumb || thumbFailed) && <Icon name="ImageOff" size={18} stroke={1.5} className="nk-imgicon" />}
             </span>
             <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+              {state.listing.category && (
+                <span className="nk-redirect__eyebrow">{state.listing.category}</span>
+              )}
               <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{state.listing.title}</span>
               {state.listing.priceLabel && <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-2)" }}>{state.listing.priceLabel}</span>}
             </span>
@@ -189,7 +193,7 @@ export function AppRedirect() {
           </span>
         </div>
         {/* Desktop: separate the scan handoff from the store click-path. Hidden ≤560px. */}
-        <div className="nk-redirect-divider" aria-hidden="true"><span>{storeLabel}</span></div>
+        <div className="nk-redirect-divider" aria-hidden="true"><span>{dict.bridge.storesDivider}</span></div>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Mobile primary: one-tap smart link that sniffs the OS. Hidden >560px,
               where it would only 302 back to the homepage (a decoy CTA). */}
