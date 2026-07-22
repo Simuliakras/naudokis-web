@@ -2580,7 +2580,7 @@ footer .nk-link:hover {
   min-width: 0;
 }
 /* phones: tighten the inter-column gap so both columns fit narrow screens */
-@container nk-footer (width < 35rem) {
+@container nk-footer (width < theme(--breakpoint-sm)) {
   .nk-footer__catgrid {
     gap: var(--nk-s-4) var(--nk-gap-lg);
   }
@@ -2814,7 +2814,7 @@ footer .nk-link:hover {
     column-gap: var(--nk-s-8);
   }
 }
-@container nk-footer (width < 35rem) {
+@container nk-footer (width < theme(--breakpoint-sm)) {
   .nk-footer__top {
     grid-template-columns: 1fr;
     gap: var(--nk-s-10);
@@ -2847,7 +2847,7 @@ footer .nk-link:hover {
   }
 }
 
-@container nk-footer (width < 22.5rem) {
+@container nk-footer (width < theme(--breakpoint-xs)) {
   .nk-footer__pay {
     gap: var(--nk-gap-md) 12px;
   }
@@ -3077,7 +3077,7 @@ footer .nk-link:hover {
 
 /* Two-column tablet composition. Categories balance the combined Cities + Help
    stack, while the brand becomes a compact two-column block above both. */
-@container nk-footer (width >= 35rem) {
+@container nk-footer (width >= theme(--breakpoint-sm)) {
   .nk-footer .nk-footer__pattern {
     --nk-footer-pattern-opacity: 0.045;
     inline-size: min(68rem, 92%);
@@ -5163,7 +5163,7 @@ footer .nk-link:hover {
    edge sits a full arrow-rail past the photo — pull the close button back to the photo's
    own top-right corner (arrow width + stage gap) so it reads as the photo's control.
    Single-photo sets drop the arrows, so the photo already fills the panel: no offset. */
-@media (width >= theme(--breakpoint-sm)) and (min-height: 521px) {
+@media (width >= theme(--breakpoint-sm)) and (height >= 32.5rem) {
   .nk-lightbox__panel.is-multi .nk-lightbox__close {
     right: calc(48px + clamp(8px, 2vw, 18px));
   }
@@ -5201,7 +5201,7 @@ footer .nk-link:hover {
 }
 /* narrow or short screens: overlay the arrows ON the photo instead of flanking
    it — two 48px flanks squeezed the image to ~65% width on phones */
-@media (width < theme(--breakpoint-sm)), (max-height: 520px) {
+@media (width < theme(--breakpoint-sm)), (height < 32.5rem) {
   .nk-lightbox__stage {
     position: relative;
     gap: 0;
@@ -5428,7 +5428,7 @@ footer .nk-link:hover {
     gap: 28px;
   }
 }
-@media (max-height: 780px) {
+@media (height <= 48.75rem) {
   @container nk-detail (width >= 55rem) {
     .nk-bento {
       height: clamp(300px, 38vw, 420px);
@@ -5491,13 +5491,13 @@ footer .nk-link:hover {
     inset-block-end: calc(92px + var(--nk-safe-bottom));
   }
 }
-@container nk-detail (width < 48rem) {
+@container nk-detail (width < theme(--breakpoint-md)) {
   .nk-spec-grid {
     grid-template-columns: 1fr;
     column-gap: 0;
   }
 }
-@container nk-detail (width < 35rem) {
+@container nk-detail (width < theme(--breakpoint-sm)) {
   /* full-bleed hero tile + a tidy 2-up thumbnail mosaic, not five stacked tiles */
   .nk-bento {
     grid-template-columns: 1fr 1fr;
@@ -5767,7 +5767,7 @@ footer .nk-link:hover {
     margin-top: 8px;
   }
 }
-@container nk-home-hiw (width < 35rem) {
+@container nk-home-hiw (width < theme(--breakpoint-sm)) {
   /* narrower text column: shrink the node (every rail offset recomputes) and let the
      title scale, so a 37-char LT title doesn't wrap five times beside the circle */
   .nk-hiw-grid {
@@ -6869,7 +6869,7 @@ footer .nk-link:hover {
   height: 9px;
   background: var(--nk-green);
 }
-@container nk-app-cta (width < 35rem) {
+@container nk-app-cta (width < theme(--breakpoint-sm)) {
   .nk-appcta__copy h2 {
     font-size: clamp(30px, 9vw, 38px);
     line-height: 1.14;
@@ -6965,7 +6965,7 @@ footer .nk-link:hover {
     order: 1;
   }
 }
-@container nk-hiw-layout (width < 48rem) {
+@container nk-hiw-layout (width < theme(--breakpoint-md)) {
   .htw-step__num {
     width: 54px;
     height: 54px;
@@ -6979,7 +6979,7 @@ footer .nk-link:hover {
     font-size: 22px;
   }
 }
-@container nk-app-cta (width < 48rem) {
+@container nk-app-cta (width < theme(--breakpoint-md)) {
   .nk-appcta__qr {
     display: none;
   } /* on a phone you can't scan your own screen — badges deep-link */
@@ -7200,7 +7200,7 @@ footer .nk-link:hover {
   }
 }
 
-@media (width < theme(--breakpoint-sm)) and (max-height: 700px) {
+@media (width < theme(--breakpoint-sm)) and (height <= 43.75rem) {
   :root {
     --nk-section-y: 48px;
     --nk-section-y-lg: 52px;
@@ -7250,7 +7250,7 @@ footer .nk-link:hover {
    windows) the sticky nav + sticky filter bar consumed 37–43% of the screen.
    Width-only breakpoints can't see this — unpin the secondary chrome so the
    content gets the viewport back; the page scrolls it into reach as usual. */
-@media (max-height: 520px) {
+@media (height < 32.5rem) {
   .nk-nav-bar {
     /* Stay in normal flow, but retain the z-index stacking context so the open
        drawer remains interactive above its fixed page scrim. */
@@ -8168,7 +8168,7 @@ svg.nk-ico {
 }
 /* phones: snap-stop keeps fast flicks from skipping whole tile groups on the
    narrow rail. Card geometry is untouched — same 224px tile as every other width. */
-@container nk-category-shelf (width < 35rem) {
+@container nk-category-shelf (width < theme(--breakpoint-sm)) {
   .nk-cats-shelf > * {
     scroll-snap-stop: always;
   }

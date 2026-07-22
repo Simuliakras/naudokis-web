@@ -1,3 +1,5 @@
+@reference "../../globals.css";
+
 /* ============================================================================
    Legal documents — calm, text-first reading system. Ported from the
    handoff legal.css. Imported by DocumentScreen.tsx (NOT
@@ -18,7 +20,10 @@
   --nk-purple-light: var(--nk-purple-hover);
   --nk-text-tertiary: rgba(255, 255, 255, 0.62); /* ≥4.5:1 on --nk-bg for the small uppercase TOC/related labels */
   --lg-elevated: #1c1f20;
-  --lg-float-bg: rgba(47, 52, 54, 0.9); /* floating TOC / language panel */
+  --lg-float-bg: var(
+    --nk-float-bg
+  ); /* floating TOC / language panel — shared
+                                            with .nk-backtotop so they can't drift */
   background: var(--nk-bg);
   color: var(--nk-text-2);
   font-family: var(--nk-font-body);
@@ -161,7 +166,7 @@
   align-items: start;
 }
 .nk-lg-root[data-layout="a"] .nk-lg-body {
-  grid-template-columns: minmax(620px, var(--lg-read)) 264px;
+  grid-template-columns: minmax(0, var(--lg-read)) minmax(15.25rem, 16.5rem);
 }
 .nk-lg-root[data-layout="a"] .nk-lg-toc {
   order: 2;
@@ -243,6 +248,7 @@
 .nk-lg-article {
   max-width: var(--lg-read);
   min-width: 0;
+  container: nk-legal-article / inline-size;
 }
 .nk-lg-h2 {
   font-family: var(--nk-font-display);
@@ -647,52 +653,15 @@
   font-size: 13.5px;
   color: var(--nk-purple-light);
 }
-@media (max-width: 560px) {
+@container nk-legal-article (width < theme(--breakpoint-sm)) {
   .nk-lg-related__grid {
     grid-template-columns: 1fr;
   }
 }
 
-/* back to top — visibility keeps the invisible control out of the Tab order
-   (opacity alone left it focusable from page load) without killing the fade */
-.nk-lg-totop {
-  position: fixed;
-  right: calc(24px + var(--nk-safe-right, 0px));
-  bottom: calc(24px + var(--nk-safe-bottom, 0px));
-  z-index: 70;
-  min-width: 44px;
-  min-height: 44px;
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  border: 1px solid var(--lg-rule);
-  background: var(--lg-float-bg);
-  backdrop-filter: blur(10px);
-  color: var(--nk-text);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transform: translateY(10px) scale(0.94);
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    opacity 0.22s,
-    transform 0.22s,
-    background 0.15s,
-    visibility 0.22s;
-}
-.nk-lg-totop.is-on {
-  opacity: 1;
-  transform: none;
-  pointer-events: auto;
-  visibility: visible;
-}
-.nk-lg-totop:hover {
-  background: var(--nk-purple);
-  border-color: var(--nk-purple);
-}
+/* back-to-top lives in globals.css as .nk-backtotop — the one sitewide control,
+   mounted by <Chrome>. Legal used to ship its own copy; the only legal-specific
+   part left is the FAB collision offset in the responsive block below. */
 
 /* floating TOC button (mobile/tablet) — anchored bottom-RIGHT: left-anchored it
    sat on the reading column's line starts (covered the SVARBU warning at
@@ -713,6 +682,7 @@
   border-radius: 14px;
   border: 1px solid var(--lg-rule);
   background: var(--lg-float-bg);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   color: var(--nk-text);
   cursor: pointer;
@@ -818,7 +788,7 @@
 }
 
 /* responsive */
-@media (max-width: 980px) {
+@media (width < theme(--breakpoint-lg)) {
   .nk-lg-root[data-layout="a"] .nk-lg-body {
     grid-template-columns: 1fr;
   }
@@ -828,32 +798,13 @@
   .nk-lg-root[data-layout="a"] .nk-lg-fab-toc {
     display: flex;
   }
-  /* both floating controls share the right edge — stack back-to-top above */
-  .nk-lg-root[data-layout="a"] .nk-lg-totop {
-    bottom: calc(84px + var(--nk-safe-bottom, 0px));
-  }
-}
-/* 981–1023 only: the sidebar genuinely doesn't fit (620px article + 264px TOC).
-   From 1024 the two-column layout engages — laptops/iPad-landscape read with a
-   real TOC instead of a FAB + drawer while the right margin sat dead. */
-@media (max-width: 1023px) and (min-width: 981px) {
-  .nk-lg-root[data-layout="a"] .nk-lg-body {
-    grid-template-columns: 1fr;
-  }
-  .nk-lg-root[data-layout="a"] .nk-lg-toc {
-    display: none;
-  }
-  .nk-lg-root[data-layout="a"] .nk-lg-fab-toc {
-    display: flex;
-  }
-  .nk-lg-root[data-layout="a"] .nk-lg-totop {
-    bottom: calc(84px + var(--nk-safe-bottom, 0px));
-  }
-}
-@media (max-width: 1180px) and (min-width: 1024px) {
-  .nk-lg-root[data-layout="a"] .nk-lg-body {
-    grid-template-columns: minmax(0, var(--lg-read)) 244px;
-    gap: clamp(32px, 4vw, 56px);
+  /* the TOC FAB owns the bottom-right corner here; the global back-to-top
+     (.nk-backtotop, globals.css) stacks directly above it and must match its
+     right edge — the global rule uses a tighter clamp() inset than the FAB.
+     FAB: bottom 24px + height 46px = top edge at 70px, so 84px keeps a 14px gap. */
+  body:has(.nk-lg-fab-toc) .nk-backtotop {
+    inset-inline-end: calc(24px + var(--nk-safe-right, 0px));
+    inset-block-end: calc(84px + var(--nk-safe-bottom, 0px));
   }
 }
 /* Legal tables read as records once the reading column gets tight: each row
@@ -861,7 +812,7 @@
    data-label. ≤700px only — the simple 2-column wayfinding table fits real
    tablet widths (the stacked cards tripled the section height at 768), and in
    the 981–1120 sidebar band the .nk-lg-tablescroll wrapper absorbs any squeeze. */
-@media (max-width: 700px) {
+@container nk-legal-article (width < 43.75rem) {
   .nk-lg-tablewrap {
     overflow: visible;
     border: 0;
@@ -946,7 +897,7 @@
     font-weight: 400;
   }
 }
-@media (max-width: 680px) {
+@media (pointer: coarse) {
   /* the permalink is a real 44px tap target here — pin it to the heading's first
      line instead of vertically centering against a 2–3 line wrapped title */
   .nk-lg-h2 {
@@ -959,6 +910,8 @@
     align-self: flex-start;
     margin-top: 1px;
   }
+}
+@media (width < theme(--breakpoint-sm)) {
   .nk-lg-shell {
     padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
@@ -973,18 +926,13 @@
       0 12px 30px rgba(0, 0, 0, 0.28),
       var(--nk-edge-top);
   }
-  .nk-lg-totop {
-    right: calc(16px + var(--nk-safe-right, 0px));
-    bottom: calc(84px + var(--nk-safe-bottom, 0px));
-    width: 44px;
-    height: 44px;
-    border-radius: 13px;
-    box-shadow:
-      0 12px 30px rgba(0, 0, 0, 0.28),
-      var(--nk-edge-top);
+  /* FAB here: bottom 28px + height 44px = top edge at 72px → 84px keeps 12px */
+  body:has(.nk-lg-fab-toc) .nk-backtotop {
+    inset-inline-end: calc(16px + var(--nk-safe-right, 0px));
+    inset-block-end: calc(84px + var(--nk-safe-bottom, 0px));
   }
 }
-@media (max-height: 620px) {
+@media (height <= 38.75rem) {
   .nk-lg-drawer__panel {
     padding-block: 14px;
   }
@@ -996,7 +944,7 @@
     padding-block: 8px;
   }
 }
-@media (max-width: 420px) {
+@container nk-legal-article (width < 26.25rem) {
   .nk-lg-td {
     grid-template-columns: 1fr;
     gap: 4px;
@@ -1005,8 +953,8 @@
 
 /* print */
 @media print {
+  /* .nk-backtotop has its own print rule in globals.css */
   .nk-lg-progress,
-  .nk-lg-totop,
   .nk-lg-fab-toc,
   .nk-lg-toc,
   .nk-lg-drawer,
