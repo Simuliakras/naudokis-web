@@ -164,9 +164,10 @@ test("install handoff uses the compact layer on short landscape viewports", asyn
     (window as Window & { __nkNavReady?: boolean }).__nkNavReady === true
     && window.__nkBridgeReady === true
   ));
-  await expect(page.locator(".nk-nav-cta")).toBeHidden();
-  await page.locator(".nk-nav-burger").click();
-  await page.locator(".nk-nav-drawer-cta").click();
+  // 900px is below --breakpoint-nav, so the bar CTA is showing its short label —
+  // it no longer retreats into the drawer, and opening the handoff is one tap.
+  await expect(page.locator(".nk-nav-cta")).toBeVisible();
+  await page.locator(".nk-nav-cta").click();
   await expect(page.locator(".nk-sheet-grabzone")).toBeVisible();
   await expect(page.locator(".nk-redirect-qr")).toBeHidden();
   await page.setViewportSize({ width: 900, height: 700 });

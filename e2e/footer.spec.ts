@@ -158,6 +158,12 @@ test("back-to-top stacks clear of the legal TOC FAB below lg", async ({ page }) 
     const fab = page.locator(".nk-lg-fab-toc");
     await expect(back).toHaveClass(/is-on/);
     await expect(fab).toBeVisible();
+    // .is-on only STARTS the fade — the resting state is translateY(10px) scale(.94)
+    // and the transform transition runs 0.22s. Measuring on the class alone caught
+    // the button mid-scale (45.6px wide instead of 46), which read as a ~1.05px
+    // right-edge misalignment that came and went with machine speed. Wait for the
+    // transform to actually land; Playwright polls this assertion.
+    await expect(back).toHaveCSS("transform", "none");
     // The legal-only copy of this button is gone — exactly one control now.
     await expect(back).toHaveCount(1);
     await expect(page.locator(".nk-lg-totop")).toHaveCount(0);

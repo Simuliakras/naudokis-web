@@ -16,6 +16,15 @@ export default defineConfig({
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     { name: "firefox-responsive", testMatch: /breakpoint-contracts\.spec\.ts/, use: { ...devices["Desktop Firefox"] } },
+    // WEBKIT ONLY RUNS AGAINST `next dev` (the webServer below), never against a
+    // plain-HTTP `next start`. The production CSP includes upgrade-insecure-requests
+    // (next.config.ts drops it when isDev). WebKit applies that to localhost, so
+    // every chunk, stylesheet and font is force-upgraded to https://127.0.0.1:<port>
+    // and dies with "A TLS error caused the secure connection to fail" — the page
+    // never hydrates and every test times out waiting on __nkNavReady. Chromium
+    // exempts localhost from the upgrade, which is why it alone appears to work.
+    // Point PLAYWRIGHT_BASE_URL at a `next start` and you will see six webkit
+    // failures that are entirely an artifact of the transport.
     { name: "webkit-responsive", testMatch: /breakpoint-contracts\.spec\.ts/, use: { ...devices["Desktop Safari"] } },
   ],
   webServer: {

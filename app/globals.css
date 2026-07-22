@@ -2706,11 +2706,16 @@ footer .nk-link:hover {
   transition: color 0.15s ease;
   width: fit-content;
 }
-.nk-footer__col a:hover,
-.nk-footer__col a:active {
+/* The `.nk-footer` prefix is load-bearing, not decoration: the Quiet Luxe layer
+   below re-declares `.nk-footer .nk-footer__col a`'s resting color at the same
+   (0,2,1) specificity as a bare `.nk-footer__col a:hover`, and wins on source
+   order — so an unprefixed hover rule here silently never paints. Same fade as
+   the nav links (.nk-link). */
+.nk-footer .nk-footer__col a:hover,
+.nk-footer .nk-footer__col a:active {
   color: var(--nk-purple-hover);
 }
-.nk-footer__col a[aria-current="page"] {
+.nk-footer .nk-footer__col a[aria-current="page"] {
   color: var(--nk-purple-hover);
 }
 .nk-footer__bottom {
