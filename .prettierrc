@@ -1,0 +1,8 @@
+{
+  "overrides": [
+    {
+      "files": "*.css",
+      "options": { "printWidth": 120 }
+    }
+  ]
+}

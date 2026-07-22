@@ -1,0 +1,32 @@
+# Prettier is deliberately scoped to CSS (see .prettierrc + the `format:css` script).
+#
+# The TS/TSX surface is NOT uniformly Prettier-formatted and must not be swept in:
+# the grouped UI-kit bundles (ui.tsx, cards.tsx, sections-home.tsx) are hand-kept in
+# a compact style with long single-line JSX, while lt.ts/en.ts ARE conformant at the
+# default printWidth 80. One `prettier --write .` would rewrite both groups and bury
+# any real change in an unreviewable diff.
+#
+# Listed by extension rather than `*` + negations: gitignore semantics cannot
+# re-include a path whose parent directory is excluded, so the `*` / `!*.css` form
+# silently ignores everything (it did — it made `--check` pass on zero files).
+#
+# If the repo ever adopts repo-wide formatting, do it as its own commit and update
+# this file. Do not let it ride along with a feature change.
+*.ts
+*.tsx
+*.js
+*.jsx
+*.mjs
+*.cjs
+*.json
+*.jsonc
+*.md
+*.mdx
+*.yml
+*.yaml
+*.html
+
+.next/
+node_modules/
+e2e/__screens__/
+screenshots/
