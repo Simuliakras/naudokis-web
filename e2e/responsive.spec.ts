@@ -32,7 +32,7 @@ const SURFACES: Surface[] = [
   { name: "privacy", tag: "@legal", path: "/privatumo-politika" },
   { name: "notfound", tag: "@status", path: "/this-route-does-not-exist" },
   { name: "home-en", tag: "@home", path: "/en" },
-  { name: "feed-en", tag: "@feed", path: "/en/skelbimai" },
+  { name: "feed-en", tag: "@feed", path: "/en/listings" },
 ];
 
 fs.mkdirSync(OUT, { recursive: true });

@@ -3,7 +3,7 @@
 // from one place. Lithuanian is unprefixed at "/"; English lives at "/en".
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { defaultLocale, isLocale, localePrefix, type Locale } from "@/app/lib/i18n/config";
+import { defaultLocale, isLocale, locales, localePath, localePrefix, type Locale } from "@/app/lib/i18n/config";
 import { CONTACT_EMAIL, CONTACT_PHONE, SITE_ORIGIN, SOCIAL_LINKS, APP_STORE_URL, PLAY_STORE_URL, LEGAL_NAME, COMPANY_CODE } from "@/app/lib/contact";
 import type { FaqItem } from "@/app/lib/i18n/types";
 import { LT_CITIES, type City } from "@/app/lib/cities";
@@ -12,16 +12,16 @@ import { listingLandingPath } from "@/app/lib/landing-routes";
 import { listingDetailPath } from "@/app/lib/listing-url";
 
 export {
-  categoryIdFromSlug,
   categorySlugForId,
   cityFromSlug,
   citySlugFor,
   listingFilterPath,
   listingLandingPath,
-  subcategoryIdFromSlug,
+  resolveCategorySlug,
+  resolveSubcategorySlug,
   subcategorySlugForId,
 } from "@/app/lib/landing-routes";
-export type { ListingLandingFilters } from "@/app/lib/landing-routes";
+export type { ListingLandingFilters, SlugMatch, SlugResolution } from "@/app/lib/landing-routes";
 
 // Canonical production origin, for absolute URLs in the metadata builders here and
 // in the sitemap/robots routes. Defined in contact.ts (which client components can
@@ -51,16 +51,14 @@ export function requireLocale(lang: string): Locale {
   return lang;
 }
 
-// `path` is the bare route, e.g. "/kategorijos" ("" for home).
+// `path` is the bare INTERNAL route, e.g. "/kategorijos" ("" for home). Segments are
+// spelled per locale in the public URL ("/en/categories"), which is why these go
+// through `localePath` rather than concatenating a prefix — see i18n/routes.ts.
 export function ltPath(path: string) {
-  return path || "/";
-}
-export function enPath(path: string) {
-  return `/en${path}`;
+  return localePath(defaultLocale, path);
 }
 export function canonicalFor(locale: Locale, path: string) {
-  const prefix = localePrefix(locale);
-  return prefix ? `${prefix}${path}` : ltPath(path);
+  return localePath(locale, path);
 }
 
 // The per-locale WebSite node's stable @id, referenced by every isPartOf. One
@@ -168,9 +166,14 @@ export function pageMetadata({
     openGraph.images = [{ url: generatedImage, width: 1200, height: 630, alt: ogImageAlt }];
     twitter.images = [generatedImage];
   }
-  const languages = ltOnly
-    ? { lt: ltPath(path), "x-default": ltPath(path) }
-    : { lt: ltPath(path), en: enPath(path), "x-default": ltPath(path) };
+  // Built by iterating `locales` — each locale's URL is its own localized path, not
+  // the Lithuanian one with a prefix bolted on.
+  const languages: Record<string, string> = ltOnly
+    ? { [defaultLocale]: ltPath(path), "x-default": ltPath(path) }
+    : {
+        ...Object.fromEntries(locales.map((l) => [l, canonicalFor(l, path)])),
+        "x-default": ltPath(path),
+      };
   return {
     metadataBase: new URL(SITE_URL),
     title,

@@ -39,9 +39,34 @@ import {
   pageFromLandingSearch,
   type LandingSearchParams,
 } from "@/app/lib/landing-params";
-import { categoryIdFromSlug, subcategoryIdFromSlug } from "@/app/lib/landing-routes";
+import { resolveCategorySlug, resolveSubcategorySlug } from "@/app/lib/landing-routes";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
+
+// Map the taxonomy slugs of a /nuoma URL to backend ids, for this locale.
+//
+// It only MAPS — there is no redirect here. Canonicalizing a non-canonical spelling
+// ("/en/rent/namai-sodas") is the proxy's job (see i18n/route-resolution.ts), so by
+// the time a request reaches this function the slug is already canonical. Do not
+// "harden" this with `permanentRedirect`: inside an async page body the shell has
+// already flushed, and Next then emits a client-side meta tag instead of a 308 —
+// which is not a redirect a crawler will honour. That was measured, not assumed.
+export function landingSlugIds({
+  locale,
+  categorySlug,
+  subcategorySlug,
+}: {
+  locale: Locale;
+  categorySlug: string;
+  subcategorySlug?: string;
+}): { categoryId: string; subcategoryId?: string } {
+  // Taxonomy ids, NOT a `ListingFilters` — the feed filters on a single category id,
+  // so a subcategory landing passes `subcategoryId` as its `category` filter.
+  return {
+    categoryId: resolveCategorySlug(categorySlug, locale).id,
+    subcategoryId: subcategorySlug ? resolveSubcategorySlug(subcategorySlug, locale).id : undefined,
+  };
+}
 
 // Resolve a /nuoma/[category]/[subcategory][/city] pair to its backend level-1
 // category, validating that the sub is a real child of the parent. Shared by the
@@ -55,13 +80,16 @@ export async function resolveSubcategory({
   categorySlug: string;
   subcategorySlug: string;
 }): Promise<{ categories: Category[]; subcategory: Category }> {
-  const parentId = categoryIdFromSlug(categorySlug);
-  const subcategoryId = subcategoryIdFromSlug(subcategorySlug);
+  const { categoryId: parentId, subcategoryId } = landingSlugIds({
+    locale,
+    categorySlug,
+    subcategorySlug,
+  });
   const categories = await fetchAllCategories(locale).catch(() => []);
   const subcategory = categories.find(
     (c) => c.id === subcategoryId && c.parentId === parentId,
   );
-  if (!parentId || !subcategory) {
+  if (!subcategory) {
     notFound();
   }
   return { categories, subcategory };
@@ -128,10 +156,17 @@ export async function listingLandingMetadata({
   // landing clears the minimum-usefulness threshold. This avoids walking the
   // full catalogue during metadata generation for every landing request.
   const needed = listingsNeededForPage(page, MIN_INDEXABLE_LISTINGS);
-  const count = await fetchListingsCount({
+  // Keep "counted zero" and "could not count" apart. Collapsing a timeout to 0
+  // reads as a thin landing, and ISR then caches that `noindex` for the whole
+  // revalidate window — a backend blip would deindex healthy categories. An
+  // unproven count instead leaves the directive off: indexing a thin page for
+  // one window is recoverable, dropping a good one out of the index is not.
+  const counted = await fetchListingsCount({
     category: category?.id,
     city: landing.city,
-  }, { stopAt: needed }).catch(() => 0);
+  }, { stopAt: needed })
+    .then((n) => ({ ok: true as const, n }))
+    .catch(() => ({ ok: false as const, n: 0 }));
 
   const metadata = pageMetadata({
     locale,
@@ -147,7 +182,7 @@ export async function listingLandingMetadata({
   }
   // Low-stock or non-existent paginated landings stay usable and
   // crawlable-through, but are not useful enough to recommend for indexing.
-  if (count < needed) {
+  if (counted.ok && counted.n < needed) {
     metadata.robots = NOINDEX_FOLLOW;
   }
   return metadata;

@@ -123,15 +123,25 @@ const nextConfig: NextConfig = {
         destination: "https://www.naudokis.lt/:path",
         permanent: true,
       },
-      // Legal URLs that changed between the old site and this one. The old EN
-      // slugs were indexed; preserve their link equity. The LT terms slug
-      // matches the old site after the rename, so only the dev-era LT slug needs
-      // a defensive redirect.
-      { source: "/en/terms-of-service", destination: "/en/naudojimosi-salygos", permanent: true },
-      { source: "/en/privacy-policy", destination: "/en/privatumo-politika", permanent: true },
-      { source: "/en/account-deletion", destination: "/en/paskyros-trynimas", permanent: true },
+      // Legal URLs that changed between the old site and this one.
+      //
+      // The three English slugs (/en/terms-of-service, /en/privacy-policy,
+      // /en/account-deletion) used to be redirected FROM here to the Lithuanian
+      // ones. They are canonical again now that English routes are localized, so
+      // those rules are gone — leaving them would send every visitor away from the
+      // URL the page's own canonical advertises.
+      //
+      // Their Lithuanian counterparts are deliberately NOT redirected here either:
+      // a 308 is cached by clients forever, so any browser still holding the old
+      // "/en/terms-of-service → /en/naudojimosi-salygos" hop would loop entirely
+      // inside its own cache. They stay 200 and are de-duplicated by canonical.
+      // See NO_REDIRECT_SEGMENTS in app/lib/i18n/route-resolution.ts.
+      //
+      // Legacy English route segments (/en/skelbimai, /en/nuoma/*, …) are moved in
+      // the proxy rather than here: `redirects()` runs before Proxy, so a rule that
+      // is the exact inverse of the proxy's own rewrite risks an infinite loop.
       { source: "/naudojimo-taisykles", destination: "/naudojimosi-salygos", permanent: true },
-      { source: "/en/naudojimo-taisykles", destination: "/en/naudojimosi-salygos", permanent: true },
+      { source: "/en/naudojimo-taisykles", destination: "/en/terms-of-service", permanent: true },
     ];
   },
   // WebP avoids AVIF's materially slower first-request encoding on listing LCPs.

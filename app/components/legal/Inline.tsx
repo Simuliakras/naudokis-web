@@ -3,7 +3,7 @@
 // links that resolve to in-app routes via legalHref. Server component (pure).
 import { Fragment, type ReactNode } from "react";
 import type { Locale } from "@/app/lib/i18n/config";
-import { localePrefix } from "@/app/lib/i18n/config";
+import { localePath } from "@/app/lib/i18n/config";
 import { legalHref } from "@/app/lib/legal/manifest";
 
 // Priority-ordered constructs: bold | code | [label](href) | email | url.
@@ -47,8 +47,8 @@ export function Inline({ text, locale }: { text: string | undefined; locale: Loc
       } else if (href.startsWith("#") || href.startsWith("mailto")) {
         nodes.push(<a key={key++} href={href}>{label}</a>);
       } else if (href.startsWith("/")) {
-        // Internal app route — locale-prefixed.
-        nodes.push(<a key={key++} href={localePrefix(locale) + href}>{label}</a>);
+        // Internal app route — segments translated and locale-prefixed.
+        nodes.push(<a key={key++} href={localePath(locale, href)}>{label}</a>);
       } else {
         nodes.push(<span key={key++}>{label}</span>);
       }

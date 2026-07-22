@@ -4,7 +4,6 @@ import {
   NOINDEX_FOLLOW,
   MIN_INDEXABLE_LISTINGS,
   canonicalFor,
-  enPath,
   ltPath,
   webSiteId,
   absoluteUrl,
@@ -22,11 +21,13 @@ import type { Category } from "./categories";
 // locales into one. These lock the URL shapes down.
 
 describe("locale URL shapes", () => {
-  it("keeps Lithuanian unprefixed and prefixes English", () => {
+  it("keeps Lithuanian unprefixed and both prefixes AND translates English", () => {
     expect(ltPath("/kategorijos")).toBe("/kategorijos");
-    expect(enPath("/kategorijos")).toBe("/en/kategorijos");
     expect(canonicalFor("lt", "/kategorijos")).toBe("/kategorijos");
-    expect(canonicalFor("en", "/kategorijos")).toBe("/en/kategorijos");
+    // The English URL is a translation of the route, not the Lithuanian path with a
+    // prefix bolted on — see app/lib/i18n/routes.ts.
+    expect(canonicalFor("en", "/kategorijos")).toBe("/en/categories");
+    expect(canonicalFor("en", "/nuoma/irankiai-statyba")).toBe("/en/rent/tools-construction");
   });
 
   it("renders the home path as / rather than an empty string", () => {
@@ -38,7 +39,7 @@ describe("locale URL shapes", () => {
   it("builds absolute URLs on the canonical www origin", () => {
     expect(SITE_URL).toBe("https://www.naudokis.lt");
     expect(absoluteUrl("lt", "/skelbimai")).toBe("https://www.naudokis.lt/skelbimai");
-    expect(absoluteUrl("en", "/skelbimai")).toBe("https://www.naudokis.lt/en/skelbimai");
+    expect(absoluteUrl("en", "/skelbimai")).toBe("https://www.naudokis.lt/en/listings");
   });
 
   it("gives each locale its own WebSite @id", () => {
@@ -62,7 +63,7 @@ const page = (locale: "lt" | "en", extra: Partial<Parameters<typeof pageMetadata
 describe("pageMetadata", () => {
   it("points the canonical at the locale's own URL", () => {
     expect(page("lt").alternates?.canonical).toBe("/kategorijos");
-    expect(page("en").alternates?.canonical).toBe("/en/kategorijos");
+    expect(page("en").alternates?.canonical).toBe("/en/categories");
   });
 
   it("declares both locales plus an x-default pointing at Lithuanian", () => {
@@ -70,7 +71,7 @@ describe("pageMetadata", () => {
     for (const locale of ["lt", "en"] as const) {
       expect(page(locale).alternates?.languages).toEqual({
         lt: "/kategorijos",
-        en: "/en/kategorijos",
+        en: "/en/categories",
         "x-default": "/kategorijos",
       });
     }
@@ -255,7 +256,7 @@ describe("itemListJsonLd", () => {
     const items = node.itemListElement as { position: number; url: string }[];
     expect(items.map((i) => i.position)).toEqual([1, 2]);
     for (const item of items) {
-      expect(item.url.startsWith("https://www.naudokis.lt/en/skelbimai/")).toBe(true);
+      expect(item.url.startsWith("https://www.naudokis.lt/en/listings/")).toBe(true);
     }
   });
 });

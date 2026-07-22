@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { API_BASE, USES_PRODUCTION_API } from "@/app/lib/api";
-import { locales, localePrefix } from "@/app/lib/i18n/config";
+import { locales, defaultLocale, localePath } from "@/app/lib/i18n/config";
 import { SITE_URL } from "@/app/lib/seo";
 import { isSyntheticListing, listingDetailPath } from "@/app/lib/listing-url";
 
@@ -162,15 +162,17 @@ export async function fetchListingSitemapEntries(chunkIndex: number): Promise<Li
 export function localizedListingSitemapEntries(entries: ListingEntry[]): MetadataRoute.Sitemap {
   return entries.flatMap((entry) =>
     locales.map((locale) => {
+      // The owner-authored title slug is locale-invariant, but the route segment is
+      // not (/skelbimai vs /listings), so this goes through `localePath`.
       const path = listingDetailPath({ id: entry.id, title: entry.title, city: entry.city });
       return {
-        url: `${SITE_URL}${localePrefix(locale)}${path}`,
+        url: `${SITE_URL}${localePath(locale, path)}`,
         alternates: {
           languages: {
             ...Object.fromEntries(
-              locales.map((l) => [l, `${SITE_URL}${localePrefix(l)}${path}`]),
+              locales.map((l) => [l, `${SITE_URL}${localePath(l, path)}`]),
             ),
-            "x-default": `${SITE_URL}${path}`,
+            "x-default": `${SITE_URL}${localePath(defaultLocale, path)}`,
           },
         },
         ...(entry.lastModified ? { lastModified: entry.lastModified } : {}),

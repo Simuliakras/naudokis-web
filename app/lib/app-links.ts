@@ -18,7 +18,9 @@
 // native deep link + direct store links — never an AppsFlyer redirect, and never the
 // authenticated record itself (the web has no login, and a valid id must render
 // exactly like a bogus one).
-import { barePath } from "./i18n/config";
+// From the i18n leaf, not ./i18n/config: `proxy.ts` reaches this module on every
+// request, and config pulls in the route translators and with them the taxonomy.
+import { barePath } from "./i18n/locales";
 import type { HandoffKind } from "./i18n/types";
 
 // First URL segment → dictionary key. `listing` and `ref` are absent: they have

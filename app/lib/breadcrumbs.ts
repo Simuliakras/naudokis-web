@@ -34,12 +34,16 @@ export function listingBreadcrumbTrail({
   if (category && categoryTitle) {
     trail.push({ name: categoryTitle, path: listingLandingPath({ category }) });
   }
-  if (category && subcategory && subcategoryTitle && city) {
-    trail.push({ name: `${subcategoryTitle}, ${city}`, path: listingLandingPath({ category, subcategory, city }) });
-    return trail;
+  // One crumb per URL segment, so the trail always names the page it is on and
+  // every intermediate link is a real landing. A subcategory used to be folded
+  // into a combined "Sub, City" leaf that only appeared when a city was present,
+  // which left every city-less subcategory landing describing its PARENT as the
+  // current page.
+  if (category && subcategory && subcategoryTitle) {
+    trail.push({ name: subcategoryTitle, path: listingLandingPath({ category, subcategory }) });
   }
   if (city) {
-    trail.push({ name: city, path: listingLandingPath({ category, city }) });
+    trail.push({ name: city, path: listingLandingPath({ category, subcategory, city }) });
   }
   return trail;
 }

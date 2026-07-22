@@ -7,10 +7,10 @@ import { categoryIconFor, categoryNameFor } from "@/app/lib/category-style";
 import {
   barePath,
   localePath,
-  localePrefix,
   locales,
   type Locale,
 } from "@/app/lib/i18n/config";
+import { internalizeRoute } from "@/app/lib/i18n/routes";
 import type { FaqItem } from "@/app/lib/i18n/types";
 // listing-view, not listings — see the note in cards.tsx: importing the hooks module
 // would put react-query in the home page's bundle for the sake of a sort function.
@@ -58,12 +58,16 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   const burgerRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLElement>(null);
 
-  // Active-route flag for aria-current — strip any locale prefix to the bare
-  // path (the default locale is unprefixed) before matching.
-  const isCategories = barePath(pathname) === "/kategorijos";
-  const isHowItWorks = barePath(pathname) === "/kaip-tai-veikia";
+  // Active-route flag for aria-current. Strip the locale prefix, then normalize to
+  // the INTERNAL spelling before matching: `usePathname()` reports the internal path
+  // on the server but the public one on the client under the proxy's rewrite
+  // (/en/listings vs /en/skelbimai), so comparing raw would flip `aria-current` on
+  // hydration on every English page. `internalizeRoute` is idempotent, so both sides
+  // reduce to the same value.
+  const bare = internalizeRoute(locale, barePath(pathname));
+  const isCategories = bare === "/kategorijos";
+  const isHowItWorks = bare === "/kaip-tai-veikia";
   // Section-level match: highlights on both the feed and listing-detail pages.
-  const bare = barePath(pathname);
   const isListings = bare.startsWith("/skelbimai") || bare.startsWith("/nuoma") || bare.startsWith("/miestai");
   // Condense the bar once the page scrolls — wired here (not per-page) so it
   // works on every screen that renders the Nav.
@@ -348,11 +352,16 @@ function LocaleSwitcher({ inflow = false }: { inflow?: boolean }) {
       focusListboxSelection(listRef.current);
     }
   }, [open]);
-  // Strip a leading locale prefix to get the bare path, then re-prefix for the
-  // target locale (default locale is unprefixed). Keeps you on the same page.
-  const bare = barePath(pathname);
-  const href = (l: Locale) =>
-    localePrefix(l) + (bare === "/" ? "" : bare) || "/";
+  // Normalize the current URL to the internal path, then render it in the target
+  // locale — segments AND taxonomy slugs, so "/nuoma/irankiai-statyba/vilnius"
+  // offers "/en/rent/tools-construction/vilnius" rather than a Lithuanian URL under
+  // /en. Re-prefixing alone would land the user on a legacy URL (or a 404).
+  //
+  // Pure string work, no data access: the slug tables are static, and
+  // `internalizeRoute` is idempotent, so this agrees with itself across the
+  // server/client `usePathname()` split.
+  const internal = internalizeRoute(locale, barePath(pathname));
+  const href = (l: Locale) => localePath(l, internal);
   return (
     <span
       ref={ref}

@@ -1,4 +1,4 @@
-import { localePath, localePrefix, type Locale } from "@/app/lib/i18n/config";
+import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { listingLandingPath, type ListingLandingFilters } from "@/app/lib/landing-routes";
 
 // Single source of truth for the listings-feed URL. The feed reads `q`
@@ -53,7 +53,10 @@ export function lastFeedUrl(locale: Locale): string | null {
     const url = sessionStorage.getItem(LAST_FEED_KEY);
     // Ignore a URL recorded under another locale (the user switched language
     // since) — better to fall back to the bare feed than flip locales on them.
-    return url?.startsWith(`${localePrefix(locale)}/skelbimai`) ? url : null;
+    // Must go through `localePath`: the English feed is "/en/listings", so a
+    // prefix + "/skelbimai" test would reject every English visitor's own URL and
+    // silently drop their filters.
+    return url?.startsWith(localePath(locale, "/skelbimai")) ? url : null;
   } catch {
     return null;
   }

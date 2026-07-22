@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { categoryIdFromSlug, cityFromSlug, requireLocale } from "@/app/lib/seo";
+import { cityFromSlug, requireLocale } from "@/app/lib/seo";
 import {
+  landingSlugIds,
   ListingLandingPage,
   listingLandingMetadata,
   resolveSubcategory,
@@ -15,10 +16,13 @@ type CategorySlugPageProps = {
 };
 
 async function resolveFilters({ locale, category, slug }: { locale: ReturnType<typeof requireLocale>; category: string; slug: string }) {
+  // The middle slot is a city if it names one, otherwise a subcategory — the same
+  // order i18n/routes.ts translates it in.
   const cityName = cityFromSlug(slug);
   if (cityName) {
+    const { categoryId } = landingSlugIds({ locale, categorySlug: category });
     return {
-      filters: { category: categoryIdFromSlug(category), city: cityName },
+      filters: { category: categoryId, city: cityName },
       extraCategory: undefined,
       categoriesOverride: undefined,
     };

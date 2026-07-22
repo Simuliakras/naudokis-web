@@ -22,12 +22,18 @@ const ROUTES = [
   { path: "/en", canonical: "/en", alwaysIndexable: true },
   { path: "/skelbimai", canonical: "/skelbimai", alwaysIndexable: true },
   { path: "/kategorijos", canonical: "/kategorijos", alwaysIndexable: true },
-  { path: "/en/kategorijos", canonical: "/en/kategorijos", alwaysIndexable: true },
+  // English routes are localized end to end — segments AND taxonomy slugs.
+  { path: "/en/categories", canonical: "/en/categories", alwaysIndexable: true },
+  { path: "/en/listings", canonical: "/en/listings", alwaysIndexable: true },
+  { path: "/en/how-it-works", canonical: "/en/how-it-works", alwaysIndexable: true },
+  { path: "/en/terms-of-service", canonical: "/en/terms-of-service", alwaysIndexable: true },
   { path: "/kaip-tai-veikia", canonical: "/kaip-tai-veikia", alwaysIndexable: true },
   { path: "/naudojimosi-salygos", canonical: "/naudojimosi-salygos", alwaysIndexable: true },
   // Slugs come from the taxonomy the routes are built from (app/lib/landing-routes.ts).
   { path: "/nuoma/transportas", canonical: "/nuoma/transportas", alwaysIndexable: false },
   { path: "/miestai/vilnius", canonical: "/miestai/vilnius", alwaysIndexable: false },
+  { path: "/en/rent/transport", canonical: "/en/rent/transport", alwaysIndexable: false },
+  { path: "/en/cities/vilnius", canonical: "/en/cities/vilnius", alwaysIndexable: false },
 ];
 
 const tags = (html: string, pattern: RegExp): string[] => html.match(pattern) ?? [];
@@ -113,7 +119,7 @@ test("home carries the entity graph that identifies the brand and the app", asyn
 });
 
 test("category and city landings describe themselves as collections", async ({ request }) => {
-  for (const path of ["/nuoma/transportas", "/miestai/vilnius"]) {
+  for (const path of ["/nuoma/transportas", "/miestai/vilnius", "/en/rent/transport"]) {
     const types = jsonLdTypes(await htmlOf(await request.get(path)));
     expect(types).toContain("BreadcrumbList");
     expect(types).toContain("CollectionPage");
@@ -125,7 +131,10 @@ test("category and city landings describe themselves as collections", async ({ r
 // the served bytes — this asserts that and would catch a regression to a
 // client-only feed, which is what would actually hollow the page out.
 test("a landing's served HTML contains the listings its ItemList advertises", async ({ request }) => {
-  const html = await htmlOf(await request.get("/nuoma/transportas"));
+  // Both locales: this is the check that catches a canonical/href divergence, and
+  // English is where the two spellings can drift apart.
+  for (const path of ["/nuoma/transportas", "/en/rent/transport"]) {
+  const html = await htmlOf(await request.get(path));
   const listNode = nodeOfType(html, "ItemList");
 
   // Live inventory: with nothing to list there is no ItemList node and nothing to
@@ -134,6 +143,7 @@ test("a landing's served HTML contains the listings its ItemList advertises", as
   const items = (listNode?.itemListElement ?? []) as { url: string }[];
   for (const item of items) {
     expect(html).toContain(`href="${item.url.replace(ORIGIN, "")}"`);
+  }
   }
 });
 

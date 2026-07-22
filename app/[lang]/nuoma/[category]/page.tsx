@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { categoryIdFromSlug, requireLocale } from "@/app/lib/seo";
-import { ListingLandingPage, listingLandingMetadata } from "@/app/lib/listing-landing-page";
+import { requireLocale } from "@/app/lib/seo";
+import {
+  landingSlugIds,
+  ListingLandingPage,
+  listingLandingMetadata,
+} from "@/app/lib/listing-landing-page";
 import type { LandingSearchParams } from "@/app/lib/landing-params";
 
 // Re-render the landing HTML at most every 5 min (matches the feed/home ISR and
@@ -18,7 +22,7 @@ export async function generateMetadata({ params, searchParams }: CategoryPagePro
   const locale = requireLocale(lang);
   return listingLandingMetadata({
     locale,
-    filters: { category: categoryIdFromSlug(category) },
+    filters: { category: landingSlugIds({ locale, categorySlug: category }).categoryId },
     searchParams: await searchParams,
   });
 }
@@ -29,7 +33,7 @@ export default async function Page({ params, searchParams }: CategoryPageProps) 
   return (
     <ListingLandingPage
       locale={locale}
-      filters={{ category: categoryIdFromSlug(category) }}
+      filters={{ category: landingSlugIds({ locale, categorySlug: category }).categoryId }}
       searchParams={await searchParams}
     />
   );

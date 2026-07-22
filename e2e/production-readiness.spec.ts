@@ -224,10 +224,19 @@ test("retired legal hub and transaction policy routes return not found", async (
 // documents do not fit in the default 30s budget on a loaded machine.
 test("the published legal documents are reachable in both locales", async ({ request }) => {
   test.slow();
+  // The English legal URLs are localized ("/en/terms-of-service"). The Lithuanian
+  // spellings under /en MUST keep returning 200 rather than redirecting: the old
+  // site 308'd "/en/terms-of-service" to them, and a 308 is cached by clients
+  // indefinitely, so redirecting back would loop inside the browser's own cache
+  // where no server change can reach it. This can never become a redirect
+  // assertion — see NO_REDIRECT_SEGMENTS in app/lib/i18n/route-resolution.ts.
   const paths = [
     "/naudojimosi-salygos",
     "/privatumo-politika",
     "/paskyros-trynimas",
+    "/en/terms-of-service",
+    "/en/privacy-policy",
+    "/en/account-deletion",
     "/en/naudojimosi-salygos",
     "/en/privatumo-politika",
     "/en/paskyros-trynimas",

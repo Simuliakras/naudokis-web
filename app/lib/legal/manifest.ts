@@ -1,7 +1,7 @@
 // Legal manifest access + URL mapping. Small + pure, so safe to import from both
 // server and client modules (it never pulls in the heavy per-document JSON).
 import type { Locale } from "@/app/lib/i18n/config";
-import { localePrefix } from "@/app/lib/i18n/config";
+import { localePath } from "@/app/lib/i18n/config";
 import manifestData from "./data/manifest.json";
 import { truncate } from "./format";
 import type { LegalManifest, LegalDocMeta } from "./types";
@@ -23,7 +23,9 @@ export const CANONICAL_PATHS: Record<string, string> = {
 // In-app, locale-correct path for a published document id.
 export function legalHref(docId: string, locale: Locale): string | undefined {
   const path = CANONICAL_PATHS[docId];
-  return path ? `${localePrefix(locale)}${path}` : undefined;
+  // localePath, not a raw prefix: the English legal routes are localized too
+  // ("/en/terms-of-service"), so concatenating would emit a legacy URL.
+  return path ? localePath(locale, path) : undefined;
 }
 
 // A doc's blurb in the requested locale, falling back to LT.
