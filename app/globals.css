@@ -1,3 +1,14 @@
+@theme static {
+  /* Viewport tiers are mobile-first starts, not device detection. Keep these in
+     sync with app/lib/breakpoints.ts; verify:breakpoints enforces the contract. */
+  --breakpoint-xs: 22.5rem;
+  --breakpoint-sm: 35rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-nav: 70rem;
+  --breakpoint-xl: 80rem;
+}
+
 /* ============================================================================
    Naudokis.lt — Colors & Type tokens
    Ported from the Naudokis design bundle ("design-naudokis.fig").
@@ -71,6 +82,7 @@
   --nk-glass-strong: rgba(255, 255, 255, 0.05); /* feature card glass          */
   --nk-glass-card-border: rgba(255, 255, 255, 0.08); /* firmer hairline on glass cards */
   --nk-glass-nav: rgba(18, 19, 20, 0.76); /* glassBackdrop — nav over page */
+  --nk-float-bg: rgba(47, 52, 54, 0.9); /* floating chrome glass — back-to-top, legal TOC FAB */
   --nk-surface-glass: rgba(255, 255, 255, 0.03); /* surfaceElevated             */
   --nk-input-bg: rgba(255, 255, 255, 0.04); /* inputBackground — ghost btn / listing fields */
   --nk-overlay: rgba(20, 22, 23, 0.62); /* dark glass scrim — gallery / map chips */
@@ -244,7 +256,7 @@
   --nk-grid-row-gap: clamp(28px, 3vw, 48px); /* feed row gap, collapses on mobile   */
   --nk-r-tile: 14px; /* unified gallery tile radius */
   --nk-card-min: 260px; /* feed/card grids choose columns by usable card width */
-  --nk-offer-min: 206px; /* offer-card track floor — auto-fill grids never squeeze a card below this */
+  --nk-offer-min: 272px; /* intrinsic full-card floor; the compact viewport policy below deliberately overrides the grid */
   --nk-offer-owner-h: 24px; /* owner-row height (= avatar diameter). OfferCard AND
                                                      OfferCardSkeleton both read this — it is the CLS contract.
                                                      The compact card skin retargets it to 20px. */
@@ -272,21 +284,6 @@
   --nk-fs-body-sm: 18px; /* .nk-body-sm / .nk-meta                              */
   --nk-fs-subtitle: 18px; /* .nk-subtitle — page / section subtitles            */
   --nk-fs-sm: 16px; /* small body (SEO copy, inputs)                       */
-}
-
-/* Wider card floor once two full-size tracks actually fit. The offer card's price
-   row is the constraint: the worst realistic pairing ("100 € /d." + a 3-digit
-   "300 € užstatas" pill) needs ~226px, and below a ~260px card that overruns the
-   body's inner width and wraps the deposit onto its own line — measured, not
-   guessed. 272px keeps a margin for 4-digit deposits.
-   Floor at 680px, not 561: two 272px tracks plus gutters and gap don't fit under
-   ~645px, so raising it any earlier would collapse small tablets to a single
-   full-bleed column. Phones are unaffected either way — the ≤560 polish layer
-   hard-sets the 2-up grid with repeat(2), so this token never reaches them. */
-@media (min-width: 680px) {
-  :root {
-    --nk-offer-min: 272px;
-  }
 }
 
 /* ============================================================================
@@ -529,12 +526,12 @@ select {
 .nk-brand-pattern {
   opacity: 0.09;
 }
-@media (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   .nk-brand-pattern {
     opacity: 0.075;
   }
 }
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-brand-pattern {
     opacity: 0.06;
   }
@@ -550,13 +547,13 @@ select {
 .nk-brand-pattern.nk-hero-band__pattern {
   opacity: 0.09;
 }
-@media (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   .nk-brand-pattern.nk-hero-pattern,
   .nk-brand-pattern.nk-hero-band__pattern {
     opacity: 0.07;
   }
 }
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-brand-pattern.nk-hero-pattern,
   .nk-brand-pattern.nk-hero-band__pattern {
     opacity: 0.05;
@@ -991,7 +988,7 @@ select {
   display: none;
 }
 
-@media (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   .nk-logo span {
     font-size: 22px;
   }
@@ -1074,7 +1071,7 @@ select {
          The bare .nk-reveal tightens with them — the feed's cards carry it directly
          rather than through a grid (FeedScreen), and they are the single surface a
          phone flicks through fastest. */
-      @media (max-width: 768px) {
+      @media (width < theme(--breakpoint-md)) {
         .nk-reveal {
           animation-range: entry 0% cover 14%;
         }
@@ -1090,7 +1087,7 @@ select {
          to auto, so these are block-axis scroll containers — view() on their CHILDREN
          resolves to the rail, not the page, which is a dead timeline (the child never
          travels through the rail's scrollport). Reveal the rail as one unit instead. */
-      @media (max-width: 980px) {
+      @container nk-category-shelf (width < 55rem) {
         .nk-cats-shelf.nk-reveal-grid > * {
           animation: none;
         }
@@ -1100,7 +1097,7 @@ select {
           animation-range: entry 0% cover 14%;
         }
       }
-      @media (max-width: 560px) {
+      @media (width < theme(--breakpoint-sm)) {
         .nk-grid-4--rail > .nk-reveal {
           animation: none;
         }
@@ -1108,7 +1105,7 @@ select {
     }
   }
 }
-@media (max-width: 768px) {
+@media (width < theme(--breakpoint-md)) {
   :root {
     --nk-reveal-y: 14px;
   }
@@ -1128,7 +1125,7 @@ select {
    The left column's children rise + fade in sequence on load. Reduced-motion is
    covered by the global rule that collapses durations, so content stays visible.
    `backwards` fills the delay and then releases — see the reveal note above. */
-@media (prefers-reduced-motion: no-preference) and (min-width: 769px) {
+@media (prefers-reduced-motion: no-preference) and (width >= theme(--breakpoint-md)) {
   .nk-hero-intro > * {
     animation: nk-hero-rise 0.6s var(--nk-ease) backwards;
   }
@@ -1166,7 +1163,7 @@ select {
    count an element painted at opacity:0 as painted. Fading it in would push LCP by the
    animation delay on this site's highest-value surface; a translate alone is free,
    because a translated-but-opaque element still counts as painted. */
-@media (prefers-reduced-motion: no-preference) and (max-width: 768px) {
+@media (prefers-reduced-motion: no-preference) and (width < theme(--breakpoint-md)) {
   .nk-hero-intro > * {
     animation: nk-hero-rise-m 0.42s var(--nk-ease) backwards;
   }
@@ -1381,8 +1378,7 @@ input:focus-visible,
 }
 /* nowrap keeps multi-word links ("How it works" / "Kaip tai veikia") on one line;
    the gap tightens below ~1364px so the full nav still fits beside the search pill.
-   margin-left:auto hugs the link group to the right edge (the install CTA is a
-   separate sibling now, so it survives the mobile collapse). */
+   margin-left:auto hugs the desktop link group to the right edge. */
 .nk-nav-links {
   display: flex;
   align-items: center;
@@ -1391,8 +1387,10 @@ input:focus-visible,
   min-width: 0;
   margin-left: auto;
 }
-/* Persistent install CTA in the sticky chrome — the site's one conversion action.
-   Full label ≥1121px, compact label beside the burger below. */
+/* Install CTA. This is the site's single conversion action, so it survives the
+   compact collapse instead of retreating into the drawer — it only sheds label:
+   full text on desktop, short label beside the burger on tablets, icon-only
+   square on phones. The drawer carries a second copy for users already in it. */
 .nk-nav-cta {
   flex: none;
   padding: 10px 20px;
@@ -1437,7 +1435,7 @@ input:focus-visible,
   pointer-events: none;
   transition: opacity var(--nk-dur-med) var(--nk-ease);
 }
-@media (max-width: 1120px) {
+@media (width < theme(--breakpoint-nav)) {
   .nk-nav-links {
     display: none;
   }
@@ -1516,8 +1514,10 @@ input:focus-visible,
     padding: 12px 12px 4px;
   }
 }
-/* Phones: drop the CTA label entirely — icon-only square primary button. */
-@media (max-width: 560px) {
+/* Phones: drop the CTA label entirely — icon-only square primary button. The
+   action stays in the bar; only the word goes. aria-label on the <Link> carries
+   the accessible name, so nothing is lost to AT. */
+@media (width < theme(--breakpoint-sm)) {
   .nk-nav-cta__short {
     display: none;
   }
@@ -1643,7 +1643,7 @@ footer .nk-link:hover {
   background: var(--nk-purple-soft);
   color: var(--nk-purple-deep);
 }
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-citypick--hero .nk-citypick__panel {
     bottom: auto;
     top: calc(100% + 8px);
@@ -1740,6 +1740,15 @@ footer .nk-link:hover {
 .nk-locale-trigger:hover,
 .nk-locale-trigger[aria-expanded="true"] {
   background: var(--nk-hover-wash);
+}
+/* Locale flags. flex:none because the option row is a flex line — without it the
+   flag squashes before the endonym wraps. The hairline keeps the GB flag's dark
+   navy field from bleeding into the surface behind it (and reads as a deliberate
+   chip edge on the yellow LT band, which would otherwise sit edge-to-edge). */
+.nk-flag {
+  flex: none;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 /* toggle switch (delivery filter) — the lead never overflows; the track sits at
    the trailing edge so the off/on state is always visible, incl. the ≤560 stack */
@@ -2179,12 +2188,10 @@ footer .nk-link:hover {
 
 /* ---- category card shell (radius/border/lift/focus/active) — the v2 inner
    anatomy (.nk-catv2__*) lives in the Categories v2 layer at EOF ---- */
-/* size container: the tile's compact anatomy follows its OWN width (see the
-   @container nk-tile layer at EOF) — one skin per tile size across the
-   all-categories grid, the home shelf rail and the phone 2-up grid */
+/* The tile has exactly ONE anatomy at every width — it is deliberately not a
+   size container (the nk-tile queries that used to swap its contents are gone;
+   see the note in the Categories v2 layer at EOF). */
 .nk-cat {
-  container-type: inline-size;
-  container-name: nk-tile;
   position: relative;
   width: 100%;
   height: var(--nk-cat-h, 248px);
@@ -2223,7 +2230,7 @@ footer .nk-link:hover {
 }
 /* compact 2-up tiles on phones (the whole tile is the tap target); the v2 inner
    anatomy compacts itself in the Categories v2 layer at EOF */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   /* SectionHead stacks head → "view all" action on phones so the trailing
      "Visos kategorijos →" arrow can't clip/overflow at the 320px floor */
   .nk-section__top {
@@ -2271,6 +2278,14 @@ footer .nk-link:hover {
   .nk-feature:hover {
     transform: translateY(-4px);
   }
+}
+/* Centred copy needs a shorter measure than ranged-left copy — without a cap the
+   stacked tier runs the body the full ~860px card width while the title sits short
+   and centred, so the two read as different blocks. A no-op at 3-up, where the
+   column is already narrower than the cap. */
+.nk-feature .nk-body {
+  max-width: 48ch;
+  margin-inline: auto;
 }
 
 /* ---- glass card (use-case band) ---- */
@@ -2508,7 +2523,7 @@ footer .nk-link:hover {
 }
 /* panel actions: even, full-width pair on phones so the primary isn't rendered
    narrower than the outline secondary beneath it */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-emptygrid__actions {
     flex-direction: column;
     align-items: stretch;
@@ -2543,6 +2558,7 @@ footer .nk-link:hover {
 }
 .nk-footer .nk-container {
   position: relative;
+  container: nk-footer / inline-size;
 }
 .nk-footer__top {
   display: grid;
@@ -2564,7 +2580,7 @@ footer .nk-link:hover {
   min-width: 0;
 }
 /* phones: tighten the inter-column gap so both columns fit narrow screens */
-@media (max-width: 560px) {
+@container nk-footer (width < 35rem) {
   .nk-footer__catgrid {
     gap: var(--nk-s-4) var(--nk-gap-lg);
   }
@@ -2657,7 +2673,7 @@ footer .nk-link:hover {
   flex-direction: column;
   gap: var(--nk-gap-lg);
 }
-@media (min-width: 1241px) {
+@container nk-footer (width >= 68rem) {
   .nk-footer__brand {
     padding-top: 4px;
   }
@@ -2732,7 +2748,8 @@ footer .nk-link:hover {
 }
 /* 2-col footer holds to 1240: the 4-col track math only breathes from ~1240 —
    engaging it at 1025 double-wrapped every Cities link for the whole band */
-@media (max-width: 1240px) {
+/* Footer tiers are based on the footer's usable inline size, not the viewport. */
+@container nk-footer (width < 68rem) {
   .nk-footer__top {
     grid-template-columns: 1fr 1fr;
     gap: var(--nk-s-10) var(--nk-s-12);
@@ -2749,7 +2766,55 @@ footer .nk-link:hover {
     opacity: 0.08;
   }
 }
-@media (max-width: 560px) {
+/* Just under the desktop tier the four tracks stop fitting, but the brand column
+   still does — dropping the whole sitemap below the store badges loses the
+   side-by-side reading for no gain. Keep brand-left and fold the sitemap into a
+   2x2 block beside it: Browse across row 1, Cities | Help on row 2. */
+@container nk-footer (width >= 58rem) and (width < 68rem) {
+  /* The two link tracks are content-sized and the brand track takes the slack, so a
+     tightening footer narrows the brand (its badges just stack) before it wraps a
+     category or city label. */
+  .nk-footer__top {
+    grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, auto);
+    gap: var(--nk-s-10) var(--nk-s-8);
+  }
+  .nk-footer__brand {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    max-width: 348px;
+  }
+  /* the brand column runs the full height of the sitemap here, so the badges have
+     room to stack — one per row reads as a list of two, not a squeezed pair */
+  .nk-footer__brand .nk-appbadges {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  /* Browse spans the whole link area; Cities and Help then auto-flow into row 2.
+     Its category pair adopts those same two tracks through subgrid rather than
+     splitting its own width — equalising the tracks instead would let the longest
+     category label set both, and cost the bottom half of this tier. */
+  .nk-footer__top > nav:nth-of-type(1) {
+    grid-column: 2 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-content: start;
+    /* drop the heading to the tagline's baseline, as the desktop tier does — the
+       wordmark keeps the corner to itself */
+    padding-top: 60px;
+  }
+  .nk-footer__top > nav:nth-of-type(1) > h2,
+  .nk-footer__catgrid {
+    grid-column: 1 / -1;
+  }
+  .nk-footer__catgrid {
+    display: grid;
+    grid-template-columns: subgrid;
+    /* a subgrid keeps its own gutter if it declares one — match the parent's, or the
+       category pair sits a couple of px off the headings below it */
+    column-gap: var(--nk-s-8);
+  }
+}
+@container nk-footer (width < 35rem) {
   .nk-footer__top {
     grid-template-columns: 1fr;
     gap: var(--nk-s-10);
@@ -2782,9 +2847,382 @@ footer .nk-link:hover {
   }
 }
 
-@media (max-width: 360px) {
+@container nk-footer (width < 22.5rem) {
   .nk-footer__pay {
     gap: var(--nk-gap-md) 12px;
+  }
+}
+
+/* Footer responsive rebuild -------------------------------------------------
+   Mobile is the base layout. The same navigation content becomes a disclosure
+   at compact footer widths and a balanced grid as soon as its own container can
+   hold the columns. These rules deliberately sit after the original footer skin
+   so the refactor remains isolated from unrelated marketplace components. */
+.nk-footer {
+  isolation: isolate;
+  overflow: clip;
+}
+.nk-footer .nk-container {
+  padding-inline-start: max(var(--nk-gutter), calc(16px + var(--nk-safe-left)));
+  padding-inline-end: max(var(--nk-gutter), calc(16px + var(--nk-safe-right)));
+}
+.nk-footer .nk-footer__pattern {
+  --nk-footer-pattern-opacity: 0.035;
+  z-index: 0;
+  inset-block: 0;
+  inset-inline: auto 0;
+  inline-size: min(72rem, 112%);
+  max-inline-size: none;
+  block-size: 100%;
+  object-position: 68% center;
+  opacity: var(--nk-footer-pattern-opacity);
+  filter: saturate(0.7) brightness(0.68);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.24) 34%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.24) 34%, #000 100%);
+}
+.nk-footer .nk-footer__top,
+.nk-footer .nk-footer__bottom {
+  position: relative;
+  z-index: 1;
+}
+.nk-footer .nk-footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+  padding-block: clamp(32px, 7cqi, 52px) 24px;
+}
+.nk-footer .nk-footer__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 32rem;
+  max-inline-size: 32rem;
+  padding: 0;
+  margin-block-end: 22px;
+}
+.nk-footer .nk-footer__brand > .nk-logo {
+  align-self: flex-start;
+  inline-size: fit-content;
+}
+.nk-footer .nk-footer__tagline {
+  max-inline-size: 38ch;
+  font-size: clamp(15px, 3.8cqi, 17px);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.nk-footer .nk-footer__contact {
+  gap: 2px;
+}
+.nk-footer .nk-footer__contact a {
+  min-block-size: 36px;
+  padding-block: 4px;
+  font-size: 16px;
+  line-height: 1.35;
+}
+.nk-footer .nk-footer__social {
+  gap: 8px;
+}
+.nk-footer .nk-footer__social a,
+.nk-footer .nk-footer__social span {
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 11px;
+}
+.nk-footer .nk-footer__brand .nk-appbadges {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  inline-size: fit-content;
+}
+.nk-footer .nk-footer__col {
+  display: flex;
+  min-inline-size: 0;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  border-block-start: 1px solid var(--nk-border-soft);
+}
+.nk-footer .nk-footer__top > .nk-footer__col--categories {
+  display: flex;
+  grid-template-columns: none;
+  align-content: normal;
+  padding-block-start: 0;
+}
+.nk-footer .nk-footer__col h2 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.3;
+}
+.nk-footer .nk-footer__heading-static {
+  display: none;
+}
+.nk-footer .nk-footer__disclosure {
+  inline-size: 100%;
+  min-block-size: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nk-gap-md);
+  padding: 12px 4px;
+  color: var(--nk-text);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  text-align: start;
+}
+.nk-footer .nk-footer__disclosure svg {
+  inline-size: 20px;
+  block-size: 20px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--nk-dur-fast) var(--nk-ease);
+}
+.nk-footer .nk-footer__disclosure[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+.nk-footer .nk-footer__col-content {
+  display: none;
+  min-inline-size: 0;
+  padding: 4px 4px 16px;
+}
+.nk-footer .nk-footer__col-content[data-expanded="true"] {
+  display: block;
+}
+.nk-footer .nk-footer__catgrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+.nk-footer .nk-footer__catcol,
+.nk-footer .nk-footer__linklist {
+  display: flex;
+  min-inline-size: 0;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nk-footer .nk-footer__col li {
+  min-inline-size: 0;
+}
+.nk-footer .nk-footer__col a {
+  min-block-size: 36px;
+  max-inline-size: min(100%, 30ch);
+  padding-block: 6px;
+  color: var(--nk-text-2);
+  font-size: 16px;
+  line-height: 1.45;
+  text-wrap: pretty;
+  overflow-wrap: normal;
+}
+.nk-footer a,
+.nk-footer button {
+  scroll-margin-block-start: calc(var(--nk-nav-h-scrolled) + 16px);
+  scroll-margin-block-end: calc(72px + var(--nk-safe-bottom));
+}
+/* The trailing 48px track is an empty reserve, not a cell: the floating
+   .nk-backtotop parks over this corner at the page bottom, and the gap keeps it
+   off the payment marks and the privacy control. Don't reclaim it. */
+.nk-footer .nk-footer__bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px;
+  align-items: end;
+  gap: 14px 16px;
+  padding-block: 20px calc(20px + var(--nk-safe-bottom));
+}
+.nk-footer .nk-footer__legal {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.nk-footer .nk-footer__meta {
+  grid-column: 1;
+  display: grid;
+  align-items: center;
+  gap: 12px;
+  min-inline-size: 0;
+}
+.nk-footer .nk-footer__meta .nk-privacy-trigger {
+  min-block-size: 36px;
+  inline-size: fit-content;
+  padding-block: 6px;
+}
+.nk-footer .nk-footer__sep {
+  display: none;
+}
+.nk-footer .nk-footer__pay {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  min-inline-size: 0;
+}
+.nk-footer .nk-footer__pay > span {
+  display: inline-flex;
+  flex: none;
+}
+.nk-footer .nk-footer__pay img {
+  display: block;
+  min-block-size: 30px;
+}
+
+/* Two-column tablet composition. Categories balance the combined Cities + Help
+   stack, while the brand becomes a compact two-column block above both. */
+@container nk-footer (width >= 35rem) {
+  .nk-footer .nk-footer__pattern {
+    --nk-footer-pattern-opacity: 0.045;
+    inline-size: min(68rem, 92%);
+    object-position: right center;
+  }
+  .nk-footer .nk-footer__top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px clamp(32px, 6cqi, 56px);
+    padding-block: clamp(40px, 5cqi, 52px) 40px;
+  }
+  .nk-footer .nk-footer__brand {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto 1fr;
+    gap: 10px clamp(28px, 5cqi, 52px);
+    max-width: none;
+    max-inline-size: none;
+    margin: 0;
+  }
+  .nk-footer .nk-footer__brand > .nk-logo,
+  .nk-footer .nk-footer__tagline,
+  .nk-footer .nk-footer__contact {
+    grid-column: 1;
+  }
+  .nk-footer .nk-footer__social,
+  .nk-footer .nk-footer__brand .nk-appbadges {
+    grid-column: 2;
+  }
+  .nk-footer .nk-footer__social {
+    grid-row: 2;
+    align-self: start;
+  }
+  .nk-footer .nk-footer__brand .nk-appbadges {
+    grid-row: 3;
+    align-self: start;
+    margin-block-start: 12px;
+    max-inline-size: 100%;
+  }
+  .nk-footer .nk-footer__social a,
+  .nk-footer .nk-footer__social span {
+    inline-size: 44px;
+    block-size: 44px;
+  }
+  .nk-footer .nk-footer__col {
+    gap: 16px;
+    padding: 0;
+    border: 0;
+  }
+  .nk-footer .nk-footer__top > .nk-footer__col--categories {
+    grid-column: 1;
+    grid-row: 2 / span 2;
+  }
+  .nk-footer .nk-footer__col--cities {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .nk-footer .nk-footer__col--help {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .nk-footer .nk-footer__heading-static {
+    display: inline;
+  }
+  .nk-footer .nk-footer__disclosure {
+    display: none;
+  }
+  .nk-footer .nk-footer__col-content,
+  .nk-footer .nk-footer__col-content[data-expanded="false"],
+  .nk-footer .nk-footer__col-content[data-expanded="true"] {
+    display: block;
+    padding: 0;
+  }
+  .nk-footer .nk-footer__bottom {
+    grid-template-columns: minmax(0, 1fr) 48px;
+    align-items: center;
+    gap: 14px 20px;
+    padding-block: 22px calc(22px + var(--nk-safe-bottom));
+  }
+  .nk-footer .nk-footer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+  }
+  .nk-footer .nk-footer__sep {
+    display: block;
+  }
+}
+
+/* Four-column information architecture once the real minimum track sum fits.
+   This tier starts around 1186px viewport width with the current fluid gutters. */
+@container nk-footer (width >= 61rem) {
+  .nk-footer .nk-footer__pattern {
+    --nk-footer-pattern-opacity: 0.055;
+    inline-size: min(66rem, 78%);
+    object-position: right center;
+  }
+  .nk-footer .nk-footer__top {
+    grid-template-columns:
+      minmax(19rem, 0.95fr)
+      minmax(20rem, 1.35fr)
+      minmax(7.5rem, 0.55fr)
+      minmax(10rem, 0.7fr);
+    gap: clamp(24px, 2.4cqi, 40px);
+    padding-block: clamp(44px, 4cqi, 56px) 40px;
+  }
+  .nk-footer .nk-footer__brand {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 21rem;
+    max-inline-size: 21rem;
+  }
+  .nk-footer .nk-footer__col--categories,
+  .nk-footer .nk-footer__col--cities,
+  .nk-footer .nk-footer__col--help {
+    grid-row: 1;
+  }
+  .nk-footer .nk-footer__top > .nk-footer__col--categories {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .nk-footer .nk-footer__col--cities {
+    grid-column: 3;
+  }
+  .nk-footer .nk-footer__col--help {
+    grid-column: 4;
+  }
+  .nk-footer .nk-footer__catgrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(20px, 2.2cqi, 36px);
+  }
+  .nk-footer .nk-footer__bottom {
+    grid-template-columns: minmax(0, 1fr) auto 48px;
+    gap: 20px;
+  }
+  .nk-footer .nk-footer__legal {
+    grid-column: 1;
+  }
+  .nk-footer .nk-footer__meta {
+    grid-column: 2;
+    flex-wrap: nowrap;
   }
 }
 
@@ -2937,20 +3375,67 @@ footer .nk-link:hover {
   border-radius: var(--nk-r-pill);
 }
 
-/* floating back-to-top — mounted sitewide by <Chrome>, so it has to clear the
-   listing detail's mobile bottom bar (see the :has rule beside .nk-mbar).
+/* floating back-to-top — the ONE scroll-to-top control on the site, mounted
+   sitewide by <Chrome> and shown past 600px of scroll (that threshold IS the
+   "is this page long enough" test, so short pages never show it).
+   Two collision rules keep it clear of the other bottom-right floats: the
+   listing detail's mobile bottom bar (:has(.nk-mbar), further down this file)
+   and the legal TOC FAB (:has(.nk-lg-fab-toc), in legal/legal.css).
    Sits closer to the edge than a normal gutter: at the old 32px its left edge
    landed within ~2px of where the footer's payment marks end, so the floating
-   button read as part of that cluster instead of over it. */
+   button read as part of that cluster instead of over it.
+   The element is ALWAYS mounted and fades via .is-on — `visibility` (not just
+   opacity) is what keeps the resting control out of the Tab order. */
 .nk-backtotop {
   position: fixed;
-  right: calc(clamp(12px, 2vw, 20px) + var(--nk-safe-right));
-  bottom: calc(20px + var(--nk-safe-bottom));
+  inset-inline-end: calc(clamp(12px, 2vw, 20px) + var(--nk-safe-right));
+  inset-block-end: calc(20px + var(--nk-safe-bottom));
   z-index: 60;
-  width: 48px;
-  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  inline-size: 46px;
+  block-size: 46px;
+  min-inline-size: var(--nk-tap);
+  min-block-size: var(--nk-tap);
+  border: 1px solid var(--nk-border);
+  border-radius: var(--nk-r-md);
+  background: var(--nk-float-bg);
+  color: var(--nk-text);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   box-shadow: var(--nk-edge-top), var(--nk-shadow-2);
-  animation: nk-pop-in 0.2s var(--nk-ease-spring) both;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.94);
+  transition:
+    opacity 0.22s,
+    transform 0.22s,
+    background 0.15s,
+    border-color 0.15s,
+    visibility 0.22s;
+}
+.nk-backtotop.is-on {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .nk-backtotop:hover {
+    background: var(--nk-purple);
+    border-color: var(--nk-purple);
+  }
+}
+.nk-backtotop.is-on:active {
+  transform: scale(0.94);
+}
+@media print {
+  .nk-backtotop {
+    display: none !important;
+  }
 }
 
 /* ============================================================
@@ -3143,14 +3628,14 @@ footer .nk-link:hover {
   background: var(--nk-surface-hover-glass);
   border-color: var(--nk-border-strong);
 }
-@media (min-width: 561px) {
+@media (width >= theme(--breakpoint-sm)) and (height >= 32.5rem) {
   /* the /go smart link 302s back to the homepage on desktop UAs — never show a
      decoy primary there; the QR card + badges are the real desktop paths */
   .nk-redirect-smartlink {
     display: none;
   }
 }
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)), (height < 32.5rem) {
   .nk-redirect-scrim {
     align-items: flex-end;
   }
@@ -3163,7 +3648,7 @@ footer .nk-link:hover {
     display: none;
   }
   .nk-redirect-panel {
-    width: 100%;
+    width: min(35rem, 100%);
     border-radius: 24px 24px 0 0;
     max-height: 92vh;
     overflow: auto;
@@ -3238,10 +3723,12 @@ footer .nk-link:hover {
 }
 .nk-crumbs {
   min-width: 0;
+  container: nk-breadcrumb / inline-size;
 }
 /* Small phones: the current-page chip repeats the H1 directly below it — drop it
    (and the chevron of the segment that precedes it) so the trail stays one row. */
-@media (max-width: 680px) {
+/* The current-page label is redundant once the breadcrumb itself becomes tight. */
+@container nk-breadcrumb (width < 42.5rem) {
   .nk-crumbs [aria-current="page"] {
     display: none;
   }
@@ -3298,59 +3785,26 @@ footer .nk-link:hover {
 }
 
 /* category tile grid (home strip + all-categories page). --nk-cat-h is the single
-   source of truth for tile height so the real card AND its skeleton stay locked at
-   every breakpoint (no load-time layout shift). Dense 5-up top tier (compact,
-   arrow-less tiles) cascading 5 → 4 → 3 → 2; a page-scoped max-width caps
-   ultrawide on the categories page. */
+   source of truth for tile height, and it is deliberately breakpoint-INDEPENDENT:
+   a category tile is 208px tall and carries its full anatomy (chip, title,
+   examples, arrow) at every resolution. The rail below inherits this same token
+   rather than overriding it, so the card never morphs between layout modes and
+   the skeleton never shifts on load. Dense 5-up top tier cascading 5 → 4 → 3 → 2;
+   a page-scoped max-width caps ultrawide on the categories page. */
 .nk-grid-cats {
   --nk-cat-h: 208px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--nk-cat-min)), 1fr));
+  /* 18% caps the intrinsic grid at five tracks; 13rem keeps every track wide
+     enough for the full tile anatomy (chip + 2-line title + examples). */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(13rem, 18%)), 1fr));
   gap: var(--nk-grid-gap);
 }
-/* ladder entries respect --nk-cat-min (220px): a forced column count must never
-   drop tracks below the tile's own readable minimum (LT titles ellipsized when
-   3-up started at 701 / 4-up at 981). Content ≈ 88% of viewport (fluid gutter). */
-@media (min-width: 1441px) {
-  .nk-grid-cats {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-}
-@media (min-width: 1056px) and (max-width: 1440px) {
-  .nk-grid-cats {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-@media (min-width: 788px) and (max-width: 1055px) {
-  .nk-grid-cats {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (max-width: 787px) {
-  .nk-grid-cats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-/* home 10-tile shelf keeps 4+4+2 through the 981–1055 slice (its curated titles
-   are short; a 3+3+3+1 orphan row reads worse than ~216px tiles) */
-@media (min-width: 981px) and (max-width: 1055px) {
-  .nk-cats-shelf {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
 /* phones: a dense 2-up category grid (was a single tall column — full-width tiles
-   made ~1500px of low-density scroll); tiles get a compact skin below */
-@media (max-width: 560px) {
+   made ~1500px of low-density scroll). Only the decorative skeleton/empty grids
+   reach this — the real home shelf is a rail below 55rem. */
+@media (width < theme(--breakpoint-sm)) {
   .nk-grid-cats {
-    --nk-cat-h: 138px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-/* smallest phones: a touch more tile height so long LT names keep breathing room
-   at 320–400px (must follow the ≤560 rule above — same specificity, order wins) */
-@media (max-width: 400px) {
-  .nk-grid-cats {
-    --nk-cat-h: 150px;
   }
 }
 
@@ -3370,11 +3824,6 @@ footer .nk-link:hover {
 }
 /* 561–700: the desktop pill row wraps to ~3 lines here — pinned, it held ~250px
    of every viewport. Let it scroll away; the toolbar is one flick up. */
-@media (min-width: 561px) and (max-width: 700px) {
-  .nk-filterbar {
-    position: static;
-  }
-}
 /* desktop shows the inline sort/category/city/delivery controls; on phones they
    collapse into a bottom sheet (.nk-filtersheet) opened by .nk-filters-mobilebtn,
    so the sticky bar keeps just search + a "Filters" button (reclaims ~200px) */
@@ -3399,7 +3848,7 @@ footer .nk-link:hover {
   font-size: 12.5px;
   line-height: 1;
 }
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-md)) {
   .nk-filterbar {
     padding-block: 8px 10px;
     margin-bottom: 20px;
@@ -3437,7 +3886,7 @@ footer .nk-link:hover {
 .nk-catrail {
   display: none;
 }
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-md)) {
   .nk-catrail {
     position: relative;
     display: flex;
@@ -3496,7 +3945,7 @@ footer .nk-link:hover {
 .nk-narrow-only {
   display: none;
 }
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-md)) {
   .nk-wide-only {
     display: none;
   }
@@ -3518,7 +3967,7 @@ footer .nk-link:hover {
 .nk-fchips {
   display: flex;
 }
-@media (min-width: 561px) {
+@media (width >= theme(--breakpoint-md)) {
   .nk-fchips {
     display: none;
   }
@@ -3632,6 +4081,7 @@ footer .nk-link:hover {
 .nk-detail {
   max-width: 1340px;
   margin: 0 auto;
+  container: nk-detail / inline-size;
 }
 .nk-detail-h {
   margin: 0 0 22px;
@@ -3658,7 +4108,7 @@ footer .nk-link:hover {
    tiles. Scoped to >980px so the ≤980 mobile mosaic (higher-specificity attribute
    rules would otherwise win over the in-media .nk-bento rule) still applies. Base
    rule above is the 5-up bento (data-count 5). */
-@media (min-width: 981px) {
+@container nk-detail (width >= 55rem) {
   .nk-bento[data-count="0"],
   .nk-bento[data-count="1"] {
     grid-template-columns: 1fr;
@@ -3720,10 +4170,14 @@ footer .nk-link:hover {
    the narrowest phones so a long title + two buttons never crowd.
    (Base flex sizing lives here, NOT inline in ListingDetail.tsx, so this media
    override can actually win — an inline flex:none made it dead code before.) */
+.nk-lhead {
+  container: nk-listing-header / inline-size;
+}
 .nk-lhead__actions {
   flex: none;
 }
-@media (max-width: 430px) {
+/* Actions stack according to the listing header's own available width. */
+@container nk-listing-header (width < 26.875rem) {
   .nk-lhead__actions {
     flex: 1 1 100%;
   }
@@ -3748,7 +4202,7 @@ footer .nk-link:hover {
 .nk-spec-grid > .nk-spec-row:last-child {
   border-bottom: none;
 }
-@media (min-width: 769px) {
+@media (width >= theme(--breakpoint-md)) {
   .nk-spec-grid > .nk-spec-row:nth-last-child(2):nth-child(odd) {
     border-bottom: none;
   }
@@ -4289,7 +4743,7 @@ footer .nk-link:hover {
 }
 
 /* Phones: a 40px circle inside a 44px cell — the touch-target floor. */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-cal__grid {
     --nk-cal-day: 40px;
   }
@@ -4498,7 +4952,7 @@ footer .nk-link:hover {
 
 /* Phones (inline in the sheet): a larger thumb for touch — the rail's end padding
    follows it automatically. */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-price-slider {
     --nk-price-thumb: 28px;
   }
@@ -4709,7 +5163,7 @@ footer .nk-link:hover {
    edge sits a full arrow-rail past the photo — pull the close button back to the photo's
    own top-right corner (arrow width + stage gap) so it reads as the photo's control.
    Single-photo sets drop the arrows, so the photo already fills the panel: no offset. */
-@media (min-width: 561px) and (min-height: 521px) {
+@media (width >= theme(--breakpoint-sm)) and (min-height: 521px) {
   .nk-lightbox__panel.is-multi .nk-lightbox__close {
     right: calc(48px + clamp(8px, 2vw, 18px));
   }
@@ -4747,7 +5201,7 @@ footer .nk-link:hover {
 }
 /* narrow or short screens: overlay the arrows ON the photo instead of flanking
    it — two 48px flanks squeezed the image to ~65% width on phones */
-@media (max-width: 560px), (max-height: 520px) {
+@media (width < theme(--breakpoint-sm)), (max-height: 520px) {
   .nk-lightbox__stage {
     position: relative;
     gap: 0;
@@ -4892,7 +5346,7 @@ footer .nk-link:hover {
   }
 }
 /* nav buttons keep the 44px+ tap floor on phones; thumbs stay ≥44px tall */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-lightbox__thumb {
     width: 60px;
     height: 44px;
@@ -4945,6 +5399,9 @@ footer .nk-link:hover {
     opacity 0.18s ease,
     visibility 0.22s;
 }
+.nk-mbar-spacer {
+  display: none;
+}
 /* visibility (a discrete transition step) removes the hidden bar's Reserve button
    from the Tab order once the slide-out finishes — opacity alone left it focusable */
 .nk-mbar.is-hidden {
@@ -4965,19 +5422,21 @@ footer .nk-link:hover {
   white-space: nowrap;
   max-width: min(52vw, 340px);
 }
-@media (min-width: 981px) and (max-width: 1120px) {
+@container nk-detail (55rem <= width < 60rem) {
   .nk-detail-grid {
     grid-template-columns: minmax(560px, 1fr) minmax(286px, 320px);
     gap: 28px;
   }
 }
-@media (max-height: 780px) and (min-width: 981px) {
-  .nk-bento {
-    height: clamp(300px, 38vw, 420px);
+@media (max-height: 780px) {
+  @container nk-detail (width >= 55rem) {
+    .nk-bento {
+      height: clamp(300px, 38vw, 420px);
+    }
   }
 }
 /* keep the booking sidebar through landscape tablets; collapse to the bottom bar only on portrait tablets/phones */
-@media (max-width: 980px) {
+@container nk-detail (width < 55rem) {
   .nk-detail-grid {
     grid-template-columns: 1fr;
     gap: 40px;
@@ -4995,13 +5454,9 @@ footer .nk-link:hover {
   .nk-mbar {
     display: flex;
   }
-  body:has(.nk-mbar) .nk-page {
-    padding-bottom: calc(104px + var(--nk-safe-bottom));
-  }
-  /* the sitewide back-to-top would otherwise sit UNDER the bar (both z-index:60,
-     and the bar wins on paint order) — lift it clear of the bar's min-height */
-  body:has(.nk-mbar) .nk-backtotop {
-    bottom: calc(92px + var(--nk-safe-bottom));
+  .nk-mbar-spacer {
+    display: block;
+    height: calc(104px + var(--nk-safe-bottom));
   }
   /* grid-template-rows:auto (not none) — row 1 must size to the oversized hero
      tile, otherwise the hero paints over the inline booking card below the grid */
@@ -5009,12 +5464,12 @@ footer .nk-link:hover {
     height: auto;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
-    grid-auto-rows: clamp(150px, 22vw, 190px);
+    grid-auto-rows: clamp(150px, 22cqw, 190px);
   }
   .nk-bento > :first-child {
     grid-column: 1 / -1;
     grid-row: auto;
-    height: clamp(260px, 34vw, 320px);
+    height: clamp(260px, 34cqw, 320px);
   }
   /* 0–2 photos: stack full-width, no lonely half-width tile in the 2-col mosaic */
   .nk-bento[data-count="0"],
@@ -5029,13 +5484,20 @@ footer .nk-link:hover {
     grid-template-columns: 1fr !important;
   }
 }
-@media (max-width: 768px) {
+/* Back-to-top is outside the detail container, so its collision avoidance stays
+   a canonical viewport concern while the bar's actual visibility is container-owned. */
+@media (width < theme(--breakpoint-lg)) {
+  body:has(.nk-mbar) .nk-backtotop {
+    inset-block-end: calc(92px + var(--nk-safe-bottom));
+  }
+}
+@container nk-detail (width < 48rem) {
   .nk-spec-grid {
     grid-template-columns: 1fr;
     column-gap: 0;
   }
 }
-@media (max-width: 560px) {
+@container nk-detail (width < 35rem) {
   /* full-bleed hero tile + a tidy 2-up thumbnail mosaic, not five stacked tiles */
   .nk-bento {
     grid-template-columns: 1fr 1fr;
@@ -5071,13 +5533,13 @@ footer .nk-link:hover {
   }
 }
 /* the 2-up terms grid runs out of room only below ~360px */
-@media (max-width: 359px) {
+@media (width < theme(--breakpoint-xs)) {
   .nk-hl-grid {
     grid-template-columns: 1fr;
   }
 }
 /* F-061: clamp long owner descriptions on phones; the Show-more toggle lifts it */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-desc-clamp {
     display: -webkit-box;
     -webkit-line-clamp: 6;
@@ -5090,7 +5552,7 @@ footer .nk-link:hover {
   row-gap: 0;
   column-gap: 44px;
 }
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-ratebreak {
     grid-template-columns: 1fr !important;
     row-gap: 18px;
@@ -5107,29 +5569,39 @@ footer .nk-link:hover {
 /* ============================================================
    Responsive
    ------------------------------------------------------------
-   Standard breakpoint ladder (CSS @media can't read var() widths,
-   so these are the canonical literals — snap new rules to one of):
-     xs  360px  tiny phones
-     sm  560px  phones
-     md  768px  portrait tablet
-     lg  1024px landscape tablet / small laptop  (hero + nav stack here)
-     xl  1280px desktop
+   Viewport composition uses the @theme static tier starts declared at the top
+   of this file. Component fit belongs to named containers below.
    ============================================================ */
-/* horizontal card rows (features / use-case cards): 3-up → tablet 2-up wrap → phone stack */
+/* feature/trust card rows: 3-up → stack. There is deliberately NO 2-up tier —
+   every FeatureBand call site passes exactly three cards, so wrapping to two
+   columns always leaves a stretched full-width orphan on the second line. */
+.nk-featureband-container {
+  container: nk-feature-row / inline-size;
+}
 .nk-row {
   display: flex;
   gap: var(--nk-gap-lg);
 }
-@media (max-width: 900px) {
+/* Stacks at the SAME cliff as the home "Kaip tai veikia" stepper goes vertical
+   (@container nk-home-hiw < 60rem). Both containers are direct children of
+   .nk-container, so equal thresholds mean equal viewport widths — the two bands
+   must never disagree about whether the page is in its stacked tier. */
+@container nk-feature-row (width < 60rem) {
+  /* Stacked cards are ~950px slabs, so the 20px row gap that reads as separation
+     between three narrow columns reads as a seam between them. --nk-grid-row-gap
+     is the card-row token; --nk-stack-lg is deliberately NOT reused here because
+     the card already spends it internally (icon↔text), and matching the two would
+     flatten the inside/outside hierarchy. */
   .nk-row {
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: var(--nk-grid-row-gap);
   }
   .nk-row > * {
-    flex: 1 1 calc(50% - var(--nk-gap-lg));
+    flex: 1 1 auto;
   }
 }
 
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-search > span:first-child > .nk-ico,
   .nk-search .nk-citypick__trigger > .nk-ico:first-child {
     transform: translateY(7px);
@@ -5147,6 +5619,7 @@ footer .nk-link:hover {
 .nk-hiw-track {
   position: relative;
   margin-top: clamp(40px, 5vw, 72px);
+  container: nk-home-hiw / inline-size;
 }
 .nk-hiw-line {
   position: absolute;
@@ -5221,7 +5694,7 @@ footer .nk-link:hover {
    spans the row gap) and the last step draws none — geometry falls out of layout, so it
    survives any copy length without measuring anything. Nodes stay opaque + z-index:2 and
    punch over the rail exactly as they do on desktop. */
-@media (max-width: 1024px) {
+@container nk-home-hiw (width < 60rem) {
   .nk-hiw-grid {
     display: flex;
     flex-direction: column;
@@ -5294,7 +5767,7 @@ footer .nk-link:hover {
     margin-top: 8px;
   }
 }
-@media (max-width: 560px) {
+@container nk-home-hiw (width < 35rem) {
   /* narrower text column: shrink the node (every rail offset recomputes) and let the
      title scale, so a 37-char LT title doesn't wrap five times beside the circle */
   .nk-hiw-grid {
@@ -5313,26 +5786,72 @@ footer .nk-link:hover {
 }
 
 /* hero panel layout (visual skin stays inline in <Hero>) — fluid min-height avoids a forced-tall 2-col on landscape tablets */
+.nk-home-hero-container {
+  container: nk-home-hero / inline-size;
+}
 .nk-hero-panel {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
   gap: clamp(28px, 4vw, 40px);
   padding: var(--nk-panel-pad);
   min-height: clamp(560px, 64vw, 700px);
+  overflow: clip;
+  isolation: isolate;
 }
 .nk-hero-panel > * {
   min-width: 0;
 }
 .nk-hero-media {
+  display: grid;
+  place-items: center;
   min-height: clamp(360px, 42vw, 560px);
 }
-/* the phone illustration (next/image) is positioned via inline styles on the
-   element; only the responsive size/transform overrides live in CSS below */
+.nk-hero-device {
+  position: relative;
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  place-items: center;
+  inline-size: 100%;
+  block-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 0;
+}
+.nk-hero-phone {
+  position: relative;
+  grid-area: 1 / 1;
+  place-self: center;
+  /* The media track gets a little more of the desktop grid, making the tightly
+     cropped asset visibly larger without borrowing the search field's space. */
+  inline-size: 110%;
+  max-inline-size: 34.5rem;
+  inset-inline-start: 2px;
+  block-size: 100%;
+  object-fit: contain;
+  object-position: center;
+  filter: var(--nk-shadow-phone-hero);
+}
+.nk-hero-qr {
+  z-index: 2;
+}
+/* the hero QR is a secondary install path next to the device — the shared
+   .nk-qr-card padding is tuned for the bigger modal matrix and reads chunky
+   at this size, so the hero scopes its own tighter frame */
+.nk-hero-qr .nk-qr-card {
+  padding: 12px;
+}
+/* The phone is inset-bounded by an explicit media wrapper. Its image box is capped
+   by both track axes and object-fit preserves the intrinsic aspect ratio. */
 .nk-hero-intro {
   width: 100%;
   min-width: 0;
 }
-@media (min-width: 1121px) {
+@media (width >= theme(--breakpoint-nav)) {
+  .nk-hero-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .nk-hero-phone {
+    max-inline-size: 36rem;
+  }
   :lang(lt) .nk-hero-panel .nk-h-hero {
     font-size: clamp(44px, 5.8vw, 70px);
     line-height: 1.07;
@@ -5341,7 +5860,7 @@ footer .nk-link:hover {
 /* 1025–1120 (burger-nav desktop): the base 7.2vw ramp (→ ~80px) cannot fit
    "Išsinuomokite," in the narrower hero column and broke it mid-word — bridge
    the ladder hole so LT ramps 901–1024 (6vw) → here (5.7vw) → ≥1121 (5.8vw). */
-@media (min-width: 1025px) and (max-width: 1120px) {
+@media (width >= theme(--breakpoint-lg)) and (width < theme(--breakpoint-nav)) {
   :lang(lt) .nk-hero-panel .nk-h-hero {
     font-size: clamp(44px, 5.7vw, 64px);
     line-height: 1.07;
@@ -5372,7 +5891,7 @@ footer .nk-link:hover {
   border-color: var(--nk-border-strong);
 }
 
-@media (max-width: 1024px) {
+@media (width < theme(--breakpoint-lg)) {
   .nk-hero-panel {
     grid-template-columns: 1fr;
     padding: 36px;
@@ -5389,7 +5908,7 @@ footer .nk-link:hover {
     gap: 32px !important;
   }
 }
-@media (min-width: 901px) and (max-width: 1024px) {
+@media (width >= theme(--breakpoint-md)) and (width < theme(--breakpoint-lg)) {
   .nk-hero-panel {
     grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
     gap: 28px;
@@ -5398,10 +5917,6 @@ footer .nk-link:hover {
   }
   .nk-hero-media {
     min-height: clamp(420px, 50vw, 520px);
-  }
-  .nk-hero-phone {
-    height: 112% !important;
-    transform: translateX(-50%) !important;
   }
   .nk-hero-qr {
     right: 12px !important;
@@ -5428,20 +5943,17 @@ footer .nk-link:hover {
     padding-inline: 24px !important;
   }
 }
-@media (min-width: 1025px) and (max-width: 1280px) {
+@media (width >= theme(--breakpoint-lg)) and (width < theme(--breakpoint-xl)) {
   /* keep clear air between the copy column and the device bezel */
   .nk-hero-panel .nk-body {
     max-width: 500px;
-  }
-  .nk-hero-phone {
-    transform: translateX(-50%) !important;
   }
   /* free ~70px inside the search pill so the placeholder never ellipsizes */
   .nk-hero-panel .nk-search .nk-btn--primary {
     padding: 16px 24px !important;
   }
 }
-@media (min-width: 561px) and (max-width: 900px) {
+@media (width >= theme(--breakpoint-sm)) and (width < theme(--breakpoint-md)) {
   .nk-hero-panel .nk-h-hero {
     font-size: clamp(44px, 6vw, 56px);
   }
@@ -5450,19 +5962,33 @@ footer .nk-link:hover {
     display: none !important;
   }
 }
-@media (max-width: 768px) {
-  .nk-row {
-    flex-direction: column;
+/* Component fit, not device naming: below 58rem of usable hero width the copy and
+   app preview become dedicated rows. This lands between the supplied 1060px and
+   998px cases with the current fluid gutters and remains correct in nested layouts. */
+@container nk-home-hero (width < 58rem) {
+  .nk-hero-panel {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    gap: 32px;
   }
-  .nk-row > * {
-    flex: 1 1 auto;
+  .nk-hero-media {
+    min-height: 0;
+    block-size: clamp(360px, 58cqi, 540px);
   }
+  .nk-hero-phone {
+    inline-size: 100%;
+    max-inline-size: 30rem;
+    inset-inline-start: 0;
+    block-size: 100%;
+  }
+}
+@media (width < theme(--breakpoint-md)) {
   .nk-sheet {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
 /* tighter, app-like type density on phones — headings stay fluid (clamp) */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-btn {
     white-space: normal;
   }
@@ -5474,6 +6000,9 @@ footer .nk-link:hover {
     padding: 16px;
     gap: 14px;
     border-radius: 18px !important;
+    /* The phone is absent in this tier; let the downward city list escape the
+       card instead of clipping an interactive control to the rounded paint box. */
+    overflow: visible;
   }
   /* the visitor is already on a phone — drop the device mockup + QR entirely so the
      hero is a tight value-prop stack with no dead vertical space (badge → headline →
@@ -5604,7 +6133,7 @@ footer .nk-link:hover {
     font-size: 16px;
   }
 }
-@media (max-width: 360px) {
+@media (width < theme(--breakpoint-xs)) {
   .nk-btn {
     white-space: normal;
   }
@@ -5771,6 +6300,7 @@ footer .nk-link:hover {
 /* ---- steps (synced phone) ---- */
 .htw-steps {
   padding-block: var(--nk-section-y) var(--nk-section-y-lg);
+  container: nk-hiw-layout / inline-size;
 }
 .htw-grid {
   display: grid;
@@ -6215,17 +6745,27 @@ footer .nk-link:hover {
    for this family live in the breakpoint blocks below, beside the htw- rules. */
 .nk-appcta-wrap {
   padding-block: clamp(12px, 2vw, 24px) var(--nk-section-y);
+  container: nk-app-cta / inline-size;
 }
 /* HIW (after the trust band) & home (after the stepper): full breather above. */
 .htw-page .nk-appcta-wrap,
 .nk-home .nk-appcta-wrap {
   padding-top: var(--nk-section-y);
 }
+/* Grid, not absolute centring, for the copy column: the band clips (overflow:hidden)
+   and 660px is only a FLOOR, so an absolutely-centred column that outgrows it loses
+   equal slices off the top and bottom. Copy height varies by locale and by the body
+   each call site passes, so the band has to be able to grow instead. The phone stays
+   absolute — it bleeds past the right edge and must not add height. */
 .nk-appcta {
   position: relative;
   border-radius: 20px;
   overflow: hidden;
   min-height: 660px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1fr;
+  align-items: center;
+  padding-block: var(--nk-panel-pad);
   background:
     radial-gradient(680px 680px at -6% -18%, var(--nk-glow-purple), transparent 66%),
     radial-gradient(
@@ -6238,10 +6778,13 @@ footer .nk-link:hover {
     linear-gradient(180deg, rgba(0, 0, 0, 0) 46%, rgba(0, 0, 0, 0.3) 100%),
     linear-gradient(135deg, var(--nk-card-grad-1) 0%, var(--nk-card-grad-2) 52%, var(--nk-bg-deep) 100%);
 }
+/* bottom-anchored, not top-anchored: the band grows with the copy now, and a fixed
+   top left the phone floating above a dead strip of gradient. -56px reproduces the
+   bleed it had at the old fixed 660px height (top:96 + 620 = 716). */
 .nk-appcta__phone {
   position: absolute;
   right: -20px;
-  top: 96px;
+  bottom: -56px;
   height: 620px;
   width: auto;
   max-width: 50%;
@@ -6249,15 +6792,14 @@ footer .nk-link:hover {
   object-position: left top;
   filter: var(--nk-shadow-phone-cta);
 }
-.nk-appcta__badges {
-  margin-top: 4px;
-}
+/* no margin-top: the badges sit in a centred flex row now, and 4px of it would
+   knock them off the QR's centre line */
 .nk-appcta__copy {
-  position: absolute;
-  left: var(--nk-panel-pad);
-  top: 50%;
-  transform: translateY(-50%);
-  max-width: min(720px, 50%);
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  margin-inline-start: var(--nk-panel-pad);
+  max-width: 720px;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -6280,14 +6822,18 @@ footer .nk-link:hover {
   line-height: 32px;
   color: var(--nk-text-muted);
 }
-.nk-appcta__qr {
-  position: absolute;
-  right: 72px;
-  bottom: calc(var(--nk-panel-pad) - 20px);
+/* Install row inside the copy column: badges anchor the left, QR the right. On wide
+   desktop the QR is lifted out to the band's bottom-right corner (see the 79rem
+   container query) and space-between collapses to a plain left-aligned badge row. */
+.nk-appcta__actions {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: var(--nk-gap-xl);
+}
+.nk-appcta__qr {
+  display: flex;
+  align-items: center;
 }
 .nk-appcta__spark span {
   position: absolute;
@@ -6323,7 +6869,7 @@ footer .nk-link:hover {
   height: 9px;
   background: var(--nk-green);
 }
-@media (max-width: 560px) {
+@container nk-app-cta (width < 35rem) {
   .nk-appcta__copy h2 {
     font-size: clamp(30px, 9vw, 38px);
     line-height: 1.14;
@@ -6331,7 +6877,7 @@ footer .nk-link:hover {
   }
 }
 
-@media (max-width: 1120px) {
+@container nk-hiw-layout (width < 60rem) {
   .htw-grid {
     grid-template-columns: 1fr;
     gap: 54px;
@@ -6370,8 +6916,35 @@ footer .nk-link:hover {
     padding: 12px 8px;
     white-space: nowrap;
   }
-  /* CTA: no ghost phone — go straight to the readable stacked panel, keep the scan
-     path (users scan with a second phone on tablet; badges are the path on phones). */
+}
+/* Wide desktop: the QR leaves the install row and anchors to the band's own
+   bottom-right corner, over the empty dark screen beside the phone's logo. Absolute
+   resolves against .nk-appcta (the copy column is unpositioned) and paints above the
+   phone by DOM order, so no z-index is needed.
+
+   79rem is a geometry floor, not taste. The phone is capped at max-width:50%, so its
+   logo lock-up — which sits ~47% into the artwork — tracks inward as the band
+   narrows: its right edge lands at band/2 + 389px, while the QR's left edge sits at
+   band - 60 - 165. Those cross at ~1260px, so below 79rem the corner QR would clip
+   the "Naudokis.lt" wordmark and the QR goes back in the install row instead. */
+@container nk-app-cta (width >= 79rem) {
+  .nk-appcta__qr {
+    position: absolute;
+    right: var(--nk-panel-pad);
+    bottom: var(--nk-panel-pad);
+  }
+}
+/* Install row still carries the QR here, and the copy column is half the panel less
+   its inset — a side-by-side badge row (370px) + QR leaves no slack for a real gap.
+   The two badges stack into a column BESIDE the QR so the row keeps breathing. */
+@container nk-app-cta (60rem <= width < 79rem) {
+  .nk-appcta__actions .nk-appbadges {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+/* App CTA composition follows its own panel width rather than navigation. */
+@container nk-app-cta (width < 60rem) {
   .nk-appcta {
     min-height: 0;
     display: flex;
@@ -6385,25 +6958,14 @@ footer .nk-link:hover {
   .nk-appcta__spark {
     display: none;
   }
+  /* the band carries the padding in this tier, so drop the copy's own inset */
   .nk-appcta__copy {
-    position: static;
-    left: auto;
-    top: auto;
-    transform: none;
-    bottom: auto;
     max-width: none;
+    margin-inline-start: 0;
     order: 1;
   }
-  .nk-appcta__qr {
-    position: static;
-    right: auto;
-    bottom: auto;
-    order: 2;
-    display: flex;
-    align-items: flex-start;
-  }
 }
-@media (max-width: 768px) {
+@container nk-hiw-layout (width < 48rem) {
   .htw-step__num {
     width: 54px;
     height: 54px;
@@ -6416,11 +6978,13 @@ footer .nk-link:hover {
   .htw-step__top h3 {
     font-size: 22px;
   }
+}
+@container nk-app-cta (width < 48rem) {
   .nk-appcta__qr {
     display: none;
   } /* on a phone you can't scan your own screen — badges deep-link */
 }
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .htw-toggle__btn {
     padding: 13px 24px;
     font-size: 16px;
@@ -6435,7 +6999,7 @@ footer .nk-link:hover {
     --hero-gap: 20px;
   }
 }
-@media (max-width: 360px) {
+@media (width < theme(--breakpoint-xs)) {
   .htw-grid,
   .htw-left,
   .htw-toggle-row,
@@ -6479,6 +7043,7 @@ footer .nk-link:hover {
   --hero-title: clamp(38px, 5.6vw, 68px);
   --hero-title-lh: 1.06;
   --hero-title-mw: 900px;
+  container: nk-invite / inline-size;
   --hero-lead-mw: 620px;
   --hero-lead: 20px;
   --hero-lead-lh: 32px;
@@ -6540,7 +7105,7 @@ footer .nk-link:hover {
   align-items: center;
   gap: var(--hero-gap, 24px);
 }
-@media (min-width: 1120px) {
+@container nk-invite (width >= 60rem) {
   .invite-cols {
     display: grid;
     grid-template-columns: 1.25fr 0.75fr;
@@ -6576,7 +7141,7 @@ footer .nk-link:hover {
 }
 /* you can't scan a QR on the same phone you're holding — drop it ≤560 (the install
    CTA + store badges are the mobile path), mirroring the home-hero/HIW convention */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .invite-qr {
     display: none;
   }
@@ -6621,7 +7186,7 @@ footer .nk-link:hover {
   color: var(--nk-text-muted);
   text-align: center;
 }
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .invite-hero {
     --hero-gap: 20px;
   }
@@ -6635,7 +7200,7 @@ footer .nk-link:hover {
   }
 }
 
-@media (max-width: 560px) and (max-height: 700px) {
+@media (width < theme(--breakpoint-sm)) and (max-height: 700px) {
   :root {
     --nk-section-y: 48px;
     --nk-section-y-lg: 52px;
@@ -6687,7 +7252,9 @@ footer .nk-link:hover {
    content gets the viewport back; the page scrolls it into reach as usual. */
 @media (max-height: 520px) {
   .nk-nav-bar {
-    position: static;
+    /* Stay in normal flow, but retain the z-index stacking context so the open
+       drawer remains interactive above its fixed page scrim. */
+    position: relative;
   }
   .nk-filterbar {
     position: static;
@@ -6699,7 +7266,7 @@ footer .nk-link:hover {
    (Reveal/zoom motion is already neutralised for reduced-motion by the global
    rule near the top of this file, and the reveal runs on a compositor-only
    view() timeline, so there is nothing extra to disable here.) */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-hero-panel,
   .nk-feature {
     backdrop-filter: none;
@@ -6759,7 +7326,7 @@ footer .nk-link:hover {
   font-size: 13px;
   color: var(--nk-text-muted);
 }
-@media (min-width: 768px) {
+@media (width >= theme(--breakpoint-md)) {
   .nk-handoff__qr {
     display: flex;
     flex-direction: column;
@@ -6825,6 +7392,19 @@ footer .nk-link:hover {
   font-size: 15px;
   line-height: 23px;
   color: var(--nk-text-2);
+}
+/* Compact layers follow usable height as well as width, so landscape phones do
+   not receive a vertically centred panel with its actions below the fold. */
+@media (width < theme(--breakpoint-sm)), (height < 32.5rem) {
+  .nk-dialog-scrim {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .nk-dialog-panel {
+    width: min(35rem, 100%);
+    border-radius: 24px 24px 0 0;
+    padding-bottom: calc(28px + var(--nk-safe-bottom));
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .nk-dialog-scrim,
@@ -7038,7 +7618,7 @@ svg.nk-ico {
   opacity: 0.028;
 }
 .nk-footer__pattern {
-  opacity: 0.07;
+  opacity: var(--nk-footer-pattern-opacity, 0.07);
 }
 /* both stepper rails dim together — horizontal bar and the ≤1024 vertical segments */
 .nk-hiw-line,
@@ -7066,7 +7646,7 @@ svg.nk-ico {
    !important is required where the card carries inline styles
    (cards.tsx OfferCard type/geometry).
    ============================================================ */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   :root {
     --nk-card-pad: 14px;
     --nk-offer-pad: 12px;
@@ -7119,7 +7699,7 @@ svg.nk-ico {
    ~11px, enough for the widest realistic amounts at the 4-up desktop density.
    Sits ABOVE the 202px block on purpose: both are single-class !important, so
    source order is what lets the narrower tier win for cards matching both. */
-@container nk-card (max-width:300px) {
+@container nk-card (width <= 18.75rem) {
   .o-deposit > span {
     gap: 4px !important;
     padding: 4px 8px !important;
@@ -7130,7 +7710,7 @@ svg.nk-ico {
     height: 12px !important;
   }
 }
-@container nk-card (max-width:202px) {
+@container nk-card (width <= 12.625rem) {
   .nk-offer__body {
     gap: 5px !important;
   }
@@ -7270,7 +7850,7 @@ svg.nk-ico {
   }
 }
 /* --- tablet: comfortable reading measure for detail prose --- */
-@media (min-width: 561px) and (max-width: 1024px) {
+@media (width >= theme(--breakpoint-sm)) and (width < theme(--breakpoint-lg)) {
   .nk-detail .nk-prose {
     max-width: 62ch;
   }
@@ -7283,13 +7863,13 @@ svg.nk-ico {
 /* "Panašūs daiktai" rail on the listing detail page: max 4-up on
    wide desktop (the 5-up feed grid read too dense in that context).
    The extra class is added in ListingScreen.tsx SimilarRail. */
-@media (min-width: 1281px) {
+@media (width >= theme(--breakpoint-xl)) {
   .nk-grid-4--rail {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 /* Phones: the rail becomes a swipeable edge-to-edge snap carousel. */
-@media (max-width: 560px) {
+@media (width < theme(--breakpoint-sm)) {
   .nk-grid-4--rail {
     grid-template-columns: none;
     grid-auto-flow: column;
@@ -7327,7 +7907,9 @@ svg.nk-ico {
    ============================================================ */
 .nk-cat.nk-catv2 {
   justify-content: space-between;
-  padding: clamp(16px, 1.5vw, 22px);
+  /* fixed, not clamp(16px, 1.5vw, 22px): a vw-driven pad made the same card
+     breathe differently per viewport, which is the morphing we removed */
+  padding: 20px;
   text-align: left;
 }
 /* per-category hover identity: border warms to the category accent */
@@ -7498,51 +8080,13 @@ svg.nk-ico {
   transform: none;
 }
 
-/* Compact tile skin — container-driven: applies whenever the TILE itself is
-   narrow (phone 2-up grid ~135-200px, phone shelf rail ~150-180px), regardless
-   of viewport. Wide tiles keep the full anatomy even on small screens. */
-@container nk-tile (max-width:200px) {
-  .nk-cat.nk-catv2 {
-    padding: 14px;
-  }
-  .nk-catv2__meta h3,
-  .nk-cat h3 {
-    font-size: 15px;
-    line-height: 18px;
-  }
-  .nk-catv2__chip {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-  }
-  .nk-catv2__chip svg {
-    width: 20px;
-    height: 20px;
-  }
-  .nk-catv2__go {
-    width: 28px;
-    height: 28px;
-  }
-  .nk-catv2__go svg {
-    width: 13px;
-    height: 13px;
-  }
-  .nk-catv2__sub {
-    display: none;
-  }
-  .nk-catv2__ghost {
-    width: 112px;
-    height: 112px;
-    right: -20px;
-    bottom: -24px;
-  }
-}
-/* narrowest tiles (≤400px viewport 2-up ≈ 135-155px): drop the arrow chip */
-@container nk-tile (max-width:160px) {
-  .nk-catv2__go {
-    display: none;
-  }
-}
+/* NOTE: there were two @container nk-tile compact skins here (≤12.5rem dropped
+   the examples line and shrank the chip/title, ≤10rem dropped the arrow). They
+   are gone on purpose: a tile is now guaranteed ≥13rem wide in the grid and a
+   fixed 224px in the rail, so the skins only ever fired at the rail↔grid
+   boundary — swapping the card's contents mid-resize, which is the behaviour we
+   are removing. Don't reintroduce a width-conditional anatomy; if a tile is too
+   narrow for the full card, widen the track instead. */
 @media (prefers-reduced-motion: reduce) {
   .nk-catv2__ghost,
   .nk-catv2__chip,
@@ -7563,15 +8107,21 @@ svg.nk-ico {
 }
 
 /* ============================================================
-   Home category shelf — swipeable snap rail ≤980px, standard
-   .nk-grid-cats grid above (10 tiles = 4+4+2 / 5+5). The rail
-   bleeds to the viewport edge (negative gutter margins), fades
-   at both ends, hides its scrollbar and snaps to the gutter.
+   Home category shelf — swipeable snap rail below a 55rem shelf
+   container, standard .nk-grid-cats grid above. The rail bleeds
+   to the viewport edge (negative gutter margins), fades at both
+   ends, hides its scrollbar and snaps to the gutter. It changes
+   the LAYOUT only: tile height, padding and contents are the
+   grid's, inherited untouched.
    Third instance of the edge-bleed snap-rail idiom (see
    .nk-catrail, .nk-grid-4--rail) — candidate for a shared
    utility in a dedicated cleanup pass.
    ============================================================ */
-@media (max-width: 980px) {
+.nk-cats-shelf-wrap {
+  container: nk-category-shelf / inline-size;
+}
+/* The shelf switches mode from its own usable width, keeping embedded variants stable. */
+@container nk-category-shelf (width < 55rem) {
   /* 14px card gap is the handoff value — deliberately between
      --nk-gap-sm (12) and --nk-gap-md (16); no matching token */
   .nk-cats-shelf {
@@ -7605,36 +8155,22 @@ svg.nk-ico {
   .nk-cats-shelf {
     overscroll-behavior-x: contain;
   }
-  /* width-aware basis: exact-fit pockets (3 clean tiles at ~745–811px) hid the
-     other 7 categories — guarantee a partial tile always peeks as the scroll cue */
+  /* Fixed basis, not a width-derived fraction: the tile must stay identical to
+     its grid counterpart, so it cannot shrink to fit n-up pockets. 224px is the
+     narrowest width that still holds the full anatomy. Tiles keep --nk-cat-h and
+     the shared padding from the grid — the rail changes layout, never the card.
+     A partial tile peeks at every width except a ~700px container (3 tiles
+     exactly), where the edge mask still supplies the scroll cue. */
   .nk-cats-shelf > * {
-    flex: 0 0 min(224px, calc((100% - 28px) / 3.4));
+    flex: 0 0 224px;
     scroll-snap-align: start;
   }
-  /* skeletons ride the same height so tiles don't jump when data lands */
-  .nk-cats-shelf .nk-cat,
-  .nk-cats-shelf .nk-cat-skel {
-    height: 192px;
-  }
-  /* 224px rail tiles are 16px SHORTER than grid tiles — the examples line has
-     no room and crowded the chip row; padding steps down with the height */
-  .nk-cats-shelf .nk-catv2__sub {
-    display: none;
-  }
-  .nk-cats-shelf .nk-cat.nk-catv2 {
-    padding: 16px;
-  }
 }
-/* phones: narrower rail cards (compact tile skin applies), ~2.2 visible + peek;
-   snap-stop keeps fast flicks from skipping whole tile groups on narrow rails */
-@media (max-width: 560px) {
+/* phones: snap-stop keeps fast flicks from skipping whole tile groups on the
+   narrow rail. Card geometry is untouched — same 224px tile as every other width. */
+@container nk-category-shelf (width < 35rem) {
   .nk-cats-shelf > * {
-    flex-basis: min(46vw, 180px);
     scroll-snap-stop: always;
-  }
-  .nk-cats-shelf .nk-cat,
-  .nk-cats-shelf .nk-cat-skel {
-    height: 158px;
   }
 }
 /* mouse/trackpad users get a visible (thin) scrollbar — a hidden-scrollbar rail
@@ -7648,8 +8184,8 @@ svg.nk-ico {
 /* ============================================================
    Kategorijos v2 directory (all-categories page, 2026-07 handoff).
    Cards reuse .nk-catv2__bg / .nk-catv2__chip from the layer above —
-   safe outside .nk-cat: the compact variants are @container nk-tile
-   -scoped and these cards are not containers. Unlike the tiles, these
+   safe outside .nk-cat: those rules are unconditional now (the
+   width-conditional tile skins are gone). Unlike the tiles, these
    cards hold REAL links (title, subs, arrow), so .nk-catv2__top/__meta
    (pointer-events:none) must never be reused here. Content blocks carry
    z-index:1 so the absolutely-positioned __bg paints beneath them.
@@ -7657,6 +8193,7 @@ svg.nk-ico {
 .nk-dirgrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 310px), 1fr));
+  container: nk-directory-grid / inline-size;
   gap: var(--nk-grid-gap);
   align-items: start;
 }
@@ -7878,7 +8415,8 @@ svg.nk-ico {
   color: var(--nk-text);
   text-decoration: none;
 }
-@media (max-width: 640px) {
+/* Collapse is determined by each directory card, not the page viewport. */
+@container nk-directory-grid (width < 40rem) {
   .nk-dircard__subs.is-collapsed > li {
     display: none;
   }

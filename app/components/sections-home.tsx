@@ -14,12 +14,14 @@ import {
 import { SearchBar, HeroOwnerCta } from "./HeroSearch";
 import { AppCtaBanner } from "./AppCtaBanner";
 import { FeatureBand } from "./FeatureBand";
+import { FooterDisclosure } from "./FooterDisclosure";
 import { PrivacyChoices } from "./PrivacyChoices";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, SOCIAL_PROFILES, LEGAL_NAME, COPYRIGHT_YEAR } from "@/app/lib/contact";
 import { LT_CITIES } from "@/app/lib/cities";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
 import { listingLandingHref } from "@/app/lib/search";
+import { IMAGE_SIZES, LEGACY_VIEWPORT_QUERIES } from "@/app/lib/breakpoints";
 
 /* ---------------- Hero ---------------- */
 export function Hero({ locale }: { locale: Locale }) {
@@ -28,7 +30,7 @@ export function Hero({ locale }: { locale: Locale }) {
     <section id="top" style={{ position: "relative", background: "radial-gradient(circle at 85% 20%, var(--nk-purple-halo), transparent 42%), var(--nk-bg-deep)", overflow: "hidden" }}>
       <Pattern name="hero-pattern" priority mobileBlank className="nk-hero-pattern nk-brand-pattern"
         style={{ position: "absolute", top: 0, bottom: 0, height: "100%", objectFit: "cover", objectPosition: "right top", pointerEvents: "none" }} />
-      <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
+      <div className="nk-container nk-home-hero-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
         {/* grid columns / padding / min-height live on .nk-hero-panel in globals.css
             so the 980px stack doesn't need !important overrides */}
         <div className="nk-hero-panel nk-grain nk-gborder" style={{ position: "relative", borderRadius: "var(--nk-r-lg)", background: "var(--nk-glass)", backdropFilter: "blur(35px)" }}>
@@ -62,16 +64,18 @@ export function Hero({ locale }: { locale: Locale }) {
                 `fetchPriority` alone would not do — next/image treats an Image with
                 neither `preload` nor `loading` as lazy, which is the opposite of
                 what an LCP element wants. */}
-            <picture>
+            <picture className="nk-hero-device">
               {/* Browsers fetch an <img> even inside a display:none ancestor, and the
                   whole media column is display:none below 560px. Selecting a 1×1 GIF
                   there means the desktop URL is never requested on phones — the only
-                  candidate the browser resolves is this one. */}
-              <source media="(max-width: 560px)" srcSet="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" />
+                  candidate the browser resolves is this one. LEGACY_ syntax on
+                  purpose: <source media> is not downleveled, and an engine that
+                  cannot parse `(width < …)` reads it as non-matching, which would
+                  hand phones the full-size PNG this line exists to withhold. */}
+              <source media={LEGACY_VIEWPORT_QUERIES.compact} srcSet="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" />
               <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt}
-                width={714} height={968} loading="eager" fetchPriority="high"
-                sizes="(max-width: 1024px) 80vw, 420px"
-                style={{ position: "absolute", bottom: -24, left: "50%", transform: "translateX(-54%)", height: "118%", width: "auto", maxWidth: "none", filter: "var(--nk-shadow-phone-hero)" }} />
+                width={1436} height={1868} loading="eager" fetchPriority="high"
+                sizes={IMAGE_SIZES.heroPhone} />
             </picture>
             <div className="nk-hero-qr" style={{ position: "absolute", right: "clamp(16px, 2vw, 32px)", bottom: 0 }}><QR size={132} /></div>
           </div>
@@ -105,8 +109,8 @@ export function CtaBanner({ locale }: { locale: Locale }) {
 
 /* Ambient glow layer for the hero panel — purple + yellow radial glows and a
    diagonal sheen, concentrated behind the device on the right so the phone pops.
-   The wrapper is clipped to the panel's rounded rect (the phone itself overflows
-   it as a later sibling). */
+   The wrapper is clipped to the panel's rounded rect; the phone is independently
+   constrained by the media track so neither layer relies on decorative overflow. */
 function AmbientGlow() {
   return (
     <div style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", borderRadius: "inherit" }}>
@@ -129,8 +133,10 @@ export function Footer({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).footer;
   return (
     <footer id="kontaktai" className="nk-footer">
-      <Pattern name="footer-pattern" className="nk-footer__pattern" />
       <div className="nk-container">
+        {/* Kept inside the query container so the artwork follows the footer's
+            usable width instead of the page viewport. Pattern itself is decorative. */}
+        <Pattern name="footer-pattern" className="nk-footer__pattern" />
         <div className="nk-footer__top">
           <div className="nk-footer__brand">
             <LogoMark locale={locale} />
@@ -148,26 +154,23 @@ export function Footer({ locale }: { locale: Locale }) {
                 </a>
               ))}
             </nav>
-            <AppBadges footer={true} height={46} />
+            <AppBadges footer={true} height={40} gap={12} />
           </div>
 
           {/* h2 (visually sized by the .nk-footer__col heading rule): hardcoded h4s
               produced h1→h4 outline jumps on pages with no h2/h3 (404, /invite). */}
-          <nav className="nk-footer__col" aria-label={t.browseHeading}>
-            <h2>{t.browseHeading}</h2>
+          <FooterDisclosure heading={t.browseHeading} className="nk-footer__col--categories">
             <FooterCategories locale={locale} />
-          </nav>
+          </FooterDisclosure>
 
           {/* city landings — internal-link equity + the H1's own "nearby" promise */}
-          <nav className="nk-footer__col nk-footer__col--center" aria-label={t.citiesHeading}>
-            <h2>{t.citiesHeading}</h2>
+          <FooterDisclosure heading={t.citiesHeading} className="nk-footer__col--cities">
             <FooterCities locale={locale} />
-          </nav>
+          </FooterDisclosure>
 
-          <nav className="nk-footer__col" aria-label={t.helpHeading}>
-            <h2>{t.helpHeading}</h2>
+          <FooterDisclosure heading={t.helpHeading} className="nk-footer__col--help">
             <FooterHelpLinks locale={locale} />
-          </nav>
+          </FooterDisclosure>
         </div>
 
         <div className="nk-footer__bottom">
@@ -189,10 +192,12 @@ export function Footer({ locale }: { locale: Locale }) {
             <span className="nk-footer__sep" aria-hidden />
             {/* Payment methods accepted in the app (via Stripe) — the site itself takes
                 no payment. */}
-            <div className="nk-footer__pay">
+            <div className="nk-footer__pay" role="list" aria-label={t.paymentLabel}>
               {FOOTER_PAY.map(([f, a]) => (
-                <Image key={f} src={`/naudokis/${f}.png`} alt={a} width={100} height={52}
-                  style={{ height: 30, width: "auto" }} />
+                <span key={f} role="listitem">
+                  <Image src={`/naudokis/${f}.png`} alt={a} width={100} height={52}
+                    style={{ height: 30, width: "auto" }} />
+                </span>
               ))}
             </div>
           </div>
@@ -211,13 +216,15 @@ function FooterCategories({ locale }: { locale: Locale }) {
   return (
     <div className="nk-footer__catgrid">
       {columns.map((column, i) => (
-        <div key={i} className="nk-footer__catcol">
+        <ul key={i} className="nk-footer__catcol">
           {column.map((category) => (
-            <Link key={category.categoryId} href={listingLandingHref({ category: category.categoryId, locale })}>
-              {category.label}
-            </Link>
+            <li key={category.categoryId}>
+              <Link href={listingLandingHref({ category: category.categoryId, locale })}>
+                {category.label}
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       ))}
     </div>
   );
@@ -226,22 +233,26 @@ function FooterCategories({ locale }: { locale: Locale }) {
 function FooterCities({ locale }: { locale: Locale }) {
   const t = getDictionary(locale).footer;
   return (
-    <>
+    <ul className="nk-footer__linklist">
       {LT_CITIES.slice(0, 5).map((city) => (
-        <Link key={city} href={listingLandingHref({ city, locale })}>
-          {t.cityLink(city)}
-        </Link>
+        <li key={city}>
+          <Link href={listingLandingHref({ city, locale })}>
+            {t.cityLink(city)}
+          </Link>
+        </li>
       ))}
-    </>
+    </ul>
   );
 }
 
 function FooterHelpLinks({ locale }: { locale: Locale }) {
   return (
-    <>
+    <ul className="nk-footer__linklist">
       {getDictionary(locale).footer.help.map((link) => (
-        <Link key={link.href} href={localePath(locale, link.href)}>{link.label}</Link>
+        <li key={link.href}>
+          <Link href={localePath(locale, link.href)}>{link.label}</Link>
+        </li>
       ))}
-    </>
+    </ul>
   );
 }

@@ -11,6 +11,7 @@ import {
   Speaker, Star, Tag, TriangleAlert, Truck, User, Users, Wrench, X,
 } from "lucide-react";
 import { localeHome, type Locale } from "@/app/lib/i18n/config";
+import { LEGACY_VIEWPORT_QUERIES } from "@/app/lib/breakpoints";
 import { DynamicQR } from "./DynamicQR";
 
 /* ---------------- Icon ----------------
@@ -116,6 +117,11 @@ export function Icon({
   );
 }
 
+/* Locale flags are multicolor, so they cannot be ICONS entries (every glyph
+   there flows a single `currentColor`). They live in ui.tsx as LocaleFlag —
+   the Union Jack needs a per-instance <clipPath id>, hence useId, hence a
+   client component. */
+
 type PatternName = "hero-pattern" | "section-pattern" | "footer-pattern";
 
 export function Pattern({ name, className, style, priority = false, mobileBlank = false }: {
@@ -128,7 +134,10 @@ export function Pattern({ name, className, style, priority = false, mobileBlank 
   const base = `/naudokis/${name}`;
   return (
     <picture>
-      {mobileBlank && <source media="(max-width: 560px)" srcSet="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" type="image/gif" />}
+      {/* LEGACY_ not VIEWPORT_QUERIES: <source media> is never downleveled, and an
+          engine that cannot parse range syntax treats the query as non-matching —
+          which would defeat the blanking this attribute exists to do. */}
+      {mobileBlank && <source media={LEGACY_VIEWPORT_QUERIES.compact} srcSet="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" type="image/gif" />}
       <source srcSet={`${base}.avif`} type="image/avif" />
       <source srcSet={`${base}.webp`} type="image/webp" />
       <img src={`${base}.png`} alt="" aria-hidden="true" className={className} style={style}

@@ -403,7 +403,7 @@ export const lt: Dict = {
   cta: {
     eyebrow: "Programėlė",
     title: "Naršykite internete. Užklausą pateikite programėlėje.",
-    body: "Programėlėje pasirinksite datas ir perdavimo būdą, peržiūrėsite visą sumą bei patvirtinsite mokėjimo autorizaciją. Užklausa bus išsiųsta savininkui; rezervacija taps galutinė tik ją priėmus ir mokėjimui sėkmingai įvykus. Žinutes, perdavimą ir grąžinimą valdysite vienoje vietoje.",
+    body: "Programėlėje pasirinksite datas ir perdavimo būdą, peržiūrėsite visą sumą bei patvirtinsite mokėjimo autorizaciją. Užklausa bus išsiųsta savininkui; rezervacija taps galutinė tik ją priėmus daikto savininkui ir mokėjimui sėkmingai įvykus. Žinutes, perdavimą ir grąžinimą valdysite vienoje vietoje.",
     phoneAlt: "Naudokis programėlės rezervacijos ekranas",
   },
   faq: {
@@ -438,7 +438,7 @@ export const lt: Dict = {
       },
       {
         q: "Ar daiktus gali siūlyti privatūs žmonės ir verslai?",
-        a: "Taip. Daiktus gali siūlyti privatūs ir verslo savininkai. Kai savininkas veikia kaip verslas, jo statusas turi būti nurodytas profilyje ar rezervacijos eigoje, o vartotojams taikoma privaloma vartotojų teisių apsauga.",
+        a: "Taip. Daiktus gali siūlyti privatūs ir verslo savininkai. Kai savininkas veikia kaip verslas, jo statusas yra nurodytas profilyje ar rezervacijos eigoje, o vartotojams taikoma privaloma vartotojų teisių apsauga.",
       },
       {
         q: "Kodėl rezervacijos užklausa teikiama programėlėje?",
@@ -486,6 +486,7 @@ export const lt: Dict = {
     copyright: ({ year, legalName }) =>
       `© ${year} ${legalName}. Visos teisės saugomos.`,
     socialLabel: "Socialiniai tinklai",
+    paymentLabel: "Priimami mokėjimo būdai",
   },
   detail: {
     metaFallbackTitle: "Daikto nuoma | Naudokis.lt",
@@ -868,8 +869,8 @@ export const lt: Dict = {
     qrHint: "Nuskenuokite QR kodą telefonu ir atidarykite Naudokis.",
     qrTitle: "Nuskenuokite ir tęskite telefone",
     installCta: "Atsisiųsti programėlę",
-    storesAlso: "arba atsisiųskite per:",
-    storesDivider: "Taip pat",
+    storesAlso: "arba atsisiųskite iš",
+    storesDivider: "arba atsisiųskite iš",
     appOpenFallback:
       "Programėlė neatsidarė? Bandykite dar kartą arba pasirinkite programėlių parduotuvę.",
     retryOpen: "Bandyti atidaryti dar kartą",
@@ -1032,7 +1033,7 @@ export const lt: Dict = {
   },
   cityPicker: {
     heading: "Pasirinkite miestą",
-    all: "Visi miestai",
+    all: "Miestas",
   },
   errors: {
     notFoundTitle: "Šio puslapio neradome",
@@ -1049,7 +1050,6 @@ export const lt: Dict = {
     brandSub: "Taisyklės ir privatumas",
     contents: "Turinys",
     closeContents: "Uždaryti turinį",
-    backTop: "Į viršų",
     readingProgress: "Skaitymo eiga",
     effective: "Įsigalioja",
     updated: "Atnaujinta",

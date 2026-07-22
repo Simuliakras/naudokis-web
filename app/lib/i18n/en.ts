@@ -432,6 +432,7 @@ export const en: Dict = {
     copyright: ({ year, legalName }) =>
       `© ${year} ${legalName}. All rights reserved.`,
     socialLabel: "Social media",
+    paymentLabel: "Accepted payment methods",
   },
   detail: {
     metaFallbackTitle: "Item rental | Naudokis.lt",
@@ -979,7 +980,6 @@ export const en: Dict = {
     brandSub: "Rules & privacy",
     contents: "Contents",
     closeContents: "Close contents",
-    backTop: "Back to top",
     readingProgress: "Reading progress",
     effective: "Effective",
     updated: "Updated",

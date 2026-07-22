@@ -38,6 +38,7 @@ import {
   IconName,
   listboxPanelKeyNav,
   listboxTriggerKeyNav,
+  LocaleFlag,
   Logo,
   openRedirect,
 } from "./ui";
@@ -86,7 +87,7 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   // deliberately leaves the page scrollable behind it.
   useDismissableLayer(menuOpen, () => setMenuOpen(false), {
     lockScroll: false,
-    closeAt: "(min-width: 1121px)",
+    closeAt: "navExpanded",
   });
 
   // Close the drawer on navigation (the route — not just the hash — changed).
@@ -182,8 +183,11 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
             <LocaleSwitcher />
           </nav>
           {/* Install CTA lives OUTSIDE the collapsible link group so the site's
-              single conversion action survives the ≤1120px collapse — full label
-              on desktop, compact label beside the burger on phones/tablets. */}
+              single conversion action survives the compact collapse — full label
+              on desktop, short label beside the burger on tablets, icon-only on
+              phones (see .nk-nav-cta in globals.css). It must not retreat into
+              the drawer: that puts the one thing this site exists to do behind a
+              burger tap for the majority of traffic. */}
           <Link
             href="/go"
             prefetch={false}
@@ -277,7 +281,7 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
             <Link
               href="/go"
               prefetch={false}
-              className="nk-btn nk-btn--primary"
+              className="nk-btn nk-btn--primary nk-nav-drawer-cta"
               style={{ margin: "4px 12px 0", justifyContent: "center" }}
               onClick={(event) => {
                 event.preventDefault();
@@ -304,7 +308,13 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
 }
 
 // Language picker — globe + "Kalba"/"Language" + chevron trigger opening a listbox
-// of endonym options (a globe, not flags: flags denote countries, not languages).
+// of endonym options, each preceded by a flag. The flags are a deliberate reversal
+// of this file's earlier "globe, not flags" rule (flags denote countries, not
+// languages) — with only two locales they scan faster than text alone. The trigger
+// keeps the globe precisely because it stands for the choice, not for either option.
+// "English" flies GB; it is the closest thing to a conventional mark for the
+// language and this site's non-LT audience is primarily European, but it is a
+// convention, not a fact — swap FLAGS.en if that ever reads wrong.
 // Options are Next <Link>s to the per-locale path (default locale unprefixed) so it
 // keeps you on-page. `inflow` renders the options as an in-flow expansion instead of
 // a floating panel — used inside the mobile drawer, where an absolutely-positioned
@@ -442,6 +452,7 @@ function LocaleSwitcher({ inflow = false }: { inflow?: boolean }) {
                   fontSize: 15,
                 }}
               >
+                <LocaleFlag code={l} size={20} />
                 {dict.nav.languageNames[l]}
                 {active && (
                   <Icon
@@ -499,17 +510,19 @@ export function Categories({ data }: { data: Category[] }) {
         }
       />
       {list.length ? (
-        <div className="nk-grid-cats nk-cats-shelf nk-reveal-grid">
-          {list.map((c) => (
-            <CategoryCard
-              key={c.id}
-              id={c.id}
-              icon={c.icon}
-              title={c.title}
-              href={listingLandingHref({ category: c.id, locale })}
-              examples={t.examples(c.id)}
-            />
-          ))}
+        <div className="nk-cats-shelf-wrap">
+          <div className="nk-grid-cats nk-cats-shelf nk-reveal-grid">
+            {list.map((c) => (
+              <CategoryCard
+                key={c.id}
+                id={c.id}
+                icon={c.icon}
+                title={c.title}
+                href={listingLandingHref({ category: c.id, locale })}
+                examples={t.examples(c.id)}
+              />
+            ))}
+          </div>
         </div>
       ) : (
         // Lead with a productive action (open the app) instead of a "Refresh"
@@ -570,6 +583,7 @@ export function Offers({ data, categories }: { data: Offer[]; categories: Catego
           {list.map((o) => (
             <OfferCard
               key={o.id}
+              id={o.id}
               title={o.title}
               city={o.city}
               subdivision={o.subdivision}

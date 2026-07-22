@@ -13,12 +13,13 @@
 // dismissing it or unlocking the page behind it.
 import { RefObject, useEffect, useRef } from "react";
 import { enterEscapeLayer, lockBodyScroll } from "./layer-stack";
+import { observeViewport, type ViewportQueryName } from "./breakpoints";
 
 type DismissableLayerOptions = {
   lockScroll?: boolean; // freeze <body> scroll while open (default true)
   restoreFocus?: boolean; // refocus the opener element on close (default true)
   initialFocus?: RefObject<HTMLElement | null>; // element focused on open (after paint)
-  closeAt?: string; // media query; onDismiss fires once it starts matching (e.g. viewport grows past mobile)
+  closeAt?: ViewportQueryName; // semantic query; onDismiss fires once it starts matching
 };
 
 export function useDismissableLayer(
@@ -53,17 +54,17 @@ export function useDismissableLayer(
     window.addEventListener("keydown", onKey);
     // Auto-close when the layer's context no longer applies (e.g. a mobile-only
     // sheet on a viewport resized past the breakpoint) so it can't get stranded.
-    const mq = closeAt ? window.matchMedia(closeAt) : null;
-    const onBreakpoint = (e: MediaQueryListEvent) => {
-      if (e.matches) {
-        dismiss();
-      }
-    };
-    mq?.addEventListener("change", onBreakpoint);
+    const stopObserving = closeAt
+      ? observeViewport(closeAt, (matches) => {
+          if (matches) {
+            dismiss();
+          }
+        })
+      : null;
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("keydown", onKey);
-      mq?.removeEventListener("change", onBreakpoint);
+      stopObserving?.();
       unlockScroll?.();
       layer.release();
       // A closeAt auto-dismiss can leave the opener display:none on the new band

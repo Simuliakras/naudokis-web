@@ -47,7 +47,6 @@ export type LegalDict = {
   brandSub: string;        // header eyebrow label above the document title
   contents: string;        // ONE name for the TOC everywhere: sidebar heading, FAB label, drawer heading
   closeContents: string;   // drawer close-button aria-label
-  backTop: string;         // back-to-top aria/title
   readingProgress: string; // progress-bar aria
   effective: string;
   updated: string;
@@ -75,7 +74,7 @@ export type Dict = {
     listings: string; // "Items to rent" / "Nuomojami daiktai" link to the feed
     howItWorks: string; // "Kaip tai veikia" link
     getApp: string; // primary "Get the app" button
-    getAppShort: string; // compact install CTA in the ≤1120px sticky bar
+    getAppShort: string; // compact install CTA label once the nav collapses
     language: string; // language-picker trigger label ("Kalba" / "Language")
     languageNames: { lt: string; en: string }; // endonyms shown in the picker
     primary: string; // aria-label for the primary <nav> landmark
@@ -223,6 +222,7 @@ export type Dict = {
     // Organization JSON-LD publishes — so only the sentence is translated here.
     copyright: (parts: { year: string; legalName: string }) => string;
     socialLabel: string; // aria-label for the social-links group
+    paymentLabel: string; // aria-label for the accepted payment-method marks
   };
   detail: {
     metaFallbackTitle: string;
