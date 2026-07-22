@@ -93,7 +93,7 @@ export function InviteScreen() {
         <main id="nk-main">
           <section className="nk-hero-band invite-hero">
             <Pattern name="hero-pattern" priority className="nk-hero-band__pattern nk-brand-pattern" />
-            {/* ≥1120px: copy/actions left, QR/code right (see .invite-cols) — the
+            {/* At/above --breakpoint-nav: copy/actions left, QR/code right (see .invite-cols) — the
                 centred phone column blown up to 1440 wasted the whole width */}
             <div className="nk-container nk-hero-band__inner invite-cols">
               <div className="invite-cols__main">

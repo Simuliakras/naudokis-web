@@ -45,7 +45,7 @@ import {
 import { Section, SectionHead } from "./headers";
 
 /* ---------------- Nav ----------------
-   Translucent sticky bar that condenses on scroll; on tablet/mobile (≤1120px)
+   Translucent sticky bar that condenses on scroll; below --breakpoint-nav
    the links collapse into a hamburger drawer.
    `onSearch` is optional so the server-rendered home page can mount <Nav />
    without passing a function across the server→client boundary; the default
@@ -82,8 +82,10 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   }, []);
 
   // Escape-to-close, focus-restore to the burger, and auto-close once the viewport
-  // grows past the tablet/mobile breakpoint (same 1120px query as the
-  // .nk-nav-drawer rules in globals.css). lockScroll is off — the drawer
+  // grows past the compact breakpoint. "navExpanded" is the SAME token the
+  // .nk-nav-drawer rules use, which is the point: this used to be a hand-written
+  // "(min-width: 1121px)" that disagreed with the CSS by exactly 1px at 1120.
+  // lockScroll is off — the drawer
   // deliberately leaves the page scrollable behind it.
   useDismissableLayer(menuOpen, () => setMenuOpen(false), {
     lockScroll: false,
@@ -627,7 +629,7 @@ export function Offers({ data, categories }: { data: Offer[]; categories: Catego
    Four role-neutral steps on a purple→yellow→green connector line. Icons and
    the step number are positional design constants; the dictionary carries the
    copy only. The rail is CSS-only in both orientations — horizontal above the lg
-   cliff, vertical (segment per step) at ≤1024px; see .nk-hiw-* in globals.css. */
+   cliff, vertical (segment per step) below --breakpoint-lg; see .nk-hiw-* in globals.css. */
 
 // Per-step accent, positional: each index maps to the matching stop on the
 // connector-line gradient (purple → yellow → green).

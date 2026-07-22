@@ -79,7 +79,7 @@ export function HowItWorksScreen() {
           {/* STEPS (synced phone) */}
           <section className="nk-container htw-steps">
             {/* Always-mounted SR announcement of the step change ("2 / 4 · …") —
-                the visible preview is display:none ≤1120px, and a live region
+                the visible preview is display:none below --breakpoint-nav, and a live region
                 inside it never fires there. */}
             <span className="nk-sr-only" id="htw-preview" aria-live="polite">{`${active + 1} / ${steps.length} · ${current.title}`}</span>
             <div className="htw-grid">

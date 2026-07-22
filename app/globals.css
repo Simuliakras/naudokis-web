@@ -4128,7 +4128,8 @@ footer .nk-link:hover {
   grid-row: 1 / 3;
 }
 /* Count-aware desktop layouts so a listing with 1–4 photos never shows empty grey
-   tiles. Scoped to >980px so the ≤980 mobile mosaic (higher-specificity attribute
+   tiles. Scoped to the two-column detail container so the narrow mobile mosaic
+   (higher-specificity attribute
    rules would otherwise win over the in-media .nk-bento rule) still applies. Base
    rule above is the 5-up bento (data-count 5). */
 @container nk-detail (width >= 55rem) {
@@ -4185,7 +4186,8 @@ footer .nk-link:hover {
   align-items: start;
 }
 /* Booking facts inline under the gallery on mobile, where the sticky sidebar
-   booking panel is hidden (≤980px). The fixed MobileBar stays the reserve CTA. */
+   booking panel is hidden (below @container nk-detail 55rem). The fixed MobileBar
+   stays the reserve CTA. */
 .nk-booking-inline {
   display: none;
 }
@@ -5633,7 +5635,7 @@ footer .nk-link:hover {
 
 /* ---- home "Kaip tai veikia" numbered stepper ----
    Four role-neutral steps on a purple→yellow→green connector line: horizontal above
-   the lg cliff, vertical at ≤1024px (see the media block below). The section shell
+   the lg cliff, vertical below --breakpoint-lg (see the media block below). The section shell
    (container width, section-y rhythm) comes from .nk-container; these rules reproduce
    the handoff's inner composition on the --nk-* tokens. Head is the shared
    <SectionHead> (eyebrow + title + view-all action + lead). */
@@ -7119,7 +7121,7 @@ footer .nk-link:hover {
   gap: 12px;
   margin-top: 8px;
 }
-/* ≥1120px: split funnel — copy/actions left, QR + code right; below that the
+/* At/above --breakpoint-nav: split funnel — copy/actions left, QR + code right; below that the
    original centred column stack applies */
 .invite-cols__main,
 .invite-cols__aside {
@@ -7657,7 +7659,7 @@ svg.nk-ico {
 
 /* ============================================================
    Quiet Luxe — 2026 mobile/tablet upgrade layer
-   Desktop (>560px grids / >1024px layouts) untouched. Upgrades:
+   Desktop (grids at/above --breakpoint-sm, layouts at/above --breakpoint-lg) untouched. Upgrades:
    1. Phones browse a dense 2-up card grid (Airbnb/Vinted pattern)
       with a compact card skin — ~2.4x more inventory per screen
       vs the old 1-up column.

@@ -1,14 +1,31 @@
 import { expect, test } from "@playwright/test";
+import { BREAKPOINTS } from "../app/lib/breakpoints";
+import { getDictionary } from "../app/lib/i18n/dictionaries";
 
-const WIDTHS = [320, 360, 390, 430, 768, 1024, 1105, 1186, 1280, 1509, 1971];
+// 480/540/600/640 are not padding: the footer disclosure is driven by a CONTAINER
+// query, so its switch point is not a viewport tier. The list used to jump 430 ->
+// 768, which skipped the entire band where the disclosure is still showing — and
+// the spec asserted `width <= 430` for it, a number matching nothing in the CSS.
+const WIDTHS = [320, 360, 390, 430, 480, 540, 600, 640, 768, 1024, 1105, 1186, 1280, 1509, 1971];
 
-test("footer stays compact, readable, and collision-free at requested widths", async ({ page }) => {
-  test.setTimeout(90_000);
-  await page.goto("/", { waitUntil: "load" });
-  const footer = page.locator("footer.nk-footer");
-  await expect(footer).toBeVisible();
+// Mirrors the CSS exactly: .nk-footer .nk-container is the query container, and
+// .nk-container's padding-inline is clamp(20px, 6vw, 82px). So the container
+// measures viewport - 2*gutter, and 35rem of container arrives at ~637px of
+// viewport — not 560px, and nowhere near 430px.
+const FOOTER_COLUMNS_AT = Number.parseFloat(BREAKPOINTS.sm) * 16;
+function footerContainerWidth(viewport: number): number {
+  const gutter = Math.min(Math.max(20, viewport * 0.06), 82);
+  return viewport - 2 * gutter;
+}
+const showsDisclosure = (viewport: number) => footerContainerWidth(viewport) < FOOTER_COLUMNS_AT;
 
-  for (const width of WIDTHS) {
+// One test per width: a single loop aborts at the first failure, so a regression at
+// 320px would hide the state of the other fourteen.
+for (const width of WIDTHS) {
+  test(`footer stays compact, readable, and collision-free at ${width}px`, async ({ page }) => {
+    await page.goto("/", { waitUntil: "load" });
+    const footer = page.locator("footer.nk-footer");
+    await expect(footer).toBeVisible();
     await page.setViewportSize({ width, height: width <= 430 ? 932 : 900 });
     // Rest at the true page bottom — that is where the footer is actually read,
     // and the state the reserved 48px track in .nk-footer__bottom protects.
@@ -115,16 +132,18 @@ test("footer stays compact, readable, and collision-free at requested widths", a
       ).toBeLessThanOrEqual(1);
     }
 
-    if (width <= 430) {
-      expect(audit.disclosureDisplay, `mobile disclosure at ${width}px`).toBe("flex");
+    if (showsDisclosure(width)) {
+      expect(audit.disclosureDisplay, `narrow disclosure at ${width}px`).toBe("flex");
       expect(audit.categoryDisplay, `collapsed category content at ${width}px`).toBe("none");
-      expect(audit.footerHeight, `compact mobile footer at ${width}px`).toBeLessThan(800);
+      if (width <= 430) {
+        expect(audit.footerHeight, `compact mobile footer at ${width}px`).toBeLessThan(800);
+      }
     } else {
-      expect(audit.disclosureDisplay, `desktop disclosure at ${width}px`).toBe("none");
-      expect(audit.categoryDisplay, `desktop category content at ${width}px`).toBe("block");
+      expect(audit.disclosureDisplay, `column disclosure at ${width}px`).toBe("none");
+      expect(audit.categoryDisplay, `column category content at ${width}px`).toBe("block");
     }
-  }
-});
+  });
+}
 
 // The sitewide back-to-top and the legal TOC FAB both own the bottom-right
 // corner. legal.css offsets the float above the FAB via :has(.nk-lg-fab-toc);
@@ -162,7 +181,8 @@ test("mobile footer disclosures work with the keyboard and retain visible focus"
   const footer = page.locator("footer.nk-footer");
   await footer.scrollIntoViewIfNeeded();
 
-  const categories = footer.getByRole("button", { name: "Kategorijos", exact: true });
+  const browseHeading = getDictionary("lt").footer.browseHeading;
+  const categories = footer.getByRole("button", { name: browseHeading, exact: true });
   const panelId = await categories.getAttribute("aria-controls");
   expect(panelId).toBeTruthy();
   const panel = page.locator(`[id="${panelId}"]`);
@@ -189,11 +209,32 @@ test("mobile footer disclosures work with the keyboard and retain visible focus"
   await expect(panel).toBeHidden();
 });
 
-test("footer motion collapses under the reduced-motion preference", async ({ page }) => {
+// Asserting only the transition duration here would be near-vacuous: globals.css
+// carries a blanket `* { transition-duration: .001ms !important }` under
+// reduced-motion, so that passes whether or not the chevron is wired up at all.
+// What matters is that the disclosure stays FUNCTIONAL — the rotation is state, not
+// decoration, so it must still land, just without travelling.
+test("footer disclosure still works, without motion, under reduced-motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "load" });
-  const chevron = page.locator(".nk-footer__col--categories .nk-footer__disclosure svg");
+
+  const column = page.locator(".nk-footer__col--categories");
+  const button = column.locator(".nk-footer__disclosure");
+  const chevron = column.locator(".nk-footer__disclosure svg");
+  await button.scrollIntoViewIfNeeded();
+
   const duration = await chevron.evaluate((element) => getComputedStyle(element).transitionDuration);
-  expect(Number.parseFloat(duration)).toBeLessThanOrEqual(0.001);
+  expect(Number.parseFloat(duration), "chevron transition is collapsed").toBeLessThanOrEqual(0.001);
+
+  const collapsed = await chevron.evaluate((element) => getComputedStyle(element).transform);
+  await button.click();
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+  await expect(column.locator(".nk-footer__col-content")).toBeVisible();
+
+  // matrix(-1, 0, 0, -1, 0, 0) is the 180deg rotate; "none" would mean the state
+  // cue never arrives for anyone who prefers reduced motion.
+  const expanded = await chevron.evaluate((element) => getComputedStyle(element).transform);
+  expect(expanded, "chevron still reflects the expanded state").not.toBe(collapsed);
+  expect(expanded).not.toBe("none");
 });

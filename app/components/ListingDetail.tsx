@@ -2371,7 +2371,8 @@ export function DetailBody({
    cancellation policy — no estimate breakdown: pricing math lives in the app),
    and the reserve CTA with a nothing-charged-yet reassurance line.
    variant="facts" drops the reserve button + its note — used inline on mobile
-   (≤980px), where the sticky sidebar is hidden and the fixed MobileBar carries the
+   (below @container nk-detail 55rem), where the sticky sidebar is hidden and the
+   fixed MobileBar carries the
    reserve CTA, so the price + dates + facts still travel to phone users. */
 
 export function BookingPanel({

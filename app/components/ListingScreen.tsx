@@ -213,7 +213,8 @@ export function ListingScreen({ id }: { id: string }) {
         <ListingHeader listing={listing} shared={shared} shareFailed={shareFailed} onShare={share} onFav={lockFav} />
         <Gallery images={listing.images} redirectCtx={listingCtx} hasNoReviews={hasNoReviews} appPath={appPath} />
 
-        {/* The sticky sidebar booking panel is hidden on tablet/phone (≤980px);
+        {/* The sticky sidebar booking panel is hidden once the detail grid collapses
+            to one column (@container nk-detail < 55rem, ~1000px viewport);
             surface the booking facts — and the owner trust card, otherwise ~8
             screens deep — inline under the gallery so mobile keeps the price
             breakdown, protection context and the human trust signal up top. The

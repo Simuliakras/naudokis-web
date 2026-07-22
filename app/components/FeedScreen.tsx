@@ -561,7 +561,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
           </div>
 
           {/* Mobile category rail — the browse dimension stays visible on the page
-              itself instead of two taps deep in the filter sheet (≤560px only). */}
+              itself instead of two taps deep in the filter sheet (below --breakpoint-sm only). */}
           <div className="nk-catrail" ref={catrailRef}>
             <button type="button" className={"nk-pillctl nk-catrail__chip" + (!params.cat ? " is-active" : "")}
               aria-pressed={!params.cat} onClick={() => setParams({ cat: "" })}>{t.allCategories}</button>

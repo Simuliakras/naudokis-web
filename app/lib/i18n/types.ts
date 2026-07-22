@@ -438,7 +438,7 @@ export type Dict = {
     titleSearch: string;
     subtitleAll: string;
     subtitleSearch: (query: string) => string;
-    subtitleSearchGeneric: string; // ≤560px search subtitle — the chip row already echoes the query there
+    subtitleSearchGeneric: string; // compact-viewport search subtitle — the chip row already echoes the query there
     resultCount: (count: number) => string;
     resultCountAtLeast: (count: number) => string; // "N+ …" while the backend cursor has another page
     loadMore: string; // "load more results" button

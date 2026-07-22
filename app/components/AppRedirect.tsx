@@ -184,7 +184,7 @@ export function AppRedirect() {
         )}
         {/* Desktop hero: the QR is the working handoff path there (/go only
             resolves to a store on a phone), so it gets the card + heading.
-            Hidden ≤560px. */}
+            Hidden below --breakpoint-sm. */}
         <div className="nk-redirect-qr">
           <QR size={128} value={installUrl} />
           <span style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
@@ -192,10 +192,12 @@ export function AppRedirect() {
             <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 14, lineHeight: "20px", color: "var(--nk-text-muted)" }}>{dict.bridge.qrHint}</span>
           </span>
         </div>
-        {/* Desktop: separate the scan handoff from the store click-path. Hidden ≤560px. */}
+        {/* Desktop: separate the scan handoff from the store click-path.
+            Hidden below --breakpoint-sm. */}
         <div className="nk-redirect-divider" aria-hidden="true"><span>{dict.bridge.storesDivider}</span></div>
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {/* Mobile primary: one-tap smart link that sniffs the OS. Hidden >560px,
+          {/* Mobile primary: one-tap smart link that sniffs the OS. Hidden at/above
+              --breakpoint-sm,
               where it would only 302 back to the homepage (a decoy CTA). */}
           {/* Ask for the attribution choice first if none is stored. /go enforces it
               either way — this only means the visitor is asked at the moment they act,

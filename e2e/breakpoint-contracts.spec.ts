@@ -2,6 +2,13 @@ import { expect, test } from "@playwright/test";
 import { BREAKPOINTS, VIEWPORT_QUERIES } from "../app/lib/breakpoints";
 
 const breakpointPixels = Object.values(BREAKPOINTS).map((value) => Number.parseFloat(value) * 16);
+// Derived, never literal: hardcoded 559/560/561 would keep passing while silently
+// probing the wrong edges if a token ever moved.
+const px = (token: keyof typeof BREAKPOINTS) => Number.parseFloat(BREAKPOINTS[token]) * 16;
+const SM = px("sm");
+const MD = px("md");
+const NAV = px("nav");
+const around = (edge: number) => [edge - 1, edge, edge + 1];
 
 test("viewport tiers have no gap or overlap", async ({ page }) => {
   await page.goto("/this-route-does-not-exist", { waitUntil: "domcontentloaded" });
@@ -34,7 +41,7 @@ test("all canonical boundaries reflow without horizontal overflow", async ({ pag
 
 test("home hero phone stays contained and clear of search", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  const widths = [559, 560, 561, 767, 768, 769, 772, 804, 911, 998, 1060, 1083, 1110, 1222, 1372];
+  const widths = [...around(SM), ...around(MD), 772, 804, 911, 998, 1060, 1083, 1110, 1222, 1372];
   for (const path of ["/", "/en"]) {
     await page.goto(path, { waitUntil: "load" });
     await page.evaluate(() => document.fonts?.ready);
@@ -67,7 +74,7 @@ test("home hero phone stays contained and clear of search", async ({ page }) => 
       expect(geometry.panel, `hero panel on ${viewport}`).not.toBeNull();
       expect(geometry.intro, `hero intro on ${viewport}`).not.toBeNull();
       expect(geometry.search, `hero search on ${viewport}`).not.toBeNull();
-      if (width < 560) {
+      if (width < SM) {
         expect(geometry.mediaDisplay, `hero media visibility on ${viewport}`).toBe("none");
         continue;
       }
@@ -102,27 +109,49 @@ test("home hero phone stays contained and clear of search", async ({ page }) => 
 });
 
 test("navigation drawer closes at nav and restores visible focus", async ({ page }) => {
-  await page.setViewportSize({ width: 1119, height: 900 });
+  await page.setViewportSize({ width: NAV - 1, height: 900 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => (window as Window & { __nkNavReady?: boolean }).__nkNavReady === true);
-  await expect(page.locator(".nk-nav-cta")).toBeHidden();
+  // The install CTA stays in the bar at every width — it is the site's single
+  // conversion action and must never retreat behind the burger. Below nav it only
+  // sheds its label, so the SHORT one is showing here and the full one is not.
+  await expect(page.locator(".nk-nav-cta")).toBeVisible();
+  await expect(page.locator(".nk-nav-cta__short")).toBeVisible();
+  await expect(page.locator(".nk-nav-cta__full")).toBeHidden();
   await page.locator(".nk-nav-burger").click();
   await expect(page.locator(".nk-nav-drawer")).toHaveClass(/open/);
-  await page.setViewportSize({ width: 1120, height: 900 });
+  await page.setViewportSize({ width: NAV, height: 900 });
   await expect(page.locator(".nk-nav-drawer")).not.toHaveClass(/open/);
-  await expect(page.locator(".nk-nav-cta")).toBeVisible();
+  await expect(page.locator(".nk-nav-cta__full")).toBeVisible();
+  await expect(page.locator(".nk-nav-cta__short")).toBeHidden();
   await expect(page.locator(".nk-nav-burger")).toBeHidden();
   await expect(page.locator("#nk-main")).toBeFocused();
 });
 
+// Phones drop the label entirely: icon-only square, but still present and named.
+test("install CTA survives the compact collapse as an icon-only control", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => (window as Window & { __nkNavReady?: boolean }).__nkNavReady === true);
+  const cta = page.locator(".nk-nav-cta");
+  await expect(cta).toBeVisible();
+  await expect(page.locator(".nk-nav-cta__full")).toBeHidden();
+  await expect(page.locator(".nk-nav-cta__short")).toBeHidden();
+  // Label gone from the screen, never from the accessibility tree.
+  await expect(cta).toHaveAttribute("aria-label", /.+/);
+  const box = await cta.boundingBox();
+  expect(box!.width).toBeGreaterThanOrEqual(44);
+  expect(box!.height).toBeGreaterThanOrEqual(44);
+});
+
 test("filter sheet closes at md and restores visible focus", async ({ page }) => {
   test.setTimeout(60_000);
-  await page.setViewportSize({ width: 767, height: 900 });
+  await page.setViewportSize({ width: MD - 1, height: 900 });
   await page.goto("/skelbimai", { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => (window as Window & { __nkNavReady?: boolean }).__nkNavReady === true);
   await page.locator(".nk-filters-mobilebtn").click();
   await expect(page.locator(".nk-filtersheet-scrim")).toBeVisible();
-  await page.setViewportSize({ width: 768, height: 900 });
+  await page.setViewportSize({ width: MD, height: 900 });
   await expect(page.locator(".nk-filtersheet-scrim")).toHaveCount(0);
   await expect(page.locator("#nk-main")).toBeFocused();
 });
@@ -147,7 +176,7 @@ test("install handoff uses the compact layer on short landscape viewports", asyn
 
 test("semantic compact and expanded queries stay complementary", async ({ page }) => {
   await page.goto("/this-route-does-not-exist", { waitUntil: "domcontentloaded" });
-  for (const width of [559, 560, 561, 767, 768, 769]) {
+  for (const width of [...around(SM), ...around(MD)]) {
     await page.setViewportSize({ width, height: 900 });
     const state = await page.evaluate((queries) => ({
       compact: matchMedia(queries.compact).matches,
@@ -155,6 +184,6 @@ test("semantic compact and expanded queries stay complementary", async ({ page }
       filterExpanded: matchMedia(queries.filterExpanded).matches,
     }), VIEWPORT_QUERIES);
     expect(Number(state.filterCompact) + Number(state.filterExpanded)).toBe(1);
-    expect(state.compact).toBe(width < 560);
+    expect(state.compact).toBe(width < SM);
   }
 });

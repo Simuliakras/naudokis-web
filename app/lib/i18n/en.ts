@@ -158,9 +158,9 @@ export const en: Dict = {
     renter: {
       label: "Renter",
       lead: "From search to return, here is how to rent for a day, a weekend or a project.",
-      ctaTitle: "Continue your reservation request in the app",
+      ctaTitle: "Reserve the item in the app",
       ctaBody:
-        "Choose dates and handover, review the full amount, then authorise payment. The request is then sent to the owner.",
+        "Choose your rental dates and handover method, review the final amount, then authorise payment. The request is then sent to the owner.",
       steps: [
         {
           icon: "Search",

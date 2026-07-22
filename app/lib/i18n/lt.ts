@@ -207,9 +207,9 @@ export const lt: Dict = {
     renter: {
       label: "Nuomininkas",
       lead: "Nuo paieškos iki grąžinimo — taip išsinuomosite daiktą dienai, savaitgaliui ar projektui.",
-      ctaTitle: "Tęskite rezervacijos užklausą programėlėje",
+      ctaTitle: "Rezervuokite daiktą nuomai programėlėje",
       ctaBody:
-        "Pasirinkite datas ir perdavimo būdą, peržiūrėkite visą sumą bei patvirtinkite mokėjimo autorizaciją. Tada užklausa bus išsiųsta savininkui.",
+        "Pasirinkite nuomos datas ir perdavimo būdą, peržiūrėkite galutinę sumą bei patvirtinkite mokėjimo autorizaciją. Tuomet užklausa bus išsiųsta savininkui.",
       steps: [
         {
           icon: "Search",
