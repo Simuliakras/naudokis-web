@@ -7,16 +7,25 @@
    No @reference: that directive is only needed for @apply / theme(), and this file
    uses neither — it would just cost a re-parse of globals.css.
    Hardcoded hexes rather than --nk-* are deliberate here: this page must render
-   correctly even if the token stylesheet fails to load. */
+   correctly even if the token stylesheet fails to load. Keep them in sync with
+   --nk-bg in globals.css — they are a copy, not a source.
 
-:global(html),
-:global(body) {
+   The html/body reset is gated on :has(.root) so it only applies while THIS page
+   is mounted. A bare `:global(body)` escapes module scoping entirely and Next
+   bundles it into the shared CSS chunk, so it repainted every route's body:
+   a stale #282c2d (the pre-"Quiet Luxe" --nk-bg) over the real --nk-bg, plus
+   overflow-x:hidden clobbering globals.css's deliberate `clip`. The visible
+   symptom was the sticky feed filter bar — the one element still painting the
+   correct token — reading as a mismatched darker slab. Do not un-scope these. */
+
+:global(html):has(.root),
+:global(body):has(.root) {
   margin: 0;
   min-height: 100%;
-  background: #282c2d;
+  background: #222527;
 }
 
-:global(body) {
+:global(body):has(.root) {
   overflow-x: hidden;
 }
 

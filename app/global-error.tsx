@@ -28,7 +28,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           gap: 20,
           padding: 24,
           textAlign: "center",
-          background: "#282C2D", // --nk-bg
+          background: "#222527", // --nk-bg
           color: "#FFFFFF", // --nk-text
           fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
         }}

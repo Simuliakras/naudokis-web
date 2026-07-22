@@ -53,7 +53,7 @@ export default function NotFound() {
       style={{
         minHeight: "100vh",
         background:
-          "radial-gradient(circle at 78% 18%, rgba(102,101,224,.30), transparent 34%), radial-gradient(circle at 18% 82%, rgba(16,185,129,.18), transparent 30%), #282C2D",
+          "radial-gradient(circle at 78% 18%, rgba(102,101,224,.30), transparent 34%), radial-gradient(circle at 18% 82%, rgba(16,185,129,.18), transparent 30%), #222527",
         color: "#FFFFFF",
       }}
       className={`${brandFont.className} ${styles.root}`}
