@@ -31,7 +31,10 @@ const configuredFingerprints = value("ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS"
 const configuredPackage = value("ANDROID_APP_LINK_PACKAGE_NAME") || "com.naudokis.naudokis";
 
 /* ---------------- AASA ---------------- */
-const aasa = JSON.parse(readFileSync("public/.well-known/apple-app-site-association", "utf8"));
+// The AASA document is a lib module served by app/.well-known/apple-app-site-association/route.ts,
+// not a public/ asset — a route handler is the only way to guarantee Apple's required
+// application/json Content-Type on every host. This reads the same source the route serves.
+const aasa = JSON.parse(readFileSync("app/lib/apple-app-site-association.json", "utf8"));
 const appId = aasa?.applinks?.details?.[0]?.appID;
 const paths = aasa?.applinks?.details?.[0]?.paths;
 if (!/^[A-Z0-9]{10}\.[A-Za-z0-9.-]+$/.test(appId || "")) {

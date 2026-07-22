@@ -102,15 +102,13 @@ const nextConfig: NextConfig = {
   // unprefixed forms (/kategorijos, /skelbimai/[id]) which don't exist in the
   // typed /[lang]/... route tree, so every href would need an `as Route` cast.
   async headers() {
-    return [
-      { source: "/:path*", headers: securityHeaders },
-      // apple-app-site-association is extensionless; iOS requires it served as
-      // application/json (no .json file is fetched by the OS).
-      {
-        source: "/.well-known/apple-app-site-association",
-        headers: [{ key: "Content-Type", value: "application/json" }],
-      },
-    ];
+    // NOTE: there is no Content-Type entry for apple-app-site-association here any
+    // more. It used to be a public/ asset that needed this header applied to it, but
+    // headers() only runs for responses the Next server produces — hosts that serve
+    // public/ straight off their CDN never applied it (verified on Amplify Hosting).
+    // It is now a route handler that sets its own Content-Type, which holds on every
+    // host. See app/.well-known/apple-app-site-association/route.ts.
+    return [{ source: "/:path*", headers: securityHeaders }];
   },
   async redirects() {
     return [

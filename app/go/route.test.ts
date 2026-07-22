@@ -74,6 +74,21 @@ describe("/go OS routing", () => {
     expect(locationOf(go({ ua: UA.desktop }))).toBe("https://www.naudokis.lt/");
   });
 
+  // Regression: the desktop fallback used to be derived from `request.url`, which
+  // only looked correct because every other test builds its request from the
+  // canonical origin. Amplify's SSR compute does not rewrite the request host from
+  // X-Forwarded-Host, so in production `request.url` was http://localhost:3000 and
+  // desktop visitors were redirected to a dead URL. Build the request from a
+  // foreign origin so the assertion tests the behaviour, not the fixture.
+  it("sends desktop to the canonical origin even when the request host is not canonical", () => {
+    const response = GET(
+      new NextRequest(new URL("http://localhost:3000/go"), {
+        headers: new Headers({ "user-agent": UA.desktop }),
+      }),
+    );
+    expect(locationOf(response)).toBe("https://www.naudokis.lt/");
+  });
+
   it("never caches — the response depends on UA and cookie", async () => {
     const mod = await import("./route");
     expect(mod.dynamic).toBe("force-dynamic");

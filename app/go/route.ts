@@ -1,5 +1,5 @@
 import { after, NextResponse, userAgent, type NextRequest } from "next/server";
-import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
+import { APP_STORE_URL, PLAY_STORE_URL, SITE_ORIGIN } from "@/app/lib/contact";
 import { buildGenericInstallLink } from "@/app/lib/onelink";
 import { GO_ATTRIBUTION_KEYS, cleanAttributionValue } from "@/app/lib/attribution";
 import { listingIdFromAppPath } from "@/app/lib/app-links";
@@ -74,11 +74,16 @@ export function GET(request: NextRequest) {
   // reached on the granted path — AppsFlyer builds its own Play URL and owns the
   // referrer there. See app/lib/play-referrer.ts.
   const playUrl = playStoreUrlWithReferrer(PLAY_STORE_URL, targetPath);
+  // Desktop falls back to the marketing home at the CANONICAL origin, never one
+  // derived from `request.url`. Hosts differ on whether they rewrite the request
+  // host from X-Forwarded-Host: Amplify's SSR compute does not, so `request.url`
+  // arrives as http://localhost:3000 and the fallback redirected visitors to a
+  // dead URL. Every other absolute URL on the site already comes from SITE_ORIGIN.
   const destination =
     oneLink ??
     (os.name === "iOS" ? APP_STORE_URL
       : os.name === "Android" ? playUrl
-        : new URL("/", request.url).toString());
+        : `${SITE_ORIGIN}/`);
   const outcome =
     oneLink ? "onelink"
       : os.name === "iOS" ? "app_store"

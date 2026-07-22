@@ -1,0 +1,64 @@
+# AWS Amplify Hosting build settings.
+#
+# This file is the source of truth: when amplify.yml exists at the repo root,
+# Amplify uses it and IGNORES the build settings saved in the console, so the
+# buildspec is reviewable and versioned rather than invisible console state.
+#
+# The app is deployed as an SSR/compute app (platform WEB_COMPUTE), not the static
+# export the previous site used — hence `baseDirectory: .next` rather than `out`.
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # Next 16 requires Node >=20.9. Pin it rather than inheriting whatever the
+        # build image defaults to; Amplify supports Node 20/22/24.
+        - nvm install 22
+        - nvm use 22
+        - node -v
+        - yarn install --frozen-lockfile
+        # ------------------------------------------------------------------
+        # Amplify does NOT pass environment variables into the SSR compute
+        # runtime. Verified 2026-07-22 at BOTH app level and branch level: a
+        # force-dynamic route reading process.env at request time gets nothing,
+        # while the same route serves correctly on any other host. Build-time
+        # NEXT_PUBLIC_* inlining is unaffected and needs nothing here.
+        #
+        # So every variable read at REQUEST time has to be materialised into a
+        # .env file that ships with the build, for the Next server to load on
+        # boot. Do not delete this block: without it these are silently empty,
+        # and two of them fail quietly rather than loudly — TRUSTED_PROXY_HOPS
+        # disables per-client rate limiting, and HANDOFF_SIGNING_SECRET stops
+        # handoff tokens minting, neither of which surfaces as an error.
+        #
+        # Consequence to accept: these values live in the build artifact, so
+        # rotating one is a rebuild, not an env-var edit. (.env* is gitignored,
+        # so this generated file is never committed.)
+        # ------------------------------------------------------------------
+        - |
+          cat > .env.production <<EOF
+          ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS=$ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS
+          ANDROID_APP_LINK_PACKAGE_NAME=$ANDROID_APP_LINK_PACKAGE_NAME
+          TRUSTED_PROXY_HOPS=$TRUSTED_PROXY_HOPS
+          HANDOFF_SIGNING_SECRET=$HANDOFF_SIGNING_SECRET
+          PLAUSIBLE_EVENTS_API=$PLAUSIBLE_EVENTS_API
+          EOF
+        # Log which runtime vars actually arrived. Prints the KEY and whether it is
+        # set — never the value, since HANDOFF_SIGNING_SECRET is among them and
+        # build logs are not a secret store.
+        - |
+          while IFS='=' read -r key value; do
+            [ -z "$key" ] && continue
+            if [ -n "$value" ]; then echo "runtime env $key: set"; else echo "runtime env $key: MISSING"; fi
+          done < .env.production
+    build:
+      commands:
+        - yarn build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
