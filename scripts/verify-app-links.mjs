@@ -26,6 +26,19 @@ const fileEnv = Object.fromEntries(envText.split(/\r?\n/).flatMap((line) => {
 }));
 const value = (key) => process.env[key] || fileEnv[key] || "";
 const fingerprintPattern = /^(?:[0-9A-F]{2}:){31}[0-9A-F]{2}$/;
+// Read from the i18n config rather than hardcoded: this is a .mjs script and cannot
+// import the TS module, but a second copy of the locale list is exactly the kind of
+// drift this script exists to catch.
+const localeSource = readFileSync("app/lib/i18n/locales.ts", "utf8");
+const locales = [...(localeSource.match(/export const locales = \[([^\]]+)\]/)?.[1] ?? "")
+  .matchAll(/"([a-z-]+)"/g)].map((match) => match[1]);
+if (locales.length === 0) {
+  problems.push("could not read `locales` from app/lib/i18n/locales.ts");
+}
+const defaultLocale = localeSource.match(/export const defaultLocale: Locale = "([a-z-]+)"/)?.[1];
+if (!defaultLocale) {
+  problems.push("could not read `defaultLocale` from app/lib/i18n/locales.ts");
+}
 const configuredFingerprints = value("ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS")
   .split(/[,;\n]/).map((item) => item.trim().toUpperCase()).filter(Boolean);
 const configuredPackage = value("ANDROID_APP_LINK_PACKAGE_NAME") || "com.naudokis.naudokis";
@@ -51,9 +64,37 @@ if (!Array.isArray(paths) || !paths.includes("/listing/*") || !paths.includes("/
 /* ---------------- Every AASA path resolves to a real, unshadowed route ---------------- */
 // "/booking-request/*" → "booking-request". The first segment is all that decides
 // which route file serves it, and whether the proxy matches it.
+//
+// A claim may carry an explicit locale prefix ("/en/skelbimai/*"): pages that are
+// browsable in both locales are shared with the locale in the URL, so both forms
+// have to be claimed. The prefix is not a route directory — app/[lang] has no "en"
+// folder — so strip it before asking whether the segment routes.
+//
+// The segment itself is also spelled per locale ("/en/listings/*" is served by
+// app/[lang]/skelbimai), so translate it back through the same table proxy.ts uses
+// before looking for a route directory. Parsed out of the TS module rather than
+// duplicated here — a second copy is exactly the drift this script exists to catch.
+const segmentSource = readFileSync("app/lib/i18n/route-segments.ts", "utf8");
+const internalSegments = new Map();
+for (const locale of locales) {
+  const block = segmentSource.match(new RegExp(`\\b${locale}:\\s*\\{([^}]*)\\}`))?.[1];
+  if (!block) {
+    problems.push(`could not read ROUTE_SEGMENTS.${locale} from app/lib/i18n/route-segments.ts`);
+    continue;
+  }
+  for (const [, internal, publicSegment] of block.matchAll(/"?([a-z-]+)"?\s*:\s*"([a-z-]+)"/g)) {
+    internalSegments.set(`${locale}:${publicSegment}`, internal);
+  }
+}
+
+const LOCALE_PREFIX = new RegExp(`^/(${locales.join("|")})(?=/)`);
 const claimedSegments = new Set(
   (Array.isArray(paths) ? paths : [])
-    .map((path) => path.replace(/^\//, "").split("/")[0].replace(/\*$/, ""))
+    .map((path) => {
+      const locale = path.match(LOCALE_PREFIX)?.[1] ?? defaultLocale;
+      const publicSegment = path.replace(LOCALE_PREFIX, "").replace(/^\//, "").split("/")[0].replace(/\*$/, "");
+      return internalSegments.get(`${locale}:${publicSegment}`) ?? publicSegment;
+    })
     .filter(Boolean),
 );
 
@@ -80,14 +121,24 @@ const routable = (segment) => {
 
 // The proxy must MATCH these paths (they need the locale rewrite). Anything listed
 // in the matcher's negative lookahead is excluded from the proxy and would 404.
+// Run the real matcher against a real path rather than parsing its exclusion list.
+// The previous `\(\?!([^)]+)\)` parse stopped at the first ")" — which lands inside
+// "(?:/|$)" — so the set was ["api(?:/", "$"] and this check could never fire.
+// `readFileSync` returns the TS *source*, where a regex backslash is written "\\",
+// so unescape before compiling.
 const matcher = readFileSync("proxy.ts", "utf8").match(/matcher:\s*\["([^"]+)"\]/)?.[1] ?? "";
-const proxyExcluded = new Set(matcher.match(/\(\?!([^)]+)\)/)?.[1]?.split("|") ?? []);
+if (!matcher) {
+  problems.push("could not read the proxy matcher from proxy.ts");
+}
+const matcherRe = matcher ? new RegExp(`^${matcher.replace(/\\\\/g, "\\")}$`) : undefined;
+const proxyMatches = (segment) =>
+  !matcherRe || (matcherRe.test(`/${segment}`) && matcherRe.test(`/${segment}/x`));
 
 for (const segment of claimedSegments) {
   if (!routable(segment)) {
     problems.push(`AASA claims "/${segment}" but app/[lang]/${segment} has no page — it would 404 for anyone without the app`);
   }
-  if (proxyExcluded.has(segment)) {
+  if (!proxyMatches(segment)) {
     problems.push(`proxy.ts matcher excludes "${segment}", so /${segment}/… never gets its locale rewrite and 404s`);
   }
 }
@@ -107,12 +158,70 @@ if (!staticOnly) {
     problems.push("ANDROID_APP_LINK_SHA256_CERT_FINGERPRINTS must contain at least one valid SHA-256 app-signing fingerprint");
   }
   const oneLink = value("NEXT_PUBLIC_ONELINK_URL");
+  let oneLinkUrl;
   try {
-    if (!oneLink || new URL(oneLink).protocol !== "https:") {
+    oneLinkUrl = new URL(oneLink);
+    if (!oneLink || oneLinkUrl.protocol !== "https:") {
       problems.push("NEXT_PUBLIC_ONELINK_URL must be an absolute HTTPS URL");
+      oneLinkUrl = undefined;
     }
   } catch {
     problems.push("NEXT_PUBLIC_ONELINK_URL is invalid");
+  }
+  // The OneLink host is a SECOND association surface, hosted by AppsFlyer from its
+  // dashboard config — we cannot serve it, but the link we emit has to satisfy it.
+  // It claimed "/LNBm/*" while we emitted the bare "/LNBm", so iOS matched nothing
+  // and every consented install bounced to the App Store instead of opening the app
+  // — silently, and only for people who already had it. Nothing checked this before.
+  if (oneLinkUrl) {
+    await verifyOneLinkAssociation(oneLinkUrl);
+  }
+}
+
+// Apple's legacy `paths` matcher. Only the path is compared — query and fragment are
+// ignored (App Search Programming Guide) — so "/LNBm/*" does NOT match "/LNBm": the
+// pattern requires the literal separator before the wildcard.
+function matchesApplePath(pattern, pathname) {
+  const negated = pattern.startsWith("NOT ");
+  const body = negated ? pattern.slice(4) : pattern;
+  const regex = new RegExp(`^${body.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".")}$`);
+  return { matched: regex.test(pathname), negated };
+}
+
+async function verifyOneLinkAssociation(url) {
+  const associationUrl = new URL("/.well-known/apple-app-site-association", url.origin);
+  let claimed;
+  try {
+    const response = await fetch(associationUrl, { redirect: "manual" });
+    if (response.status !== 200) {
+      problems.push(`${associationUrl} returned ${response.status} — the OneLink host claims no iOS app, so links never open it`);
+      return;
+    }
+    const json = await response.json();
+    const detail = json?.applinks?.details?.find((entry) => entry?.appID === appId);
+    if (!detail) {
+      problems.push(`${associationUrl} does not claim ${appId} — configure Universal Links in the AppsFlyer OneLink template`);
+      return;
+    }
+    claimed = detail.paths;
+  } catch (error) {
+    problems.push(`could not fetch ${associationUrl}: ${error.message}`);
+    return;
+  }
+  if (!Array.isArray(claimed)) {
+    return;
+  }
+  // Last matching entry wins, so a trailing "NOT " exclusion can still veto.
+  const verdict = claimed
+    .map((pattern) => matchesApplePath(pattern, url.pathname))
+    .filter((result) => result.matched)
+    .pop();
+  if (!verdict || verdict.negated) {
+    problems.push(
+      `NEXT_PUBLIC_ONELINK_URL path "${url.pathname}" matches none of ${url.host}'s claimed paths ` +
+      `${JSON.stringify(claimed)} — iOS will open Safari instead of the app. Add a path segment ` +
+      `(e.g. "${url.pathname.replace(/\/$/, "")}/i") so it matches.`,
+    );
   }
 }
 
