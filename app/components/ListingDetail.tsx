@@ -5,6 +5,7 @@
 // the design bundle's "2026 rigorous redesign" (listing.jsx): premium bento
 // gallery, sticky in-page sub-nav, booking panel, trust-rich host card.
 import { trackEvent } from "@/app/lib/analytics";
+import { IMAGE_SIZES } from "@/app/lib/breakpoints";
 import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
 import { goHref } from "@/app/lib/attribution";
 import type { Availability } from "@/app/lib/availability";
@@ -207,12 +208,12 @@ function GalleryTile({
           quality={75}
           sizes={
             fullWidth
-              ? "(max-width: 980px) 100vw, min(calc(100vw - 164px), 1340px)"
+              ? IMAGE_SIZES.detailHero
               : big
                 ? // the detail column caps at 1340px — a bare vw kept scaling the
                   // request past it (~1.5-3x pixels at wide/ultrawide)
-                  "(max-width: 980px) 100vw, min(60vw, 800px)"
-                : "(max-width: 980px) 50vw, min(20vw, 268px)"
+                  IMAGE_SIZES.detailPrimary
+                : IMAGE_SIZES.detailThumb
           }
           onError={(event) => {
             event.currentTarget.style.visibility = "hidden";
@@ -742,6 +743,7 @@ export function ListingHeader({
   const t = dict.detail;
   return (
     <div
+      className="nk-lhead"
       style={{
         display: "flex",
         justifyContent: "space-between",
@@ -1052,7 +1054,7 @@ export function Gallery({
 // is letterboxed by object-fit:contain, so a bare 100vw would over-fetch on wide
 // screens; declaring the real ~1024px slot lands DPR1 on the 1080 candidate and
 // DPR2 exactly on 2048 with no visible softening.
-const LB_SIZES = "(min-width: 1200px) 1024px, 100vw";
+const LB_SIZES = IMAGE_SIZES.lightbox;
 
 // Main lightbox photo with a load/error state tied to the ACTUAL image load
 // (mounted with key={index} so it resets per navigation): a spinner shows until
@@ -1062,7 +1064,7 @@ const LB_SIZES = "(min-width: 1200px) 1024px, 100vw";
 // Byte-identical to the big bento tile's `sizes`, so the browser reuses the
 // already-cached grid rendition as an instant low-res underlay while the
 // full-res LB_SIZES photo loads (Airbnb-style paint-what-you-had-then-swap).
-const LB_UNDERLAY_SIZES = "(max-width: 980px) 100vw, 60vw";
+const LB_UNDERLAY_SIZES = IMAGE_SIZES.lightboxUnderlay;
 
 function LightboxImage({
   src,

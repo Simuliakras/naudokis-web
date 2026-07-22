@@ -401,7 +401,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
     // grid-display wrapper so the card stretches to the row height; listitem role
     // pairs with the grid's role="list" so AT gets "list, N items" + position
     <div key={o.id} className="nk-reveal" role="listitem" style={{ display: "grid" }}>
-      <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
+      <OfferCard id={o.id} title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
         rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
         photoCount={o.photoCount} deposit={o.deposit} owner={o.owner}
         img={o.img} category={o.category} categoryName={categoryNameFor(cats, o.category)} categoryIcon={categoryIconFor(cats, o.category)}
@@ -906,9 +906,9 @@ function FeedFilterSheet({
   // Scroll-lock + Escape + focus-restore + focus-on-open, plus auto-close once the
   // viewport grows past the mobile breakpoint (the trigger is mobile-only) so a
   // resized desktop is never stuck behind the sheet.
-  useDismissableLayer(open, onClose, { initialFocus: closeRef, closeAt: "(min-width: 561px)" });
+  useDismissableLayer(open, onClose, { initialFocus: closeRef, closeAt: "filterExpanded" });
   // Same sheet anatomy as the app-redirect sheet: grabber pill + swipe-to-dismiss.
-  useSheetDrag({ panelRef, handleRef: grabRef, enabled: open, onDismiss: onClose });
+  useSheetDrag({ panelRef, handleRef: grabRef, enabled: open, onDismiss: onClose, activeAt: "filterCompact" });
   // Drive the slide-in: keyed on `open` alone so an in-sheet filter tap (which
   // re-renders the parent) never restarts the entrance animation.
   useEffect(() => {

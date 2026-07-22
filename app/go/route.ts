@@ -2,8 +2,10 @@ import { after, NextResponse, userAgent, type NextRequest } from "next/server";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 import { buildGenericInstallLink } from "@/app/lib/onelink";
 import { GO_ATTRIBUTION_KEYS, cleanAttributionValue } from "@/app/lib/attribution";
+import { listingIdFromAppPath } from "@/app/lib/app-links";
 import { trackServerEvent } from "@/app/lib/server-analytics";
 import { createHandoffToken } from "@/app/lib/handoff-token";
+import { playStoreUrlWithReferrer } from "@/app/lib/play-referrer";
 import { CONSENT_COOKIE, parseConsent } from "@/app/lib/consent";
 
 // Smart install link. A single shareable URL (https://www.naudokis.lt/go) — the
@@ -24,15 +26,21 @@ export const dynamic = "force-dynamic";
 // chat, review, billing, profile and account paths carry transactional ids that
 // must never reach an attribution processor — they keep their own first-party
 // handoff pages instead, and any such ?target here is ignored.
-const APP_PATH = /^\/listing(?:\/|$)/;
-
 function appTarget(request: NextRequest): string | undefined {
   const raw = request.nextUrl.searchParams.get("target");
   if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.length > 600) {
     return undefined;
   }
   const target = new URL(raw, request.nextUrl.origin);
-  if (target.origin !== request.nextUrl.origin || !APP_PATH.test(target.pathname)) {
+  if (target.origin !== request.nextUrl.origin) {
+    return undefined;
+  }
+  // Gate on the shared parser rather than a local regex. A bare "/listing" (no id)
+  // used to pass: it minted a handoff token and set deep_link_sub10, but with no id
+  // there is no deep_link_value, and the app early-returns when that is absent — so
+  // the token was attached and then silently ignored. Requiring an id means "we
+  // produced a target" and "the app can act on it" can no longer disagree.
+  if (!listingIdFromAppPath(target.pathname)) {
     return undefined;
   }
   return `${target.pathname}${target.search}${target.hash}`;
@@ -60,10 +68,16 @@ export function GET(request: NextRequest) {
   }
 
   const { os } = userAgent(request);
+  // Android keeps its deep-link target even without consent: the Play install
+  // referrer is first-party and needs no SDK, so the declined path still resumes at
+  // the listing. iOS has no equivalent, so it degrades to a bare store URL. Not
+  // reached on the granted path — AppsFlyer builds its own Play URL and owns the
+  // referrer there. See app/lib/play-referrer.ts.
+  const playUrl = playStoreUrlWithReferrer(PLAY_STORE_URL, targetPath);
   const destination =
     oneLink ??
     (os.name === "iOS" ? APP_STORE_URL
-      : os.name === "Android" ? PLAY_STORE_URL
+      : os.name === "Android" ? playUrl
         : new URL("/", request.url).toString());
   const outcome =
     oneLink ? "onelink"
@@ -81,7 +95,12 @@ export function GET(request: NextRequest) {
       outcome,
       handoff: safeHandoff,
       consent,
-      contextPreserved: Boolean(oneLink && targetPath),
+      // True only where the target actually rides along: the consented OneLink, or
+      // an Android referrer that was really attached. Reading this as "AppsFlyer
+      // fired" would now be wrong — the two have come apart.
+      contextPreserved: Boolean(
+        targetPath && (oneLink || (os.name === "Android" && playUrl !== PLAY_STORE_URL)),
+      ),
       os: os.name ?? "unknown",
     }),
   );

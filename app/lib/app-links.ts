@@ -71,6 +71,17 @@ export function listingAppPath(id: string, range?: { start: string; end: string 
   return `${path}?start_date=${range.start}&end_date=${range.end}`;
 }
 
+// The inverse: the listing id back out of an app path ("/listing/abc?start_date=…"
+// → "abc"). Lives beside listingAppPath deliberately — the OneLink builder and the
+// Play referrer builder both parse ids the web wrote here, and two hand-rolled
+// parsers that must agree with one writer is how they stop agreeing. Query and hash
+// are stripped: dates, if ever switched on, travel on the path, never in the id.
+export function listingIdFromAppPath(appPath: string): string | undefined {
+  const [pathname] = appPath.split(/[?#]/);
+  const [segment, id] = pathname.split("/").filter(Boolean);
+  return segment === "listing" && id ? id : undefined;
+}
+
 // Paths whose query carries a single-use token (password reset, email verification,
 // deletion cancel). The token authorizes a real account action, so it must not be
 // forwarded to a third party — not to analytics, not to error reporting.

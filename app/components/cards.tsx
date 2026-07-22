@@ -6,10 +6,12 @@ import { useEffect, useId, useRef, useState } from "react";
 import { Avatar, Icon, IconName, IllusName, Illustration, Pill, openRedirect } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { trackEvent } from "@/app/lib/analytics";
+import { IMAGE_SIZES } from "@/app/lib/breakpoints";
 // From listing-view, NOT listings: listings.ts owns the react-query hooks, and
 // importing it here would pull the whole query runtime into every page that renders
 // a card — including the home page, which issues no queries at all.
 import { formatLocation, type OfferOwner } from "@/app/lib/listing-view";
+import { listingAppPath } from "@/app/lib/app-links";
 
 /* ---------------- Offer / listing card ----------------
    "Struktūruota" 2026 design: photo-forward 4:3 frame whose bottom edge pairs the
@@ -18,10 +20,11 @@ import { formatLocation, type OfferOwner } from "@/app/lib/listing-view";
    amount. No arrow cue — the whole card is a stretched <Link>.
    Favorite is locked (opens the app modal). */
 export function OfferCard({
-  title, city, subdivision, price, unit, rating, ratingCount, img, href, category, categoryName, categoryIcon = "Tag", hasDelivery = false,
+  id, title, city, subdivision, price, unit, rating, ratingCount, img, href, category, categoryName, categoryIcon = "Tag", hasDelivery = false,
   photoCount = 0, deposit, owner,
   imageLoading = "lazy",
 }: {
+  id?: string; // listing id — the app-side favourite target; absent on decorative/preview cards
   title: string;
   city?: string;
   subdivision?: string; // district within the city, appended after the city on the location line
@@ -51,6 +54,11 @@ export function OfferCard({
     // ListingScreen): favouriting from a card and from the detail page must open
     // the same modal for the same listing, down to the category eyebrow's hue.
     // Everything here is card props — nothing is derived or fabricated.
+    //
+    // `appPath` matters as much as the modal contents: without it /go has no
+    // ?target, so a favourite from the feed lands on a bare store page while the
+    // identical action on the detail page resumes at the listing. Same action,
+    // same handoff. Dates are detail-page-only, so there is no range to pass.
     openRedirect({
       title: dict.bridge.favoriteTitle,
       body: dict.bridge.favoriteBody,
@@ -61,6 +69,7 @@ export function OfferCard({
         category: categoryName,
         categoryId: category,
       },
+      appPath: id ? listingAppPath(id) : undefined,
     });
   };
   return (
@@ -78,7 +87,7 @@ export function OfferCard({
         {img && failedSrc !== img && (
           <Image src={img} alt={title} fill className="nk-zoom"
             loading={imageLoading}
-            sizes="(max-width: 560px) calc(50vw - 28px), (max-width: 750px) calc(50vw - 40px), (max-width: 1020px) calc(33vw - 30px), (max-width: 1280px) calc(25vw - 30px), min(20vw, 345px)"
+            sizes={IMAGE_SIZES.offerCard}
             onError={(event) => {
               event.currentTarget.style.visibility = "hidden";
               setFailedSrc(img);
@@ -197,11 +206,12 @@ export function CategoryCard({
   href: string;
   id: string; // top-level category id — selects the accent hue
   icon: IconName; // glyph resolved from the wire's icon_name (Category.icon)
-  examples?: string; // one-line examples (dict, id-keyed); hidden ≤560px by CSS
+  examples?: string; // one-line examples (dict, id-keyed); shown at every width
 }) {
   // Bare <Icon> — its default 24/2 width/stroke attributes are inert here: the
-  // v2 CSS (plus the global svg.nk-ico stroke) restyles size/stroke per slot and
-  // breakpoint (e.g. chip 24→20px at ≤560), which per-render props can't do.
+  // v2 CSS (plus the global svg.nk-ico stroke) restyles size/stroke per slot,
+  // which per-render props can't do. The sizing is breakpoint-independent: this
+  // card renders one anatomy at every resolution.
   return (
     <div className="nk-cat nk-catv2" data-cat={id}>
       <Link href={href} className="nk-stretch" aria-label={title} />

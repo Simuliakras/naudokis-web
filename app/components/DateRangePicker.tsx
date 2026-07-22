@@ -30,6 +30,7 @@ import { type Availability } from "@/app/lib/availability";
 import { formatShortDate, type IsoDate } from "@/app/lib/dates";
 import type { Dict } from "@/app/lib/i18n/types";
 import { CalendarPanel, type CalendarCopy, type DateRange } from "./Calendar";
+import { matchesViewport } from "@/app/lib/breakpoints";
 
 export type { DateRange };
 
@@ -110,7 +111,7 @@ export function DateRangePicker(props: PickerProps) {
   // `closeAt`, so a mid-open resize is handled too. This also arms the lazily-enabled
   // availability query, so neither happens until the user actually asks for the calendar.
   const { open, triggerRef, close, dismiss, toggle } = useTriggerPopover<HTMLButtonElement>(() => {
-    setIsSheet(window.matchMedia("(max-width: 560px)").matches);
+    setIsSheet(matchesViewport("layerCompact"));
     props.onOpen();
   });
 
@@ -200,7 +201,7 @@ function RangeSheet(props: PanelProps & { onClose: () => void }) {
   const [shown, setShown] = useState(false);
 
   useFocusTrap(panelRef, true);
-  useDismissableLayer(true, onClose, { initialFocus: closeRef, closeAt: "(min-width: 561px)" });
+  useDismissableLayer(true, onClose, { initialFocus: closeRef, closeAt: "layerExpanded" });
   useSheetDrag({ panelRef, handleRef: grabRef, enabled: true, onDismiss: onClose });
 
   useEffect(() => {

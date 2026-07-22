@@ -2,12 +2,18 @@
 import { chromium } from "@playwright/test";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { openNavInstall } from "./_shots-lib.mjs";
 
-export const WIDTHS = [
-  320, 344, 360, 375, 390, 393, 412, 430, 480, 540, 560, 600, 640, 700, 744, 768,
-  820, 834, 900, 980, 1024, 1112, 1120, 1180, 1200, 1280, 1366, 1440, 1536, 1728,
-  1920, 2560,
-];
+const breakpointSource = await fs.readFile(new URL("../app/lib/breakpoints.ts", import.meta.url), "utf8");
+const breakpointWidths = [...breakpointSource.matchAll(/^\s+(?:xs|sm|md|lg|nav|xl):\s*"([\d.]+)rem"/gm)]
+  .map((match) => Number(match[1]) * 16);
+if (breakpointWidths.length !== 6) throw new Error("Could not load the canonical breakpoint registry");
+const boundaryWidths = breakpointWidths.flatMap((width) => [width - 1, width, width + 1]);
+export const WIDTHS = [...new Set([
+  320, 344, 375, 390, 393, 412, 430, 480, 540, 600, 640, 700, 744,
+  820, 834, 900, 980, 1112, 1180, 1200, 1366, 1440, 1536, 1728, 1920, 2560,
+  ...boundaryWidths,
+])].sort((a, b) => a - b);
 
 const BASE_URL = process.env.BASE_URL ?? "http://127.0.0.1:3001";
 const OUT = process.env.RESPONSIVE_AUDIT_OUT
@@ -15,7 +21,7 @@ const OUT = process.env.RESPONSIVE_AUDIT_OUT
   : path.resolve("screenshots", "responsive-audit");
 const QUICK = process.argv.includes("--quick");
 
-const QUICK_WIDTHS = [320, 390, 560, 768, 1024, 1366, 1920];
+const QUICK_WIDTHS = [320, 390, ...breakpointWidths, 1366, 1920];
 const widths = QUICK ? QUICK_WIDTHS : WIDTHS;
 
 const ROUTES = [
@@ -71,14 +77,14 @@ const INTERACTIONS = [
     path: "/",
     widths: [320, 390, 768, 1366],
     open: async (page) => {
-      await clickIfReady(page, ".nk-nav-cta");
+      await openNavInstall(page);
       await page.waitForTimeout(350);
     },
   },
 ];
 
 const REVEAL_KILL = `
-  .nk-reveal, .nk-reveal-grid > *, .nk-hero-intro > *, .nk-hero-media {
+  .nk-reveal, .nk-reveal-grid, .nk-reveal-grid > *, .nk-hero-intro > *, .nk-hero-media {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

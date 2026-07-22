@@ -153,8 +153,8 @@ export const en: Dict = {
         "Learn how to send or accept a reservation request, record handover and return, and complete a rental through Naudokis.",
     },
     eyebrow: "How it works",
-    title: "Rent what you need. Earn from what you own.",
-    lead: "Naudokis provides the marketplace and rental-process tools; the renter contracts directly with a private or business owner. Choose your role to see the full journey.",
+    title: "Rent what you need. Earn from what you already own.",
+    lead: "Naudokis connects renters with private and business owners and provides the tools for a smooth rental process. The rental agreement is made directly between the parties. Choose your role and see how the whole process works.",
     renter: {
       label: "Renter",
       lead: "From search to return, here is how to rent for a day, a weekend or a project.",

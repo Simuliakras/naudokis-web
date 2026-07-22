@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CONTACT_EMAIL } from "@/app/lib/contact";
 import { brandFont } from "@/app/lib/fonts";
+import styles from "./not-found.module.css";
 
 export const metadata: Metadata = {
   title: "Šio puslapio neradome | Page not found",
@@ -48,47 +49,17 @@ const secondaryCta: React.CSSProperties = {
 
 export default function NotFound() {
   return (
-    <>
-      <style>{`
-        html, body {
-          margin: 0;
-          min-height: 100%;
-          background: #282C2D;
-        }
-        body {
-          overflow-x: hidden;
-        }
-        a:focus-visible { outline: 2px solid #8A89FF; outline-offset: 3px; }
-        .nf-nav a:hover { color: #8A89FF; }
-        .nf-cta { transition: opacity .15s ease, transform .15s ease; }
-        .nf-cta:hover { opacity: .92; }
-        .nf-cta:active { transform: scale(.98); }
-        .nf-get:hover { color: #FFFFFF; }
-        @media (max-width: 640px) {
-          .nf-nav {
-            display: none !important;
-          }
-        }
-        .nf-cta-short { display: none; }
-        @media (max-width: 430px) {
-          .nf-header { gap: 12px !important; padding-inline: 12px !important; }
-          .nf-header img { height: 32px !important; width: auto !important; }
-          .nf-header .nf-cta { padding-inline: 16px !important; }
-          .nf-cta-full { display: none; }
-          .nf-cta-short { display: inline; }
-        }
-      `}</style>
-      <main
+    <main
         style={{
           minHeight: "100vh",
           background:
             "radial-gradient(circle at 78% 18%, rgba(102,101,224,.30), transparent 34%), radial-gradient(circle at 18% 82%, rgba(16,185,129,.18), transparent 30%), #282C2D",
           color: "#FFFFFF",
         }}
-        className={brandFont.className}
+        className={`${brandFont.className} ${styles.root}`}
       >
         <header
-          className="nf-header"
+          className={styles.header}
           style={{
             minHeight: 76,
             display: "flex",
@@ -106,7 +77,7 @@ export default function NotFound() {
             <img src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={162} height={36} style={{ height: 36, width: "auto" }} />
           </Link>
           <nav
-            className="nf-nav"
+            className={styles.nav}
             aria-label="Pagrindinė navigacija"
             style={{
               display: "flex",
@@ -135,9 +106,9 @@ export default function NotFound() {
           {/* the site's one conversion action stays in the chrome even here;
               /go is a redirect route handler, so a plain <a> is correct */}
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/go" aria-label="Atsisiųsti programėlę" className={"nf-cta " + brandFont.className} style={{ ...primaryCta, minHeight: 44, padding: "0 20px", fontSize: 15, flex: "none" }}>
-            <span className="nf-cta-full">Atsisiųsti programėlę</span>
-            <span className="nf-cta-short">Programėlė</span>
+          <a href="/go" aria-label="Atsisiųsti programėlę" className={`${styles.cta} ${brandFont.className}`} style={{ ...primaryCta, minHeight: 44, padding: "0 20px", fontSize: 15, flex: "none" }}>
+            <span className={styles.ctaFull}>Atsisiųsti programėlę</span>
+            <span className={styles.ctaShort}>Programėlė</span>
           </a>
         </header>
 
@@ -217,17 +188,17 @@ export default function NotFound() {
                 marginTop: 30,
               }}
             >
-              <Link href="/" className="nf-cta" style={primaryCta}>
+              <Link href="/" className={styles.cta} style={primaryCta}>
                 Į pradžią / Home
               </Link>
-              <Link href="/skelbimai" className="nf-cta" style={secondaryCta}>
+              <Link href="/skelbimai" className={styles.cta} style={secondaryCta}>
                 Naršyti nuomą / Browse rentals
               </Link>
             </div>
             {/* minimal install affordance — /go is a redirect route handler (sniffs
                 the OS), so a full navigation via <a> is correct, not next/link. */}
             {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-            <a href="/go" className="nf-get" style={{ display: "inline-block", marginTop: 22, color: "rgba(255,255,255,.6)", textDecoration: "underline", textUnderlineOffset: 3, fontSize: 14, transition: "color .15s ease" }}>
+            <a href="/go" className={styles.get} style={{ display: "inline-block", marginTop: 22, color: "rgba(255,255,255,.6)", textDecoration: "underline", textUnderlineOffset: 3, fontSize: 14, transition: "color .15s ease" }}>
               Atsisiųsti programėlę / Get the app
             </a>
           </div>
@@ -249,7 +220,6 @@ export default function NotFound() {
           <span>© {new Date().getFullYear()} Naudokis.lt</span>
           <a href={"mailto:" + CONTACT_EMAIL} style={{ color: "rgba(255,255,255,.6)", textDecoration: "underline", textUnderlineOffset: 3 }}>{CONTACT_EMAIL}</a>
         </footer>
-      </main>
-    </>
+    </main>
   );
 }

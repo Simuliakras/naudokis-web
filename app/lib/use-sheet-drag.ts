@@ -6,15 +6,16 @@
 // scrolling content; no-ops entirely above the mobile-sheet breakpoint.
 import { useEffect } from "react";
 import { prefersReducedMotion } from "./motion";
+import { matchesViewport, type ViewportQueryName } from "./breakpoints";
 
-const SHEET_MEDIA = "(max-width: 560px)";
 const CLOSE_THRESHOLD_PX = 120;
 
-export function useSheetDrag({ panelRef, handleRef, enabled, onDismiss }: {
+export function useSheetDrag({ panelRef, handleRef, enabled, onDismiss, activeAt = "layerCompact" }: {
   panelRef: React.RefObject<HTMLElement | null>;
   handleRef: React.RefObject<HTMLElement | null>;
   enabled: boolean;
   onDismiss: () => void;
+  activeAt?: ViewportQueryName;
 }) {
   useEffect(() => {
     if (!enabled) {
@@ -58,7 +59,7 @@ export function useSheetDrag({ panelRef, handleRef, enabled, onDismiss }: {
       }
     };
     const onDown = (e: PointerEvent) => {
-      if (!window.matchMedia(SHEET_MEDIA).matches) {
+      if (!matchesViewport(activeAt)) {
         return;
       }
       dragging = true;
@@ -75,5 +76,5 @@ export function useSheetDrag({ panelRef, handleRef, enabled, onDismiss }: {
       window.removeEventListener("pointerup", end);
       window.removeEventListener("pointercancel", end);
     };
-  }, [enabled, onDismiss, panelRef, handleRef]);
+  }, [activeAt, enabled, onDismiss, panelRef, handleRef]);
 }

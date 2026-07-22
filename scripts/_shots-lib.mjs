@@ -67,6 +67,21 @@ export async function clickIfReady(page, selector, timeout = 4000) {
   }
 }
 
+// Opens the install handoff from the nav, wherever the current width puts it.
+// The bar CTA is present at every width (full label / short label / icon-only), so
+// that is the normal path; the drawer fallback stays as insurance in case a future
+// layout moves it back behind the burger.
+export async function openNavInstall(page) {
+  const barCta = page.locator(".nk-nav-cta").first();
+  if (await barCta.isVisible().catch(() => false)) {
+    await barCta.click();
+    return true;
+  }
+  await clickIfReady(page, ".nk-nav-burger");
+  await page.waitForSelector(".nk-nav-drawer.open", { timeout: 4000 }).catch(() => {});
+  return clickIfReady(page, ".nk-nav-drawer-cta");
+}
+
 export async function settle(page, { revealKill = true, extraCss } = {}) {
   if (revealKill) {
     await page.addStyleTag({ content: REVEAL_KILL });

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useI18nOptional } from "./I18nProvider";
-import { localeHome } from "@/app/lib/i18n/config";
+import { localeHome, type Locale } from "@/app/lib/i18n/config";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 import { trackEvent } from "@/app/lib/analytics";
 import { prefersReducedMotion } from "@/app/lib/motion";
@@ -17,6 +17,56 @@ import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { Icon, Pattern, QR, type IconName } from "./visual";
 export { Icon, Pattern, QR };
 export type { IconName };
+
+/* ---------------- LocaleFlag ----------------
+   Flags for the language-picker options. Not an ICONS entry: those all flow a
+   single `currentColor`, and a flag is multicolor by definition. Inline SVG
+   rather than the 🇱🇹/🇬🇧 emoji because Windows ships no flag glyphs in Segoe UI
+   Emoji — regional-indicator pairs fall back to two boxed letters ("LT"), a
+   visible defect on a large share of desktop traffic.
+
+   Both flags are normalized to one 3:2 box so the option rows align. That
+   restretches the Union Jack from its official 2:1 (squared flag sets do the
+   same); its geometry is recomputed for 60x40 rather than scaled, so the
+   fimbriation stays even. */
+const UK_COUNTERCHANGE = "M30,20 h30 v20 z v20 h-30 z h-30 v-20 z v-20 h30 z";
+
+export function LocaleFlag({ code, size = 20, style }: {
+  code: Locale;
+  size?: number;
+  style?: React.CSSProperties;
+}) {
+  // The saltire's red arms are counterchanged — offset to one side of the white,
+  // flipping per quadrant, which is what makes an upside-down Union Jack a real
+  // (and famously noticed) error. It has to be a <clipPath> element: the CSS
+  // `clip-path: path()` shorthand resolves against the element's bounding box
+  // rather than the viewBox, which silently drops the red from the fly-side arms
+  // — verified in Chromium, so this is not interchangeable with the shorthand.
+  // The id is per-instance because the picker mounts twice (nav + mobile drawer).
+  const ccId = useId();
+  const isGb = code === "en";
+  return (
+    <svg className="nk-flag" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"
+      width={size} height={size * (2 / 3)} viewBox="0 0 60 40" style={style}>
+      {isGb ? (
+        <>
+          <clipPath id={ccId}><path d={UK_COUNTERCHANGE} /></clipPath>
+          <rect width="60" height="40" fill="#012169" />
+          <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" strokeWidth="8" />
+          <path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" strokeWidth="4.8" clipPath={`url(#${ccId})`} />
+          <path d="M30,0 v40 M0,20 h60" stroke="#fff" strokeWidth="13.33" />
+          <path d="M30,0 v40 M0,20 h60" stroke="#C8102E" strokeWidth="8" />
+        </>
+      ) : (
+        <>
+          <rect width="60" height="40" fill="#FDB913" />
+          <rect y="13.34" width="60" height="13.33" fill="#006A44" />
+          <rect y="26.67" width="60" height="13.33" fill="#C1272D" />
+        </>
+      )}
+    </svg>
+  );
+}
 
 /* ---------------- Logo ---------------- */
 // A real link to the locale home (a logo is expected to navigate, not no-op).

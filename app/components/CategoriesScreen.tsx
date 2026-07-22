@@ -112,7 +112,9 @@ export function CategoriesScreen() {
           <h2 className="nk-sr-only">{t.gridHeading}</h2>
           {isLoading ? (
             <div className="nk-dirgrid" aria-hidden="true">
-              {Array.from({ length: CATEGORY_SKELETON_COUNT }).map((_, i) => <div key={i} className="nk-skel nk-dircard-skel" />)}
+              {Array.from({ length: CATEGORY_SKELETON_COUNT }).map((_, i) => (
+                <div key={i} className="nk-dircard-skel-wrap"><div className="nk-skel nk-dircard-skel" /></div>
+              ))}
             </div>
           ) : !online && (isError || all.length === 0) ? (
             <EmptyState illustration="offline" title={dict.offline.title} subtitle={dict.offline.body}

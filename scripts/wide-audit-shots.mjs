@@ -17,7 +17,7 @@ import path from "node:path";
 import { pickListingIds, resolveApiBase } from "./_backend.mjs";
 import {
   TEXT_SPACING, pad, contextOptions, gotoWithRetry, clickIfReady,
-  settle, fullPageShot, collectMetrics,
+  settle, fullPageShot, collectMetrics, openNavInstall,
 } from "./_shots-lib.mjs";
 
 /* ---------------- CLI ---------------- */
@@ -152,7 +152,6 @@ const routeBySlug = Object.fromEntries(ALL_ROUTES.map((r) => [r.slug, r]));
 //               run(page, h) } — h.shoot(sub, {fullPage}) captures + names files.
 
 const esc = async (page) => { await page.keyboard.press("Escape").catch(() => {}); };
-
 const STATES = [
   {
     id: "nav-drawer", routes: ["home"],
@@ -183,9 +182,9 @@ const STATES = [
     },
   },
   {
-    // Nav CTA label stages flip at exactly these widths; letter-level findings
-    // need DPR2 even on the >900 side.
-    id: "nav-cta-stage", routes: ["home", "feed", "invite-code"], locales: ["lt", "en"],
+    // The top-bar install CTA returns with the expanded nav at 1120px; the small
+    // widths also guard the intentionally sparse logo + burger composition.
+    id: "nav-chrome-stage", routes: ["home", "feed", "invite-code"], locales: ["lt", "en"],
     at: [559, 560, 561, 1119, 1120, 1121], dpr: 2,
     run: async (page, h) => { await h.shoot("", { fullPage: false }); },
   },
@@ -282,7 +281,7 @@ const STATES = [
     id: "app-redirect", routes: ["home"], at: [320, 390, 560, 561, 768, 1280, 1920, { w: 390, h: 700 }],
     run: async (page, h) => {
       await page.waitForFunction(() => window.__nkBridgeReady === true, { timeout: 10_000 }).catch(() => {});
-      await clickIfReady(page, ".nk-nav-cta");
+      await openNavInstall(page);
       await page.waitForSelector('[role="dialog"]', { timeout: 5000 }).catch(() => {});
       await page.waitForTimeout(400);
       await h.shoot("", { fullPage: false });

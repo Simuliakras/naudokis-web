@@ -15,7 +15,7 @@ export function FeatureBand({ eyebrow, title, items, style }: {
   return (
     <section style={{ position: "relative", background: "var(--nk-bg-deep)", overflow: "hidden", ...style }}>
       <Pattern name="section-pattern" className="nk-brand-pattern" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-      <div className="nk-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y)" }}>
+      <div className="nk-container nk-featureband-container" style={{ position: "relative", paddingBlock: "var(--nk-section-y)" }}>
         {/* the page's strongest trust content gets the sitewide eyebrow+H2 anatomy
             instead of floating unlabelled */}
         <SectionHead eyebrow={eyebrow} title={title} />

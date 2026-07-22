@@ -14,13 +14,13 @@ const ConsentSheet = dynamic(() => import("./ConsentSheet").then((m) => m.Consen
   ssr: false,
 });
 
-export function Chrome({ children, backToTop = true }: { children: React.ReactNode; backToTop?: boolean }) {
+export function Chrome({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
       <AppRedirect />
       <ConsentSheet />
-      <BackToTop enabled={backToTop} />
+      <BackToTop />
     </>
   );
 }

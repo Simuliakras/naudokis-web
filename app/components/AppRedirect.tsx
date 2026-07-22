@@ -125,7 +125,7 @@ export function AppRedirect() {
   useFocusTrap(panelRef, state.open);
 
   // The grabber pill advertises swipe-to-dismiss — honour it (mobile widths only).
-  useSheetDrag({ panelRef, handleRef: grabRef, enabled: state.open, onDismiss: close });
+  useSheetDrag({ panelRef, handleRef: grabRef, enabled: state.open, onDismiss: close, activeAt: "layerCompact" });
 
   if (!state.open) return null;
   const installHref = smartInstallHref(state.appPath, "smart");

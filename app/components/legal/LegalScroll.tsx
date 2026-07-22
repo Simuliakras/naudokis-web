@@ -1,26 +1,29 @@
 "use client";
 // Legal — the single scroll source for a reading page. One rAF-throttled window
-// scroll/resize listener computes { progress, activeId, scrolledDown } per frame
-// from the heading `ids` and shares it via context, replacing the four separate
-// listeners the progress bar, scroll-spy TOC (sidebar + drawer) and back-to-top
-// used to each run. Emits no DOM, so it can wrap server-rendered children.
+// scroll/resize listener computes { progress, activeId } per frame from the
+// heading `ids` and shares it via context, replacing the separate listeners the
+// progress bar and scroll-spy TOC (sidebar + drawer) used to each run. Emits no
+// DOM, so it can wrap server-rendered children.
+//
+// This used to also publish `scrolledDown` for a legal-only back-to-top button.
+// That button is gone: the sitewide <BackToTop> (mounted by <Chrome>) is now the
+// single implementation and owns its own threshold. Don't fold it back in here —
+// it has to work on every page, not just the ones with a LegalScrollProvider.
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 const HEADING_OFFSET = 130; // scroll-spy lead: mark a heading active a little before it
                             // reaches the sticky nav (headings' scroll-margin-top is
                             // --nk-nav-h-scrolled + 24px in legal.css).
-const TO_TOP_AFTER = 600; // px scrolled before the back-to-top button shows
+type LegalScrollState = { progress: number; activeId: string };
 
-type LegalScrollState = { progress: number; activeId: string; scrolledDown: boolean };
-
-const LegalScrollContext = createContext<LegalScrollState>({ progress: 0, activeId: "", scrolledDown: false });
+const LegalScrollContext = createContext<LegalScrollState>({ progress: 0, activeId: "" });
 
 export function useLegalScroll(): LegalScrollState {
   return useContext(LegalScrollContext);
 }
 
 export function LegalScrollProvider({ ids, children }: { ids: string[]; children: ReactNode }) {
-  const [state, setState] = useState<LegalScrollState>({ progress: 0, activeId: ids[0] ?? "", scrolledDown: false });
+  const [state, setState] = useState<LegalScrollState>({ progress: 0, activeId: ids[0] ?? "" });
   const joined = ids.join("|");
 
   useEffect(() => {
@@ -39,7 +42,7 @@ export function LegalScrollProvider({ ids, children }: { ids: string[]; children
           activeId = id;
         }
       }
-      setState({ progress, activeId, scrolledDown: window.scrollY > TO_TOP_AFTER });
+      setState({ progress, activeId });
     };
     const onScroll = () => {
       if (!frame) {

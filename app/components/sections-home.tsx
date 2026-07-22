@@ -192,14 +192,16 @@ export function Footer({ locale }: { locale: Locale }) {
             <span className="nk-footer__sep" aria-hidden />
             {/* Payment methods accepted in the app (via Stripe) — the site itself takes
                 no payment. */}
-            <div className="nk-footer__pay" role="list" aria-label={t.paymentLabel}>
+            {/* real ul/li, like the link groups above — role="list" on spans is for
+                when CSS strips the semantics, which nothing here does */}
+            <ul className="nk-footer__pay" aria-label={t.paymentLabel}>
               {FOOTER_PAY.map(([f, a]) => (
-                <span key={f} role="listitem">
+                <li key={f}>
                   <Image src={`/naudokis/${f}.png`} alt={a} width={100} height={52}
                     style={{ height: 30, width: "auto" }} />
-                </span>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
       </div>

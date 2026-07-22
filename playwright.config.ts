@@ -15,6 +15,8 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "firefox-responsive", testMatch: /breakpoint-contracts\.spec\.ts/, use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit-responsive", testMatch: /breakpoint-contracts\.spec\.ts/, use: { ...devices["Desktop Safari"] } },
   ],
   webServer: {
     command: "node ./node_modules/next/dist/bin/next dev -p 3000 -H 127.0.0.1",

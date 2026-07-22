@@ -1,6 +1,7 @@
 // Legal — full document reading page (server component). Uses the shared nav,
-// footer and redirect modal, but opts out of the sticky install banner so the
-// mobile TOC / back-to-top controls keep a clear fixed-action zone.
+// footer and redirect modal. The mobile TOC FAB shares the bottom-right corner
+// with the sitewide back-to-top float, which offsets itself above the FAB via
+// the :has(.nk-lg-fab-toc) rule in legal.css.
 import "./legal.css";
 import Link from "next/link";
 import type { Locale } from "@/app/lib/i18n/config";
@@ -111,7 +112,6 @@ export function DocumentScreen({
               // one TOC name everywhere: the FAB announces the same word the
               // drawer it opens is titled with
               openMenu={t.contents}
-              backTop={t.backTop}
               readingProgress={t.readingProgress}
             />
           </div>

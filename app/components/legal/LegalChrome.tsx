@@ -1,9 +1,11 @@
 "use client";
 // Legal — the interactive chrome islands: reading-progress bar, scroll-spy TOC
-// sidebar, mobile TOC drawer + FAB, and back-to-top. These are presentational
-// and read scroll state from the shared LegalScroll context (one rAF-throttled
+// sidebar, and the mobile TOC drawer + FAB. These are presentational and read
+// scroll state from the shared LegalScroll context (one rAF-throttled
 // listener); the heavy document body stays server rendered. Ported from the
-// handoff chrome.jsx.
+// handoff chrome.jsx. Back-to-top is NOT here — it's the sitewide
+// <BackToTop> mounted by <Chrome>; legal only contributes a CSS offset so the
+// float clears the FAB (see legal.css).
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { TocItem } from "@/app/lib/legal/types";
 import { prefersReducedMotion } from "@/app/lib/motion";
@@ -54,16 +56,15 @@ export function TocSidebar({ toc, heading }: { toc: TocItem[]; heading: string }
 }
 
 export function LegalChrome({
-  toc, contents, closeContents, openMenu, backTop, readingProgress,
+  toc, contents, closeContents, openMenu, readingProgress,
 }: {
   toc: TocItem[];
   contents: string;
   closeContents: string; // close-button accessible name — must NOT repeat the panel title
   openMenu: string;
-  backTop: string;
   readingProgress: string;
 }) {
-  const { progress, activeId, scrolledDown } = useLegalScroll();
+  const { progress, activeId } = useLegalScroll();
   const [drawer, setDrawer] = useState(false);
   const fabRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -131,15 +132,6 @@ export function LegalChrome({
           ))}
         </nav>
       </div>
-
-      <button
-        className={"nk-lg-totop" + (scrolledDown ? " is-on" : "")}
-        title={backTop}
-        aria-label={backTop}
-        onClick={() => window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" })}
-      >
-        <Icon name="arrowUp" size={20} />
-      </button>
     </>
   );
 }

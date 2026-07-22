@@ -6,12 +6,23 @@
 // all (privacy boundary — see app/lib/consent.ts). Install CTAs therefore point at
 // the first-party /go, which is the single place that decides OneLink vs. store.
 //
-// The referral code travels as OneLink's `deep_link_value` param — keep this
-// verbatim with the app's UDL handler and the dashboard OneLink template
-// (cross-team contract), and identical to the backend's `share_link` builder so
-// there is a single link contract. Verify the exact param name against the
-// AppsFlyer dashboard template + backend `share_link` builder before launch — a
-// silent mismatch drops referral attribution without any error.
+// `deep_link_value` is the app's UDL dispatch key, and the app team confirmed its
+// shape against the shipped handler (2026-07-21). Two branches:
+//
+//   - A reserved keyword routes to a screen. `listing` is the only one the web
+//     emits; the id rides in `deep_link_sub1`.
+//   - ANY other value falls through to the referral branch and is validated as an
+//     8-character referral code. That is why /invite sends the bare code with no
+//     keyword, and why it must stay that way — matching the backend's `share_link`
+//     builder so there is a single link contract.
+//
+// The fallthrough is what makes a wrong value here fail silently rather than
+// loudly: `listing/<id>` would be read as a referral code and dropped without an
+// error anywhere. Never invent a keyword — confirm it against the handler first.
+//
+// The handler reads ONLY `deep_link_value` + `deep_link_sub1`/`sub2`, and
+// early-returns when `deep_link_value` is absent. `af_dp`/`af_web_dp` are read by
+// nothing in the app; they are kept for other clients and cost nothing.
 //
 // Inert until configured: with NEXT_PUBLIC_ONELINK_URL unset, /go keeps its
 // OS-sniffing store redirect.
@@ -21,6 +32,7 @@
 // AppsFlyer URL builder to the browser.
 import "server-only";
 import { SITE_ORIGIN } from "./contact";
+import { listingIdFromAppPath } from "./app-links";
 
 const ONELINK_URL = process.env.NEXT_PUBLIC_ONELINK_URL ?? "";
 
@@ -76,6 +88,16 @@ export function buildGenericInstallLink(
   if (deepLinkPath) {
     params.af_dp = `naudokis://${deepLinkPath.replace(/^\/+/, "")}`;
     params.af_web_dp = `${SITE_ORIGIN}${deepLinkPath}`;
+    // The UDL pair, and the only thing the app actually reads. Assigned last so a
+    // server-validated target always beats a `deep_link_value` smuggled in via the
+    // query string: /go validates the target, it does not validate that param.
+    // Both keys or neither — a bare `listing` with no id routes the app to a screen
+    // it cannot populate.
+    const id = listingIdFromAppPath(deepLinkPath);
+    if (id) {
+      params.deep_link_value = "listing";
+      params.deep_link_sub1 = id;
+    }
   }
   return oneLink(base, params);
 }

@@ -1,0 +1,76 @@
+/* The root 404 (app/not-found.tsx) — the ONLY CSS module in this repo. Styling
+   here is normally inline `style={{}}` with --nk-* tokens plus nk- classes in
+   globals.css; a module is used because this file needs @container queries, which
+   an inline style cannot express, and the root 404 renders outside the [lang]
+   layout so it has no app shell to inherit from. Do NOT read this as licence to
+   convert other components.
+   No @reference: that directive is only needed for @apply / theme(), and this file
+   uses neither — it would just cost a re-parse of globals.css.
+   Hardcoded hexes rather than --nk-* are deliberate here: this page must render
+   correctly even if the token stylesheet fails to load. */
+
+:global(html),
+:global(body) {
+  margin: 0;
+  min-height: 100%;
+  background: #282c2d;
+}
+
+:global(body) {
+  overflow-x: hidden;
+}
+
+.root {
+  container: nk-not-found / inline-size;
+}
+.root a:focus-visible {
+  outline: 2px solid #8a89ff;
+  outline-offset: 3px;
+}
+.nav a:hover {
+  color: #8a89ff !important;
+}
+.cta {
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+.cta:hover {
+  opacity: 0.92;
+}
+.cta:active {
+  transform: scale(0.98);
+}
+.get:hover {
+  color: #fff !important;
+}
+.ctaShort {
+  display: none;
+}
+
+/* The root 404 owns no localized app shell, so its header measures itself. */
+@container nk-not-found (width < 40rem) {
+  .nav {
+    display: none !important;
+  }
+}
+
+@container nk-not-found (width < 26.875rem) {
+  .header {
+    gap: 12px !important;
+    padding-inline: 12px !important;
+  }
+  .header img {
+    height: 32px !important;
+    width: auto !important;
+  }
+  .header .cta {
+    padding-inline: 16px !important;
+  }
+  .ctaFull {
+    display: none;
+  }
+  .ctaShort {
+    display: inline;
+  }
+}

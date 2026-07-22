@@ -253,6 +253,7 @@ export function ListingScreen({ id }: { id: string }) {
         )}
       </div>
 
+      <div className="nk-mbar-spacer" aria-hidden="true" />
       <MobileBar price={listing.price} appPath={appPath} hidden={footerInView} onReserve={reserve} />
     </>,
   );
@@ -309,7 +310,7 @@ function SimilarRail({
       <div className="nk-grid-4 nk-grid-4--rail">
         {items.map((o) => (
           <div key={o.id} className="nk-reveal" style={{ display: "grid" }}>
-            <OfferCard title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
+            <OfferCard id={o.id} title={o.title} city={o.city} subdivision={o.subdivision} price={o.price} unit={dict.common.perDay}
               rating={o.rating} ratingCount={o.ratingCount} hasDelivery={o.hasDelivery}
               photoCount={o.photoCount} deposit={o.deposit} owner={o.owner}
               img={o.img} category={o.category} categoryName={categoryNameFor(cats, o.category)} categoryIcon={categoryIconFor(cats, o.category)}

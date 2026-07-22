@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
+import { BREAKPOINTS } from "../app/lib/breakpoints";
 
 // Screenshot-driven responsive sweep. Captures every real bridge-site surface at
 // the full breakpoint list and asserts no horizontal overflow at any width. Pages
@@ -11,11 +12,14 @@ import path from "node:path";
 
 const OUT = path.join(process.cwd(), "e2e", "__screens__");
 
-const WIDTHS = [
-  320, 344, 360, 375, 390, 393, 412, 430, 480, 540, 560, 600, 640, 700,
-  744, 768, 820, 834, 900, 980, 1024, 1112, 1120, 1180, 1200, 1280,
-  1366, 1440, 1536, 1728, 1920, 2560,
-];
+const boundaryWidths = Object.values(BREAKPOINTS)
+  .map((value) => Number.parseFloat(value) * 16)
+  .flatMap((width) => [width - 1, width, width + 1]);
+const WIDTHS = [...new Set([
+  320, 344, 375, 390, 393, 412, 430, 480, 540, 600, 640, 700, 744,
+  820, 834, 900, 980, 1112, 1180, 1200, 1366, 1440, 1536, 1728, 1920, 2560,
+  ...boundaryWidths,
+])].sort((a, b) => a - b);
 
 type Surface = { name: string; tag: string; path: string };
 
@@ -37,7 +41,7 @@ fs.mkdirSync(OUT, { recursive: true });
 // at opacity:0 in a fullPage capture, and reduced-motion emulation doesn't reliably
 // neutralize them at render time. Force every revealed element to its final state.
 const REVEAL_KILL = `
-  .nk-reveal, .nk-reveal-grid > *, .nk-hero-intro > *, .nk-hero-media {
+  .nk-reveal, .nk-reveal-grid, .nk-reveal-grid > *, .nk-hero-intro > *, .nk-hero-media {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
@@ -90,7 +94,7 @@ test("proxy: default-locale rewrites do not loop @proxy", async ({ request }) =>
 
 for (const s of SURFACES) {
   test(`sweep ${s.name} ${s.tag}`, async ({ page }) => {
-    test.setTimeout(180_000);
+    test.setTimeout(300_000);
     const overflows: { width: number; px: number }[] = [];
     // Navigate once, then resize — avoids re-fetching per width (Next dev HMR keeps
     // a websocket open, so "networkidle" never settles).

@@ -202,8 +202,8 @@ export const lt: Dict = {
         "Sužinokite, kaip per Naudokis pateikti arba priimti rezervacijos užklausą, užfiksuoti perdavimą bei grąžinimą ir užbaigti nuomą.",
     },
     eyebrow: "Kaip tai veikia",
-    title: "Nuomokitės tai, ko reikia. Uždirbkite iš to, ką turite.",
-    lead: "„Naudokis“ suteikia prekyvietę ir nuomos proceso įrankius, o sandorį tiesiogiai sudaro nuomininkas ir privatus arba verslo savininkas. Pasirinkite vaidmenį ir peržiūrėkite visą kelią.",
+    title: "Nuomokitės tai, ko reikia. Uždirbkite iš to, ką jau turite.",
+    lead: "„Naudokis“ sujungia nuomininkus su privačiais ir verslo nuomotojais bei suteikia įrankius sklandžiam nuomos procesui. Nuomos sutartį šalys sudaro tiesiogiai tarpusavyje. Pasirinkite savo vaidmenį ir sužinokite, kaip vyksta visas procesas.",
     renter: {
       label: "Nuomininkas",
       lead: "Nuo paieškos iki grąžinimo — taip išsinuomosite daiktą dienai, savaitgaliui ar projektui.",
