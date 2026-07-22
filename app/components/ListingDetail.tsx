@@ -23,6 +23,7 @@ import { formatLocation } from "@/app/lib/listings";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { RichText } from "@/app/lib/rich-text";
 import { listingLandingHref } from "@/app/lib/search";
+import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -30,7 +31,7 @@ import { SectionEmpty } from "./cards";
 import { DateRangePicker, type DateRange } from "./DateRangePicker";
 import { RowHead } from "./headers";
 import { useI18n } from "./I18nProvider";
-import { Avatar, Icon, IconName, Pill, openRedirect, type RedirectListingContext } from "./ui";
+import { Avatar, CloseButton, Icon, IconName, Pill, openRedirect, type RedirectListingContext } from "./ui";
 
 // Everything the booking panel needs to run the date field. Bundled into one prop
 // because BookingPanel is rendered twice (sticky sidebar + mobile inline) and both
@@ -1052,8 +1053,9 @@ export function Gallery({
 // Shared by the main photo and the neighbour warmer so the optimizer URL (and
 // thus the cache key) is byte-identical. The panel caps at 1180px and the photo
 // is letterboxed by object-fit:contain, so a bare 100vw would over-fetch on wide
-// screens; declaring the real ~1024px slot lands DPR1 on the 1080 candidate and
-// DPR2 exactly on 2048 with no visible softening.
+// screens. 1024 is deliberately UNDER the 1180px box: it lands DPR1 on the 1080
+// candidate and DPR2 exactly on 2048. Declaring the true 1180 would push DPR2 to
+// 2360 → the 3840 candidate, ~3.5x the bytes for a slot `contain` rarely fills.
 const LB_SIZES = IMAGE_SIZES.lightbox;
 
 // Main lightbox photo with a load/error state tied to the ACTUAL image load
@@ -1164,8 +1166,6 @@ function GalleryLightbox({
   const t = dict.detail;
   const [i, setI] = useState(start);
   const panelRef = useRef<HTMLDivElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
-  const lastFocused = useRef<HTMLElement | null>(null); // restored when the lightbox closes
   const touchStartX = useRef<number | null>(null); // horizontal-swipe origin (touch paging)
   const thumbsRef = useRef<HTMLDivElement>(null); // scrolls the active thumb into view
   const many = images.length > 1;
@@ -1188,42 +1188,39 @@ function GalleryLightbox({
       ].filter((n) => n !== i)
     : [];
 
-  // Mount-only: lock body scroll, move focus into the dialog, and restore focus
-  // to the opener on close. Kept separate from the keydown effect so a parent
-  // re-render (which changes the onClose identity) never re-steals focus.
-  useEffect(() => {
-    lastFocused.current =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-    document.body.style.overflow = "hidden";
-    closeRef.current?.focus();
-    return () => {
-      document.body.style.overflow = "";
-      lastFocused.current?.focus();
-    };
-  }, []);
+  // Scroll lock, Escape and focus restore come from the shared layer plumbing. The
+  // reserve CTA below opens the redirect modal ON TOP of this one, so both have to
+  // be layer-ordered: an unregistered Escape dismissed the modal AND the lightbox
+  // under it, and a raw body-overflow write unlocked the page when the modal closed.
+  // Focus lands on the PANEL, not the close button: opening a viewer must not
+  // preselect "dismiss it" as the first Enter (same rule as <Dialog/>).
+  useDismissableLayer(true, onClose, { initialFocus: panelRef });
 
-  // Esc closes, arrows page (when multiple). Tab-trapping is handled by useFocusTrap.
+  // Arrows page. Gated on focus living inside this panel so they fall silent while
+  // the redirect modal (which traps focus in its own panel) is open above us. This
+  // is why the panel carries tabIndex={-1}: without it a click on the photo blurs
+  // to <body>, the gate stops matching and paging dies until the user tabs back in.
   useEffect(() => {
+    if (!many) {
+      return;
+    }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
+      if (!panelRef.current?.contains(document.activeElement)) {
         return;
       }
-      if (e.key === "ArrowLeft" && many) {
+      if (e.key === "ArrowLeft") {
         e.preventDefault();
         prev();
         return;
       }
-      if (e.key === "ArrowRight" && many) {
+      if (e.key === "ArrowRight") {
         e.preventDefault();
         next();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose, prev, next, many]);
+  }, [prev, next, many]);
 
   // Keep the active thumbnail visible in the overflow-x strip as the index changes
   // (arrow keys, nav buttons, swipe). block:"nearest" avoids nudging the scroll-locked page.
@@ -1246,24 +1243,28 @@ function GalleryLightbox({
   return (
     <div
       className="nk-lightbox"
-      role="dialog"
-      aria-modal="true"
-      aria-label={t.galleryViewLabel}
-      onClick={onClose}
+      role="presentation"
+      // mousedown + target check, not click: a text/drag gesture that STARTS on the
+      // photo and releases over the scrim must not count as a backdrop dismiss.
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
       <div
         ref={panelRef}
-        className={"nk-lightbox__panel" + (many ? " is-multi" : "")}
-        onClick={(e) => e.stopPropagation()}
+        tabIndex={-1}
+        className="nk-lightbox__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t.galleryViewLabel}
       >
-        <button
-          ref={closeRef}
+        <CloseButton
           className="nk-lightbox__close"
+          label={t.galleryClose}
           onClick={onClose}
-          aria-label={t.galleryClose}
-        >
-          <Icon name="X" size={20} color="var(--nk-text)" />
-        </button>
+        />
         <div
           className="nk-lightbox__stage"
           onTouchStart={(e) => {
@@ -1286,7 +1287,8 @@ function GalleryLightbox({
         >
           {many && (
             <button
-              className="nk-lightbox__nav"
+              type="button"
+              className="nk-lightbox__nav is-prev"
               onClick={prev}
               aria-label={t.galleryPrev}
             >
@@ -1306,7 +1308,8 @@ function GalleryLightbox({
           />
           {many && (
             <button
-              className="nk-lightbox__nav"
+              type="button"
+              className="nk-lightbox__nav is-next"
               onClick={next}
               aria-label={t.galleryNext}
             >
@@ -1317,6 +1320,20 @@ function GalleryLightbox({
                 color="var(--nk-text)"
               />
             </button>
+          )}
+          {/* "1 / 3" is spoken as "1 slash 3", so the visible glyphs and the
+              announced string are deliberately different NODES — an aria-label on
+              the pill itself would be dropped, since a bare <span> maps to role
+              `generic`, which ARIA prohibits from carrying a name. */}
+          {many && (
+            <>
+              <span className="nk-lightbox__count" aria-hidden>
+                {i + 1} / {images.length}
+              </span>
+              <span className="nk-sr-only" role="status" aria-live="polite">
+                {t.galleryCounter(i + 1, images.length)}
+              </span>
+            </>
           )}
         </div>
         {/* Off-screen, non-interactive prefetch of the adjacent photos (identical
@@ -1355,14 +1372,11 @@ function GalleryLightbox({
             ))}
           </div>
         )}
-        {/* Count + thumbnail scrubber ride together in one row directly below the
-            photo; the count is dead chrome on single-photo sets, so the whole row
-            only renders when there's more than one image. */}
-        {many && (
-          <div className="nk-lightbox__preview">
-            <span className="nk-lightbox__count" aria-live="polite">
-              {i + 1} / {images.length}
-            </span>
+        {/* One bottom band: the filmstrip centres against the panel and the reserve
+            CTA docks right. The strip is dead chrome on single-photo sets, so it
+            drops out and the CTA keeps its column. */}
+        <div className="nk-lightbox__bar">
+          {many && (
             <div ref={thumbsRef} className="nk-lightbox__thumbs">
               {images.map((src, idx) => (
                 <button
@@ -1370,45 +1384,49 @@ function GalleryLightbox({
                   type="button"
                   onClick={() => setI(idx)}
                   aria-current={idx === i}
-                  aria-label={`${idx + 1} / ${images.length}`}
+                  aria-label={t.galleryCounter(idx + 1, images.length)}
                   className={
                     "nk-lightbox__thumb" + (idx === i ? " is-active" : "")
                   }
                 >
+                  {/* low priority for the same reason the neighbour warmer is:
+                      a 10-photo strip must not race the in-view photo. */}
                   <Image
                     src={src}
                     alt=""
                     fill
-                    sizes="64px"
+                    sizes={IMAGE_SIZES.lightboxThumb}
+                    fetchPriority="low"
                     style={{ objectFit: "cover" }}
                   />
                 </button>
               ))}
             </div>
+          )}
+          <div className="nk-lightbox__cta">
+            <button
+              type="button"
+              className="nk-btn nk-btn--primary nk-btn--sm"
+              title={dict.bridge.opensAppHint}
+              onClick={() =>
+                openRedirect({
+                  title: dict.bridge.reserveTitle,
+                  body: dict.bridge.reserveBody,
+                  // the photo the user is actually looking at, not the cover shot
+                  listing: { ...redirectCtx, thumb: images[i] },
+                  appPath,
+                })
+              }
+            >
+              <Icon
+                name="Smartphone"
+                size={16}
+                stroke={2.2}
+                color="var(--nk-text)"
+              />{" "}
+              {t.reserve}
+            </button>
           </div>
-        )}
-        <div className="nk-lightbox__bar">
-          <button
-            className="nk-btn nk-btn--primary nk-btn--sm"
-            title={dict.bridge.opensAppHint}
-            onClick={() =>
-              openRedirect({
-                title: dict.bridge.reserveTitle,
-                body: dict.bridge.reserveBody,
-                // the photo the user is actually looking at, not the cover shot
-                listing: { ...redirectCtx, thumb: images[i] },
-                appPath,
-              })
-            }
-          >
-            <Icon
-              name="Smartphone"
-              size={16}
-              stroke={2.2}
-              color="var(--nk-text)"
-            />{" "}
-            {t.reserve}
-          </button>
         </div>
       </div>
     </div>

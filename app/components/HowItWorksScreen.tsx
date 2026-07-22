@@ -11,11 +11,12 @@ import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";
 import { AppCtaBanner } from "./AppCtaBanner";
 import { FeatureBand } from "./FeatureBand";
-import { Icon, AppBadges, Breadcrumb, Pattern, openRedirect, type IconName } from "./ui";
+import { Icon, AppBadges, Breadcrumb, Pattern, openRedirect } from "./ui";
 import { PageHead } from "./headers";
+import { PhoneScreen } from "./HowItWorksPhone";
 import { useI18n } from "./I18nProvider";
 import { localePath } from "@/app/lib/i18n/config";
-import type { HtwScreen, HtwStep } from "@/app/lib/i18n/types";
+import type { HtwStep } from "@/app/lib/i18n/types";
 
 type Role = "renter" | "owner";
 
@@ -129,8 +130,10 @@ export function HowItWorksScreen() {
             </div>
           </section>
 
-          {/* TRUST STRIP */}
-          <FeatureBand eyebrow={t.trustEyebrow} title={t.trustTitle} items={t.trust} style={{ marginBottom: "var(--nk-section-y)" }} />
+          {/* TRUST STRIP — role-aware like the FAQ below: the guarantees are
+              stated from the active role's side (renter: when am I charged;
+              owner: when am I paid, who am I renting to). */}
+          <FeatureBand eyebrow={t.trustEyebrow} title={t.trustTitle} items={data.trust} style={{ marginBottom: "var(--nk-section-y)" }} />
 
           {/* CTA (green) */}
           <AppCtaBanner eyebrow={t.ctaEyebrow} title={data.ctaTitle} body={data.ctaBody} phoneAlt={t.ctaPhoneAlt} placement="hiw_cta" />
@@ -142,7 +145,7 @@ export function HowItWorksScreen() {
             key={role}
             eyebrow={t.faqEyebrow}
             heading={t.faqTitle}
-            subheading={t.faqSubheading}
+            subheading={role === "owner" ? t.faqOwnerSubheading : t.faqSubheading}
             items={role === "owner" ? t.faqOwner : t.faq}
           />
         </main>
@@ -280,96 +283,3 @@ const TONE_BG: Record<HtwStep["tone"], string> = {
   green: "var(--nk-green-tint)",
   purple: "var(--nk-purple-tag)",
 };
-
-/* ---- phone mini-screens (one per step `screen`) ----
-   Tiles carry illustrative CATEGORY glyphs (wrench/car/laptop/dumbbell), never
-   the Camera placeholder — that's the live site's missing-photo language, which
-   made the mocks read as failed image loads. Screens stay abstract (bars, no
-   fabricated ratings/counts/names) but dense enough to read as a real app. */
-function Bar({ w, c }: { w: string; c?: string }) {
-  return <span className="htw-ps-bar" style={{ width: w, background: c }} />;
-}
-function Ph({ h, icon = "Wrench" }: { h: number; icon?: IconName }) {
-  return (
-    <div className="htw-ps-ph" style={{ height: h }}>
-      <Icon name={icon} size={28} color="var(--nk-ps-icon)" stroke={1.6} style={{ opacity: 0.55 }} />
-    </div>
-  );
-}
-function Head() {
-  return (
-    <div className="htw-ps-top">
-      <div className="htw-ps-dot" />
-      <div className="htw-ps-lines"><Bar w="70%" /><Bar w="45%" /></div>
-    </div>
-  );
-}
-
-function PhoneScreen({ kind }: { kind: HtwScreen }) {
-  const { dict } = useI18n();
-  const s = dict.howItWorks.screen;
-  const screens: Record<HtwScreen, React.ReactNode> = {
-    search: (
-      <>
-        <div className="htw-ps-search"><Icon name="Search" size={16} color="var(--nk-bg)" stroke={2} /><span>{s.searchPlaceholder}</span></div>
-        <div className="htw-ps-grid"><Ph h={70} icon="Wrench" /><Ph h={70} icon="Car" /><Ph h={70} icon="Laptop" /><Ph h={70} icon="Dumbbell" /></div>
-        <Bar w="60%" />
-      </>
-    ),
-    reserve: (
-      <>
-        <Ph h={110} icon="Car" />
-        <Head />
-        <div className="htw-ps-row"><Bar w="60%" /><span className="htw-ps-pill htw-ps-pill--green">{s.frozenPill}</span></div>
-        <div className="htw-ps-cta">{s.reserveCta}</div>
-      </>
-    ),
-    pickup: (
-      <>
-        <div className="htw-ps-map"><Icon name="MapPin" size={26} color="var(--nk-yellow)" fill="var(--nk-yellow)" /></div>
-        <Head />
-        <div className="htw-ps-row"><Bar w="45%" /><Bar w="25%" /></div>
-        <div className="htw-ps-cta htw-ps-cta--ghost">{s.pickupCta}</div>
-      </>
-    ),
-    review: (
-      <>
-        <Ph h={80} icon="Car" />
-        <div className="htw-ps-stars">{Array.from({ length: 5 }).map((_, i) => <Icon key={i} name="Star" size={22} color="var(--nk-yellow)" fill="var(--nk-yellow)" />)}</div>
-        <Bar w="80%" /><Bar w="55%" />
-        <div className="htw-ps-cta">{s.reviewCta}</div>
-      </>
-    ),
-    list: (
-      <>
-        <div className="htw-ps-up"><Icon name="Camera" size={26} color="var(--nk-purple-hover)" stroke={1.8} /><span>{s.listUpload}</span></div>
-        <div className="htw-ps-row"><Bar w="50%" /><span className="htw-ps-pill htw-ps-pill--purple">{s.listPrice}</span></div>
-        <Bar w="70%" />
-        <div className="htw-ps-cta">{s.listCta}</div>
-      </>
-    ),
-    accept: (
-      <>
-        <Ph h={90} icon="Laptop" />
-        <div className="htw-ps-req"><div className="htw-ps-avatar" /><div className="htw-ps-lines"><Bar w="65%" /><Bar w="40%" /></div></div>
-        <div className="htw-ps-cta">{s.acceptCta}</div>
-      </>
-    ),
-    handover: (
-      <>
-        <div className="htw-ps-map"><Icon name="Handshake" size={28} color="var(--nk-green)" stroke={2} /></div>
-        <Head />
-        <div className="htw-ps-row"><Bar w="45%" /><Bar w="25%" /></div>
-        <div className="htw-ps-cta htw-ps-cta--ghost">{s.handoverCta}</div>
-      </>
-    ),
-    payout: (
-      <>
-        <div className="htw-ps-amt"><span>{s.payoutAmount}</span><i>{s.payoutLabel}</i></div>
-        <div className="htw-ps-req"><div className="htw-ps-avatar" /><div className="htw-ps-lines"><Bar w="55%" /><Bar w="35%" /></div></div>
-        <div className="htw-ps-row"><Bar w="45%" /><span className="htw-ps-pill htw-ps-pill--green">{s.completedPill}</span></div>
-      </>
-    ),
-  };
-  return <div className="htw-ps-screen">{screens[kind]}</div>;
-}

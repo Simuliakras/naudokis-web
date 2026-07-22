@@ -3,21 +3,28 @@
 import type { IconName } from "@/app/components/ui";
 import type { CancellationTier } from "@/app/lib/listing-view";
 
-export type FaqItem = { q: string; a: string };
+// `a` stays plain text so faqJsonLd can feed it straight into acceptedAnswer.text.
+// An answer that needs to point at a policy carries `link` instead — rendered as a
+// trailing anchor, never inline markup. `href` is stored bare (e.g.
+// "/naudojimosi-salygos") and locale-prefixed at render.
+export type FaqItem = { q: string; a: string; link?: { label: string; href: string } };
 export type FeatureItem = { icon: IconName; title: string; body: string };
 
 // "Kaip tai veikia" (How it works) standalone page.
 export type HtwTone = "yellow" | "green" | "purple";
 export type HtwScreen = "search" | "reserve" | "pickup" | "review" | "list" | "accept" | "handover" | "payout";
 export type HtwStep = { icon: IconName; title: string; tag: string; tone: HtwTone; body: string; screen: HtwScreen };
+export type HtwTrust = { icon: IconName; title: string; body: string };
 export type HtwRole = {
   label: string; // role-toggle label (e.g. "Nuomininkas" / "Nuomotojas")
   lead: string;
   ctaTitle: string;
   ctaBody: string;
   steps: [HtwStep, HtwStep, HtwStep, HtwStep];
+  // Trust band under the steps — the guarantees stated from THIS role's side
+  // (a renter cares when they are charged; an owner cares when they are paid).
+  trust: [HtwTrust, HtwTrust, HtwTrust];
 };
-export type HtwTrust = { icon: IconName; title: string; body: string };
 // The app-only screens the backend links to from transactional email. Each one is
 // a first-party handoff page here (the web has no login), keyed by its URL segment.
 export type HandoffKind =
@@ -155,31 +162,94 @@ export type Dict = {
     owner: HtwRole;
     trustEyebrow: string;
     trustTitle: string;
-    trust: [HtwTrust, HtwTrust, HtwTrust];
     browseCta: string; // renter mid-funnel exit into the live inventory ("Browse items")
     listCta: string; // owner mid-funnel CTA ("List an item") — listing lives in the app, opens the list-flow bridge modal
     faqEyebrow: string;
     faqTitle: string;
-    faqSubheading: string;
+    faqSubheading: string; // renter-role subheading — pairs with `faq`
+    faqOwnerSubheading: string; // owner-role subheading — pairs with `faqOwner`
     faq: FaqItem[]; // renter-slanted questions (shown for the renter role)
     faqOwner: FaqItem[]; // owner-side questions (payouts, fees, damage) for the owner role
     ctaEyebrow: string;
     ctaPhoneAlt: string;
-    // micro-labels rendered inside the synced phone mock-ups
+    // Micro-copy rendered inside the synced phone mock-ups. Each screen mirrors
+    // the real Naudokis app screen that step represents (app dark theme, app
+    // labels), so the shared fixture values are deliberately reused across
+    // screens: the €54 rental / €5,40 fee / €48,60 payout chain has to agree
+    // between the owner's Accept and Payout screens, and the same item, dates
+    // and renter run through the whole flow.
     screen: {
-      searchPlaceholder: string;
-      reserveCta: string;
-      frozenPill: string;
-      pickupCta: string;
-      reviewCta: string;
-      listUpload: string;
-      listPrice: string;
-      listCta: string;
-      acceptCta: string;
-      handoverCta: string;
-      payoutAmount: string;
+      item: string; // "Bosch perforatorius" — the fixture listing, all screens
+      itemCat: string;
+      itemPrice: string;
+      dates: string;
+      days: string;
+      renter: string;
+      renterInitial: string; // avatar monogram — must match `renter`
+      rentLabel: string;
+      rentValue: string;
+      feeLabel: string;
+      feeValue: string;
       payoutLabel: string;
-      completedPill: string;
+      payoutValue: string;
+      photosLabel: string;
+      addPhoto: string;
+      conditionLabel: string;
+      conditionGood: string;
+      conditionWorn: string;
+      conditionDamaged: string;
+      confirm: string;
+      search: {
+        title: string;
+        placeholder: string;
+        catsLabel: string;
+        cats: [string, string, string, string, string];
+      };
+      reserve: {
+        title: string;
+        rentalLabel: string;
+        cancelLabel: string;
+        cancelValue: string;
+        handoffLabel: string;
+        pickup: string;
+        delivery: string;
+        feesLabel: string;
+        rentRow: string; // "Nuoma × 3 d." — the per-line label, not `rentLabel`
+        deliveryValue: string;
+        depositLabel: string;
+        depositValue: string;
+        totalLabel: string;
+        totalValue: string;
+        cta: string;
+      };
+      pickup: {
+        title: string;
+        intro: string;
+        photoCount: string;
+        camera: string;
+        gallery: string;
+        goodHint: string;
+      };
+      review: { title: string; prompt: string; placeholder: string; cta: string };
+      list: {
+        title: string;
+        heading: string;
+        body: string;
+        photoCount: string;
+        cover: string;
+        cta: string;
+      };
+      accept: {
+        title: string;
+        renterLabel: string;
+        rating: string;
+        rentals: string;
+        earningsLabel: string;
+        reject: string;
+        accept: string;
+      };
+      handover: { title: string; intro: string; photoCount: string; goodHint: string };
+      payout: { title: string; meta: string; amount: string; rateLabel: string };
     };
   };
   // Homepage numbered-stepper band. One fixed, role-neutral set of four steps
@@ -214,7 +284,7 @@ export type Dict = {
     // bare city name. LT applies the locative case; EN keeps the nominative.
     cityLink: (city: string) => string;
     helpHeading: string;
-    help: FooterLink[]; // FAQ anchor, contacts anchor, privacy, terms
+    help: FooterLink[]; // how-it-works, privacy, terms, account deletion
     // Rights notice. Names the LEGAL entity, not the domain: a copyright notice
     // asserts who owns the rights, and "Naudokis.lt" is a brand, not a legal
     // person. Both values are injected — the year from the build (see
@@ -281,6 +351,7 @@ export type Dict = {
     galleryPrev: string; // lightbox previous-photo aria-label
     galleryNext: string; // lightbox next-photo aria-label
     galleryImageError: string; // shown when a lightbox photo fails to load
+    galleryCounter: (index: number, total: number) => string; // spoken label for the counter pill + each thumb ("1 / 3" reads as "1 slash 3")
     // booking panel
     ratingLinkLabel: (parts: { rating: string; count: number }) => string; // aria-label on the "4,9 · 24" reviews link
     // Empty-state trust rows (no dates picked)

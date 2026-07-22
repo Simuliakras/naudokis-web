@@ -65,9 +65,9 @@ export const en: Dict = {
     closeMenu: "Close menu",
   },
   hero: {
-    badge: "Clear profile verification signals",
-    title: "Clearer item rental from search to return.",
-    body: "Find an item from a private or business owner. Compare listings on the website, then use the app to see the full reservation amount, send a request, and record handover and return.",
+    badge: "Renting between verified users",
+    title: "Clearer item rental – from search to return.",
+    body: "Find an item from a private or business owner. Compare listings on the website, then use the app to review the final amount, send a reservation request, and record the handover and return of the item.",
     ownerPrompt: "Have an item you are not using?",
     ownerCta: "List it in the app",
     phoneAlt: "Item rental listings in the Naudokis app",
@@ -82,7 +82,7 @@ export const en: Dict = {
     submit: "Search",
   },
   categories: {
-    eyebrow: "Browse",
+    eyebrow: "Discover",
     title: "Rental categories",
     all: "All categories",
     examples: (id) => EN_CATEGORY_EXAMPLES[id],
@@ -106,7 +106,7 @@ export const en: Dict = {
   offers: {
     // FINAL: recency framing — "picked for you"/"popular"/
     // "nearby" had no personalization, review or geo signal behind them.
-    eyebrow: "Browse",
+    eyebrow: "Choose",
     title: "Items to rent",
     all: "All items",
     errorTitle: "We couldn’t load listings",
@@ -157,75 +157,94 @@ export const en: Dict = {
     lead: "Naudokis connects renters with private and business owners and provides the tools for a smooth rental process. The rental agreement is made directly between the parties. Choose your role and see how the whole process works.",
     renter: {
       label: "Renter",
-      lead: "From search to return, here is how to rent for a day, a weekend or a project.",
+      lead: "From search to return – four clear steps to rent an item for a day, a weekend or a project.",
       ctaTitle: "Reserve the item in the app",
       ctaBody:
         "Choose your rental dates and handover method, review the final amount, then authorise payment. The request is then sent to the owner.",
       steps: [
         {
           icon: "Search",
-          title: "Find and compare",
+          title: "Discover and compare",
           tag: "Search",
           tone: "yellow",
           screen: "search",
-          body: "Check the description, condition, location, handover options, owner status, completed checks and reviews from completed reservations.",
+          body: "Check the item’s description, condition, location and handover options. Weigh up the owner’s profile, their completed checks and reviews from earlier rentals.",
         },
         {
           icon: "Calendar",
-          title: "Review the amount and send a request",
+          title: "Choose your terms and send a request",
           tag: "Request",
           tone: "green",
           screen: "reserve",
-          body: "Choose dates and handover, then check the price, fees, deposit, cancellation terms and total. Stripe authorises payment, and the owner accepts or declines the request.",
+          body: "Choose your rental dates and handover method, then review the final amount, the deposit and the cancellation terms. Once you authorise payment, the request is sent to the owner.",
         },
         {
           icon: "Handshake",
-          title: "Receive the item with a condition record",
+          title: "Receive it and record the condition",
           tag: "Handover",
           tone: "yellow",
           screen: "pickup",
-          body: "At pickup or delivery, check the item’s condition and accessories. Save photos and notes in the app.",
+          body: "At pickup or delivery, check the item’s condition, what it comes with and its accessories. Save photos and notes in the app.",
         },
         {
           icon: "Star",
-          title: "Return, complete and review",
+          title: "Return and complete the rental",
           tag: "Completion",
           tone: "purple",
           screen: "review",
-          body: "Record the condition again at return. Participants in a completed reservation can then leave a review.",
+          body: "Record the item’s condition again at return, confirm the return, and leave a review once the rental is complete.",
+        },
+      ],
+      // ⚠️ DRAFT (2026-07-22): renter-side guarantees, mirroring the LT copy.
+      // Deadlines and conditions are quoted from the Terms of Use (§6–§9).
+      trust: [
+        {
+          icon: "CreditCard",
+          title: "Payment is taken only once the reservation is confirmed",
+          body: "The rental price, platform fees and the deposit are shown before you send the request. Payment is only authorised at first, and taken once the owner accepts the request.",
+        },
+        {
+          icon: "Users",
+          title: "You know who you rent from",
+          body: "Owner profiles show identity and other profile verifications, along with reviews from earlier rentals. Only people who completed a reservation through Naudokis can leave a review.",
+        },
+        {
+          icon: "ShieldCheck",
+          title: "Deposit and cancellation terms – upfront",
+          body: "You see the deposit-return and cancellation terms before you send the request. If no justified claim is filed within the deadline, the deposit is returned. Cancelled before handover, it is returned in full.",
         },
       ],
     },
     owner: {
       label: "Owner",
-      lead: "From listing to payout, here is how to turn idle items into income.",
+      lead: "From listing to payout – four clear steps to help you turn idle items into income.",
       ctaTitle: "List your item in the app",
       ctaBody:
         "In the app you can list items, manage requests, message renters and receive payouts in one place.",
       steps: [
         {
           icon: "Camera",
-          title: "Publish accurate terms",
+          title: "List your item on clear terms",
           tag: "Listing",
           tone: "yellow",
           screen: "list",
-          body: "Add real photos, describe condition and accessories, and set the price, deposit, delivery and cancellation terms.",
+          body: "Add clear photos, describe the item’s condition and what it comes with, and set the price, deposit, handover methods and cancellation terms.",
         },
         {
           icon: "BadgeCheck",
-          title: "Accept or decline the request",
-          tag: "Decision",
+          title: "Review and respond to the request",
+          tag: "Request",
           tone: "green",
           screen: "accept",
-          body: "Review the renter’s profile, dates and amounts, then decide by the deadline shown in the app.",
+          body: "Review the renter’s profile, the rental dates and the final amount. Accept or decline the request by the deadline shown.",
         },
         {
           icon: "Handshake",
           title: "Record handover and return",
-          tag: "Condition",
+          tag: "Handover",
           tone: "yellow",
           screen: "handover",
-          body: "At both stages, save a record of the item’s condition, photos, notes and included accessories.",
+          body: "When you hand the item over and when you take it back, record its condition, what it comes with, photos and notes in the app.",
         },
         {
           icon: "Coins",
@@ -233,171 +252,271 @@ export const en: Dict = {
           tag: "Payout",
           tone: "purple",
           screen: "payout",
-          body: "Once completion and payout conditions are met, the payout is initiated. If there is a problem, submit a claim and evidence within the deadline shown in the app.",
+          body: "Once the return is confirmed and the payout conditions are met, the payout is initiated. If a problem comes up, submit a claim and evidence within the deadline shown in the app.",
+        },
+      ],
+      // ⚠️ DRAFT (2026-07-22): owner-side guarantees, mirroring the LT copy.
+      trust: [
+        {
+          icon: "Coins",
+          title: "You see the fees before you accept a request",
+          body: "You can publish a listing with no upfront fee. The platform fees that apply to a specific reservation are shown clearly before you accept the request.",
+        },
+        {
+          icon: "BadgeCheck",
+          title: "You decide who to rent to",
+          body: "Before you decide, you can see the renter’s profile, their identity verification, the rental dates and the final amount. You can accept or decline any request.",
+        },
+        {
+          icon: "ShieldCheck",
+          title: "Condition records and a clear claims process",
+          body: "Handover and return records are saved in the app. If you notice damage, file a claim with initial evidence within 24 hours of the confirmed return.",
         },
       ],
     },
-    trustEyebrow: "Trust on both sides",
-    trustTitle: "Clear rentals for people and businesses",
-    trust: [
-      {
-        icon: "CreditCard",
-        title: "Payments processed by Stripe",
-        body: "The payment amount, platform fees and any refundable deposit are shown before confirmation.",
-      },
-      {
-        icon: "Users",
-        title: "Profiles, verification and reviews",
-        body: "Only people who completed a reservation through Naudokis can leave a review. Completed verification is also shown on profiles.",
-      },
-      {
-        icon: "ShieldCheck",
-        title: "Deposits and support",
-        body: "Clear deposit, damage and evidence rules, plus dispute support, help both sides handle problems.",
-      },
-    ],
-    browseCta: "Browse items",
-    listCta: "List an item",
+    trustEyebrow: "Trust at every stage",
+    trustTitle: "Clearer rentals for both sides",
+    browseCta: "Find an item",
+    listCta: "List your item",
     faqEyebrow: "More questions?",
     faqTitle: "Common questions",
     faqSubheading:
-      "Quick answers about reservations, payments, deposits and renting through the app.",
+      "Clear answers about reservations, payment, cancellation, deposits and returning the item.",
+    faqOwnerSubheading:
+      "Clear answers about listings, requests, payouts, claims and renting out as a business.",
+    // ⚠️ DRAFT (2026-07-22): renter-side questions — authorisation vs. confirmation,
+    // cancellation, deposits, handover records, late return, checks. No invented
+    // numbers: every deadline and formula is quoted from the Terms (§6, §7, §8, §9).
     faq: [
       {
-        q: "Is browsing free?",
-        a: "Yes. Searching and viewing listings on the website is free. Fees, deposit, cancellation terms and the total for a specific reservation are shown before you send a request.",
+        q: "When is the reservation confirmed, and when is payment taken?",
+        a: "When you send a request, the amount is only authorised – the reservation is not yet confirmed. It is confirmed once the owner accepts the request and payment goes through. The rental amount and the deposit are taken at that point.",
       },
       {
-        q: "How are payments handled?",
-        a: "Stripe processes payments. Payment is authorised when you send a request; the reservation becomes final after the owner accepts it and payment succeeds.",
+        q: "Which cancellation terms apply to a reservation?",
+        a: "Every listing carries one of three cancellation policies. Flexible – the full rental price is refunded if you cancel at least 24 hours ahead. Moderate – the full price is refunded if you cancel at least 5 days ahead, and 50% with 1–4 days left. Strict – 50% is refunded if you cancel at least 14 days ahead. Moderate applies unless the listing says otherwise. Clearly disclosed non-refundable fees are not returned, and the deposit comes back in full on a reservation cancelled before handover.",
+        link: { label: "Cancellation terms", href: "/naudojimosi-salygos" },
       },
       {
-        q: "Who is responsible for any damage to an item?",
-        a: "A refundable deposit may apply, but it is not insurance or a liability cap. If there is a disagreement, both sides submit evidence and Naudokis administers the platform dispute process.",
+        q: "How does the deposit work, and what am I liable for?",
+        a: "The deposit is usually taken together with the reservation payment once the owner accepts the request. It is returned after the reservation ends if no justified claim is filed within the set period. The deposit is not insurance and does not cap your liability – a justified claim can come to more than the deposit.",
       },
       {
-        q: "Why is the reservation request sent in the app?",
-        a: "The app keeps dates, the full amount, payment authorisation, the request, messages, condition records and notifications in one place. On the website you can browse and compare listings.",
+        q: "How should I record the handover and return of the item?",
+        a: "When you collect and return the item, check its condition, what it comes with, its accessories, any visible defects and, where applicable, the serial number. Save clear photos or video in the app and flag anything that does not match. These records can become important evidence if a claim is examined.",
+      },
+      {
+        q: "What happens if I return the item late?",
+        a: "For each started 24-hour period of delay, a fee of two days’ rental price may apply. There is no free grace period. The total cannot exceed the lower of two limits: seven days’ rental price, or the item’s replacement value stated in the listing. The exact formula and the maximum possible amount are shown before you confirm payment.",
+      },
+      {
+        q: "What do checks confirm — and what don’t they guarantee?",
+        a: "For some features, users have to confirm their email, phone number or identity. The payment service provider may also run its own payment and compliance checks. These checks do not assess an item’s condition and do not guarantee the outcome of a rental. Naudokis does not physically inspect every item or handover, so review the listing, the owner’s profile and the item itself before renting.",
       },
     ],
-    // FINAL product copy: owner-side FAQ — mirrors the LT set and published policies.
+    // ⚠️ DRAFT (2026-07-22): owner-side questions — fees, accepting requests, payouts
+    // and holds, evidence deadlines, renter cancellations, business obligations.
+    // Same rule as the renter set: no invented numbers, only the Terms’ own wording.
     faqOwner: [
       {
-        q: "When do I get paid?",
-        a: "After the rental is completed and the payout conditions are met, your payout is sent through Stripe. Payouts follow the process set out in the Terms of Use.",
-      },
-      {
         q: "How much does listing an item cost?",
-        a: "There is no upfront fee to publish an item. Platform fees for a specific reservation are shown before you accept the request.",
-      },
-      {
-        q: "What if an item comes back damaged?",
-        a: "The refundable deposit and the dispute process help: you submit evidence in the app and Naudokis administers the dispute under the rules.",
+        a: "You can publish a listing with no upfront fee. Platform fees for a specific reservation are shown before you accept the request. Any change to those fees applies only to future reservations.",
       },
       {
         q: "Do I have to accept every request?",
-        a: "No. Review the renter’s profile, dates and amounts, then accept or decline the request by the deadline shown in the app.",
+        a: "No. Before you decide, review the renter’s profile, the rental dates and the final amount. Accept or decline the request by the deadline shown. If you do not respond in time, the request lapses and the renter’s payment is not taken.",
+      },
+      {
+        q: "When is a payout initiated, and why can it be held?",
+        a: "A payout is initiated once the reservation is properly completed, the payment has finally settled, and there is no active dispute or refund, or any account, compliance or tax restriction. If one side confirms the return and the other files no justified claim within 3 calendar days, the reservation completes automatically. How long the transfer takes depends on the payment service provider, the bank and any checks.",
+      },
+      {
+        q: "How long do I have to file a damage claim?",
+        a: "File your damage claim and initial evidence within 24 hours of the confirmed return. If the return was not confirmed, the deadline runs from the scheduled return time. The renter normally has 7 calendar days to respond with their own evidence.",
+        link: { label: "Deposits and damage", href: "/naudojimosi-salygos" },
+      },
+      {
+        q: "What happens if the renter cancels?",
+        a: "The cancellation policy chosen for the listing applies – flexible, moderate or strict. If you chose no policy, moderate applies. The share of the rental price refunded to the renter is calculated according to that policy, and the deposit is returned in full on a reservation cancelled before handover.",
+      },
+      {
+        q: "What should I know if I rent out as a business?",
+        a: "When you rent out as a business, you are yourself responsible for the consumer protection, product safety, tax, VAT, invoicing and accounting obligations that apply to you. Business status is shown on your profile and during the reservation. You may need to confirm your business details, right of representation, tax details and consent to invoices being issued in your name. If the required information is missing, publishing listings, accepting requests or payouts may be restricted.",
       },
     ],
     ctaEyebrow: "The app",
     ctaPhoneAlt: "Naudokis app",
+    // DRAFT — English rendering of the app's own Lithuanian screen labels. The
+    // shipped app is Lithuanian; these are the marketing-site equivalents and
+    // need sign-off before launch.
     screen: {
-      searchPlaceholder: "What do you need to rent?",
-      reserveCta: "Send request",
-      frozenPill: "Payment authorised",
-      pickupCta: "Meet the owner",
-      reviewCta: "Leave a review",
-      listUpload: "Add photos",
-      listPrice: "€50 / day",
-      listCta: "Publish",
-      acceptCta: "Accept request",
-      handoverCta: "Record handover",
-      // multi-day amount (≠ 1× the mock's daily price) + explicit after-fees
-      // qualifier, so the illustration can't read as a fee-free gross payout
-      payoutAmount: "+ €120",
-      payoutLabel: "Payout sent, after fees",
-      completedPill: "Completed",
+      item: "Bosch rotary hammer",
+      itemCat: "Tools",
+      itemPrice: "€18/day",
+      dates: "March 12 – 15",
+      days: "3 days",
+      renter: "Marius K.",
+      renterInitial: "M",
+      rentLabel: "Rental total",
+      rentValue: "€54",
+      feeLabel: "Platform fee",
+      feeValue: "− €5.40",
+      payoutLabel: "Your payout",
+      payoutValue: "€48.60",
+      photosLabel: "Photos",
+      addPhoto: "Add",
+      conditionLabel: "Item condition",
+      conditionGood: "Good",
+      conditionWorn: "Light wear",
+      conditionDamaged: "Damaged",
+      confirm: "Confirm",
+      search: {
+        title: "Search",
+        placeholder: "What are you looking for?",
+        catsLabel: "Item categories",
+        cats: ["Tools", "Vehicles", "Electronics", "Sports gear", "Events"],
+      },
+      reserve: {
+        title: "Rental request",
+        rentalLabel: "Rental details",
+        cancelLabel: "Cancellation",
+        cancelValue: "Flexible",
+        handoffLabel: "Handover",
+        pickup: "Pick-up",
+        delivery: "Delivery",
+        feesLabel: "Payment summary",
+        rentRow: "Rental × 3 days",
+        deliveryValue: "€5",
+        depositLabel: "Deposit",
+        depositValue: "€50",
+        totalLabel: "Total",
+        totalValue: "€109",
+        cta: "Reserve payment · €109",
+      },
+      pickup: {
+        title: "Item handover",
+        intro: "Record the condition — it protects both sides.",
+        photoCount: "0 / 8",
+        camera: "Take photo",
+        gallery: "From gallery",
+        goodHint: "No visible defects",
+      },
+      review: {
+        title: "Review",
+        prompt: "Share your experience",
+        placeholder: "Write a review…",
+        cta: "Submit review",
+      },
+      list: {
+        title: "New listing",
+        heading: "Upload photos of your item",
+        body: "Add up to 10 clear photos. The first one is the listing's main photo.",
+        photoCount: "3 / 10",
+        cover: "Cover",
+        cta: "Continue",
+      },
+      accept: {
+        title: "Request review",
+        renterLabel: "Renter",
+        rating: "4.9",
+        rentals: "· 12 rentals",
+        earningsLabel: "Payout",
+        reject: "Decline",
+        accept: "Accept",
+      },
+      handover: {
+        title: "Item return",
+        intro: "Compare the condition with the handover record.",
+        photoCount: "2 / 8",
+        goodHint: "Returned in order",
+      },
+      payout: {
+        title: "Rental completion",
+        meta: "March 12–15 · 3 days · Marius K.",
+        amount: "+ €48.60",
+        rateLabel: "Rate the renter",
+      },
     },
   },
   homeSteps: {
     eyebrow: "How it works",
-    title: "How each rental works",
-    lead: "Four clear stages from search or listing to return and completion.",
+    title: "A rental from start to finish",
+    lead: "Four clear stages – from finding an item or posting a listing to return and completion.",
     steps: [
       {
-        kicker: "Start",
-        title: "Find or list an item",
-        body: "Compare listings on the website, or list your own item in the app.",
+        kicker: "Search",
+        title: "Find or offer an item",
+        body: "Compare rental listings on the website, or post a listing for your own item in the app.",
       },
       {
-        kicker: "Decision",
+        kicker: "Request",
         title: "Send or accept a request",
-        body: "The renter sees the full amount and sends a request; the owner accepts or declines it.",
+        body: "The renter reviews the final amount and sends a reservation request; the owner confirms or declines it.",
       },
       {
-        kicker: "Record",
-        title: "Hand over and return with a record",
-        body: "At both stages, record the item’s condition, photos, notes and accessories.",
+        kicker: "Handover",
+        title: "Record the handover and return",
+        body: "When handing the item over and taking it back, record its condition, photos, notes and what it comes with.",
       },
       {
-        kicker: "Finish",
-        title: "Complete the rental",
-        body: "Confirm the return, provide evidence if needed, and leave a review after completion.",
+        kicker: "Completion",
+        title: "Confirm the end of the rental",
+        body: "Confirm the return, attach evidence if needed, and leave a review once the rental is complete.",
       },
     ],
-    ctaLabel: "Read more",
+    ctaLabel: "See the full process",
   },
   cta: {
     eyebrow: "The app",
     title: "Browse online. Send your request in the app.",
-    body: "In the app, choose dates and handover, review the full amount and authorise payment. The request is sent to the owner; the reservation becomes final only after the owner accepts and payment succeeds. Messages, handover and return stay in one place.",
+    body: "In the app, choose your rental dates and handover method, review the final amount and authorise payment. The request is sent to the owner, and the reservation is confirmed once they accept it and payment succeeds. Manage messages, handover and return in one place.",
     phoneAlt: "Reservation screen in the Naudokis app",
   },
   faq: {
     eyebrow: "Questions?",
     heading: "What to know before renting",
     subheading:
-      "Quick answers about the agreement, reservation status, checks, deposits and responsibility.",
+      "Quick answers about the agreement, confirmation, price, cancellation, deposits and checks.",
+    // Ordered by renter anxiety, not company narrative: who am I dealing with → when
+    // am I committed → what does it cost → what if it goes wrong. Every answer ends on
+    // a concrete outcome, a timing condition or a policy link. Wording tracks the Terms
+    // (§4, §6, §7, §9) — note the "generally" hedges: the Terms don't promise a single
+    // outcome for cancellations, so neither does this copy.
     items: [
       {
-        q: "Who enters into the rental agreement?",
-        a: "The renter enters into the agreement directly with the private or business owner offering the item. Naudokis provides the marketplace, payment and rental-process tools.",
+        q: "Who am I renting from?",
+        a: "You rent directly from a private or business owner. Naudokis provides the tools for searching, reserving, paying, handover and dispute handling, but is generally not the owner of the item or a party to the rental agreement.",
       },
       {
-        q: "When does a reservation become final?",
-        a: "Stripe first authorises payment and the request is sent to the owner. The reservation becomes final only after the owner accepts it and payment succeeds.",
+        q: "When is my reservation confirmed?",
+        a: "Your reservation is confirmed only once the owner accepts the request and payment goes through. A payment authorisation on its own does not mean the reservation is confirmed.",
       },
       {
-        q: "What can I rent on Naudokis?",
-        a: "Popular categories include tools, photo and video gear, transport, electronics, home appliances, event equipment and leisure gear.",
+        q: "What will I pay?",
+        a: "The owner sets the rental price and the deposit, and Naudokis may add clearly disclosed platform and other fees. Before you pay, the app shows the rental price, any delivery fee, other fees, the deposit, the cancellation terms and the total.",
       },
       {
-        q: "Can I rent items across Lithuania?",
-        a: "Yes. Search, categories and city filters help you find items in Vilnius, Kaunas, Klaipėda and other cities.",
+        q: "What happens if someone cancels?",
+        a: "It depends on who cancels and when. If you cancel before the owner accepts, the payment is generally not taken — the authorisation is released or the amount is refunded through Stripe. If the reservation is already confirmed, the cancellation terms shown before payment apply, alongside your statutory consumer rights. If the owner cancels before handover, a full refund is generally initiated.",
+        link: { label: "Cancellation terms", href: "/naudojimosi-salygos" },
       },
       {
-        q: "How do owners set prices?",
-        a: "Owners can compare similar rental offers and use recommendations, while staying in control of the final price and deposit.",
+        q: "What happens if an item is damaged, late or not returned?",
+        a: "Both sides can submit photos, messages and other evidence. The deposit can cover a justified claim, but it is not insurance and does not cap the renter's liability. The owner has 24 hours from the confirmed return to file a claim, and the renter has 7 days to respond.",
+        link: { label: "Deposits and damage", href: "/naudojimosi-salygos" },
       },
       {
-        q: "What happens if an item is damaged or not returned?",
-        a: "The refundable deposit and dispute process help: both sides can submit evidence in the app and Naudokis administers the dispute under the rules.",
+        q: "What do profile checks mean?",
+        a: "Profile badges show which checks have been completed. They do not confirm an item's condition, provide insurance or guarantee the transaction, so review the profile, the listing and the applicable terms before you reserve.",
       },
       {
-        q: "Can private people and businesses list items?",
-        a: "Yes. Private and business owners can list items. When an owner acts as a business, that status should be shown in the profile or reservation flow, and mandatory consumer rights apply.",
+        q: "Can I search across Lithuania?",
+        a: "Yes, you can search anywhere in Lithuania. How much is on offer depends on the city and the category, so in some places the choice may still be limited.",
+        link: { label: "Browse categories", href: "/kategorijos" },
       },
       {
-        q: "Why is the reservation request sent in the app?",
-        a: "The app keeps dates, the full amount, payment authorisation, messages, condition records and notifications in one place.",
-      },
-      {
-        q: "When does the owner receive a payout?",
-        a: "The payout is initiated after the rental is completed and payout conditions are met. Actual transfer time depends on the payment provider and any applicable checks.",
-      },
-      {
-        q: "Are browsing and listing free?",
-        a: "There is no upfront fee to search or view listings on the website or to publish an item. Fees for a specific reservation are shown before the request is sent.",
+        q: "What can I do on the website and in the app?",
+        a: "On the website you can search and compare listings. In the app you pick dates and a handover method, see the full amount, send the request, pay, message the owner, and keep a record of handover and return.",
       },
     ],
   },
@@ -497,6 +616,7 @@ export const en: Dict = {
     galleryPrev: "Previous photo",
     galleryNext: "Next photo",
     galleryImageError: "Couldn’t load this photo",
+    galleryCounter: (index, total) => `Photo ${index} of ${total}`,
     // DRAFT — marketing sign-off pending (booking-panel trust rows + CTA note)
     ratingLinkLabel: ({ rating, count }) =>
       `Rated ${rating} out of 5, ${count} review${count === 1 ? "" : "s"} — go to reviews`,

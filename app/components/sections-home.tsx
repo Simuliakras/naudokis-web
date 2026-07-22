@@ -30,9 +30,9 @@ export function Hero({ locale }: { locale: Locale }) {
     <section id="top" style={{ position: "relative", background: "radial-gradient(circle at 85% 20%, var(--nk-purple-halo), transparent 42%), var(--nk-bg-deep)", overflow: "hidden" }}>
       <Pattern name="hero-pattern" priority mobileBlank className="nk-hero-pattern nk-brand-pattern"
         style={{ position: "absolute", top: 0, bottom: 0, height: "100%", objectFit: "cover", objectPosition: "right top", pointerEvents: "none" }} />
-      <div className="nk-container nk-home-hero-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
+      <div className="nk-container" style={{ position: "relative", paddingBlock: "clamp(20px, 3vw, 40px) var(--nk-section-y-lg)" }}>
         {/* grid columns / padding / min-height live on .nk-hero-panel in globals.css
-            so the 980px stack doesn't need !important overrides */}
+            so the 1190px stack doesn't need !important overrides */}
         <div className="nk-hero-panel nk-grain nk-gborder" style={{ position: "relative", borderRadius: "var(--nk-r-lg)", background: "var(--nk-glass)", backdropFilter: "blur(35px)" }}>
           <AmbientGlow />
           {/* left column */}
@@ -66,13 +66,13 @@ export function Hero({ locale }: { locale: Locale }) {
                 what an LCP element wants. */}
             <picture className="nk-hero-device">
               {/* Browsers fetch an <img> even inside a display:none ancestor, and the
-                  whole media column is display:none below 560px. Selecting a 1×1 GIF
-                  there means the desktop URL is never requested on phones — the only
-                  candidate the browser resolves is this one. LEGACY_ syntax on
-                  purpose: <source media> is not downleveled, and an engine that
+                  whole media column is display:none below 1190px. Selecting a 1×1 GIF
+                  there means the desktop URL is never requested below that width —
+                  the only candidate the browser resolves is this one. LEGACY_ syntax
+                  on purpose: <source media> is not downleveled, and an engine that
                   cannot parse `(width < …)` reads it as non-matching, which would
-                  hand phones the full-size PNG this line exists to withhold. */}
-              <source media={LEGACY_VIEWPORT_QUERIES.compact} srcSet="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" />
+                  hand those clients the full-size PNG this line exists to withhold. */}
+              <source media={LEGACY_VIEWPORT_QUERIES.heroPhone} srcSet="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" />
               <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt}
                 width={1436} height={1868} loading="eager" fetchPriority="high"
                 sizes={IMAGE_SIZES.heroPhone} />

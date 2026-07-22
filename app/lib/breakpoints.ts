@@ -18,6 +18,9 @@ export const BREAKPOINTS = {
   md: "48rem",
   lg: "64rem",
   nav: "70rem",
+  // Component-scoped like `nav`: the width below which the home hero drops its phone
+  // column. 1190px.
+  hero: "74.375rem",
   xl: "80rem",
 } as const;
 
@@ -36,12 +39,23 @@ export const VIEWPORT_QUERIES = {
   navExpanded: `(width >= ${BREAKPOINTS.nav})`,
 } as const;
 
-// Legacy-syntax equivalents for the two <source media> attributes. HTML gains
-// nothing from range syntax — no downleveling happens there — and these guard the
-// hero/pattern 1x1-GIF trick, whose whole job is to stop old phones downloading a
+// The hero's phone column is display:none below the `hero` tier (globals.css). An
+// <img> inside a display:none ancestor is still fetched, so the same edge has to be
+// spelled twice more — as a <source media> below and in IMAGE_SIZES.heroPhone — or
+// the phone would stop being shown at one width and stop being fetched at another.
+// Both derive from the token so there is one place to change it.
+const HERO_PHONE_HIDDEN = `(width < ${BREAKPOINTS.hero})`;
+const HERO_PHONE_HIDDEN_PX = Number.parseFloat(BREAKPOINTS.hero) * 16;
+
+// Legacy-syntax equivalents for the <source media> attributes. HTML gains nothing
+// from range syntax — no downleveling happens there — and these guard the
+// hero/pattern 1x1-GIF trick, whose whole job is to stop clients downloading a
 // desktop image. A query the engine cannot parse would defeat exactly that.
 export const LEGACY_VIEWPORT_QUERIES = {
   compact: `(max-width: ${Number.parseFloat(BREAKPOINTS.sm) * 16 - 0.02}px)`,
+  // Distinct from `compact`, which still guards Pattern's mobileBlank at the sm
+  // tier. The hero phone hides much earlier than the background pattern does.
+  heroPhone: `(max-width: ${HERO_PHONE_HIDDEN_PX - 0.02}px)`,
 } as const;
 
 export type ViewportQueryName = keyof typeof VIEWPORT_QUERIES;
@@ -89,11 +103,11 @@ const DETAIL_ONE_COLUMN = "(width < 62.5rem)";
 const APP_CTA_PHONE_HIDDEN = "(width < 68rem)";
 
 export const IMAGE_SIZES = {
-  heroPhone: [
-    `${VIEWPORT_QUERIES.compact} 1px`,
-    `(width < ${BREAKPOINTS.nav}) min(45vw, 30rem)`,
-    "min(43vw, 36rem)",
-  ].join(", "),
+  // Only two candidates left: the column is display:none below the collapse (1px,
+  // the 1x1 GIF), and above it the phone is always the wide two-column rendition.
+  // The old `< nav` middle clause described the stacked-phone slot, which no longer
+  // exists.
+  heroPhone: `${HERO_PHONE_HIDDEN} 1px, min(43vw, 36rem)`,
   appCtaPhone: `${APP_CTA_PHONE_HIDDEN} 1px, 480px`,
   offerCard: [
     `${VIEWPORT_QUERIES.compact} calc(50vw - 28px)`,
@@ -110,4 +124,8 @@ export const IMAGE_SIZES = {
   // bento rendition as an instant underlay, which only works if both resolve to the
   // same candidate. Keep them in lockstep.
   lightboxUnderlay: `${DETAIL_ONE_COLUMN} 100vw, min(60vw, 800px)`,
+  // Filmstrip thumb: 80px above the phone tier, 64px below. Declaring the real CSS
+  // box lets srcset pick the DPR2 candidate; the old hardcoded "64px" already
+  // disagreed with the phone box it shipped alongside.
+  lightboxThumb: `(width < ${BREAKPOINTS.sm}) 64px, 80px`,
 } as const;

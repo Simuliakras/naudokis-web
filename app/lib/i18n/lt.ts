@@ -106,9 +106,9 @@ export const lt: Dict = {
     closeMenu: "Uždaryti meniu",
   },
   hero: {
-    badge: "Nuoma iš patvirtintų naudotojų",
+    badge: "Nuoma tarp patvirtintų naudotojų",
     title: "Aiškesnė daiktų nuoma nuo paieškos iki grąžinimo.",
-    body: "Raskite daiktą iš privačių ar verslo savininkų. Svetainėje palyginkite pasiūlymus, o programėlėje matykite visą rezervacijos sumą, pateikite užklausą ir fiksuokite perdavimą bei grąžinimą.",
+    body: "Raskite daiktą iš privataus ar verslo nuomotojo. Svetainėje palyginkite pasiūlymus, o programėlėje peržiūrėkite galutinę sumą, pateikite rezervacijos užklausą ir užfiksuokite daikto perdavimą bei grąžinimą.",
     ownerPrompt: "Turite nenaudojamą daiktą?",
     ownerCta: "Įkelkite skelbimą programėlėje",
     phoneAlt: "Naudokis programėlėje rodomi daiktų nuomos pasiūlymai",
@@ -123,7 +123,7 @@ export const lt: Dict = {
     submit: "Ieškoti",
   },
   categories: {
-    eyebrow: "Naršykite",
+    eyebrow: "Atraskite",
     title: "Nuomos kategorijos",
     all: "Visos kategorijos",
     examples: (id) => LT_CATEGORY_EXAMPLES[id],
@@ -156,7 +156,7 @@ export const lt: Dict = {
   offers: {
     // FINAL: recency framing — "picked for you"/"popular"/
     // "nearby" had no personalization, review or geo signal behind them.
-    eyebrow: "Naršykite",
+    eyebrow: "Išsirinkite",
     title: "Daiktai nuomai",
     all: "Visi daiktai",
     errorTitle: "Nepavyko įkelti nuomos pasiūlymų",
@@ -206,75 +206,94 @@ export const lt: Dict = {
     lead: "„Naudokis“ sujungia nuomininkus su privačiais ir verslo nuomotojais bei suteikia įrankius sklandžiam nuomos procesui. Nuomos sutartį šalys sudaro tiesiogiai tarpusavyje. Pasirinkite savo vaidmenį ir sužinokite, kaip vyksta visas procesas.",
     renter: {
       label: "Nuomininkas",
-      lead: "Nuo paieškos iki grąžinimo — taip išsinuomosite daiktą dienai, savaitgaliui ar projektui.",
+      lead: "Nuo paieškos iki grąžinimo – keturi aiškūs žingsniai, kad išsinuomotumėte daiktą dienai, savaitgaliui ar projektui.",
       ctaTitle: "Rezervuokite daiktą nuomai programėlėje",
       ctaBody:
         "Pasirinkite nuomos datas ir perdavimo būdą, peržiūrėkite galutinę sumą bei patvirtinkite mokėjimo autorizaciją. Tuomet užklausa bus išsiųsta savininkui.",
       steps: [
         {
           icon: "Search",
-          title: "Raskite ir palyginkite",
+          title: "Atraskite ir palyginkite",
           tag: "Paieška",
           tone: "yellow",
           screen: "search",
-          body: "Peržiūrėkite aprašymą, būklę, vietą, perdavimo būdus, savininko statusą, atliktas patikras ir užbaigtų rezervacijų atsiliepimus.",
+          body: "Peržiūrėkite daikto aprašymą, būklę, vietą ir perdavimo būdus. Įvertinkite savininko profilį, patvirtinimus bei ankstesnių nuomų atsiliepimus.",
         },
         {
           icon: "Calendar",
-          title: "Peržiūrėkite sumą ir pateikite užklausą",
+          title: "Pasirinkite sąlygas ir pateikite užklausą",
           tag: "Užklausa",
           tone: "green",
           screen: "reserve",
-          body: "Pasirinkite datas bei perdavimo būdą ir patikrinkite kainą, mokesčius, užstatą, atšaukimo sąlygas bei bendrą sumą. Stripe autorizuoja mokėjimą, o savininkas priima arba atmeta užklausą.",
+          body: "Pasirinkite nuomos datas ir perdavimo būdą, peržiūrėkite galutinę sumą, užstatą bei atšaukimo sąlygas. Patvirtinus mokėjimo autorizaciją, užklausa bus išsiųsta savininkui.",
         },
         {
           icon: "Handshake",
-          title: "Perimkite daiktą su būklės įrašu",
+          title: "Perimkite ir užfiksuokite būklę",
           tag: "Perdavimas",
           tone: "yellow",
           screen: "pickup",
-          body: "Susitikę ar gavę pristatymą patikrinkite daikto būklę ir priedus. Nuotraukas bei pastabas išsaugokite programėlėje.",
+          body: "Atsiimdami daiktą arba gavę pristatymą patikrinkite jo būklę, komplektaciją ir priedus. Nuotraukas bei pastabas išsaugokite programėlėje.",
         },
         {
           icon: "Star",
-          title: "Grąžinkite, užbaikite ir įvertinkite",
+          title: "Grąžinkite ir užbaikite nuomą",
           tag: "Užbaigimas",
           tone: "purple",
           screen: "review",
-          body: "Grąžindami dar kartą užfiksuokite būklę. Užbaigtos rezervacijos dalyviai gali palikti atsiliepimą.",
+          body: "Grąžindami daiktą dar kartą užfiksuokite jo būklę, patvirtinkite grąžinimą ir, užbaigę nuomą, palikite atsiliepimą.",
+        },
+      ],
+      // ⚠️ DRAFT (2026-07-22): nuomininko pusės garantijos. Skaičiai ir terminai
+      // cituojami iš Naudojimosi sąlygų (§6, §7, §8, §9) — nieko neišgalvota.
+      trust: [
+        {
+          icon: "CreditCard",
+          title: "Mokėjimas nurašomas tik patvirtinus rezervaciją",
+          body: "Nuomos kaina, platformos mokesčiai ir užstatas parodomi prieš pateikiant užklausą. Mokėjimas iš pradžių tik autorizuojamas ir nurašomas savininkui priėmus užklausą.",
+        },
+        {
+          icon: "Users",
+          title: "Žinote, iš ko nuomojatės",
+          body: "Savininko profilyje matote tapatybės ir kitus profilio patvirtinimus bei ankstesnių nuomų atsiliepimus. Atsiliepimus gali palikti tik per „Naudokis“ užbaigtų rezervacijų dalyviai.",
+        },
+        {
+          icon: "ShieldCheck",
+          title: "Užstato ir atšaukimo sąlygos – iš anksto",
+          body: "Užstato grąžinimo ir rezervacijos atšaukimo sąlygas matote prieš pateikdami užklausą. Jei per nustatytą terminą nepateikiama pagrįsta pretenzija, užstatas grąžinamas. Atšaukus iki perdavimo, jis grąžinamas visas.",
         },
       ],
     },
     owner: {
       label: "Savininkas",
-      lead: "Nuo skelbimo iki išmokos — taip nenaudojamus daiktus paversite pajamomis.",
+      lead: "Nuo skelbimo iki išmokos – keturi aiškūs žingsniai, padedantys nenaudojamus daiktus paversti pajamomis.",
       ctaTitle: "Paskelbkite daiktą programėlėje",
       ctaBody:
         "Programėlėje įkelsite daiktą, valdysite užklausas, susirašysite su nuomininkais ir gausite išmokas vienoje vietoje.",
       steps: [
         {
           icon: "Camera",
-          title: "Paskelbkite tikslias sąlygas",
+          title: "Paskelbkite daiktą aiškiomis sąlygomis",
           tag: "Skelbimas",
           tone: "yellow",
           screen: "list",
-          body: "Įkelkite tikras nuotraukas, aprašykite būklę ir priedus, nustatykite kainą, užstatą, pristatymo bei atšaukimo sąlygas.",
+          body: "Įkelkite aiškias nuotraukas, aprašykite daikto būklę ir komplektaciją, nustatykite kainą, užstatą, perdavimo būdus bei atšaukimo sąlygas.",
         },
         {
           icon: "BadgeCheck",
-          title: "Priimkite arba atmeskite užklausą",
-          tag: "Sprendimas",
+          title: "Peržiūrėkite ir atsakykite į užklausą",
+          tag: "Užklausa",
           tone: "green",
           screen: "accept",
-          body: "Peržiūrėkite nuomininko profilį, datas ir sumas, tada iki rodomo termino nuspręskite, ar priimti užklausą.",
+          body: "Peržiūrėkite nuomininko profilį, nuomos datas ir galutinę sumą. Iki nurodyto termino užklausą priimkite arba atmeskite.",
         },
         {
           icon: "Handshake",
           title: "Užfiksuokite perdavimą ir grąžinimą",
-          tag: "Būklė",
+          tag: "Perdavimas",
           tone: "yellow",
           screen: "handover",
-          body: "Abiem etapais išsaugokite daikto būklės, nuotraukų, pastabų ir perduodamų priedų įrašą.",
+          body: "Perduodami ir priimdami grąžinamą daiktą programėlėje užfiksuokite jo būklę, komplektaciją, nuotraukas ir pastabas.",
         },
         {
           icon: "Coins",
@@ -282,175 +301,272 @@ export const lt: Dict = {
           tag: "Išmoka",
           tone: "purple",
           screen: "payout",
-          body: "Įvykdžius užbaigimo ir išmokos sąlygas, inicijuojama išmoka. Jei kilo problema, per programėlėje rodomą terminą pateikite reikalavimą ir įrodymus.",
+          body: "Patvirtinus grąžinimą ir įvykdžius išmokos sąlygas, išmoka bus inicijuota. Kilus problemai, per programėlėje nurodytą terminą pateikite reikalavimą ir įrodymus.",
+        },
+      ],
+      // ⚠️ DRAFT (2026-07-22): savininko pusės garantijos — mokesčiai, sprendimas
+      // dėl užklausos, pretenzijų terminai. Cituojama iš Naudojimosi sąlygų.
+      trust: [
+        {
+          icon: "Coins",
+          title: "Mokesčius matote prieš priimdami užklausą",
+          body: "Skelbimą galite paskelbti be išankstinio mokesčio. Konkrečiai rezervacijai taikomi platformos mokesčiai aiškiai parodomi prieš priimant užklausą.",
+        },
+        {
+          icon: "BadgeCheck",
+          title: "Jūs sprendžiate, kam nuomoti",
+          body: "Prieš priimdami sprendimą matote nuomininko profilį, tapatybės patvirtinimą, nuomos datas ir galutinę sumą. Kiekvieną užklausą galite priimti arba atmesti.",
+        },
+        {
+          icon: "ShieldCheck",
+          title: "Būklės įrašai ir aiškus pretenzijų procesas",
+          body: "Perdavimo ir grąžinimo įrašai išsaugomi programėlėje. Pastebėję žalą, per 24 valandas nuo patvirtinto grąžinimo pateikite pretenziją ir pirminius įrodymus.",
         },
       ],
     },
-    trustEyebrow: "Pasitikėjimas iš abiejų pusių",
-    trustTitle: "Aiškesnė nuoma privatiems ir verslo naudotojams",
-    trust: [
-      {
-        icon: "CreditCard",
-        title: "Mokėjimai per Stripe",
-        body: "Mokėjimo suma, platformos mokesčiai ir grąžinamas užstatas parodomi prieš patvirtinant.",
-      },
-      {
-        icon: "Users",
-        title: "Profiliai, patvirtinimai ir atsiliepimai",
-        body: "Atsiliepimus gali palikti tik per Naudokis užbaigtos rezervacijos dalyviai. Profilyje taip pat matomos atliktos patikros.",
-      },
-      {
-        icon: "ShieldCheck",
-        title: "Užstatai ir pagalba",
-        body: "Aiškios užstato, žalos ir įrodymų taisyklės bei pagalba ginčo atveju padeda abiem pusėms.",
-      },
-    ],
-    browseCta: "Naršyti daiktus",
-    listCta: "Įkelti skelbimą",
+    trustEyebrow: "Pasitikėjimas kiekviename etape",
+    trustTitle: "Aiškesnė nuoma abiem pusėms",
+    browseCta: "Rasti daiktą",
+    listCta: "Paskelbti daiktą",
     faqEyebrow: "Turite klausimų?",
     faqTitle: "Dažniausi klausimai",
     faqSubheading:
-      "Trumpi atsakymai apie rezervacijas, mokėjimus, užstatus ir nuomą programėlėje.",
+      "Aiškūs atsakymai apie rezervaciją, mokėjimą, atšaukimą, užstatą ir daikto grąžinimą.",
+    faqOwnerSubheading:
+      "Aiškūs atsakymai apie skelbimus, užklausas, išmokas, pretenzijas ir verslo nuomą.",
+    // ⚠️ DRAFT (2026-07-22): nuomininko pusės klausimai — autorizacija vs. patvirtinimas,
+    // atšaukimas, užstatas, perdavimo įrašai, vėlavimas, patikros. Skaičiai neišgalvoti:
+    // terminai ir formulės cituojami iš Naudojimosi sąlygų (§6, §7, §8, §9).
     faq: [
       {
-        q: "Ar naršymas nemokamas?",
-        a: "Taip. Ieškoti ir peržiūrėti nuomos pasiūlymus svetainėje nemokama. Konkrečios rezervacijos mokesčiai, užstatas, atšaukimo sąlygos ir bendra suma parodomi prieš pateikiant užklausą.",
+        q: "Kada patvirtinama rezervacija ir nurašomas mokėjimas?",
+        a: "Pateikus užklausą, mokėjimo suma tik autorizuojama – rezervacija dar nėra patvirtinta. Ji patvirtinama savininkui priėmus užklausą ir mokėjimui sėkmingai įvykus. Tuomet nurašoma nuomos suma ir užstatas.",
       },
       {
-        q: "Kaip tvarkomi mokėjimai?",
-        a: "Mokėjimus apdoroja Stripe. Pateikiant užklausą mokėjimas autorizuojamas; rezervacija tampa galutinė savininkui ją priėmus ir mokėjimui sėkmingai įvykus.",
+        q: "Kokios atšaukimo sąlygos taikomos rezervacijai?",
+        a: "Kiekvienam skelbimui taikoma viena iš trijų atšaukimo politikų. Lanksti – visa nuomos kaina grąžinama atšaukus bent prieš 24 valandas. Vidutinė – visa kaina grąžinama atšaukus bent prieš 5 dienas, o likus 1–4 dienoms grąžinama 50 %. Griežta – 50 % grąžinama atšaukus bent prieš 14 dienų. Jei skelbime nenurodyta kitaip, taikoma vidutinė politika. Aiškiai pažymėti negrąžinami mokesčiai negrąžinami, o iki perdavimo atšauktos rezervacijos užstatas grąžinamas visas.",
+        link: { label: "Atšaukimo sąlygos", href: "/naudojimosi-salygos" },
       },
       {
-        q: "Kas atsako už galimą žalą daiktui?",
-        a: "Prieš nuomą gali būti taikomas grąžinamas užstatas, tačiau jis nėra draudimas ar atsakomybės riba. Kilus nesutarimui, abi pusės pateikia įrodymus, o Naudokis administruoja platformos ginčo procesą.",
+        q: "Kaip veikia užstatas ir kokia mano atsakomybė?",
+        a: "Užstatas paprastai nurašomas kartu su rezervacijos mokėjimu, savininkui priėmus užklausą. Rezervacijai pasibaigus jis grąžinamas, jei per nustatytą terminą nepateikiama pagrįsta pretenzija. Užstatas nėra draudimas ir neapriboja jūsų atsakomybės – pagrįsto reikalavimo suma gali būti didesnė už užstatą.",
       },
       {
-        q: "Kodėl rezervacijos užklausa teikiama programėlėje?",
-        a: "Programėlėje pasirenkamos datos, rodoma visa suma, autorizuojamas mokėjimas, pateikiama užklausa, saugomos žinutės, būklės įrašai ir pranešimai. Svetainėje galite naršyti ir palyginti pasiūlymus.",
+        q: "Kaip užfiksuoti daikto perdavimą ir grąžinimą?",
+        a: "Atsiimdami ir grąžindami daiktą patikrinkite jo būklę, komplektaciją, priedus, matomus trūkumus ir, jei taikoma, serijos numerį. Programėlėje išsaugokite aiškias nuotraukas ar vaizdo įrašą ir pažymėkite pastebėtus neatitikimus. Šie įrašai gali tapti svarbiais įrodymais nagrinėjant pretenziją.",
+      },
+      {
+        q: "Kas nutinka pavėlavus grąžinti daiktą?",
+        a: "Už kiekvieną pradėtą 24 valandų vėlavimo laikotarpį gali būti taikomas dviejų dienų nuomos kainos dydžio mokestis. Papildomas nemokamas laikotarpis netaikomas. Bendra suma negali viršyti mažesnės iš dviejų ribų: septynių dienų nuomos kainos arba skelbime nurodytos daikto atkuriamosios vertės. Tiksli formulė ir didžiausia galima suma parodomos prieš patvirtinant mokėjimą.",
+      },
+      {
+        q: "Ką patvirtina ir ko negarantuoja patikros?",
+        a: "Kai kurioms funkcijoms naudotojai turi patvirtinti el. paštą, telefono numerį ar tapatybę. Mokėjimų paslaugų teikėjas taip pat gali atlikti mokėjimų ir atitikties patikras. Šios patikros neįvertina daikto būklės ir negarantuoja nuomos baigties. „Naudokis“ fiziškai netikrina kiekvieno daikto ar perdavimo, todėl prieš nuomą įvertinkite skelbimą, savininko profilį ir patį daiktą.",
       },
     ],
-    // FINAL product copy: owner-side FAQ — payouts, fees, damage,
-    // requests. Only already-claimed facts (Stripe payouts, upfront fees, deposit
-    // + dispute process per the Terms); no numbers invented.
+    // ⚠️ DRAFT (2026-07-22): savininko pusės klausimai — mokesčiai, užklausų priėmimas,
+    // išmokos ir sulaikymai, įrodymų terminai, nuomininko atšaukimai, verslo pareigos.
+    // Kaip ir nuomininko rinkinyje: jokių išgalvotų skaičių, tik Sąlygų formuluotės.
     faqOwner: [
       {
-        q: "Kada gaunu išmoką?",
-        a: "Užbaigus nuomą ir įvykdžius išmokos sąlygas, išmoka pervedama per Stripe. Išmokoms taikoma Naudojimosi sąlygose nurodyta tvarka.",
-      },
-      {
         q: "Kiek kainuoja paskelbti daiktą?",
-        a: "Daiktui paskelbti išankstinis mokestis netaikomas. Konkrečiai rezervacijai taikomi platformos mokesčiai parodomi prieš priimant užklausą.",
+        a: "Skelbimą paskelbti galite be išankstinio mokesčio. Konkrečiai rezervacijai taikomi platformos mokesčiai parodomi prieš priimant užklausą. Pasikeitę mokesčiai taikomi tik būsimoms rezervacijoms.",
       },
       {
-        q: "Kas, jei daiktas grąžinamas sugadintas?",
-        a: "Padeda grąžinamas užstatas ir ginčų procesas: pateikiate įrodymus programėlėje, o Naudokis administruoja ginčą pagal taisykles.",
+        q: "Ar turiu priimti kiekvieną užklausą?",
+        a: "Ne. Prieš nuspręsdami peržiūrėkite nuomininko profilį, nuomos datas ir galutinę sumą. Iki nurodyto termino užklausą priimkite arba atmeskite. Jei laiku neatsakysite, užklausa nustos galioti, o nuomininko mokėjimas nebus nurašytas.",
       },
       {
-        q: "Ar privalau priimti kiekvieną užklausą?",
-        a: "Ne. Peržiūrėkite nuomininko profilį, datas ir sumas, tada iki rodomo termino priimkite arba atmeskite užklausą.",
+        q: "Kada inicijuojama išmoka ir kodėl ji gali būti sulaikyta?",
+        a: "Išmoka inicijuojama, kai rezervacija tinkamai užbaigta, mokėjimas galutinai įskaitytas ir nėra aktyvaus ginčo, grąžinimo ar su paskyra, atitiktimi ar mokesčiais susijusių apribojimų. Jei viena šalis patvirtina grąžinimą, o kita per 3 kalendorines dienas nepateikia pagrįstos pretenzijos, rezervacija užbaigiama automatiškai. Pervedimo trukmė priklauso nuo mokėjimų paslaugų teikėjo, banko ir galimų patikrų.",
+      },
+      {
+        q: "Per kiek laiko turiu pateikti pretenziją dėl žalos?",
+        a: "Pretenziją dėl žalos ir pirminius įrodymus pateikite per 24 valandas nuo patvirtinto daikto grąžinimo. Jei grąžinimas nepatvirtintas, terminas skaičiuojamas nuo numatyto grąžinimo laiko. Nuomininkas paprastai turi 7 kalendorines dienas atsakyti ir pateikti savo įrodymus.",
+        link: { label: "Užstatas ir žala", href: "/naudojimosi-salygos" },
+      },
+      {
+        q: "Kas nutinka, jei nuomininkas atšaukia?",
+        a: "Taikoma skelbime pasirinkta atšaukimo politika – lanksti, vidutinė arba griežta. Jei politikos nepasirinkote, taikoma vidutinė. Nuomininkui grąžinama nuomos kainos dalis apskaičiuojama pagal pasirinktą politiką, o iki perdavimo atšauktos rezervacijos užstatas grąžinamas visas.",
+      },
+      {
+        q: "Ką turiu žinoti, jei nuomoju kaip verslas?",
+        a: "Nuomodami kaip verslas, patys atsakote už jums taikomas vartotojų apsaugos, produktų saugos, mokesčių, PVM, sąskaitų išrašymo ir apskaitos pareigas. Verslo statusas rodomas profilyje ir rezervacijos metu. Gali reikėti patvirtinti verslo duomenis, atstovavimo teisę, mokestinę informaciją ir sutikimą dėl sąskaitų išrašymo jūsų vardu. Nepateikus reikalingų duomenų, skelbimų publikavimas, užklausų priėmimas ar išmokos gali būti apriboti.",
       },
     ],
     ctaEyebrow: "Programėlė",
     ctaPhoneAlt: "Naudokis programėlė",
+    // Verbatim from the mobile app's own translations/lt.json wherever the app
+    // has the label — these mock-ups reproduce real app screens, so the copy
+    // must match what someone sees after installing.
     screen: {
-      searchPlaceholder: "Ką norite išsinuomoti?",
-      reserveCta: "Pateikti užklausą",
-      // hold-state (mirrors EN "Held") — "Rezervuota" contradicted the Reserve
-      // button right under it (completed state above the action that causes it)
-      frozenPill: "Mokėjimas autorizuotas",
-      pickupCta: "Susitikti su savininku",
-      reviewCta: "Palikti atsiliepimą",
-      listUpload: "Įkelkite nuotraukas",
-      listPrice: "50 € / diena",
-      listCta: "Skelbti",
-      acceptCta: "Priimti užklausą",
-      handoverCta: "Fiksuoti perdavimą",
-      // multi-day amount (≠ 1× the mock's daily price) + explicit after-fees
-      // qualifier, so the illustration can't read as a fee-free gross payout
-      payoutAmount: "+ 120 €",
-      payoutLabel: "Išmoka pervesta po mokesčių",
-      completedPill: "Užbaigta",
+      item: "Bosch perforatorius",
+      itemCat: "Įrankiai",
+      itemPrice: "18 €/d.",
+      dates: "Kovo 12 – 15",
+      days: "3 d.",
+      renter: "Marius K.",
+      renterInitial: "M",
+      rentLabel: "Nuomos suma",
+      rentValue: "54 €",
+      feeLabel: "Platformos mokestis",
+      feeValue: "− 5,40 €",
+      payoutLabel: "Jūsų išmoka",
+      payoutValue: "48,60 €",
+      photosLabel: "Nuotraukos",
+      addPhoto: "Pridėti",
+      conditionLabel: "Daikto būklė",
+      conditionGood: "Gera",
+      conditionWorn: "Nežymus nusidėvėjimas",
+      conditionDamaged: "Pažeista",
+      confirm: "Patvirtinti",
+      search: {
+        title: "Paieška",
+        placeholder: "Ko ieškote?",
+        catsLabel: "Daiktų kategorijos",
+        cats: ["Įrankiai", "Automobiliai", "Elektronika", "Sporto įranga", "Renginiai"],
+      },
+      reserve: {
+        title: "Nuomos užklausa",
+        rentalLabel: "Nuomos informacija",
+        cancelLabel: "Atšaukimas",
+        cancelValue: "Lankstus",
+        handoffLabel: "Daikto perdavimas",
+        pickup: "Atsiėmimas",
+        delivery: "Pristatymas",
+        feesLabel: "Mokėjimo suvestinė",
+        rentRow: "Nuoma × 3 d.",
+        deliveryValue: "5 €",
+        depositLabel: "Užstatas",
+        depositValue: "50 €",
+        totalLabel: "Iš viso",
+        totalValue: "109 €",
+        cta: "Rezervuoti mokėjimą · 109 €",
+      },
+      pickup: {
+        title: "Daikto perdavimas",
+        intro: "Užfiksuokite būklę – tai apsaugo abi puses.",
+        photoCount: "0 / 8",
+        camera: "Fotografuoti",
+        gallery: "Iš galerijos",
+        goodHint: "Be pastebimų defektų",
+      },
+      review: {
+        title: "Atsiliepimas",
+        prompt: "Pasidalinkite patirtimi",
+        placeholder: "Parašykite atsiliepimą…",
+        cta: "Pateikti atsiliepimą",
+      },
+      list: {
+        title: "Naujas skelbimas",
+        heading: "Įkelkite daikto nuotraukas",
+        body: "Pridėkite iki 10 aiškių nuotraukų. Pirmoji – pagrindinė skelbimo nuotrauka.",
+        photoCount: "3 / 10",
+        cover: "Viršelis",
+        cta: "Toliau",
+      },
+      accept: {
+        title: "Užklausos peržiūra",
+        renterLabel: "Nuomininkas",
+        rating: "4,9",
+        rentals: "· 12 nuomų",
+        earningsLabel: "Išmoka",
+        reject: "Atmesti",
+        accept: "Priimti",
+      },
+      handover: {
+        title: "Daikto grąžinimas",
+        intro: "Palyginkite būklę su perdavimo įrašu.",
+        photoCount: "2 / 8",
+        goodHint: "Grąžinta tvarkinga",
+      },
+      payout: {
+        title: "Nuomos užbaigimas",
+        meta: "Kovo 12–15 · 3 d. · Marius K.",
+        amount: "+ 48,60 €",
+        rateLabel: "Įvertinkite nuomininką",
+      },
     },
   },
   homeSteps: {
     eyebrow: "Kaip tai veikia",
-    title: "Kaip vyksta nuoma",
-    lead: "Keturi aiškūs etapai nuo paieškos ar skelbimo iki grąžinimo ir užbaigimo.",
+    title: "Nuoma nuo pradžios iki pabaigos",
+    lead: "Keturi aiškūs etapai – nuo daikto paieškos ar skelbimo įkėlimo iki grąžinimo ir nuomos užbaigimo.",
     steps: [
       {
-        kicker: "Pradžia",
-        title: "Raskite arba paskelbkite",
-        body: "Palyginkite pasiūlymus svetainėje arba paskelbkite savo daiktą programėlėje.",
+        kicker: "Paieška",
+        title: "Raskite arba pasiūlykite daiktą",
+        body: "Palyginkite nuomos pasiūlymus svetainėje arba įkelkite savo daikto skelbimą programėlėje.",
       },
       {
-        kicker: "Sprendimas",
+        kicker: "Užklausa",
         title: "Pateikite arba patvirtinkite užklausą",
-        body: "Nuomininkas mato visą sumą ir pateikia užklausą, o savininkas ją priima arba atmeta.",
+        body: "Nuomininkas peržiūri galutinę sumą ir pateikia rezervacijos užklausą, o savininkas ją patvirtina arba atmeta.",
       },
       {
-        kicker: "Įrašas",
-        title: "Perduokite ir grąžinkite su įrašu",
-        body: "Abiem etapais užfiksuokite daikto būklę, nuotraukas, pastabas ir priedus.",
+        kicker: "Perdavimas",
+        title: "Užfiksuokite perdavimą ir grąžinimą",
+        body: "Perduodami ir grąžindami daiktą užfiksuokite jo būklę, nuotraukas, pastabas ir komplektaciją.",
       },
       {
-        kicker: "Pabaiga",
-        title: "Užbaikite nuomą",
-        body: "Patvirtinkite grąžinimą, prireikus pateikite įrodymus, o po užbaigimo palikite atsiliepimą.",
+        kicker: "Užbaigimas",
+        title: "Patvirtinkite nuomos pabaigą",
+        body: "Patvirtinkite grąžinimą, prireikus pridėkite įrodymus ir, užbaigę nuomą, palikite atsiliepimą.",
       },
     ],
-    ctaLabel: "Skaityti daugiau",
+    ctaLabel: "Peržiūrėti visą procesą",
   },
   cta: {
     eyebrow: "Programėlė",
     title: "Naršykite internete. Užklausą pateikite programėlėje.",
-    body: "Programėlėje pasirinksite datas ir perdavimo būdą, peržiūrėsite visą sumą bei patvirtinsite mokėjimo autorizaciją. Užklausa bus išsiųsta savininkui; rezervacija taps galutinė tik ją priėmus daikto savininkui ir mokėjimui sėkmingai įvykus. Žinutes, perdavimą ir grąžinimą valdysite vienoje vietoje.",
+    body: "Programėlėje pasirinkite nuomos datas ir perdavimo būdą, peržiūrėkite galutinę sumą bei patvirtinkite mokėjimo autorizaciją. Užklausa bus išsiųsta savininkui, o rezervacija patvirtinta jam ją priėmus ir sėkmingai atlikus mokėjimą. Žinutes, daikto perdavimą ir grąžinimą valdykite vienoje vietoje.",
     phoneAlt: "Naudokis programėlės rezervacijos ekranas",
   },
   faq: {
     eyebrow: "Turite klausimų?",
     heading: "Ką verta žinoti prieš nuomojantis",
     subheading:
-      "Trumpi atsakymai apie sandorį, rezervacijos būseną, patikras, užstatą ir atsakomybę.",
+      "Trumpi atsakymai apie sandorį, patvirtinimą, kainą, atšaukimą, užstatą ir patikras.",
+    // Eilės tvarka pagal nuomininko nerimą, ne pagal įmonės pasakojimą: iš ko nuomojuosi
+    // → kada esu įsipareigojęs → kiek kainuoja → kas nutinka, jei kas nors nepavyksta.
+    // Kiekvienas atsakymas baigiasi konkrečiu rezultatu, terminu arba nuoroda į sąlygas.
+    // Formuluotės atitinka Naudojimosi sąlygas (§4, §6, §7, §9) — žr. „paprastai“
+    // išlygas: Sąlygos negarantuoja vieno rezultato, todėl negarantuoja ir šis tekstas.
     items: [
       {
-        q: "Kas sudaro nuomos sandorį?",
-        a: "Nuomos sandorį tiesiogiai sudaro nuomininkas ir daiktą siūlantis privatus arba verslo savininkas. „Naudokis“ suteikia prekyvietę, mokėjimo ir nuomos proceso įrankius.",
+        q: "Iš ko nuomojuosi daiktą?",
+        a: "Daiktą nuomojatės tiesiogiai iš privataus arba verslo savininko. „Naudokis“ suteikia paieškos, rezervacijos, mokėjimo, perdavimo ir ginčų valdymo įrankius, tačiau paprastai nėra daikto savininkė ar nuomos sandorio šalis.",
       },
       {
-        q: "Kada rezervacija tampa galutinė?",
-        a: "Pirmiausia Stripe autorizuoja mokėjimą ir užklausa išsiunčiama savininkui. Rezervacija tampa galutinė tik savininkui ją priėmus ir mokėjimui sėkmingai įvykus.",
+        q: "Kada rezervacija patvirtinama?",
+        a: "Rezervacija patvirtinama tik tada, kai savininkas priima užklausą ir mokėjimas sėkmingai įvykdomas. Vien mokėjimo autorizacija dar nereiškia, kad rezervacija patvirtinta.",
       },
       {
-        q: "Ką galima išsinuomoti per Naudokis?",
-        a: "Populiarios kategorijos apima įrankius, foto ir video techniką, transportą, elektroniką, buitinę techniką, renginių ir laisvalaikio įrangą.",
+        q: "Kiek mokėsiu?",
+        a: "Nuomos kainą ir užstatą nustato savininkas, o „Naudokis“ gali taikyti platformos ar kitus aiškiai nurodytus mokesčius. Prieš mokėdami programėlėje matysite nuomos kainą, pristatymo mokestį, jei jis taikomas, kitus mokesčius, užstatą, atšaukimo sąlygas ir bendrą sumą.",
       },
       {
-        q: "Ar galiu rasti daiktų nuomai visoje Lietuvoje?",
-        a: "Taip. Kategorijos, miestų filtrai ir paieška padeda greitai rasti reikalingą daiktą Vilniuje, Kaune, Klaipėdoje ir kituose miestuose.",
+        q: "Kas nutinka atšaukus rezervaciją?",
+        a: "Tai priklauso nuo to, kas ir kada atšaukia. Jei užklausą atšaukiate iki savininkui ją priimant, mokėjimas paprastai nėra nurašomas — autorizacija panaikinama arba suma grąžinama per Stripe. Jei rezervacija jau patvirtinta, taikomos prieš mokėjimą parodytos atšaukimo sąlygos ir privalomos vartotojų teisės. Savininkui atšaukus iki perdavimo, paprastai inicijuojamas visos sumokėtos sumos grąžinimas.",
+        link: { label: "Atšaukimo sąlygos", href: "/naudojimosi-salygos" },
       },
       {
-        q: "Kaip savininkai nustato kainas?",
-        a: "Savininkai gali palyginti panašius nuomos pasiūlymus ir naudotis rekomendacijomis, bet galutinę kainą bei užstatą nustato patys.",
+        q: "Kas nutinka, jei daiktas sugadinamas, vėluoja arba negrąžinamas?",
+        a: "Abi pusės gali pateikti nuotraukas, žinutes ir kitus įrodymus. Užstatas gali būti panaudotas pagrįstai pretenzijai, tačiau jis nėra draudimas ir neriboja nuomininko atsakomybės. Savininkas pretenziją turi pateikti per 24 valandas nuo patvirtinto grąžinimo, o nuomininkas turi 7 dienas atsakyti.",
+        link: { label: "Užstatas ir žala", href: "/naudojimosi-salygos" },
       },
       {
-        q: "Kas nutinka sugadinus ar negrąžinus daikto?",
-        a: "Padeda grąžinamas užstatas ir ginčų procesas: abi pusės gali pateikti įrodymus programėlėje, o Naudokis administruoja ginčą pagal taisykles.",
+        q: "Ką reiškia profilyje rodomos patikros?",
+        a: "Profilio žymos parodo atliktas patikras. Jos nepatvirtina daikto būklės, draudimo ir negarantuoja sandorio, todėl prieš rezervuodami peržiūrėkite profilį, skelbimą ir taikomas sąlygas.",
       },
       {
-        q: "Ar daiktus gali siūlyti privatūs žmonės ir verslai?",
-        a: "Taip. Daiktus gali siūlyti privatūs ir verslo savininkai. Kai savininkas veikia kaip verslas, jo statusas yra nurodytas profilyje ar rezervacijos eigoje, o vartotojams taikoma privaloma vartotojų teisių apsauga.",
+        q: "Ar galiu ieškoti daiktų visoje Lietuvoje?",
+        a: "Taip, ieškoti galite visoje Lietuvoje. Pasiūlymų skaičius priklauso nuo miesto ir kategorijos, todėl kai kuriose vietose pasirinkimas dar gali būti ribotas.",
+        link: { label: "Naršyti kategorijas", href: "/kategorijos" },
       },
       {
-        q: "Kodėl rezervacijos užklausa teikiama programėlėje?",
-        a: "Programėlėje vienoje vietoje pasirenkamos datos, rodoma visa suma, autorizuojamas mokėjimas, saugomos žinutės, būklės įrašai ir pranešimai.",
-      },
-      {
-        q: "Kada savininkas gauna išmoką?",
-        a: "Išmoka inicijuojama užbaigus nuomą ir įvykdžius išmokos sąlygas. Faktinis pervedimo laikas priklauso nuo mokėjimo paslaugų teikėjo ir taikomų patikrų.",
-      },
-      {
-        q: "Ar naršymas ir skelbimas mokami?",
-        a: "Pasiūlymų paieškai ir peržiūrai svetainėje bei daikto paskelbimui išankstinis mokestis netaikomas. Konkrečios rezervacijos mokesčiai parodomi prieš pateikiant užklausą.",
+        q: "Ką galiu atlikti svetainėje, o ką programėlėje?",
+        a: "Svetainėje galite ieškoti ir palyginti pasiūlymus. Programėlėje pasirinksite datas ir perdavimo būdą, matysite visą sumą, pateiksite užklausą, mokėsite, susirašinėsite ir išsaugosite perdavimo bei grąžinimo įrašus.",
       },
     ],
   },
@@ -554,6 +670,7 @@ export const lt: Dict = {
     galleryPrev: "Ankstesnė nuotrauka",
     galleryNext: "Kita nuotrauka",
     galleryImageError: "Nepavyko įkelti nuotraukos",
+    galleryCounter: (index, total) => `${index} nuotrauka iš ${total}`,
     ratingLinkLabel: ({ rating, count }) =>
       `Įvertinimas ${rating} iš 5, ${ltReviews(count)} — rodyti atsiliepimus`,
     trustDepositRest: "užstatas (grąžinamas po nuomos)",

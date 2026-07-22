@@ -8,6 +8,7 @@ const expected = {
   md: "48rem",
   lg: "64rem",
   nav: "70rem",
+  hero: "74.375rem",
   xl: "80rem",
 } as const;
 

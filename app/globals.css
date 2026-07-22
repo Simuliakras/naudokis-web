@@ -6,6 +6,9 @@
   --breakpoint-md: 48rem;
   --breakpoint-lg: 64rem;
   --breakpoint-nav: 70rem;
+  /* Component-scoped like --breakpoint-nav: the width below which the home hero
+     drops its phone column and runs as a single copy column. 1190px. */
+  --breakpoint-hero: 74.375rem;
   --breakpoint-xl: 80rem;
 }
 
@@ -135,13 +138,8 @@
   /* ---- Phone mock-up palette (htw synced "device screen" context) ------- */
   --nk-ps-bg: #0f1112; /* device body / notch              */
   --nk-ps-frame: rgba(255, 255, 255, 0.14); /* device bezel hairline         */
-  --nk-ps-screen-1: #23282a; /* screen gradient top              */
-  --nk-ps-screen-2: #1b1f20; /* screen gradient bottom           */
   --nk-ps-card: #2c3133; /* placeholder card / row fill      */
-  --nk-ps-bar: #3a4042; /* skeleton bar / avatar            */
   --nk-ps-icon: #8a9694; /* muted placeholder icon           */
-  --nk-ps-map-1: #22272a; /* map grid line a                  */
-  --nk-ps-map-2: #262c2f; /* map grid line b                  */
   --nk-ps-shadow: rgba(16, 16, 16, 0.3); /* CTA phone drop-shadow            */
 
   /* ---- Type families (wired to next/font) ------------------------------- */
@@ -210,6 +208,7 @@
   --nk-media: var(--nk-ps-card); /* empty listing-photo surface   */
   --nk-hover-wash: rgba(255, 255, 255, 0.08); /* generic hover film on dark    */
   --nk-scrim: rgba(15, 17, 18, 0.72); /* modal / sheet backdrop        */
+  --nk-scrim-media: rgba(10, 11, 12, 0.94); /* full-bleed media viewer (lightbox) */
 
   /* ---- Spacing scale (px) ----------------------------------------------- */
   --nk-s-1: 4px;
@@ -2374,6 +2373,34 @@ footer .nk-link:hover {
 }
 .nk-faq button:focus-visible {
   outline: none;
+}
+/* Trailing policy link inside an answer panel. Sits at --nk-purple-hover (the
+   ≥4.5:1 purple on --nk-surface) rather than --nk-purple, which fails contrast
+   at this size. Underline on hover, since color alone can't carry the affordance
+   once the base is already purple. */
+.nk-faq-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--nk-font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--nk-purple-hover);
+  text-decoration: none;
+  transition: gap 0.15s ease;
+}
+.nk-faq-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  gap: 10px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nk-faq-link {
+    transition: none;
+  }
+  .nk-faq-link:hover {
+    gap: 6px;
+  }
 }
 
 /* ---- skeleton / shimmer ---- */
@@ -5142,22 +5169,37 @@ footer .nk-link:hover {
 
 /* ---- Gallery lightbox (full-screen photo viewer) ---- */
 .nk-lightbox {
+  /* Scrim gutter and the inset shared by every chip floating on the photo. Both are
+     variables because the short-viewport block below retunes the gutter only: the
+     landscape axis is height, and a width-driven clamp burns rows the photo needs.
+     One inset for close + counter + both arrows, so they read as a single rail
+     instead of each picking its own edge distance. */
+  --nk-lb-gutter: clamp(12px, 3vw, 40px);
+  --nk-lb-inset: clamp(8px, 2vw, 20px);
   position: fixed;
   inset: 0;
   z-index: 150;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(12px, 3vw, 40px);
-  background: rgba(10, 11, 12, 0.94);
+  padding: var(--nk-lb-gutter);
+  background: var(--nk-scrim-media);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   /* safe-area guards: the close button must clear the notch/Dynamic-Island zone in
-     iOS standalone display (bottom inset is handled by the bar itself) */
-  padding-top: max(clamp(12px, 3vw, 40px), env(safe-area-inset-top));
-  padding-left: max(clamp(12px, 3vw, 40px), env(safe-area-inset-left));
-  padding-right: max(clamp(12px, 3vw, 40px), env(safe-area-inset-right));
+     iOS standalone display (bottom inset is handled by the bar itself). The chips
+     inside then need NO safe-area of their own — they measure from the panel, which
+     this padding has already pushed clear of the inset. */
+  padding-top: max(var(--nk-lb-gutter), env(safe-area-inset-top));
+  padding-left: max(var(--nk-lb-gutter), env(safe-area-inset-left));
+  padding-right: max(var(--nk-lb-gutter), env(safe-area-inset-right));
   animation: nk-scrim-in 0.2s ease both;
+}
+/* The panel is the focus sink (tabIndex -1) so arrow paging survives a click on the
+   photo; it must never paint a ring for that. Real focus-visible targets inside keep
+   the global outline. */
+.nk-lightbox__panel:focus {
+  outline: none;
 }
 .nk-lightbox__panel {
   position: relative;
@@ -5165,45 +5207,40 @@ footer .nk-link:hover {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--nk-gap-md);
+}
+/* Close + arrows are one affordance: a glass disc floating ON the photo (the 2026
+   media-viewer convention — chrome belongs to the media, it does not orbit it in
+   dead space). Close composes .nk-closebtn for the shared box + press; the navs
+   carry their own box, so only the skin is shared here. */
+.nk-lightbox__close,
+.nk-lightbox__nav {
+  border-radius: var(--nk-r-icon);
+  background: var(--nk-overlay);
+  border: 1px solid var(--nk-border-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--nk-shadow-1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nk-lightbox__close:hover,
+  .nk-lightbox__nav:hover {
+    background: var(--nk-surface-hover-glass);
+    border-color: var(--nk-border-strong);
+  }
 }
 .nk-lightbox__close {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: var(--nk-lb-inset);
+  right: var(--nk-lb-inset);
   z-index: 3;
-  width: 44px;
-  height: 44px;
-  border-radius: 22px;
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--nk-overlay);
-  border: 1px solid var(--nk-border-strong);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-.nk-lightbox__close:hover {
-  background: var(--nk-surface-2);
-}
-/* When the arrows flank the photo (multi-photo, wide + tall enough), the panel's right
-   edge sits a full arrow-rail past the photo — pull the close button back to the photo's
-   own top-right corner (arrow width + stage gap) so it reads as the photo's control.
-   Single-photo sets drop the arrows, so the photo already fills the panel: no offset. */
-@media (width >= theme(--breakpoint-sm)) and (height >= 32.5rem) {
-  .nk-lightbox__panel.is-multi .nk-lightbox__close {
-    right: calc(48px + clamp(8px, 2vw, 18px));
-  }
 }
 .nk-lightbox__stage {
+  position: relative;
   flex: 1;
   min-height: 0;
   display: flex;
   align-items: center;
-  gap: clamp(8px, 2vw, 18px);
 }
 .nk-lightbox__img {
   position: relative;
@@ -5211,73 +5248,76 @@ footer .nk-link:hover {
   height: 100%;
   min-width: 0;
 }
+/* Centred with inset + margin-block:auto, NOT translateY(-50%) — load-bearing: the
+   :active press below is a transform, and a centring transform would be clobbered
+   by it, dropping the arrow to the top of the stage on every click. */
 .nk-lightbox__nav {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin-block: auto;
+  z-index: 2;
+  /* Same 44px box as .nk-closebtn: with --nk-r-icon (22px) both are true circles.
+     At 48px the identical radius drew a squircle instead — two different silhouettes
+     on one photo, which is exactly what the shared skin above exists to prevent. */
+  width: var(--nk-tap);
+  height: var(--nk-tap);
   flex: none;
-  width: 48px;
-  height: 48px;
-  border-radius: 24px;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--nk-overlay);
-  border: 1px solid var(--nk-border-strong);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  transition: background 0.15s ease;
+  cursor: pointer;
+  transition:
+    background var(--nk-dur-fast) var(--nk-ease),
+    border-color var(--nk-dur-fast) var(--nk-ease),
+    transform var(--nk-dur-fast) var(--nk-ease-spring);
 }
-.nk-lightbox__nav:hover {
-  background: var(--nk-surface-2);
+.nk-lightbox__nav:active {
+  transform: scale(0.94);
 }
-/* narrow or short screens: overlay the arrows ON the photo instead of flanking
-   it — two 48px flanks squeezed the image to ~65% width on phones */
-@media (width < theme(--breakpoint-sm)), (height < 32.5rem) {
-  .nk-lightbox__stage {
-    position: relative;
-    gap: 0;
-  }
-  .nk-lightbox__nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 2;
-    width: 44px;
-    height: 44px;
-    background: rgba(27, 30, 31, 0.55);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-  }
-  .nk-lightbox__nav:first-of-type {
-    left: calc(4px + var(--nk-safe-left));
-  }
-  .nk-lightbox__nav:last-of-type {
-    right: calc(4px + var(--nk-safe-right));
-  }
+.nk-lightbox__nav.is-prev {
+  left: var(--nk-lb-inset);
 }
-.nk-lightbox__bar {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 16px;
-  padding-bottom: env(safe-area-inset-bottom);
+.nk-lightbox__nav.is-next {
+  right: var(--nk-lb-inset);
 }
-/* count + thumbnail scrubber sit on one row directly under the photo; the count is a
-   fixed leading label and the scrubber takes the rest, scrolling internally. */
-.nk-lightbox__preview {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
+/* Counter rides the photo as a glass chip opposite the close button, balancing the
+   top edge — as bare text under the photo it read as a debug label. */
 .nk-lightbox__count {
-  flex: none;
+  position: absolute;
+  top: var(--nk-lb-inset);
+  left: var(--nk-lb-inset);
+  z-index: 2;
+  padding: 6px 12px;
+  border-radius: var(--nk-r-pill);
   font-family: var(--nk-font-body);
-  font-size: 15px;
+  font-size: 13px;
+  line-height: 1;
   color: var(--nk-text-2);
   font-variant-numeric: tabular-nums;
+  background: var(--nk-overlay);
+  border: 1px solid var(--nk-border-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+/* One bottom band, not two rows. `1fr minmax(0, auto) 1fr` centres the filmstrip
+   against the PANEL while the CTA docks right: cols 1 and 3 are equal, so the CTA's
+   intrinsic width is mirrored by an empty spacer opposite it. minmax(0, auto) lets a
+   long strip shrink and scroll internally instead of shoving the CTA off-panel. */
+.nk-lightbox__bar {
+  flex: none;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
+  align-items: center;
+  gap: var(--nk-gap-md);
+  padding-bottom: var(--nk-safe-bottom);
+}
+.nk-lightbox__thumbs {
+  grid-column: 2;
+}
+.nk-lightbox__cta {
+  grid-column: 3;
+  justify-self: end;
 }
 /* photo reveal tied to the actual load (keyed remount per index): while loading,
    .nk-lightbox__ph shows a spinner; onLoad flips data-loaded and the photo fades
@@ -5336,12 +5376,13 @@ footer .nk-link:hover {
   }
 }
 /* thumbnail scrubber — horizontal strip mapped to the active index */
-/* 6px padding keeps the 3px-offset focus ring fully inside the scroll container */
+/* 6px padding clears BOTH rings drawn outside the thumb box: the 4px selection ring
+   below and the global 2px focus outline at 3px offset. Neither may be clipped by
+   this scroll container. */
 .nk-lightbox__thumbs {
-  flex: 1;
   min-width: 0;
   display: flex;
-  gap: 8px;
+  gap: 10px;
   overflow-x: auto;
   padding: 6px;
   scrollbar-width: none;
@@ -5352,34 +5393,103 @@ footer .nk-link:hover {
 .nk-lightbox__thumb {
   position: relative;
   flex: none;
-  width: 64px;
-  height: 46px;
-  border-radius: 8px;
+  width: 80px;
+  height: 60px;
+  border-radius: var(--nk-r-sm);
   overflow: hidden;
   cursor: pointer;
-  border: 2px solid transparent;
-  opacity: 0.5;
+  border: 0;
   transition:
-    opacity 0.15s ease,
-    border-color 0.15s ease;
+    box-shadow var(--nk-dur-fast) var(--nk-ease),
+    transform var(--nk-dur-fast) var(--nk-ease-spring);
 }
-.nk-lightbox__thumb:hover {
-  opacity: 0.85;
+/* Recede behind a scrim, not opacity: opacity fades the photo INTO the near-black
+   backdrop and reads muddy, where a scrim keeps it legible but quiet. */
+.nk-lightbox__thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--nk-scrim-media) 55%, transparent);
+  transition: background var(--nk-dur-fast) var(--nk-ease);
 }
+@media (hover: hover) and (pointer: fine) {
+  .nk-lightbox__thumb:hover {
+    transform: translateY(-1px);
+  }
+  .nk-lightbox__thumb:hover::after {
+    background: color-mix(in srgb, var(--nk-scrim-media) 20%, transparent);
+  }
+}
+.nk-lightbox__thumb:active {
+  transform: scale(0.96);
+}
+.nk-lightbox__thumb.is-active::after {
+  background: transparent;
+}
+/* Ring with a gap. A flush inner border (the old 2px inside overflow:hidden) reads
+   as a stray browser focus outline; the inner stop is the backdrop colour, so the
+   gap looks punched out of the strip. */
 .nk-lightbox__thumb.is-active {
-  opacity: 1;
-  border-color: var(--nk-purple);
+  box-shadow:
+    0 0 0 2px var(--nk-scrim-media),
+    0 0 0 4px var(--nk-purple);
 }
 @media (prefers-reduced-motion: reduce) {
   .nk-lightbox__photo {
     transition: none;
   }
 }
-/* nav buttons keep the 44px+ tap floor on phones; thumbs stay ≥44px tall */
+/* Narrow and short are deliberately SEPARATE blocks — they want opposite things, so
+   the old combined `layerCompact` query served neither well. Short comes first so a
+   phone that is both (small landscape) still gets the stacked band below. */
+
+/* Landscape phones: height is the scarce axis. The gutter stops tracking width (a
+   3vw clamp burned 28px top AND bottom of a 430px viewport) and the strip shrinks to
+   ride inside the CTA's own 44px row, so every spare px goes to the photo. */
+@media (height < 32.5rem) {
+  .nk-lightbox {
+    --nk-lb-gutter: 10px;
+  }
+  .nk-lightbox__panel {
+    gap: var(--nk-gap-sm);
+  }
+  .nk-lightbox__thumbs {
+    padding-block: 5px;
+  }
+  .nk-lightbox__thumb {
+    width: 56px;
+    height: 42px;
+  }
+}
+/* Portrait phones: the reserve CTA's copy cannot share a row with a filmstrip at
+   375px, so the band stacks and the CTA goes full-width — the right phone pattern
+   regardless. Stacking frees vertical room, so the thumbs stay generous. */
 @media (width < theme(--breakpoint-sm)) {
   .nk-lightbox__thumb {
-    width: 60px;
-    height: 44px;
+    width: 72px;
+    height: 54px;
+  }
+  .nk-lightbox__bar {
+    grid-template-columns: 1fr;
+    gap: var(--nk-gap-sm);
+  }
+  .nk-lightbox__thumbs,
+  .nk-lightbox__cta {
+    grid-column: 1;
+    justify-self: stretch;
+  }
+  .nk-lightbox__cta .nk-btn {
+    width: 100%;
+  }
+}
+/* .nk-btn is white-space:nowrap and the LT reserve string is ~316px with icon and
+   padding, so a full-width button overflows a 320px viewport. Same squeeze .nk-mbar
+   applies to this exact string — repeated here because that rule is scoped to
+   `@container nk-detail`, which a fixed-position layer never matches. */
+@media (width < theme(--breakpoint-xs)) {
+  .nk-lightbox__cta .nk-btn {
+    padding: 12px 16px;
+    font-size: 14.5px;
   }
 }
 /* content reveal after skeleton — a subtle opacity + rise. Fill-mode is `backwards`
@@ -5816,9 +5926,6 @@ footer .nk-link:hover {
 }
 
 /* hero panel layout (visual skin stays inline in <Hero>) — fluid min-height avoids a forced-tall 2-col on landscape tablets */
-.nk-home-hero-container {
-  container: nk-home-hero / inline-size;
-}
 .nk-hero-panel {
   display: grid;
   grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
@@ -5928,9 +6035,6 @@ footer .nk-link:hover {
     min-height: 0;
     gap: 32px;
   }
-  .nk-hero-media {
-    min-height: clamp(300px, 42vw, 400px);
-  }
   /* stacked hero follows DOM order (badge → headline → body → search → store badges);
      the JSX leads with the value prop, so no `order` remap is needed */
   .nk-detail {
@@ -5939,18 +6043,10 @@ footer .nk-link:hover {
   }
 }
 @media (width >= theme(--breakpoint-md)) and (width < theme(--breakpoint-lg)) {
-  .nk-hero-panel {
-    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-    gap: 28px;
-    padding: 36px;
-    min-height: clamp(500px, 58vw, 590px);
-  }
-  .nk-hero-media {
-    min-height: clamp(420px, 50vw, 520px);
-  }
-  .nk-hero-qr {
-    right: 12px !important;
-  }
+  /* No .nk-hero-panel geometry here: this whole band sits below the @container
+     collapse, so columns/gap/min-height come from that block and padding from the
+     `< lg` block above, and .nk-hero-media is display:none. Only the copy-column
+     tuning below is reachable in this band. */
   .nk-hero-panel .nk-hero-intro {
     gap: clamp(20px, 2.4vw, 28px);
   }
@@ -5992,24 +6088,29 @@ footer .nk-link:hover {
     display: none !important;
   }
 }
-/* Component fit, not device naming: below 58rem of usable hero width the copy and
-   app preview become dedicated rows. This lands between the supplied 1060px and
-   998px cases with the current fluid gutters and remains correct in nested layouts. */
-@container nk-home-hero (width < 58rem) {
+/* Below 1190px the copy goes full width and the app preview drops out entirely — a
+   stacked phone reads as filler once the copy no longer needs a partner column.
+   DELIBERATELY a viewport media query, not a container query. This used to ask
+   `@container nk-home-hero (width < 65.45rem)`, deriving the container width as
+   viewport × 0.88 (the .nk-container gutters). Two problems killed it: consecutive
+   viewport pixels are only 0.88px apart in container space, so the edge sat inside
+   engine sub-pixel noise, and Firefox fails to re-match a container query after a
+   large window resize — it kept the two-column hero at a measured 1046.33px
+   container, well under the 1047.2px threshold. Media queries invalidate correctly
+   in every engine and say what we actually mean.
+   Keep this block LAST of the .nk-hero-panel grid rules — they all have the same
+   specificity, so source order is what makes this one win.
+   The phone <img> is still fetched inside a display:none ancestor, so the matching
+   viewport threshold in breakpoints.ts (LEGACY_VIEWPORT_QUERIES.heroPhone and
+   IMAGE_SIZES.heroPhone) must move with this one. */
+@media (width < theme(--breakpoint-hero)) {
   .nk-hero-panel {
     grid-template-columns: 1fr;
     min-height: 0;
     gap: 32px;
   }
   .nk-hero-media {
-    min-height: 0;
-    block-size: clamp(360px, 58cqi, 540px);
-  }
-  .nk-hero-phone {
-    inline-size: 100%;
-    max-inline-size: 30rem;
-    inset-inline-start: 0;
-    block-size: 100%;
+    display: none;
   }
 }
 @media (width < theme(--breakpoint-md)) {
@@ -6034,12 +6135,11 @@ footer .nk-link:hover {
        card instead of clipping an interactive control to the rounded paint box. */
     overflow: visible;
   }
-  /* the visitor is already on a phone — drop the device mockup + QR entirely so the
-     hero is a tight value-prop stack with no dead vertical space (badge → headline →
-     body → search → trust → store badges). display:none does NOT stop an <img> from
-     being fetched, so the phone image is paired with a 1×1 <source> at this same
-     breakpoint (see Hero in sections-home.tsx) — that, not this rule, is what keeps
-     the desktop PNG off the wire here. */
+  /* Redundant with the @container collapse above, which already hides the media
+     column from 1190px down — kept as the fallback for engines without container
+     query support, where it is the only rule that drops the device mockup + QR on a
+     phone. (The 1×1 <source> that actually keeps the PNG off the wire is viewport-
+     based and sits at the 1190px line; see Hero in sections-home.tsx.) */
   .nk-hero-media {
     display: none;
   }
@@ -6585,189 +6685,292 @@ footer .nk-link:hover {
   height: 100%;
   border-radius: 34px;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--nk-ps-screen-1), var(--nk-ps-screen-2));
+  background: var(--nk-app-bg);
+  /* size container so the screen contents can scale to the device width — see
+     .htw-appscreen. Nothing inside the phone used cq units before this. */
+  container-type: inline-size;
 }
-.htw-ps-screen {
+
+/* ---- app mini-screens (one per step) ----
+   These reproduce the real Naudokis app screens each step represents, so they
+   carry the APP's dark palette, not the website's. It is scoped here rather
+   than added to :root deliberately — these values are the mobile app's design
+   tokens and must not leak into site surfaces. Re-derive from the app's
+   src/constants/palettes.ts if it ever re-themes. */
+.htw-appscreen {
+  --nk-app-bg: #282c2d;
+  --nk-app-card: #303637;
+  --nk-app-media: linear-gradient(135deg, #2c3234, #23282a);
+  --nk-app-primary: #6665e0;
+  --nk-app-link: #8a89ff;
+  --nk-app-accent: #f9f367;
+  --nk-app-accent-ink: #1b1d22;
+  --nk-app-success: #10b981;
+  --nk-app-success-bright: #4ade80;
+  --nk-app-success-tint: rgba(16, 185, 129, 0.1);
+  --nk-app-success-line: rgba(16, 185, 129, 0.3);
+  --nk-app-success-ink: #b7f0d8;
+  --nk-app-error: #ef4444;
+  --nk-app-text: #ffffff;
+  --nk-app-text-2: #c9ced4;
+  --nk-app-text-3: #dde1e6;
+  --nk-app-muted: #949ba8;
+  --nk-app-muted-2: #8a929c;
+  --nk-app-muted-3: #aeb4bc;
+  --nk-app-icon: #7c858c;
+  --nk-app-hair: rgba(255, 255, 255, 0.08);
+  --nk-app-soft: rgba(255, 255, 255, 0.06);
+  --nk-app-line: rgba(255, 255, 255, 0.1);
+  --nk-app-dash: rgba(255, 255, 255, 0.22);
+  --nk-app-field: #ffffff;
+  --nk-app-field-ink: #6b7280;
+
+  /* The screens are authored ONCE at the 310px desktop screen width (340px
+     phone − 2×14px padding − 2×1px bezel) and scaled as a unit, so the ~200px
+     inline device needs no per-element type overrides. --s is exactly 1 at
+     desktop. The `px` divisor is load-bearing: dividing by a bare 312 yields a
+     LENGTH, and both `calc(100% / <length>)` and `scale(<length>)` are invalid
+     and get dropped — which silently leaves the screen unscaled and shrunk. */
+  --s: calc(100cqw / 310px);
   position: absolute;
-  inset: 0;
-  padding: 54px 22px 24px;
+  top: 0;
+  left: 0;
+  width: calc(100% / var(--s));
+  height: calc(100% / var(--s));
+  transform: scale(var(--s));
+  transform-origin: top left;
+}
+/* The fade lives on an INNER element: htw-fade animates `transform`, which
+   would otherwise clobber the scale above for its whole 0.4s run and pop the
+   screen to full size on every step change. */
+.htw-appscreen__in {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  background: var(--nk-app-bg);
+  font-family: var(--nk-font-body);
   animation: htw-fade 0.4s var(--nk-ease);
 }
-.htw-ps-ph {
-  width: 100%;
-  border-radius: 14px;
-  background: var(--nk-ps-card);
+.htw-as-status {
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.htw-ps-bar {
-  height: 11px;
-  border-radius: 6px;
-  background: var(--nk-ps-bar);
-}
-.htw-ps-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.htw-ps-dot {
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  background: var(--nk-ps-card);
-  flex: none;
-}
-.htw-ps-lines {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  flex: 1;
-}
-.htw-ps-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--nk-light-field);
-  border-radius: 22px;
-  padding: 12px 16px;
-  font-family: var(--nk-font-body);
-  font-size: 14px;
-  color: var(--nk-text-slate);
-}
-.htw-ps-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.htw-ps-search span {
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.htw-ps-row {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 10px;
-}
-.htw-ps-pill {
-  font-family: var(--nk-font-body);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 5px 11px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-.htw-ps-pill--green {
-  background: var(--nk-green-soft);
-  color: var(--nk-green-text);
-}
-.htw-ps-pill--purple {
-  background: var(--nk-purple-pill);
-  color: var(--nk-purple-hover);
-}
-.htw-ps-cta {
-  margin-top: auto;
-  text-align: center;
-  padding: 15px;
-  border-radius: 16px;
-  background: var(--nk-purple);
+  align-items: center;
+  padding: 15px 22px 3px;
   font-family: var(--nk-font-display);
   font-weight: 700;
-  font-size: 16px;
-  color: var(--nk-text);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
 }
-.htw-ps-cta--ghost {
-  background: transparent;
-  border: 1px solid var(--nk-border-strong);
-  color: var(--nk-text);
+.htw-as-batt {
+  position: relative;
+  display: inline-block;
+  width: 22px;
+  height: 11px;
+  border: 1.4px solid rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
 }
-.htw-ps-map {
-  height: 200px;
-  border-radius: 16px;
-  display: flex;
+.htw-as-batt::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: 13px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.85);
+}
+/* app ModalHeader: 3-col so the title stays optically centred whether or not
+   the trailing slot is filled */
+.htw-as-head {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
   align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(circle at 30% 40%, var(--nk-purple-tint), transparent 40%),
-    repeating-linear-gradient(
-      0deg,
-      var(--nk-ps-map-1),
-      var(--nk-ps-map-1) 22px,
-      var(--nk-ps-map-2) 22px,
-      var(--nk-ps-map-2) 23px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      var(--nk-ps-map-1),
-      var(--nk-ps-map-1) 22px,
-      var(--nk-ps-map-2) 22px,
-      var(--nk-ps-map-2) 23px
-    );
-}
-.htw-ps-stars {
-  display: flex;
   gap: 6px;
-  justify-content: center;
-  padding: 8px 0;
+  padding: 8px 14px;
 }
-.htw-ps-up {
-  height: 150px;
+.htw-as-headbtn {
+  width: 32px;
+  height: 32px;
   border-radius: 16px;
-  border: 1.5px dashed var(--nk-border-strong);
+  background: var(--nk-app-soft);
+  display: grid;
+  place-items: center;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--nk-app-text-2);
+}
+.htw-as-headtitle {
+  text-align: center;
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--nk-app-text);
+}
+/* Content taller than the fold clips behind the sticky footer by design — the
+   real screens scroll, the mock shows the top of the scroll. */
+.htw-as-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  padding: 2px 16px 0;
+  gap: 11px;
+}
+.htw-as-foot {
+  padding: 10px 16px 15px;
+  border-top: 1px solid var(--nk-app-hair);
+  display: flex;
+  gap: 8px;
+}
+.htw-as-btn {
+  flex: 1;
+  display: flex;
+  height: 46px;
+  border-radius: 16px;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  font-family: var(--nk-font-body);
-  font-size: 14px;
-  color: var(--nk-text-muted);
+  gap: 7px;
+  background: var(--nk-app-primary);
+  color: var(--nk-app-text);
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 13.5px;
 }
-.htw-ps-req {
+.htw-as-btn--ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 13px;
+}
+/* payout confirm mirrors the app's tone="accent" footer button */
+.htw-as-btn--accent {
+  background: var(--nk-app-accent);
+  color: var(--nk-app-accent-ink);
+}
+.htw-as-label {
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nk-app-muted-2);
+}
+.htw-as-card {
+  background: var(--nk-app-card);
+  border-radius: 16px;
+  padding: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.htw-as-media {
+  background: var(--nk-app-media);
+  display: grid;
+  place-items: center;
+  flex: none;
+  position: relative;
+}
+.htw-as-hair {
+  height: 1px;
+  background: var(--nk-app-hair);
+}
+.htw-as-fee {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+}
+.htw-as-fee > :first-child {
+  color: var(--nk-app-muted-3);
+}
+.htw-as-fee > :last-child {
+  color: var(--nk-app-text);
+}
+/* purple "this protects both sides" intro on the handoff screens */
+.htw-as-note {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 14px;
-  background: var(--nk-ps-card);
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  background: rgba(102, 101, 224, 0.14);
+  border: 1px solid rgba(102, 101, 224, 0.32);
+  font-size: 10.5px;
+  line-height: 1.3;
+  color: #d9d9ec;
 }
-.htw-ps-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  background: var(--nk-ps-bar);
+.htw-as-count {
+  font-size: 10px;
+  color: var(--nk-app-muted);
+  background: var(--nk-app-soft);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.htw-as-radio {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--nk-app-line);
+}
+.htw-as-radio.is-on {
+  border-color: var(--nk-app-success);
+  background: rgba(16, 185, 129, 0.12);
+}
+.htw-as-radio__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
   flex: none;
 }
-.htw-ps-amt {
+.htw-as-radio__mark {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.htw-as-radio.is-on .htw-as-radio__mark {
+  border-color: var(--nk-app-success);
+}
+.htw-as-radio.is-on .htw-as-radio__mark::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--nk-app-success);
+}
+.htw-as-radio__t {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--nk-app-text-3);
+}
+.htw-as-radio.is-on .htw-as-radio__t {
+  color: var(--nk-app-text);
+}
+.htw-as-radio__h {
+  font-size: 9.5px;
+  color: var(--nk-app-muted);
+}
+.htw-as-dash {
+  border-radius: 11px;
+  border: 1.5px dashed var(--nk-app-dash);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 22px;
-  border-radius: 16px;
-  background: var(--nk-green-tint);
-  text-align: center;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--nk-app-muted-3);
+  font-size: 9px;
+  flex: none;
 }
-/* nowrap + fluid size: "+ 120 €" orphaned the euro sign onto its own line
-   inside the ~230px inline mock */
-.htw-ps-amt span {
-  font-family: var(--nk-font-display);
-  font-weight: 700;
-  font-size: clamp(26px, 14cqw, 34px);
-  white-space: nowrap;
-  color: var(--nk-green);
-}
-.htw-ps-amt i {
-  font-family: var(--nk-font-body);
-  font-style: normal;
-  font-size: 14px;
-  color: var(--nk-text-2);
+.htw-as-stars {
+  display: flex;
+  justify-content: center;
 }
 
 /* ---- App-download CTA banner (gradient) ----
@@ -6940,12 +7143,9 @@ footer .nk-link:hover {
     width: min(230px, 100%);
     box-shadow: var(--nk-shadow-2);
   }
-  /* inline-device CTAs stay one crisp line at the 230px mock width */
-  .htw-phone--inline .htw-ps-cta {
-    font-size: 13.5px;
-    padding: 12px 8px;
-    white-space: nowrap;
-  }
+  /* No type overrides here: the app screens are drawn once at the 312px desktop
+     screen width and scaled down as a unit (see .htw-appscreen), so the inline
+     ~202px mock stays proportional without per-element tuning. */
 }
 /* Wide desktop: the QR leaves the install row and anchors to the band's own
    bottom-right corner, over the empty dark screen beside the phone's logo. Absolute

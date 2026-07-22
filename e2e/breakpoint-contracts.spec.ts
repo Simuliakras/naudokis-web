@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { BREAKPOINTS, VIEWPORT_QUERIES } from "../app/lib/breakpoints";
 
 const breakpointPixels = Object.values(BREAKPOINTS).map((value) => Number.parseFloat(value) * 16);
@@ -8,7 +8,22 @@ const px = (token: keyof typeof BREAKPOINTS) => Number.parseFloat(BREAKPOINTS[to
 const SM = px("sm");
 const MD = px("md");
 const NAV = px("nav");
+const HERO = px("hero");
 const around = (edge: number) => [edge - 1, edge, edge + 1];
+
+// setViewportSize resolves before Firefox has finished relaying out, and under
+// back-to-back resizes it reports the PREVIOUS width's geometry — at the hero's
+// 1-col→2-col flip that reads as a 11.2px phone/search gap where a fresh load at the
+// same width measures 19.5px. Waiting for the viewport to actually apply and then
+// two frames pins the measurement to the layout under test. Chromium and WebKit do
+// not need this; leaving it out makes the suite fail only on Firefox, and only at
+// the width where the hero changes shape.
+async function settleViewport(page: Page, width: number) {
+  await page.waitForFunction((expected) => document.documentElement.clientWidth === expected, width);
+  await page.evaluate(
+    () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
+  );
+}
 
 test("viewport tiers have no gap or overlap", async ({ page }) => {
   await page.goto("/this-route-does-not-exist", { waitUntil: "domcontentloaded" });
@@ -41,13 +56,14 @@ test("all canonical boundaries reflow without horizontal overflow", async ({ pag
 
 test("home hero phone stays contained and clear of search", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  const widths = [...around(SM), ...around(MD), 772, 804, 911, 998, 1060, 1083, 1110, 1222, 1372];
+  const widths = [...around(SM), ...around(MD), 772, 804, 911, 998, 1060, 1083, 1110, ...around(HERO), 1222, 1372];
   for (const path of ["/", "/en"]) {
     await page.goto(path, { waitUntil: "load" });
     await page.evaluate(() => document.fonts?.ready);
 
     for (const width of widths) {
       await page.setViewportSize({ width, height: 1237 });
+      await settleViewport(page, width);
       const geometry = await page.evaluate(() => {
         const rect = (selector: string) => {
           const element = document.querySelector(selector);
@@ -74,7 +90,7 @@ test("home hero phone stays contained and clear of search", async ({ page }) => 
       expect(geometry.panel, `hero panel on ${viewport}`).not.toBeNull();
       expect(geometry.intro, `hero intro on ${viewport}`).not.toBeNull();
       expect(geometry.search, `hero search on ${viewport}`).not.toBeNull();
-      if (width < SM) {
+      if (width < HERO) {
         expect(geometry.mediaDisplay, `hero media visibility on ${viewport}`).toBe("none");
         continue;
       }

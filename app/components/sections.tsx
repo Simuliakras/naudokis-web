@@ -702,6 +702,9 @@ export function Faq({
   items: readonly FaqItem[];
 }) {
   const [open, setOpen] = useState(0);
+  // Read here rather than taking a prop: callers include the server-rendered home
+  // page, and hrefs are stored bare in the dictionary so both locales share one entry.
+  const { locale } = useI18n();
   return (
     <section style={{ background: "var(--nk-bg)" }}>
       {/* standard rhythm on top (124px at the desktop cap) against the CTA banner
@@ -723,6 +726,8 @@ export function Faq({
               key={i}
               q={f.q}
               a={f.a}
+              href={f.link ? localePath(locale, f.link.href) : undefined}
+              linkLabel={f.link?.label}
               open={open === i}
               onToggle={() => setOpen(open === i ? -1 : i)}
             />

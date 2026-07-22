@@ -231,10 +231,12 @@ export function CategoryCard({
 
 /* ---------------- FAQ accordion row ---------------- */
 export function FaqRow({
-  q, a, open, onToggle,
+  q, a, href, linkLabel, open, onToggle,
 }: {
   q: string;
   a: string;
+  href?: string; // already locale-prefixed by the caller
+  linkLabel?: string;
   open: boolean;
   onToggle: () => void;
 }) {
@@ -255,9 +257,23 @@ export function FaqRow({
           </span>
         </button>
       </h3>
-      <div id={panelId} style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows .25s ease" }}>
+      {/* `inert` while collapsed: the 0fr grid row + overflow:hidden only clip paint,
+          so without it anything focusable in a closed panel stays a phantom tab stop
+          (and trips .nk-faq:focus-within on a row showing nothing). The toggle button
+          is a sibling in the <h3>, so it stays reachable. */}
+      <div id={panelId} inert={!open} style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows .25s ease" }}>
         <div style={{ overflow: "hidden" }}>
-          <p style={{ margin: 0, padding: "0 clamp(22px,6vw,40px) 24px", fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "30px", color: "var(--nk-text-2)" }}>{a}</p>
+          <p style={{ margin: 0, padding: `0 clamp(22px,6vw,40px) ${href && linkLabel ? 14 : 24}px`, fontFamily: "var(--nk-font-body)", fontSize: 18, lineHeight: "30px", color: "var(--nk-text-2)" }}>{a}</p>
+          {/* Sibling anchor, never inline markup: `a` stays plain text so the same
+              string can feed faqJsonLd's acceptedAnswer.text unaltered. */}
+          {href && linkLabel ? (
+            <p style={{ margin: 0, padding: "0 clamp(22px,6vw,40px) 24px" }}>
+              <Link href={href} className="nk-faq-link">
+                {linkLabel}
+                <Icon name="ArrowRight" size={17} stroke={2.2} />
+              </Link>
+            </p>
+          ) : null}
         </div>
       </div>
     </div>
@@ -406,15 +422,20 @@ export function SectionEmpty({
 }) {
   const c = SECTION_EMPTY_TONES[tone];
   return (
-    <div style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", alignItems: "center", gap: "var(--nk-gap-xl)", flexWrap: "wrap" }}>
+    <div style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-xl)" }}>
       <span style={{ width: 60, height: 60, borderRadius: 30, flex: "none", background: c.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Icon name={icon} size={27} color={c.fg} stroke={2} />
       </span>
-      <div style={{ flex: 1, minWidth: 220, display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)" }}>
-        <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", color: "var(--nk-text)" }}>{title}</span>
-        {subtitle && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "25px", color: "var(--nk-text-2)" }}>{subtitle}</span>}
+      {/* Copy + action wrap as one unit beside the icon: when the button no longer
+          fits next to the copy it drops to a second row on the *text's* left edge,
+          not under the icon disk. */}
+      <div style={{ flex: 1, display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--nk-gap-md) var(--nk-gap-xl)" }}>
+        <div style={{ flex: "1 1 220px", display: "flex", flexDirection: "column", gap: "var(--nk-gap-2xs)" }}>
+          <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 21, lineHeight: "26px", color: "var(--nk-text)" }}>{title}</span>
+          {subtitle && <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "25px", color: "var(--nk-text-2)" }}>{subtitle}</span>}
+        </div>
+        {actionLabel && <button className="nk-btn nk-btn--outline" onClick={onAction} style={{ flex: "none" }}>{actionLabel}</button>}
       </div>
-      {actionLabel && <button className="nk-btn nk-btn--outline" onClick={onAction} style={{ flex: "none" }}>{actionLabel}</button>}
     </div>
   );
 }

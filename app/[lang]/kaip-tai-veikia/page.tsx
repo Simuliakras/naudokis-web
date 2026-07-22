@@ -30,6 +30,10 @@ export default async function Page({ params }: PageProps<"/[lang]/kaip-tai-veiki
   return (
     <>
       <JsonLd data={breadcrumb} />
+      {/* Renter set only, deliberately. HowItWorksScreen renders
+          `role === "owner" ? t.faqOwner : t.faq`, so at the default renter role the
+          owner questions are not in the served HTML at all — emitting them would
+          advertise Q&A the crawled document does not contain. */}
       <JsonLd data={faqJsonLd(t.faq)} />
       <HowItWorksScreen />
     </>
