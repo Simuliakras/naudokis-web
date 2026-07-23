@@ -73,8 +73,16 @@ export default function NotFound() {
         }}
       >
         <Link href="/" aria-label="Naudokis.lt" style={{ display: "inline-flex", alignItems: "center" }}>
+          {/* loading="lazy" is not about this page — it is about every OTHER page.
+              experimental.globalNotFound streams this whole tree into each route's
+              RSC payload, and React Float emits a <link rel=preload as=image> for any
+              eager <img> it renders. That put a preload of the UNOPTIMIZED logo PNG in
+              the <head> of the home page, alongside the real optimized one the nav
+              already fetches — two copies of the same mark, one of them for a page
+              nobody is on. Lazy suppresses the preload; on the actual 404 this image
+              is at the top of the viewport, so it still loads immediately. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={162} height={36} style={{ height: 36, width: "auto" }} />
+          <img src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={162} height={36} loading="lazy" style={{ height: 36, width: "auto" }} />
         </Link>
         <nav
           className={styles.nav}

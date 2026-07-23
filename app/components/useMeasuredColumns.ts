@@ -22,7 +22,11 @@ export function useMeasuredColumns<T extends HTMLElement = HTMLDivElement>() {
       const n = tracks ? tracks.split(" ").filter((track) => track && track !== "0px").length : 1;
       setCols(Math.max(1, n));
     };
-    read();
+    // No priming read() before observe(): observe() queues an initial notification
+    // of its own, so a manual first call is both redundant AND the one that forces
+    // synchronous layout — getComputedStyle right after mount invalidated styles.
+    // Reading inside the callback instead means every read happens in the
+    // ResizeObserver delivery step, after layout has settled.
     const ro = new ResizeObserver(read);
     ro.observe(el);
     return () => ro.disconnect();

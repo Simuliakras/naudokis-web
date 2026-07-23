@@ -3,7 +3,7 @@
 // Mounted once via <Chrome/>; opened from anywhere via openRedirect({title, body}).
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Icon, QR, AppBadges, CloseButton, NK_REDIRECT_EVENT, type RedirectPayload } from "./ui";
+import { Icon, QR, AppBadges, CloseButton, logoBox, NK_REDIRECT_EVENT, type RedirectPayload } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
@@ -155,7 +155,7 @@ export function AppRedirect() {
         {/* dismissible-sheet affordance + drag handle (mobile only, via CSS) */}
         <div ref={grabRef} className="nk-sheet-grabzone" aria-hidden="true"><span className="nk-sheet-grabber" /></div>
         <CloseButton ref={closeRef} onClick={close} label={dict.bridge.close} className="nk-redirect-close" />
-        <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={287} height={64}
+        <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" {...logoBox(32)}
           style={{ height: 32, width: "auto", alignSelf: "flex-start" }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <h2 id="nk-redirect-title" style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", letterSpacing: "-0.01em", color: "var(--nk-text)" }}>{state.title}</h2>

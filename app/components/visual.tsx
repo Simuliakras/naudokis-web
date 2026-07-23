@@ -146,10 +146,21 @@ export function Pattern({ name, className, style, priority = false, mobileBlank 
   );
 }
 
+/* ---------------- Logo artwork ----------------
+   next/image derives its srcset candidates from the `width` PROP, not from the CSS
+   box: with no `sizes`, a numeric width yields `[width, width*2]` as 1x/2x. Passing
+   the PNG's intrinsic 287×64 for a mark that renders ~161px wide therefore made
+   every DPR2 client fetch the 640px rendition. `logoBox` hands next/image the box
+   the caller actually paints, so the candidates land on 192/384 instead.
+   Every render of this asset goes through it — see also StoreBadge in ui.tsx, which
+   had the same defect an order of magnitude worse. */
+const LOGO_ASPECT = 287 / 64;
+export const logoBox = (height: number) => ({ width: Math.round(height * LOGO_ASPECT), height });
+
 export function LogoMark({ locale, height = 36 }: { locale: Locale; height?: number }) {
   return (
     <Link className="nk-logo" href={localeHome(locale)}>
-      <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={287} height={64}
+      <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" {...logoBox(height)}
         style={{ height, width: "auto" }} />
     </Link>
   );

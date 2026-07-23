@@ -14,8 +14,8 @@ import { useFocusTrap } from "@/app/lib/use-focus-trap";
 // Icon / Pattern / QR / IconName are defined in the server-renderable visual.tsx
 // (single source of truth) and re-exported here so existing `from "./ui"` import
 // sites keep working unchanged.
-import { Icon, Pattern, QR, type IconName } from "./visual";
-export { Icon, Pattern, QR };
+import { Icon, Pattern, QR, logoBox, type IconName } from "./visual";
+export { Icon, Pattern, QR, logoBox };
 export type { IconName };
 
 /* ---------------- LocaleFlag ----------------
@@ -89,7 +89,7 @@ export function Logo({ height = 36, priority = false }: { height?: number; prior
   };
   return (
     <Link className="nk-logo" href={home} onClick={onClick}>
-      <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" width={287} height={64}
+      <Image src="/naudokis/naudokis-logo.png" alt="Naudokis.lt" {...logoBox(height)}
         preload={priority} style={{ height, width: "auto" }} />
     </Link>
   );
@@ -118,13 +118,16 @@ export function StoreBadge({
   // The official badge art carries more internal padding than the retired custom
   // assets; ×1.1 keeps the optical size the existing call-site heights were tuned to.
   const renderedHeight = Math.round(height * 1.1);
-  // Intrinsic PNG dimensions (next/image needs them to reserve layout space).
-  const width = isGoogle ? 478 : 813;
-  const naturalHeight = isGoogle ? 142 : 272;
+  // The RENDERED box, not the PNG's intrinsic 813×272 / 478×142. next/image reads
+  // its srcset candidates off the `width` prop (`[width, width*2]` as 1x/2x when
+  // there is no `sizes`), so passing the intrinsic size asked every DPR2 client for
+  // the w=1920 rendition of a badge that paints ~170px wide — 10 KiB, above the
+  // fold in the hero, competing with LCP. Same defect, same fix as logoBox().
+  const renderedWidth = Math.round(renderedHeight * (isGoogle ? 478 / 142 : 813 / 272));
   const img = (
     <Image src={isGoogle ? "/naudokis/google-play.png" : "/naudokis/app-store.png"}
       alt={isGoogle ? dict.bridge.googlePlayAlt : dict.bridge.appStoreAlt}
-      width={width} height={naturalHeight} style={{ height: renderedHeight, width: "auto" }} />
+      width={renderedWidth} height={renderedHeight} style={{ height: renderedHeight, width: "auto" }} />
   );
   if (!interactive) {
     return <span style={{ display: "inline-flex" }}>{img}</span>;
