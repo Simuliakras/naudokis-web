@@ -171,8 +171,23 @@ test("robots.txt advertises the sitemaps and withholds only non-documents", asyn
   expect(body).not.toContain("Disallow: /invite");
 });
 
-test("sitemap lists both locales of the home page with hreflang alternates", async ({ request }) => {
+test("the sitemap index is a sitemapindex that points at its child sitemaps", async ({ request }) => {
+  // /sitemap.xml is a <sitemapindex>, not a <urlset>: the single canonical entry
+  // point robots.txt advertises. The pages child is always present; the listing
+  // shards are appended only when the catalogue is non-empty (the listing sitemap
+  // skips a non-production API), so only the config-independent facts are asserted
+  // here. A referenced shard is anchored as /listings/sitemap/<n>.xml when present.
   const xml = await (await request.get("/sitemap.xml")).text();
+  expect(xml).toContain("<sitemapindex");
+  expect(xml).toContain(`<loc>${ORIGIN}/pages/sitemap.xml</loc>`);
+  const shards = xml.match(/\/listings\/sitemap\/\d+\.xml/g) ?? [];
+  for (const shard of shards) {
+    expect(shard).toMatch(/^\/listings\/sitemap\/\d+\.xml$/);
+  }
+});
+
+test("the pages sitemap lists both locales of the home page with hreflang alternates", async ({ request }) => {
+  const xml = await (await request.get("/pages/sitemap.xml")).text();
   expect(xml).toContain("<urlset");
   expect(xml).toContain(`<loc>${ORIGIN}/</loc>`);
   expect(xml).toContain(`${ORIGIN}/en`);

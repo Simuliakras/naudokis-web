@@ -1,13 +1,7 @@
 import type { MetadataRoute } from "next";
-import { fetchListingSitemapCount } from "@/app/lib/listing-sitemap";
 import { SITE_URL } from "@/app/lib/seo";
 
-export default async function robots(): Promise<MetadataRoute.Robots> {
-  const listingSitemapCount = await fetchListingSitemapCount();
-  const listingSitemaps = Array.from(
-    { length: listingSitemapCount },
-    (_, id) => `${SITE_URL}/listings/sitemap/${id}.xml`,
-  );
+export default function robots(): MetadataRoute.Robots {
   return {
     // Everything stays crawlable EXCEPT endpoints that are not documents. The
     // many pages that rely on `meta robots: noindex` (search-param feed states,
@@ -21,7 +15,11 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     //            SoftwareApplication.installUrl, which is a declaration rather
     //            than a crawl target.
     rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/go"] },
-    sitemap: [`${SITE_URL}/sitemap.xml`, ...listingSitemaps],
+    // Just the index. /sitemap.xml is a <sitemapindex> (app/sitemap.xml/route.ts)
+    // that references the pages sitemap and every listing shard, so a crawler
+    // discovers all of them from this one URL — no need to enumerate shards here
+    // (which also drops robots.txt's backend dependency).
+    sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,
   };
 }

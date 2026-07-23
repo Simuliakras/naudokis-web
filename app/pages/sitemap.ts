@@ -5,6 +5,14 @@ import { LT_CITIES } from "@/app/lib/cities";
 import { fetchListingsCount } from "@/app/lib/listings";
 import { listingLandingPath, SITE_URL, MIN_INDEXABLE_LISTINGS } from "@/app/lib/seo";
 
+// The "pages" child sitemap: static marketing pages + category/city landings, served
+// at /pages/sitemap.xml. It is NOT the canonical entry point — /sitemap.xml is a
+// sitemap index (app/sitemap.xml/route.ts) that references this file and the listing
+// shards. Kept on the Next metadata convention (rather than a hand-rolled handler) so
+// Next serialises the hreflang `alternates` into <xhtml:link> for us; the index only
+// carries plain <loc>s, so it can be a route handler. The proxy matcher must exclude
+// this path (it is not a localizable page) — see proxy.ts.
+
 // Per-locale entries for a bare path ("" → home), with hreflang alternates.
 // `lastModified`/`images` are only set for entries with real data (listings) —
 // a fabricated build-time lastmod on static pages is worse than none.
