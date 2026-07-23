@@ -3,6 +3,8 @@
 // pills, per-category cards with inline subcategory lists, SEO note.
 import { useId, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+// Route-scoped stylesheet — see the header of categories-directory.css.
+import "./categories-directory.css";
 import Link from "next/link";
 import { Nav } from "./sections";
 import { CtaBanner, Footer } from "./sections-home";

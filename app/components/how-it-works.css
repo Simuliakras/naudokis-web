@@ -1,0 +1,742 @@
+@reference "../globals.css";
+
+/* "Kaip tai veikia" (How it works) page — ported from htw.css.
+   Fluid rhythm tokens (--nk-section-y, --nk-panel-pad, …) are global.
+
+   Route-scoped, imported by HowItWorksScreen.tsx rather than globals.css — ~17 KB
+   that only /kaip-tai-veikia renders. See components/invite.css for the ordering
+   contract (this file loads AFTER globals.css).
+
+   TWO families deliberately did NOT come with it, because they are shared:
+     • .nk-hero-band* + .nk-qr-card — the dark pattern-backed hero band, also used
+       by /invite, which tunes it through the --hero-* custom properties.
+     • .nk-appcta* — the gradient App-download banner, also on the home page.
+   Both stay in globals.css together with their own breakpoint blocks. The `.htw-*`
+   rules that used to be interleaved among those blocks were pulled forward into
+   this file in source order, so their relative cascade is unchanged.
+   Adding a rule here that targets either family is a mistake — it would apply on
+   /kaip-tai-veikia only, which is never what those two want. */
+.htw-page {
+  width: 100%;
+  background: var(--nk-bg);
+}
+
+/* The one .htw- rule inside the shared hero band: the band itself stays global,
+   this actions row is only ever rendered by HowItWorksScreen. */
+.htw-hero__actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+/* ---- role toggle (renter / owner segmented control) ---- */
+.htw-toggle {
+  position: relative;
+  display: inline-flex;
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--nk-surface);
+  border: 1px solid var(--nk-border);
+}
+.htw-toggle__btn {
+  position: relative;
+  z-index: 2;
+  padding: 13px 36px;
+  border-radius: 999px;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--nk-text-muted);
+  transition: color 0.25s ease;
+  white-space: nowrap;
+}
+.htw-toggle__btn.is-active {
+  color: var(--nk-text);
+}
+.htw-toggle__btn:not(.is-active):hover {
+  color: var(--nk-text);
+}
+.htw-toggle__thumb {
+  position: absolute;
+  z-index: 1;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc(50% - 6px);
+  border-radius: 999px;
+  background: var(--nk-purple);
+  border: 1px solid var(--nk-purple-deep);
+  transition: transform 0.32s var(--nk-ease-spring);
+}
+.htw-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 13px 5px 11px;
+  border-radius: 999px;
+  font-family: var(--nk-font-body);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.htw-tag::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+@keyframes htw-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- steps (synced phone) ---- */
+.htw-steps {
+  padding-block: var(--nk-section-y) var(--nk-section-y-lg);
+  container: nk-hiw-layout / inline-size;
+}
+.htw-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(48px, 6vw, 90px);
+  align-items: start;
+}
+.htw-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nk-stack-lg);
+}
+.htw-toggle-row {
+  display: flex;
+}
+.htw-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.htw-list::before {
+  content: "";
+  position: absolute;
+  left: 33px;
+  top: var(--spine-top, 40px);
+  bottom: var(--spine-bottom, 40px);
+  width: 2px;
+  background: var(--nk-border);
+}
+.htw-list__fill {
+  position: absolute;
+  left: 33px;
+  top: var(--spine-top, 40px);
+  width: 2px;
+  background: var(--nk-purple);
+  transition: height 0.4s var(--nk-ease-spring);
+  border-radius: 2px;
+}
+.htw-step {
+  position: relative;
+  display: flex;
+  gap: var(--nk-gap-xl);
+  padding: var(--nk-gap-xl) var(--nk-gap-xl) var(--nk-gap-xl) 0;
+  cursor: pointer;
+  border-radius: 18px;
+  text-align: left;
+  background: transparent;
+  transition: background 0.22s ease;
+  width: 100%;
+}
+.htw-step:hover {
+  background: var(--nk-surface-glass);
+}
+/* the real <button> lives inside the h3 (valid HTML keeps the heading outline);
+   its ::after overlay preserves the whole-row click target */
+.htw-step__btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.htw-step__btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+}
+.htw-step__btn:focus-visible {
+  outline: none;
+}
+.htw-step:has(.htw-step__btn:focus-visible) {
+  box-shadow: 0 0 0 3px var(--nk-purple-hover);
+}
+.htw-step__num {
+  position: relative;
+  z-index: 2;
+  width: 68px;
+  height: 68px;
+  border-radius: 34px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nk-surface);
+  border: 1px solid var(--nk-border);
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--nk-text-muted);
+  transition: all 0.28s var(--nk-ease-spring);
+}
+.htw-step__num .nk-ico {
+  display: none;
+}
+.htw-step.is-active .htw-step__num {
+  background: var(--nk-purple);
+  border-color: var(--nk-purple-deep);
+  color: var(--nk-text);
+  transform: scale(1.04);
+  box-shadow: 0 10px 28px var(--nk-purple-shadow);
+}
+.htw-step.is-active .htw-step__num span {
+  display: none;
+}
+.htw-step.is-active .htw-step__num .nk-ico {
+  display: block;
+}
+.htw-step.is-done .htw-step__num {
+  background: var(--nk-surface-2);
+  border-color: var(--nk-purple);
+  color: var(--nk-purple-hover);
+}
+.htw-step__body {
+  padding-top: 8px;
+  flex: 1;
+  min-width: 0;
+}
+/* chip on its own line under the title for ALL steps — the inline slot wrapped
+   only on the longest title, breaking the rail's rhythm mid-list */
+.htw-step__top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--nk-gap-xs);
+  margin-bottom: 6px;
+}
+.htw-step__top h3 {
+  margin: 0;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 30px;
+  color: var(--nk-text-muted);
+  transition: color 0.22s ease;
+}
+.htw-step.is-active .htw-step__top h3 {
+  color: var(--nk-text);
+}
+/* Body reveal via grid-rows (0fr→1fr) — animates true content height, so long LT
+   copy never clips (the old max-height:200px was a latent clip). transitionend on
+   grid-template-rows still fires, so StepList.measure() re-runs on collapse/expand. */
+.htw-step__reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.34s ease;
+}
+.htw-step.is-active .htw-step__reveal {
+  grid-template-rows: 1fr;
+}
+.htw-step__revealclip {
+  overflow: hidden;
+  min-height: 0;
+}
+.htw-step__text {
+  margin: 0;
+  padding-top: 8px;
+  font-family: var(--nk-font-body);
+  font-size: 18px;
+  line-height: 29px;
+  color: var(--nk-text-2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.htw-step.is-active .htw-step__text {
+  opacity: 1;
+}
+/* Per-step inline device — hidden on desktop (the sticky .htw-right shows the
+   synced phone); revealed at ≤1120 so the active step owns its own app screen.
+   The wrap is a 0fr→1fr grid (same reveal idiom as .htw-step__reveal): every
+   step keeps its device MOUNTED, so switching steps animates the height instead
+   of teleporting the layout by a phone-mock's height. */
+.htw-step__devicewrap {
+  display: none;
+}
+.htw-step__deviceclip {
+  overflow: hidden;
+  min-height: 0;
+  display: block;
+}
+.htw-step__device {
+  display: flex;
+  justify-content: center;
+}
+.htw-right {
+  position: sticky;
+  top: 120px;
+  display: flex;
+  justify-content: center;
+}
+/* both phone hosts are size containers — the mock sizes itself to the column
+   it actually sits in (sticky right column vs inline step body). The wrap needs
+   an explicit width: inline-size containment means it can no longer shrink-wrap
+   to the phone (a content-sized container would collapse to 0). */
+.htw-phonewrap {
+  position: relative;
+  container-type: inline-size;
+  width: min(340px, 100%);
+}
+.htw-phonewrap__glow {
+  position: absolute;
+  inset: -40px;
+  border-radius: 60px;
+  filter: blur(50px);
+  opacity: 0.5;
+  background: radial-gradient(circle at 50% 40%, var(--nk-purple-glow-2), transparent 65%);
+  transition: background 0.4s ease;
+}
+.htw-stepcount {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--nk-font-body);
+  font-size: 16px;
+  color: var(--nk-text-muted);
+}
+.htw-stepcount b {
+  color: var(--nk-text);
+  font-family: var(--nk-font-display);
+}
+
+/* ---- phone frame + mini-screens ---- */
+.htw-phone {
+  position: relative;
+  width: min(340px, 100cqw);
+  aspect-ratio: 340/700;
+  border-radius: 46px;
+  background: var(--nk-ps-bg);
+  border: 1px solid var(--nk-ps-frame);
+  box-shadow: var(--nk-shadow-hero);
+  padding: 14px;
+  flex: none;
+}
+.htw-phone__notch {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 28px;
+  border-radius: 16px;
+  background: var(--nk-ps-bg);
+  z-index: 3;
+}
+.htw-phone__screen {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 34px;
+  overflow: hidden;
+  background: var(--nk-app-bg);
+  /* size container so the screen contents can scale to the device width — see
+     .htw-appscreen. Nothing inside the phone used cq units before this. */
+  container-type: inline-size;
+}
+
+/* ---- app mini-screens (one per step) ----
+   These reproduce the real Naudokis app screens each step represents, so they
+   carry the APP's dark palette, not the website's. It is scoped here rather
+   than added to :root deliberately — these values are the mobile app's design
+   tokens and must not leak into site surfaces. Re-derive from the app's
+   src/constants/palettes.ts if it ever re-themes. */
+.htw-appscreen {
+  --nk-app-bg: #282c2d;
+  --nk-app-card: #303637;
+  --nk-app-media: linear-gradient(135deg, #2c3234, #23282a);
+  --nk-app-primary: #6665e0;
+  --nk-app-link: #8a89ff;
+  --nk-app-accent: #f9f367;
+  --nk-app-accent-ink: #1b1d22;
+  --nk-app-success: #10b981;
+  --nk-app-success-bright: #4ade80;
+  --nk-app-success-tint: rgba(16, 185, 129, 0.1);
+  --nk-app-success-line: rgba(16, 185, 129, 0.3);
+  --nk-app-success-ink: #b7f0d8;
+  --nk-app-error: #ef4444;
+  --nk-app-text: #ffffff;
+  --nk-app-text-2: #c9ced4;
+  --nk-app-text-3: #dde1e6;
+  --nk-app-muted: #949ba8;
+  --nk-app-muted-2: #8a929c;
+  --nk-app-muted-3: #aeb4bc;
+  --nk-app-icon: #7c858c;
+  --nk-app-hair: rgba(255, 255, 255, 0.08);
+  --nk-app-soft: rgba(255, 255, 255, 0.06);
+  --nk-app-line: rgba(255, 255, 255, 0.1);
+  --nk-app-dash: rgba(255, 255, 255, 0.22);
+  --nk-app-field: #ffffff;
+  --nk-app-field-ink: #6b7280;
+
+  /* The screens are authored ONCE at the 310px desktop screen width (340px
+     phone − 2×14px padding − 2×1px bezel) and scaled as a unit, so the ~200px
+     inline device needs no per-element type overrides. --s is exactly 1 at
+     desktop. The `px` divisor is load-bearing: dividing by a bare 312 yields a
+     LENGTH, and both `calc(100% / <length>)` and `scale(<length>)` are invalid
+     and get dropped — which silently leaves the screen unscaled and shrunk. */
+  --s: calc(100cqw / 310px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / var(--s));
+  height: calc(100% / var(--s));
+  transform: scale(var(--s));
+  transform-origin: top left;
+}
+/* The fade lives on an INNER element: htw-fade animates `transform`, which
+   would otherwise clobber the scale above for its whole 0.4s run and pop the
+   screen to full size on every step change. */
+.htw-appscreen__in {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--nk-app-bg);
+  font-family: var(--nk-font-body);
+  animation: htw-fade 0.4s var(--nk-ease);
+}
+.htw-as-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 22px 3px;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
+}
+.htw-as-batt {
+  position: relative;
+  display: inline-block;
+  width: 22px;
+  height: 11px;
+  border: 1.4px solid rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
+}
+.htw-as-batt::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: 13px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.85);
+}
+/* app ModalHeader: 3-col so the title stays optically centred whether or not
+   the trailing slot is filled */
+.htw-as-head {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+}
+.htw-as-headbtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background: var(--nk-app-soft);
+  display: grid;
+  place-items: center;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--nk-app-text-2);
+}
+.htw-as-headtitle {
+  text-align: center;
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--nk-app-text);
+}
+/* Content taller than the fold clips behind the sticky footer by design — the
+   real screens scroll, the mock shows the top of the scroll. */
+.htw-as-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 2px 16px 0;
+  gap: 11px;
+}
+.htw-as-foot {
+  padding: 10px 16px 15px;
+  border-top: 1px solid var(--nk-app-hair);
+  display: flex;
+  gap: 8px;
+}
+.htw-as-btn {
+  flex: 1;
+  display: flex;
+  height: 46px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background: var(--nk-app-primary);
+  color: var(--nk-app-text);
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+}
+.htw-as-btn--ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 13px;
+}
+/* payout confirm mirrors the app's tone="accent" footer button */
+.htw-as-btn--accent {
+  background: var(--nk-app-accent);
+  color: var(--nk-app-accent-ink);
+}
+.htw-as-label {
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nk-app-muted-2);
+}
+.htw-as-card {
+  background: var(--nk-app-card);
+  border-radius: 16px;
+  padding: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.htw-as-media {
+  background: var(--nk-app-media);
+  display: grid;
+  place-items: center;
+  flex: none;
+  position: relative;
+}
+.htw-as-hair {
+  height: 1px;
+  background: var(--nk-app-hair);
+}
+.htw-as-fee {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+}
+.htw-as-fee > :first-child {
+  color: var(--nk-app-muted-3);
+}
+.htw-as-fee > :last-child {
+  color: var(--nk-app-text);
+}
+/* purple "this protects both sides" intro on the handoff screens */
+.htw-as-note {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  background: rgba(102, 101, 224, 0.14);
+  border: 1px solid rgba(102, 101, 224, 0.32);
+  font-size: 10.5px;
+  line-height: 1.3;
+  color: #d9d9ec;
+}
+.htw-as-count {
+  font-size: 10px;
+  color: var(--nk-app-muted);
+  background: var(--nk-app-soft);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.htw-as-radio {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--nk-app-line);
+}
+.htw-as-radio.is-on {
+  border-color: var(--nk-app-success);
+  background: rgba(16, 185, 129, 0.12);
+}
+.htw-as-radio__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+.htw-as-radio__mark {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.htw-as-radio.is-on .htw-as-radio__mark {
+  border-color: var(--nk-app-success);
+}
+.htw-as-radio.is-on .htw-as-radio__mark::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--nk-app-success);
+}
+.htw-as-radio__t {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--nk-app-text-3);
+}
+.htw-as-radio.is-on .htw-as-radio__t {
+  color: var(--nk-app-text);
+}
+.htw-as-radio__h {
+  font-size: 9.5px;
+  color: var(--nk-app-muted);
+}
+.htw-as-dash {
+  border-radius: 11px;
+  border: 1.5px dashed var(--nk-app-dash);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--nk-app-muted-3);
+  font-size: 9px;
+  flex: none;
+}
+.htw-as-stars {
+  display: flex;
+  justify-content: center;
+}
+
+@container nk-hiw-layout (width < 60rem) {
+  .htw-grid {
+    grid-template-columns: 1fr;
+    gap: 54px;
+  }
+  /* the lone column keeps a readable measure instead of a full-container card */
+  .htw-left {
+    width: 100%;
+    max-width: 720px;
+    margin-inline: auto;
+  }
+  /* hide the decoupled synced phone; the active step carries its own inline device */
+  .htw-right {
+    display: none;
+  }
+  /* centre the inline device so the ~230px phone doesn't hug the left of a wide
+     single-column step, stranded beside empty space at 561-1120 */
+  .htw-step__devicewrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.34s ease;
+    container-type: inline-size;
+  }
+  .htw-step.is-active .htw-step__devicewrap {
+    grid-template-rows: 1fr;
+  }
+  .htw-step__device {
+    padding-top: 16px;
+  }
+  .htw-phone--inline {
+    width: min(230px, 100%);
+    box-shadow: var(--nk-shadow-2);
+  }
+  /* No type overrides here: the app screens are drawn once at the 312px desktop
+     screen width and scaled down as a unit (see .htw-appscreen), so the inline
+     ~202px mock stays proportional without per-element tuning. */
+}
+
+@container nk-hiw-layout (width < theme(--breakpoint-md)) {
+  .htw-step__num {
+    width: 54px;
+    height: 54px;
+    font-size: 20px;
+  }
+  .htw-list::before,
+  .htw-list__fill {
+    left: 26px;
+  }
+  .htw-step__top h3 {
+    font-size: 22px;
+  }
+}
+
+@media (width < theme(--breakpoint-sm)) {
+  .htw-toggle__btn {
+    padding: 13px 24px;
+    font-size: 16px;
+  }
+  .htw-page .nk-hero-band__inner {
+    padding-block: 34px 44px;
+  }
+  .htw-page {
+    --hero-title: clamp(32px, 10vw, 42px);
+    --hero-lead: 17px;
+    --hero-lead-lh: 27px;
+    --hero-gap: 20px;
+  }
+}
+@media (width < theme(--breakpoint-xs)) {
+  .htw-grid,
+  .htw-left,
+  .htw-toggle-row,
+  .htw-list,
+  .htw-right {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .htw-toggle {
+    width: 100%;
+    max-width: 100%;
+  }
+  .htw-toggle__btn {
+    flex: 1;
+    min-width: 0;
+    padding-inline: 10px;
+    font-size: 15px;
+  }
+  .htw-step {
+    padding-right: 0;
+    gap: var(--nk-gap-md);
+  }
+  .htw-step__top {
+    gap: var(--nk-gap-xs);
+  }
+}

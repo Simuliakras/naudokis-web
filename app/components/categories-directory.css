@@ -1,0 +1,280 @@
+@reference "../globals.css";
+
+/* Kategorijos v2 directory (all-categories page, 2026-07 handoff).
+   Cards reuse .nk-catv2__bg / .nk-catv2__chip from globals.css — safe outside
+   .nk-cat: those rules are unconditional now (the width-conditional tile skins are
+   gone). Unlike the tiles, these cards hold REAL links (title, subs, arrow), so
+   .nk-catv2__top/__meta (pointer-events:none) must never be reused here. Content
+   blocks carry z-index:1 so the absolutely-positioned __bg paints beneath them.
+
+   Route-scoped, imported by CategoriesScreen.tsx rather than globals.css — ~7.5 KB
+   that only /kategorijos renders. The shared .nk-catv2__* tile anatomy it builds on
+   STAYS in globals.css (the home snap rail uses it too); only the .nk-dir*
+   namespace and .nk-pillrow__pill live here. See components/invite.css for the
+   ordering contract — this file loads AFTER globals.css, which is what lets the
+   rules below refine the shared tile anatomy. */
+.nk-dirgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 310px), 1fr));
+  container: nk-directory-grid / inline-size;
+  gap: var(--nk-grid-gap);
+  align-items: start;
+}
+.nk-dircard {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background: var(--nk-surface);
+  border: 1px solid var(--nk-border);
+  border-radius: var(--nk-r-card);
+}
+.nk-dircard__head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nk-dircard__titleblock {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.nk-dircard__title {
+  margin: 0;
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 24px;
+  letter-spacing: -0.01em;
+}
+.nk-dircard__title a {
+  color: var(--nk-text);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.nk-dircard__title a:hover,
+.nk-dircard__title a:focus-visible {
+  color: var(--nk-purple-bright);
+}
+.nk-dircard__count {
+  font-family: var(--nk-font-body);
+  font-size: 13.5px;
+  line-height: 17px;
+  color: var(--nk-text-muted);
+}
+.nk-dircard__go {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--nk-border);
+  color: var(--nk-text-muted);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.nk-dircard__go:hover,
+.nk-dircard__go:focus-visible {
+  background: var(--nk-surface-hover);
+  border-color: var(--nk-border-strong);
+  color: var(--nk-text);
+}
+/* every sub stays in the SSR DOM (crawlable): collapse hides rows with CSS only —
+   top-4 on desktop, header-only ≤640px. Search-filtered rows use [hidden] instead;
+   the two never combine (an active term removes .is-collapsed). */
+.nk-dircard__subs {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  transition: margin-top var(--nk-dur-med) var(--nk-ease);
+}
+.nk-dircard__subs.is-collapsed > li:nth-child(n + 5) {
+  display: none;
+}
+/* Expand/collapse motion: rows grow/shrink (height 0↔auto, Chromium via
+   interpolate-size — min-height:0 lifts the flex-item content floor that would
+   otherwise clamp the animated height) and cross-fade, with the fade offset so
+   rows are near-transparent while mid-animation heights make them overlap — no
+   overflow clip, which would cut the 3px-offset focus ring on the sub links.
+   Browsers without interpolate-size keep the fade-in and snap the height.
+   The collapse direction holds display until the shrink ends (allow-discrete);
+   that transition lives ONLY on the .is-collapsed rules, and it is
+   @supports-gated: without an animating height, held-open rows would pile onto
+   one line while fading.
+   Rows enter from display:none, so @starting-style is what arms the animation —
+   and its selectors decide which reveals animate. Two paths, deliberately split:
+   the expander only ever reveals n+5 (all rows in the ≤640px header-only
+   variant), while a search term reveals rows at any position. Scoping the second
+   path behind .is-filtering keeps them uniform while filtering AND keeps the
+   top-4 unarmed at first paint — those ARE rendered on desktop load, so a bare
+   >li rule would animate every visible row on every page load and cost CLS. */
+.nk-dircard__subs > li {
+  interpolate-size: allow-keywords;
+  min-height: 0;
+  transition:
+    height var(--nk-dur-med) var(--nk-ease),
+    opacity 0.18s ease 0.08s;
+}
+@starting-style {
+  .nk-dircard__subs > li:nth-child(n + 5) {
+    height: 0;
+    opacity: 0;
+  }
+  .nk-dircard__subs.is-filtering > li {
+    height: 0;
+    opacity: 0;
+  }
+}
+@supports (interpolate-size: allow-keywords) {
+  .nk-dircard__subs.is-collapsed > li:nth-child(n + 5) {
+    height: 0;
+    opacity: 0;
+    transition:
+      height var(--nk-dur-med) var(--nk-ease),
+      opacity 0.18s ease,
+      display var(--nk-dur-med) allow-discrete;
+  }
+}
+.nk-dircard__sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 40px;
+  padding: 8px 10px;
+  margin-inline: -10px;
+  border-radius: 10px;
+  font-family: var(--nk-font-body);
+  font-size: 15.5px;
+  line-height: 20px;
+  color: var(--nk-text-2);
+  text-decoration: none;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.nk-dircard__sub:hover,
+.nk-dircard__sub:focus-visible {
+  background: var(--nk-surface-hover);
+  color: var(--nk-text);
+}
+.nk-dircard__subname {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nk-dircard__more {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  align-self: flex-start;
+  margin: 6px -10px 0;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--nk-purple-hover);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.nk-dircard__more:hover,
+.nk-dircard__more:focus-visible {
+  color: var(--nk-purple-bright);
+  background: var(--nk-surface-hover);
+}
+/* the expander carries two CSS-swapped labels: "Dar N−4" above 640px (4 rows
+   showing), "Dar N" below (header-only). --sm marks ≤4-sub cards, whose button
+   only exists for the mobile header-only collapse. */
+.nk-dircard__more--sm,
+.nk-dircard__more-all {
+  display: none;
+}
+/* single ChevronDown glyph: points down collapsed (more below), animates a
+   half-turn to up when expanded — rotation keys off aria-expanded */
+.nk-dircard__more svg {
+  transition: transform var(--nk-dur-fast) var(--nk-ease);
+}
+.nk-dircard__more[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+/* skeleton rides .nk-skel for the shimmer; height ≈ header + 4 rows + expander */
+.nk-dircard-skel {
+  height: 304px;
+  border-radius: var(--nk-r-card);
+}
+/* "Populiaru dabar" pills — .nk-pillctl supplies the rest/hover skin (layout
+   stays with the caller, per the pillctl banner); this is the layout half */
+.nk-pillrow__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: var(--nk-r-chip);
+  font-family: var(--nk-font-body);
+  font-size: 15px;
+  line-height: 18px;
+  color: var(--nk-text);
+  text-decoration: none;
+}
+/* Collapse is determined by each directory card, not the page viewport. */
+@container nk-directory-grid (width < 40rem) {
+  .nk-dircard__subs.is-collapsed > li {
+    display: none;
+  }
+  /* header-only card: the zero-height list must not leave a dangling 12px gap */
+  .nk-dircard__subs.is-collapsed {
+    margin-top: 0;
+  }
+  /* header-only collapse hides EVERY row, so they all enter animated (safe at
+     this width: collapsed-by-default means none are rendered at first paint) */
+  @starting-style {
+    .nk-dircard__subs > li {
+      height: 0;
+      opacity: 0;
+    }
+  }
+  @supports (interpolate-size: allow-keywords) {
+    .nk-dircard__subs.is-collapsed > li {
+      height: 0;
+      opacity: 0;
+      transition:
+        height var(--nk-dur-med) var(--nk-ease),
+        opacity 0.18s ease,
+        display var(--nk-dur-med) allow-discrete;
+    }
+  }
+  .nk-dircard__more--sm {
+    display: flex;
+  }
+  .nk-dircard__more-rest {
+    display: none;
+  }
+  .nk-dircard__more-all {
+    display: inline;
+  }
+  .nk-dircard-skel {
+    height: 96px;
+  }
+}

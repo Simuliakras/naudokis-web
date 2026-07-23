@@ -4,6 +4,8 @@
 // mock-up, a trust strip, a mini-FAQ and the green app-download CTA. Ported from
 // the design bundle's kaip-tai-veikia prototype to the nk- design system.
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
+// Route-scoped stylesheet — see the header of how-it-works.css.
+import "./how-it-works.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Nav, Faq } from "./sections";

@@ -4,6 +4,8 @@
 // locked to the app via the redirect modal. This file is the orchestrator —
 // the presentational pieces live in ./ListingDetail.
 import { useEffect, useRef, useState } from "react";
+// Route-scoped stylesheet — see the header of catalogue.css.
+import "./catalogue.css";
 import { useRouter } from "next/navigation";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";

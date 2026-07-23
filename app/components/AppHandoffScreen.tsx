@@ -15,6 +15,8 @@
 //     email must not disclose the click to AppsFlyer. The generic "get the app"
 //     button is the one exception, and it asks first (useInstallCta → /go).
 import { useRouter } from "next/navigation";
+// Route-scoped stylesheet — see the header of app-handoff.css.
+import "./app-handoff.css";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";

@@ -14,6 +14,9 @@
 // desktop one it was never asked about.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+// Route-scoped stylesheet: Next emits it as its own chunk linked only on /invite,
+// so the .invite-* rules stay out of every other route's render-blocking CSS.
+import "./invite.css";
 import { Nav } from "./sections";
 import { Footer } from "./sections-home";
 import { Chrome } from "./Chrome";

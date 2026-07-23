@@ -3,6 +3,8 @@
 // Search / filter / sort are functional on the web; only transactional actions
 // (favorite/reserve/contact) are locked to the app.
 import { useEffect, useMemo, useRef, useState } from "react";
+// Route-scoped stylesheet — see the header of catalogue.css.
+import "./catalogue.css";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";

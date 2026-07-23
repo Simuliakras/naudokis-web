@@ -1,0 +1,1871 @@
+@reference "../globals.css";
+
+/* Catalogue — the browse-and-book surfaces: the listings feed (grid, toolbar,
+   filter pills, mobile filter sheet), the listing detail page (bento gallery,
+   booking panel, lightbox, discount ladder, mobile booking bar) and the two
+   range filters plus the shared Calendar engine behind them.
+
+   Route-scoped, imported by FeedScreen.tsx, ListingScreen.tsx and
+   CatalogueLoading.tsx rather than globals.css — ~50 KB that the home page, the
+   legal centre, /kaip-tai-veikia and /invite have no use for. Feed and detail are
+   kept in ONE file on purpose: both render the calendar, the filter sheet and the
+   card grid, so splitting them four ways would buy those two routes nothing and
+   cost four more cascade seams to reason about.
+
+   ORDERING CONTRACT (this file loads AFTER globals.css):
+     • Anything in globals.css that overrides a selector defined here would lose
+       on source order at equal specificity. That is why the short-viewport
+       `.nk-filterbar` unpin lives at the bottom of THIS file — see the note there.
+     • Conversely, do not put anything here that globals.css needs to override.
+   Deliberately LEFT in globals.css even though the catalogue is their main
+   consumer, because other routes render them too: .nk-modal-scrim/.nk-sheet (the
+   bottom-sheet primitives, also the app-redirect modal), .nk-backtotop (mounted
+   sitewide by Chrome), the .nk-fchip family and .nk-input-clear (also on
+   /kategorijos), .nk-spinner
+   and @keyframes nk-spin (the shared reduced-motion-safe loader — it shares its
+   animation and its reduced-motion gate with .nk-lightbox__spin, so the pair has
+   to stay together), .nk-searchfield, .nk-crumbs and the offer/category cards. */
+/* ---- mobile filter sheet (built on .nk-modal-scrim / .nk-sheet) ---- */
+.nk-filtersheet-scrim {
+  z-index: 120;
+}
+.nk-filtersheet {
+  max-width: 560px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+/* head pinned like the foot — title, drag affordance and close stay reachable
+   while the option lists scroll underneath */
+.nk-filtersheet__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--nk-bg);
+  padding: 20px 0 12px;
+  margin-bottom: -8px;
+  border-bottom: 1px solid var(--nk-border-soft);
+}
+.nk-filtersheet__title {
+  margin: 0;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 26px;
+  color: var(--nk-text);
+}
+.nk-filtersheet__group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.nk-filtersheet__label {
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--nk-text-muted);
+}
+.nk-filtersheet__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.nk-filtersheet__opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--nk-r-pill);
+  border: 1px solid var(--nk-border);
+  background: var(--nk-surface);
+  color: var(--nk-text);
+  min-height: var(--nk-tap);
+  font-family: var(--nk-font-body);
+  font-size: 15.5px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+.nk-filtersheet__opt:hover {
+  border-color: var(--nk-border-strong);
+}
+.nk-filtersheet__opt.is-selected {
+  background: var(--nk-accent-bg);
+  color: var(--nk-accent-text);
+  border-color: var(--nk-accent-border);
+}
+.nk-filtersheet .nk-toggle {
+  width: 100%;
+  justify-content: space-between;
+}
+/* sticky so the apply/clear controls stay reachable past the long option lists */
+.nk-filtersheet__foot {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--nk-bg);
+  padding: 14px 0 calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--nk-border-soft);
+}
+/* footer pair shares one height + radius so Clear never reads as a runt button */
+.nk-filtersheet__foot .nk-btn--ghost {
+  padding-block: 16px;
+  border-radius: var(--nk-r-pill);
+}
+
+/* ============================================================
+   Listings feed
+   ============================================================ */
+/* sticky filter bar — solid (not blurred) bg so popovers layer above cards */
+.nk-filterbar {
+  position: sticky;
+  top: var(--nk-nav-h-scrolled);
+  z-index: 40;
+  margin-bottom: 36px;
+  scroll-margin-top: calc(var(--nk-nav-h-scrolled) + 24px);
+  padding-block: 16px;
+  background: var(--nk-bg);
+  border-bottom: 1px solid var(--nk-border-soft);
+}
+/* 561–700: the desktop pill row wraps to ~3 lines here — pinned, it held ~250px
+   of every viewport. Let it scroll away; the toolbar is one flick up. */
+/* desktop shows the inline sort/category/city/delivery controls; on phones they
+   collapse into a bottom sheet (.nk-filtersheet) opened by .nk-filters-mobilebtn,
+   so the sticky bar keeps just search + a "Filters" button (reclaims ~200px) */
+.nk-filters-desktop {
+  display: contents;
+}
+.nk-filters-mobilebtn {
+  display: none;
+}
+.nk-filters-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--nk-accent-text);
+  color: var(--nk-accent-bg);
+  font-family: var(--nk-font-body);
+  font-weight: 700;
+  font-size: 12.5px;
+  line-height: 1;
+}
+@media (width < theme(--breakpoint-md)) {
+  .nk-filterbar {
+    padding-block: 8px 10px;
+    margin-bottom: 20px;
+  }
+  .nk-filters-desktop {
+    display: none;
+  }
+  .nk-filters-mobilebtn {
+    display: inline-flex;
+  }
+  /* row 1 = search (grows) + Filters button on ONE row; the desktop pill row
+     disappears entirely (its controls live in the sheet — !important because
+     the row carries an inline display:flex) */
+  .nk-filter-row {
+    gap: 10px;
+  }
+  /* small explicit basis: flex-wrap breaks lines on BASE sizes, so a content/
+     320px basis pushed the Filters pill onto its own dead row at 390px */
+  .nk-filter-row > .nk-searchfield {
+    flex: 1 1 120px;
+    min-width: 0;
+    width: auto;
+    padding-inline: 16px;
+  }
+  .nk-filter-row--desktop {
+    display: none !important;
+  }
+  .nk-filter-meta {
+    width: 100%;
+    justify-content: space-between !important;
+    padding-top: 2px;
+  }
+}
+/* mobile category chip rail — the browse dimension on the page itself (≤560) */
+.nk-catrail {
+  display: none;
+}
+@media (width < theme(--breakpoint-md)) {
+  .nk-catrail {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    margin: -6px calc(-1 * var(--nk-gutter)) 14px;
+    padding: 4px var(--nk-gutter);
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 var(--nk-gutter),
+      #000 calc(100% - var(--nk-gutter)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 var(--nk-gutter),
+      #000 calc(100% - var(--nk-gutter)),
+      transparent 100%
+    );
+  }
+  .nk-catrail::-webkit-scrollbar {
+    display: none;
+  }
+  .nk-catrail__chip {
+    flex: none;
+    padding: 9px 14px;
+    border-radius: 999px;
+    min-height: 38px;
+    font-family: var(--nk-font-display);
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+}
+/* persistent "you're offline" strip over cached results (never assert stale data silently) */
+.nk-offline-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--nk-hairline);
+  background: color-mix(in srgb, var(--nk-yellow) 8%, transparent);
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--nk-text);
+}
+/* width-swapped copy variants (e.g. the search subtitle) */
+.nk-narrow-only {
+  display: none;
+}
+@media (width < theme(--breakpoint-md)) {
+  .nk-wide-only {
+    display: none;
+  }
+  .nk-narrow-only {
+    display: inline;
+  }
+  /* long authored landing intros clamp to 3 lines on phones (toggle expands) */
+  .nk-intro-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* ============================================================
+   Listing detail page
+   ============================================================ */
+.nk-detail {
+  max-width: 1340px;
+  margin: 0 auto;
+  container: nk-detail / inline-size;
+}
+.nk-detail-h {
+  margin: 0 0 22px;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 25px;
+  line-height: 30px;
+  color: var(--nk-text);
+}
+/* Height is viewport-aware so the booking card's price row clears a ~900px desktop
+   fold: 46vw drives normal scaling, the 100dvh term caps the hero on short windows
+   (~430px at 900px tall), and tall screens keep the 512px ceiling. */
+.nk-bento {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+  height: clamp(320px, min(42vw, calc(100dvh - 420px)), 500px);
+}
+.nk-bento > :first-child {
+  grid-row: 1 / 3;
+}
+/* Count-aware desktop layouts so a listing with 1–4 photos never shows empty grey
+   tiles. Scoped to the two-column detail container so the narrow mobile mosaic
+   (higher-specificity attribute
+   rules would otherwise win over the in-media .nk-bento rule) still applies. Base
+   rule above is the 5-up bento (data-count 5). */
+@container nk-detail (width >= 55rem) {
+  .nk-bento[data-count="0"],
+  .nk-bento[data-count="1"] {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+  .nk-bento[data-count="2"] {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+  .nk-bento[data-count="3"] {
+    grid-template-columns: 1.55fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .nk-bento[data-count="4"] {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  /* the big-left row span (base .nk-bento > :first-child) only suits 3-up and 5-up */
+  .nk-bento[data-count="0"] > :first-child,
+  .nk-bento[data-count="1"] > :first-child,
+  .nk-bento[data-count="2"] > :first-child,
+  .nk-bento[data-count="4"] > :first-child {
+    grid-row: auto;
+  }
+}
+/* Dark-glass corner chip for over-photo badges (e.g. the gallery "New" badge) —
+   solid enough to stay legible on any hero photo. Position + accent colour are set
+   inline at the call site since they're context-specific. */
+.nk-chip-glass {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border-radius: var(--nk-r-chip);
+  background: var(--nk-overlay);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--nk-edge-top);
+  font-family: var(--nk-font-body);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1;
+}
+/* sidebar is fluid so it never out-widths the content column on a ~1024px tablet;
+   the tighter top margin keeps the sidebar price above the desktop fold */
+.nk-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(620px, 1fr) clamp(300px, 30vw, 372px);
+  gap: clamp(36px, 4vw, 56px);
+  margin-top: 28px;
+  align-items: start;
+}
+/* Booking facts inline under the gallery on mobile, where the sticky sidebar
+   booking panel is hidden (below @container nk-detail 55rem). The fixed MobileBar
+   stays the reserve CTA. */
+.nk-booking-inline {
+  display: none;
+}
+/* Listing header actions (Share / Save) — full-width 50/50 row under the title on
+   the narrowest phones so a long title + two buttons never crowd.
+   (Base flex sizing lives here, NOT inline in ListingDetail.tsx, so this media
+   override can actually win — an inline flex:none made it dead code before.) */
+.nk-lhead {
+  container: nk-listing-header / inline-size;
+}
+.nk-lhead__actions {
+  flex: none;
+}
+/* Actions stack according to the listing header's own available width. */
+@container nk-listing-header (width < 26.875rem) {
+  .nk-lhead__actions {
+    flex: 1 1 100%;
+  }
+  .nk-lhead__actions .nk-lfield {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+}
+.nk-spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 48px;
+  row-gap: 0;
+}
+.nk-spec-row {
+  border-bottom: 1px solid var(--nk-divider);
+}
+/* Last row shouldn't carry the row divider. The true last item always qualifies;
+   its left-column row-mate only does when the count is even — nth-last-child(2)
+   landing on an odd position proves the two are paired in the final row (below,
+   the grid drops to one column at 768px, where :last-child alone is correct). */
+.nk-spec-grid > .nk-spec-row:last-child {
+  border-bottom: none;
+}
+@media (width >= theme(--breakpoint-md)) {
+  .nk-spec-grid > .nk-spec-row:nth-last-child(2):nth-child(odd) {
+    border-bottom: none;
+  }
+}
+.nk-tworow {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  column-gap: 48px;
+}
+.nk-hl-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--nk-gap-md);
+}
+.nk-reserve {
+  position: sticky;
+  top: calc(var(--nk-nav-h-scrolled) + 28px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--nk-gap-md);
+  align-self: start;
+  min-width: 0;
+}
+.nk-sec {
+  scroll-margin-top: calc(var(--nk-nav-h-scrolled) + 28px);
+}
+/* interactive listing-detail control (header buttons, date pickers) */
+.nk-lfield {
+  min-width: 0;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.12s var(--nk-ease-spring);
+}
+.nk-lfield:hover {
+  background: var(--nk-purple-soft);
+  border-color: var(--nk-accent-border);
+}
+.nk-lfield:active {
+  transform: scale(0.97);
+}
+/* gallery tile hover — scrim + subtle photo zoom (matches the offer cards) */
+.nk-gtile__hint {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+.nk-gtile:hover .nk-gtile__hint {
+  opacity: 1;
+}
+.nk-gtile img {
+  transition: transform 0.55s var(--nk-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nk-gtile:hover img {
+    transform: scale(1.045);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nk-gtile img {
+    transition: none;
+  }
+  .nk-gtile:hover img {
+    transform: none;
+  }
+}
+/* photo tiles open the lightbox — full-bleed button, no default chrome */
+.nk-gtile--btn {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  overflow: hidden;
+}
+/* "all photos" pill sits in the corner of the last tile (the tile itself is the trigger) */
+.nk-gtile__more {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--nk-overlay);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--nk-border-strong);
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--nk-text);
+}
+/* Fact cards — quiet hover so the spec row reads as scannable. Deliberately NOT
+   extended to the review cards: a review card is shaped like a link target, so
+   hover feedback there promises a click the card doesn't handle. */
+.nk-fact {
+  transition:
+    border-color 0.18s var(--nk-ease),
+    background 0.18s var(--nk-ease);
+}
+.nk-fact:hover {
+  border-color: var(--nk-accent-border);
+  background: var(--nk-surface-2);
+}
+
+/* ---- Rental date-range picker (booking panel) ----
+   Honesty constraint made visual: there is a "booked" state and no "available" one.
+   A day that isn't struck out is simply not-known-to-be-taken — the booking
+   panel's reserve note carries the rest. Booked is distinguished from a plain past day
+   by a diagonal strike, not by colour alone (WCAG 1.4.1). No new tokens. */
+.nk-cal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.nk-cal-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 10px 16px;
+  cursor: pointer;
+  background: var(--nk-input-bg);
+  border: 1px solid var(--nk-border);
+  border-radius: var(--nk-r-md);
+  transition:
+    border-color 0.16s var(--nk-ease),
+    background 0.16s var(--nk-ease);
+}
+.nk-cal-trigger:hover,
+.nk-cal-trigger.is-open {
+  border-color: var(--nk-border-strong);
+  background: var(--nk-surface-hover);
+}
+.nk-cal-trigger__cols {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.nk-cal-trigger__col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+.nk-cal-trigger__sep {
+  width: 1px;
+  align-self: stretch;
+  background: var(--nk-divider);
+  flex: none;
+}
+.nk-cal-trigger__cap {
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nk-text-muted);
+}
+.nk-cal-trigger__val {
+  font-family: var(--nk-font-body);
+  font-size: 15px;
+  color: var(--nk-text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nk-cal-trigger__val.is-set {
+  color: var(--nk-text);
+  font-weight: 500;
+}
+/* only rendered for the availability-unknown warning, hence the warn colour lives
+   on the base class — reintroduce a modifier if a neutral summary ever returns */
+.nk-cal-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--nk-font-body);
+  font-size: 13px;
+  color: var(--nk-yellow-deep);
+}
+
+/* desktop popover — FilterSelect's panel skin, anchored to the field */
+.nk-cal-field {
+  position: relative;
+}
+.nk-cal-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  min-width: 290px;
+  max-width: calc(100vw - 32px);
+  padding: 14px;
+  background: var(--nk-surface);
+  border: 1px solid var(--nk-border-strong);
+  border-radius: 18px;
+  box-shadow: var(--nk-shadow-3);
+}
+
+/* mobile sheet — built on .nk-modal-scrim / .nk-sheet, above the filter sheet */
+.nk-cal-sheet-scrim {
+  z-index: 130;
+}
+.nk-cal-sheet {
+  max-width: 560px;
+  padding: 0 20px 20px;
+}
+.nk-cal-sheet__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0 14px;
+  background: var(--nk-bg);
+}
+.nk-cal-sheet__title {
+  margin: 0;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 26px;
+  color: var(--nk-text);
+}
+.nk-cal-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.nk-cal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.nk-cal__title {
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 16.5px;
+  color: var(--nk-text);
+}
+.nk-cal__nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border: 1px solid transparent;
+  border-radius: var(--nk-r-pill);
+  background: none;
+  cursor: pointer;
+  transition:
+    background 0.14s var(--nk-ease),
+    border-color 0.14s var(--nk-ease);
+}
+.nk-cal__nav:hover:not(:disabled) {
+  background: var(--nk-surface-hover);
+  border-color: var(--nk-border);
+}
+.nk-cal__nav:disabled {
+  opacity: 0.32;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* The grid paints on TWO layers, and keeping them apart is what makes a range read as a
+   range rather than as a row of separately-selected squares:
+
+     the <td>   carries the connecting wash, edge to edge — which is why border-spacing
+                is 0. At 2px, every in-range day was a detached block with a visible slit
+                either side of it, and the range never joined up.
+     the <span> already wrapping the number is the day SHAPE: the circle that carries
+                hover, the today ring and the two selected end-caps.
+
+   Both on the <td> is what produced the old striped bar with squared-off ends. */
+.nk-cal__grid {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  --nk-cal-day: 36px; /* the day circle; the cell is this + 2px padding */
+  --nk-cal-wash: var(--nk-purple-tag);
+} /* committed range */
+.nk-cal__grid.has-preview {
+  --nk-cal-wash: var(--nk-purple-soft);
+} /* the hovered/arrowed one */
+.nk-cal__grid.is-loading {
+  opacity: 0.45;
+  pointer-events: none;
+}
+.nk-cal__wd {
+  padding: 4px 0 8px;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--nk-text-muted);
+}
+.nk-cal__pad {
+  padding: 0;
+}
+
+/* ---- the wash layer (<td>) ---- */
+.nk-cal__day {
+  position: relative;
+  padding: 2px 0;
+  text-align: center;
+  cursor: pointer;
+  font-family: var(--nk-font-body);
+  font-size: 14.5px;
+  color: var(--nk-text);
+}
+/* On ::before, not on the cell's own background, for two reasons: it can be inset to the
+   circle's height (a wash filling the whole cell box would be a fat band), and it can be
+   clipped to half the cell on the end caps, where the circle takes over. */
+.nk-cal__day::before {
+  content: "";
+  position: absolute;
+  inset: 3px 0;
+  z-index: 0;
+}
+.nk-cal__day.is-inrange::before,
+.nk-cal__day.is-preview::before {
+  background: var(--nk-cal-wash);
+}
+/* The caps reach only as far as the circle, and only from the side the trail is on. The
+   start's half-wash is gated on the grid actually HAVING a trail — a lone picked start,
+   before an end is hovered or chosen, has nothing to connect to. */
+.nk-cal__grid.has-range .nk-cal__day.is-start::before,
+.nk-cal__grid.has-preview .nk-cal__day.is-start::before {
+  inset: 3px 0 3px 50%;
+  background: var(--nk-cal-wash);
+}
+.nk-cal__day.is-end::before,
+.nk-cal__day.is-preview-end::before {
+  inset: 3px 50% 3px 0;
+  background: var(--nk-cal-wash);
+}
+/* A one-day rental is both ends at once, and has no trail to draw. */
+.nk-cal__day.is-start.is-end::before {
+  background: none;
+}
+
+/* ---- the day shape (<span>) ---- */
+.nk-cal__day > span {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--nk-cal-day);
+  height: var(--nk-cal-day);
+  margin: 0 auto;
+  border-radius: 999px;
+  transition:
+    background 0.12s var(--nk-ease),
+    color 0.12s var(--nk-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nk-cal__day:not(.is-disabled):not(.is-booked):hover > span {
+    background: var(--nk-surface-hover);
+    box-shadow: inset 0 0 0 1.5px var(--nk-border-strong);
+  }
+}
+/* today: a quiet dot under the number — the old full ring read as a second selection
+   and fought the hover ring for the same treatment */
+.nk-cal__day.is-today > span {
+  font-weight: 700;
+}
+.nk-cal__day.is-today > span::before {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.65;
+}
+/* Unselectable states come FIRST, so a selected end-cap below always out-ranks them.
+   They share a specificity, so source order is the whole tie-break: with `is-disabled`
+   last, a chosen start on a listing whose minimum rental is >1 day rendered greyed out
+   — the one cell the user had just clicked, looking dead. */
+.nk-cal__day.is-disabled,
+.nk-cal__day.is-booked {
+  cursor: not-allowed;
+}
+.nk-cal__day.is-disabled > span,
+.nk-cal__day.is-booked > span {
+  color: var(--nk-text-tertiary);
+}
+.nk-cal__day.is-inrange > span {
+  color: var(--nk-purple-tag-text);
+}
+.nk-cal__day.is-preview-end > span {
+  background: var(--nk-purple-tag);
+  color: var(--nk-purple-tag-text);
+}
+.nk-cal__day.is-start > span,
+.nk-cal__day.is-end > span {
+  background: var(--nk-accent-bg);
+  color: var(--nk-accent-text);
+  font-weight: 700;
+}
+@keyframes nk-day-pop {
+  from {
+    transform: scale(0.82);
+  }
+}
+.nk-cal__day.is-start > span,
+.nk-cal__day.is-end > span {
+  animation: nk-day-pop 0.18s var(--nk-ease-spring);
+}
+/* booked ≠ merely unselectable: carry it with a shape, not just a lighter grey */
+.nk-cal__day.is-booked > span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top left,
+    transparent calc(50% - 1px),
+    var(--nk-text-tertiary) 50%,
+    transparent calc(50% + 1px)
+  );
+}
+
+.nk-cal__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: var(--nk-font-body);
+  font-size: 12.5px;
+  color: var(--nk-text-muted);
+}
+.nk-cal__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.nk-cal__swatch {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border-radius: 4px;
+  border: 1px solid var(--nk-border);
+}
+.nk-cal__swatch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top left,
+    transparent calc(50% - 1px),
+    var(--nk-text-tertiary) 50%,
+    transparent calc(50% + 1px)
+  );
+}
+/* Grid, not a flex row: the popover is only ~290px wide, and a retry button sitting
+   beside the text squeezed the heading into one word per line. Icon and copy share the
+   first row; the action drops beneath, aligned to the copy. */
+.nk-cal__notice {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 6px 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--nk-yellow-tint);
+  border: 1px solid var(--nk-yellow-glow);
+}
+.nk-cal__notice-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  font-family: var(--nk-font-body);
+  font-size: 12.5px;
+  line-height: 17px;
+  color: var(--nk-text-2);
+}
+.nk-cal__notice-text strong {
+  font-family: var(--nk-font-display);
+  font-size: 13.5px;
+  color: var(--nk-text);
+}
+.nk-cal__retry {
+  grid-column: 2;
+  justify-self: start;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 2px 0;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--nk-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* Panel action row — the calendar's and the price panel's are the same object
+   (equal-width buttons across the panel's foot), so they share one rule. */
+.nk-cal__foot,
+.nk-price-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 2px;
+}
+.nk-cal__foot .nk-btn,
+.nk-price-foot .nk-btn {
+  flex: 1;
+  justify-content: center;
+}
+.nk-cal__foot .nk-btn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* Phones: a 40px circle inside a 44px cell — the touch-target floor. */
+@media (width < theme(--breakpoint-sm)) {
+  .nk-cal__grid {
+    --nk-cal-day: 40px;
+  }
+  .nk-cal__day {
+    font-size: 15.5px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nk-cal__day > span,
+  .nk-cal-trigger,
+  .nk-cal__nav {
+    transition: none;
+  }
+  .nk-cal__day.is-start > span,
+  .nk-cal__day.is-end > span {
+    animation: none;
+  }
+}
+
+/* ---- Booking-panel rating link ("4,9 · 24" → #atsiliepimai) ----
+   Underline surfaces on hover only; the transparent resting state keeps the
+   panel's price header quiet. */
+.nk-rating-link {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.16s var(--nk-ease);
+}
+.nk-rating-link:hover {
+  text-decoration-color: var(--nk-text-muted);
+}
+
+/* ---- Trust rows (booking panel, under the date field) ----
+   No top padding of its own — the panel's gap spaces it. Icon color rides on
+   the Icon component's inline style, not here. */
+.nk-trust {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.nk-trust__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--nk-font-body);
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--nk-text-2);
+}
+.nk-trust__row svg {
+  flex: none;
+  margin-top: 2.5px;
+}
+
+/* ---- CTA reassurance line (booking panel, full variant only) ---- */
+.nk-cta-note {
+  font-family: var(--nk-font-body);
+  font-size: 12.5px;
+  line-height: 17px;
+  color: var(--nk-text-muted);
+  text-align: center;
+}
+
+/* ============================================================
+   Price-range filter (dual-thumb slider + min/max EUR inputs)
+   Desktop: the shared .nk-rangepop shell behind the "Price" pill.
+   Mobile: the SAME panel rendered inline inside the filter sheet.
+   The popover shell, its anchoring and the panel's flex sizing all come from
+   .nk-rangepop — only the panel's own internals are here.
+   ============================================================ */
+.nk-price-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.nk-price-panel.is-inline {
+  gap: 14px;
+}
+/* live read-out of the current range (aria-hidden — the thumbs carry the value for AT) */
+.nk-price-panel__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--nk-font-body);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--nk-text);
+}
+.nk-price-panel__val {
+  font-variant-numeric: tabular-nums;
+}
+.nk-price-panel__dash {
+  color: var(--nk-text-muted);
+}
+
+/* The row is --nk-tap tall so tapping anywhere on it grabs the nearer thumb. The end
+   padding is HALF a thumb: a thumb at 0% / 100% is centred on the rail's end, so it
+   would otherwise hang outside the panel. Both are driven off one local var — sized
+   independently they drift apart at the touch breakpoint, and the ends overhang again. */
+.nk-price-slider {
+  --nk-price-thumb: 24px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--nk-tap);
+  padding: 0 calc(var(--nk-price-thumb) / 2);
+}
+.nk-price-track {
+  position: relative;
+  flex: 1;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--nk-divider);
+  touch-action: none;
+  cursor: pointer;
+}
+.nk-price-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: var(--nk-accent-bg);
+}
+.nk-price-thumb {
+  position: absolute;
+  top: 50%;
+  width: var(--nk-price-thumb);
+  height: var(--nk-price-thumb);
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: var(--nk-text);
+  border: 2px solid var(--nk-accent-bg);
+  cursor: grab;
+  touch-action: none;
+  padding: 0;
+  box-shadow: var(--nk-shadow-1);
+  transition:
+    box-shadow 0.15s ease,
+    transform var(--nk-dur-fast) var(--nk-ease-spring);
+}
+/* extend the vertical pointer target without widening the circle, so two close thumbs
+   stay individually grabbable */
+.nk-price-thumb::before {
+  content: "";
+  position: absolute;
+  inset: -11px -2px;
+}
+.nk-price-thumb:hover {
+  box-shadow: var(--nk-glow-accent);
+}
+.nk-price-thumb:active {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.08);
+}
+.nk-price-thumb:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--nk-purple-hover);
+}
+
+.nk-price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nk-price-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  height: var(--nk-control-h);
+  padding: 0 12px;
+  background: var(--nk-input-bg);
+  border: 1px solid var(--nk-border);
+  border-radius: var(--nk-r-sm);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.nk-price-input:focus-within {
+  border-color: var(--nk-purple);
+  box-shadow: var(--nk-glow-accent);
+}
+.nk-price-input__affix {
+  font-family: var(--nk-font-body);
+  font-size: 15px;
+  color: var(--nk-text-muted);
+  flex: none;
+}
+/* 16px keeps iOS from zooming the viewport on focus */
+.nk-price-input input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--nk-font-body);
+  font-size: 16px;
+  color: var(--nk-text);
+}
+.nk-price-sep {
+  color: var(--nk-text-muted);
+  flex: none;
+}
+
+/* Phones (inline in the sheet): a larger thumb for touch — the rail's end padding
+   follows it automatically. */
+@media (width < theme(--breakpoint-sm)) {
+  .nk-price-slider {
+    --nk-price-thumb: 28px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nk-price-thumb {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Date-range filter (feed) — a calendar behind the "Dates" pill.
+   Desktop: the shared .nk-rangepop shell, exactly as the price twin.
+   Mobile: the SAME panel rendered inline inside the filter sheet.
+   The month grid reuses the shared .nk-cal-* styling as-is, so all that is left
+   here is the wrapper that lets the grid fill either container.
+   ============================================================ */
+.nk-datefilter-panel {
+  display: flex;
+  min-width: 0;
+}
+.nk-datefilter-panel .nk-cal-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- Longer-rental discount ladder (Terms section, full-width fact card) ----
+   Tier cells light up (.is-active) for the break the selected dates earn; the
+   __hint line narrates the same fact. Max 4-up: each cell's minimum is a quarter
+   of the row minus its share of the 10px gaps, floored at 160px so cells wrap to
+   fewer-up on narrow screens. auto-fill (not auto-fit) keeps the unused tracks,
+   so with fewer tiers each cell still caps at a quarter of the row. Mobile
+   compaction rides the .nk-fact !important block below, same as the sibling
+   fact cards. */
+.nk-breaks {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  padding: var(--nk-card-pad-sm);
+  border-radius: 16px;
+  background: var(--nk-surface-glass);
+  border: 1px solid var(--nk-border);
+}
+/* Opt out of the shared .nk-fact:hover treatment — the ladder isn't a single
+   scannable fact, it's a container around its own tier cells, so a hover
+   border/bg on the outer card read as a stray click affordance. Both classes in
+   the selector on purpose: the element carries "nk-fact nk-breaks", so a bare
+   .nk-breaks:hover would only tie .nk-fact:hover and win on source order alone. */
+.nk-fact.nk-breaks:hover {
+  border-color: var(--nk-border);
+  background: var(--nk-surface-glass);
+}
+.nk-breaks__head {
+  display: flex;
+  align-items: center;
+  gap: var(--nk-gap-md);
+}
+.nk-breaks__headtext {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nk-gap-2xs);
+  min-width: 0;
+}
+.nk-breaks__label {
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--nk-text);
+}
+.nk-breaks__hint {
+  font-family: var(--nk-font-body);
+  font-size: 14px;
+  color: var(--nk-text-muted);
+}
+.nk-breaks__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(max(160px, 25% - 7.5px), 1fr));
+}
+.nk-breaks__tier {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--nk-border);
+  background: var(--nk-input-bg);
+  transition:
+    border-color 0.18s var(--nk-ease),
+    background-color 0.18s var(--nk-ease);
+}
+.nk-breaks__top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 20px;
+}
+.nk-breaks__from {
+  font-family: var(--nk-font-body);
+  font-weight: 500;
+  font-size: 14.5px;
+  line-height: 1;
+  color: var(--nk-text-muted);
+  white-space: nowrap;
+}
+.nk-breaks__pct {
+  margin-left: auto;
+  background: var(--nk-green-tint);
+  color: var(--nk-green-text);
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-family: var(--nk-font-display);
+  font-weight: 700;
+  font-size: 12.5px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.nk-breaks__prices {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+.nk-breaks__price {
+  font-family: var(--nk-font-price);
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--nk-text);
+}
+.nk-breaks__unit {
+  font-family: var(--nk-font-body);
+  font-size: 15px;
+  color: var(--nk-text-2);
+}
+.nk-breaks__was {
+  font-family: var(--nk-font-body);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--nk-text-muted);
+  text-decoration: line-through;
+}
+.nk-breaks__wasunit {
+  font-weight: 400;
+  font-size: 13px;
+}
+.nk-breaks__tier.is-active {
+  border-color: var(--nk-purple);
+  background: var(--nk-purple-tag);
+}
+.nk-breaks__tier.is-active .nk-breaks__from {
+  color: var(--nk-purple-bright);
+}
+
+/* ---- Gallery lightbox (full-screen photo viewer) ---- */
+.nk-lightbox {
+  /* Scrim gutter and the inset shared by every chip floating on the photo. Both are
+     variables because the short-viewport block below retunes the gutter only: the
+     landscape axis is height, and a width-driven clamp burns rows the photo needs.
+     One inset for close + counter + both arrows, so they read as a single rail
+     instead of each picking its own edge distance. */
+  --nk-lb-gutter: clamp(12px, 3vw, 40px);
+  --nk-lb-inset: clamp(8px, 2vw, 20px);
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--nk-lb-gutter);
+  background: var(--nk-scrim-media);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  /* safe-area guards: the close button must clear the notch/Dynamic-Island zone in
+     iOS standalone display (bottom inset is handled by the bar itself). The chips
+     inside then need NO safe-area of their own — they measure from the panel, which
+     this padding has already pushed clear of the inset. */
+  padding-top: max(var(--nk-lb-gutter), env(safe-area-inset-top));
+  padding-left: max(var(--nk-lb-gutter), env(safe-area-inset-left));
+  padding-right: max(var(--nk-lb-gutter), env(safe-area-inset-right));
+  animation: nk-scrim-in 0.2s ease both;
+}
+/* The panel is the focus sink (tabIndex -1) so arrow paging survives a click on the
+   photo; it must never paint a ring for that. Real focus-visible targets inside keep
+   the global outline. */
+.nk-lightbox__panel:focus {
+  outline: none;
+}
+.nk-lightbox__panel {
+  position: relative;
+  width: min(1180px, 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nk-gap-md);
+}
+/* Close + arrows are one affordance: a glass disc floating ON the photo (the 2026
+   media-viewer convention — chrome belongs to the media, it does not orbit it in
+   dead space). Close composes .nk-closebtn for the shared box + press; the navs
+   carry their own box, so only the skin is shared here. */
+.nk-lightbox__close,
+.nk-lightbox__nav {
+  border-radius: var(--nk-r-icon);
+  background: var(--nk-overlay);
+  border: 1px solid var(--nk-border-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--nk-shadow-1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nk-lightbox__close:hover,
+  .nk-lightbox__nav:hover {
+    background: var(--nk-surface-hover-glass);
+    border-color: var(--nk-border-strong);
+  }
+}
+.nk-lightbox__close {
+  position: absolute;
+  top: var(--nk-lb-inset);
+  right: var(--nk-lb-inset);
+  z-index: 3;
+}
+.nk-lightbox__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+}
+.nk-lightbox__img {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+}
+/* Centred with inset + margin-block:auto, NOT translateY(-50%) — load-bearing: the
+   :active press below is a transform, and a centring transform would be clobbered
+   by it, dropping the arrow to the top of the stage on every click. */
+.nk-lightbox__nav {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin-block: auto;
+  z-index: 2;
+  /* Same 44px box as .nk-closebtn: with --nk-r-icon (22px) both are true circles.
+     At 48px the identical radius drew a squircle instead — two different silhouettes
+     on one photo, which is exactly what the shared skin above exists to prevent. */
+  width: var(--nk-tap);
+  height: var(--nk-tap);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background var(--nk-dur-fast) var(--nk-ease),
+    border-color var(--nk-dur-fast) var(--nk-ease),
+    transform var(--nk-dur-fast) var(--nk-ease-spring);
+}
+.nk-lightbox__nav:active {
+  transform: scale(0.94);
+}
+.nk-lightbox__nav.is-prev {
+  left: var(--nk-lb-inset);
+}
+.nk-lightbox__nav.is-next {
+  right: var(--nk-lb-inset);
+}
+/* Counter rides the photo as a glass chip opposite the close button, balancing the
+   top edge — as bare text under the photo it read as a debug label. */
+.nk-lightbox__count {
+  position: absolute;
+  top: var(--nk-lb-inset);
+  left: var(--nk-lb-inset);
+  z-index: 2;
+  padding: 6px 12px;
+  border-radius: var(--nk-r-pill);
+  font-family: var(--nk-font-body);
+  font-size: 13px;
+  line-height: 1;
+  color: var(--nk-text-2);
+  font-variant-numeric: tabular-nums;
+  background: var(--nk-overlay);
+  border: 1px solid var(--nk-border-strong);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+/* One bottom band, not two rows. `1fr minmax(0, auto) 1fr` centres the filmstrip
+   against the PANEL while the CTA docks right: cols 1 and 3 are equal, so the CTA's
+   intrinsic width is mirrored by an empty spacer opposite it. minmax(0, auto) lets a
+   long strip shrink and scroll internally instead of shoving the CTA off-panel. */
+.nk-lightbox__bar {
+  flex: none;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
+  align-items: center;
+  gap: var(--nk-gap-md);
+  padding-bottom: var(--nk-safe-bottom);
+}
+.nk-lightbox__thumbs {
+  grid-column: 2;
+}
+.nk-lightbox__cta {
+  grid-column: 3;
+  justify-self: end;
+}
+/* photo reveal tied to the actual load (keyed remount per index): while loading,
+   .nk-lightbox__ph shows a spinner; onLoad flips data-loaded and the photo fades
+   in — so paging never crossfades to an empty frame before the image arrives.
+   .nk-lightbox__err is the graceful broken-image fallback. */
+.nk-lightbox__ph {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+}
+/* the default 28%-opacity placeholder icon is near-invisible in a ~1600px dark
+   panel — the lightbox spinner needs real presence */
+.nk-lightbox__ph .nk-imgicon {
+  opacity: 0.6;
+}
+.nk-lightbox__err {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--nk-font-body);
+  font-size: 14px;
+  color: var(--nk-text-muted);
+  text-align: center;
+  padding: 0 24px;
+}
+.nk-lightbox__photo {
+  opacity: 0;
+  transition: opacity 0.22s var(--nk-ease);
+}
+.nk-lightbox__photo[data-loaded="true"] {
+  opacity: 1;
+}
+
+/* thumbnail scrubber — horizontal strip mapped to the active index */
+/* 6px padding clears BOTH rings drawn outside the thumb box: the 4px selection ring
+   below and the global 2px focus outline at 3px offset. Neither may be clipped by
+   this scroll container. */
+.nk-lightbox__thumbs {
+  min-width: 0;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 6px;
+  scrollbar-width: none;
+}
+.nk-lightbox__thumbs::-webkit-scrollbar {
+  display: none;
+}
+.nk-lightbox__thumb {
+  position: relative;
+  flex: none;
+  width: 80px;
+  height: 60px;
+  border-radius: var(--nk-r-sm);
+  overflow: hidden;
+  cursor: pointer;
+  border: 0;
+  transition:
+    box-shadow var(--nk-dur-fast) var(--nk-ease),
+    transform var(--nk-dur-fast) var(--nk-ease-spring);
+}
+/* Recede behind a scrim, not opacity: opacity fades the photo INTO the near-black
+   backdrop and reads muddy, where a scrim keeps it legible but quiet. */
+.nk-lightbox__thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--nk-scrim-media) 55%, transparent);
+  transition: background var(--nk-dur-fast) var(--nk-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nk-lightbox__thumb:hover {
+    transform: translateY(-1px);
+  }
+  .nk-lightbox__thumb:hover::after {
+    background: color-mix(in srgb, var(--nk-scrim-media) 20%, transparent);
+  }
+}
+.nk-lightbox__thumb:active {
+  transform: scale(0.96);
+}
+.nk-lightbox__thumb.is-active::after {
+  background: transparent;
+}
+/* Ring with a gap. A flush inner border (the old 2px inside overflow:hidden) reads
+   as a stray browser focus outline; the inner stop is the backdrop colour, so the
+   gap looks punched out of the strip. */
+.nk-lightbox__thumb.is-active {
+  box-shadow:
+    0 0 0 2px var(--nk-scrim-media),
+    0 0 0 4px var(--nk-purple);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nk-lightbox__photo {
+    transition: none;
+  }
+}
+/* Narrow and short are deliberately SEPARATE blocks — they want opposite things, so
+   the old combined `layerCompact` query served neither well. Short comes first so a
+   phone that is both (small landscape) still gets the stacked band below. */
+
+/* Landscape phones: height is the scarce axis. The gutter stops tracking width (a
+   3vw clamp burned 28px top AND bottom of a 430px viewport) and the strip shrinks to
+   ride inside the CTA's own 44px row, so every spare px goes to the photo. */
+@media (height < 32.5rem) {
+  .nk-lightbox {
+    --nk-lb-gutter: 10px;
+  }
+  .nk-lightbox__panel {
+    gap: var(--nk-gap-sm);
+  }
+  .nk-lightbox__thumbs {
+    padding-block: 5px;
+  }
+  .nk-lightbox__thumb {
+    width: 56px;
+    height: 42px;
+  }
+}
+/* Portrait phones: the reserve CTA's copy cannot share a row with a filmstrip at
+   375px, so the band stacks and the CTA goes full-width — the right phone pattern
+   regardless. Stacking frees vertical room, so the thumbs stay generous. */
+@media (width < theme(--breakpoint-sm)) {
+  .nk-lightbox__thumb {
+    width: 72px;
+    height: 54px;
+  }
+  .nk-lightbox__bar {
+    grid-template-columns: 1fr;
+    gap: var(--nk-gap-sm);
+  }
+  .nk-lightbox__thumbs,
+  .nk-lightbox__cta {
+    grid-column: 1;
+    justify-self: stretch;
+  }
+  .nk-lightbox__cta .nk-btn {
+    width: 100%;
+  }
+}
+/* .nk-btn is white-space:nowrap and the LT reserve string is ~316px with icon and
+   padding, so a full-width button overflows a 320px viewport. Same squeeze .nk-mbar
+   applies to this exact string — repeated here because that rule is scoped to
+   `@container nk-detail`, which a fixed-position layer never matches. */
+@media (width < theme(--breakpoint-xs)) {
+  .nk-lightbox__cta .nk-btn {
+    padding: 12px 16px;
+    font-size: 14.5px;
+  }
+}
+/* content reveal after skeleton — a subtle opacity + rise. Fill-mode is `backwards`
+   (NOT `both`/`forwards`): forwards would hold the final keyframe's transform as a
+   matrix(1,…) forever, which — even though it's the identity — makes the wrapper a
+   containing block for its position:fixed descendants (the Gallery lightbox lives
+   inside here), pinning the "fullscreen" overlay to the content box instead of the
+   viewport. `backwards` only fills the pre-start frame, so once the reveal ends the
+   transform reverts to none and no containing block persists. */
+.nk-fadecontent {
+  animation: nk-contentfade 0.45s var(--nk-ease) backwards;
+}
+@keyframes nk-contentfade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nk-fadecontent {
+    animation: none;
+  }
+}
+.nk-mbar {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  background: rgba(27, 30, 31, 0.96);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--nk-border);
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px calc(20px + var(--nk-safe-right)) calc(14px + var(--nk-safe-bottom)) calc(20px + var(--nk-safe-left));
+  min-height: calc(72px + var(--nk-safe-bottom));
+  box-shadow: var(--nk-shadow-up);
+  transition:
+    transform 0.22s var(--nk-ease),
+    opacity 0.18s ease,
+    visibility 0.22s;
+}
+.nk-mbar-spacer {
+  display: none;
+}
+/* visibility (a discrete transition step) removes the hidden bar's Reserve button
+   from the Tab order once the slide-out finishes — opacity alone left it focusable */
+.nk-mbar.is-hidden {
+  opacity: 0;
+  transform: translateY(calc(100% + var(--nk-safe-bottom)));
+  pointer-events: none;
+  visibility: hidden;
+}
+.nk-mbar > * {
+  min-width: 0;
+}
+.nk-mbar > span {
+  overflow: hidden;
+}
+.nk-mbar > span span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: min(52vw, 340px);
+}
+@container nk-detail (55rem <= width < 60rem) {
+  .nk-detail-grid {
+    grid-template-columns: minmax(560px, 1fr) minmax(286px, 320px);
+    gap: 28px;
+  }
+}
+@media (height <= 48.75rem) {
+  @container nk-detail (width >= 55rem) {
+    .nk-bento {
+      height: clamp(300px, 38vw, 420px);
+    }
+  }
+}
+/* keep the booking sidebar through landscape tablets; collapse to the bottom bar only on portrait tablets/phones */
+@container nk-detail (width < 55rem) {
+  .nk-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  /* the whole aside is replaced ≤980: the sticky bar carries reserve and the
+     booking-facts + owner cards render inline under the gallery instead — hiding
+     it here is what prevents the owner card appearing twice */
+  .nk-reserve {
+    display: none;
+  }
+  .nk-booking-inline {
+    display: block;
+    margin-top: 24px;
+  }
+  .nk-mbar {
+    display: flex;
+  }
+  .nk-mbar-spacer {
+    display: block;
+    height: calc(104px + var(--nk-safe-bottom));
+  }
+  /* grid-template-rows:auto (not none) — row 1 must size to the oversized hero
+     tile, otherwise the hero paints over the inline booking card below the grid */
+  .nk-bento {
+    height: auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-auto-rows: clamp(150px, 22cqw, 190px);
+  }
+  .nk-bento > :first-child {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    height: clamp(260px, 34cqw, 320px);
+  }
+  /* 0–2 photos: stack full-width, no lonely half-width tile in the 2-col mosaic */
+  .nk-bento[data-count="0"],
+  .nk-bento[data-count="1"],
+  .nk-bento[data-count="2"] {
+    grid-template-columns: 1fr;
+  }
+  .nk-tworow {
+    grid-template-columns: 1fr;
+  }
+  .nk-rev-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+/* Back-to-top is outside the detail container, so its collision avoidance stays
+   a canonical viewport concern while the bar's actual visibility is container-owned. */
+@media (width < theme(--breakpoint-lg)) {
+  body:has(.nk-mbar) .nk-backtotop {
+    inset-block-end: calc(92px + var(--nk-safe-bottom));
+  }
+}
+@container nk-detail (width < theme(--breakpoint-md)) {
+  .nk-spec-grid {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+  }
+}
+@container nk-detail (width < theme(--breakpoint-sm)) {
+  /* full-bleed hero tile + a tidy 2-up thumbnail mosaic, not five stacked tiles */
+  .nk-bento {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 116px;
+    gap: 8px;
+  }
+  .nk-bento > :first-child {
+    grid-column: 1 / -1;
+    height: 230px;
+  }
+  /* four short facts stay a 2-up grid (a full-width stack cost ~640px of scroll);
+     compact fact-card chrome keeps the text column readable at ~165px (!important
+     — the card sets its roomy defaults as inline styles) */
+  .nk-hl-grid {
+    gap: var(--nk-gap-sm);
+  }
+  .nk-fact {
+    padding: 12px !important;
+    gap: 10px !important;
+  }
+  .nk-fact__disk {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .nk-mbar {
+    gap: 10px;
+    padding: 10px 12px calc(10px + var(--nk-safe-bottom));
+  }
+  .nk-mbar .nk-btn {
+    flex: 0 0 auto;
+    padding: 12px 16px !important;
+    font-size: 14.5px !important;
+  }
+}
+/* the 2-up terms grid runs out of room only below ~360px */
+@media (width < theme(--breakpoint-xs)) {
+  .nk-hl-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* F-061: clamp long owner descriptions on phones; the Show-more toggle lifts it */
+@media (width < theme(--breakpoint-sm)) {
+  .nk-desc-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+/* rating breakdown — wide column gap reads as a void on small phones */
+.nk-ratebreak {
+  row-gap: 0;
+  column-gap: 44px;
+}
+@media (width < theme(--breakpoint-sm)) {
+  .nk-ratebreak {
+    grid-template-columns: 1fr !important;
+    row-gap: 18px;
+    column-gap: 0;
+  }
+  .nk-ratebreak > :first-child {
+    padding-right: 0 !important;
+    padding-bottom: 18px;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--nk-divider);
+  }
+}
+
+/* ---- rules pulled out of globals.css when this file was split off ----
+   Each targets a selector that now lives here, so leaving it behind would have
+   put it on the wrong side of the cascade (this file loads AFTER globals.css)
+   or shipped listing-detail styling to all 20-odd routes. */
+
+/* Short viewports (landscape phones, half-height windows): unpin the sticky
+   filter bar so the content gets the screen back. This one is not tidiness —
+   `.nk-filterbar { position: sticky }` is declared in this same file, so an
+   unpin left in globals.css would tie on specificity and lose on source order,
+   silently re-pinning the bar. Its sibling `.nk-nav-bar { position: relative }`
+   stays in globals.css with the rest of the nav. */
+@media (height < 32.5rem) {
+  .nk-filterbar {
+    position: static;
+  }
+}
+
+/* NOTE: `.nk-filter-row > .nk-searchfield { flex: 1 1 320px }` is deliberately NOT
+   here. It has to load BEFORE the ≤560 block above, which re-bases the same
+   selector and ties it on specificity — so it stays in globals.css. Pulling it in
+   here wrapped the Filters pill onto its own row at 390px. */
+
+/* --- tablet: comfortable reading measure for detail prose --- */
+@media (width >= theme(--breakpoint-sm)) and (width < theme(--breakpoint-lg)) {
+  .nk-detail .nk-prose {
+    max-width: 62ch;
+  }
+}
+
+/* Empty gallery tile — the sibling of .nk-offer__media--empty in globals.css,
+   kept here because only the listing detail renders a .nk-gtile. */
+.nk-gtile:not(.nk-gtile--btn) {
+  background:
+    radial-gradient(80% 70% at 50% 52%, rgba(102, 101, 224, 0.18), transparent 70%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.025) 0 2px, transparent 2px 14px), var(--nk-ps-card);
+}
+.nk-gtile:not(.nk-gtile--btn) .nk-imgicon {
+  opacity: 0.42;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.25));
+}

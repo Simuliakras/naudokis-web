@@ -16,6 +16,10 @@
 // in the layout), so a bare <main> here would unmount the 77px-tall header for the whole
 // loading window and drop every page's content back down when it lands — a guaranteed
 // layout shift on exactly the navigation this component exists to smooth over.
+// Route-scoped stylesheet — see the header of catalogue.css. This file needs it in
+// its own right: the loading skeletons use .nk-grid-feed / .nk-detail, and a
+// loading.tsx renders before the screen component that would otherwise pull it in.
+import "./catalogue.css";
 import { Nav } from "./sections";
 import { CtaBanner, Footer } from "./sections-home";
 import { Chrome } from "./Chrome";

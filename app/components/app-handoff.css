@@ -1,0 +1,65 @@
+@reference "../globals.css";
+
+/* App-handoff landings (/booking-request/…, /chat/…, /my-profile, …). The browser
+   fallback for the app-only email links, on the shared .nk-statusmain shell.
+
+   Route-scoped, imported by AppHandoffScreen.tsx rather than globals.css — these
+   pages are reached from an email link, so their CSS has no business blocking the
+   render of the marketing routes. See components/invite.css for the same pattern
+   and its ordering contract (this file loads AFTER globals.css). */
+.nk-handoff {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nk-gap-md);
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.nk-handoff__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.nk-handoff__hint {
+  margin: 0;
+  max-width: 44ch;
+  font-family: var(--nk-font-body);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--nk-text-muted);
+}
+.nk-handoff__install {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nk-gap-sm);
+  width: 100%;
+  padding-top: var(--nk-gap-md);
+  border-top: 1px solid var(--nk-border);
+}
+.nk-handoff__lead {
+  margin: 0;
+  font-family: var(--nk-font-body);
+  font-size: 15px;
+  color: var(--nk-text-2);
+}
+/* Scanning is a desktop affordance — on the phone the store badges are the path. */
+.nk-handoff__qr {
+  display: none;
+}
+.nk-handoff__qrhint {
+  font-family: var(--nk-font-body);
+  font-size: 13px;
+  color: var(--nk-text-muted);
+}
+@media (width >= theme(--breakpoint-md)) {
+  .nk-handoff__qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+}

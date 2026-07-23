@@ -1,0 +1,184 @@
+/* @reference is build-time only — it hands this file the `@theme static` breakpoint
+   scale so `theme(--breakpoint-sm)` resolves, and emits no CSS of its own. Same
+   opening line as components/legal/legal.css. */
+@reference "../globals.css";
+
+/* Invite — referral bridge (/invite). Dark hero with the brand pattern; centered
+   install funnel (headline → reward note → CTA + badges → QR → on-page code).
+
+   Route-scoped, imported by InviteScreen.tsx rather than living in globals.css, so
+   the ~4 KB never enters the render-blocking stylesheet of the other 20 routes.
+   Same mechanism as components/legal/legal.css.
+
+   ORDERING CONTRACT: this file loads AFTER globals.css, which is what the rules
+   below assume — .invite-hero retunes the shared .nk-hero-band `--hero-*` custom
+   properties, and that only works while it comes later. Do not add anything here
+   that globals.css needs to override.
+   Tokens, .nk-* primitives and the site-wide short-viewport layer stay in
+   globals.css; only the .invite-* namespace belongs here. */
+.invite-page {
+  width: 100%;
+  background: var(--nk-bg);
+}
+/* /invite tunes the shared .nk-hero-band smaller than How-it-works (see --hero-* above). */
+.invite-hero {
+  --hero-gap: 24px;
+  --hero-title: clamp(38px, 5.6vw, 68px);
+  --hero-title-lh: 1.06;
+  --hero-title-mw: 900px;
+  container: nk-invite / inline-size;
+  --hero-lead-mw: 620px;
+  --hero-lead: 20px;
+  --hero-lead-lh: 32px;
+}
+.invite-reward {
+  margin: 0;
+  max-width: 560px;
+  font-family: var(--nk-font-body);
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--nk-text-muted);
+}
+/* truthful value bullets between the lead and the install actions */
+/* items align flush-left as a block; the parent column centers the shrink-
+   wrapped list (individually-centered rows staggered the check icons ~130px) */
+.invite-benefits {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.invite-benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-family: var(--nk-font-body);
+  font-size: 15.5px;
+  line-height: 24px;
+  color: var(--nk-text-2);
+  text-align: left;
+}
+.invite-benefits .nk-ico {
+  flex: none;
+  margin-top: 3px;
+}
+.invite-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 8px;
+}
+.invite-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+/* At/above --breakpoint-nav: split funnel — copy/actions left, QR + code right; below that the
+   original centred column stack applies */
+.invite-cols__main,
+.invite-cols__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--hero-gap, 24px);
+}
+@container nk-invite (width >= 60rem) {
+  .invite-cols {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 56px;
+    align-items: center;
+    text-align: left;
+  }
+  .invite-cols__main {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .invite-cols__main h1 {
+    text-align: left;
+  }
+  .invite-cols__aside {
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    background: var(--nk-surface-glass);
+    border: 1px solid var(--nk-border);
+    border-radius: var(--nk-r-card);
+  }
+  .invite-actions {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+.invite-qr__hint {
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--nk-text-muted);
+}
+/* you can't scan a QR on the same phone you're holding — drop it ≤560 (the install
+   CTA + store badges are the mobile path), mirroring the home-hero/HIW convention */
+@media (width < theme(--breakpoint-sm)) {
+  .invite-qr {
+    display: none;
+  }
+}
+.invite-code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.invite-code__label {
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nk-text-muted);
+}
+.invite-code__value {
+  font-family: var(--nk-font-body);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.18em;
+  color: var(--nk-text);
+  background: var(--nk-surface);
+  border: 1px solid var(--nk-border);
+  border-radius: var(--nk-r-pill);
+  padding: 10px 20px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-align: center;
+}
+/* The manual-entry path: this is how the reward is actually granted (it never
+   depends on attribution consent), so it reads as instruction, not fine print. */
+.invite-code__hint {
+  max-width: 34ch;
+  font-family: var(--nk-font-body);
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--nk-text-muted);
+  text-align: center;
+}
+@media (width < theme(--breakpoint-sm)) {
+  .invite-hero {
+    --hero-gap: 20px;
+  }
+  .invite-code {
+    width: 100%;
+  }
+  .invite-code__value {
+    width: 100%;
+    font-size: 18px;
+    letter-spacing: 0.12em;
+  }
+}
