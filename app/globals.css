@@ -3256,6 +3256,17 @@ footer .nk-link:hover {
   .nk-footer .nk-footer__col--help {
     grid-column: 4;
   }
+  /* Drop the three sitemap headings onto the tagline's first line — the wordmark
+     keeps the top corner to itself, and every column then starts on one shared
+     text line. 36px is LogoMark's rendered height, 14px the brand column's row
+     gap; the extra 1px trades the half-leading difference between the heading
+     (Archivo 18/1.3) and the tagline (17/1.55) so their caps land together.
+     Needs the `> .nk-footer__top` prefix to outrank the base tier's
+     `.nk-footer .nk-footer__top > .nk-footer__col--categories` reset — container
+     queries add no specificity of their own. */
+  .nk-footer .nk-footer__top > .nk-footer__col {
+    padding-block-start: 51px;
+  }
   .nk-footer .nk-footer__catgrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(20px, 2.2cqi, 36px);
