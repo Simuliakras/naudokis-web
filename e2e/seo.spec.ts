@@ -21,9 +21,11 @@ const ROUTES = [
   { path: "/", canonical: "", alwaysIndexable: true },
   { path: "/en", canonical: "/en", alwaysIndexable: true },
   { path: "/skelbimai", canonical: "/skelbimai", alwaysIndexable: true },
-  { path: "/kategorijos", canonical: "/kategorijos", alwaysIndexable: true },
+  // The category directory, at the head of the landing tier it indexes. The old
+  // /kategorijos (and /en/categories) only 308 here now — see MOVED_PATHS.
+  { path: "/nuoma", canonical: "/nuoma", alwaysIndexable: true },
   // English routes are localized end to end — segments AND taxonomy slugs.
-  { path: "/en/categories", canonical: "/en/categories", alwaysIndexable: true },
+  { path: "/en/rent", canonical: "/en/rent", alwaysIndexable: true },
   { path: "/en/listings", canonical: "/en/listings", alwaysIndexable: true },
   { path: "/en/how-it-works", canonical: "/en/how-it-works", alwaysIndexable: true },
   { path: "/en/terms-of-service", canonical: "/en/terms-of-service", alwaysIndexable: true },
@@ -119,8 +121,18 @@ for (const route of ROUTES) {
     //
     // Hence a byte-level assertion, unlike the DOM-level H1 count above. Re-adding a
     // boundary anywhere above these screens is what this catches.
+    //
+    // What makes a hidden region a bug is that it CARRIES the page. An empty
+    // `<div hidden id="S:…"></div>` is just React's end-of-stream marker for a
+    // boundary that resolved to nothing; it appears or not depending on how the
+    // response happened to flush, so asserting on its mere presence is both wrong
+    // and flaky (observed on production: two markers on one fetch of /skelbimai,
+    // none on the next). Match only a region with markup inside it.
     const html = await htmlOf(await request.get(route.path));
-    expect(html).not.toContain('<div hidden id="S:');
+    expect(html).not.toMatch(/<div hidden id="S:\d+">(?!<\/div>)/);
+    // With the bug the served bytes carried two H1s — the skeleton's, and the real
+    // one sealed in the hidden region. Exactly one, given nothing is hidden, is
+    // therefore the real one, in the shell.
     expect(tags(html, /<h1[\s>]/g)).toHaveLength(1);
   });
 }
