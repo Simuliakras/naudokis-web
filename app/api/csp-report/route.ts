@@ -5,8 +5,8 @@ import { clientFingerprint, evictBounded, takeClientRateLimit, takeGlobalRateLim
 const MAX_REPORT_BYTES = 64 * 1024;
 
 /* ---------------- Violation de-duplication ----------------
-   The strict report-only policy is knowingly violated by Next's own inline
-   bootstrap, so the SAME violation arrives once per page view. Log each distinct
+   A report-only probe that turns out to be load-bearing is violated by every page
+   that renders, so the SAME violation arrives once per page view. Log each distinct
    violation once per window and drop the repeats: otherwise the only useful
    signal — a violation we have not seen before — is buried under one identical
    line per visitor. */

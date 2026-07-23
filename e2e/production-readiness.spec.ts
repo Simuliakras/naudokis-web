@@ -262,13 +262,34 @@ test("Google Maps is retained but loads only after an explicit choice", async ({
   }
 });
 
-test("strict CSP is observed in report-only mode before enforcement", async ({ request }) => {
+test("the report-only CSP probes only grants that can converge", async ({ request }) => {
   const response = await request.get("/");
-  const enforced = response.headers()["content-security-policy"];
-  const reportOnly = response.headers()["content-security-policy-report-only"];
+  const enforced = response.headers()["content-security-policy"] ?? "";
+  const reportOnly = response.headers()["content-security-policy-report-only"] ?? "";
+
+  // Next's RSC streaming bootstrap is inline and generated per page, so script-src
+  // cannot converge under SSG/ISR. Probing it reported ~24 violations per page view
+  // forever and buried the real ones, so both policies keep the same grant.
   expect(enforced).toContain("script-src 'self' 'unsafe-inline'");
-  expect(reportOnly).toContain("script-src 'self'");
-  expect(reportOnly).not.toContain("script-src 'self' 'unsafe-inline'");
+  expect(reportOnly).toContain("script-src 'self' 'unsafe-inline'");
+
+  // Grants the probe expects to be dead. A violation blocks nothing; it says the
+  // grant is load-bearing and has to stay in the enforced policy.
+  expect(enforced).toContain("worker-src 'self' blob:");
+  expect(reportOnly).toContain("style-src-elem 'self'");
+  expect(reportOnly).toContain("worker-src 'none'");
+  expect(reportOnly).toContain("media-src 'none'");
+
+  // No report-only semantics; browsers warn when it appears there.
+  expect(reportOnly).not.toContain("upgrade-insecure-requests");
+
+  // A directive named twice in one policy makes the browser ignore the second copy
+  // AND log a console warning — exactly the noise this whole pass removed. The probe
+  // overrides base entries by key, so a regression here is a silently dead probe.
+  for (const policy of [enforced, reportOnly]) {
+    const names = policy.split(";").map((directive) => directive.trim().split(/\s+/)[0]).filter(Boolean);
+    expect(names.filter((name, index) => names.indexOf(name) !== index)).toEqual([]);
+  }
 });
 
 test("native handoff outcomes require a signed journey token", async ({ request }) => {
