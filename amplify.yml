@@ -62,3 +62,36 @@ frontend:
     paths:
       - node_modules/**/*
       - .next/cache/**/*
+
+# ----------------------------------------------------------------------------
+# Response headers for assets Amplify serves off its own CDN tier rather than
+# through the Next server.
+#
+# This block is NOT a duplicate of next.config.ts `headers()`. That function only
+# runs for responses the Next server produces; everything under public/ is served
+# straight from Amplify's static tier and never reaches it. (Same lesson as the
+# apple-app-site-association Content-Type — see the note above `headers()` in
+# next.config.ts.) Without this block Amplify applies its compute-app default of
+# `max-age=5, stale-while-revalidate`, which is short enough that CloudFront
+# cannot hold the object either: every brand asset was a `Miss from cloudfront`
+# on every page view, ~133 KiB re-fetched from origin each time.
+#
+# _next/static/** needs nothing here — Next already content-hashes those and
+# sends immutable itself.
+# ----------------------------------------------------------------------------
+customHeaders:
+  # Brand imagery, PWA icons and the install QR. `immutable` means CACHE-BUSTING
+  # IS A RENAME: editing a file in place will not reach a browser that already
+  # holds it for up to a year. The generators that write here
+  # (scripts/generate-install-qr.mjs, scripts/generate-favicon.mjs) say the same.
+  - pattern: '/naudokis/**'
+    headers:
+      - key: 'Cache-Control'
+        value: 'public, max-age=31536000, immutable'
+  # Deliberately not immutable: /favicon.ico is a fixed, un-hashable path that
+  # every crawler requests by convention, so it has no rename escape hatch. A
+  # week is long enough to matter and short enough to self-heal.
+  - pattern: '/favicon.ico'
+    headers:
+      - key: 'Cache-Control'
+        value: 'public, max-age=604800'
