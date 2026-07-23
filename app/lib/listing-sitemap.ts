@@ -159,6 +159,43 @@ export async function fetchListingSitemapEntries(chunkIndex: number): Promise<Li
   return entries;
 }
 
+// Single-file sitemap: every public listing in one walk, for when the whole site is
+// one flat /sitemap.xml with no index. A flat sitemap is valid only up to Google's
+// 50,000-URL / 50 MB ceiling, and each listing emits one <url> PER LOCALE, so the
+// cap is on listings, well under half of 50k with room for the page URLs sharing the
+// file. Crossing it truncates loudly — that warning is the signal to restore the
+// sitemap index (generateSitemaps) instead of raising the cap.
+export const MAX_SINGLE_SITEMAP_LISTINGS = 20_000;
+
+export async function fetchAllListingSitemapEntries(): Promise<ListingEntry[]> {
+  if (skipNonProductionApi("entries")) return [];
+  const entries: ListingEntry[] = [];
+  try {
+    for await (const item of walkPublicListings()) {
+      const updated = item.updated_at ? new Date(item.updated_at) : undefined;
+      const image = safePublicImage(item.images?.[0]?.url);
+      entries.push({
+        id: item.id,
+        title: item.title,
+        city: item.city ?? undefined,
+        lastModified: updated && !Number.isNaN(updated.getTime()) ? updated : undefined,
+        images: image ? [image] : [],
+      });
+      if (entries.length >= MAX_SINGLE_SITEMAP_LISTINGS) {
+        console.warn(
+          `[listing-sitemap] single sitemap hit the ${MAX_SINGLE_SITEMAP_LISTINGS}-listing cap; truncating. Restore the sitemap index (generateSitemaps) rather than raising this.`,
+        );
+        break;
+      }
+    }
+  } catch (error) {
+    // A short list is still valid (the missing URLs return next cycle); degrade
+    // rather than 500 the whole sitemap, but never silently.
+    console.warn(`[listing-sitemap] listing walk failed after ${entries.length} entries.`, error);
+  }
+  return entries;
+}
+
 export function localizedListingSitemapEntries(entries: ListingEntry[]): MetadataRoute.Sitemap {
   return entries.flatMap((entry) =>
     locales.map((locale) => {

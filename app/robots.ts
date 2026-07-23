@@ -15,10 +15,9 @@ export default function robots(): MetadataRoute.Robots {
     //            SoftwareApplication.installUrl, which is a declaration rather
     //            than a crawl target.
     rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/go"] },
-    // Just the index. /sitemap.xml is a <sitemapindex> (app/sitemap.xml/route.ts)
-    // that references the pages sitemap and every listing shard, so a crawler
-    // discovers all of them from this one URL — no need to enumerate shards here
-    // (which also drops robots.txt's backend dependency).
+    // One sitemap for the whole site (pages, landings and listings live in the same
+    // flat /sitemap.xml — no index, no separate listing sitemap), so robots.txt
+    // advertises the single URL and carries no backend dependency.
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,
   };

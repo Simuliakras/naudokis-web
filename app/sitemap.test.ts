@@ -8,6 +8,8 @@ import { LT_CITIES } from "@/app/lib/cities";
 
 const fetchAllCategories = vi.fn<() => Promise<Category[]>>();
 const fetchListingsCount = vi.fn<(filters: { category?: string; city?: string }) => Promise<number>>();
+const fetchAllListingSitemapEntries =
+  vi.fn<() => Promise<{ id: string; title?: string; city?: string; images: string[] }[]>>();
 
 vi.mock("@/app/lib/categories", () => ({
   fetchAllCategories: () => fetchAllCategories(),
@@ -15,6 +17,16 @@ vi.mock("@/app/lib/categories", () => ({
 vi.mock("@/app/lib/listings", () => ({
   fetchListingsCount: (filters: { category?: string; city?: string }) => fetchListingsCount(filters),
 }));
+// The single sitemap folds in every listing. Mock the walk (it would otherwise hit
+// the live catalogue); the real localizer runs, so the per-locale URL/hreflang shape
+// of a listing entry is still exercised.
+vi.mock("@/app/lib/listing-sitemap", async (importActual) => {
+  const actual = await importActual<typeof import("@/app/lib/listing-sitemap")>();
+  return {
+    ...actual,
+    fetchAllListingSitemapEntries: () => fetchAllListingSitemapEntries(),
+  };
+});
 
 const { default: sitemap } = await import("./sitemap");
 
@@ -55,10 +67,12 @@ async function enPaths(): Promise<string[]> {
 beforeEach(() => {
   fetchAllCategories.mockReset();
   fetchListingsCount.mockReset();
+  fetchAllListingSitemapEntries.mockReset();
   fetchAllCategories.mockResolvedValue(TREE);
   fetchListingsCount.mockImplementation(async ({ category: id }) =>
     id === undefined || STOCKED.has(id) ? 5 : 0,
   );
+  fetchAllListingSitemapEntries.mockResolvedValue([]);
 });
 
 describe("sitemap landing enumeration", () => {
@@ -154,5 +168,18 @@ describe("English entries are localized, not prefixed", () => {
       expect(languages.lt?.startsWith(`${ORIGIN}/en`)).toBe(false);
       expect(languages["x-default"]).toBe(languages.lt);
     }
+  });
+});
+
+// One flat sitemap: listings live in the same file as pages and landings, not a
+// separate listing sitemap. A listing detail URL is uniquely /skelbimai/<slug>
+// (the feed is the slug-less /skelbimai), so its presence per locale is the check.
+describe("the single sitemap folds in listings", () => {
+  it("includes each public listing, once per locale", async () => {
+    fetchAllListingSitemapEntries.mockResolvedValue([{ id: "abc123", title: "Grąžtas", city: "Vilnius", images: [] }]);
+    const lt = await ltPaths();
+    const en = await enPaths();
+    expect(lt.some((path) => path.startsWith("/skelbimai/"))).toBe(true);
+    expect(en.some((path) => path.startsWith("/en/listings/"))).toBe(true);
   });
 });

@@ -45,16 +45,10 @@ check(Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN), "NEXT_PUBLIC_SENTRY_DSN is re
 
 try {
   const site = await canonicalOrigin();
-  const [
-    { response: home, text: html },
-    { response: robots, text: robotsText },
-    { response: sitemap, text: sitemapText },
-    { response: pagesSitemap, text: pagesSitemapText },
-  ] = await Promise.all([
+  const [{ response: home, text: html }, { response: robots, text: robotsText }, { response: sitemap, text: sitemapText }] = await Promise.all([
     get("/"),
     get("/robots.txt"),
     get("/sitemap.xml"),
-    get("/pages/sitemap.xml"),
   ]);
 
   check(home.status === 200, `/ returned ${home.status}`);
@@ -69,24 +63,19 @@ try {
   check(robotsText.includes(`Sitemap: ${site}/sitemap.xml`), "robots.txt is missing the canonical sitemap index");
   check(!robotsText.includes("api-dev"), "robots.txt contains a dev API reference");
 
-  // /sitemap.xml is a sitemap INDEX (<sitemapindex>): it carries only <loc>s to
-  // child sitemaps, so it must reference the pages child, or a crawler reading only
-  // the index discovers nothing.
+  // One flat sitemap for the whole site: a <urlset> (never a <sitemapindex>), with
+  // the homepage present and no dev-API leak.
   check(sitemap.status === 200, `/sitemap.xml returned ${sitemap.status}`);
   check(sitemap.headers.get("content-type")?.includes("xml"), "sitemap.xml does not have an XML content type");
-  check(sitemapText.includes("<sitemapindex"), "sitemap.xml is not a <sitemapindex>");
-  check(sitemapText.includes(`${site}/pages/sitemap.xml`), "sitemap index does not reference the pages sitemap");
+  check(sitemapText.includes("<urlset"), "sitemap.xml is not a <urlset>");
+  check(!sitemapText.includes("<sitemapindex"), "sitemap.xml is a sitemap index, but a single flat sitemap is expected");
+  check(sitemapText.includes(`${site}/`), "sitemap.xml is missing the canonical homepage");
+  check(!sitemapText.includes("api-dev"), "sitemap.xml contains a dev API reference");
 
-  // The actual page URLs live in the pages child, so the homepage-present and
-  // no-dev-API-leak checks belong there rather than on the index.
-  check(pagesSitemap.status === 200, `/pages/sitemap.xml returned ${pagesSitemap.status}`);
-  check(pagesSitemapText.includes(`${site}/`), "pages sitemap is missing the canonical homepage");
-  check(!pagesSitemapText.includes("api-dev"), "pages sitemap contains a dev API reference");
-
-  // A production catalogue with public inventory must advertise at least one listing
-  // sitemap. The shards are referenced from the sitemap index now (not robots.txt),
-  // so assert against the index. This catches the exact release failure where a
-  // build used api-dev and silently generated only the static sitemap.
+  // A production catalogue with public inventory must list at least one listing in
+  // the sitemap. Listings are folded into /sitemap.xml directly (no separate listing
+  // sitemap), so assert a listing detail URL is present. This catches the exact
+  // release failure where a build used api-dev and silently emitted only pages.
   const catalogue = await fetch(`${PRODUCTION_API}/listings?limit=5`, {
     cache: "no-store",
     signal: AbortSignal.timeout(TIMEOUT_MS),
@@ -95,7 +84,7 @@ try {
     const body = await catalogue.json();
     const hasActiveListings = Array.isArray(body?.data?.items) && body.data.items.some((item) => item?.id && item?.status === "active");
     if (hasActiveListings) {
-      check(sitemapText.includes("/listings/sitemap/0.xml"), "sitemap index is missing listing sitemap 0 despite active production inventory");
+      check(/\/skelbimai\/[^<\s]+/.test(sitemapText), "sitemap is missing listing detail URLs despite active production inventory");
     }
   }
 
