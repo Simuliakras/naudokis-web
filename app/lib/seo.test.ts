@@ -113,8 +113,11 @@ describe("indexation thresholds", () => {
     expect(NOINDEX_FOLLOW).toEqual({ index: false, follow: true });
   });
 
-  it("requires a meaningful choice set before recommending a landing", () => {
-    expect(MIN_INDEXABLE_LISTINGS).toBeGreaterThan(1);
+  it("never recommends an empty landing for the index", () => {
+    // The policy bar is one listing, but the load-bearing invariant is the floor:
+    // a zero-listing landing must stay out of the index (it has nothing to rank
+    // for and reads as thin/doorway content), so the threshold is never 0.
+    expect(MIN_INDEXABLE_LISTINGS).toBeGreaterThanOrEqual(1);
   });
 });
 

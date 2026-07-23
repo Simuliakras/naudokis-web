@@ -35,10 +35,14 @@ export const SITE_URL = SITE_ORIGIN;
 // never ranks. Shared so every noindex site stays in lockstep.
 export const NOINDEX_FOLLOW: Metadata["robots"] = { index: false, follow: true };
 
-// A marketplace landing with one or two cards is not a useful search result.
-// Keep low-stock pages available to users and crawlers, but only recommend a
-// category/city landing for indexing once it has a meaningful choice set.
-export const MIN_INDEXABLE_LISTINGS = 5;
+// A category/city landing is worth indexing once it has real inventory behind it,
+// and the bar is a single listing: one genuine result is still a useful landing,
+// and at current inventory we favour letting every stocked category be discovered
+// over withholding it for a larger choice set. The floor stays at 1, never 0 — an
+// empty landing has nothing to rank for and reads as thin/doorway content, so a
+// zero-listing page keeps its noindex,follow (crawlable through to listings, out
+// of the index).
+export const MIN_INDEXABLE_LISTINGS = 1;
 
 // Shared guard for `[lang]` routes: narrow the segment to a valid `Locale` or
 // 404. Use in both `generateMetadata` and the page component so invalid locales
