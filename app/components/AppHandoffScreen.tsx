@@ -58,7 +58,7 @@ export function AppHandoffScreen({ kind, appPath, sensitiveQuery = false }: {
     <Chrome>
       <div className="nk-page">
         {/* There is nothing to search on this page — send them somewhere they can. */}
-        <Nav onSearch={() => router.push(localePath(locale, "/kategorijos"))} />
+        <Nav onSearch={() => router.push(localePath(locale, "/nuoma"))} />
         <main id="nk-main" className="nk-container nk-statusmain">
           <div className="nk-handoff">
             <PageHead title={copy.title} subtitle={copy.body} />

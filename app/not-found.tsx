@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 const navLinks = [
-  { href: "/kategorijos", label: "Kategorijos" },
+  { href: "/nuoma", label: "Kategorijos" },
   { href: "/skelbimai", label: "Nuomojami daiktai" },
   { href: "/kaip-tai-veikia", label: "Kaip tai veikia" },
 ];

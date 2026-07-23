@@ -55,8 +55,8 @@ export function requireLocale(lang: string): Locale {
   return lang;
 }
 
-// `path` is the bare INTERNAL route, e.g. "/kategorijos" ("" for home). Segments are
-// spelled per locale in the public URL ("/en/categories"), which is why these go
+// `path` is the bare INTERNAL route, e.g. "/skelbimai" ("" for home). Segments are
+// spelled per locale in the public URL ("/en/listings"), which is why these go
 // through `localePath` rather than concatenating a prefix — see i18n/routes.ts.
 export function ltPath(path: string) {
   return localePath(defaultLocale, path);

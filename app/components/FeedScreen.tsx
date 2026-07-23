@@ -452,14 +452,14 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
       return <EmptyState illustration="search" title={empty.searchTitle(qEcho)} subtitle={empty.searchBody}
         actionLabel={empty.searchAction} onAction={reset}
         secondaryLabel={t.allCategories}
-        onSecondaryAction={() => router.push(localePath(locale, "/kategorijos"))} />;
+        onSecondaryAction={() => router.push(localePath(locale, "/nuoma"))} />;
     }
     if (params.city && !filtersActive) {
       // Empty city (or category+city) landing — a Google visitor set no filters,
       // so describe the actual situation and offer real recovery paths.
       return <EmptyState illustration="listings" title={empty.cityTitle(params.city)} subtitle={empty.cityBody}
         actionLabel={empty.categoryActionSecondary} actionPrimary
-        onAction={() => router.push(localePath(locale, "/kategorijos"))}
+        onAction={() => router.push(localePath(locale, "/nuoma"))}
         secondaryLabel={empty.categoryActionPrimary}
         onSecondaryAction={listItem} />;
     }
@@ -469,7 +469,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
       return <EmptyState illustration="listings"
         title={empty.categoryTitle} subtitle={empty.categoryBody}
         actionLabel={empty.categoryActionSecondary} actionPrimary
-        onAction={() => router.push(localePath(locale, "/kategorijos"))}
+        onAction={() => router.push(localePath(locale, "/nuoma"))}
         secondaryLabel={empty.categoryActionPrimary}
         onSecondaryAction={listItem} />;
     }
@@ -804,7 +804,7 @@ function RelatedLandingLinks({
   return (
     <ChipLinkRow
       label={heading}
-      links={[{ label: allLabel, href: localePath(locale, "/kategorijos") }, ...links]}
+      links={[{ label: allLabel, href: localePath(locale, "/nuoma") }, ...links]}
       style={{ paddingTop: "var(--nk-gap-md)" }}
     />
   );

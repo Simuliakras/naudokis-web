@@ -32,7 +32,7 @@ const ROUTES = [
   { id: "feed-long-search", path: "/skelbimai?q=profesionali%20fotografijos%20iranga%20renginiams%20su%20pristatymu" },
   { id: "feed-zero", path: "/skelbimai?q=zzzzzzzzzzzzzzzzzz" },
   { id: "feed-filtered", path: "/skelbimai?sort=price_desc&delivery=1&price=10-30" },
-  { id: "categories", path: "/kategorijos" },
+  { id: "categories", path: "/nuoma" },
   { id: "categories-en", path: "/en/categories" },
   { id: "how-it-works", path: "/kaip-tai-veikia" },
   { id: "how-it-works-en", path: "/en/how-it-works" },

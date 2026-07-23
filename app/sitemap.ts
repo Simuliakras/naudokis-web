@@ -43,7 +43,7 @@ function localized(
 const STATIC_PATHS = [
   "",
   "/kaip-tai-veikia",
-  "/kategorijos",
+  "/nuoma",
   "/skelbimai",
   "/privatumo-politika",
   "/naudojimosi-salygos",

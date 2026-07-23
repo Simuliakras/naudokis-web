@@ -22,11 +22,11 @@ import type { Category } from "./categories";
 
 describe("locale URL shapes", () => {
   it("keeps Lithuanian unprefixed and both prefixes AND translates English", () => {
-    expect(ltPath("/kategorijos")).toBe("/kategorijos");
-    expect(canonicalFor("lt", "/kategorijos")).toBe("/kategorijos");
+    expect(ltPath("/skelbimai")).toBe("/skelbimai");
+    expect(canonicalFor("lt", "/skelbimai")).toBe("/skelbimai");
     // The English URL is a translation of the route, not the Lithuanian path with a
     // prefix bolted on — see app/lib/i18n/routes.ts.
-    expect(canonicalFor("en", "/kategorijos")).toBe("/en/categories");
+    expect(canonicalFor("en", "/skelbimai")).toBe("/en/listings");
     expect(canonicalFor("en", "/nuoma/irankiai-statyba")).toBe("/en/rent/tools-construction");
   });
 
@@ -52,7 +52,7 @@ describe("locale URL shapes", () => {
 const page = (locale: "lt" | "en", extra: Partial<Parameters<typeof pageMetadata>[0]> = {}) =>
   pageMetadata({
     locale,
-    path: "/kategorijos",
+    path: "/nuoma",
     title: "Kategorijos",
     description: "Visos nuomos kategorijos.",
     ogLocale: locale === "lt" ? "lt_LT" : "en_GB",
@@ -62,17 +62,17 @@ const page = (locale: "lt" | "en", extra: Partial<Parameters<typeof pageMetadata
 
 describe("pageMetadata", () => {
   it("points the canonical at the locale's own URL", () => {
-    expect(page("lt").alternates?.canonical).toBe("/kategorijos");
-    expect(page("en").alternates?.canonical).toBe("/en/categories");
+    expect(page("lt").alternates?.canonical).toBe("/nuoma");
+    expect(page("en").alternates?.canonical).toBe("/en/rent");
   });
 
   it("declares both locales plus an x-default pointing at Lithuanian", () => {
     // Identical for both renders: hreflang describes the cluster, not the page.
     for (const locale of ["lt", "en"] as const) {
       expect(page(locale).alternates?.languages).toEqual({
-        lt: "/kategorijos",
-        en: "/en/categories",
-        "x-default": "/kategorijos",
+        lt: "/nuoma",
+        en: "/en/rent",
+        "x-default": "/nuoma",
       });
     }
   });
@@ -97,11 +97,11 @@ describe("pageMetadata", () => {
   it("keeps LT-only content canonical to LT and noindexes the /en duplicate", () => {
     const lt = page("lt", { ltOnly: true });
     const en = page("en", { ltOnly: true });
-    expect(lt.alternates?.canonical).toBe("/kategorijos");
+    expect(lt.alternates?.canonical).toBe("/nuoma");
     // The English render must not claim its own URL — that would index the same
     // Lithuanian text twice.
-    expect(en.alternates?.canonical).toBe("/kategorijos");
-    expect(en.alternates?.languages).toEqual({ lt: "/kategorijos", "x-default": "/kategorijos" });
+    expect(en.alternates?.canonical).toBe("/nuoma");
+    expect(en.alternates?.languages).toEqual({ lt: "/nuoma", "x-default": "/nuoma" });
     expect(en.robots).toEqual(NOINDEX_FOLLOW);
     expect(lt.robots).toBeUndefined();
   });

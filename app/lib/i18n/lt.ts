@@ -562,7 +562,7 @@ export const lt: Dict = {
       {
         q: "Ar galiu ieškoti daiktų visoje Lietuvoje?",
         a: "Taip, ieškoti galite visoje Lietuvoje. Pasiūlymų skaičius priklauso nuo miesto ir kategorijos, todėl kai kuriose vietose pasirinkimas dar gali būti ribotas.",
-        link: { label: "Naršyti kategorijas", href: "/kategorijos" },
+        link: { label: "Naršyti kategorijas", href: "/nuoma" },
       },
       {
         q: "Ką galiu atlikti svetainėje, o ką programėlėje?",

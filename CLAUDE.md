@@ -53,7 +53,11 @@ app/
 │   ├── error.tsx / not-found.tsx   # Localized route-level boundaries (→ StatusScreen)
 │   ├── social-card/        # 1200×630 OG card (route handler, prerendered per locale)
 │   ├── kaip-tai-veikia/    # How-it-works page
-│   ├── kategorijos/        # All-categories page
+│   ├── nuoma/              # page.tsx = the all-categories directory; [category]/[slug]/[city]/
+│   │                       #   = the programmatic SEO landings it links into (was /kategorijos,
+│   │                       #   moved here so the landing tier has a parent that resolves; the old
+│   │                       #   URL 308s via MOVED_PATHS in lib/i18n/route-resolution.ts)
+│   ├── miestai/[city]/     # City landings (no index page — /miestai itself 404s)
 │   ├── skelbimai/          # Listings feed (+ [id]/ detail with own metadata, JSON-LD, ISR)
 │   └── naudojimosi-salygos/, privatumo-politika/, paskyros-trynimas/  # Legal docs (data in lib/legal/data/)
 ├── global-error.tsx        # Last-resort boundary (own <html>/<body>, bilingual fallback)

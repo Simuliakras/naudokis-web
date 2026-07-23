@@ -52,6 +52,23 @@ export const INTERNAL_LOCALE_REWRITE = "__nk_locale_rewrite";
 // them for search engines.
 const NO_REDIRECT_SEGMENTS = new Set(["naudojimosi-salygos", "privatumo-politika", "paskyros-trynimas"]);
 
+// Routes that have MOVED, keyed and valued in the internal vocabulary.
+//
+// The category directory used to live at /kategorijos, a sibling of the landing tier
+// it links into; it is now that tier's index, so /nuoma/{category} finally has a
+// parent that resolves. Only the directory's own URL moved — every landing below it
+// is untouched.
+//
+// Folding this into canonicalization (rather than adding a redirect branch) is what
+// makes it ONE hop from every public spelling of the old URL: "/kategorijos",
+// "/en/categories" and the legacy "/en/kategorijos" all land directly on the new
+// path in their own locale. It is also why "kategorijos" has to stay in
+// ROUTE_SEGMENTS with no route folder behind it — that table is what turns
+// "/en/categories" back into "/kategorijos" so this map can match it.
+const MOVED_PATHS: Record<string, string> = {
+  "/kategorijos": "/nuoma",
+};
+
 export type LocaleRouting =
   | { kind: "next" }
   | { kind: "rewrite"; pathname: string }
@@ -128,8 +145,10 @@ export function resolveLocaleRouting({
 }
 
 // The one canonical public spelling of a path in `locale`: round-trip it through the
-// internal vocabulary and back. Both halves are idempotent, so a path that is already
-// canonical comes back unchanged.
+// internal vocabulary and back, applying any move on the internal side. Both halves
+// are idempotent and MOVED_PATHS never maps a path to another moved path, so a path
+// that is already canonical comes back unchanged.
 function canonicalPublicPath(locale: Locale, bare: string): string {
-  return localizeRoute(locale, internalizeRoute(locale, bare));
+  const [route, suffix] = splitPathSuffix(internalizeRoute(locale, bare));
+  return localizeRoute(locale, (MOVED_PATHS[route] ?? route) + suffix);
 }

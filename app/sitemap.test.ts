@@ -138,7 +138,9 @@ describe("English entries are localized, not prefixed", () => {
   it("translates route segments and taxonomy slugs", async () => {
     const en = await enPaths();
     expect(en).toContain("/en/listings");
-    expect(en).toContain("/en/categories");
+    // The category directory lives at /nuoma now, so its English URL is the
+    // translation of THAT segment — /en/categories is retired and only 308s.
+    expect(en).toContain("/en/rent");
     expect(en).toContain("/en/how-it-works");
     expect(en).toContain("/en/terms-of-service");
     expect(en).toContain("/en/rent/tools-construction/power-tools/vilnius");

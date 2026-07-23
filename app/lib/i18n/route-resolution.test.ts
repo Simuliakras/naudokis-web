@@ -110,8 +110,33 @@ describe("English", () => {
 
   it("308s a legacy Lithuanian-segment English URL to the localized one", () => {
     expect(route("/en/skelbimai")).toEqual({ kind: "redirect", pathname: "/en/listings", status: 308 });
-    expect(route("/en/kategorijos")).toEqual({ kind: "redirect", pathname: "/en/categories", status: 308 });
+    // Retired AND wrong-locale: still one hop, straight to the moved English URL.
+    expect(route("/en/kategorijos")).toEqual({ kind: "redirect", pathname: "/en/rent", status: 308 });
     expect(route("/en/miestai/vilnius")).toEqual({ kind: "redirect", pathname: "/en/cities/vilnius", status: 308 });
+  });
+
+  // MOVED_PATHS: the category directory moved from /kategorijos to /nuoma, so it now
+  // indexes the landing tier it links into. Every public spelling of the old URL has
+  // to land on the new one in ONE hop — a chain would burn crawl budget and, because
+  // these are 308s, would cache a two-step path in every client that saw it.
+  it("308s the retired /kategorijos to /nuoma in one hop, per locale", () => {
+    expect(route("/kategorijos")).toEqual({ kind: "redirect", pathname: "/nuoma", status: 308 });
+    expect(route("/en/categories")).toEqual({ kind: "redirect", pathname: "/en/rent", status: 308 });
+  });
+
+  it("serves the new location without redirecting", () => {
+    expect(route("/nuoma")).toEqual({ kind: "rewrite", pathname: "/lt/nuoma" });
+    expect(route("/en/rent")).toEqual({ kind: "rewrite", pathname: "/en/nuoma" });
+  });
+
+  // The move is keyed on the exact path, so the landing tier below it is untouched —
+  // this is what makes it a one-URL change rather than a re-slug of every landing.
+  it("leaves the landings under /nuoma alone", () => {
+    expect(route("/nuoma/irankiai-statyba")).toEqual({ kind: "rewrite", pathname: "/lt/nuoma/irankiai-statyba" });
+    expect(route("/en/rent/tools-construction/power-tools/vilnius")).toEqual({
+      kind: "rewrite",
+      pathname: "/en/nuoma/tools-construction/power-tools/vilnius",
+    });
   });
 
   // See NO_REDIRECT_SEGMENTS: the old site's "/en/terms-of-service" → Lithuanian 308

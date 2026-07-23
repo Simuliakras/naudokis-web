@@ -92,7 +92,7 @@ export function InviteScreen() {
   return (
     <Chrome>
       <div className="nk-page invite-page">
-        <Nav onSearch={() => router.push(localePath(locale, "/kategorijos"))} />
+        <Nav onSearch={() => router.push(localePath(locale, "/nuoma"))} />
         <main id="nk-main">
           <section className="nk-hero-band invite-hero">
             <Pattern name="hero-pattern" priority className="nk-hero-band__pattern nk-brand-pattern" />

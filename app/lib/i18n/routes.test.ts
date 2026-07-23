@@ -17,7 +17,7 @@ const INTERNAL_PATHS = [
   "/",
   "/skelbimai",
   "/skelbimai/bosch-grezimo-plaktukas-vilnius-11111111-2222-3333-4444-555555555555",
-  "/kategorijos",
+  "/nuoma",
   "/kaip-tai-veikia",
   "/nuoma/irankiai-statyba",
   "/nuoma/irankiai-statyba/elektriniai-irankiai",

@@ -30,7 +30,7 @@ const LOCALES = WITH_EN ? [{ name: "lt", prefix: "" }, { name: "en", prefix: "/e
 
 // Each page: slug + path (query included).
 const PAGES = [
-  { slug: "cats", path: "/kategorijos" },
+  { slug: "cats", path: "/nuoma" },
   { slug: "feed", path: "/skelbimai" },
   { slug: "feed-search", path: "/skelbimai?q=Sony" },
   { slug: "feed-cat", path: "/skelbimai?cat=sports_leisure" },

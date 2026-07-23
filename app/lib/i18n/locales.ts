@@ -15,8 +15,8 @@ export function isLocale(value: string): value is Locale {
 }
 
 // Strip a leading locale prefix from a pathname to get the bare path. The default
-// locale is served unprefixed, so "/en/kategorijos" and "/lt/kategorijos" both
-// reduce to "/kategorijos"; "/" stays "/". Built from `locales` so it stays correct
+// locale is served unprefixed, so "/en/skelbimai" and "/lt/skelbimai" both
+// reduce to "/skelbimai"; "/" stays "/". Built from `locales` so it stays correct
 // when a locale is added.
 //
 // NOTE: this strips the PREFIX only — it does not translate segments. A bare path

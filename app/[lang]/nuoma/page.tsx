@@ -12,17 +12,17 @@ import { QueryProvider } from "@/app/providers";
 // Categories change rarely — statically generate per locale, revalidate hourly.
 export const revalidate = 3600;
 
-export async function generateMetadata({ params }: PageProps<"/[lang]/kategorijos">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[lang]/nuoma">): Promise<Metadata> {
   const { lang } = await params;
   const locale = requireLocale(lang);
   const { categoriesPage: t, meta } = getDictionary(locale);
   return pageMetadata({
-    locale, path: "/kategorijos", title: t.metaTitle, description: t.metaDescription,
+    locale, path: "/nuoma", title: t.metaTitle, description: t.metaDescription,
     ogLocale: meta.ogLocale, ogImageAlt: meta.ogImageAlt,
   });
 }
 
-export default async function Page({ params }: PageProps<"/[lang]/kategorijos">) {
+export default async function Page({ params }: PageProps<"/[lang]/nuoma">) {
   const { lang } = await params;
   const locale = requireLocale(lang);
   const { common, categoriesPage: t } = getDictionary(locale);
@@ -43,7 +43,7 @@ export default async function Page({ params }: PageProps<"/[lang]/kategorijos">)
 
   const breadcrumb = breadcrumbJsonLd(locale, [
     { name: common.breadcrumbHome, path: "" },
-    { name: t.crumb, path: "/kategorijos" },
+    { name: t.crumb, path: "/nuoma" },
   ]);
   // CollectionPage + ItemList of the category landings (name + canonical URL,
   // both from the taxonomy — nothing fabricated). Skipped if the fetch failed:
@@ -53,7 +53,7 @@ export default async function Page({ params }: PageProps<"/[lang]/kategorijos">)
         locale,
         name: t.title,
         description: t.metaDescription,
-        path: "/kategorijos",
+        path: "/nuoma",
         items: tree.map((c) => {
           const parent = c.parentId ? tree.find((candidate) => candidate.id === c.parentId) : undefined;
           return {

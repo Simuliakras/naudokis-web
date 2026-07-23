@@ -512,7 +512,7 @@ export const en: Dict = {
       {
         q: "Can I search across Lithuania?",
         a: "Yes, you can search anywhere in Lithuania. How much is on offer depends on the city and the category, so in some places the choice may still be limited.",
-        link: { label: "Browse categories", href: "/kategorijos" },
+        link: { label: "Browse categories", href: "/nuoma" },
       },
       {
         q: "What can I do on the website and in the app?",

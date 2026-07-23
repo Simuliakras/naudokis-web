@@ -103,7 +103,7 @@ const P1_ROUTES = [
   { slug: "home", path: "/" },
   { slug: "feed", path: "/skelbimai" },
   ids.withPhotosReviews && { slug: "detail-full", path: `/skelbimai/${ids.withPhotosReviews}` },
-  { slug: "categories", path: "/kategorijos" },
+  { slug: "categories", path: "/nuoma" },
   { slug: "hiw", path: "/kaip-tai-veikia" },
   { slug: "legal-terms", path: "/naudojimosi-salygos" },
   { slug: "hub-sveikata", path: "/nuoma/sveikata-medicinine-iranga" },

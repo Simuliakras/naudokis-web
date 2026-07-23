@@ -65,10 +65,14 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
   // hydration on every English page. `internalizeRoute` is idempotent, so both sides
   // reduce to the same value.
   const bare = internalizeRoute(locale, barePath(pathname));
-  const isCategories = bare === "/kategorijos";
+  const isCategories = bare === "/nuoma";
   const isHowItWorks = bare === "/kaip-tai-veikia";
   // Section-level match: highlights on both the feed and listing-detail pages.
-  const isListings = bare.startsWith("/skelbimai") || bare.startsWith("/nuoma") || bare.startsWith("/miestai");
+  // `/nuoma` itself is excluded — it is the category directory, and the landings
+  // below it are the listings section; without the guard the bare path would match
+  // here too and put aria-current="page" on two nav items at once.
+  const isListings = !isCategories
+    && (bare.startsWith("/skelbimai") || bare.startsWith("/nuoma") || bare.startsWith("/miestai"));
   // Condense the bar once the page scrolls — wired here (not per-page) so it
   // works on every screen that renders the Nav.
   useEffect(() => {
@@ -167,7 +171,7 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
           <nav className="nk-nav-links" aria-label={dict.nav.primary}>
             <Link
               className="nk-nav nk-link"
-              href={localePath(locale, "/kategorijos")}
+              href={localePath(locale, "/nuoma")}
               aria-current={isCategories ? "page" : undefined}
             >
               {dict.nav.category}
@@ -249,7 +253,7 @@ export function Nav({ onSearch }: { onSearch?: () => void }) {
             </button>
             <Link
               className="nk-drawer-item"
-              href={localePath(locale, "/kategorijos")}
+              href={localePath(locale, "/nuoma")}
               aria-current={isCategories ? "page" : undefined}
               onClick={() => setMenuOpen(false)}
             >
@@ -509,7 +513,7 @@ export function Categories({ data }: { data: Category[] }) {
         eyebrow={t.eyebrow}
         title={t.title}
         action={
-          <Link className="nk-cats-all" href={localePath(locale, "/kategorijos")}>
+          <Link className="nk-cats-all" href={localePath(locale, "/nuoma")}>
             {t.all}{" "}
             <Icon
               name="ArrowRight"
@@ -620,7 +624,7 @@ export function Offers({ data, categories }: { data: Offer[]; categories: Catego
           title={t.bandEmptyTitle}
           subtitle={t.bandEmptyBody}
           primaryLabel={t.bandEmptyAction}
-          onPrimary={() => router.push(localePath(locale, "/kategorijos"))}
+          onPrimary={() => router.push(localePath(locale, "/nuoma"))}
           secondaryLabel={t.bandEmptySecondary}
           onSecondary={() =>
             openRedirect({

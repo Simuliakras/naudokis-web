@@ -17,7 +17,15 @@ import type { Locale } from "./locales";
 import { splitPathSuffix } from "./locales";
 
 // The route-folder names under app/[lang]/ that are translated. Anything absent is
-// identity in every locale — which is the correct default and needs no maintenance:
+// identity in every locale — which is the correct default and needs no maintenance.
+//
+// One entry is deliberately NOT a route folder: "kategorijos" is retired (the
+// directory moved to /nuoma) and stays here purely so the English spelling of the old
+// URL still internalizes, which is what lets MOVED_PATHS in route-resolution.ts
+// redirect /en/categories in a single hop. Do not remove it — /en/categories would
+// stop resolving to anything and 404 instead of moving.
+//
+// Segments absent from this table are identity in every locale:
 //
 //   - the app-handoff paths (/invite, /chat, /listing, /ref, /reset-password, …) are
 //     baked into transactional emails and the AASA universal-link claims, so they

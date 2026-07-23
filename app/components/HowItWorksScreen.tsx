@@ -58,7 +58,7 @@ export function HowItWorksScreen() {
   return (
     <Chrome>
       <div className="nk-page htw-page">
-        <Nav onSearch={() => router.push(localePath(locale, "/kategorijos"))} />
+        <Nav onSearch={() => router.push(localePath(locale, "/nuoma"))} />
         <main id="nk-main">
 
           {/* HERO — breadcrumb overlays the pattern-backed band (parity with the

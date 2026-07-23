@@ -41,7 +41,7 @@ const PAGES = [
   { slug: "home", path: "" },
   { slug: "skelbimai", path: "/skelbimai" },
   withPhotosReviews && { slug: "skelbimas-detail", path: `/skelbimai/${withPhotosReviews}` },
-  { slug: "kategorijos", path: "/kategorijos" },
+  { slug: "kategorijos", path: "/nuoma" },
   { slug: "kaip-tai-veikia", path: "/kaip-tai-veikia" },
   { slug: "naudojimosi-salygos", path: "/naudojimosi-salygos" },
   { slug: "privatumo-politika", path: "/privatumo-politika" },
