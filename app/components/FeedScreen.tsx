@@ -491,10 +491,11 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
               reach it. Wider than the 65ch .nk-prose measure used elsewhere — the
               feed head has the room and wraps fewer lines. The subtitle branches
               (search echo vs clamped landing intro) ride in PageHead's children
-              slot below the shared eyebrow + H1. Kept in sync with the matching
-              maxWidth in CatalogueLoading.tsx / skelbimai/page.tsx so the head
-              does not shift as the screen takes over, and with SeoNote's body
-              measure so the head and the closing block share one column. */}
+              slot below the shared eyebrow + H1. Kept in sync with SeoNote's body
+              measure so the head and the closing block share one column. (There is
+              no longer a loading skeleton to keep this in sync with: every catalogue
+              route renders its head straight into the HTML shell — see the note in
+              skelbimai/page.tsx for why a boundary here is not allowed.) */}
           <PageHead eyebrow={t.eyebrow} title={heading} maxWidth="100ch">
             {isSearch ? (
               // ≤560 the chip row already echoes the query — a generic line there

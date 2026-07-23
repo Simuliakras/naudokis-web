@@ -10,6 +10,7 @@ import { makeQueryClient } from "@/app/lib/query";
 import { fetchListing, fetchListings, listingKey, listingsKey, ListingNotFoundError, type ListingDetail } from "@/app/lib/listings";
 import { categoriesKey, fetchCategories } from "@/app/lib/categories";
 import { fetchListingMeta, type ListingMeta } from "@/app/lib/listing-seo";
+import { fetchAllListingSitemapEntries } from "@/app/lib/listing-sitemap";
 import { listingDetailPath, listingIdFromParam, isSyntheticListingParam } from "@/app/lib/listing-url";
 import { localePath } from "@/app/lib/i18n/config";
 import { truncate } from "@/app/lib/legal/format";
@@ -17,10 +18,36 @@ import { ListingScreen } from "@/app/components/ListingScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 import { QueryProvider } from "@/app/providers";
 
-// Per-listing detail is unbounded dynamic data — render on demand, cache 5 min.
-// (Literal to satisfy Next's static segment-config analysis; same value as
-// LISTING_REVALIDATE, which the data-layer fetches use.)
+// Re-render a listing's HTML at most every 5 min. (Literal to satisfy Next's static
+// segment-config analysis; same value as LISTING_REVALIDATE, which the data-layer
+// fetches use.)
 export const revalidate = 300;
+
+// Prerender every public listing at build time.
+//
+// This is load-bearing for SEO, not just a latency win. A dynamic segment with no
+// generateStaticParams is rendered per request with no ISR entry at all (measured:
+// `cache-control: no-store`, no `x-nextjs-cache`), and the route-level loading.tsx
+// then flushes as the shell — so the real <h1>, the listing body and the Product
+// JSON-LD all land inside a `<div hidden>` that only React's inline $RC() script
+// reveals. Every crawler that does not execute JS saw a skeleton whose only heading
+// was the generic "Nuomojami daiktai". Prerendering resolves the whole tree before
+// the HTML is written, which puts the content back in the shell.
+//
+// Reuses the sitemap's cursor walk so the prerendered set and the advertised set are
+// the same set, filtered by the same synthetic-fixture rule. That walk fail-softs to
+// a partial (or empty) list, and `dynamicParams` stays at its default `true`, so a
+// backend hiccup at build time degrades to on-demand generation — never a failed
+// build, and never a 404 for a listing created since the last deploy.
+export async function generateStaticParams() {
+  const entries = await fetchAllListingSitemapEntries();
+  return entries.map((entry) => {
+    // The same slug the canonical check below compares against, so a prerendered
+    // param can never trip the permanentRedirect branch.
+    const path = listingDetailPath(entry);
+    return { id: path.slice(path.lastIndexOf("/") + 1) };
+  });
+}
 
 // Prefer the listing's own description (de-tagged + trimmed) when it's
 // substantial; otherwise fall back to the templated SEO description from the

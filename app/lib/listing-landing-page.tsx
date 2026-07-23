@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { dehydrate, HydrationBoundary, type InfiniteData } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import type { Locale } from "@/app/lib/i18n/config";
@@ -257,9 +256,15 @@ export async function ListingLandingPage({
         {listings.length > 0 && (
           <JsonLd data={itemListJsonLd(locale, listings.map((l) => ({ id: l.id, name: l.title, city: l.city })))} />
         )}
-        <Suspense>
-          <FeedScreen initialFilters={resolvedFilters} extraCategory={extraCategory} extraCategories={allCategories} />
-        </Suspense>
+        {/* Deliberately NOT wrapped in <Suspense>. FeedScreen renders Chrome, whose
+            next/dynamic children throw during SSR, so any boundary here catches them
+            and streams the entire screen — Nav, H1, grid — into a `<div hidden>` that
+            only React's inline $RC() script reveals. These routes read searchParams,
+            so they are dynamic and never prerendered; without a boundary the render
+            simply waits and the whole page lands in the HTML shell, which is what a
+            crawler that does not execute JS reads. Measured: with the boundary the
+            first <h1> a landing emits sat inside the hidden region. */}
+        <FeedScreen initialFilters={resolvedFilters} extraCategory={extraCategory} extraCategories={allCategories} />
       </HydrationBoundary>
     </QueryProvider>
   );

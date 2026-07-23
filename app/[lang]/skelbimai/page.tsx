@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { dehydrate, HydrationBoundary, type InfiniteData } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import { localePath } from "@/app/lib/i18n/config";
 import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding, NOINDEX_FOLLOW, MIN_INDEXABLE_LISTINGS } from "@/app/lib/seo";
 import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { makeQueryClient } from "@/app/lib/query";
@@ -13,7 +11,6 @@ import { catalogueFiltersFromSearch, firstValue, pageFromLandingSearch, hasNonCa
 import { todayInMarket } from "@/app/lib/dates";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
-import { PageHead } from "@/app/components/headers";
 import { QueryProvider } from "@/app/providers";
 
 // Read the ?q/?cat/?city/?sort filters server-side, matching FeedScreen's hook.
@@ -99,7 +96,7 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
 export default async function Page({ params, searchParams }: PageProps<"/[lang]/skelbimai">) {
   const { lang } = await params;
   const locale = requireLocale(lang);
-  const { common, feed: t, search } = getDictionary(locale);
+  const { common, feed: t } = getDictionary(locale);
   const sp = await searchParams;
   const filters = filtersFromSearch(sp);
 
@@ -155,33 +152,23 @@ export default async function Page({ params, searchParams }: PageProps<"/[lang]/
         <JsonLd data={breadcrumb} />
         {collectionPage && <JsonLd data={collectionPage} />}
         {listings.length > 0 && <JsonLd data={itemList} />}
-        {/* FeedScreen reads ?q/?cat/?city/?sort/?delivery via useSearchParams, which
-            requires a Suspense boundary on a prerendered route (Next.js 16). This
-            fallback is what a crawler (or a visitor without JS) actually gets, so it
-            stays content-bearing — a real H1 and a working GET search form, not a
-            skeleton. It uses the same PageHead as FeedScreen and the route-level
-            loading.tsx so the head does not shift as the screen takes over. */}
-        <Suspense fallback={(
-          <main className="nk-container" style={{ paddingBlock: "var(--nk-page-top) 40px" }}>
-            <PageHead
-              eyebrow={t.eyebrow}
-              title={filters.q ? t.titleSearch : t.titleAll}
-              subtitle={filters.q ? t.subtitleSearch(filters.q) : t.subtitleAll}
-              maxWidth="100ch"
-            />
-            <form action={localePath(locale, "/skelbimai")} method="get" role="search" className="nk-search">
-              <input name="q" defaultValue={filters.q} aria-label={t.searchPlaceholder} placeholder={t.searchPlaceholder} />
-              <button type="submit">{search.submit}</button>
-            </form>
-          </main>
-        )}>
-          {/* Unlike the pretty-URL landings this screen reads its filters from the URL
-              itself, so it must be told which "today" the prefetch above clamped `?dates=`
-              against — otherwise its first render keys off the RAW window, misses the
-              dehydrated page and fires a throwaway request. Read only when a date token is
-              actually present: an undated render stays time-independent. */}
-          <FeedScreen serverToday={firstValue(sp.dates) ? todayInMarket() : undefined} />
-        </Suspense>
+        {/* Deliberately NOT wrapped in <Suspense>, and there is no loading.tsx above
+            this route either. FeedScreen renders Chrome, whose next/dynamic children
+            throw during SSR, so ANY boundary here catches them and streams the whole
+            screen into a `<div hidden>` that only React's inline $RC() script reveals.
+            This route reads searchParams, so it is dynamic and never prerendered (the
+            Next 16 useSearchParams-needs-a-boundary rule only bites on prerendered
+            routes); without a boundary the render waits and the real H1, the search
+            form and the grid all land in the HTML shell. That is strictly better than
+            the content-bearing fallback this used to carry, which — measured — was
+            itself inside the hidden region and so never reached a crawler.
+
+            Unlike the pretty-URL landings this screen reads its filters from the URL
+            itself, so it must be told which "today" the prefetch above clamped `?dates=`
+            against — otherwise its first render keys off the RAW window, misses the
+            dehydrated page and fires a throwaway request. Read only when a date token is
+            actually present: an undated render stays time-independent. */}
+        <FeedScreen serverToday={firstValue(sp.dates) ? todayInMarket() : undefined} />
       </HydrationBoundary>
     </QueryProvider>
   );

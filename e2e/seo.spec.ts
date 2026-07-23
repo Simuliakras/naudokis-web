@@ -103,13 +103,25 @@ for (const route of ROUTES) {
   });
 
   test(`${route.path} settles on exactly one H1`, async ({ page }) => {
-    // Asserted against the rendered DOM, not the served bytes. Streaming SSR
-    // leaves the loading shell, the Suspense fallback and the resolved content
-    // all in the byte stream at once, so counting <h1 in raw HTML measures the
-    // streaming protocol rather than the document outline a renderer sees.
     await page.goto(route.path);
     await expect(page.locator("h1")).toHaveCount(1);
     await expect(page.locator("h1")).not.toBeEmpty();
+  });
+
+  test(`${route.path} serves its content in the HTML shell`, async ({ request }) => {
+    // The catalogue routes render Chrome, whose next/dynamic children throw during
+    // SSR. Any Suspense boundary above them — an in-page <Suspense>, or a
+    // route-level loading.tsx, which wraps its whole segment AND every child —
+    // catches that throw and streams the entire screen into a `<div hidden id="S:…">`
+    // that only React's inline $RC() script reveals. The head stays correct, so the
+    // only visible symptom is in the served bytes: every landing and listing led
+    // with the generic "Nuomojami daiktai" skeleton heading and buried its real one.
+    //
+    // Hence a byte-level assertion, unlike the DOM-level H1 count above. Re-adding a
+    // boundary anywhere above these screens is what this catches.
+    const html = await htmlOf(await request.get(route.path));
+    expect(html).not.toContain('<div hidden id="S:');
+    expect(tags(html, /<h1[\s>]/g)).toHaveLength(1);
   });
 }
 
