@@ -108,7 +108,12 @@ export const IMAGE_SIZES = {
   // The old `< nav` middle clause described the stacked-phone slot, which no longer
   // exists.
   heroPhone: `${HERO_PHONE_HIDDEN} 1px, min(43vw, 36rem)`,
-  appCtaPhone: `${APP_CTA_PHONE_HIDDEN} 1px, 480px`,
+  // 790px is the DRAWN width, not the visible box: .nk-appcta__phone is a fixed
+  // 620px tall with object-fit cover, so the raster always paints at
+  // 620 × (899/705 intrinsic AR) ≈ 790px and the box merely crops it. Declaring
+  // the (narrower) box width made the browser fetch the 640 rendition and
+  // upscale it ~1.23x.
+  appCtaPhone: `${APP_CTA_PHONE_HIDDEN} 1px, 790px`,
   offerCard: [
     `${VIEWPORT_QUERIES.compact} calc(50vw - 28px)`,
     `(width < ${BREAKPOINTS.md}) calc(50vw - 40px)`,
