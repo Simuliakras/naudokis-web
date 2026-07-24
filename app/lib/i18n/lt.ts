@@ -86,9 +86,9 @@ const LT_CATEGORY_SYNONYMS: Record<string, string> = {
 
 export const lt: Dict = {
   meta: {
-    title: "Daiktų nuoma Lietuvoje | Naudokis.lt",
+    title: "Daiktų nuoma Lietuvoje – įrankiai, technika | Naudokis.lt",
     description:
-      "Raskite daiktus nuomai iš privačių ar verslo savininkų Lietuvoje. Palyginkite pasiūlymus internete ir tęskite rezervacijos užklausą programėlėje.",
+      "Daiktų nuoma visoje Lietuvoje – nuo įrankių iki laisvalaikio įrangos. Raskite daiktą iš privačių ar verslo savininkų ir rezervuokite „Naudokis“ programėlėje.",
     ogLocale: "lt_LT",
     ogImageAlt: "Naudokis.lt",
   },

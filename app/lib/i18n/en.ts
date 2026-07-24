@@ -42,9 +42,9 @@ const EN_CATEGORY_SYNONYMS: Record<string, string> = {
 
 export const en: Dict = {
   meta: {
-    title: "Rent items in Lithuania | Naudokis.lt",
+    title: "Rent items in Lithuania – tools, gear and more | Naudokis.lt",
     description:
-      "Find items to rent from private and business owners in Lithuania. Compare listings online, then continue your reservation request in the app.",
+      "Rent items across Lithuania – from tools to leisure gear. Find what you need from private and business owners and reserve it in the Naudokis app.",
     // og:locale is matched against the platforms' supported-locale lists, and
     // "en_LT" is on none of them. en_GB is the closest supported English for an
     // EU audience; the page's real language is carried by <html lang> + hreflang.
