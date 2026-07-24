@@ -39,14 +39,14 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // Run on page routes only; skip Next internals, static brand assets, the
-  // root-level SEO metadata routes (sitemap.xml, robots.txt, manifest — not
-  // localized as routable pages), the `/go` smart-install redirect route handler (locale-
-  // agnostic — must reach app/go/route.ts, not /lt/go) and `.well-known` (app-link
-  // verifiers require a direct 200).
+  // root-level SEO metadata routes (sitemap.xml, robots.txt, manifest, llms.txt —
+  // not localized as routable pages), the `/go` smart-install redirect route handler
+  // (locale-agnostic — must reach app/go/route.ts, not /lt/go) and `.well-known`
+  // (app-link verifiers require a direct 200).
   //
   // The app universal-link paths are deliberately NOT excluded any more: they are
   // real localized pages now (see app/lib/app-links.ts), so they MUST be matched to
   // get their locale rewrite. Excluding one would make it 404 — and it would 404
   // only for people without the app installed, which is nobody who tests it.
-  matcher: ["/((?!api(?:/|$)|go(?:/|$)|_next/static|_next/image|naudokis(?:/|$)|favicon.ico$|sitemap.xml$|robots.txt$|manifest.webmanifest$|\\.well-known(?:/|$)).*)"],
+  matcher: ["/((?!api(?:/|$)|go(?:/|$)|_next/static|_next/image|naudokis(?:/|$)|favicon.ico$|sitemap.xml$|robots.txt$|manifest.webmanifest$|llms.txt$|\\.well-known(?:/|$)).*)"],
 };
