@@ -47,7 +47,7 @@ instrumentation*.ts         # Sentry per-runtime init (inert without a DSN)
 app/
 ├── [lang]/                 # Locale segment ("lt" | "en")
 │   ├── layout.tsx          # Root layout: fonts, <html lang={lang}>, generateMetadata + generateStaticParams,
-│   │                       #   viewport, Plausible script, wraps children in <Providers> then <I18nProvider>
+│   │                       #   viewport, GA (gtag) script, wraps children in <Providers> then <I18nProvider>
 │   ├── page.tsx            # Home: server-prefetches listings/categories into a HydrationBoundary,
 │   │                       #   emits JSON-LD, composes the sections (ISR, revalidate 300)
 │   ├── error.tsx / not-found.tsx   # Localized route-level boundaries (→ StatusScreen)

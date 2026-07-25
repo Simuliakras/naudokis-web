@@ -9,6 +9,18 @@ import { CONTACT_EMAIL } from "@/app/lib/contact";
 import { brandFont } from "@/app/lib/fonts";
 import styles from "./not-found.module.css";
 
+// Which language leads. The page is static — it is streamed into every route's RSC
+// payload via global-not-found.tsx, with a hardcoded lang="lt" — so the path is only
+// knowable in the browser. A raw inline <script>, deliberately NOT an effect and NOT
+// next/script: it executes synchronously at parse time, so English visitors get the
+// English order on the FIRST paint. From an effect they saw the Lithuanian heading,
+// then watched the card re-order under them.
+// Both the flag (read by not-found.module.css) and `lang` are set: the document
+// really is in English then, and a screen reader must not read it with Lithuanian
+// pronunciation rules. script-src carries 'unsafe-inline' (next.config.ts) and is
+// deliberately unprobed, so this needs no hash allowlisting.
+const LANG_BOOTSTRAP = `if(location.pathname==="/en"||location.pathname.indexOf("/en/")===0){document.documentElement.setAttribute("data-nf-en","");document.documentElement.lang="en"}`;
+
 export const metadata: Metadata = {
   title: "Šio puslapio neradome | Page not found",
   description: "Adresas gali būti neteisingas arba puslapis perkeltas. The address may be wrong or the page may have moved.",
@@ -38,8 +50,8 @@ const ctaBase: React.CSSProperties = {
 };
 const primaryCta: React.CSSProperties = {
   ...ctaBase,
-  background: "#6665E0", // --nk-purple
-  boxShadow: "0 4px 18px rgba(102,101,224,.24)",
+  background: "#5E5CE6", // --nk-purple (Quiet Luxe)
+  boxShadow: "0 4px 18px rgba(94,92,230,.24)",
 };
 const secondaryCta: React.CSSProperties = {
   ...ctaBase,
@@ -53,11 +65,12 @@ export default function NotFound() {
       style={{
         minHeight: "100vh",
         background:
-          "radial-gradient(circle at 78% 18%, rgba(102,101,224,.30), transparent 34%), radial-gradient(circle at 18% 82%, rgba(16,185,129,.18), transparent 30%), #222527",
+          "radial-gradient(circle at 78% 18%, rgba(94,92,230,.30), transparent 34%), radial-gradient(circle at 18% 82%, rgba(16,185,129,.18), transparent 30%), #222527",
         color: "#FFFFFF",
       }}
       className={`${brandFont.className} ${styles.root}`}
     >
+      <script id="nk-404-lang" dangerouslySetInnerHTML={{ __html: LANG_BOOTSTRAP }} />
       <header
         className={styles.header}
         style={{
@@ -130,6 +143,7 @@ export default function NotFound() {
         }}
       >
         <div
+          className={styles.card}
           style={{
             width: "min(100%, 760px)",
             borderRadius: 20,
@@ -142,6 +156,7 @@ export default function NotFound() {
           }}
         >
           <p
+            className={styles.badge}
             style={{
               margin: "0 0 4px",
               color: "#F9F367",
@@ -154,7 +169,7 @@ export default function NotFound() {
             404
           </p>
           <h1
-            className={brandFont.className}
+            className={`${brandFont.className} ${styles.title}`}
             style={{
               margin: 0,
               fontSize: "clamp(34px, 7vw, 64px)",
@@ -163,9 +178,15 @@ export default function NotFound() {
               fontWeight: 700,
             }}
           >
-            Šio puslapio neradome
+            {/* lang per span: the two never show at once, but the document's own
+                lang is only right for one of them, and a screen reader reading
+                "Page not found" with Lithuanian phonemes is unintelligible. */}
+            <span lang="lt" className={styles.ltFirst}>Šio puslapio neradome</span>
+            <span lang="en" className={styles.enFirst}>Page not found</span>
           </h1>
           <p
+            lang="lt"
+            className={styles.ltPara}
             style={{
               margin: "20px auto 0",
               maxWidth: 560,
@@ -177,6 +198,8 @@ export default function NotFound() {
             Adresas gali būti neteisingas arba puslapis perkeltas. Grįžkite į pradžią arba toliau naršykite nuomos pasiūlymus.
           </p>
           <p
+            lang="en"
+            className={styles.enPara}
             style={{
               margin: "10px auto 0",
               maxWidth: 560,
@@ -188,6 +211,7 @@ export default function NotFound() {
             The address may be wrong or the page may have moved. Go home or keep browsing rentals.
           </p>
           <div
+            className={styles.actions}
             style={{
               display: "flex",
               justifyContent: "center",
@@ -200,7 +224,7 @@ export default function NotFound() {
               Į pradžią / Home
             </Link>
             <Link href="/skelbimai" className={styles.cta} style={secondaryCta}>
-              Naršyti nuomą / Browse rentals
+              Naršyti skelbimus / Browse listings
             </Link>
           </div>
           {/* minimal install affordance — /go is a redirect route handler (sniffs
@@ -225,7 +249,7 @@ export default function NotFound() {
           fontSize: 14,
         }}
       >
-        <span>© {new Date().getFullYear()} Naudokis.lt</span>
+        <span>© {new Date().getFullYear()} MB Naudokis</span>
         <a href={"mailto:" + CONTACT_EMAIL} style={{ color: "rgba(255,255,255,.6)", textDecoration: "underline", textUnderlineOffset: 3 }}>{CONTACT_EMAIL}</a>
       </footer>
     </main>

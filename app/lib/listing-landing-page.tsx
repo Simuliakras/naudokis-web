@@ -8,7 +8,7 @@ import {
   collectionPageJsonLd,
   itemListJsonLd,
   NOINDEX_FOLLOW,
-  MIN_INDEXABLE_LISTINGS,
+  minIndexableListings,
   pageMetadata,
   resolveListingLanding,
   type ListingLanding,
@@ -151,22 +151,6 @@ export async function listingLandingMetadata({
     : isLanding
       ? t.landingDescription({ category: categoryLabel, city: landing.city })
       : t.metaDescription;
-  // Count only far enough to prove that the requested page exists and that the
-  // landing clears the minimum-usefulness threshold. This avoids walking the
-  // full catalogue during metadata generation for every landing request.
-  const needed = listingsNeededForPage(page, MIN_INDEXABLE_LISTINGS);
-  // Keep "counted zero" and "could not count" apart. Collapsing a timeout to 0
-  // reads as a thin landing, and ISR then caches that `noindex` for the whole
-  // revalidate window — a backend blip would deindex healthy categories. An
-  // unproven count instead leaves the directive off: indexing a thin page for
-  // one window is recoverable, dropping a good one out of the index is not.
-  const counted = await fetchListingsCount({
-    category: category?.id,
-    city: landing.city,
-  }, { stopAt: needed })
-    .then((n) => ({ ok: true as const, n }))
-    .catch(() => ({ ok: false as const, n: 0 }));
-
   const metadata = pageMetadata({
     locale,
     path: page > 1 ? `${landing.path}?page=${page}` : landing.path,
@@ -179,6 +163,28 @@ export async function listingLandingMetadata({
     metadata.robots = NOINDEX_FOLLOW;
     return metadata;
   }
+  // How many listings this URL has to prove exist. Page 1 asks only for the tier's
+  // indexing threshold — zero for a bare category landing, which is therefore
+  // indexable with nothing behind it. Page N still has to prove it EXISTS: an empty
+  // pager page is a different problem from an empty landing.
+  const needed = page > 1 ? listingsNeededForPage(page) : minIndexableListings(landing);
+  if (needed === 0) {
+    return metadata;
+  }
+  // Count only far enough to settle that question — never walk the full catalogue
+  // during metadata generation.
+  //
+  // Keep "counted zero" and "could not count" apart. Collapsing a timeout to 0
+  // reads as a thin landing, and ISR then caches that `noindex` for the whole
+  // revalidate window — a backend blip would deindex healthy landings. An
+  // unproven count instead leaves the directive off: indexing a thin page for
+  // one window is recoverable, dropping a good one out of the index is not.
+  const counted = await fetchListingsCount({
+    category: category?.id,
+    city: landing.city,
+  }, { stopAt: needed })
+    .then((n) => ({ ok: true as const, n }))
+    .catch(() => ({ ok: false as const, n: 0 }));
   // Low-stock or non-existent paginated landings stay usable and
   // crawlable-through, but are not useful enough to recommend for indexing.
   if (counted.ok && counted.n < needed) {

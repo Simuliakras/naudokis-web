@@ -1,9 +1,8 @@
-import { after, NextResponse, userAgent, type NextRequest } from "next/server";
+import { NextResponse, userAgent, type NextRequest } from "next/server";
 import { APP_STORE_URL, PLAY_STORE_URL, SITE_ORIGIN } from "@/app/lib/contact";
 import { buildGenericInstallLink } from "@/app/lib/onelink";
 import { GO_ATTRIBUTION_KEYS, cleanAttributionValue } from "@/app/lib/attribution";
 import { listingIdFromAppPath } from "@/app/lib/app-links";
-import { trackServerEvent } from "@/app/lib/server-analytics";
 import { createHandoffToken } from "@/app/lib/handoff-token";
 import { playStoreUrlWithReferrer } from "@/app/lib/play-referrer";
 import { CONSENT_COOKIE, parseConsent } from "@/app/lib/consent";
@@ -84,31 +83,10 @@ export function GET(request: NextRequest) {
     (os.name === "iOS" ? APP_STORE_URL
       : os.name === "Android" ? playUrl
         : `${SITE_ORIGIN}/`);
-  const outcome =
-    oneLink ? "onelink"
-      : os.name === "iOS" ? "app_store"
-        : os.name === "Android" ? "play_store"
-          : "web_home";
-  const handoff = cleanAttributionValue(request.nextUrl.searchParams.get("handoff"));
-  const safeHandoff = handoff === "qr" || handoff === "smart" || handoff === "store" ? handoff : "direct";
-  // Record the outcome only after the response is sent — the store/deep-link
-  // redirect must never wait on the analytics round-trip. Plausible is first-party
-  // and cookieless, so this is not gated on the attribution choice; `consent` is
-  // recorded so the funnel stays readable once most visitors decline.
-  after(() =>
-    trackServerEvent(request, "App Redirect Outcome", {
-      outcome,
-      handoff: safeHandoff,
-      consent,
-      // True only where the target actually rides along: the consented OneLink, or
-      // an Android referrer that was really attached. Reading this as "AppsFlyer
-      // fired" would now be wrong — the two have come apart.
-      contextPreserved: Boolean(
-        targetPath && (oneLink || (os.name === "Android" && playUrl !== PLAY_STORE_URL)),
-      ),
-      os: os.name ?? "unknown",
-    }),
-  );
+  // No server-side event here any more: the Plausible events API went with the
+  // Plausible→GA migration, and GA's Measurement Protocol was deliberately not
+  // adopted for it. The install funnel is proxied by the client-side
+  // app_store_click / app_bridge_open events instead.
   return NextResponse.redirect(destination, {
     status: 302,
     // The response depends on the consent cookie and the UA; say so, even though

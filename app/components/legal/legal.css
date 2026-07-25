@@ -200,6 +200,26 @@
   background: linear-gradient(to top, var(--nk-bg), transparent);
   pointer-events: none;
 }
+/* Only fade when there IS overflow: on short TOCs (account deletion, 6 items)
+   the fade painted over the last entry as ghost text. scroll(self) is inert on
+   a non-scrolling box, so the fade stays hidden there — and it also clears as
+   the reader nears the scroller's end. Firefox keeps the always-on fade. */
+@supports (animation-timeline: scroll()) {
+  .nk-lg-toc::after {
+    opacity: 0;
+    animation: nk-lg-tocfade linear both;
+    animation-timeline: scroll(self);
+  }
+  @keyframes nk-lg-tocfade {
+    0%,
+    85% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}
 .nk-lg-toc__h {
   font-family: var(--nk-font-display);
   font-weight: 700;
@@ -240,7 +260,11 @@
 .nk-lg-toc__num {
   color: var(--nk-text);
   font-size: 12px;
-  min-width: 1.4em;
+  /* nowrap + no shrink: the drawer's flex rows compressed two-digit markers
+     until "10" wrapped over a lone "." */
+  min-width: 2ch;
+  flex: none;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
@@ -322,7 +346,9 @@
   font-family: var(--nk-font-display);
   font-weight: 600;
   color: var(--nk-text);
-  font-size: clamp(17px, 1.7vw, 20px);
+  /* 18.5px floor keeps clear size contrast over the 16.5px body at 320px (F-097);
+     the vw term only wins above ~1088px so phones ride the floor */
+  font-size: clamp(18.5px, 1.7vw, 20px);
   line-height: 1.3;
   margin: 34px 0 0;
   scroll-margin-top: calc(var(--nk-nav-h-scrolled) + 24px);
@@ -583,6 +609,9 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+  /* link cards hug their content instead of stretching to the tall contact
+     card beside them — the stretched empty box read as unfinished */
+  align-items: start;
 }
 .nk-lg-related__doc {
   display: flex;
@@ -671,8 +700,15 @@
   position: fixed;
   right: calc(24px + var(--nk-safe-right, 0px));
   left: auto;
-  bottom: calc(24px + var(--nk-safe-bottom, 0px));
-  z-index: 70;
+  /* --nk-bars-h keeps it above whatever bottom-fixed bar is on screen — here that
+     is the consent bar, which is full-bleed on phones and landed square on this
+     FAB. See the token's note in globals.css :root. */
+  bottom: calc(24px + var(--nk-safe-bottom, 0px) + var(--nk-bars-h, 0px));
+  /* 60, with the other floating chrome (.nk-backtotop) — NOT 70. At 70 it tied
+     with .nk-cookiebar and won only because this sheet loads later, i.e. it
+     painted over the consent bar's own buttons. It never needs to beat a bar:
+     clearance is --nk-bars-h's job, not the z-index's. */
+  z-index: 60;
   display: none;
   align-items: center;
   gap: 9px;
@@ -809,14 +845,21 @@
 }
 /* Legal tables read as records once the reading column gets tight: each row
    becomes a card and every cell carries its original column heading via
-   data-label. ≤700px only — the simple 2-column wayfinding table fits real
-   tablet widths (the stacked cards tripled the section height at 768), and in
-   the 981–1120 sidebar band the .nk-lg-tablescroll wrapper absorbs any squeeze. */
-@container nk-legal-article (width < 43.75rem) {
+   data-label. ≤608px only — at 700 the threshold caught the SIDEBAR-era column
+   too (article ≈ 620–700 through the 1024–1150 band), so a wider window got the
+   phone card treatment while 834–980 showed real tables. The narrower cutoff
+   keeps tables real wherever ~600px of column exists; .nk-lg-tablescroll
+   absorbs any residual squeeze. */
+@container nk-legal-article (width < 38rem) {
   .nk-lg-tablewrap {
     overflow: visible;
     border: 0;
     background: transparent;
+  }
+  /* a dash means "column doesn't apply" — informative inside the grid, dead
+     weight as a labelled card row ("Dalinis grąžinimas — –") */
+  .nk-lg-td[data-empty] {
+    display: none;
   }
   .nk-lg-tablescroll {
     overflow: visible;
@@ -918,18 +961,28 @@
   .nk-lg-fab-toc {
     right: calc(16px + var(--nk-safe-right, 0px));
     left: auto;
-    bottom: calc(28px + var(--nk-safe-bottom, 0px));
+    bottom: calc(28px + var(--nk-safe-bottom, 0px) + var(--nk-bars-h, 0px));
     height: 44px;
-    padding: 0 15px;
+    /* icon-only circle on phones: with back-to-top stacked above it, the
+       labelled pill occluded a ~150×180px patch of the prose column */
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
     border-radius: 13px;
     box-shadow:
       0 12px 30px rgba(0, 0, 0, 0.28),
       var(--nk-edge-top);
   }
-  /* FAB here: bottom 28px + height 44px = top edge at 72px → 84px keeps 12px */
+  .nk-lg-fab-toc > span {
+    display: none;
+  }
+  /* Back-to-top stacks on the FAB, and the FAB itself may already be riding a bar
+     — so it carries the same --nk-bars-h the FAB does, on top of its own offset.
+     FAB here: bottom 28px + height 44px = top edge at 72px → 84px keeps 12px. */
   body:has(.nk-lg-fab-toc) .nk-backtotop {
     inset-inline-end: calc(16px + var(--nk-safe-right, 0px));
-    inset-block-end: calc(84px + var(--nk-safe-bottom, 0px));
+    inset-block-end: calc(84px + var(--nk-safe-bottom, 0px) + var(--nk-bars-h, 0px));
   }
 }
 @media (height <= 38.75rem) {

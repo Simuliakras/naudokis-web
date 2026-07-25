@@ -104,7 +104,10 @@ export function OfferCard({
         {hasDelivery && (
           <div className="nk-offer__badges">
             <span className="nk-offer__badge">
-              <Icon name="Truck" size={14} color="var(--nk-text)" stroke={2} /> {c.delivery}
+              <Icon name="Truck" size={14} color="var(--nk-text)" stroke={2} />
+              {/* own span: ellipsis can't reach a bare text node in a flex row,
+                  so without it the label hard-clips mid-word on compact cards */}
+              <span className="nk-offer__badgelabel">{c.delivery}</span>
             </span>
           </div>
         )}
@@ -302,11 +305,16 @@ export function OfferCardSkeleton({ ghost = false }: { ghost?: boolean } = {}) {
         {/* Owner + location row placeholder — reserves exactly --nk-offer-owner-h, the
             height .nk-offer__owner is pinned to, so cards don't grow when data lands.
             Two bars: name, then place. Nothing reserves the rating: it rides the media
-            absolutely, so it costs the body no height. */}
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--nk-gap-xs)", height: "var(--nk-offer-owner-h)" }}>
+            absolutely, so it costs the body no height.
+            The row's geometry is NOT declared here: .nk-offer-skel__meta shares one
+            declaration block with .nk-offer__owner in globals.css, which is what
+            keeps the reservation and the real row identical. The classes are also
+            the hooks the ≤280px place tier uses to drop the place bar to its own
+            row and grow the reservation with it, in step with the real card. */}
+        <div className="nk-offer-skel__meta">
           <div className={cls} style={{ width: "var(--nk-offer-owner-h)", height: "var(--nk-offer-owner-h)", borderRadius: 999, flex: "none" }} />
           <div className={cls} style={{ width: "34%", height: 12 }} />
-          <div className={cls} style={{ width: "30%", height: 12 }} />
+          <div className={"nk-offer-skel__place " + cls} style={{ width: "30%", height: 12 }} />
         </div>
         {/* Footer: the card's hairline, then the price row (price left, discount right). */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: "auto", paddingTop: "var(--nk-gap-xs)" }}>

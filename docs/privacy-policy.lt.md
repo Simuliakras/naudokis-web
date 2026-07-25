@@ -35,7 +35,7 @@ Naudojimosi sąlygos nustato naudojimosi Platforma ir nuomos sandorių taisykles
 - Mokėjimus ir išmokas apdoroja „Stripe“. „Naudokis“ nesaugo viso mokėjimo kortelės numerio, CVC ar PIN.
 - Tapatybės ir amžiaus patikrai gali būti naudojamas „Didit“, o mokėjimų ar išmokų patikroms – „Stripe“.
 - Viešai rodome tik skelbimui ir pasitikėjimui būtiną informaciją. Tikslesni kontaktiniai ir perdavimo duomenys atskleidžiami tik tada, kai jų reikia sandoriui.
-- „Mixpanel“ produkto analitika ir „AppsFlyer“ programėlės atribucija įjungiama tik gavus sutikimą. Viešoje svetainėje naudojamas slapukų nenaudojantis „Plausible“ lankomumo ir perėjimo į programėlę matavimas, grindžiamas toliau aprašytu teisėtu interesu.
+- „Mixpanel“ produkto analitika ir „AppsFlyer“ programėlės atribucija įjungiama tik gavus sutikimą. Viešoje svetainėje naudojama „Google Analytics“ su sutikimo režimu („Consent Mode“): analitiniai slapukai įrašomi tik gavus jūsų sutikimą, o iki sutikimo tvarkomi tik riboti, slapukų nenaudojantys matavimo signalai toliau aprašytu teisėto intereso pagrindu.
 - Uždarius paskyrą ne visi duomenys ištrinami iš karto. Finansiniai, mokesčių, ginčų, saugumo ar teisinės gynybos duomenys gali būti saugomi ilgiau.
 - Galite prašyti susipažinti su duomenimis, juos ištaisyti, ištrinti ar apriboti, perkelti duomenis, nesutikti su tam tikru tvarkymu ir atšaukti sutikimą.
 
@@ -217,7 +217,8 @@ Toliau nurodyti pagrindiniai tikslai ir BDAR teisiniai pagrindai.
 | Saugoti sutarčių, sutikimų ir teisinių pasirinkimų įrodymus | Teisinė prievolė; teisėtas interesas įrodyti atitiktį ir apginti reikalavimus |
 | Užtikrinti infrastruktūros, paskyrų ir mokėjimų saugumą; tirti incidentus | Teisėtas interesas užtikrinti informacijos ir Platformos saugumą; teisinė prievolė, kai taikoma |
 | Vykdyti būtiną diagnostiką ir taisyti technines klaidas | Teisėtas interesas palaikyti saugią ir veikiančią paslaugą; galinio įrenginio prieigos sutikimas, kai technologija nėra griežtai būtina |
-| Naudojant slapukų nenaudojančią „Plausible“ analitiką matuoti apibendrintą svetainės naudojimą ir perėjimo į programėlę rezultatus | Teisėtas interesas suprasti ir tobulinti viešą svetainę bei programėlės įdiegimo tiltą |
+| Matuoti svetainės naudojimą „Google Analytics“ slapukais, kai priimate svetainės sutikimo juostos pasiūlymą | Sutikimas |
+| Iki sutikimo ar be jo tvarkyti ribotus, slapukų nenaudojančius „Google Analytics“ matavimo signalus | Teisėtas interesas suprasti ir tobulinti viešą svetainę |
 | Naudoti „Mixpanel“ produkto analitiką | Sutikimas |
 | Naudoti „AppsFlyer“ įdiegimo, kampanijų ir konversijų atribuciją | Sutikimas |
 | Siųsti elektroninę tiesioginę rinkodarą | Sutikimas arba įstatyme numatyta esamo kliento išimtis, jei tenkinamos visos jos sąlygos |
@@ -273,7 +274,7 @@ Priklausomai nuo įjungtų funkcijų galime naudoti:
 - **AWS**, įskaitant eu-north-1 regioną – infrastruktūrai, duomenų bazėms, failų saugyklai, žurnalams ir saugumui;
 - **Sentry** ir **AWS CloudWatch** – diagnostikai, klaidoms, našumui ir saugumo incidentams;
 - **Expo** – mobiliosios Programėlės techninėms funkcijoms ir tiesioginiams pranešimams;
-- **Plausible Analytics** – slapukų nenaudojančiam viešos svetainės lankomumo ir perėjimo į programėlę rezultatų matavimui;
+- **Google Ireland Limited („Google Analytics 4“)** – viešos svetainės lankomumo matavimui; slapukai naudojami tik gavus sutikimą, o duomenys gali būti perduodami „Google LLC“ (JAV), kaip aprašyta 12 skyriuje;
 - **Mixpanel** – sutikimu grindžiamai produkto analitikai;
 - **AppsFlyer** – sutikimu grindžiamai programėlės atribucijai ir kampanijų matavimui;
 - **Postit** – Lietuvos adresams geokoduoti ir normalizuoti;
@@ -371,13 +372,13 @@ Jei technologija nėra griežtai būtina pagal elektroninių ryšių taisykles, 
 
 Būtina diagnostika savaime neįjungia „Mixpanel“ ar „AppsFlyer“. Jei konkreti diagnostikos technologija pasiekia galinį įrenginį ne vien griežtai būtinu tikslu, jai taikomas išankstinio sutikimo reikalavimas.
 
-### 10.3. „Plausible“ svetainės analitika
+### 10.3. „Google Analytics“ svetainės analitika
 
-Viešoje svetainėje „Plausible Analytics“ naudojama be analitinių slapukų ar nuolatinių naršyklės saugyklos identifikatorių. Ji neįkeliama paskyros veiksmų puslapiuose, kurių URL yra žetonas. Naršyklės integracija gali tvarkyti puslapio URL, nukreipusį puslapį, sąveikos ar konversijos įvykį ir techninę užklausos informaciją, pavyzdžiui, IP adresą ir naudotojo agentą, kad sudarytų apibendrintą lankomumo statistiką. Paieškos ir kiti įprasti, žetonų neturintys URL parametrai gali būti naršyklės integracijos perduodamo puslapio URL dalis.
+Viešoje svetainėje naudojama „Google Analytics 4“ su „Google“ sutikimo režimu („Consent Mode“), kurio visi sutikimo požymiai pagal numatytuosius nustatymus yra atmesti. Iki jūsų sutikimo „Google Analytics“ jūsų įrenginyje nieko nesaugo — nei slapukų, nei naršyklės saugyklos identifikatorių — ir gali tvarkyti tik ribotus, slapukų nenaudojančius matavimo signalus, pavyzdžiui, puslapio URL, nukreipusį puslapį, sąveikos ar konversijos įvykį ir techninę užklausos informaciją, tokią kaip IP adresas ir naudotojo agentas, kad sudarytų apibendrintą lankomumo statistiką. Ji neįkeliama paskyros veiksmų puslapiuose, kurių URL yra žetonas. Paieškos ir kiti įprasti, žetonų neturintys URL parametrai gali būti naršyklės integracijos perduodamo puslapio URL dalis.
 
-Nukreipimo ir perėjimo į programėlę galiniai taškai taip pat gali siųsti serverinį įvykį. Prieš tokį perdavimą iš URL pašaliname užklausos eilutę ir fragmentą. Įvykis gali apimti nukreipimo rezultatą, platformą, tikslo tipą, vietą sąsajoje ar kampanijos parametrus ir pseudoniminį kelionės identifikatorių, naudojamą perėjimo į programėlę rezultatui susieti. „Plausible“ nesiunčiame jūsų vardo, el. pašto adreso, mokėjimo duomenų, Rezervacijos identifikatoriaus, viso perėjimo žetono ar tikslaus nuomojamo daikto adreso.
+Jei svetainės sutikimo juostoje priimate analitikos pasiūlymą, „Google Analytics“ papildomai įrašo pirmosios šalies „_ga“ ir „_ga_*“ slapukus, leidžiančius atpažinti grįžtančią naršyklę. Šį pasirinkimą bet kada galite pakeisti ar atšaukti svetainės poraštės skiltyje „Privatumo nustatymai“; atšaukus, slapukais grindžiamas matavimas sustabdomas, o „_ga“ slapukai pašalinami. Su reklama susiję sutikimo režimo požymiai lieka visam laikui atmesti — „Google Analytics“ nenaudojame reklamai, pakartotinei rinkodarai ar reklamos personalizavimui.
 
-Šis tvarkymas grindžiamas mūsų teisėtu interesu matuoti ir tobulinti viešą svetainę bei perėjimą iš svetainės į programėlę. Sukonfigūruota integracija neįrašo analitinių slapukų ar nuolatinio identifikatoriaus į naršyklės saugyklą ir šiuo metu veikia nepriklausomai nuo „Mixpanel“ ar „AppsFlyer“ sutikimo pasirinkimo. Galite nesutikti su teisėtu interesu grindžiamu tvarkymu, kaip aprašyta 14 skyriuje. Jei konfigūracija būtų pakeista taip, kad būtų naudojami slapukai, vietinė saugykla, reklamos identifikatoriai ar kita nebūtina galinio įrenginio technologija, arba jei išankstinio sutikimo kitaip reikėtų konkrečiai įdiegtai technologijai, prieš tokį tvarkymą gautume sutikimą.
+Slapukais grindžiamas matavimas remiasi jūsų sutikimu. Ribotas, slapukų nenaudojantis matavimas iki sutikimo ar be jo grindžiamas mūsų teisėtu interesu matuoti ir tobulinti viešą svetainę ir veikia nepriklausomai nuo „Mixpanel“ ar „AppsFlyer“ sutikimo pasirinkimo. Galite nesutikti su teisėtu interesu grindžiamu tvarkymu, kaip aprašyta 14 skyriuje. Paslaugos teikėja — „Google Ireland Limited“; perdavimai už EEE ribų aprašyti 12 skyriuje.
 
 ### 10.4. „Mixpanel“
 
@@ -485,7 +486,7 @@ Duomenis saugome ne ilgiau, nei reikia konkrečiam tikslui, teisės aktams, gin�
 | Paskyros ištrynimo prašymo audito duomenys | 180 dienų nuo prašymo sukūrimo |
 | Rinkodaros sutikimo įrašas | Kol galioja sutikimas ir tiek, kiek vėliau reikia jo gavimui įrodyti |
 | Rinkodaros atsisakymo įrašas | Tiek, kiek reikia užtikrinti, kad rinkodara nebūtų siunčiama ir atsisakymas būtų įrodytas |
-| „Plausible“ svetainės ir perėjimo analitika | Pagal mūsų „Plausible“ paslaugoje sukonfigūruotą terminą; identifikuojami ar pseudoniminiai įvykių duomenys nesaugomi ilgiau, nei būtina apibendrintam lankomumo ir perėjimo matavimui |
+| „Google Analytics“ svetainės analitika | Įvykių duomenys saugomi pagal mūsų „Google Analytics“ paskyroje sukonfigūruotą terminą, iki 14 mėnesių; „_ga“ slapukai galioja iki 2 metų, o atšaukus sutikimą pašalinami anksčiau |
 | „Mixpanel“ ir „AppsFlyer“ duomenys | Pagal sutikimo būseną ir sutartyse bei teikėjų nustatymuose sukonfigūruotus terminus |
 | DAC7 duomenys | Kai veikla praneština – 5 metus nuo ataskaitinio laikotarpio pabaigos, jei taikytinos taisyklės nereikalauja kitaip |
 | Kiti mokesčių ir apskaitos duomenys | Pagal konkrečiam dokumentui ar prievolei taikomą teisės aktuose nustatytą terminą |

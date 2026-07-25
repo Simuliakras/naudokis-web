@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LT_CITIES } from "@/app/lib/cities";
@@ -27,7 +27,7 @@ export function HeroOwnerCta() {
   // min-height keeps a real coarse-pointer target on the sole owner entry point.
   return (
     <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--nk-gap-2xs) var(--nk-gap-sm)" }}>
-      <span style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>{dict.hero.ownerPrompt}</span>
+      <span className="nk-hero-ownerprompt" style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-muted)" }}>{dict.hero.ownerPrompt}</span>
       <Link href="/go" prefetch={false} className="nk-cats-all" onClick={(event) => {
         event.preventDefault();
         trackEvent("Owner Listing Intent", { placement: "hero" });
@@ -91,18 +91,21 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: s
         aria-expanded={open}
       >
         <Icon name="MapPin" size={20} stroke={2} color="var(--nk-bg)" />
-        <span className="nk-search__col" style={{ flex: 1 }}>
+        <span className="nk-search__col">
           <span className="nk-search__label">{dict.search.labelWhere}</span>
           <span className={"nk-citypick__val" + (value ? " is-set" : "")}>
             {value || dict.cityPicker.all}
           </span>
         </span>
+        {/* `rotate`, not `transform`: the stacked layout nudges the field icons
+            onto the value line with `translate`, and the two are independent
+            properties — an inline `transform` here would shut that out. */}
         <Icon
           name="ChevronDown"
           size={16}
           stroke={2.2}
           color="var(--nk-light-meta)"
-          style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s ease" }}
+          style={{ rotate: open ? "180deg" : "0deg", transition: "rotate .2s ease" }}
         />
       </button>
       {open && (
@@ -145,6 +148,7 @@ function HeroCityPicker({ value, onChange }: { value: string; onChange: (city: s
 export function SearchBar() {
   const { locale, dict } = useI18n();
   const router = useRouter();
+  const qId = useId();
   const [q, setQ] = useState("");
   const [city, setCity] = useState("");
   const go = (e: React.FormEvent) => {
@@ -157,29 +161,27 @@ export function SearchBar() {
     router.push(listingSearchHref({ q, city, locale }));
   };
   return (
+    // Skin and layout live in globals.css (.nk-search and friends), never inline:
+    // an inline declaration cannot be reached by the focus ring, the stacked <md
+    // variant or the hero's tier overrides without `!important` on every one.
     <form
       className="nk-search"
       action={listingSearchHref({ locale })}
       method="get"
       onSubmit={go}
-      style={{
-        position: "relative",
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        background: "var(--nk-light-field)",
-        border: "1px solid var(--nk-light-line)",
-        borderRadius: 34,
-        boxShadow: "var(--nk-shadow-2)",
-        padding: "8px 8px 8px 24px",
-        maxWidth: 662,
-      }}
     >
-      <span style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
+      <span className="nk-search__field">
         <Icon name="Search" size={20} color="var(--nk-bg)" stroke={2} />
-        <span className="nk-search__col" style={{ flex: 1 }}>
-          <span className="nk-search__label">{dict.search.labelWhat}</span>
+        <span className="nk-search__col">
+          {/* A real <label>, so the micro-label is both associated and tappable —
+              that is what buys back the target the stacked input gives up by
+              sharing one line box with the city value. aria-label stays: it is
+              the fuller name, and the only one left ≥md where the label hides. */}
+          <label className="nk-search__label" htmlFor={qId}>
+            {dict.search.labelWhat}
+          </label>
           <input
+            id={qId}
             name="q"
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -189,7 +191,7 @@ export function SearchBar() {
           />
         </span>
       </span>
-      <span style={{ width: 1, height: 36, background: "var(--nk-light-line)" }} />
+      <span className="nk-search__sep" />
       <HeroCityPicker value={city} onChange={setCity} />
       {city && <input type="hidden" name="city" value={city} />}
       <button type="submit" className="nk-btn nk-btn--primary" style={{ padding: "16px 36px" }}>

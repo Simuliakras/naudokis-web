@@ -9,7 +9,7 @@ import { test, expect } from "@playwright/test";
 
 const LOCALIZED = [
   ["/skelbimai", "/en/listings"],
-  ["/kategorijos", "/en/categories"],
+  ["/nuoma", "/en/rent"],
   ["/kaip-tai-veikia", "/en/how-it-works"],
   ["/naudojimosi-salygos", "/en/terms-of-service"],
   ["/privatumo-politika", "/en/privacy-policy"],
@@ -50,7 +50,9 @@ test("no route loops, including every legacy spelling @proxy", async ({ request 
 test("legacy English segments move permanently, in one hop @proxy", async ({ request }) => {
   const cases = [
     ["/en/skelbimai", "/en/listings"],
-    ["/en/kategorijos", "/en/categories"],
+    // The category directory moved to /nuoma (2026-07-23), so the legacy English
+    // segment now lands on the new hub's English URL in the same single hop.
+    ["/en/kategorijos", "/en/rent"],
     ["/en/kaip-tai-veikia", "/en/how-it-works"],
     ["/en/miestai/vilnius", "/en/cities/vilnius"],
   ];

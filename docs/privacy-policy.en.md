@@ -35,7 +35,7 @@ The Terms of Use set out the rules for using the Platform and for rental transac
 - Payments and payouts are processed by Stripe. “Naudokis” does not store the full payment card number, CVC, or PIN.
 - Didit may be used for identity and age verification, and Stripe may be used for payment or payout checks.
 - We display publicly only the information necessary for a listing and for trust. More precise contact and handover details are disclosed only when needed for a transaction.
-- Mixpanel product analytics and AppsFlyer app attribution are enabled only with consent. The public website uses cookieless Plausible audience and app-handoff measurement on the legitimate-interests basis described below.
+- Mixpanel product analytics and AppsFlyer app attribution are enabled only with consent. The public website uses Google Analytics with Consent Mode: analytics cookies are set only with your consent, and before consent only limited cookieless measurement signals are processed on the legitimate-interests basis described below.
 - Closing an account does not result in all data being deleted immediately. Financial, tax, dispute, security, or legal-defence data may be retained for longer.
 - You may request access to, rectification, erasure, or restriction of your data, data portability, object to certain processing, and withdraw consent.
 
@@ -217,7 +217,8 @@ The principal purposes and legal bases under the GDPR are set out below.
 | Retain evidence of contracts, consents, and legal choices | Legal obligation; legitimate interest in demonstrating compliance and defending claims |
 | Ensure the security of infrastructure, accounts, and payments; investigate incidents | Legitimate interest in ensuring information and Platform security; legal obligation, where applicable |
 | Perform essential diagnostics and correct technical errors | Legitimate interest in maintaining a secure and functioning service; consent for access to terminal equipment where the technology is not strictly necessary |
-| Measure aggregate website use and app-handoff outcomes with cookieless Plausible analytics | Legitimate interest in understanding and improving the public website and app-install bridge |
+| Measure website use with Google Analytics cookies after you accept the website consent banner | Consent |
+| Process limited cookieless Google Analytics measurement signals before or without consent | Legitimate interest in understanding and improving the public website |
 | Use Mixpanel product analytics | Consent |
 | Use AppsFlyer installation, campaign, and conversion attribution | Consent |
 | Send electronic direct marketing | Consent or the statutory existing-customer exception, where all its conditions are met |
@@ -273,7 +274,7 @@ Depending on the functions enabled, we may use:
 - **AWS**, including the eu-north-1 region, for infrastructure, databases, file storage, logs, and security;
 - **Sentry** and **AWS CloudWatch** for diagnostics, errors, performance, and security incidents;
 - **Expo** for technical mobile-App functions and push notifications;
-- **Plausible Analytics** for cookieless public-website audience measurement and app-handoff outcomes;
+- **Google Ireland Limited (Google Analytics 4)** for public-website audience measurement — cookie-based only with consent; data may be transferred to Google LLC in the United States as described in Section 12;
 - **Mixpanel** for consent-based product analytics;
 - **AppsFlyer** for consent-based app attribution and campaign measurement;
 - **Postit** for geocoding and normalising Lithuanian addresses;
@@ -371,13 +372,13 @@ We use Sentry and AWS CloudWatch to monitor technical errors, incidents, perform
 
 Essential diagnostics do not, by themselves, enable Mixpanel or AppsFlyer. If a particular diagnostic technology accesses terminal equipment for a purpose that is not solely strictly necessary, prior consent is required.
 
-### 10.3. Plausible website analytics
+### 10.3. Google Analytics website analytics
 
-The public website uses Plausible Analytics without analytics cookies or persistent browser-storage identifiers. It is not loaded on token-bearing account-action pages. The browser integration may process the page URL, referring page, interaction or conversion event, and technical request information such as IP address and user agent to produce aggregate audience statistics. Search and other ordinary non-token URL parameters may form part of the page URL reported by the browser integration.
+The public website uses Google Analytics 4 with Google's Consent Mode, with all consent flags denied by default. Before you consent, Google Analytics stores nothing on your device — no cookies and no browser-storage identifiers — and may process only limited cookieless measurement signals such as the page URL, referring page, interaction or conversion event, and technical request information such as IP address and user agent, to produce aggregate audience statistics. It is not loaded on token-bearing account-action pages. Search and other ordinary non-token URL parameters may form part of the page URL reported by the browser integration.
 
-Redirect and native-handoff endpoints may also send a server-side event. For those events we remove the URL query string and fragment before transmission. The event may include the redirect outcome, platform, target type, placement or campaign parameters, and a pseudonymous journey identifier used to connect an app-handoff outcome. We do not send Plausible your name, email address, payment details, Reservation identifier, full handoff token, or the precise address of a rental item.
+If you accept the analytics choice in the website consent banner, Google Analytics additionally sets first-party `_ga` and `_ga_*` cookies so that returning browsers can be recognised. You can change or withdraw this choice at any time under "Privacy choices" in the website footer; withdrawal stops cookie-based measurement and deletes the `_ga` cookies. Advertising-related Consent Mode flags remain permanently denied — we do not use Google Analytics for advertising, remarketing, or ad personalisation.
 
-This processing is based on our legitimate interest in measuring and improving the public website and the web-to-app bridge. The configured integration does not write analytics cookies or a persistent identifier to browser storage and currently runs independently of the Mixpanel or AppsFlyer consent choice. You may object to legitimate-interest processing as described in Section 14. If the configuration changes to use cookies, local storage, advertising identifiers, or another non-essential terminal-equipment technology—or if prior consent is otherwise required for the deployed technology—we will obtain consent before enabling that processing.
+Cookie-based measurement is based on your consent. The limited cookieless measurement before or without consent is based on our legitimate interest in measuring and improving the public website, and runs independently of the Mixpanel or AppsFlyer consent choice. You may object to legitimate-interest processing as described in Section 14. The provider is Google Ireland Limited; transfers outside the EEA are described in Section 12.
 
 ### 10.4. Mixpanel
 
@@ -485,7 +486,7 @@ We retain data no longer than necessary for the specific purpose, legal requirem
 | Audit data for an account-deletion request | 180 days from creation of the request |
 | Marketing-consent record | While consent remains valid and for as long thereafter as necessary to demonstrate that it was obtained |
 | Marketing opt-out record | For as long as necessary to ensure that marketing is not sent and to prove the opt-out |
-| Plausible website and handoff analytics | According to the period configured in our Plausible service; identifiable or pseudonymous event data are not retained longer than necessary for aggregate audience and handoff measurement |
+| Google Analytics website analytics | Event data according to the retention period configured in our Google Analytics property, up to 14 months; `_ga` cookies expire after up to 2 years and are deleted earlier if you withdraw consent |
 | Mixpanel and AppsFlyer data | According to consent status and the periods configured in contracts and provider settings |
 | DAC7 data | Where the activity is reportable, 5 years from the end of the reporting period, unless the applicable rules require otherwise |
 | Other tax and accounting data | In accordance with the statutory period applicable to the specific document or obligation |

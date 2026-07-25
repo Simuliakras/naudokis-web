@@ -293,7 +293,12 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
     const rail = catrailRef.current;
     const active = rail?.querySelector<HTMLElement>(".is-active");
     if (rail && active) {
-      rail.scrollLeft = Math.max(0, active.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2);
+      // clamp both ends, and start-align a chip wider than the rail — the raw
+      // centering math could land mid-chip with the label's head cut off
+      const target = active.offsetWidth >= rail.clientWidth
+        ? active.offsetLeft
+        : active.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2;
+      rail.scrollLeft = Math.min(Math.max(0, target), Math.max(0, rail.scrollWidth - rail.clientWidth));
     }
   }, [params.cat, cats.length]);
 
@@ -552,13 +557,17 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
                 <DateRangeFilterControl value={dateRange} onChange={(r) => setParams({ dates: serializeDatesParam(r) })} />
                 <FilterSelect icon="MapPin" label={t.cityLabel} value={params.city} defaultValue="" options={cityOptions} onChange={(v) => setParams({ city: v })} />
                 <PriceRangeControl value={priceRange} onChange={(r) => setParams({ price: serializePriceParam(r) })} />
-                <Toggle icon="Truck" on={params.delivery} onChange={(on) => setParams({ delivery: on })}>{t.deliveryToggle}</Toggle>
-                {/* ON for "none" AND for a deep-linked ceiling (labelled with it) —
-                    like the price/date pills, the trigger wears the active state.
-                    Clicking an active toggle clears either state; from rest it sets
-                    "none", the only UI-producible filter. Coins, never a shield:
-                    the Terms disclaim insurance (see the card deposit pill). */}
-                <Toggle icon="Coins" on={depositActive} onChange={(on) => setParams({ deposit: on ? "none" : "" })}>{depositLabel}</Toggle>
+                {/* One wrap unit: individually the second toggle orphaned alone on
+                    row two through the whole 1024–1194 band (5+1). */}
+                <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "none" }}>
+                  <Toggle icon="Truck" on={params.delivery} onChange={(on) => setParams({ delivery: on })}>{t.deliveryToggle}</Toggle>
+                  {/* ON for "none" AND for a deep-linked ceiling (labelled with it) —
+                      like the price/date pills, the trigger wears the active state.
+                      Clicking an active toggle clears either state; from rest it sets
+                      "none", the only UI-producible filter. Coins, never a shield:
+                      the Terms disclaim insurance (see the card deposit pill). */}
+                  <Toggle icon="Coins" on={depositActive} onChange={(on) => setParams({ deposit: on ? "none" : "" })}>{depositLabel}</Toggle>
+                </div>
               </div>
             </div>
           </div>
@@ -577,8 +586,13 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
 
           <div className="nk-filter-meta" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8, margin: "-16px 0 24px" }}>
             {/* em-dash while the count is unknown (loading / error / stale
-                placeholder pages behind a changed query) — a count is a claim */}
-            <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", fontWeight: 600, whiteSpace: "nowrap" }}>{countKnown ? countLabel : "—"}</span>
+                placeholder pages behind a changed query) — a count is a claim.
+                The pill skin makes the placeholder read deliberate, not glitchy. */}
+            {countKnown ? (
+              <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 15.5, color: "var(--nk-text-2)", fontWeight: 600, whiteSpace: "nowrap" }}>{countLabel}</span>
+            ) : (
+              <span className="nk-count-pending" aria-hidden>—</span>
+            )}
             {/* Horizontal-only padding keeps the label on the count's baseline;
                 minHeight puts the hit area back (WCAG 2.5.8) without adding the
                 vertical padding that would break that alignment. */}
@@ -775,7 +789,9 @@ function RelatedLandingLinks({
     ? topCategories
         .filter((category) => category.id !== currentCategory)
         .map((category) => ({
-          label: `${category.title} · ${currentCity}`,
+          // NBSP on both sides of the dot: a wrapped chip line must never
+          // start with the bare "·" separator
+          label: `${category.title} · ${currentCity}`,
           href: listingLandingHref({ locale, category: category.id, city: currentCity }),
         }))
     : currentCategory && subcategories.length > 0

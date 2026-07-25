@@ -36,14 +36,14 @@ Build and start the new site **with its production environment**, then audit tha
 yarn build
 yarn start
 RELEASE_ORIGIN=https://new-site-preview.example \
-NEXT_PUBLIC_PLAUSIBLE_DOMAIN=naudokis.lt \
+NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX \
 NEXT_PUBLIC_SENTRY_DSN=https://… \
 yarn verify:release
 ```
 
 The gate rejects a dev catalogue, missing RUM / error-monitoring configuration, bad
-canonical or indexing output, missing listing sitemaps, and an unavailable Web Vitals
-endpoint.
+canonical or indexing output, missing listing sitemaps, and a build served without the
+Google Analytics loader.
 
 `NEXT_PUBLIC_*` values are inlined at **build** time, so run this with the same environment
 the build used — otherwise the env checks pass while the served bundle still points

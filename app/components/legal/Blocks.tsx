@@ -7,6 +7,9 @@ import type { Block, ListItem } from "@/app/lib/legal/types";
 import { Inline } from "./Inline";
 import { Icon } from "./Icon";
 
+// A lone dash (any of the three widths) meaning "column doesn't apply".
+const EMPTY_CELL_RE = /^[–—-]$/;
+
 function ListItems({ items, locale }: { items: ListItem[]; locale: Locale }) {
   return (
     <>
@@ -93,7 +96,14 @@ export function Blocks({
                       {b.rows.map((r, j) => (
                         <tr key={j}>
                           {r.map((c, k) => (
-                            <td key={k} className="nk-lg-td" data-label={b.head[k] ?? ""}>
+                            <td
+                              key={k}
+                              className="nk-lg-td"
+                              data-label={b.head[k] ?? ""}
+                              // dash-only cells are meaningful inside the real grid but dead
+                              // weight as labelled card rows — CSS drops them in card mode
+                              data-empty={EMPTY_CELL_RE.test(c.trim()) ? "" : undefined}
+                            >
                               {/* single flow wrapper: the ≤700px card transform grids the cell
                                   (label + value) — bare inline children would each become their
                                   own grid item and shatter sentences like "Skaitykite 4 ir 6

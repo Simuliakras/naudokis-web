@@ -47,6 +47,24 @@ export type FooterCategory = { label: string; categoryId: string };
 // carries strings only.
 export type HomeStep = { kicker: string; title: string; body: string };
 
+// One row of a consent card's "what this means" fact sheet. Every `value` must be
+// traceable to the published policy (docs/privacy-policy.*.md) or to the code that
+// owns the fact (app/lib/consent.ts for our own preference cookies). Never invent a
+// retention period: where the policy gives none, say how it is determined instead.
+export type ConsentDetail = { label: string; value: string };
+
+// One processing, as rendered by a card in the privacy panel — the two optional
+// ones behind a switch, and the always-on essentials row, which shares this shape
+// so the panel can render every row through one component (see PrivacyChoices).
+// `title` is the PURPOSE, never the vendor — the vendor belongs in `meta`, beside
+// the word "neprivaloma", so the heading answers "what does this do for me?".
+export type ConsentPurposeCopy = {
+  title: string;
+  meta: string; // "„AppsFlyer“ · neprivaloma" — processor · optionality, one line
+  body: string; // one plain sentence: what happens when it is on
+  details: ConsentDetail[];
+};
+
 // Legal documents — UI chrome strings only. The document content itself
 // comes from app/lib/legal/data/*.json, not the dictionaries.
 export type LegalDict = {
@@ -472,6 +490,7 @@ export type Dict = {
     countLabel: (cats: number, subs: number) => string; // live "N categories · M subcategories" (aria-live)
     subCount: (n: number) => string; // per-card count line under the title
     moreCount: (n: number) => string; // collapsed expander label ("N more…")
+    showAll: string; // countless expander label for the header-only mobile tier (the count line already says N)
     showLess: string; // expanded expander label
     popularHeading: string; // "Popular right now" eyebrow above the pill row
     allListingsLabel: (title: string) => string; // aria-label on the card's arrow link
@@ -645,19 +664,46 @@ export type Dict = {
     allow: string;
     decline: string;
     close: string;
+    manageNote: string; // where to change it later — the footer panel, named
   };
-  // Footer "Privacy choices" — permanent access to the same choice, plus withdrawal.
-  // scopeNote must keep this scoped to the WEBSITE: the app has its own setting.
+  // Site-wide analytics consent banner (Google Analytics). Non-modal, shown once
+  // while no choice is stored; both actions must stay equally plain and equally
+  // weighted — no "accept all", no nudge (see components/ConsentBanner.tsx).
+  consentBanner: {
+    title: string; // region aria-label
+    body: string; // names Google Analytics; cookies only after consent; optional
+    privacyLink: string;
+    accept: string;
+    decline: string;
+    // No `manageNote` counterpart here on purpose: this bar is height-critical (it
+    // already ate ~47% of a 320×568 viewport before being tightened), and a third
+    // line costs more than the orientation is worth. The install prompt, which has
+    // room, carries it instead.
+  };
+  // Footer "Privacy choices" — permanent access to both website choices
+  // (attribution + analytics), plus withdrawal, plus a truthful always-on row for
+  // the two preference cookies. Each optional purpose is one switch: `on`/`off` are
+  // the visible state words and MUST stay interchangeable in tone and length —
+  // equal prominence is the legal requirement, so neither state may read as the
+  // recommended one. Changes apply instantly (the cookie is written on change), so
+  // scopeNote says so; and it must keep this scoped to the WEBSITE: the app has its
+  // own setting.
+  //
+  // `trigger` and `title` are NAMED BY THE PUBLISHED PRIVACY POLICY
+  // (docs/privacy-policy.lt.md §10.3 / .en.md §10.3) as the place a choice can be
+  // changed. Renaming either requires editing that locale's policy MD in the same
+  // commit and re-running `yarn legal:json`.
   privacyChoices: {
     trigger: string; // footer link label
-    title: string;
-    body: string;
-    statusLabel: string;
-    statusAllowed: string;
-    statusNotAllowed: string;
-    allow: string;
-    withdraw: string;
-    scopeNote: string;
+    title: string; // dialog title
+    scopeNote: string; // website scope + "takes effect immediately"
+    on: string; // visible switch state word, ON — same type weight as `off`
+    off: string; // visible switch state word, OFF
+    detailsLabel: string; // one shared disclosure label for every card
+    alwaysOn: string; // static chip on the essentials row — a fact, not a control
+    essential: ConsentPurposeCopy; // same shape as the switched purposes, by design
+    attribution: ConsentPurposeCopy;
+    analytics: ConsentPurposeCopy;
     privacyLink: string;
     close: string;
   };

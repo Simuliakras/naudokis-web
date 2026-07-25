@@ -9,6 +9,11 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    // The consent e2e project builds here (NEXT_DIST_DIR — see playwright.config.ts).
+    // Not covered by the default ".next/**", so without this line every generated
+    // chunk in it is linted as source: ~40 errors and 259 warnings from Turbopack's
+    // own output the moment that project has been run.
+    ".next-consent/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

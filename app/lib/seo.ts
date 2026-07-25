@@ -35,13 +35,10 @@ export const SITE_URL = SITE_ORIGIN;
 // never ranks. Shared so every noindex site stays in lockstep.
 export const NOINDEX_FOLLOW: Metadata["robots"] = { index: false, follow: true };
 
-// A category/city landing is worth indexing once it has real inventory behind it,
-// and the bar is a single listing: one genuine result is still a useful landing,
-// and at current inventory we favour letting every stocked category be discovered
-// over withholding it for a larger choice set. The floor stays at 1, never 0 — an
-// empty landing has nothing to rank for and reads as thin/doorway content, so a
-// zero-listing page keeps its noindex,follow (crawlable through to listings, out
-// of the index).
+// A landing with a city in it is worth indexing once it has real inventory behind
+// it, and the bar is a single listing: one genuine result is still a useful landing,
+// and at current inventory we favour letting every stocked combination be discovered
+// over withholding it for a larger choice set.
 export const MIN_INDEXABLE_LISTINGS = 1;
 
 // Shared guard for `[lang]` routes: narrow the segment to a valid `Locale` or
@@ -105,6 +102,27 @@ export function resolveListingLanding({
       city,
     }),
   };
+}
+
+// How many public listings a landing must have behind it to be indexed and to earn a
+// sitemap entry. The two tiers are not the same kind of page:
+//
+// A bare category/subcategory landing is a fixed, authored destination. The taxonomy
+// ships each one a seo_title/seo_body intro, which the landing renders above the grid,
+// the whole set is ~140 URLs, and every one of them is linked from /nuoma. So it is
+// indexable from day one, empty grid included — it is a permanent page waiting for its
+// first listing, not a generated combination, and holding it back until inventory
+// arrives only means starting its crawl/age clock late.
+//
+// Anything with a city in it stays gated. That tier is combinatorial (~140 categories
+// × 8 cities) and nothing on the site links to most of it, so an empty one really is a
+// doorway URL. The bare feed keeps the same bar: an empty marketplace has no browse
+// page worth indexing.
+export function minIndexableListings(landing: Pick<ListingLanding, "category" | "city">): number {
+  if (landing.category && !landing.city) {
+    return 0;
+  }
+  return MIN_INDEXABLE_LISTINGS;
 }
 
 // Search-engine ownership proof, read from the environment so no verification
@@ -449,8 +467,17 @@ export function listingJsonLd({
     name,
     description,
     url,
-    inLanguage: inLanguage(locale),
-    isPartOf: { "@id": webSiteId(locale) },
+    // `inLanguage` / `isPartOf` are CreativeWork properties — Product is NOT a
+    // CreativeWork, so hanging them off this node put two fields outside the
+    // vocabulary (Search Console flagged both on the merchant listing). Carry the
+    // same two signals on the page entity instead: `mainEntityOfPage` is declared
+    // on Thing, so it is valid here, and its ItemPage value IS a CreativeWork.
+    mainEntityOfPage: {
+      "@type": "ItemPage",
+      "@id": url,
+      inLanguage: inLanguage(locale),
+      isPartOf: { "@id": webSiteId(locale) },
+    },
     offers,
   };
   if (image) {

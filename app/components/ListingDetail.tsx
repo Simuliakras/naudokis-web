@@ -715,6 +715,13 @@ const metaItem: React.CSSProperties = {
   color: "var(--nk-text-2)",
   whiteSpace: "nowrap",
 };
+// Optional meta item + its leading dot as ONE flex unit, so a wrapped line can
+// never begin or end with a free-floating "·".
+const metaSeg: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "var(--nk-gap-md)",
+};
 const Dot = () => (
   <span
     style={{
@@ -817,9 +824,9 @@ export function ListingHeader({
               </span>
             )}
           </span>
-          <Dot />
           {listing.city && (
-            <>
+            <span style={metaSeg}>
+              <Dot />
               <span style={{ ...metaItem, fontWeight: 600 }}>
                 <Icon
                   name="MapPin"
@@ -829,25 +836,27 @@ export function ListingHeader({
                 />{" "}
                 {formatLocation(listing.city, listing.subdivision)}
               </span>
-              {listing.owner?.verified && <Dot />}
-            </>
+            </span>
           )}
           {listing.owner?.verified && (
-            <span style={metaItem}>
-              <Icon
-                name="BadgeCheck"
-                size={16}
-                color="var(--nk-green)"
-                stroke={2}
-              />{" "}
-              <span
-                style={{
-                  color: "var(--nk-green)",
-                  fontWeight: 600,
-                  fontFamily: "var(--nk-font-display)",
-                }}
-              >
-                {t.verifiedOwnerPill}
+            <span style={metaSeg}>
+              <Dot />
+              <span style={metaItem}>
+                <Icon
+                  name="BadgeCheck"
+                  size={16}
+                  color="var(--nk-green)"
+                  stroke={2}
+                />{" "}
+                <span
+                  style={{
+                    color: "var(--nk-green)",
+                    fontWeight: 600,
+                    fontFamily: "var(--nk-font-display)",
+                  }}
+                >
+                  {t.verifiedOwnerPill}
+                </span>
               </span>
             </span>
           )}
@@ -1845,7 +1854,7 @@ function HandoverSection({
                     try {
                       localStorage.setItem("nk_google_maps_allowed", "1");
                     } catch {}
-                    trackEvent("Google Maps Loaded", {
+                    trackEvent("Maps Embed Loaded", {
                       locale,
                       placement: "listing_handover",
                     });

@@ -92,10 +92,10 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-// Cookieless analytics (Plausible). Only loaded when a domain is configured, so
-// dev and unconfigured builds ship no third-party script and write no cookies.
-const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
-const plausibleSrc = process.env.NEXT_PUBLIC_PLAUSIBLE_SRC ?? "https://plausible.io/js/script.js";
+// Google Analytics 4 (Consent Mode v2, default-denied — see components/Analytics.tsx).
+// Only loaded when an id is configured, so dev and unconfigured builds ship no
+// third-party script, no consent banner and no cookies.
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
 // Pre-hydration handoff for the app-redirect modal. The CSP-hashed inline script
 // executes synchronously at parse time, so a
 // tap on the primary "Reserve" CTA before React hydrates still opens the modal
@@ -134,9 +134,9 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
           <ScrollToTop />
           {children}
         </I18nProvider>
-        {plausibleDomain && (
+        {gaId && (
           <>
-            <Analytics domain={plausibleDomain} src={plausibleSrc} />
+            <Analytics gaId={gaId} />
             <WebVitals />
           </>
         )}

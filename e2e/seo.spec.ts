@@ -12,11 +12,13 @@ const ORIGIN = "https://www.naudokis.lt";
 // to the origin, so the home page is "" — Next resolves "/" against metadataBase
 // to the bare origin.
 //
-// `alwaysIndexable` separates the two indexation regimes. Static pages must rank
-// unconditionally. Landing pages are gated on live inventory
-// (MIN_INDEXABLE_LISTINGS in app/lib/seo.ts), so asserting they are indexable
-// would make this suite fail whenever the backend happens to be thin — the rule
-// under test there is "indexable or noindex,follow, never noindex,nofollow".
+// `alwaysIndexable` separates the two indexation regimes (minIndexableListings in
+// app/lib/seo.ts). Static pages and the category tier must rank unconditionally —
+// a category landing is indexable with an empty grid, so a thin backend is no
+// excuse for a noindex there. Anything with a city in it is gated on live
+// inventory, so asserting it is indexable would make this suite fail whenever the
+// backend happens to be thin; the rule under test there is "indexable or
+// noindex,follow, never noindex,nofollow".
 const ROUTES = [
   { path: "/", canonical: "", alwaysIndexable: true },
   { path: "/en", canonical: "/en", alwaysIndexable: true },
@@ -32,9 +34,9 @@ const ROUTES = [
   { path: "/kaip-tai-veikia", canonical: "/kaip-tai-veikia", alwaysIndexable: true },
   { path: "/naudojimosi-salygos", canonical: "/naudojimosi-salygos", alwaysIndexable: true },
   // Slugs come from the taxonomy the routes are built from (app/lib/landing-routes.ts).
-  { path: "/nuoma/transportas", canonical: "/nuoma/transportas", alwaysIndexable: false },
+  { path: "/nuoma/transportas", canonical: "/nuoma/transportas", alwaysIndexable: true },
   { path: "/miestai/vilnius", canonical: "/miestai/vilnius", alwaysIndexable: false },
-  { path: "/en/rent/transport", canonical: "/en/rent/transport", alwaysIndexable: false },
+  { path: "/en/rent/transport", canonical: "/en/rent/transport", alwaysIndexable: true },
   { path: "/en/cities/vilnius", canonical: "/en/cities/vilnius", alwaysIndexable: false },
 ];
 

@@ -18,6 +18,15 @@ export const BREAKPOINTS = {
   md: "48rem",
   lg: "64rem",
   nav: "70rem",
+  // Component-scoped like `nav`: the width below which the consent bar can reach the
+  // corner the floating chrome parks in. 852px — derived, not chosen: the bar is
+  // min(100%, 45rem) centred and .nk-backtotop is a 46px button inset 20px, so they
+  // first touch at 720 + 2 × (20 + 46). Re-derive it if either number changes.
+  cookiebar: "53.25rem",
+  // Component-scoped like `nav`: the width below which the nav's install CTA sheds
+  // its full label for the short one. 1190px — equal to `hero` by coincidence, not by
+  // derivation.
+  navcta: "74.375rem",
   // Component-scoped like `nav`: the width below which the home hero drops its phone
   // column. 1190px.
   hero: "74.375rem",
@@ -108,11 +117,15 @@ export const IMAGE_SIZES = {
   // The old `< nav` middle clause described the stacked-phone slot, which no longer
   // exists.
   heroPhone: `${HERO_PHONE_HIDDEN} 1px, min(43vw, 36rem)`,
-  // 790px is the DRAWN width, not the visible box: .nk-appcta__phone is a fixed
-  // 620px tall with object-fit cover, so the raster always paints at
-  // 620 × (899/705 intrinsic AR) ≈ 790px and the box merely crops it. Declaring
-  // the (narrower) box width made the browser fetch the 640 rendition and
-  // upscale it ~1.23x.
+  // 790px is the DRAWN width, not the visible box: from the 86rem container tier up
+  // .nk-appcta__phone is a fixed 620px tall with object-fit cover, so the raster
+  // always paints at 620 × (899/705 intrinsic AR) ≈ 790px and the box merely crops
+  // it. Declaring the (narrower) box width made the browser fetch the 640 rendition
+  // and upscale it ~1.23x. Between the 60rem and 86rem tiers the phone scales with
+  // the band instead (half its width, uncropped), drawing 480–688px — the single
+  // 790 declaration deliberately over-declares there rather than adding a third
+  // clause whose viewport threshold would have to track a container query;
+  // over-declaring is the cheap error, under-declaring is the soft-raster one.
   appCtaPhone: `${APP_CTA_PHONE_HIDDEN} 1px, 790px`,
   offerCard: [
     `${VIEWPORT_QUERIES.compact} calc(50vw - 28px)`,

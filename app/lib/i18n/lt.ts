@@ -108,7 +108,7 @@ export const lt: Dict = {
   hero: {
     badge: "Nuoma tarp patvirtintų naudotojų",
     title: "Aiškesnė daiktų nuoma nuo paieškos iki grąžinimo.",
-    body: "Raskite daiktą iš privataus ar verslo nuomotojo. Svetainėje palyginkite pasiūlymus, o programėlėje peržiūrėkite galutinę sumą, pateikite rezervacijos užklausą ir užfiksuokite daikto perdavimą bei grąžinimą.",
+    body: "Išsinuomokite įrankius, techniką, automobilius ar laisvalaikio įrangą iš privačių ir verslo savininkų visoje Lietuvoje. Galutinė kaina, rezervacija ir perdavimas — programėlėje.",
     ownerPrompt: "Turite nenaudojamą daiktą?",
     ownerCta: "Įkelkite skelbimą programėlėje",
     phoneAlt: "Naudokis programėlėje rodomi daiktų nuomos pasiūlymai",
@@ -203,7 +203,7 @@ export const lt: Dict = {
     },
     eyebrow: "Kaip tai veikia",
     title: "Nuomokitės tai, ko reikia. Uždirbkite iš to, ką jau turite.",
-    lead: "„Naudokis“ sujungia nuomininkus su privačiais ir verslo nuomotojais bei suteikia įrankius sklandžiam nuomos procesui. Nuomos sutartį šalys sudaro tiesiogiai tarpusavyje. Pasirinkite savo vaidmenį ir sužinokite, kaip vyksta visas procesas.",
+    lead: "„Naudokis“ sujungia nuomininkus su privačiais ir verslo nuomotojais bei suteikia įrankius sklandžiam nuomos procesui. Nuomos sutartį šalys sudaro tiesiogiai tarpusavyje.",
     renter: {
       label: "Nuomininkas",
       lead: "Nuo paieškos iki grąžinimo – keturi aiškūs žingsniai, kad išsinuomotumėte daiktą dienai, savaitgaliui ar projektui.",
@@ -490,7 +490,7 @@ export const lt: Dict = {
   },
   homeSteps: {
     eyebrow: "Kaip tai veikia",
-    title: "Nuoma nuo pradžios iki pabaigos",
+    title: "Nuomos eiga",
     lead: "Keturi aiškūs etapai – nuo daikto paieškos ar skelbimo įkėlimo iki grąžinimo ir nuomos užbaigimo.",
     steps: [
       {
@@ -807,6 +807,7 @@ export const lt: Dict = {
     subCount: (n) => `${n} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupių")}`,
     moreCount: (n) =>
       `Dar ${n} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupių")}`,
+    showAll: "Rodyti pogrupius",
     showLess: "Rodyti mažiau",
     popularHeading: "Populiaru dabar",
     allListingsLabel: (title) => `Visi „${title}“ skelbimai`,
@@ -897,7 +898,7 @@ export const lt: Dict = {
     priceDone: "Atlikta",
     dateLabel: "Datos",
     dateAny: "Nuomos datos",
-    dateBand: (from, to) => (from === to ? from : `${from}–${to}`),
+    dateBand: (from, to) => (from === to ? from : `${from} – ${to}`),
     datePanelTitle: "Nuomos datos",
     datePrevMonth: "Ankstesnis mėnuo",
     dateNextMonth: "Kitas mėnuo",
@@ -1022,18 +1023,139 @@ export const lt: Dict = {
     allow: "Leisti „AppsFlyer“ matavimą",
     decline: "Tęsti be „AppsFlyer“ matavimo",
     close: "Uždaryti",
+    // DRAFT: reikia patvirtinimo. Pavadinimą „Privatumo nustatymai“ įvardija ir
+    // privatumo politikos 10.3 skyrius — keičiant reikia keisti ir jį.
+    manageNote:
+      "Pasirinkimą vėliau bet kada pakeisite poraštės skiltyje „Privatumo nustatymai“.",
   },
+  // DRAFT: analitikos sutikimo juostos tekstas — reikia patvirtinimo. Abu veiksmai
+  // privalo likti vienodo svorio.
+  //
+  // Formuluotės kalba apie SLAPUKUS, ne apie „Google Analytics“ apskritai: gtag
+  // įkeliamas bet kuriuo atveju, o riboti, slapukų nenaudojantys matavimo signalai
+  // teisėto intereso pagrindu veikia nepriklausomai nuo šio pasirinkimo (politikos
+  // 10.3 sk.). „Leisti „Google Analytics““ ir „Tęsti be analitikos“ tai iškreiptų.
+  consentBanner: {
+    title: "Analitikos slapukai",
+    body: "„Google Analytics“ slapukus įrašome tik jums sutikus. Be sutikimo lieka tik riboti, slapukų nenaudojantys matavimo signalai. Svetainė veikia vienodai bet kuriuo atveju.",
+    privacyLink: "Privatumo politika",
+    accept: "Leisti analitikos slapukus",
+    decline: "Tęsti be analitikos slapukų",
+  },
+  // DRAFT: visa skiltis (išskyrus „trigger“ ir „title“) — reikia patvirtinimo.
+  // Kiekvienas faktų eilutės teiginys remiasi paskelbta privatumo politika
+  // (docs/privacy-policy.lt.md) arba kodu, kuris tą faktą valdo (app/lib/consent.ts).
+  // Nieko neprasimanyti: kur politika termino nenurodo, rašome, kaip jis nustatomas.
   privacyChoices: {
     trigger: "Privatumo nustatymai",
-    title: "„AppsFlyer“ atribucija",
-    body: "Leiskite „AppsFlyer“ susieti programėlės diegimą su kampanija ar pakvietimu ir, kai toks matavimas įjungtas, su pasirinktais programėlės konversijų įvykiais.",
-    statusLabel: "Dabartinė būsena",
-    statusAllowed: "Leidžiama",
-    statusNotAllowed: "Neleidžiama",
-    allow: "Leisti diegimo atribuciją",
-    withdraw: "Atšaukti leidimą",
+    title: "Privatumo nustatymai",
     scopeNote:
-      "Tai svetainėje duotas „AppsFlyer“ atribucijos pasirinkimas. Kitą programėlės analitiką valdote atskirai jos nustatymuose.",
+      "Šie pasirinkimai galioja svetainėje, o pakeitimai įsigalioja iš karto — išsaugoti nereikia. Programėlės analitika valdoma atskirai, jos nustatymuose.",
+    on: "Įjungta",
+    off: "Išjungta",
+    detailsLabel: "Ką tai reiškia",
+    alwaysOn: "Visada įjungta",
+    essential: {
+      title: "Būtini slapukai",
+      meta: "Naudokis · būtina",
+      body: "Šie du slapukai įsimena, ką čia pasirinkote, kad nereikėtų klausti kaskart iš naujo.",
+      details: [
+        { label: "Slapukai", value: "nk_attr_consent ir nk_ga_consent." },
+        {
+          label: "Kas juose saugoma",
+          value:
+            "Politikos versija, jūsų pasirinkimas ir kada jį padarėte. Jokio identifikatoriaus.",
+        },
+        {
+          label: "Saugojimo trukmė",
+          value:
+            "180 dienų. Vėliau — arba pasikeitus šiai politikai — paklausiame dar kartą.",
+        },
+        {
+          label: "Teisinis pagrindas",
+          value:
+            "Griežtai būtina technologija: be jos negalėtume prisiminti jūsų pasirinkimo.",
+        },
+      ],
+    },
+    attribution: {
+      title: "Diegimo ir kampanijų matavimas",
+      meta: "„AppsFlyer“ · neprivaloma",
+      body: "Kai įjungta, diegimo nuoroda atidaroma per „AppsFlyer“, todėl programėlės diegimą galime susieti su kampanija ar pakvietimu.",
+      details: [
+        {
+          label: "Kas tvarko",
+          value:
+            "„AppsFlyer“. Duomenys gali būti tvarkomi ir už EEE ribų, taikant BDAR numatytas apsaugos priemones.",
+        },
+        {
+          label: "Kokie duomenys",
+          value:
+            "Diegimo identifikatorius; platforma, įrenginio ir ryšio techninė informacija, įskaitant IP adresą; diegimo, atidarymo, nukreipimo ir kampanijos duomenys; pasirinkti programėlės veiksmai; apie užbaigtą nuomą — pseudoniminis naudotojo identifikatorius, įvykio laikas, pajamos ir valiuta.",
+        },
+        {
+          label: "Ko negauna",
+          value:
+            "Jūsų vardo, el. pašto adreso, visų mokėjimo kortelės duomenų, rezervacijos numerio ar tikslaus daikto adreso.",
+        },
+        {
+          label: "Saugojimo trukmė",
+          value:
+            "Pagal sutikimo būseną ir sutartyse bei teikėjo nustatymuose sukonfigūruotus terminus.",
+        },
+        { label: "Teisinis pagrindas", value: "Jūsų sutikimas." },
+        {
+          label: "Jei išjungsite",
+          value:
+            "Diegimo nuorodos veda tiesiai į programėlių parduotuvę ir „AppsFlyer“ paspaudimo nemato. Anksčiau gautų duomenų tai savaime neištrina — dėl jų ištrynimo galite kreiptis į mus.",
+        },
+      ],
+    },
+    analytics: {
+      // Pavadinime sąmoningai „slapukai“, ne „analitika“: jungiklis valdo tik
+      // slapukais grindžiamą matavimą. Kartu dingsta ir tautologija
+      // („Google Analytics“ analitika).
+      title: "Analitikos slapukai",
+      meta: "„Google Analytics“ · neprivaloma",
+      body: "Kai įjungta, „Google Analytics“ įrašo „_ga“ slapukus ir atpažįsta grįžtančią naršyklę; kai išjungta, lieka tik riboti, slapukų nenaudojantys matavimo signalai.",
+      details: [
+        {
+          label: "Kas tvarko",
+          value:
+            "„Google Ireland Limited“ („Google Analytics 4“). Duomenys gali būti perduodami „Google LLC“ Jungtinėse Valstijose, taikant BDAR numatytas apsaugos priemones.",
+        },
+        {
+          label: "Kokie duomenys",
+          value:
+            "Puslapio adresas, nukreipęs puslapis, sąveikos ar konversijos įvykis ir techninė užklausos informacija, pavyzdžiui, IP adresas bei naršyklės tipas — apibendrintai svetainės lankomumo statistikai.",
+        },
+        {
+          label: "Slapukai",
+          value:
+            "Įjungus įrašomi pirmosios šalies „_ga“ ir „_ga_*“ slapukai — jie leidžia atpažinti grįžtančią naršyklę; išjungus jie iš naršyklės pašalinami.",
+        },
+        {
+          label: "Kam nenaudojame",
+          value:
+            "Reklamai, pakartotinei rinkodarai ar reklamos personalizavimui. Su reklama susiję sutikimo požymiai lieka visam laikui atmesti.",
+        },
+        {
+          label: "Be sutikimo",
+          value:
+            "„Google Analytics“ jūsų įrenginyje nieko nesaugo, bet ir toliau tvarko ribotus, slapukų nenaudojančius matavimo signalus. Tai grindžiame teisėtu interesu suprasti ir tobulinti šią svetainę; su tokiu tvarkymu galite nesutikti privatumo politikoje nurodytu būdu.",
+        },
+        {
+          label: "Saugojimo trukmė",
+          value:
+            "Įvykių duomenys — iki 14 mėnesių; „_ga“ slapukai — iki 2 metų, o išjungus pašalinami anksčiau.",
+        },
+        {
+          label: "Teisinis pagrindas",
+          value:
+            "Slapukais grindžiamam matavimui — jūsų sutikimas. Ribotam, slapukų nenaudojančiam matavimui — teisėtas interesas.",
+        },
+      ],
+    },
     privacyLink: "Privatumo politika",
     close: "Uždaryti",
   },
@@ -1150,7 +1272,7 @@ export const lt: Dict = {
   },
   cityPicker: {
     heading: "Pasirinkite miestą",
-    all: "Miestas",
+    all: "Visi miestai",
   },
   errors: {
     notFoundTitle: "Šio puslapio neradome",

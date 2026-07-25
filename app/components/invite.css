@@ -112,8 +112,12 @@
     border-radius: var(--nk-r-card);
   }
   .invite-actions {
-    flex-direction: row;
-    align-items: center;
+    /* stay a column, left-aligned: side-by-side the badge pair wrapped into a
+       ragged vertical stack beside the button — three competing affordances on
+       no shared axis. Button above, badges in one row beneath (mobile's axis). */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
   }
 }
 .invite-qr__hint {

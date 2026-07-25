@@ -59,14 +59,28 @@ export function SectionHead({
   action?: React.ReactNode;
   center?: boolean;
 }) {
+  // With an eyebrow to ride, the action ships INSIDE the head as the eyebrow's
+  // row-mate — at every width, so the link never drifts a title, a lede and a row
+  // of air away from the section it belongs to. Doing it in the markup rather than
+  // in a flex/grid override is what makes the phone case work: a wrapping flex row
+  // breaks a line before it shrinks an item, and a grid's tracks get inflated by
+  // the title spanning them, so both mechanisms drop the link to its own line
+  // before its label ever wraps. Without an eyebrow it keeps its own column.
+  const actionBox = action ? <div className="nk-head__action">{action}</div> : null;
+  const eyebrowLine = eyebrow ? <span className="nk-eyebrow">{eyebrow}</span> : null;
+  // The head owns the pair only when there IS a pair; either one alone stays where
+  // it was. Deciding it once here keeps the two slots below mutually exclusive.
+  const eyerow = eyebrowLine && actionBox ? (
+    <div className="nk-head__eyerow">{eyebrowLine}{actionBox}</div>
+  ) : null;
   return (
     <div className={"nk-section__top nk-reveal" + (center ? " nk-section__top--center" : "")}>
       <div className={"nk-head" + (center ? " nk-head--center" : "")}>
-        {eyebrow && <span className="nk-eyebrow">{eyebrow}</span>}
+        {eyerow ?? eyebrowLine}
         <h2>{title}</h2>
         {subtitle && <p className="nk-head__sub">{subtitle}</p>}
       </div>
-      {action && <div className="nk-head__action">{action}</div>}
+      {!eyerow && actionBox}
     </div>
   );
 }

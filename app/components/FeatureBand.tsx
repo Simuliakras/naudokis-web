@@ -36,19 +36,18 @@ function FeatureCard({
   className?: string;
 }) {
   return (
-    <div className={className ? `nk-feature ${className}` : "nk-feature"} style={{
-      flex: 1, borderRadius: "var(--nk-r-card)", background: "var(--nk-glass-strong)", backdropFilter: "var(--nk-blur)", WebkitBackdropFilter: "var(--nk-blur)", border: "1px solid var(--nk-border-strong)", boxShadow: "var(--nk-edge-top), var(--nk-shadow-1)",
-      padding: "var(--nk-block-pad)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--nk-stack-lg)", textAlign: "center",
-    }}>
-      <span style={{ width: "var(--nk-size-icon-lg)", height: "var(--nk-size-icon-lg)", borderRadius: "50%", background: "var(--nk-yellow-tint)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    // Skin and layout are entirely in globals.css (.nk-feature and friends). They
+    // must not come back inline: the band restacks itself per tier, and an inline
+    // declaration can only be overridden with `!important` on every rule that
+    // touches it — which is what made the two tiers fight over source order, and
+    // what silently disabled this card's own :hover background.
+    <div className={className ? `nk-feature ${className}` : "nk-feature"}>
+      <span className="nk-feature__icon">
         <Icon name={icon} size={44} color="var(--nk-yellow)" stroke={2} />
       </span>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-xs)" }}>
-        {/* reserve ~2 lines so a card whose title wraps to 3 lines doesn't push its
-            body below the neighbours' — flex-start keeps 1-line titles on the SAME
-            first baseline as 2-line neighbours (centred slots jogged up-down-up) */}
-        <h3 className="nk-h-card" style={{ margin: 0, minHeight: "2.3em", display: "flex", alignItems: "flex-start", justifyContent: "center" }}>{title}</h3>
-        <p className="nk-body" style={{ margin: 0 }}>{body}</p>
+      <div className="nk-feature__text">
+        <h3 className="nk-h-card">{title}</h3>
+        <p className="nk-body">{body}</p>
       </div>
     </div>
   );

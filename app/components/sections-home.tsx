@@ -141,19 +141,22 @@ export function Footer({ locale }: { locale: Locale }) {
           <div className="nk-footer__brand">
             <LogoMark locale={locale} />
             <p className="nk-footer__tagline">{t.tagline}</p>
+            {/* Social sits inside the contact block: the profiles are another way
+                to reach us, and keeping them in it means every tier stacks them
+                with the phone/email rows instead of placing them separately. */}
             <div className="nk-footer__contact">
               <a href={CONTACT_PHONE_TEL}><Icon name="Phone" size={17} stroke={2} color="currentColor" /> {CONTACT_PHONE}</a>
               <a href={"mailto:" + CONTACT_EMAIL}><Icon name="Mail" size={17} stroke={2} color="currentColor" /> {CONTACT_EMAIL}</a>
+              {/* <nav>: aria-label does nothing on a bare div (role=generic), and
+                  these ARE navigation links — matches the sibling footer columns. */}
+              <nav className="nk-footer__social" aria-label={t.socialLabel}>
+                {SOCIAL_PROFILES.map((profile) => (
+                  <a key={profile.id} href={profile.href} target="_blank" rel="noopener noreferrer" aria-label={profile.label}>
+                    <Icon name={profile.icon} size={20} color="currentColor" />
+                  </a>
+                ))}
+              </nav>
             </div>
-            {/* <nav>: aria-label does nothing on a bare div (role=generic), and
-                these ARE navigation links — matches the sibling footer columns. */}
-            <nav className="nk-footer__social" aria-label={t.socialLabel}>
-              {SOCIAL_PROFILES.map((profile) => (
-                <a key={profile.id} href={profile.href} target="_blank" rel="noopener noreferrer" aria-label={profile.label}>
-                  <Icon name={profile.icon} size={20} color="currentColor" />
-                </a>
-              ))}
-            </nav>
             <AppBadges footer={true} height={40} gap={12} />
           </div>
 

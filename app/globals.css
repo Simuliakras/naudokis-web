@@ -6,6 +6,19 @@
   --breakpoint-md: 48rem;
   --breakpoint-lg: 64rem;
   --breakpoint-nav: 70rem;
+  /* Component-scoped like --breakpoint-nav: the width below which the install CTA
+     sheds its full label ("Atsisiųsti programėlę" → "Programėlė"). Runs ahead of
+     --breakpoint-nav because the LT label crowds the link row well before the row
+     itself collapses. 1190px — equal to --breakpoint-hero by coincidence, not by
+     derivation; the two move independently. */
+  --breakpoint-navcta: 74.375rem;
+  /* Component-scoped like --breakpoint-nav: the width below which the consent bar
+     can reach the corner the floating chrome parks in, so below this the chrome has
+     to step over it and above it must not move at all. 852px — derived, not chosen:
+     the bar is min(100%, 45rem) centred, and .nk-backtotop is a 46px button inset
+     20px, so the two first touch at 720 + 2 × (20 + 46). Re-derive it if either
+     number changes. */
+  --breakpoint-cookiebar: 53.25rem;
   /* Component-scoped like --breakpoint-nav: the width below which the home hero
      drops its phone column and runs as a single copy column. 1190px. */
   --breakpoint-hero: 74.375rem;
@@ -118,6 +131,13 @@
   --nk-border-strong: rgba(255, 255, 255, 0.13); /* burger / control hover edge */
   --nk-border-faint: var(--nk-hairline); /* subtle hairline dividers  */
   --nk-divider: rgba(255, 255, 255, 0.06); /* listing-detail row dividers / rating track */
+  /* Consent-switch track boundary. The one hairline that must clear WCAG 1.4.11's
+     3:1 against --nk-surface in BOTH states: --nk-border-strong (white 13%, ~1.5:1)
+     does not, and a consent control whose off state has no perceivable boundary is
+     not a control. Held IDENTICAL on and off on purpose — state is carried by the
+     fill and the knob, never by making one state look "outlined / disabled", which
+     would break the equal-prominence requirement. ~3.8:1 on --nk-surface. */
+  --nk-switch-edge: rgba(255, 255, 255, 0.42);
 
   /* ---- Light theme (marketing wireframe / app-light surfaces) ----------- */
   --nk-light-bg: #ffffff;
@@ -157,6 +177,7 @@
   --nk-r-pill-lg: 22px; /* hero search bar                                 */
   --nk-r-faq: 18px; /* FAQ accordion row                               */
   --nk-r-icon: 22px; /* round icon button (44px circle)                 */
+  --nk-r-modal: 24px; /* dialogs, bottom sheets, the cookie bar's top corners */
 
   /* ---- Fixed element sizes ----------------------------------------------- */
   --nk-tap: 44px; /* minimum interactive target (WCAG 2.5.8)              */
@@ -165,6 +186,19 @@
   --nk-nav-veil-scrolled: rgba(20, 22, 23, 0.74); /* scrolled nav — content must not wash out the labels */
   --nk-nav-h: 76px; /* nav bar at rest — sticky offsets derive from this    */
   --nk-nav-h-scrolled: 68px; /* condensed nav after scroll                           */
+  /* The listing detail's fixed reserve bar, as much viewport as it occupies —
+     safe-area padding included. catalogue.css owns the bar itself; this is here
+     because the layers that have to clear it (.nk-backtotop, .nk-cookiebar) live
+     in this file. Its spacer and every clearance derive from it, so the three
+     can no longer drift apart. */
+  --nk-mbar-h: calc(72px + var(--nk-safe-bottom));
+  /* How much bottom-fixed BAR is currently on screen ABOVE the safe inset. Floating
+     chrome (.nk-backtotop, .nk-lg-fab-toc) adds this to its own resting offset, so
+     one token composes every combination — reserve bar, consent bar, or both stacked
+     — instead of a rule per pair. Each bar sets it where it is defined; the "above
+     the safe inset" part is why every setter subtracts --nk-safe-bottom once: the
+     chrome's resting offset already carries it. */
+  --nk-bars-h: 0px;
   --nk-size-icon-sm: 44px; /* small icon/avatar container                          */
   --nk-size-icon-md: 60px; /* testimonial avatars, medium icon tiles               */
   --nk-size-icon-lg: 88px; /* feature-card icon tiles                              */
@@ -195,6 +229,18 @@
   --nk-glow-purple: rgba(94, 92, 230, 0.32); /* ambient CTA radials — brand purple */
   --nk-shadow-phone-hero: drop-shadow(10px 15px 42px rgba(22, 22, 22, 0.5)); /* hero phone img */
   --nk-shadow-phone-cta: drop-shadow(0 26px 50px rgba(0, 0, 0, 0.5)); /* CTA phone img  */
+  /* Lit gradient hairline — catches light at the crown, warms to a hint of brand
+     purple at the foot. Same recipe as .nk-gborder / .nk-redirect-panel::before, but
+     held as a VALUE so it can ride a background-clip:border-box layer instead of an
+     absolutely-positioned ::before. That matters on any panel that SCROLLS: an
+     inset:0 pseudo drifts away with the content (which is why
+     .nk-redirect-panel::before is switched off in the mobile sheet block). */
+  --nk-lit-edge: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.02) 42%,
+    color-mix(in srgb, var(--nk-purple) 34%, transparent)
+  );
 
   /* ---- Motion ------------------------------------------------------------ */
   --nk-ease: cubic-bezier(0.2, 0.7, 0.2, 1); /* house standard curve      */
@@ -259,6 +305,11 @@
   --nk-offer-owner-h: 24px; /* owner-row height (= avatar diameter). OfferCard AND
                                                      OfferCardSkeleton both read this — it is the CLS contract.
                                                      The compact card skin retargets it to 20px. */
+  --nk-offer-loc-h: 18px; /* the place line's own height once it drops to a second row
+                                                     on ≤280px cards (see the place tier in the compact skin);
+                                                     the skeleton adds it to the reservation above, and the
+                                                     202px tier retargets it to 16px. */
+  --nk-offer-loc-gap: 2px; /* name row → place row: one meta block, not two stacks */
   --nk-cat-min: 220px; /* category tiles stay readable before adding a column */
   --nk-safe-bottom: max(env(safe-area-inset-bottom), 0px);
   --nk-safe-left: max(env(safe-area-inset-left), 0px); /* landscape notches */
@@ -602,7 +653,9 @@ select {
   max-width: 100%;
   text-align: center;
   text-decoration: none;
-  overflow-wrap: anywhere;
+  /* break-word, not anywhere: labels must wrap at word boundaries (WCAG 1.4.12
+     text-spacing split "rezervacijos" mid-word); long-token overflow still breaks */
+  overflow-wrap: break-word;
   transition:
     transform var(--nk-dur-fast) var(--nk-ease-spring),
     background 0.18s ease,
@@ -753,6 +806,25 @@ select {
   align-items: inherit;
   min-width: 0;
 }
+/* The eyebrow's own line, shared with the section's "view all" action (SectionHead
+   emits it only when both exist). The eyebrow holds its single line and the action
+   takes what is left — where the pair outgrows a phone ("Kaip tai veikia" +
+   "Peržiūrėti visą procesą" at 390px) the LABEL wraps, right-aligned, rather than
+   the section's first words breaking in two. */
+.nk-head__eyerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nk-gap-xl);
+  min-width: 0;
+}
+.nk-head__eyerow .nk-eyebrow {
+  flex: 0 0 auto;
+}
+.nk-head__eyerow .nk-head__action {
+  flex: 0 1 auto;
+  min-width: 0;
+}
 .nk-head__action {
   flex: none;
 }
@@ -778,13 +850,10 @@ select {
 .nk-section {
   padding-block: var(--nk-section-y);
 }
-/* flex-start, not center: the view-all action rides the EYEBROW's line instead of
-   floating against the middle of the eyebrow+title+lede block (which put it beside
-   the title on short heads and beside the lede on tall ones). .nk-head is a flex
-   column whose first item is the eyebrow, so its line box owns the top
-   --nk-eyebrow-lh of the row — giving the action that exact height centres the two
-   on one axis. Baseline alignment would only match their text baselines, which
-   still reads as off-centre because the action's type is a few px larger. */
+/* flex-start, not center: an action WITHOUT an eyebrow to ride still gets its own
+   column here, and it belongs at the top of the block rather than floating against
+   the middle of the title+lede stack. (With an eyebrow it ships inside .nk-head as
+   the eyerow's second item — see .nk-head__eyerow above.) */
 .nk-section__top {
   display: flex;
   justify-content: space-between;
@@ -792,8 +861,10 @@ select {
   gap: var(--nk-gap-xl);
   margin-bottom: var(--nk-section-head);
 }
-/* Scoped with :has — on an eyebrow-less head the top of the row is the h2's line
-   box, and pinning the action to a 21px slot there would read as mis-set. */
+/* Hold the action's box to the eyebrow's line box: its arrow glyph is taller than
+   the 21px the eyebrow sets, and letting that decide the row's height would cost
+   the title its 4px hug. Overflow is symmetrical, so the two still read centred.
+   Only where an eyebrow exists — an eyebrow-less action sets its own height. */
 .nk-section__top:has(.nk-eyebrow) .nk-head__action {
   display: flex;
   align-items: center;
@@ -1086,7 +1157,9 @@ select {
          to auto, so these are block-axis scroll containers — view() on their CHILDREN
          resolves to the rail, not the page, which is a dead timeline (the child never
          travels through the rail's scrollport). Reveal the rail as one unit instead. */
-      @container nk-category-shelf (width < 55rem) {
+      /* threshold must match the rail block below — a desync would give railed
+         children a dead view() timeline (or reveal a grid as one slab) */
+      @container nk-category-shelf (width < 60rem) {
         .nk-cats-shelf.nk-reveal-grid > * {
           animation: none;
         }
@@ -1320,6 +1393,31 @@ input:focus-visible,
   max-width: 100%;
   height: auto;
 }
+/* Phone tiers cap the badge art. The official assets are tuned for the desktop
+   hero (52px → 57px rendered), and by the time the row is a phone's the pair reads
+   oversized against the panel holding it — at 540 it eats the hero's full width,
+   and a tier lower it wraps into two stacked badges. A CAP is what shrinks them,
+   not a height: every call site passes its own inline (hero 52, invite 50, handoff
+   46, HIW/modal 44, footer 40), which no media query can reach, so StoreBadge
+   paints min(its height, this cap) — the prop stays the ceiling.
+
+   40px is the number that buys the pair one row: the two badges together measure
+   6.36× their height plus the gap, so anything taller wraps before 375px — and a
+   wrapped pair costs the hero an extra band of height exactly where it is dearest.
+   It is also the App Store badge's own documented floor. */
+@media (width < theme(--breakpoint-sm)) {
+  .nk-appbadges {
+    --nk-badge-cap: 40px;
+  }
+}
+/* Below xs the gap has to give too — at 320 the capped pair alone is 229px of a
+   248px row, and 20px of gutter between them is what tips it into wrapping. */
+@media (width < theme(--breakpoint-xs)) {
+  .nk-appbadges {
+    --nk-badge-cap: 36px;
+    --nk-badge-gap: 12px;
+  }
+}
 .nk-redirect-storestext a {
   display: inline-flex;
   align-items: center;
@@ -1376,12 +1474,20 @@ input:focus-visible,
   flex: none;
 }
 /* nowrap keeps multi-word links ("How it works" / "Kaip tai veikia") on one line;
-   the gap tightens below ~1364px so the full nav still fits beside the search pill.
-   margin-left:auto hugs the desktop link group to the right edge. */
+   margin-left:auto hugs the desktop link group to the right edge.
+   ONE gap for the whole expanded range — the row must not re-space itself while it
+   is on screen, so this is a flat token, not a vw clamp with a tight-band override.
+   It used to be both: clamp(18px, 3vw, 52px) plus a 16px override from nav to xl,
+   because at 1121px the 3vw gap pushed the LT row past its flex box and the locale
+   trigger bled 11px into the CTA. That override was paying for the FULL install
+   label still being on the bar at 1120px; it now sheds at navcta (~68px back), so
+   the row clears at one flat gap. Ceiling, measured at the tightest case (LT, 1120px,
+   the narrowest width that still shows this row): ~46px before the flex floor
+   squeezes it again — 40px leaves ~47px between the logo and the row. */
 .nk-nav-links {
   display: flex;
   align-items: center;
-  gap: clamp(18px, 3vw, 52px);
+  gap: var(--nk-s-10);
   white-space: nowrap;
   min-width: 0;
   margin-left: auto;
@@ -1398,6 +1504,19 @@ input:focus-visible,
 }
 .nk-nav-cta__short {
   display: none;
+}
+/* The label sheds 70px BEFORE the row collapses, not with it: between navcta and
+   nav the full link group, the locale trigger and the long LT label are all still
+   on the bar together, which is the tightest the row ever gets (see the gap:16px
+   note above — that band already had an 11px overlap once). Shed the word first,
+   collapse the row after. Phones drop even the short label further down. */
+@media (width < theme(--breakpoint-navcta)) {
+  .nk-nav-cta__full {
+    display: none;
+  }
+  .nk-nav-cta__short {
+    display: inline;
+  }
 }
 .nk-nav-burger {
   display: none;
@@ -1449,12 +1568,6 @@ input:focus-visible,
     padding: 9px 14px;
     font-size: 14px;
   }
-  .nk-nav-cta__full {
-    display: none;
-  }
-  .nk-nav-cta__short {
-    display: inline;
-  }
   .nk-nav-scrim.open {
     opacity: 1;
     pointer-events: auto;
@@ -1470,7 +1583,10 @@ input:focus-visible,
     border-top: 1px solid transparent;
   }
   .nk-nav-drawer.open {
-    max-height: min(calc(100dvh - var(--nk-nav-h-scrolled)), 480px);
+    /* subtract the at-rest bar height: the drawer opens under the full-height bar,
+       and deriving from the condensed height pushed its last row (locale) past the
+       viewport bottom on landscape phones (844×390) */
+    max-height: min(calc(100dvh - var(--nk-nav-h)), 480px);
     opacity: 1;
     border-top-color: var(--nk-hairline);
   }
@@ -1482,6 +1598,10 @@ input:focus-visible,
     display: flex;
     flex-direction: column;
     gap: 4px;
+    /* tablets: the phone anatomy stretched to a ~1100px-wide CTA at 768–1119 —
+       cap the column and center it under the bar */
+    width: min(100%, 40rem);
+    margin-inline: auto;
   }
   .nk-drawer-item {
     display: flex;
@@ -1642,7 +1762,9 @@ footer .nk-link:hover {
   background: var(--nk-purple-soft);
   color: var(--nk-purple-deep);
 }
-@media (width < theme(--breakpoint-sm)) {
+/* < md, matching the stacked search form (the trigger sits mid-hero there, so
+   an upward panel would slide under the sticky nav exactly as it did on phones) */
+@media (width < theme(--breakpoint-md)) {
   .nk-citypick--hero .nk-citypick__panel {
     bottom: auto;
     top: calc(100% + 8px);
@@ -1787,6 +1909,71 @@ footer .nk-link:hover {
   background: var(--nk-text);
 }
 
+/* ---- consent switch (role="switch"; see <Switch/> in components/ui.tsx) ----
+   Reuses the .nk-switch GEOMETRY above but never .nk-toggle's active skin:
+   .nk-toggle.is-active repaints the whole pill --nk-accent-bg, which reads as
+   "selected filter" — on a consent row that would make the granted choice look like
+   the correct one, and equal prominence is the legal requirement there.
+
+   State is read off aria-checked rather than a duplicate class, so the paint and the
+   announcement cannot disagree (same idiom as .nk-pillctl[aria-expanded="true"]).
+   The base .nk-switch / .nk-switch__knob rules are deliberately NOT edited: the feed's
+   delivery Toggle reads them, and resizing them there would be a live regression. */
+.nk-cswitch {
+  flex: none;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nk-gap-xs);
+  min-height: var(--nk-tap); /* the visible track is 28px tall; the TARGET is 44 */
+  padding: 8px 0 8px 10px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+/* Identical type in both states — same size, weight and colour, only the string
+   changes. This is the typographic half of the equal-prominence rule. */
+.nk-cswitch__state {
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--nk-text-2);
+  white-space: nowrap;
+}
+.nk-switch--lg {
+  width: 46px;
+  height: 28px;
+  /* Boundary present in BOTH states: --nk-purple (~2.5:1) and --nk-border-strong
+     (~1.5:1) each fall short of 3:1 against --nk-surface on their own, and an edge
+     that appeared in only one state would make that state read as the unchosen one. */
+  box-shadow: inset 0 0 0 1px var(--nk-switch-edge);
+  transition:
+    background 0.2s ease,
+    transform var(--nk-dur-fast) var(--nk-ease-spring);
+}
+.nk-switch--lg .nk-switch__knob {
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+}
+.nk-cswitch[aria-checked="true"] .nk-switch--lg {
+  background: var(--nk-purple);
+}
+.nk-cswitch[aria-checked="true"] .nk-switch--lg .nk-switch__knob {
+  transform: translateX(18px); /* 46 - 3 - 3 - 22 */
+  background: var(--nk-text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nk-cswitch:hover .nk-switch--lg {
+    box-shadow: inset 0 0 0 1px var(--nk-text-muted);
+  }
+}
+.nk-cswitch:active .nk-switch--lg {
+  transform: scale(0.96);
+}
+
 /* stretched link — covers a card so the whole surface navigates while inner
    controls (favorite) stay clickable via a higher z-index */
 .nk-stretch {
@@ -1906,6 +2093,57 @@ footer .nk-link:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* The trail's last crumb — the current page, a pill rather than a link. The clamp
+   is load-bearing: with a pathological listing title this became a 2-line band that
+   simply repeated the H1 sitting right under it. */
+.nk-crumb-current {
+  padding: 6px 10px;
+  border-radius: 9px;
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--nk-text);
+  background: var(--nk-surface);
+  max-width: min(48ch, 100%);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Breadcrumb middle-collapse: at the xs floor a 4-level trail stacked one crumb
+   per line before the H1. Middles hide; the home segment shows an "…" stand-in. */
+.nk-crumbs__ell {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  color: var(--nk-text-muted);
+  font-size: 15px;
+}
+@media (width < theme(--breakpoint-xs)) {
+  /* keep the LAST middle crumb (the category — the only local context the trail
+     adds); collapse the generic tiers before it */
+  .nk-crumbs__seg--mid:not(:nth-last-child(2)) {
+    display: none !important;
+  }
+  .nk-crumbs__ell {
+    display: inline-flex;
+  }
+}
+
+/* Card eyebrow drops the "…" — an ellipsis inside letterspaced caps read scrappy
+   ("ELEKTRONIKA IR TE…"). The empty STRING, not `clip` and not a mask: like any
+   text-overflow value it engages only when the text actually overflows, so a label
+   that fits is painted whole, and it still cuts at a character boundary rather than
+   through a glyph. Engines without string support fall back to the `ellipsis` in the
+   base rule above, which is where this started. Modal eyebrow keeps the ellipsis.
+
+   NOT a mask-image fade (what this replaced): a mask is anchored to the BOX, so it
+   faded the last 16px whether or not anything was clipped — a fitting label whose
+   final letters landed in that band rendered half-transparent, reading as truncated
+   when it was complete. Any "fade the tail" idea here has the same defect; CSS
+   cannot ask whether this particular string overflowed. */
+.nk-offer__eyebrow {
+  text-overflow: "";
+}
 
 /* accent gradient ring on hover — extends the hero/CTA gborder technique to
    cards (offers fall back to brand purple; tiles use their category accent) */
@@ -2020,6 +2258,13 @@ footer .nk-link:hover {
 .nk-offer__badge svg {
   flex: none;
 }
+/* the text is a flex item, so the badge's own text-overflow can't ellipsize it */
+.nk-offer__badgelabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* ---- "Struktūruota" card anatomy (2026-07 design handoff) ----
    Additive to the .nk-offer shell above: the media's bottom edge carries a chip at each
@@ -2092,12 +2337,20 @@ footer .nk-link:hover {
    can reserve exactly this row. Only the place ellipsizes — the name holds its
    width (capped so a pathological name can't push the place out entirely) and the
    dot never shrinks. */
-.nk-offer__owner {
+/* The real row and the skeleton's stand-in share ONE declaration block: their
+   geometry being identical is the CLS contract, and it used to be kept true by
+   OfferCardSkeleton repeating the four values inline — where nothing could hold
+   the two in step and every responsive tier had to !important its way past the
+   copy. Written together, they cannot drift. */
+.nk-offer__owner,
+.nk-offer-skel__meta {
   display: flex;
   align-items: center;
   gap: var(--nk-gap-xs);
-  min-width: 0;
   height: var(--nk-offer-owner-h);
+}
+.nk-offer__owner {
+  min-width: 0;
 }
 .nk-offer__ownername {
   flex: none;
@@ -2220,21 +2473,60 @@ footer .nk-link:hover {
 }
 /* compact 2-up tiles on phones (the whole tile is the tap target); the v2 inner
    anatomy compacts itself in the Categories v2 layer at EOF */
-@media (width < theme(--breakpoint-sm)) {
-  /* SectionHead stacks head → "view all" action on phones so the trailing
-     "Visos kategorijos →" arrow can't clip/overflow at the 320px floor */
+@media (width < theme(--breakpoint-md)) {
+  /* An action with no eyebrow to ride stacks under the block below md: at 560–640
+     the side-by-side row confined the h2 to ~55% width, wrapping it into three
+     ragged lines beside an empty action column. The eyerow pair is unaffected —
+     it is one .nk-head child, not a second column. */
   .nk-section__top {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--nk-gap-md);
+  }
+  /* …but the head itself still has to span the column: align-items above is the
+     cross axis once the row stacks, so a fit-content .nk-head leaves the eyerow no
+     free space to distribute and its space-between parks the "view all" link right
+     against the eyebrow instead of the far edge. Stretch the head only — the
+     eyebrow-less action keeps its shrink-to-fit box. */
+  .nk-section__top > .nk-head {
+    align-self: stretch;
   }
   .nk-head__action {
     min-height: var(--nk-tap);
     display: inline-flex;
     align-items: center;
   }
+  /* Inside the eyerow that reserve is off again: a 44px box would push the title
+     off its 4px hug. The height has to be free here too — this is the tier where
+     the label itself may wrap, and the pinned line box above would let those extra
+     lines spill over the title. Needs the .nk-section__top prefix to outrank that
+     pin (both are three classes; source order decides). */
+  .nk-section__top .nk-head__eyerow .nk-head__action {
+    min-height: 0;
+    height: auto;
+  }
+  /* max-inline-size, not just the parent's min-width:0 — the link is an inline-flex
+     box, so without a cap it keeps its max-content width and simply overflows the
+     column it was shrunk into */
+  .nk-head__eyerow .nk-cats-all {
+    max-inline-size: 100%;
+    min-width: 0;
+    white-space: normal;
+    text-align: end;
+  }
+  /* the 24px glyph is what makes the link taller than the 21px line box it rides;
+     20px keeps the pair on one row (and buys the label 4px of width) */
+  .nk-head__eyerow .nk-cats-all svg {
+    inline-size: 20px;
+    block-size: 20px;
+  }
+}
+@media (width < theme(--breakpoint-sm)) {
   .nk-cats-all {
     font-size: 17px;
+    /* tighter than the 10px pair gap above sm — every px here is width the label
+       doesn't have to wrap over */
+    gap: 8px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2254,9 +2546,30 @@ footer .nk-link:hover {
   border-radius: var(--nk-r-card);
 }
 
-/* ---- feature card hover ---- */
+/* ---- feature card ----
+   Skin AND layout live here, not in FeatureCard's style="". Inline, every tier that
+   restacks this card needed `!important` on each declaration, which in turn forced
+   the phone tier to be `!important` too — and once two same-specificity !important
+   blocks disagree, source order is the only tiebreak, so the file carried a comment
+   warning that moving one of them silently broke the layout. Thirteen `!important`s
+   and that landmine went with this move; the tiers below are now mutually exclusive
+   instead of overriding one another.
+   It also un-broke `:hover` — `background` was an inline declaration, so the hover
+   rule below had never once applied. */
 .nk-feature {
-  box-shadow: var(--nk-edge-top);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nk-stack-lg);
+  padding: var(--nk-block-pad);
+  text-align: center;
+  background: var(--nk-glass-strong);
+  -webkit-backdrop-filter: var(--nk-blur);
+  backdrop-filter: var(--nk-blur);
+  border: 1px solid var(--nk-border-strong);
+  border-radius: var(--nk-r-card);
+  box-shadow: var(--nk-edge-top), var(--nk-shadow-1);
   transition:
     transform 0.28s ease,
     background 0.28s ease;
@@ -2269,12 +2582,38 @@ footer .nk-link:hover {
     transform: translateY(-4px);
   }
 }
+.nk-feature__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--nk-size-icon-lg);
+  height: var(--nk-size-icon-lg);
+  border-radius: 50%;
+  background: var(--nk-yellow-tint);
+}
+.nk-feature__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nk-gap-xs);
+}
+/* Reserve ~2 lines so a card whose title wraps to 3 doesn't push its body below the
+   neighbours' — flex-start keeps 1-line titles on the SAME first baseline as 2-line
+   neighbours (centred slots jogged up-down-up). Dropped once the cards stack; see
+   the container tier below. */
+.nk-feature .nk-h-card {
+  margin: 0;
+  min-height: 2.3em;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
 /* Centred copy needs a shorter measure than ranged-left copy — without a cap the
    stacked tier runs the body the full ~860px card width while the title sits short
    and centred, so the two read as different blocks. A no-op at 3-up, where the
    column is already narrower than the cap. */
 .nk-feature .nk-body {
   max-width: 48ch;
+  margin-block: 0;
   margin-inline: auto;
 }
 
@@ -2301,8 +2640,25 @@ footer .nk-link:hover {
   opacity: 0.8;
 }
 
-/* ---- search bar focus ---- */
+/* ---- hero search pill ----
+   The whole skin lives here, not in <SearchBar>'s style="". It used to be inline,
+   and every rule that had to change it — the focus ring below, the stacked <md
+   variant, the hero's own tier overrides — needed `!important` purely to outrank
+   an inline declaration. That is a trap on this element in particular: the PILL is
+   the focus indicator (.nk-search__input sets outline: 0), so one dropped
+   declaration means no visible focus anywhere (WCAG 2.4.7). Nine `!important`s
+   went with this move. */
 .nk-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 662px;
+  padding: 8px 8px 8px 24px;
+  background: var(--nk-light-field);
+  border: 1px solid var(--nk-light-line);
+  border-radius: 34px;
+  box-shadow: var(--nk-shadow-2);
   transition:
     box-shadow 0.2s ease,
     border-color 0.2s ease;
@@ -2311,10 +2667,18 @@ footer .nk-link:hover {
   border-color: var(--nk-purple);
   box-shadow: 0 6px 24px rgba(102, 101, 224, 0.28);
 }
+/* The query segment: icon + labelled column, as one flex row. */
+.nk-search__field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
 /* labeled field columns — micro-label shows only on mobile (see @media below) */
 .nk-search__col {
   display: flex;
   flex-direction: column;
+  flex: 1;
   min-width: 0;
 }
 .nk-search__label {
@@ -2332,12 +2696,23 @@ footer .nk-link:hover {
   min-height: var(--nk-tap);
   text-overflow: ellipsis;
 }
+/* Segment separator: a short vertical rule here, repurposed as a full-width
+   hairline by the stacked variant (< md). Skin lives in CSS, not inline, so both
+   states can set their own colour — flex: none keeps the 1px from being shrunk. */
+.nk-search__sep {
+  width: 1px;
+  height: 36px;
+  flex: none;
+  background: var(--nk-light-line);
+}
 /* --nk-text-slate exists precisely for this (7.2:1 on --nk-light-field); without
    it Chrome's UA darkgray placeholder computes to ~2.2:1 — and above 560px the
    placeholder is the field's ONLY visible hint (the micro-label is hidden) */
 .nk-search__input::placeholder {
   color: var(--nk-text-slate);
   opacity: 1;
+  /* at the 320px floor the hint outruns the field — fade, don't chop mid-word */
+  text-overflow: ellipsis;
 }
 
 /* ---- FAQ hover + keyboard focus ---- */
@@ -2373,6 +2748,7 @@ footer .nk-link:hover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-height: 24px; /* WCAG 2.5.8 floor — the bare line box was 17px */
   font-family: var(--nk-font-display);
   font-size: 16px;
   font-weight: 600;
@@ -2432,6 +2808,17 @@ footer .nk-link:hover {
   align-items: center;
   justify-content: center;
   padding: var(--nk-status-pad, 120px) 0;
+}
+/* Landscape phones: at the desktop padding the 404's heading and CTAs all sat
+   below the first fold — only the illustration's top arc was visible. */
+@media (height < 32.5rem) {
+  .nk-statusmain {
+    padding: 32px 0;
+  }
+  .nk-statusmain .nk-empty__ill {
+    width: 120px;
+    height: 120px;
+  }
 }
 .nk-empty {
   display: flex;
@@ -2625,7 +3012,10 @@ footer .nk-link:hover {
   flex-direction: column;
   gap: var(--nk-gap-sm);
 }
-.nk-footer__contact a {
+/* `> a`, not a descendant: the social nav lives inside this block, and its 44px
+   icon buttons must not pick up the phone/email row's type, gap or quieter icon
+   colour. Every rule here is written for the two contact rows only. */
+.nk-footer__contact > a {
   display: inline-flex;
   align-items: center;
   gap: 11px;
@@ -2637,16 +3027,16 @@ footer .nk-link:hover {
   transition: color 0.15s ease;
   width: fit-content;
 }
-.nk-footer__contact a svg {
+.nk-footer__contact > a svg {
   color: var(--nk-text-muted);
 } /* icon sits a shade quieter than the label */
-.nk-footer__contact a:hover,
-.nk-footer__contact a:active {
+.nk-footer__contact > a:hover,
+.nk-footer__contact > a:active {
   color: var(--nk-purple-hover);
 }
-.nk-footer__contact a:hover svg,
-.nk-footer__contact a:focus-visible svg,
-.nk-footer__contact a:active svg {
+.nk-footer__contact > a:hover svg,
+.nk-footer__contact > a:focus-visible svg,
+.nk-footer__contact > a:active svg {
   color: var(--nk-purple-hover);
 }
 .nk-footer__social {
@@ -2871,7 +3261,11 @@ footer .nk-link:hover {
 }
 
 @container nk-footer (width < theme(--breakpoint-xs)) {
+  /* grid, not wrap: flex broke the four marks 3+1, orphaning the last badge */
   .nk-footer__pay {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, auto));
+    justify-content: start;
     gap: var(--nk-gap-md) 12px;
   }
 }
@@ -2922,7 +3316,12 @@ footer .nk-link:hover {
   max-width: 32rem;
   max-inline-size: 32rem;
   padding: 0;
-  margin-block-end: 22px;
+  /* The store badges end the identity block and the disclosure list starts right
+     under them, with no divider above the first row (see --categories below), so
+     this margin is the only thing marking the seam. At 22px it barely cleared the
+     14px rhythm BETWEEN the brand block's own rows and read as one more of them.
+     Wider tiers override it — they have a grid row gap doing the same job. */
+  margin-block-end: 36px;
 }
 .nk-footer .nk-footer__brand > .nk-logo {
   align-self: flex-start;
@@ -2937,7 +3336,7 @@ footer .nk-link:hover {
 .nk-footer .nk-footer__contact {
   gap: 2px;
 }
-.nk-footer .nk-footer__contact a {
+.nk-footer .nk-footer__contact > a {
   min-block-size: 36px;
   padding-block: 4px;
   font-size: 16px;
@@ -2945,6 +3344,11 @@ footer .nk-link:hover {
 }
 .nk-footer .nk-footer__social {
   gap: 8px;
+}
+/* the block's own rows sit 2px apart; the social row is a separate cluster
+   inside it and keeps the brand column's 12px separation */
+.nk-footer .nk-footer__contact .nk-footer__social {
+  margin-block-start: 12px;
 }
 .nk-footer .nk-footer__social a,
 .nk-footer .nk-footer__social span {
@@ -2966,11 +3370,14 @@ footer .nk-link:hover {
   padding: 0;
   border-block-start: 1px solid var(--nk-border-soft);
 }
+/* first sitemap column: the rules above it (badges) already end the brand block,
+   so its divider would only double that break */
 .nk-footer .nk-footer__top > .nk-footer__col--categories {
   display: flex;
   grid-template-columns: none;
   align-content: normal;
   padding-block-start: 0;
+  border-block-start: 0;
 }
 .nk-footer .nk-footer__col h2 {
   margin: 0;
@@ -2987,11 +3394,14 @@ footer .nk-link:hover {
 .nk-footer .nk-footer__heading-static {
   display: inline;
 }
+/* One `display` only: this rule used to declare `none` and then `flex`, so the
+   no-JS contract above never actually held — with scripting off you got the static
+   heading AND a button, i.e. the group name twice. The enhancement layer below
+   re-declares `flex`, so every scripted path is unchanged. */
 .nk-footer .nk-footer__disclosure {
   display: none;
   inline-size: 100%;
   min-block-size: 52px;
-  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--nk-gap-md);
@@ -3013,7 +3423,11 @@ footer .nk-link:hover {
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: transform var(--nk-dur-fast) var(--nk-ease);
+  /* --nk-dur-med, not the --nk-dur-fast the other chevrons use: this one is paired
+     with a panel that now travels, and at 0.15s the arrow landed while the links
+     were still arriving. Same duration and curve as the row, so they read as one
+     gesture. */
+  transition: transform var(--nk-dur-med) var(--nk-ease);
 }
 .nk-footer .nk-footer__disclosure[aria-expanded="true"] svg {
   transform: rotate(180deg);
@@ -3021,7 +3435,18 @@ footer .nk-link:hover {
 .nk-footer .nk-footer__col-content {
   display: block;
   min-inline-size: 0;
-  padding: 4px 4px 16px;
+}
+/* The panel's padding lives on the clip's CHILD, not on the clip and not on the
+   grid container — the same place .htw-step__text puts it. On the container it
+   would sit outside the animated track, so a collapsed panel bottoms out at 20px
+   instead of 0; on the clip it is worse than useless, because overflow clips at the
+   PADDING box and a zero-height track would still paint a strip of links.
+   5px rather than the 4px this used to be: the focus ring is 2px at a 3px offset
+   (see the a/button rule near the top of the file), so anything less is shaved off
+   by the clip. These two are the only children the three footer groups render. */
+.nk-footer .nk-footer__col-clip > .nk-footer__catgrid,
+.nk-footer .nk-footer__col-clip > .nk-footer__linklist {
+  padding: 5px 5px 16px;
 }
 /* Enhancement layer: only where a script can actually work the button. */
 @media (scripting: enabled) {
@@ -3031,11 +3456,40 @@ footer .nk-link:hover {
   .nk-footer .nk-footer__disclosure {
     display: flex;
   }
+  /* Open/close travels on a 0fr→1fr grid row, like .htw-step__reveal and the FAQ
+     panel: the row resolves to the content's own height, so a long category list
+     never clips and nothing has to be measured in JS.
+     `visibility`, NOT `display: none` + allow-discrete, holds the panel rendered
+     while it shrinks. This tier is a CONTAINER query, and a phone rotated to
+     landscape crosses it — a held `display` would leave the sitemap sitting fully
+     open for the whole duration after every rotation back to portrait, then blink
+     it shut. Here `display` flips instantly, the row is already 0fr on both sides
+     of the crossing, and the clip hides the content visibility is still holding.
+     It also keeps the links out of the tab order and the a11y tree exactly as
+     `display: none` did, and needs neither @starting-style nor allow-discrete. */
   .nk-footer .nk-footer__col-content {
-    display: none;
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition:
+      grid-template-rows var(--nk-dur-med) var(--nk-ease),
+      visibility var(--nk-dur-med);
   }
   .nk-footer .nk-footer__col-content[data-expanded="true"] {
-    display: block;
+    grid-template-rows: 1fr;
+    visibility: visible;
+  }
+  /* clip, not hidden: `hidden` would make this a scroll container, and every footer
+     link carries a ~70px scroll-margin — tabbing into a panel mid-animation would
+     scroll the clip instead of just painting the link.
+     min-block-size is load-bearing BECAUSE of that choice: grid waives the automatic
+     minimum size only for scroll containers, so a clip-but-not-scroll item keeps its
+     content-based floor and the row never reaches 0fr. min-inline-size is the same
+     guard on the other axis, for the two-column catgrid at the 61rem tier. */
+  .nk-footer .nk-footer__col-clip {
+    overflow: clip;
+    min-block-size: 0;
+    min-inline-size: 0;
   }
 }
 .nk-footer .nk-footer__catgrid {
@@ -3071,26 +3525,44 @@ footer .nk-link:hover {
   scroll-margin-block-start: calc(var(--nk-nav-h-scrolled) + 16px);
   scroll-margin-block-end: calc(72px + var(--nk-safe-bottom));
 }
-/* The trailing 48px track is an empty reserve, not a cell: the floating
-   .nk-backtotop parks over this corner at the page bottom, and the gap keeps it
-   off the payment marks and the privacy control. Don't reclaim it — the desktop
-   tier below drops it only once --nk-gutter alone is wider than the button. */
+/* One line as long as the copyright and the privacy/payments cluster both fit;
+   two the moment they don't — no width tier decides it, the wrap does.
+   `wrap-reverse` is the load-bearing part: it stacks wrapped lines bottom-up, so
+   the copyright (first in source order, and the leading cell whenever they share
+   a line) drops BELOW the cluster rather than above it, and stays the footer's
+   last line either way.
+   No trailing reserve for .nk-backtotop any more: the button now yields to the
+   footer outright (an IntersectionObserver in BackToTop.tsx hides it once the
+   footer is in view), and the footer is hundreds of px tall on every tier, so it
+   is long gone before this bar can be on screen. Reserving a gutter for it as
+   well was two mechanisms doing one job — and it cost the cluster its alignment
+   with every other section's right edge. */
 .nk-footer .nk-footer__bottom {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 48px;
-  align-items: end;
-  gap: 14px 16px;
+  display: flex;
+  /* `row` is not the default here: the pre-rebuild skin still declares
+     `flex-direction: column` for this bar under --breakpoint-sm, and it sat inert
+     only while the bar was a grid. Same for the cluster below. */
+  flex-direction: row;
+  /* narrow tier only: the rules here belong to the disclosure list, so a closing
+     one under the last row would read as a fourth (empty) row. The wider tiers,
+     where the columns carry no rules at all, take it back as the sitemap/legal
+     section break. */
+  border-block-start: 0;
+  flex-wrap: wrap-reverse;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 20px;
   padding-block: 20px calc(20px + var(--nk-safe-bottom));
 }
 .nk-footer .nk-footer__legal {
-  grid-column: 1 / -1;
   font-size: 14px;
   line-height: 1.5;
   text-wrap: pretty;
 }
 .nk-footer .nk-footer__meta {
-  grid-column: 1;
-  display: grid;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
   min-inline-size: 0;
@@ -3140,29 +3612,39 @@ footer .nk-link:hover {
     grid-row: 1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto auto;
     gap: 10px clamp(28px, 5cqi, 52px);
     max-width: none;
     max-inline-size: none;
-    margin: 0;
+    /* On top of .nk-footer__top's 28px row gap: the identity block and the sitemap
+       are two different things, so the seam between them has to beat the 10px
+       rhythm inside the brand block by more than the grid gap alone manages.
+       A margin here (not a bigger row gap) leaves the Cities → Help gap in the
+       second column untouched. */
+    margin: 0 0 20px;
   }
+  /* One identity stack on the left — wordmark, tagline, then the contact block
+     (phone, email, social) — with the store badges alone in the second track,
+     parked beside it: the two "how to reach / how to get us" clusters then read
+     as one band. */
   .nk-footer .nk-footer__brand > .nk-logo,
   .nk-footer .nk-footer__tagline,
   .nk-footer .nk-footer__contact {
     grid-column: 1;
   }
-  .nk-footer .nk-footer__social,
+  /* No extra top margin on the badges here: they are the whole second track, and
+     the row gap already sets them off the stack beside them. Row 3 is the contact
+     block's row, and `start` opens the badges on that block's first line — the
+     two clusters share a top edge instead of the badges floating mid-band. */
   .nk-footer .nk-footer__brand .nk-appbadges {
     grid-column: 2;
-  }
-  .nk-footer .nk-footer__social {
-    grid-row: 2;
-    align-self: start;
-  }
-  .nk-footer .nk-footer__brand .nk-appbadges {
     grid-row: 3;
     align-self: start;
-    margin-block-start: 12px;
+    /* the track is half the band wide and holds nothing else — one badge per row
+       reads as a list of two rather than a squeezed pair */
+    flex-direction: column;
+    align-items: flex-start;
+    margin-block-start: 0;
     max-inline-size: 100%;
   }
   .nk-footer .nk-footer__social a,
@@ -3193,21 +3675,31 @@ footer .nk-link:hover {
   .nk-footer .nk-footer__disclosure {
     display: none;
   }
+  /* Both states are force-opened, so `visibility` has to come back with `display`:
+     the enhancement layer hides the collapsed panel that way, and this state stays
+     "false" up here (the button is gone, nothing can flip it). grid-template-rows
+     survives from that layer but is inert without a grid formatting context.
+     The clip goes back to being a plain wrapper — its padding belongs to the
+     disclosure, and clipping where nothing animates would only cut the focus ring
+     off every desktop footer link. */
   .nk-footer .nk-footer__col-content,
   .nk-footer .nk-footer__col-content[data-expanded="false"],
   .nk-footer .nk-footer__col-content[data-expanded="true"] {
     display: block;
+    visibility: visible;
+  }
+  .nk-footer .nk-footer__col-clip {
+    overflow: visible;
+  }
+  .nk-footer .nk-footer__col-clip > .nk-footer__catgrid,
+  .nk-footer .nk-footer__col-clip > .nk-footer__linklist {
     padding: 0;
   }
   .nk-footer .nk-footer__bottom {
-    grid-template-columns: minmax(0, 1fr) 48px;
-    align-items: center;
-    gap: 14px 20px;
     padding-block: 22px calc(22px + var(--nk-safe-bottom));
+    border-block-start: 1px solid var(--nk-border-soft);
   }
   .nk-footer .nk-footer__meta {
-    display: flex;
-    flex-wrap: wrap;
     gap: 12px 16px;
   }
   .nk-footer .nk-footer__sep {
@@ -3241,6 +3733,14 @@ footer .nk-link:hover {
     max-width: 21rem;
     max-inline-size: 21rem;
   }
+  /* the brand column is a plain stack again here — the badges sit side by side
+     under it and keep their own separation, both of which the two-column tier
+     overrides for its narrower second track */
+  .nk-footer .nk-footer__brand .nk-appbadges {
+    flex-direction: row;
+    align-items: center;
+    margin-block-start: 12px;
+  }
   .nk-footer .nk-footer__col--categories,
   .nk-footer .nk-footer__col--cities,
   .nk-footer .nk-footer__col--help {
@@ -3271,23 +3771,30 @@ footer .nk-link:hover {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(20px, 2.2cqi, 36px);
   }
-  /* No reserve track here: the trailing cluster has to end on the same edge as
-     the copyright, or the bar reads as misaligned against every other section.
-     .nk-backtotop is fixed to the viewport (46px wide, inset by 20px), so it
-     only bites into the container while --nk-gutter is narrower than its own
-     footprint — reserve exactly that shortfall, and nothing once the gutter
-     maxes out and the button parks outside the container for free. */
   .nk-footer .nk-footer__bottom {
-    grid-template-columns: minmax(0, 1fr) auto;
     gap: 20px;
-    padding-inline-end: max(0px, calc(46px + 20px + 16px - var(--nk-gutter)));
   }
-  .nk-footer .nk-footer__legal {
-    grid-column: 1;
-  }
+  /* the cluster has the whole trailing half to itself at this width — hold it on
+     one line rather than letting the marks wrap under the privacy control */
   .nk-footer .nk-footer__meta {
-    grid-column: 2;
     flex-wrap: nowrap;
+  }
+}
+
+/* Below a 900px viewport the payment marks drop out: they are an in-app checkout
+   detail (the site takes no payment), and on a narrow bottom bar they cost a
+   whole extra row beside the copyright and the privacy control. The hairline
+   goes with them — on its own it would trail the privacy control pointing at
+   nothing. Both stay in the DOM; the wider tiers take them straight back.
+   49.5rem is the footer container's inline size at that viewport: the container
+   is .nk-footer .nk-container, so its width is 100vw - 2 * --nk-gutter, and the
+   gutter is on its 6vw ramp (not clamped) anywhere near here. Re-derive it if
+   --nk-gutter's clamp() changes. Must stay after the >= --breakpoint-sm tier,
+   which is where the hairline is switched back on. */
+@container nk-footer (width <= 49.5rem) {
+  .nk-footer .nk-footer__pay,
+  .nk-footer .nk-footer__sep {
+    display: none;
   }
 }
 
@@ -3304,7 +3811,16 @@ footer .nk-link:hover {
       50  .nk-cal-pop (in-flow popover) 150  .nk-lightbox
       60  .nk-citypick__panel           200  .nk-redirect-scrim   ← the app handoff, above everything
       60  .nk-backtotop                 210  .nk-dialog-scrim     ← can open ON TOP of the handoff
+      60  .nk-lg-fab-toc (legal.css)
       60  .nk-mbar (mobile bottom bar)
+      70  .nk-cookiebar (analytics consent — above the bars, below every scrim)
+
+   PAINT ORDER IS NOT ENOUGH FOR THE BOTTOM EDGE. Five of these are fixed to it and can
+   be on screen together, so winning the z-index only means covering something the user
+   still needs — the consent bar over the Reserve CTA, say. Anything new down there joins
+   --nk-bars-h (see :root) rather than picking a z-index and hoping: bars publish their
+   height into it, floating chrome adds it to its resting offset, and the combinations
+   compose without a rule per pair.
 
    Escape and focus are NOT ordered by z-index — they run off the runtime layer stack in
    app/lib/layer-stack.ts (useDismissableLayer / useFocusTrap), so the top-most OPEN layer
@@ -3356,7 +3872,9 @@ footer .nk-link:hover {
 .nk-backtotop {
   position: fixed;
   inset-inline-end: calc(clamp(12px, 2vw, 20px) + var(--nk-safe-right));
-  inset-block-end: calc(20px + var(--nk-safe-bottom));
+  /* --nk-bars-h is 0 unless a bottom-fixed bar is on screen; see its note in :root.
+     20px is the resting gap and stays the gap above whatever bar is there. */
+  inset-block-end: calc(20px + var(--nk-safe-bottom) + var(--nk-bars-h));
   z-index: 60;
   display: flex;
   align-items: center;
@@ -3617,7 +4135,10 @@ footer .nk-link:hover {
   .nk-redirect-panel {
     width: min(35rem, 100%);
     border-radius: 24px 24px 0 0;
+    /* svh, not vh: with the URL bar expanded 92vh overshoots the visible
+       viewport and the sheet top clips off-screen (RSP-425) */
     max-height: 92vh;
+    max-height: 92svh;
     overflow: auto;
     padding-bottom: calc(36px + env(safe-area-inset-bottom));
     animation: nk-sheet-in 0.3s var(--nk-ease-spring) both;
@@ -3937,11 +4458,15 @@ footer .nk-link:hover {
   display: flex;
   gap: var(--nk-gap-lg);
 }
-/* Stacks at the SAME cliff as the home "Kaip tai veikia" stepper goes vertical
-   (@container nk-home-hiw < 60rem). Both containers are direct children of
-   .nk-container, so equal thresholds mean equal viewport widths — the two bands
-   must never disagree about whether the page is in its stacked tier. */
-@container nk-feature-row (width < 60rem) {
+/* Stacks below a 1280px VIEWPORT. The threshold is a container width, so it is the
+   viewport minus both .nk-container gutters: 1280 − 2 × (6vw of 1280 = 76.8px)
+   = 1126.4px = 70.4rem. Re-derive it if --nk-gutter's clamp() changes.
+   This deliberately sits above the home "Kaip tai veikia" stepper's own cliff
+   (@container nk-home-hiw < 60rem ≈ a 1090px viewport), which the two bands used to
+   share: three cards each carrying a wrapping title plus a 4-line body run out of
+   width well before four short stepper columns do, so between ~1090 and 1280 the
+   feature band is stacked while the stepper is still horizontal. */
+@container nk-feature-row (width < 70.4rem) {
   /* Stacked cards are ~950px slabs, so the 20px row gap that reads as separation
      between three narrow columns reads as a seam between them. --nk-grid-row-gap
      is the card-row token; --nk-stack-lg is deliberately NOT reused here because
@@ -3951,15 +4476,53 @@ footer .nk-link:hover {
     flex-direction: column;
     gap: var(--nk-grid-row-gap);
   }
-  .nk-row > * {
-    flex: 1 1 auto;
+  /* No `.nk-row > * { flex: 1 1 auto }` here any more. `.nk-row`'s only child is
+     .nk-feature, whose own `flex: 1` used to be an inline declaration — so that
+     rule could never once have applied, and reinstating it as the cards stack
+     would be a change, not a restoration. `flex: 1` is what has always shipped. */
+  /* No 2-line title reservation once the cards stack, at ANY width in this tier:
+     the min-height buys a shared first baseline across a 3-up row, and a stacked
+     card has no neighbour to share one with. */
+  .nk-feature .nk-h-card {
+    min-height: 0;
   }
-}
-
-@media (width < theme(--breakpoint-sm)) {
-  .nk-search > span:first-child > .nk-ico,
-  .nk-search .nk-citypick__trigger > .nk-ico:first-child {
-    transform: translateY(7px);
+  /* Also tier-wide, not just in the row anatomy below: a stacked card is the only
+     place the disk has a long text block competing with it for the main axis. */
+  .nk-feature__icon {
+    flex: none;
+  }
+  /* Row anatomy is a TABLET fit, so it is scoped to >= sm rather than applied here
+     and undone lower down. It exists so a ~900px slab doesn't float a short title
+     beside dead space; below sm it does the opposite — the icon plus its gap eats a
+     third of a 335px card and squeezes the body into a ~200px ribbon (measured at
+     375px). Nesting the media query means phones simply keep the base column
+     anatomy, with no counter-block to keep in the right order. */
+  @media (width >= theme(--breakpoint-sm)) {
+    /* Stacked slabs go icon-beside-text: the centred column anatomy floated a short
+       title in a ~900px card and tripled the band height on tablets. */
+    .nk-feature {
+      flex-direction: row;
+      align-items: center;
+      text-align: left;
+      gap: var(--nk-gap-lg);
+    }
+    /* Still smaller than the 3-up column tier's --nk-size-icon-lg, but only just:
+       beside a ~900px slab of text a 64px disk read as a bullet rather than as the
+       card's anchor. Glyph stays at the sitewide ~0.48 of its disk. */
+    .nk-feature__icon {
+      width: 80px;
+      height: 80px;
+    }
+    .nk-feature__icon svg {
+      width: 38px;
+      height: 38px;
+    }
+    .nk-feature .nk-h-card {
+      justify-content: flex-start;
+    }
+    .nk-feature .nk-body {
+      margin-inline: 0;
+    }
   }
 }
 
@@ -4120,6 +4683,9 @@ footer .nk-link:hover {
   }
   .nk-hiw-p {
     margin-top: 8px;
+    /* the 32ch cap is column hygiene for the 4-up layout; here the text column is
+       the whole container, and capping it stranded ~40% of tablet widths empty */
+    max-width: 58ch;
   }
 }
 @container nk-home-hiw (width < theme(--breakpoint-sm)) {
@@ -4218,6 +4784,18 @@ footer .nk-link:hover {
     line-height: 1.07;
   }
 }
+/* Phone-column entry band (iPad Pro landscape lives here): an even split crushed
+   the copy column until the search pill truncated its own placeholder. Tilt the
+   ratio to the copy; the even split returns at xl where both halves breathe.
+   The QR rides along at full size: it sits over the phone's bottom-right corner
+   exactly as it does above xl, and 1190 is the last width that has a media
+   column at all, so hiding it here would cost the hero its scan-to-install path
+   for the whole band. */
+@media (theme(--breakpoint-hero) <= width < theme(--breakpoint-xl)) {
+  .nk-hero-panel {
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
+  }
+}
 /* fluid badge label — degrades smoothly instead of jumping at the sm cliff; wraps by default (no inline nowrap) */
 .nk-hero-badge__label {
   font-size: clamp(14.5px, 2.4vw, 18px);
@@ -4273,12 +4851,18 @@ footer .nk-link:hover {
     line-height: 29px;
   }
   .nk-hero-panel .nk-search {
-    max-width: 100% !important;
-    padding-left: 18px !important;
+    max-width: 100%;
+    padding-left: 18px;
   }
-  .nk-hero-panel .nk-search .nk-citypick,
-  .nk-hero-panel .nk-search > span:nth-child(2) {
-    display: none !important;
+  /* compact city segment instead of the old display:none — dropping the control
+     silently lost the location choice for the whole tablet band. The micro-label
+     hides and the trigger tightens; pin + value still read as "city". */
+  .nk-hero-panel .nk-search .nk-citypick .nk-search__label {
+    display: none;
+  }
+  .nk-hero-panel .nk-search .nk-citypick__trigger {
+    padding: 10px 12px !important;
+    gap: 8px;
   }
   .nk-hero-panel .nk-search .nk-btn {
     padding-inline: 24px !important;
@@ -4298,9 +4882,11 @@ footer .nk-link:hover {
   .nk-hero-panel .nk-h-hero {
     font-size: clamp(44px, 6vw, 56px);
   }
-  .nk-hero-panel .nk-search .nk-citypick,
-  .nk-hero-panel .nk-search > span:nth-child(2) {
-    display: none !important;
+  /* no city hide here any more — this band now uses the stacked search form
+     (see the < md block below), which carries the city row natively. Its city
+     list opens DOWNWARD, so the panel must escape the card like on phones. */
+  .nk-hero-panel {
+    overflow: visible;
   }
 }
 /* Below 1190px the copy goes full width and the app preview drops out entirely — a
@@ -4379,85 +4965,10 @@ footer .nk-link:hover {
     font-size: 13.5px;
     line-height: 16px;
   }
-  /* store badges as one scaled row (no wrap to two lines at 344px) */
-  .nk-appbadges {
-    flex-wrap: nowrap !important;
-    gap: 10px !important;
-    width: 100%;
-  }
-  /* min-height keeps the tap target at the house 44px floor while the badge
-     artwork stays capped at 40px — these are the primary mobile install CTAs */
-  .nk-appbadges .nk-badgebtn {
-    flex: 1 1 0;
-    min-width: 0;
-    min-height: var(--nk-tap);
-    align-items: center;
-  }
-  .nk-appbadges .nk-badgebtn img {
-    width: 100% !important;
-    height: auto !important;
-    max-height: 40px;
-    object-fit: contain;
-    object-position: left;
-  }
-  .nk-search {
-    width: 100%;
-    max-width: 100% !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    padding: 6px !important;
-    border-radius: 22px !important;
-    gap: 0 !important;
-    border-color: var(--nk-light-divider) !important;
-  }
-  .nk-search > span:first-child {
-    flex: 1 1 auto !important;
-    min-width: 0;
-    width: 100%;
-    padding: 8px 12px !important;
-    gap: 12px !important;
-  }
-  /* repurpose the desktop vertical divider as a full-width hairline between fields */
-  .nk-search > span:nth-child(2) {
-    display: block !important;
-    width: auto !important;
-    height: 1px !important;
-    margin: 0 14px;
-    background: var(--nk-light-divider);
-  }
-  .nk-search .nk-citypick {
-    flex: 1 1 auto;
-    min-width: 0;
-    width: 100%;
-  }
-  .nk-search .nk-citypick__trigger {
-    width: 100%;
-    justify-content: flex-start;
-    gap: 12px;
-    padding: 8px 12px !important;
-    text-align: left;
-  }
-  .nk-search .nk-search__col {
-    flex: 1;
-    text-align: left;
-  }
-  .nk-search .nk-search__label {
-    display: block;
-    font-family: var(--nk-font-display);
-    font-weight: 700;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--nk-light-meta);
-    margin-bottom: 2px;
-  }
-  .nk-search .nk-btn {
-    width: 100%;
-    padding-block: 12px !important;
-    padding-inline: 20px !important;
-    min-height: 48px;
-    margin-top: 4px;
-    border-radius: 17px;
+  /* the muted owner prompt is a second value prop the compact hero can't afford —
+     the "list it in the app" link stays as the sole owner entry point */
+  .nk-hero-ownerprompt {
+    display: none;
   }
   .nk-body {
     font-size: 15.5px;
@@ -4476,6 +4987,102 @@ footer .nk-link:hover {
   }
   .nk-nav {
     font-size: 16px;
+  }
+}
+/* Stacked search form — the field-over-field variant with the city row.
+   Extended from <sm to <md: the 561–767 pill had no city control at all
+   (the segment was display:none), silently dropping the location choice
+   for the whole small-tablet band. */
+@media (width < theme(--breakpoint-md)) {
+  .nk-search {
+    /* Both fields are built from these two numbers, so the query row and the city
+       row have identical geometry — the label sits the same 2px above its value
+       in each, and the icon offset is exactly half the label block rather than a
+       hardcoded nudge that drifts when the label's metrics change.
+       The value line is deliberately not --nk-tap: a 44px input inside a labeled
+       field is what left the micro-label floating 14px above its own value. The
+       label is a real <label> (see SearchBar), so the tappable area is the whole
+       42px column, and 26px alone still clears WCAG 2.5.8's 24px minimum. */
+    --nk-search-label-block: 16px; /* 14px line box + 2px margin-bottom */
+    --nk-search-val-line: 26px;
+    width: 100%;
+    max-width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 6px;
+    border-radius: 22px;
+    gap: 0;
+    border-color: var(--nk-light-divider);
+  }
+  .nk-search__field {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    padding: 8px 12px;
+  }
+  /* repurpose the desktop vertical divider as a full-width hairline between fields */
+  .nk-search__sep {
+    width: auto;
+    height: 1px;
+    margin: 0 14px;
+    background: var(--nk-light-divider);
+  }
+  .nk-search .nk-citypick {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+  }
+  .nk-search .nk-citypick__trigger {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 8px 12px !important;
+    text-align: left;
+  }
+  .nk-search .nk-search__col {
+    text-align: left;
+  }
+  .nk-search .nk-search__label {
+    display: block;
+    font-family: var(--nk-font-display);
+    font-weight: 700;
+    font-size: 11px;
+    /* declared, not `normal`: the label block's height is load-bearing — the icon
+       offset below is derived from it */
+    line-height: calc(var(--nk-search-label-block) - 2px);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--nk-light-meta);
+    margin-bottom: 2px;
+    cursor: pointer;
+  }
+  /* One shared line box for both values: the input's --nk-tap min-height would
+     otherwise make the query row 25px taller than the city row. padding is
+     Chrome's UA 1px 2px on <input> — 2px is enough to knock the value out of line
+     with the micro-label above it, and it would add 2px to the line box declared
+     here. Scoped to this block: ≥md there is no label to align to. */
+  .nk-search .nk-search__input,
+  .nk-search .nk-citypick__val {
+    min-height: var(--nk-search-val-line);
+    line-height: var(--nk-search-val-line);
+    padding: 0;
+  }
+  /* Ride the value line rather than the two-line column's centre. `translate`,
+     not `transform`: the chevron sets `transform`-adjacent `rotate` inline, and
+     the two properties compose only while they stay separate. Not :first-child
+     either — the chevron needs the same offset or it reads as attached to the
+     label instead of the city. */
+  .nk-search__field > .nk-ico,
+  .nk-search .nk-citypick__trigger > .nk-ico {
+    translate: 0 calc(var(--nk-search-label-block) / 2);
+  }
+  .nk-search .nk-btn {
+    width: 100%;
+    padding-block: 12px !important;
+    padding-inline: 20px !important;
+    min-height: 48px;
+    margin-top: 4px;
+    border-radius: 17px;
   }
 }
 @media (width < theme(--breakpoint-xs)) {
@@ -4649,9 +5256,10 @@ footer .nk-link:hover {
   line-height: 32px;
   color: var(--nk-text-muted);
 }
-/* Install row inside the copy column: badges anchor the left, QR the right. On wide
-   desktop the QR is lifted out to the band's bottom-right corner (see the 79rem
-   container query) and space-between collapses to a plain left-aligned badge row. */
+/* Install row inside the copy column: badges anchor the left, QR the right — which
+   in the stacked tier already lands the QR in the band's bottom-right corner. From
+   60rem up the QR is lifted out to that corner absolutely (see the container query
+   below) and space-between collapses to a plain left-aligned badge row. */
 .nk-appcta__actions {
   display: flex;
   align-items: center;
@@ -4704,30 +5312,55 @@ footer .nk-link:hover {
   }
 }
 
-/* Wide desktop: the QR leaves the install row and anchors to the band's own
-   bottom-right corner, over the empty dark screen beside the phone's logo. Absolute
-   resolves against .nk-appcta (the copy column is unpositioned) and paints above the
-   phone by DOM order, so no z-index is needed.
-
-   79rem is a geometry floor, not taste. The phone is capped at max-width:50%, so its
-   logo lock-up — which sits ~47% into the artwork — tracks inward as the band
-   narrows: its right edge lands at band/2 + 389px, while the QR's left edge sits at
-   band - 60 - 165. Those cross at ~1260px, so below 79rem the corner QR would clip
-   the "Naudokis.lt" wordmark and the QR goes back in the install row instead. */
-@container nk-app-cta (width >= 79rem) {
+/* Desktop: the QR leaves the install row and anchors to the band's own bottom-right
+   corner. That corner is its home at every width where it renders — below 60rem the
+   band is a single stacked column, so the last row's right end IS the bottom-right
+   corner and the flow position already puts it there. Absolute resolves against
+   .nk-appcta (the copy column is unpositioned) and paints above the phone by DOM
+   order, so no z-index is needed. With the QR gone the install row is badges only,
+   so they stay side by side at every width (no column stacking). */
+@container nk-app-cta (width >= 60rem) {
   .nk-appcta__qr {
     position: absolute;
     right: var(--nk-panel-pad);
     bottom: var(--nk-panel-pad);
   }
 }
-/* Install row still carries the QR here, and the copy column is half the panel less
-   its inset — a side-by-side badge row (370px) + QR leaves no slack for a real gap.
-   The two badges stack into a column BESIDE the QR so the row keeps breathing. */
-@container nk-app-cta (60rem <= width < 79rem) {
-  .nk-appcta__actions .nk-appbadges {
-    flex-direction: column;
-    align-items: flex-start;
+/* Below 86rem that corner is where the phone's app-icon lock-up lands, so the phone
+   yields — by SHRINKING with the band, not by leaving the bottom edge. It used to
+   hang from the top under a fade mask, which cleared the corner but cost the bleed
+   the whole composition rests on.
+
+   Why scaling works where a fixed height doesn't: above 86rem the raster is
+   height-bound (620px tall ⇒ ~790px drawn) and only the BOX narrows, so the artwork
+   stays pinned to the box's left edge — which tracks inward as the band narrows and
+   walks the lock-up into the QR. Measured, the lock-up's right edge lands at
+   ~band/2 + 440 against a QR left edge of band - (--nk-panel-pad + the 164px card);
+   those touch at band ≈ 1330. Scaling the whole raster instead holds the lock-up at
+   a fixed fraction of the band, so the gap only grows as the band narrows.
+
+   Three numbers hold it together:
+   • width 50% — a ceiling, not taste. The raster is uncropped here, so its bottom
+     rows (where the device spans the full frame) start at the box's left edge; any
+     wider and that edge crosses into the copy column's half of the grid.
+   • right 0 — the base 20px right bleed pushes the lock-up back toward the QR, and
+     at this tier's narrow end that is the entire clearance. Nothing is lost: the
+     raster's right edge is a cut through the device either way.
+   • bottom -3.5cqw — the proportional twin of the base -56px, keeping the raster's
+     hard bottom cut outside the band at every width in the tier. */
+@container nk-app-cta (60rem <= width < 86rem) {
+  .nk-appcta__phone {
+    right: 0;
+    bottom: -3.5cqw;
+    width: 50%;
+    height: auto;
+  }
+  /* The copy column is ~half the panel here, but the viewport-derived 56px cap
+     still applied — the LT headline broke into five single-word lines. 4.4cqw
+     lands ~42px at band entry and saturates at the 56px base from 79rem up, so
+     carrying it to this block's wider bound changes nothing above 79rem. */
+  .nk-appcta__copy h2 {
+    font-size: clamp(32px, 4.4cqw, 56px);
   }
 }
 /* App CTA composition follows its own panel width rather than navigation. */
@@ -4859,7 +5492,9 @@ footer .nk-link:hover {
 }
 .nk-dialog-panel {
   position: relative;
-  width: min(460px, 100%);
+  /* 520, not 460: the consent panel's card anatomy (icon + title + switch on one
+     line) needs the extra room before the switch starts crowding the title. */
+  width: min(520px, 100%);
   max-height: 92vh;
   max-height: min(92dvh, 92svh);
   overflow: auto;
@@ -4867,19 +5502,44 @@ footer .nk-link:hover {
   flex-direction: column;
   gap: var(--nk-gap-sm);
   padding: 28px;
-  background: var(--nk-surface);
-  border: 1px solid var(--nk-border);
-  border-radius: var(--nk-r-card);
-  box-shadow: var(--nk-shadow-3);
-  animation: nk-pop-in 0.28s var(--nk-ease-spring) both;
+  /* The lit hairline is a BORDER-BOX BACKGROUND LAYER, not a ::before. This panel is
+     a scroll container, and an absolutely-positioned inset:0 pseudo scrolls away with
+     the content — the exact defect .nk-redirect-panel::before is switched off for in
+     the mobile sheet block below. A background layer is attached to the element's own
+     border box, so it stays at the panel edge while the cards scroll under it.
+     There must be NO background-color here: a colour paints the whole border box and
+     would hide the 1px ring.
+     The base is --nk-bg, not --nk-surface, so the --nk-surface cards inside are
+     visible against it — the same relationship .nk-redirect-panel already uses. */
+  border: 1px solid transparent;
+  background:
+    radial-gradient(130% 78% at 50% -14%, var(--nk-purple-soft), transparent 60%) padding-box,
+    linear-gradient(var(--nk-bg), var(--nk-bg)) padding-box,
+    var(--nk-lit-edge) border-box;
+  border-radius: var(--nk-r-modal);
+  /* --nk-shadow-modal is documented as the dialog tier in :root; this panel had been
+     left on --nk-shadow-3 (the popover / card-hover tier). Corrected. */
+  box-shadow: var(--nk-edge-top), var(--nk-shadow-modal);
+  /* `backwards`, never `both`: a forward fill pins the `to` keyframe at animation
+     priority forever, outranking any later :hover/state transform. (Zero visual
+     change here — nk-pop-in's `to` equals the base style.) */
+  animation: nk-pop-in 0.28s var(--nk-ease-spring) backwards;
 }
 .nk-dialog-panel:focus {
   outline: none;
 }
+/* Sticky, not absolute: the panel is the scroll container, so an absolutely
+   positioned close scrolls out of reach the moment the content overflows — which the
+   consent panel's three cards do on a phone, leaving a sheet with no visible dismiss.
+   As a flex child it pins to the top of the scrollport instead. The negative bottom
+   margin cancels its own height so it still shares the title's band rather than
+   pushing it down (the title carries padding-right: 44px to clear it). */
 .nk-dialog-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  align-self: flex-end;
+  margin-bottom: calc(-1 * var(--nk-tap));
 }
 .nk-dialog-title {
   margin: 0;
@@ -4888,14 +5548,17 @@ footer .nk-link:hover {
   font-weight: 700;
   font-size: var(--nk-fs-row);
   line-height: 1.25;
+  letter-spacing: -0.008em;
   color: var(--nk-text);
 }
+/* The dialog's lede is chrome — it frames the controls below rather than being the
+   content, so it sits one tier quieter than the card bodies it introduces. */
 .nk-dialog-body {
   margin: 0;
   font-family: var(--nk-font-body);
   font-size: 15px;
   line-height: 23px;
-  color: var(--nk-text-2);
+  color: var(--nk-text-muted);
 }
 /* Compact layers follow usable height as well as width, so landscape phones do
    not receive a vertically centred panel with its actions below the fold. */
@@ -4906,50 +5569,237 @@ footer .nk-link:hover {
   }
   .nk-dialog-panel {
     width: min(35rem, 100%);
-    border-radius: 24px 24px 0 0;
-    padding-bottom: calc(28px + var(--nk-safe-bottom));
+    border-radius: var(--nk-r-modal) var(--nk-r-modal) 0 0;
+    padding: 22px 18px calc(22px + var(--nk-safe-bottom));
   }
+  /* The consent CARDS' compact form is NOT here — it lives in its own media block
+     after the consent content below. It has to: those base rules are declared later
+     in this file, so an override left here would tie on specificity and lose on
+     source order (the same trap documented for .nk-filterbar). */
 }
 @media (prefers-reduced-motion: reduce) {
   .nk-dialog-scrim,
   .nk-dialog-panel {
     animation: none;
   }
+  /* No transition overrides here: the global reduced-motion blanket near the top of
+     this file already collapses every transition-duration with !important, which no
+     normal rule can add to. The switch knob, the chevron and the disclosure collapse
+     are covered by it. */
 }
 
-/* ---- consent content (install-attribution prompt + footer privacy panel) ----
-   Both actions share one button skin (.nk-btn--outline) on purpose: equal
-   prominence is the legal requirement, so no rule here may make either the
-   visually dominant choice. */
-.nk-consent-status {
+/* ---- consent content (install prompt + cookie bar + footer privacy panel) ----
+   THE RULE THAT GOVERNS THIS WHOLE BLOCK: equal prominence is a legal requirement,
+   so nothing here may make either answer the visually dominant one. Concretely —
+   the first-ask surfaces give both actions one button skin (.nk-btn--outline), and
+   the privacy panel's cards never change appearance with their switch state. */
+
+/* One purpose = one card. Its chrome NEVER varies with the switch state — no
+   [data-granted] rule may be added here, or a granted purpose starts looking more
+   "correct" than a refused one. overflow stays visible so the 3px-offset focus ring
+   on the switch and the disclosure is not clipped at the card edge. */
+.nk-consent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nk-gap-xs);
+}
+.nk-consent-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nk-gap-xs);
+  padding: 14px 16px;
+  background: var(--nk-surface);
+  border: 1px solid var(--nk-border);
+  border-radius: var(--nk-r-md);
+  box-shadow: var(--nk-edge-top);
+}
+/* Always-on row: quieter fill, so it reads as context rather than a fourth choice. */
+.nk-consent-card--static {
+  background: var(--nk-glass);
+  border-color: var(--nk-border-soft);
+  box-shadow: none;
+}
+.nk-consent-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--nk-gap-sm);
+}
+/* Neutral in every card — the icon identifies the purpose, it never signals on/off. */
+.nk-consent-card__icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--nk-r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nk-surface-2);
+  border: 1px solid var(--nk-border);
+  color: var(--nk-text-muted);
+}
+.nk-consent-card__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 2px; /* optical: 15.5px cap-height against the 34px icon chip */
+}
+.nk-consent-card__title {
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 15.5px;
+  line-height: 20px;
+  letter-spacing: -0.006em;
+  color: var(--nk-text);
+  text-wrap: pretty;
+}
+.nk-consent-card__meta {
+  font-family: var(--nk-font-body);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--nk-text-muted);
+}
+.nk-consent-card__body {
   margin: 0;
   font-family: var(--nk-font-body);
   font-size: 14px;
+  line-height: 21px;
+  color: var(--nk-text-2);
+  text-wrap: pretty;
+}
+/* A statement, not a control: no cursor, no hover, no focus, no aria-disabled. The
+   two preference cookies really are always set, so this row states a fact. Neutral
+   fill on purpose — an accented chip here would read as "on = accent = the good
+   state" and colour-code the two switches below it by association. */
+.nk-consent-card__always {
+  flex: none;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 11px;
+  border-radius: var(--nk-r-pill);
+  background: var(--nk-surface-2);
+  border: 1px solid var(--nk-border);
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 12.5px;
+  line-height: 1;
+  color: var(--nk-text-2);
+  white-space: nowrap;
+}
+
+/* Quiet text trigger, not a button skin — this reveals reference facts, it is not an
+   action. Negative margin lines the label up with the body above it while the 44px
+   hit area still extends past the glyph. */
+.nk-consent-card__disc {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--nk-tap);
+  margin: -6px -8px -8px;
+  padding: 0 8px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--nk-text-muted);
+  transition: color 0.15s ease;
+}
+.nk-consent-card__disc:hover,
+.nk-consent-card__disc[aria-expanded="true"] {
   color: var(--nk-text-2);
 }
-.nk-consent-status strong {
-  color: var(--nk-text);
+.nk-consent-card__disc svg.nk-ico {
+  transition: transform 0.2s var(--nk-ease);
 }
-.nk-consent-note {
+.nk-consent-card__disc[aria-expanded="true"] svg.nk-ico {
+  transform: rotate(180deg);
+}
+/* grid-template-rows 0fr↔1fr, not max-height: the height is exact, so nothing snaps
+   at the end of the open. The region sits AFTER its trigger, so growth is always
+   below the line the user clicked and the panel's scroll position is unaffected —
+   there is deliberately no scrollIntoView anywhere in the expand path. `inert` in the
+   JSX is what actually removes the collapsed facts from the a11y tree; the 0fr row
+   only clips paint (same fix as .nk-faq). */
+.nk-consent-card__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--nk-dur-med) var(--nk-ease);
+}
+.nk-consent-card__panel[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+.nk-consent-card__panel > div {
+  overflow: hidden;
+}
+/* Parallel facts, same shape in every card — including the always-on row, which is
+   what makes "always on" credible rather than a fig leaf. Text only: the overflow
+   clip above would cut a 3px-offset focus ring, so no links or buttons may go in
+   here — the policy link belongs to the panel, not to a card. */
+.nk-consent-facts {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: minmax(6.5rem, auto) 1fr;
+  gap: 6px 12px;
+  background: var(--nk-glass);
+  border: 1px solid var(--nk-border-soft);
+  border-radius: var(--nk-r-sm);
+}
+.nk-consent-facts > div {
+  display: contents;
+}
+.nk-consent-facts dt {
+  font-family: var(--nk-font-display);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--nk-text-muted);
+}
+.nk-consent-facts dd {
   margin: 0;
   font-family: var(--nk-font-body);
   font-size: 13px;
   line-height: 19px;
-  color: var(--nk-text-muted);
+  color: var(--nk-text-2);
+  text-wrap: pretty;
 }
+
 .nk-consent-privacy {
   align-self: flex-start;
-  min-height: 24px;
+  min-height: var(--nk-tap);
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   font-family: var(--nk-font-body);
   font-size: 14px;
   color: var(--nk-text-2);
   text-decoration: underline;
   text-underline-offset: 3px;
+  transition: color 0.15s ease;
 }
 .nk-consent-privacy:hover {
   color: var(--nk-text);
+}
+/* Only the privacy panel renders an arrow; these two rules are inert without it. */
+.nk-consent-privacy svg.nk-ico {
+  transition: transform 0.2s var(--nk-ease);
+}
+.nk-consent-privacy:hover svg.nk-ico {
+  transform: translateX(2px);
+}
+/* In the cookie bar the link sits inside running text, where a 44px inline-flex box
+   would stretch the line. It keeps the paragraph's own line box there. */
+.nk-cookiebar .nk-consent-privacy {
+  min-height: 0;
+  display: inline;
 }
 /* Equal-width, equal-skin actions. They stack on narrow screens in source order,
    which keeps neither choice "below the fold" of the panel. */
@@ -4962,6 +5812,57 @@ footer .nk-link:hover {
 .nk-consent-actions .nk-btn {
   flex: 1 1 180px;
   justify-content: center;
+}
+/* Where to change the choice later. Quiet by design: it is orientation, not a third
+   action, so it must not compete with the two equally-weighted buttons above it. */
+.nk-consent-manage {
+  margin: 0;
+  font-family: var(--nk-font-body);
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--nk-text-muted);
+}
+
+/* Compact card form for the sheet layers (narrow OR short viewports — same query the
+   dialog's sheet form uses). This block MUST stay after the card/fact base rules
+   above: it ties with them on specificity, so it only wins on source order. Moving it
+   up beside the .nk-dialog-panel sheet rules silently disables every line in it. */
+@media (width < theme(--breakpoint-sm)), (height < 32.5rem) {
+  .nk-consent-card {
+    padding: 12px 13px;
+  }
+  .nk-consent-card__head {
+    gap: 10px;
+  }
+  .nk-consent-card__icon {
+    width: 30px;
+    height: 30px;
+  }
+  /* The switch keeps its full geometry at every width — the 44px target is the point.
+     A minmax() label column beside a two-line processor value wraps to four lines at
+     390px, so the fact sheet becomes a stacked label/value list instead. */
+  .nk-consent-facts {
+    grid-template-columns: 1fr;
+    gap: 2px 0;
+    padding: 10px;
+  }
+  .nk-consent-facts dt {
+    margin-top: 8px;
+  }
+  .nk-consent-facts > div:first-child dt {
+    margin-top: 0;
+  }
+}
+
+/* Privacy panel only. The panel scrolls, and nothing inside it may pull the scroll
+   position when a disclosure expands: growth is always below its trigger, so
+   anchoring is already correct — this is belt-and-braces against a future rule that
+   adds height above a card. */
+.nk-privacy-panel {
+  overflow-anchor: auto;
+}
+.nk-privacy-panel .nk-consent-privacy {
+  margin-top: var(--nk-gap-2xs);
 }
 
 /* Footer trigger — a quiet text link among the legal row, not a CTA. Matches the
@@ -4983,6 +5884,101 @@ footer .nk-link:hover {
 .nk-privacy-trigger:hover,
 .nk-privacy-trigger:active {
   color: var(--nk-purple-hover);
+}
+
+/* ---- analytics consent banner (site-wide, non-modal) ----
+   Fixed to the bottom, above the mobile bottom bar (60) and below every scrim
+   (100+): the page stays fully usable behind it, and any sheet/dialog opens over
+   it. Listed in THE LAYER STACK comment above — keep the two agreeing. No
+   entrance animation: it mounts post-hydration as a fixed overlay, so it causes
+   no CLS and needs no reduced-motion handling.
+
+   Winning the z-index is only half of sharing the bottom edge: this bar must not
+   COVER what it outranks. It publishes its height (--nk-cookiebar-h, set from a
+   ResizeObserver in ConsentBanner because the bar wraps from one line to three
+   between 320 and 720px) and stacks on the reserve bar rather than over it — see
+   --nk-bars-h in :root and the .nk-mbar block in catalogue.css. */
+.nk-cookiebar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 70;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  margin-inline: auto;
+  width: min(100%, 45rem);
+  /* through a var so the stacked case can zero it: lifted onto the reserve bar,
+     this bar no longer touches the viewport edge and the inset is dead padding */
+  padding: 16px 20px calc(16px + var(--nk-cookiebar-safe, var(--nk-safe-bottom)));
+  /* Same lit-hairline recipe as the dialog panel, so the three consent surfaces read
+     as one family (see .nk-dialog-panel for why it is a background layer and why no
+     background-color may be set). The base stays --nk-surface-2, not --nk-bg: unlike
+     the dialogs this bar sits over live page content with no scrim, so it has to read
+     as raised rather than as a modal surface. --nk-shadow-up stays — it is the correct
+     upward cast for the one bottom-fixed surface. */
+  border: 1px solid transparent;
+  background:
+    radial-gradient(120% 100% at 50% -30%, var(--nk-purple-soft), transparent 62%) padding-box,
+    linear-gradient(var(--nk-surface-2), var(--nk-surface-2)) padding-box,
+    var(--nk-lit-edge) border-box;
+  border-bottom: 0;
+  border-radius: var(--nk-r-modal) var(--nk-r-modal) 0 0;
+  box-shadow: var(--nk-edge-top), var(--nk-shadow-up);
+}
+.nk-cookiebar__text {
+  flex: 1 1 22rem;
+  margin: 0;
+  font-family: var(--nk-font-body);
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--nk-text-2);
+}
+.nk-cookiebar .nk-consent-actions {
+  flex: 0 1 auto;
+  margin-top: 0;
+}
+/* The bar overlays the END of the page, and the last thing on every page is the
+   footer's legal row — which holds the "Privatumo nustatymai" trigger this very bar
+   points at. Reserve its height inside the footer so that row can always be
+   scrolled clear. On .nk-footer rather than <body>: the footer paints --nk-bg-deep
+   and the body --nk-bg, so body padding would open a lighter strip under it.
+   --nk-cookiebar-h, not --nk-bars-h: that token is scoped to the widths where the
+   bar reaches the floating chrome's corner, but this bar spans the footer's middle
+   at EVERY width, so the reserve has to be unconditional. The measured height
+   already contains whatever safe inset the bar is absorbing. */
+body:has(.nk-cookiebar) .nk-footer {
+  padding-bottom: var(--nk-cookiebar-h, 132px);
+}
+/* Floating chrome has to clear this bar — but only where the bar actually reaches
+   the corner that chrome parks in, or the button would jump for nothing on desktop.
+   --breakpoint-cookiebar is exactly that width; its derivation is in :root.
+   The published height includes the safe inset this bar absorbs, and the chrome's
+   resting offset carries that inset too — subtract it once. The fallback is the
+   three-line phone case, so the offset is sane before the first measurement. */
+@media (width < theme(--breakpoint-cookiebar)) {
+  body:has(.nk-cookiebar) {
+    --nk-bars-h: calc(var(--nk-cookiebar-h, 132px) - var(--nk-safe-bottom));
+  }
+}
+/* smallest phones: the banner ate ~47% of a 320×568 viewport — tighter frame,
+   type and button padding pull it under ~40% without losing the 44px targets */
+@media (width < theme(--breakpoint-xs)) {
+  .nk-cookiebar {
+    gap: 10px 24px;
+    padding: 12px 16px calc(12px + var(--nk-cookiebar-safe, var(--nk-safe-bottom)));
+  }
+  .nk-cookiebar__text {
+    font-size: 13px;
+    line-height: 19px;
+  }
+  .nk-cookiebar .nk-consent-actions {
+    gap: 8px;
+  }
+  .nk-cookiebar .nk-consent-actions .nk-btn {
+    padding-block: 12px;
+  }
 }
 
 /* ============================================================================
@@ -5146,7 +6142,8 @@ svg.nk-ico {
    3. Tighter mobile card chrome: 36px fav disk, compact badges,
       smaller placeholder glyphs.
    4. Calmer mobile type on the loudest fixed-size text (detail H1,
-      interruption banner, FAQ rows).
+      interruption banner, FAQ rows) — scoped < md, not < sm: the 2026-07
+      tablet audit kept it through the small-tablet band.
    !important is required where the card carries inline styles
    (cards.tsx OfferCard type/geometry).
    ============================================================ */
@@ -5161,7 +6158,22 @@ svg.nk-ico {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px 10px;
   }
-  /* --- 4. calmer mobile type on fixed-size text --- */
+}
+/* Bridge tier: the auto-fill formula can only fit ONE ≥272px track between sm
+   and ~1000px of container, so without this rule the column count inverted
+   2→1→2 as the viewport grew through 560–672. Explicit 2-up (standard gaps —
+   cards here are ≥230px, full skin) keeps the count monotonic until auto-fill
+   takes over at md with the same two columns. */
+@media (theme(--breakpoint-sm) <= width < theme(--breakpoint-md)) {
+  .nk-grid-feed,
+  .nk-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* --- 4. calmer mobile type on fixed-size text — < md on purpose: phones are
+   the original audience, and the 2026-07 tablet audit kept the calmer scale
+   through the small-tablet band --- */
+@media (width < theme(--breakpoint-md)) {
   .nk-detail h1 {
     font-size: 28px !important;
     line-height: 1.12 !important;
@@ -5214,6 +6226,77 @@ svg.nk-ico {
     height: 12px !important;
   }
 }
+/* Place tier — the location claims its own row under the owner name. Sharing one
+   line stops working here: "Jonas Petraitis" beside "Vilnius, Žirmūnai" leaves
+   both halves a few characters wide, so each ellipsizes into a stub. Stacked,
+   the name keeps the full width and the place reads whole.
+   A ceiling, so it holds all the way down: the place is never dropped at any
+   width, it just ellipsizes against its own row (the 202px tier below used to
+   hide it — that trade is gone, and the tier only rescales it now).
+   The block's height stays intrinsic (min-height, not height): with no owner —
+   which is every browse card until the backend embeds one — the place is alone
+   and the row must still measure exactly --nk-offer-owner-h, the CLS contract
+   OfferCardSkeleton reserves against. */
+@container nk-card (width <= 17.5rem) {
+  .nk-offer__owner,
+  .nk-offer-skel__meta {
+    flex-wrap: wrap;
+    row-gap: var(--nk-offer-loc-gap);
+  }
+  .nk-offer__owner {
+    height: auto;
+    min-height: var(--nk-offer-owner-h);
+  }
+  /* the · divided two halves of one line; stacked, it would trail the name */
+  .nk-offer__sep {
+    display: none !important;
+  }
+  /* The name owns line 1 — shrinkable rather than flex:none, so a long one
+     ellipsizes against the avatar instead of overrunning the card's padding.
+     Basis 0, NOT auto: wrapping is on for the place's sake, and an auto basis
+     let the name break the line itself once its text outgrew the space beside
+     the avatar (a ~150px card put the name on its own row, three rows total,
+     18px past what the skeleton reserves). At basis 0 it can never force a
+     break; it just grows into the space that is there. */
+  .nk-offer__ownername {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  /* flex-basis 100% is what breaks the line (and it outranks the skeleton bar's
+     inline width, which is a main-size declaration too) */
+  .nk-offer__loc,
+  .nk-offer-skel__place {
+    flex: 0 0 100% !important;
+  }
+  /* pinned, not intrinsic: the second row's height is half the reservation the
+     skeleton has to match, so it can't ride on the default line box */
+  .nk-offer__loc {
+    height: var(--nk-offer-loc-h) !important;
+    line-height: 1.25 !important;
+  }
+  /* the skeleton stands in for a full card, so it reserves both rows: owner row
+     + gap + place row. Every term resolves on the skeleton row itself, so this
+     tracks the smaller row heights the tier below retargets. */
+  .nk-offer-skel__meta {
+    height: calc(var(--nk-offer-owner-h) + var(--nk-offer-loc-gap) + var(--nk-offer-loc-h));
+  }
+}
+/* Deposit tier — below this the pill stops fitting beside the price at all.
+   Even compacted (mid tier above) "300 € užstatas" next to a 27px price anchor
+   leaves neither room to breathe, and letting it wrap costs the card a whole
+   row for its secondary fact. Drop it: the deposit is stated in full on the
+   detail page. The place never makes this trade — it stacks and ellipsizes
+   instead (tier above), because where the item is decides whether the card is
+   worth a tap at all.
+   Ordered after the two tiers above and before the 202px block, so the ladder
+   still reads widest → narrowest; nothing below re-shows it, which is why the
+   202px block no longer restyles the pill. */
+@container nk-card (width <= 16.25rem) {
+  .o-deposit {
+    display: none !important;
+  }
+}
 @container nk-card (width <= 12.625rem) {
   .nk-offer__body {
     gap: 5px !important;
@@ -5229,16 +6312,18 @@ svg.nk-ico {
     font-size: 11px !important;
     letter-spacing: 0.1em !important;
   }
-  /* body type: the owner-row place half (pin + text) and its · read one step down */
+  /* The place is NOT dropped here (it used to be, back when it shared the owner's
+     line and this width left it a bare pin). On its own row it has the full card
+     to work with, so it only rescales — and ellipsizes if the city + district
+     still overrun. Its row height is retargeted with the owner's, below.
+     (The name needs nothing here: the place tier already gave it the whole of
+     line 1.) */
   .nk-offer__loc {
     font-size: 12.5px !important;
   }
   .nk-offer__loc svg.nk-ico {
-    width: 13px !important;
-    height: 13px !important;
-  }
-  .nk-offer__sep {
-    font-size: 16px !important;
+    width: 12px !important;
+    height: 12px !important;
   }
   .nk-offer__foot {
     gap: 8px !important;
@@ -5250,16 +6335,8 @@ svg.nk-ico {
   .nk-offer__pricemain > span:last-child {
     font-size: 11.5px !important;
   }
-  /* .o-deposit sits on the Pill WRAPPER in cards.tsx OfferCard; the
-     inline-styled Pill span inside is the >span target. */
-  .o-deposit > span {
-    padding: 4px 9px !important;
-    font-size: 11.5px !important;
-  }
-  .o-deposit svg.nk-ico {
-    width: 12px !important;
-    height: 12px !important;
-  }
+  /* (no .o-deposit rules here: the 260px tier above hides the pill outright, so
+     anything sizing it at this width would be dead.) */
   .nk-fav {
     width: 36px !important;
     height: 36px !important;
@@ -5278,7 +6355,8 @@ svg.nk-ico {
     gap: 5px !important;
   }
   .nk-offer__badges > :first-child {
-    max-width: calc(100% - 34px) !important;
+    /* 36px compact heart + 8px clearance — 34px left a 2px overlap */
+    max-width: calc(100% - 44px) !important;
   }
   .nk-offer__badge {
     padding: 4px 8px !important;
@@ -5288,13 +6366,15 @@ svg.nk-ico {
     width: 11px !important;
     height: 11px !important;
   }
-  /* Owner row. Setting the token on the BODY (a descendant) rather than .nk-offer:
-     a container query can never match its own container element. The skeleton's body
-     carries the same token, so both sides shrink together and the reservation stays
-     exact. !important on the disk because <Avatar> writes width/height inline. */
+  /* Owner + place rows. Setting the tokens on the BODY (a descendant) rather than
+     .nk-offer: a container query can never match its own container element. The
+     skeleton's body carries the same tokens, so both sides shrink together and the
+     reservation stays exact. !important on the disk because <Avatar> writes
+     width/height inline. */
   .nk-offer__body,
   .nk-offer-skel__body {
     --nk-offer-owner-h: 20px;
+    --nk-offer-loc-h: 16px;
   }
   /* the skeleton's rows must sit on the same rhythm as the card's, or its owner
      reservation is right but lands 3px off — see .nk-offer__body{gap:5px} above */
@@ -5618,8 +6698,11 @@ svg.nk-ico {
 .nk-cats-shelf-wrap {
   container: nk-category-shelf / inline-size;
 }
-/* The shelf switches mode from its own usable width, keeping embedded variants stable. */
-@container nk-category-shelf (width < 55rem) {
+/* The shelf switches mode from its own usable width, keeping embedded variants
+   stable. 60rem (was 55): the auto-fit grid can only manage 3 columns below a
+   960px container, which wrapped the 10 tiles 3+3+3+1 with an orphaned fourth
+   row — the rail carries that band instead, and the grid enters at 4-up. */
+@container nk-category-shelf (width < 60rem) {
   /* 14px card gap is the handoff value — deliberately between
      --nk-gap-sm (12) and --nk-gap-md (16); no matching token */
   .nk-cats-shelf {
@@ -5656,12 +6739,20 @@ svg.nk-ico {
   /* Fixed basis, not a width-derived fraction: the tile must stay identical to
      its grid counterpart, so it cannot shrink to fit n-up pockets. 224px is the
      narrowest width that still holds the full anatomy. Tiles keep --nk-cat-h and
-     the shared padding from the grid — the rail changes layout, never the card.
-     A partial tile peeks at every width except a ~700px container (3 tiles
-     exactly), where the edge mask still supplies the scroll cue. */
+     the shared padding from the grid — the rail changes layout, never the card. */
   .nk-cats-shelf > * {
     flex: 0 0 224px;
     scroll-snap-align: start;
+  }
+}
+/* Exact-fit pockets: at these container bands n tiles land flush and the next
+   tile has no visible sliver, so the rail masquerades as a complete grid (its
+   only cue was the edge mask, which audits showed users don't read). A slightly
+   wider tile forces a partial neighbour into view; growing never breaks the
+   anatomy (224px is the floor, not the fixed size). */
+@container nk-category-shelf ((28.5rem <= width < 31.5rem) or (43.5rem <= width < 46.5rem) or (58rem <= width < 60rem)) {
+  .nk-cats-shelf > * {
+    flex-basis: 248px;
   }
 }
 /* phones: snap-stop keeps fast flicks from skipping whole tile groups on the

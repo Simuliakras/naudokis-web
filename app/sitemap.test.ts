@@ -84,10 +84,23 @@ describe("sitemap landing enumeration", () => {
     expect(paths).toContain("/miestai/vilnius");
   });
 
-  it("omits landings that miss the minimum, at every tier", async () => {
+  // The category tier ships whole: an empty category is a real page waiting for
+  // inventory, and it is indexable, so withholding its sitemap entry would only
+  // delay the crawl. The city tiers below it still have to be stocked.
+  it("emits every category landing, stocked or not", async () => {
     const paths = await ltPaths();
-    expect(paths).not.toContain("/nuoma/vaikams");
+    expect(paths).toContain("/nuoma/vaikams");
+    expect(paths).toContain("/nuoma/irankiai-statyba/elektriniai-irankiai");
+  });
+
+  it("omits unstocked landings once a city is in the URL", async () => {
+    const paths = await ltPaths();
     expect(paths.some((path) => path.startsWith("/nuoma/vaikams/"))).toBe(false);
+    fetchListingsCount.mockImplementation(async ({ city }) => (city ? 0 : 5));
+    const unstockedCities = await ltPaths();
+    expect(unstockedCities).toContain("/nuoma/vaikams");
+    expect(unstockedCities).not.toContain("/miestai/vilnius");
+    expect(unstockedCities.some((path) => path.endsWith("/vilnius"))).toBe(false);
   });
 
   it("never spends a city probe on a category that missed the threshold nationally", async () => {
@@ -117,7 +130,7 @@ describe("sitemap failure handling", () => {
     await expect(sitemap()).rejects.toThrow();
   });
 
-  it("tolerates a single failed probe by dropping only that URL", async () => {
+  it("tolerates a single failed probe by dropping only what that probe gated", async () => {
     fetchListingsCount.mockImplementation(async ({ category: id, city }) => {
       if (id === "power_tools" && !city) {
         throw new Error("blip");
@@ -125,8 +138,11 @@ describe("sitemap failure handling", () => {
       return id === undefined || STOCKED.has(id) ? 5 : 0;
     });
     const paths = await ltPaths();
-    expect(paths).not.toContain("/nuoma/irankiai-statyba/elektriniai-irankiai");
-    expect(paths).toContain("/nuoma/irankiai-statyba");
+    // The landing itself is not gated on the probe any more — only its city
+    // expansion, which is what the failed count was being asked about.
+    expect(paths).toContain("/nuoma/irankiai-statyba/elektriniai-irankiai");
+    expect(paths).not.toContain("/nuoma/irankiai-statyba/elektriniai-irankiai/vilnius");
+    expect(paths).toContain("/nuoma/irankiai-statyba/kaunas");
   });
 });
 

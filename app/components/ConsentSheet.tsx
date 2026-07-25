@@ -69,6 +69,9 @@ export function ConsentSheet() {
           {t.decline}
         </button>
       </div>
+      {/* After the buttons, and quiet: this is orientation for later, not a third
+          option, so it must not compete with the two equally-weighted answers. */}
+      <p className="nk-consent-manage">{t.manageNote}</p>
     </Dialog>
   );
 }

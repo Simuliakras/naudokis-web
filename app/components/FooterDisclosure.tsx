@@ -47,7 +47,16 @@ export function FooterDisclosure({
         className="nk-footer__col-content"
         data-expanded={expanded ? "true" : "false"}
       >
-        {children}
+        {/* The clip is the single grid item whose row animates 0fr→1fr, and what
+            hides the links while the row shrinks. Its padding lives on the child
+            (globals.css): overflow clips at the PADDING box, so padding here would
+            keep painting a strip of links at 0fr.
+            No `inert`: the collapsed panel is visibility:hidden, which already takes
+            the links out of the tab order and the a11y tree. Unlike the FAQ panel in
+            cards.tsx, inert would be actively wrong here — this state stays false on
+            desktop, where CSS force-opens the panel, so inert={!expanded} would kill
+            every footer link above the column breakpoint. */}
+        <div className="nk-footer__col-clip">{children}</div>
       </div>
     </nav>
   );

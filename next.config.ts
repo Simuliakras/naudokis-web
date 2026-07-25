@@ -17,11 +17,13 @@ const isDev = process.env.NODE_ENV === "development";
 // styles are style="" attributes, covered by style-src-attr. unsafe-eval is dev-only.
 const cspBase: Record<string, string> = {
   "default-src": "'self'",
-  "script-src": `'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://plausible.io`,
+  "script-src": `'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com`,
   "script-src-attr": "'none'",
   "style-src": "'self' 'unsafe-inline'",
   "style-src-attr": "'unsafe-inline'",
-  "img-src": `'self' data: blob: ${IMAGE_CDN_HOSTS.join(" ")}`,
+  // GA hosts cover the image-transport fallback beacon (sendBeacon/fetch use
+  // connect-src below).
+  "img-src": `'self' data: blob: ${IMAGE_CDN_HOSTS.join(" ")} https://*.google-analytics.com https://*.googletagmanager.com`,
   "font-src": "'self' data:",
   "object-src": "'none'",
   "media-src": "'self' data: blob:",
@@ -31,8 +33,10 @@ const cspBase: Record<string, string> = {
   "frame-src": "https://www.google.com",
   // Referral/install attribution is via AppsFlyer OneLink URLs, which are
   // navigations / QR values (not fetch/XHR), so connect-src needs no OneLink host.
+  // The google-analytics/analytics.google wildcards cover the regional collect
+  // endpoints (e.g. region1.google-analytics.com) GA4 uses for EU traffic.
   "connect-src":
-    "'self' https://api.naudokis.lt https://api-dev.naudokis.lt https://plausible.io https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
+    "'self' https://api.naudokis.lt https://api-dev.naudokis.lt https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://*.ingest.sentry.io https://*.ingest.de.sentry.io",
   "frame-ancestors": "'none'",
   "base-uri": "'self'",
   "form-action": "'self'",
@@ -61,7 +65,9 @@ const cspProbes: Record<string, string> = {
   // Nothing calls URL.createObjectURL, constructs a Worker, or registers a service
   // worker, and the site has no <video>/<audio>. Enabling a Sentry DSN would be
   // expected to trip worker-src: Replay compresses in a blob: worker.
-  "img-src": `'self' data: ${IMAGE_CDN_HOSTS.join(" ")}`,
+  // GA hosts mirrored here so the beacon fallback never floods the report log;
+  // the probe's purpose (does anything still need blob: images?) is preserved.
+  "img-src": `'self' data: ${IMAGE_CDN_HOSTS.join(" ")} https://*.google-analytics.com https://*.googletagmanager.com`,
   "media-src": "'none'",
   "worker-src": "'none'",
 };
@@ -109,6 +115,13 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Almost always ".next". The override exists so a second dev server can run
+  // against this same working tree without fighting the first one for the build
+  // directory — which is what e2e/consent-analytics.spec.ts needs: NEXT_PUBLIC_GA_ID
+  // is inlined at compile time, so testing the consent surfaces means a server
+  // compiled WITH an id, alongside the default one compiled without. Unset in every
+  // real build.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   // Build-time constants inlined into BOTH bundles (that is what `env` does —
   // unlike .env vars, no NEXT_PUBLIC_ prefix is involved and it cannot be
   // overridden at runtime). The footer's rights notice needs the year to be one

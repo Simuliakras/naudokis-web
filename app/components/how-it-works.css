@@ -327,6 +327,15 @@
 }
 
 /* ---- phone frame + mini-screens ---- */
+/* Smallest phones: the hero badge row pushed the role toggle ~1.4 viewports
+   down at 320×568. The sticky nav CTA and the stepper-end CTA both carry the
+   install action, so this page can shed the third copy at the floor. */
+@media (width < theme(--breakpoint-xs)) {
+  .htw-hero__actions {
+    display: none;
+  }
+}
+
 .htw-phone {
   position: relative;
   width: min(340px, 100cqw);
@@ -340,11 +349,14 @@
 }
 .htw-phone__notch {
   position: absolute;
-  top: 18px;
+  /* proportional, not fixed: the screen content scales with the frame (cq units),
+     and a fixed 120×28 pill overlapped the scaled app header on small frames.
+     35.3% / 4% / 2.6% reproduce the 120px / 28px / 18px design at full size. */
+  top: 2.6%;
   left: 50%;
   transform: translateX(-50%);
-  width: 120px;
-  height: 28px;
+  width: 35.3%;
+  height: 4%;
   border-radius: 16px;
   background: var(--nk-ps-bg);
   z-index: 3;

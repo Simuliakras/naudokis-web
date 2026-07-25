@@ -107,7 +107,8 @@ export function LegalChrome({
       </div>
 
       {toc.length > 0 && (
-        <button ref={fabRef} className="nk-lg-fab-toc" onClick={() => setDrawer(true)} aria-haspopup="dialog" aria-expanded={drawer}>
+        <button ref={fabRef} className="nk-lg-fab-toc" onClick={() => setDrawer(true)} aria-haspopup="dialog" aria-expanded={drawer} aria-label={openMenu}>
+          {/* the label span hides on phones (icon-only circle) — aria-label carries the name */}
           <Icon name="menu" size={18} /><span>{openMenu}</span>
         </button>
       )}

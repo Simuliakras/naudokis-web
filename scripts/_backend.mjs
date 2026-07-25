@@ -36,11 +36,30 @@ export async function pickListingIds(apiBase = resolveApiBase()) {
     return empty;
   }
 
+  // The site deliberately 404s synthetic listings (see isSyntheticListing in
+  // app/lib/listing-url.ts) — picking one captures the status screen instead of
+  // the detail page. Mirror the guard here; keep the regex in sync.
+  const SYNTHETIC_RE = /(?:^|[\s./_-])(?:e2e[\s_-]?test|fixture|example)(?:[\s./_-]|$)/i;
+  const synthetic = (l) =>
+    [l.id, l.title, ...(l.images ?? []).map((image) => image.url)].some(
+      (value) => !!value && SYNTHETIC_RE.test(value),
+    );
+  items = items.filter((l) => !synthetic(l));
+  if (!items.length) {
+    console.warn(`⚠ Only synthetic listings returned from ${apiBase}; skipping listing shots.`);
+    return empty;
+  }
+
   const hasPhotos = (l) => (l.images?.length ?? 0) > 0;
   const hasReviews = (l) => (l.rating_count ?? 0) > 0;
 
+  // Among candidates, prefer the richest gallery so bento/lightbox states have
+  // something to show; a 1-photo listing renders a degenerate gallery.
+  const byPhotoCount = (a, b) => (b.images?.length ?? 0) - (a.images?.length ?? 0);
   const withPhotosReviews =
-    items.find((l) => hasPhotos(l) && hasReviews(l)) ?? items.find(hasPhotos) ?? items[0];
+    items.filter((l) => hasPhotos(l) && hasReviews(l)).sort(byPhotoCount)[0] ??
+    items.filter(hasPhotos).sort(byPhotoCount)[0] ??
+    items[0];
   const zeroReviews = items.find((l) => !hasReviews(l)) ?? items[items.length - 1];
 
   return {

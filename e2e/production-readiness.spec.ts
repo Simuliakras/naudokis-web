@@ -292,32 +292,6 @@ test("the report-only CSP probes only grants that can converge", async ({ reques
   }
 });
 
-test("native handoff outcomes require a signed journey token", async ({ request }) => {
-  const response = await request.post("/api/handoff-event", {
-    data: { token: "tampered", event: "native_open", platform: "ios" },
-  });
-  expect(response.status()).toBe(401);
-});
-
-test("Web Vitals ingestion accepts bounded metrics and rejects sensitive paths", async ({ request }) => {
-  const metric = {
-    path: "/skelbimai",
-    name: "LCP",
-    value: 1234.56,
-    delta: 1234.56,
-    rating: "good",
-    navigationType: "navigate",
-  };
-  const accepted = await request.post("/api/web-vitals", { data: metric });
-  expect(accepted.status()).toBe(204);
-  expect(accepted.headers()["cache-control"]).toContain("no-store");
-
-  const queryLeak = await request.post("/api/web-vitals", { data: { ...metric, path: "/skelbimai?email=a@example.com" } });
-  expect(queryLeak.status()).toBe(400);
-  const tokenPath = await request.post("/api/web-vitals", { data: { ...metric, path: "/reset-password" } });
-  expect(tokenPath.status()).toBe(400);
-});
-
 test("mobile homepage does not download the hidden desktop hero phone", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const heroRequests: string[] = [];

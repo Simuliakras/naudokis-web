@@ -1,6 +1,7 @@
 "use client";
 // Naudokis UI kit — primitives.
 import React, { useCallback, useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -124,10 +125,15 @@ export function StoreBadge({
   // the w=1920 rendition of a badge that paints ~170px wide — 10 KiB, above the
   // fold in the hero, competing with LCP. Same defect, same fix as logoBox().
   const renderedWidth = Math.round(renderedHeight * (isGoogle ? 478 / 142 : 813 / 272));
+  // The painted height is a min() against --nk-badge-cap (defaulted on .nk-appbadges,
+  // lowered per tier there) so the phone tiers can shrink the art without every call
+  // site's height moving: an inline `height` is unreachable from a media query, and
+  // a cap can only ever take a call site DOWN — the prop stays the ceiling.
   const img = (
     <Image src={isGoogle ? "/naudokis/google-play.png" : "/naudokis/app-store.png"}
       alt={isGoogle ? dict.bridge.googlePlayAlt : dict.bridge.appStoreAlt}
-      width={renderedWidth} height={renderedHeight} style={{ height: renderedHeight, width: "auto" }} />
+      width={renderedWidth} height={renderedHeight}
+      style={{ height: `min(${renderedHeight}px, var(--nk-badge-cap, ${renderedHeight}px))`, width: "auto" }} />
   );
   if (!interactive) {
     return <span style={{ display: "inline-flex" }}>{img}</span>;
@@ -144,8 +150,10 @@ export function StoreBadge({
 export function AppBadges({ gap = 20, height = 52, footer = false, interactive = true, href, placement }: {
   gap?: number; height?: number; footer?: boolean; interactive?: boolean; href?: string; placement?: string;
 }) {
+  // gap through a var for the same reason as the height cap above: the phone tiers
+  // have to be able to tighten the pair, and an inline gap is unreachable from CSS
   return (
-    <div className="nk-appbadges" style={{ gap }}>
+    <div className="nk-appbadges" style={{ gap: `var(--nk-badge-gap, ${gap}px)` }}>
       <StoreBadge store="google" height={height} footer={footer} interactive={interactive} href={href} placement={placement} />
       <StoreBadge store="apple" height={height} footer={footer} interactive={interactive} href={href} placement={placement} />
     </div>
@@ -352,13 +360,27 @@ export function CloseButton({ label, onClick, className, ref }: {
    one opens on top of another (see lib/layer-stack.ts).
 
    Focus lands on the PANEL, never on the first button: a dialog that asks a
-   question must not preselect one of its answers. */
-export function Dialog({ open, onDismiss, title, description, closeLabel, children }: {
+   question must not preselect one of its answers. That holds even when the dialog
+   is a settings surface — there, the reflex Space/Enter after it opens would flip a
+   consent state and write a cookie, with no Save button to catch it.
+
+   `panelClassName` is the one extension point: omitted, the emitted className is
+   byte-identical to before, so both call sites and the e2e `.nk-dialog-panel`
+   locator are untouched.
+
+   PORTALLED TO <body> — required, not tidiness. z-index only orders siblings within
+   the nearest stacking context, and <PrivacyChoices/> renders inside .nk-footer,
+   which sets `isolation: isolate` (globals.css) for its own internal layering. Left
+   in place, the scrim's z-index 210 was scoped to the footer, so the sticky nav
+   (z 50, but a root-level sibling) painted OVER the "modal" and stayed clickable
+   through it. A modal must not inherit an ancestor's stacking context. */
+export function Dialog({ open, onDismiss, title, description, closeLabel, panelClassName, children }: {
   open: boolean;
   onDismiss: () => void;
   title: string;
   description: string;
   closeLabel: string;
+  panelClassName?: string;
   children: React.ReactNode;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -367,24 +389,27 @@ export function Dialog({ open, onDismiss, title, description, closeLabel, childr
   useDismissableLayer(open, onDismiss, { initialFocus: panelRef });
   useFocusTrap(panelRef, open);
 
-  if (!open) {
+  // `open` is always false on the server for every call site, so the portal target is
+  // only ever read in the browser; the guard is insurance, not a live branch.
+  if (!open || typeof document === "undefined") {
     return null;
   }
-  return (
+  return createPortal(
     <div className="nk-dialog-scrim" role="presentation"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) {
           onDismiss();
         }
       }}>
-      <div ref={panelRef} tabIndex={-1} className="nk-dialog-panel" role="dialog" aria-modal="true"
-        aria-labelledby={titleId} aria-describedby={bodyId}>
+      <div ref={panelRef} tabIndex={-1} className={"nk-dialog-panel" + (panelClassName ? " " + panelClassName : "")}
+        role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={bodyId}>
         <CloseButton label={closeLabel} onClick={onDismiss} className="nk-dialog-close" />
         <h2 id={titleId} className="nk-dialog-title">{title}</h2>
         <p id={bodyId} className="nk-dialog-body">{description}</p>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -453,19 +478,34 @@ export function Breadcrumb({ items, homeLabel, label }: { items: Crumb[]; homeLa
       {all.map((c, i) => {
         const last = i === all.length - 1;
         const home = i === 0;
+        // Middle crumbs collapse to a single "…" at the xs floor (CSS-driven):
+        // a 4-level trail stacked one crumb per line and spent ~135px of the
+        // first fold before the H1. The parent link stays one tap away via the
+        // last crumb's page; the full trail remains in the BreadcrumbList JSON-LD.
+        const mid = !home && !last && all.length > 3;
         if (last) {
-          return (
-            <span key={i} aria-current="page" style={{ padding: "6px 10px", borderRadius: 9, fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text)", background: "var(--nk-surface)" }}>{c.label}</span>
-          );
+          // Skin in CSS (.nk-crumb-current), not inline: it is entirely static, and
+          // the clamp it carries — with a pathological title this pill became a
+          // 2-line band duplicating the H1 right below it — needs a media query to
+          // stay tunable, which an inline style can never be reached by.
+          return <span key={i} aria-current="page" className="nk-crumb-current">{c.label}</span>;
         }
         // Crumb + its separator wrap as one unit — a chevron must never orphan at
         // a line end when the trail wraps on small phones.
         return (
-          <span key={i} className="nk-crumbs__seg" style={{ display: "inline-flex", alignItems: "center", gap: 4, whiteSpace: "nowrap" }}>
+          <span key={i} className={"nk-crumbs__seg" + (mid ? " nk-crumbs__seg--mid" : "")} style={{ display: "inline-flex", alignItems: "center", gap: 4, whiteSpace: "nowrap" }}>
             <Link href={c.href ?? localeHome(locale)} className="nk-crumb" style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "6px 10px", borderRadius: 9, fontFamily: "var(--nk-font-body)", fontSize: 15, color: "var(--nk-text-muted)", textDecoration: "none" }}>
               {home && <Icon name="Home" size={16} stroke={2} color="currentColor" />} {c.label}
             </Link>
             <Icon name="ChevronRight" size={14} stroke={2.4} color="var(--nk-text-muted)" className="nk-crumbs__sep" />
+            {/* the "…" stand-in for collapsed middles lives in the home segment
+                (the mids themselves are display:none at the xs floor) */}
+            {home && all.length > 3 && (
+              <span className="nk-crumbs__ell" aria-hidden>
+                …
+                <Icon name="ChevronRight" size={14} stroke={2.4} color="var(--nk-text-muted)" className="nk-crumbs__sep" />
+              </span>
+            )}
           </span>
         );
       })}
@@ -844,6 +884,39 @@ export function Toggle({
       {/* real on/off switch — gives the control a visible state and a trailing
           element so the ≤560 full-width `justify-content:space-between` reads right */}
       <span className="nk-switch" aria-hidden="true"><span className="nk-switch__knob" /></span>
+    </button>
+  );
+}
+
+/* ---------------- Switch (role="switch" setting) ----------------
+   The consent panel's on/off control. Deliberately NOT <Toggle/>: aria-pressed is a
+   toggle BUTTON (a sticky filter that happens to remember), role="switch" is a
+   SETTING. Merging them would make the feed's delivery filter announce "switch, on".
+
+   Neutral by construction — the track is the house accent in one state and the
+   house hairline in the other (never green-good / red-bad), the boundary ring is
+   present at identical opacity in both, and the two state words share one class, so
+   only the string differs. Equal prominence is the legal requirement here.
+
+   No onKeyDown: a native <button> already fires click on both Space and Enter,
+   which is exactly the role="switch" keyboard contract — a handler would double-fire
+   on Space. The visible state word is aria-hidden because aria-checked already
+   announces it; it is a redundancy for sighted users, not for screen readers. */
+export function Switch({
+  checked, onChange, labelledBy, describedBy, onLabel, offLabel,
+}: {
+  checked: boolean;
+  onChange: (next: boolean) => void;
+  labelledBy: string; // id of the setting's title — the switch's accessible name
+  describedBy?: string; // id of the meta line ("„AppsFlyer“ · neprivaloma")
+  onLabel: string;
+  offLabel: string;
+}) {
+  return (
+    <button type="button" role="switch" aria-checked={checked} aria-labelledby={labelledBy}
+      aria-describedby={describedBy} className="nk-cswitch" onClick={() => onChange(!checked)}>
+      <span className="nk-cswitch__state" aria-hidden="true">{checked ? onLabel : offLabel}</span>
+      <span className="nk-switch nk-switch--lg" aria-hidden="true"><span className="nk-switch__knob" /></span>
     </button>
   );
 }

@@ -211,7 +211,16 @@ const STATES = [
       const pills = page.locator(".nk-pillctl");
       const n = Math.min(await pills.count(), 5);
       for (let i = 0; i < n; i += 1) {
-        await pills.nth(i).click({ timeout: 3000 }).catch(() => {});
+        // wait for an actual open panel before shooting — a click that lands
+        // during hydration (or a re-click race) shot a closed popover as pN
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          await pills.nth(i).click({ timeout: 3000 }).catch(() => {});
+          const open = await page.waitForSelector(
+            ".nk-popover, [role='listbox'], .nk-cal",
+            { state: "visible", timeout: 1200 },
+          ).then(() => true).catch(() => false);
+          if (open) break;
+        }
         await page.waitForTimeout(300);
         await h.shoot(`p${i}`, { fullPage: false });
         await esc(page);
@@ -291,7 +300,9 @@ const STATES = [
     id: "app-redirect-mbar", routes: ["detail-full"], at: [390],
     run: async (page, h) => {
       await page.waitForFunction(() => window.__nkBridgeReady === true, { timeout: 10_000 }).catch(() => {});
-      await clickIfReady(page, ".nk-mbar button.nk-btn--primary");
+      // the reserve CTA is an <a>, not a <button> — the old selector silently
+      // matched nothing and this state shipped as a bare base shot
+      await clickIfReady(page, ".nk-mbar .nk-btn--primary");
       await page.waitForSelector('[role="dialog"]', { timeout: 5000 }).catch(() => {});
       await page.waitForTimeout(400);
       await h.shoot("", { fullPage: false });
@@ -306,9 +317,20 @@ const STATES = [
       await page.waitForSelector(".nk-lightbox__panel", { timeout: 4000 }).catch(() => {});
       await page.waitForTimeout(400);
       await h.shoot("s1", { fullPage: false });
-      await page.locator(".nk-lightbox__nav").last().click({ timeout: 2000 }).catch(() => {});
+      // assert the advance actually landed (a click during the filmstrip's
+      // scrollIntoView was once swallowed); retry once before shooting s2
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        await page.locator(".nk-lightbox__nav").last().click({ timeout: 2000 }).catch(() => {});
+        const advanced = await page.waitForFunction(
+          () => !/^\s*1\s*\//.test(document.querySelector(".nk-lightbox__panel")?.textContent ?? ""),
+          { timeout: 1200 },
+        ).then(() => true).catch(() => false);
+        if (advanced) break;
+      }
       await page.waitForTimeout(350);
       await h.shoot("s2", { fullPage: false });
+      /* s3 below is the SAME slide with the filmstrip scrolled to its end —
+         a thumbs-overflow state, not a third navigation step */
       await page.evaluate(() => {
         const t = document.querySelector(".nk-lightbox__thumbs");
         if (t) t.scrollLeft = 99999;
@@ -468,17 +490,20 @@ const TEXTSPACING_WIDTHS = [320, 768, 1280];
 /* ---------------- Mock scenarios (server on :4141, `yarn dev` site) ---------------- */
 // Each scenario: mode set via GET {MOCK_CONTROL}/__mode?set=<id> before capture;
 // URLs carry a cb= cache-buster so Next's fetch cache can't serve a stale mode.
+// Detail paths are bare UUIDs (the mock's fixed record ids): the detail route
+// canonicalizes on the param-derived id, so a friendly alias slug 308s to a
+// canonical URL that can never resolve — only a UUID param settles in one hop.
 
 const MOCK_SCENARIOS = [
-  { id: "bento-0", route: { slug: "mock-bento-0", path: "/skelbimai/mock-bento-0" }, widths: [390, 768, 1280] },
-  { id: "bento-1", route: { slug: "mock-bento-1", path: "/skelbimai/mock-bento-1" }, widths: [390, 768, 1280] },
-  { id: "bento-2", route: { slug: "mock-bento-2", path: "/skelbimai/mock-bento-2" }, widths: [390, 768, 1280] },
-  { id: "bento-3", route: { slug: "mock-bento-3", path: "/skelbimai/mock-bento-3" }, widths: [390, 768, 1280] },
-  { id: "bento-4", route: { slug: "mock-bento-4", path: "/skelbimai/mock-bento-4" }, widths: [390, 768, 1280] },
-  { id: "bento-5", route: { slug: "mock-bento-5", path: "/skelbimai/mock-bento-5" }, widths: [390, 768, 1280] },
-  { id: "stress-title-detail", route: { slug: "mock-stress-title", path: "/skelbimai/mock-stress-title" }, widths: [320, 344, 390, 430, 560, 768, 1024, 1280] },
+  { id: "bento-0", route: { slug: "mock-bento-0", path: "/skelbimai/00000000-0000-4000-8000-000000000400" }, widths: [390, 768, 1280] },
+  { id: "bento-1", route: { slug: "mock-bento-1", path: "/skelbimai/00000000-0000-4000-8000-000000000401" }, widths: [390, 768, 1280] },
+  { id: "bento-2", route: { slug: "mock-bento-2", path: "/skelbimai/00000000-0000-4000-8000-000000000402" }, widths: [390, 768, 1280] },
+  { id: "bento-3", route: { slug: "mock-bento-3", path: "/skelbimai/00000000-0000-4000-8000-000000000403" }, widths: [390, 768, 1280] },
+  { id: "bento-4", route: { slug: "mock-bento-4", path: "/skelbimai/00000000-0000-4000-8000-000000000404" }, widths: [390, 768, 1280] },
+  { id: "bento-5", route: { slug: "mock-bento-5", path: "/skelbimai/00000000-0000-4000-8000-000000000405" }, widths: [390, 768, 1280] },
+  { id: "stress-title-detail", route: { slug: "mock-stress-title", path: "/skelbimai/00000000-0000-4000-8000-000000000410" }, widths: [320, 344, 390, 430, 560, 768, 1024, 1280] },
   { id: "stress-title-feed", mode: "stress", route: { slug: "mock-stress-feed", path: "/skelbimai?q=stress" }, widths: [320, 344, 390, 430, 560, 768, 1024, 1280] },
-  { id: "stress-numbers", route: { slug: "mock-stress-numbers", path: "/skelbimai/mock-stress-numbers" }, widths: [320, 390, 560, 980, 981, 1280] },
+  { id: "stress-numbers", route: { slug: "mock-stress-numbers", path: "/skelbimai/00000000-0000-4000-8000-000000000411" }, widths: [320, 390, 560, 980, 981, 1280] },
   { id: "empty-city", mode: "empty", route: { slug: "mock-empty-city", path: "/skelbimai?city=Palanga&cb=empty1" }, widths: [320, 390, 560, 768, 1280] },
   { id: "empty-filter", mode: "empty", route: { slug: "mock-empty-filter", path: "/skelbimai?cat=kids&delivery=1&cb=empty2" }, widths: [320, 390, 560, 768, 1280] },
   { id: "error-feed", mode: "error", route: { slug: "mock-error-feed", path: "/skelbimai?cb=err1" }, widths: [390, 1280] },
@@ -492,7 +517,7 @@ const MOCK_SCENARIOS = [
   { id: "cancel-invalid", cancel: true, route: { slug: "mock-cancel-invalid", path: "/cancel-deletion?token=mock-invalid" }, widths: [320, 390, 768, 1280] },
   { id: "cancel-already", cancel: true, route: { slug: "mock-cancel-already", path: "/cancel-deletion?token=mock-already" }, widths: [320, 390, 768, 1280] },
   { id: "cancel-error", cancel: true, route: { slug: "mock-cancel-error", path: "/cancel-deletion?token=mock-error" }, widths: [320, 390, 768, 1280] },
-  { id: "long-owner", route: { slug: "mock-long-owner", path: "/skelbimai/mock-long-owner" }, widths: [320, 390, 560] },
+  { id: "long-owner", route: { slug: "mock-long-owner", path: "/skelbimai/00000000-0000-4000-8000-000000000412" }, widths: [320, 390, 560] },
 ];
 
 /* ---------------- Plan expansion ---------------- */
@@ -722,6 +747,28 @@ async function runJob(ctx, job) {
       revealKill: !job.recipe?.noRevealKill,
       extraCss: job.textSpacing ? TEXT_SPACING : undefined,
     });
+
+    // A route that unexpectedly renders the 404 StatusScreen must fail the job,
+    // not silently ship 404 shots as if they were the page (a synthetic listing
+    // id once invalidated an entire detail tier this way).
+    if (!job.routeSlug.includes("404") && job.mock?.mode !== "error") {
+      const notFound = await page.locator("main.nk-statusmain").count();
+      if (notFound > 0) {
+        throw new Error(`captured 404/error StatusScreen instead of ${job.routeSlug}`);
+      }
+    }
+    // Detail pages must be DATA-loaded before shooting: networkidle can fire on
+    // the streamed CatalogueLoading shell (an entire mock tier once shipped as
+    // skeleton screenshots). Gate on the streamed shell clearing + a real H1.
+    if (/^\/skelbimai\/[^?]+$/.test(job.path)) {
+      await page.waitForFunction(
+        () => !document.querySelector('main[aria-busy="true"]')
+          && (document.querySelector("main h1")?.textContent ?? "").trim().length > 0,
+        { timeout: 20_000 },
+      ).catch(() => {
+        throw new Error(`detail never left its loading shell on ${job.routeSlug}`);
+      });
+    }
 
     const name = (sub, kind) =>
       path.join(dir, `${job.state}${sub ? `-${sub}` : ""}-${job.locale}-${pad(job.width)}x${pad(job.height)}${job.dpr === 2 ? "-dpr2" : ""}-${kind}.png`);

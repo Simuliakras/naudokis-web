@@ -88,10 +88,11 @@ export function listingIdFromAppPath(appPath: string): string | undefined {
 // deletion cancel). The token authorizes a real account action, so it must not be
 // forwarded to a third party — not to analytics, not to error reporting.
 //
-// Plausible only offers server-side page blocking, which would still mean shipping
-// the URL to them first, so the analytics script is simply not loaded on these
-// pages (see components/Analytics.tsx). The screens additionally strip the token
-// from the address bar once they hold it (use-strip-sensitive-query.ts).
+// The GA script reports the full page_location, and any server-side exclusion
+// would still mean shipping the URL to Google first, so the analytics script is
+// simply not loaded on these pages (see components/Analytics.tsx). The screens
+// additionally strip the token from the address bar once they hold it
+// (use-strip-sensitive-query.ts).
 const TOKENIZED_PATHS = ["/cancel-deletion", "/reset-password", "/verify-email"];
 
 export function isTokenizedPath(pathname: string): boolean {

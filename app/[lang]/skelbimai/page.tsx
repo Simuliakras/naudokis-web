@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { dehydrate, HydrationBoundary, type InfiniteData } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding, NOINDEX_FOLLOW, MIN_INDEXABLE_LISTINGS } from "@/app/lib/seo";
+import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding, NOINDEX_FOLLOW, minIndexableListings } from "@/app/lib/seo";
 import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { makeQueryClient } from "@/app/lib/query";
 import { fetchListingsCount, fetchListingsPage, listingsInfiniteKey, listingsNeededForPage, LISTINGS_FIRST_CURSOR, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
@@ -77,17 +77,20 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
   ) {
     md.robots = NOINDEX_FOLLOW;
   } else {
-    // Only count far enough to prove that this page exists and, for an SEO
-    // landing, that the catalogue clears the minimum-usefulness threshold.
-    // Page 1 of the bare feed needs one public result; page N needs the first
-    // result that would land on that page.
-    const needed = listingsNeededForPage(page, isLanding ? MIN_INDEXABLE_LISTINGS : 1);
-    const count = await fetchListingsCount({
-      category: landing.category?.id,
-      city: landing.city,
-    }, { stopAt: needed }).catch(() => 0);
-    if (count < needed) {
-      md.robots = NOINDEX_FOLLOW;
+    // Only count far enough to prove that this page exists and that it clears its
+    // tier's indexing threshold. Page 1 needs whatever minIndexableListings asks
+    // for — nothing at all for a ?cat= landing, which canonicalizes to a category
+    // landing that is now indexable empty; page N needs the first result that would
+    // land on that page.
+    const needed = page > 1 ? listingsNeededForPage(page) : minIndexableListings(landing);
+    if (needed > 0) {
+      const count = await fetchListingsCount({
+        category: landing.category?.id,
+        city: landing.city,
+      }, { stopAt: needed }).catch(() => 0);
+      if (count < needed) {
+        md.robots = NOINDEX_FOLLOW;
+      }
     }
   }
   return md;

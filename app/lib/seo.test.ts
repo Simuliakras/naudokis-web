@@ -9,6 +9,7 @@ import {
   absoluteUrl,
   pageMetadata,
   resolveListingLanding,
+  minIndexableListings,
   verificationMeta,
   organizationJsonLd,
   listingJsonLd,
@@ -163,6 +164,31 @@ describe("resolveListingLanding", () => {
   });
 });
 
+// Which landings may be indexed (and so listed in the sitemap) with an empty grid.
+// The category tier is authored and finite; the city tiers are combinatorial.
+describe("minIndexableListings", () => {
+  const landing = (catParam: string, cityParam: string) =>
+    resolveListingLanding({
+      catParam,
+      cityParam,
+      categories: [category(), category({ id: "drills", title: "Grąžtai", parentId: "tools" })],
+    });
+
+  it("lets a category or subcategory landing be indexed with nothing behind it", () => {
+    expect(minIndexableListings(landing("tools", ""))).toBe(0);
+    expect(minIndexableListings(landing("drills", ""))).toBe(0);
+  });
+
+  it("still makes anything with a city earn its place", () => {
+    expect(minIndexableListings(landing("tools", "Vilnius"))).toBe(MIN_INDEXABLE_LISTINGS);
+    expect(minIndexableListings(landing("", "Vilnius"))).toBe(MIN_INDEXABLE_LISTINGS);
+  });
+
+  it("keeps the bare feed off the index while the marketplace is empty", () => {
+    expect(minIndexableListings(landing("", ""))).toBe(MIN_INDEXABLE_LISTINGS);
+  });
+});
+
 describe("verificationMeta", () => {
   // stubEnv restores through afterEach even when an assertion throws mid-test —
   // a leaked token would silently arm every later case in the file.
@@ -246,6 +272,21 @@ describe("JSON-LD honesty guards", () => {
     const node = organizationJsonLd();
     expect(node.legalName).toBe("MB Naudokis");
     expect(node.identifier).toBe("307423504");
+  });
+
+  // Search Console rejected `inLanguage`/`isPartOf` on the merchant listing: both
+  // are CreativeWork properties and Product is not a CreativeWork. They belong on
+  // the page entity, which is one.
+  it("keeps CreativeWork-only properties off the Product node", () => {
+    const node = listingJsonLd({ ...listing, path: "/skelbimai/graztas-vilnius-abc123" });
+    expect(node.inLanguage).toBeUndefined();
+    expect(node.isPartOf).toBeUndefined();
+    expect(node.mainEntityOfPage).toEqual({
+      "@type": "ItemPage",
+      "@id": `${SITE_URL}/skelbimai/graztas-vilnius-abc123`,
+      inLanguage: "lt-LT",
+      isPartOf: { "@id": webSiteId("lt") },
+    });
   });
 });
 

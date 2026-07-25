@@ -67,7 +67,7 @@ export const en: Dict = {
   hero: {
     badge: "Renting between verified users",
     title: "Clearer item rental – from search to return.",
-    body: "Find an item from a private or business owner. Compare listings on the website, then use the app to review the final amount, send a reservation request, and record the handover and return of the item.",
+    body: "Rent tools, equipment, cars or leisure gear from private and business owners across Lithuania. Final price, reservation and handover — in the app.",
     ownerPrompt: "Have an item you are not using?",
     ownerCta: "List it in the app",
     phoneAlt: "Item rental listings in the Naudokis app",
@@ -154,7 +154,7 @@ export const en: Dict = {
     },
     eyebrow: "How it works",
     title: "Rent what you need. Earn from what you already own.",
-    lead: "Naudokis connects renters with private and business owners and provides the tools for a smooth rental process. The rental agreement is made directly between the parties. Choose your role and see how the whole process works.",
+    lead: "Naudokis connects renters with private and business owners and provides the tools for a smooth rental process. The rental agreement is made directly between the parties.",
     renter: {
       label: "Renter",
       lead: "From search to return – four clear steps to rent an item for a day, a weekend or a project.",
@@ -752,6 +752,7 @@ export const en: Dict = {
       `${cats} categor${cats === 1 ? "y" : "ies"} · ${subs} subcategor${subs === 1 ? "y" : "ies"}`,
     subCount: (n) => `${n} subcategor${n === 1 ? "y" : "ies"}`,
     moreCount: (n) => `${n} more subcategor${n === 1 ? "y" : "ies"}`,
+    showAll: "Show subcategories",
     showLess: "Show less",
     popularHeading: "Popular right now",
     allListingsLabel: (title) => `All “${title}” listings`,
@@ -836,7 +837,7 @@ export const en: Dict = {
     priceDone: "Done",
     dateLabel: "Dates",
     dateAny: "Any dates",
-    dateBand: (from, to) => (from === to ? from : `${from}–${to}`),
+    dateBand: (from, to) => (from === to ? from : `${from} – ${to}`),
     datePanelTitle: "Rental dates",
     datePrevMonth: "Previous month",
     dateNextMonth: "Next month",
@@ -956,19 +957,138 @@ export const en: Dict = {
     allow: "Allow AppsFlyer measurement",
     decline: "Continue without AppsFlyer measurement",
     close: "Close",
+    // The name "Privacy choices" is also written into §10.3 of the published
+    // policy — renaming it means editing docs/privacy-policy.en.md in lockstep.
+    manageNote:
+      "You can change this at any time later under “Privacy choices” in the footer.",
   },
-  // DRAFT.
+  // DRAFT: analytics-consent banner copy — needs sign-off. Both actions must stay
+  // equally weighted.
+  //
+  // The wording is about COOKIES, not Google Analytics as a whole: gtag loads
+  // either way, and the limited cookieless measurement signals run on legitimate
+  // interest independently of this choice (policy §10.3). "Allow Google Analytics"
+  // and "Continue without analytics" both misstated that.
+  consentBanner: {
+    title: "Analytics cookies",
+    body: "We set Google Analytics cookies only if you agree. Without consent, only limited cookieless measurement signals remain. The site works the same either way.",
+    privacyLink: "Privacy Policy",
+    accept: "Allow analytics cookies",
+    decline: "Continue without analytics cookies",
+  },
+  // DRAFT: the whole block except `trigger` and `title`. Every fact-sheet value is
+  // traceable to the published policy (docs/privacy-policy.en.md) or to the code
+  // that owns the fact (app/lib/consent.ts). Nothing is invented: where the policy
+  // gives no retention period, we say how it is determined instead.
   privacyChoices: {
     trigger: "Privacy choices",
-    title: "AppsFlyer attribution",
-    body: "Allow AppsFlyer to connect the app installation with a campaign or referral and, where enabled, selected app conversion events.",
-    statusLabel: "Current status",
-    statusAllowed: "Allowed",
-    statusNotAllowed: "Not allowed",
-    allow: "Allow install attribution",
-    withdraw: "Withdraw permission",
+    title: "Privacy choices",
     scopeNote:
-      "This is the AppsFlyer attribution choice made on the website. Other in-app analytics are controlled separately in the app settings.",
+      "These choices apply to this website and take effect immediately — there is nothing to save. The app's own analytics are controlled separately, in the app settings.",
+    on: "On",
+    off: "Off",
+    detailsLabel: "What this means",
+    alwaysOn: "Always on",
+    essential: {
+      title: "Strictly necessary cookies",
+      meta: "Naudokis · essential",
+      body: "These two cookies remember what you chose here, so we do not have to ask again on every visit.",
+      details: [
+        { label: "Cookies", value: "nk_attr_consent and nk_ga_consent." },
+        {
+          label: "What they hold",
+          value:
+            "The policy version, your choice, and when you made it. No identifier.",
+        },
+        {
+          label: "Kept for",
+          value:
+            "180 days. After that — or if this policy changes — we ask again.",
+        },
+        {
+          label: "Legal basis",
+          value:
+            "Strictly necessary: without it we could not remember your choice.",
+        },
+      ],
+    },
+    attribution: {
+      title: "Install and campaign measurement",
+      meta: "AppsFlyer · optional",
+      body: "When this is on, the install link opens through AppsFlyer, so an app install can be connected to its campaign or invitation.",
+      details: [
+        {
+          label: "Who processes it",
+          value:
+            "AppsFlyer. Data may also be processed outside the EEA, under the safeguards required by the GDPR.",
+        },
+        {
+          label: "What is received",
+          value:
+            "An install identifier; platform, device and connection technical information, including IP address; installation, opening, redirection and campaign data; selected actions in the app; and, for a completed rental, a pseudonymous user identifier, event time, revenue and currency.",
+        },
+        {
+          label: "Never receives",
+          value:
+            "Your name, email address, full card details, reservation number, or the item’s precise address.",
+        },
+        {
+          label: "Kept for",
+          value:
+            "According to consent status and the periods configured in contracts and provider settings.",
+        },
+        { label: "Legal basis", value: "Your consent." },
+        {
+          label: "If you turn this off",
+          value:
+            "Install links go straight to the app store and AppsFlyer never sees the click. This does not, by itself, erase data already received — you can contact us about erasing it.",
+        },
+      ],
+    },
+    analytics: {
+      // The title says "cookies", not "analytics", on purpose: the switch governs
+      // cookie-based measurement only.
+      title: "Analytics cookies",
+      meta: "Google Analytics · optional",
+      body: "When this is on, Google Analytics sets _ga cookies and can recognise a returning browser; when it is off, only limited cookieless measurement signals remain.",
+      details: [
+        {
+          label: "Who processes it",
+          value:
+            "Google Ireland Limited (Google Analytics 4). Data may be transferred to Google LLC in the United States, under the safeguards required by the GDPR.",
+        },
+        {
+          label: "What is received",
+          value:
+            "The page URL, referring page, interaction or conversion event, and technical request information such as IP address and browser type — to produce aggregate audience statistics.",
+        },
+        {
+          label: "Cookies",
+          value:
+            "When on, first-party _ga and _ga_* cookies are set — they let a returning browser be recognised; when off they are deleted from your browser.",
+        },
+        {
+          label: "Never used for",
+          value:
+            "Advertising, remarketing, or ad personalisation. Advertising-related consent flags stay permanently denied.",
+        },
+        {
+          label: "Without consent",
+          value:
+            "Google Analytics stores nothing on your device, but it still processes limited cookieless measurement signals. This is based on our legitimate interest in understanding and improving this website; you can object to it as described in the Privacy Policy.",
+        },
+        {
+          label: "Kept for",
+          value:
+            "Event data up to 14 months; _ga cookies up to 2 years, deleted earlier when you turn this off.",
+        },
+        {
+          label: "Legal basis",
+          value:
+            "Consent for cookie-based measurement. Legitimate interest for the limited cookieless measurement.",
+        },
+      ],
+    },
     privacyLink: "Privacy Policy",
     close: "Close",
   },

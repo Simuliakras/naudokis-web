@@ -41,7 +41,6 @@ frontend:
           ANDROID_APP_LINK_PACKAGE_NAME=$ANDROID_APP_LINK_PACKAGE_NAME
           TRUSTED_PROXY_HOPS=$TRUSTED_PROXY_HOPS
           HANDOFF_SIGNING_SECRET=$HANDOFF_SIGNING_SECRET
-          PLAUSIBLE_EVENTS_API=$PLAUSIBLE_EVENTS_API
           EOF
         # Log which runtime vars actually arrived. Prints the KEY and whether it is
         # set — never the value, since HANDOFF_SIGNING_SECRET is among them and

@@ -8,6 +8,7 @@ const px = (token: keyof typeof BREAKPOINTS) => Number.parseFloat(BREAKPOINTS[to
 const SM = px("sm");
 const MD = px("md");
 const NAV = px("nav");
+const NAVCTA = px("navcta");
 const HERO = px("hero");
 const around = (edge: number) => [edge - 1, edge, edge + 1];
 
@@ -138,10 +139,16 @@ test("navigation drawer closes at nav and restores visible focus", async ({ page
   await expect(page.locator(".nk-nav-drawer")).toHaveClass(/open/);
   await page.setViewportSize({ width: NAV, height: 900 });
   await expect(page.locator(".nk-nav-drawer")).not.toHaveClass(/open/);
-  await expect(page.locator(".nk-nav-cta__full")).toBeVisible();
-  await expect(page.locator(".nk-nav-cta__short")).toBeHidden();
   await expect(page.locator(".nk-nav-burger")).toBeHidden();
   await expect(page.locator("#nk-main")).toBeFocused();
+  // The label has its own edge 70px further up: at nav the link row is back but the
+  // CTA is still short, and only at navcta does the full label return. Asserting both
+  // sides is what stops the two thresholds silently re-merging.
+  await expect(page.locator(".nk-nav-cta__short")).toBeVisible();
+  await expect(page.locator(".nk-nav-cta__full")).toBeHidden();
+  await page.setViewportSize({ width: NAVCTA, height: 900 });
+  await expect(page.locator(".nk-nav-cta__full")).toBeVisible();
+  await expect(page.locator(".nk-nav-cta__short")).toBeHidden();
 });
 
 // Phones drop the label entirely: icon-only square, but still present and named.

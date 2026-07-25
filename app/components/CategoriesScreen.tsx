@@ -68,26 +68,7 @@ export function CategoriesScreen() {
             maxWidth="100ch"
           />
 
-          {/* Quick-access rail into the highest-traffic subcategory landings. It
-              sits above the field, so it stays mounted while a term is active —
-              unmounting it here would yank the search input upward mid-typing.
-              100ch keeps the pills wrapping within the same reading column as
-              the PageHead above and the SeoNote below. */}
-          {popular.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-8)", maxWidth: "100ch" }}>
-              <span className="nk-eyebrow" style={{ fontSize: 13 }}>{t.popularHeading}</span>
-              <ChipLinkRow
-                variant="pill"
-                links={popular.map(({ sub, parent }) => ({
-                  label: sub.title,
-                  icon: parent.icon,
-                  href: listingLandingHref({ category: parent.id, subcategory: sub.id, locale }),
-                }))}
-              />
-            </div>
-          )}
-
-          <form onSubmit={(e) => e.preventDefault()} role="search" style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-20)" }}>
+          <form onSubmit={(e) => e.preventDefault()} role="search" style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-8)" }}>
             {/* 100ch — the same reading column the PageHead, the popular rail and
                 the closing SeoNote sit in, so the page has one left-to-right edge. */}
             <span className="nk-searchfield" style={{ width: "100%", maxWidth: "100ch" }}>
@@ -108,6 +89,25 @@ export function CategoriesScreen() {
               {isLoading ? dict.common.loading : !isError && all.length > 0 ? t.countLabel(shown.length, shownSubCount) : ""}
             </span>
           </form>
+
+          {/* Quick-access rail into the highest-traffic subcategory landings.
+              Below the field it can't shift the input, and it stays mounted
+              while a term is active so results don't jump around mid-typing.
+              100ch keeps the pills wrapping within the same reading column as
+              the PageHead above and the SeoNote below. */}
+          {popular.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--nk-gap-sm)", marginBottom: "var(--nk-s-20)", maxWidth: "100ch" }}>
+              <span className="nk-eyebrow" style={{ fontSize: 13 }}>{t.popularHeading}</span>
+              <ChipLinkRow
+                variant="pill"
+                links={popular.map(({ sub, parent }) => ({
+                  label: sub.title,
+                  icon: parent.icon,
+                  href: listingLandingHref({ category: parent.id, subcategory: sub.id, locale }),
+                }))}
+              />
+            </div>
+          )}
 
           {/* sr-only section heading so the outline is h1 → h2 → h3(cards) instead
               of skipping a level straight to the card <h3>s */}
@@ -214,7 +214,9 @@ function DirectoryCard({
           {expanded ? t.showLess : (
             <>
               {subs.length > 4 && <span className="nk-dircard__more-rest">{t.moreCount(subs.length - 4)}</span>}
-              <span className="nk-dircard__more-all">{t.moreCount(subs.length)}</span>
+              {/* countless below 640px — the card's count line already says
+                  "N pogrupių", so "Dar N pogrupių" 30px under it read double */}
+              <span className="nk-dircard__more-all">{t.showAll}</span>
             </>
           )}
           {/* one glyph, rotated by CSS off aria-expanded, so the turn animates */}

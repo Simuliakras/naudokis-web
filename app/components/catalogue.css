@@ -110,6 +110,9 @@
 .nk-filtersheet__foot {
   position: sticky;
   bottom: 0;
+  /* above the calendar day cells (they carry z-index for the range fill), which
+     otherwise paint through the opaque bar around the apply pill */
+  z-index: 2;
   display: flex;
   gap: 12px;
   align-items: center;
@@ -127,6 +130,21 @@
    Listings feed
    ============================================================ */
 /* sticky filter bar — solid (not blurred) bg so popovers layer above cards */
+/* count placeholder while the total is unknown — a quiet pill so the em-dash
+   reads as a held slot, not a rendering glitch */
+.nk-count-pending {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  min-height: 24px;
+  border-radius: var(--nk-r-pill);
+  background: var(--nk-surface);
+  color: var(--nk-text-muted);
+  font-family: var(--nk-font-body);
+  font-size: 14px;
+}
+
 .nk-filterbar {
   position: sticky;
   top: var(--nk-nav-h-scrolled);
@@ -1141,6 +1159,9 @@
 .nk-price-input input {
   width: 100%;
   min-width: 0;
+  /* fill the 46px field: the wrapper is a span, so only the input itself is
+     tappable — at its intrinsic ~19px the touch target missed WCAG 2.5.8 */
+  height: 100%;
   border: none;
   outline: none;
   background: transparent;
@@ -1281,6 +1302,13 @@
   display: flex;
   align-items: baseline;
   gap: 6px;
+  /* wrap, don't overflow: at extreme prices the struck reference used to paint
+     straight across the neighbouring tier card's border. Each price keeps its
+     own nowrap so a unit never splits internally. */
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.nk-breaks__prices > * {
   white-space: nowrap;
 }
 .nk-breaks__price {
@@ -1655,7 +1683,9 @@
   justify-content: space-between;
   gap: 16px;
   padding: 14px calc(20px + var(--nk-safe-right)) calc(14px + var(--nk-safe-bottom)) calc(20px + var(--nk-safe-left));
-  min-height: calc(72px + var(--nk-safe-bottom));
+  /* --nk-mbar-h (globals.css :root) is the one number: this height, the spacer
+     below it, and every layer that has to clear the bar all read it. */
+  min-height: var(--nk-mbar-h);
   box-shadow: var(--nk-shadow-up);
   transition:
     transform 0.22s var(--nk-ease),
@@ -1684,6 +1714,23 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: min(52vw, 340px);
+}
+/* ≤360 the 52vw cap cut the qualifier to a dangling "Galutinė suma —…" — two
+   clamped lines carry the full phrase without growing the bar meaningfully */
+@media (width < theme(--breakpoint-xs)) {
+  .nk-mbar > span > span:last-child {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+  /* the PRICE line must never ellipsize — "9999,99…" lost its currency and
+     per-day unit. One font step down instead; the caption absorbs any squeeze. */
+  .nk-mbar > span > span:first-child {
+    max-width: none;
+    font-size: 17px !important;
+  }
 }
 @container nk-detail (55rem <= width < 60rem) {
   .nk-detail-grid {
@@ -1719,7 +1766,9 @@
   }
   .nk-mbar-spacer {
     display: block;
-    height: calc(104px + var(--nk-safe-bottom));
+    /* the bar's own height plus 32px, so the last row of content is never flush
+       against it — derived rather than the 104px literal it used to be */
+    height: calc(var(--nk-mbar-h) + 32px);
   }
   /* grid-template-rows:auto (not none) — row 1 must size to the oversized hero
      tile, otherwise the hero paints over the inline booking card below the grid */
@@ -1740,6 +1789,11 @@
   .nk-bento[data-count="2"] {
     grid-template-columns: 1fr;
   }
+  /* 4 photos: the 2-up flow left the last tile orphaned beside an empty cell —
+     span it, echoing the hero's full-width treatment */
+  .nk-bento[data-count="4"] > :last-child {
+    grid-column: 1 / -1;
+  }
   .nk-tworow {
     grid-template-columns: 1fr;
   }
@@ -1747,11 +1801,33 @@
     grid-template-columns: 1fr !important;
   }
 }
-/* Back-to-top is outside the detail container, so its collision avoidance stays
-   a canonical viewport concern while the bar's actual visibility is container-owned. */
+/* Everything the reserve bar has to coexist with lives OUTSIDE the detail
+   container — .nk-backtotop and .nk-cookiebar are siblings of the page, and a
+   `body:has(…)` written inside a container query can never match `body` itself.
+   So the bar's visibility stays container-owned above, and its collision handling
+   is a canonical viewport concern here. The lg cutoff is where the sidebar's
+   `< 55rem` container tier can first put the bar on screen. */
 @media (width < theme(--breakpoint-lg)) {
-  body:has(.nk-mbar) .nk-backtotop {
-    inset-block-end: calc(92px + var(--nk-safe-bottom));
+  /* Publish the bar into --nk-bars-h (see globals.css :root) so floating chrome
+     reads one token instead of every layer knowing about this bar. Minus the safe
+     inset once: --nk-mbar-h carries it and so does the chrome's resting offset. */
+  body:has(.nk-mbar) {
+    --nk-bars-h: calc(var(--nk-mbar-h) - var(--nk-safe-bottom));
+  }
+  /* The consent bar STACKS on the reserve bar rather than covering it. Both have
+     to stay usable: the consent bar outranks it on z-index, and left at bottom: 0
+     it hid the Reserve CTA and its price outright — the page's primary control,
+     for every first-time visitor. Lifted off the viewport edge it no longer needs
+     its own safe-area padding; the bar underneath already absorbs that. */
+  body:has(.nk-mbar) .nk-cookiebar {
+    bottom: var(--nk-mbar-h);
+    --nk-cookiebar-safe: 0px;
+  }
+  /* Both on screen: chrome clears the whole stack. An explicit selector rather
+     than a cascade race — (0,3,1) against the two (0,2,1) setters, so it wins on
+     specificity regardless of which sheet loads first. */
+  body:has(.nk-mbar):has(.nk-cookiebar) {
+    --nk-bars-h: calc(var(--nk-mbar-h) + var(--nk-cookiebar-h, 132px) - var(--nk-safe-bottom));
   }
 }
 @container nk-detail (width < theme(--breakpoint-md)) {

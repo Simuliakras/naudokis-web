@@ -25,8 +25,10 @@ export function AppCtaBanner({ eyebrow, title, body, phoneAlt, placement }: { ey
           </div>
           <p>{body}</p>
           {/* badges + QR are one install row: two routes to the same action, so they
-              read as siblings. On wide desktop CSS lifts the QR out of this row into
-              the band's bottom-right corner (see .nk-appcta__qr in globals.css). */}
+              read as siblings. The QR's place is the band's bottom-right corner —
+              on desktop CSS lifts it out of this row to get there, and in the stacked
+              tier below it the row's right end already is that corner (see
+              .nk-appcta__qr in globals.css). */}
           <div className="nk-appcta__actions">
             <AppBadges height={50} placement={placement} />
             <div className="nk-appcta__qr"><QR size={132} /></div>

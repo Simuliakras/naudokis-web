@@ -40,7 +40,7 @@ async function get(path, init) {
 // the served output. README.md spells out the same caveat.
 const configuredApi = process.env.NEXT_PUBLIC_API_BASE_URL ?? PRODUCTION_API;
 check(configuredApi === PRODUCTION_API, `NEXT_PUBLIC_API_BASE_URL must be ${PRODUCTION_API}, got ${configuredApi}`);
-check(Boolean(process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN), "NEXT_PUBLIC_PLAUSIBLE_DOMAIN is required for analytics and Web Vitals RUM");
+check(Boolean(process.env.NEXT_PUBLIC_GA_ID), "NEXT_PUBLIC_GA_ID is required for analytics and Web Vitals RUM");
 check(Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN), "NEXT_PUBLIC_SENTRY_DSN is required for release error monitoring");
 
 try {
@@ -88,21 +88,9 @@ try {
     }
   }
 
-  const vital = await fetch(new URL("/api/web-vitals", origin), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-    body: JSON.stringify({
-      path: "/release-check",
-      name: "LCP",
-      value: 1,
-      delta: 1,
-      rating: "good",
-      navigationType: "navigate",
-    }),
-  });
-  check(vital.status === 204, `/api/web-vitals returned ${vital.status} for a valid metric`);
-  check(vital.headers.get("cache-control")?.includes("no-store"), "/api/web-vitals is not marked no-store");
+  // The env check above only proves the script's environment; this inspects the
+  // served output — a build made without NEXT_PUBLIC_GA_ID ships no gtag loader.
+  check(html.includes("googletagmanager.com/gtag/js"), "homepage HTML is missing the Google Analytics loader (built without NEXT_PUBLIC_GA_ID?)");
 } catch (error) {
   failures.push(`could not audit ${origin.origin}: ${error instanceof Error ? error.message : String(error)}`);
 }

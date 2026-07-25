@@ -1,24 +1,31 @@
-// Install-attribution consent — the one gate between this site and AppsFlyer.
+// Consent state for the two optional processings on this site, one cookie each:
+//   - install attribution (AppsFlyer)        → nk_attr_consent, asked contextually
+//     from install CTAs (ConsentSheet), gates /go's OneLink redirect.
+//   - website analytics (Google Analytics)   → nk_ga_consent, asked once by the
+//     site-wide banner (ConsentBanner), gates gtag's analytics_storage.
+// Separate cookies because the purposes (and processors) are distinct — GDPR
+// consent must be purpose-specific — and because each keeps its own policy
+// version and re-ask clock. Both share one value format and one validation rule.
 //
-// The site is otherwise cookieless. This cookie is written ONLY after an explicit
-// choice (allow or refuse), so a visitor who never touches an install CTA never
-// gets one. Refusal is remembered on purpose: it is what stops the prompt from
-// nagging on every subsequent install click.
+// A cookie is written ONLY after an explicit choice (allow or refuse). Refusal is
+// remembered on purpose: it is what stops the prompt from re-asking.
 //
 // The value is deliberately minimal — policy version, the choice, and when it was
 // made. No advertising identifier, no visitor id, nothing that could function as
 // one. Anything malformed, expired, or written under an older policy version reads
-// back as "unknown", which fails CLOSED: /go then sends the visitor straight to the
-// store and AppsFlyer never sees the click.
+// back as "unknown", which fails CLOSED: /go sends the visitor straight to the
+// store and AppsFlyer never sees the click; gtag keeps analytics_storage denied.
 //
 // Client-safe (no node imports): `parseConsent` runs in app/go/route.ts on the
 // server, the rest in the browser.
 
 export const CONSENT_COOKIE = "nk_attr_consent";
+export const ANALYTICS_CONSENT_COOKIE = "nk_ga_consent";
 
 // Bump when the disclosure the choice was made against changes materially. Every
 // stored choice then reads as "unknown" and is asked again.
 export const CONSENT_POLICY_VERSION = 1;
+export const ANALYTICS_CONSENT_POLICY_VERSION = 1;
 
 // Re-ask after six months even if nothing else changed.
 const MAX_AGE_SECONDS = 180 * 24 * 60 * 60;
@@ -32,15 +39,18 @@ export type ConsentStatus = "granted" | "denied" | "unknown";
 export type ConsentDecision = "granted" | "denied" | "dismissed";
 
 // Cookie value: "<version>.<choice>.<unixSeconds>".
-function serialize(choice: "granted" | "denied"): string {
-  return `${CONSENT_POLICY_VERSION}.${choice}.${Math.floor(Date.now() / 1000)}`;
+function serialize(policyVersion: number, choice: "granted" | "denied"): string {
+  return `${policyVersion}.${choice}.${Math.floor(Date.now() / 1000)}`;
 }
 
 // The single validation rule, shared by the server (/go) and the client. Every
 // rejection path returns "unknown" — never a silent "granted".
-export function parseConsent(raw: string | undefined): ConsentStatus {
+export function parseConsent(
+  raw: string | undefined,
+  policyVersion: number = CONSENT_POLICY_VERSION,
+): ConsentStatus {
   const [version, choice, stamp] = (raw ?? "").split(".");
-  if (Number(version) !== CONSENT_POLICY_VERSION) {
+  if (Number(version) !== policyVersion) {
     return "unknown";
   }
   if (choice !== "granted" && choice !== "denied") {
@@ -63,31 +73,67 @@ export function parseConsent(raw: string | undefined): ConsentStatus {
 // stay in sync with a withdrawal made elsewhere on the page.
 export const NK_CONSENT_CHANGE_EVENT = "nk:consent-change";
 
-function cookieValue(): string | undefined {
+function cookieValue(name: string): string | undefined {
   return document.cookie
     .split("; ")
-    .find((entry) => entry.startsWith(`${CONSENT_COOKIE}=`))
-    ?.slice(CONSENT_COOKIE.length + 1);
+    .find((entry) => entry.startsWith(`${name}=`))
+    ?.slice(name.length + 1);
 }
 
 export function readConsent(): ConsentStatus {
   if (typeof document === "undefined") {
     return "unknown";
   }
-  return parseConsent(cookieValue());
+  return parseConsent(cookieValue(CONSENT_COOKIE));
 }
 
-// Not HttpOnly: the client owns this preference — it must be readable to render the
-// current status and writable to withdraw. SameSite=Lax is enough; the cookie only
-// ever gates our own /go redirect.
+export function readAnalyticsConsent(): ConsentStatus {
+  if (typeof document === "undefined") {
+    return "unknown";
+  }
+  return parseConsent(cookieValue(ANALYTICS_CONSENT_COOKIE), ANALYTICS_CONSENT_POLICY_VERSION);
+}
+
+// Not HttpOnly: the client owns these preferences — they must be readable to render
+// the current status and writable to withdraw. SameSite=Lax is enough; the cookies
+// only ever gate our own /go redirect and our own gtag consent state.
 //
-// Withdrawal writes "denied" rather than deleting: /go treats it exactly like a
-// missing cookie (straight to the store), and it takes effect on the very next
-// request with no server round-trip — but the visitor isn't re-asked afterwards.
-export function writeConsent(choice: "granted" | "denied"): void {
+// Withdrawal writes "denied" rather than deleting: it takes effect immediately and
+// the visitor isn't re-asked afterwards.
+function writeChoiceCookie(name: string, policyVersion: number, choice: "granted" | "denied"): void {
   const secure = location.protocol === "https:" ? "; Secure" : "";
-  document.cookie = `${CONSENT_COOKIE}=${serialize(choice)}; Path=/; Max-Age=${MAX_AGE_SECONDS}; SameSite=Lax${secure}`;
+  document.cookie = `${name}=${serialize(policyVersion, choice)}; Path=/; Max-Age=${MAX_AGE_SECONDS}; SameSite=Lax${secure}`;
   window.dispatchEvent(new CustomEvent(NK_CONSENT_CHANGE_EVENT));
+}
+
+export function writeConsent(choice: "granted" | "denied"): void {
+  writeChoiceCookie(CONSENT_COOKIE, CONSENT_POLICY_VERSION, choice);
+}
+
+export function writeAnalyticsConsent(choice: "granted" | "denied"): void {
+  // Order matters: the change event (dispatched by writeChoiceCookie) flips gtag's
+  // analytics_storage to denied first, so GA won't re-create the cookies we expire.
+  writeChoiceCookie(ANALYTICS_CONSENT_COOKIE, ANALYTICS_CONSENT_POLICY_VERSION, choice);
+  if (choice === "denied") {
+    expireGaCookies();
+  }
+}
+
+// Google Analytics sets _ga / _ga_<container> first-party cookies on the
+// registrable domain. Best-effort deletion on withdrawal: expire each name with and
+// without the apex Domain attribute (the "www." strip is a heuristic, not a public
+// suffix list). Any survivor is inert once analytics_storage is denied.
+function expireGaCookies(): void {
+  const apex = location.hostname.replace(/^www\./, "");
+  for (const entry of document.cookie.split("; ")) {
+    const name = entry.split("=")[0];
+    if (name !== "_ga" && !name.startsWith("_ga_")) {
+      continue;
+    }
+    for (const domain of ["", `; Domain=.${apex}`]) {
+      document.cookie = `${name}=; Path=/; Max-Age=0${domain}`;
+    }
+  }
 }
 
 /* ---------------- The prompt ---------------- */

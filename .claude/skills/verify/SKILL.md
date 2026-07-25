@@ -37,6 +37,10 @@ Verified 2026-07-21 against `app/lib/listings.ts` / `availability.ts`:
   `body.data` *directly*. Wrapping it as `data: { listing }` yields a detail page stuck on its
   route-level loading shell forever, with no console error: the query resolves to an object
   whose every field is `undefined`.
+- `GET /listings/:id` records MUST carry `category_names: [{ lt, en }]` — it is the one field
+  `fetchListing`'s mapper reads with **no fallback** (`detail.category_names.map(...)`). Omit it
+  and the client query throws → silent React-Query retry loop → the page never leaves its
+  loading shell, with every network response reading 200.
 - `GET /listings/:id/review-stats` → `data: { rating_average, rating_count, rating_distribution }`
   — the per-star map is `rating_distribution`, **not** `breakdown`.
 - `GET /listings/:id/availability` → `data: { listing_id, start_date, end_date, booked_dates: [] }`.

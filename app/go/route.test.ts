@@ -1,22 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { PLAY_STORE_URL, APP_STORE_URL } from "@/app/lib/contact";
 import { CONSENT_COOKIE, CONSENT_POLICY_VERSION } from "@/app/lib/consent";
 
-// `after()` needs an active request store, and trackServerEvent would fire real
-// network calls. Both are side effects of the route, not the behaviour under test —
-// the question here is only "where does /go send you, and what rides along".
-const tracked: { event: string; payload: Record<string, unknown> }[] = [];
-
-vi.mock("next/server", async () => {
-  const actual = await vi.importActual<typeof import("next/server")>("next/server");
-  return { ...actual, after: (callback: () => void) => callback() };
-});
-
-vi.mock("@/app/lib/server-analytics", () => ({
-  trackServerEvent: (_request: unknown, event: string, payload: Record<string, unknown>) => {
-    tracked.push({ event, payload });
-  },
-}));
+// The question here is only "where does /go send you, and what rides along" — the
+// route has no other observable side effects since the server-side analytics event
+// was removed with the Plausible→GA migration.
 
 // Both are read at module scope by onelink.ts / handoff-token.ts, so they must be
 // in place before those modules are first imported.
@@ -58,11 +46,7 @@ function go({ target, ua = UA.android, consent, params }: {
 }
 
 const locationOf = (response: Response) => response.headers.get("location") ?? "";
-const lastPayload = () => tracked[tracked.length - 1]?.payload ?? {};
 
-beforeEach(() => {
-  tracked.length = 0;
-});
 afterEach(() => {
   vi.unstubAllEnvs();
 });
@@ -150,7 +134,6 @@ describe("target validation", () => {
       expect(location).not.toContain("af_dp");
       expect(location).not.toContain("af_web_dp");
     }
-    expect(lastPayload().contextPreserved).toBe(false);
   });
 });
 
@@ -160,7 +143,6 @@ describe("consented OneLink path", () => {
     expect(location).toContain("af_dp=naudokis://listing/abc123");
     expect(location).toContain("deep_link_value=listing");
     expect(location).toContain("deep_link_sub1=abc123");
-    expect(lastPayload()).toMatchObject({ outcome: "onelink", contextPreserved: true });
   });
 
   // /go validates ?target but does NOT validate deep_link_value, which
@@ -187,36 +169,13 @@ describe("consented OneLink path", () => {
   });
 });
 
-describe("contextPreserved", () => {
-  // This metric came apart from "AppsFlyer fired" when the Play referrer landed.
-  // It now means "the target actually rode along", by either route.
-  it("is true for an Android referrer even though no OneLink was built", () => {
-    go({ target: "/listing/abc123", ua: UA.android });
-    expect(lastPayload()).toMatchObject({ outcome: "play_store", contextPreserved: true });
-  });
-
-  it("is false when there is no target at all", () => {
-    go({ ua: UA.android });
-    expect(lastPayload().contextPreserved).toBe(false);
-  });
-
-  it("is false on iOS, where the target cannot travel", () => {
-    go({ target: "/listing/abc123", ua: UA.ios });
-    expect(lastPayload()).toMatchObject({ outcome: "app_store", contextPreserved: false });
-  });
-});
-
 describe("consent", () => {
-  it("records the consent state so the funnel stays readable", () => {
-    go({ ua: UA.android });
-    expect(lastPayload().consent).toBeDefined();
-  });
-
   // Fails closed: OneLink is fully configured in this suite, so reaching the store
   // instead is the consent gate working, not a missing env var.
   it("stays off AppsFlyer with no cookie at all", () => {
-    go({ target: "/listing/abc123", ua: UA.android });
-    expect(lastPayload().outcome).toBe("play_store");
+    const location = locationOf(go({ target: "/listing/abc123", ua: UA.android }));
+    expect(location).not.toContain("link.naudokis.lt");
+    expect(location).toContain("play.google.com");
   });
 
   it("treats a malformed or stale cookie as unknown, not granted", () => {
@@ -226,6 +185,6 @@ describe("consent", () => {
       headers: new Headers({ "user-agent": UA.android, cookie: stale }),
     }));
     expect(locationOf(response)).not.toContain("link.naudokis.lt");
-    expect(lastPayload().consent).toBe("unknown");
+    expect(locationOf(response)).toContain("play.google.com");
   });
 });
