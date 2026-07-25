@@ -192,6 +192,16 @@ test.describe("footer privacy panel", () => {
 });
 
 test.describe("the banner shares the bottom edge without covering it", () => {
+  // The bar fades up over --nk-dur-med. Every assertion below reads a bounding box,
+  // and a box sampled mid-entrance sits 12px low — which is the direction that turns
+  // "clears the reserve bar" into a false failure. Wait for the animation itself
+  // rather than a timeout; the click-driven tests above need nothing, since Playwright
+  // already waits for box stability before it clicks.
+  const bannerStill = (page: Page) =>
+    banner(page).evaluate(async (el) => {
+      await Promise.all(el.getAnimations().map((animation) => animation.finished));
+    });
+
   const overlaps = async (page: Page, a: string, b: string) => {
     const [boxA, boxB] = await Promise.all([page.locator(a).boundingBox(), page.locator(b).boundingBox()]);
     if (!boxA || !boxB) {
@@ -205,6 +215,7 @@ test.describe("the banner shares the bottom edge without covering it", () => {
     await page.goto("/kaip-tai-veikia");
     await bannerSettled(page);
     await expect(banner(page)).toBeVisible();
+    await bannerStill(page);
 
     await page.evaluate(() => window.scrollTo({ top: 2000, behavior: "instant" }));
     await expect(page.locator(".nk-backtotop")).toHaveClass(/is-on/);
@@ -225,6 +236,7 @@ test.describe("the banner shares the bottom edge without covering it", () => {
     const bar = page.locator(".nk-mbar");
     await expect(bar).toBeVisible();
     await expect(banner(page)).toBeVisible();
+    await bannerStill(page);
     expect(await overlaps(page, BANNER, ".nk-mbar")).toBe(false);
 
     // Visible is not enough — the CTA has to be reachable, which is what an

@@ -1827,7 +1827,7 @@
      than a cascade race — (0,3,1) against the two (0,2,1) setters, so it wins on
      specificity regardless of which sheet loads first. */
   body:has(.nk-mbar):has(.nk-cookiebar) {
-    --nk-bars-h: calc(var(--nk-mbar-h) + var(--nk-cookiebar-h, 132px) - var(--nk-safe-bottom));
+    --nk-bars-h: calc(var(--nk-mbar-h) + var(--nk-cookiebar-h) - var(--nk-safe-bottom));
   }
 }
 @container nk-detail (width < theme(--breakpoint-md)) {
