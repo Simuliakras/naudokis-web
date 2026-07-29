@@ -14,6 +14,7 @@ import { fetchAllListingSitemapEntries } from "@/app/lib/listing-sitemap";
 import { listingDetailPath, listingIdFromParam, isSyntheticListingParam } from "@/app/lib/listing-url";
 import { localePath } from "@/app/lib/i18n/config";
 import { truncate } from "@/app/lib/legal/format";
+import { richTextToPlainText } from "@/app/lib/rich-text";
 import { ListingScreen } from "@/app/components/ListingScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 import { QueryProvider } from "@/app/providers";
@@ -53,11 +54,12 @@ export async function generateStaticParams() {
 // substantial; otherwise fall back to the templated SEO description from the
 // dictionary. Word-boundary truncation with an ellipsis (shared truncate()) —
 // a hard slice amputated SERP snippets mid-word.
-function cleanDescription(raw: string): string {
-  return raw.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-}
+//
+// De-tagging goes through the renderer's own richTextToPlainText: a second,
+// local implementation here only stripped REAL tags, so an entity-escaped
+// description (`&lt;div&gt;…`) put literal markup in the snippet and JSON-LD.
 function listingDescription(data: ListingMeta, fromDict: string): string {
-  const clean = cleanDescription(data.description);
+  const clean = richTextToPlainText(data.description);
   return clean.length >= 80 ? truncate(clean, 160) : fromDict;
 }
 

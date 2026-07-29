@@ -10,10 +10,17 @@
 import { createElement, Fragment, type ReactNode } from "react";
 
 // Inline emphasis + block structure the editor can produce. `b`/`i` normalize to
-// `strong`/`em`. Everything not listed is unwrapped (children kept, tag dropped).
+// `strong`/`em`. Everything not listed is unwrapped (children kept, tag dropped) —
+// `span` deliberately among them (inline, carries no semantics once attributes go).
+//
+// `div` maps to `div`, NOT `p`: pasted rich text is often one `<div>` per line, and a
+// `<div><ul>…</ul></div>` re-tagged as `<p>` serializes to `<p><ul>`, which the HTML
+// parser auto-closes → hydration mismatch. A bare `div` is a block box with zero
+// margin (preflight), so each one is its own line and `<div><br></div>` is a blank
+// line — exactly what the author composed.
 const TAG_MAP: Record<string, keyof React.JSX.IntrinsicElements> = {
   p: "p", br: "br", strong: "strong", b: "strong", em: "em", i: "em", u: "u",
-  ul: "ul", ol: "ol", li: "li",
+  ul: "ul", ol: "ol", li: "li", div: "div",
 };
 // Elements whose CONTENT is dropped entirely (not unwrapped) — never render their text.
 const DROP_WITH_CONTENT = new Set(["script", "style"]);
@@ -23,6 +30,25 @@ type Token =
   | { kind: "open" | "close"; name: string }
   | { kind: "void"; name: string }
   | { kind: "text"; text: string };
+
+// Some descriptions arrive with their markup entity-escaped (`&lt;div&gt;`) — rich text
+// pasted from macOS that the write path escaped wholesale. Left alone, those tags reach
+// `decodeEntities` below as TEXT and render as a visible `<div>` soup (this shipped as a
+// live bug). Rewrite only tag-SHAPED runs back into real tags, so an ordinary `&lt;` in
+// prose ("temperatūra &lt; 5 °C") stays literal text and a double-escaped `&amp;lt;div&amp;gt;`
+// still decodes to exactly one level.
+//
+// Attributes are dropped here rather than carried through, since `tokenize` would
+// discard them anyway. This widens what we PARSE, never what we trust: the output is
+// still an allowlisted React tree with no attributes and no dangerouslySetInnerHTML.
+const ESCAPED_TAG = /&lt;(\/?)([a-zA-Z][a-zA-Z0-9]*)(?:(?!&lt;|&gt;)[\s\S])*?(\/?)&gt;/g;
+
+function unescapeMarkup(html: string): string {
+  return html.replace(
+    ESCAPED_TAG,
+    (_m, close: string, name: string, selfClose: string) => `<${close}${name}${selfClose}>`,
+  );
+}
 
 // Split into tag / text tokens. Attributes are matched but discarded (`[^>]*`), so
 // no attribute value ever reaches the output.
@@ -67,7 +93,7 @@ function decodeEntities(s: string): string {
 type Frame = { name: string; children: ReactNode[] };
 
 export function richTextToNodes(html: string): ReactNode[] {
-  const tokens = tokenize(html);
+  const tokens = tokenize(unescapeMarkup(html));
   const root: ReactNode[] = [];
   const stack: Frame[] = [];
   let dropDepth = 0; // >0 while inside a DROP_WITH_CONTENT subtree
@@ -132,10 +158,27 @@ export function richTextToNodes(html: string): ReactNode[] {
   return root;
 }
 
-// Renders backend HTML as a safe React tree. Falls back to plain text when the
-// content has no tags (the common short-description case).
+// Same content as a single plain-text run — for `<meta description>`, OG/Twitter and
+// JSON-LD, which must never carry markup. Shares `unescapeMarkup` + `decodeEntities`
+// with the renderer so the head and the body can't disagree about the same string.
+export function richTextToPlainText(html: string): string {
+  return decodeEntities(
+    unescapeMarkup(html)
+      .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, " ")
+      .replace(/<[^>]*>/g, " "),
+  )
+    .replace(/\s+/g, " ")
+    // Each stripped tag leaves a space behind, so `<u>parai</u>.` reached the
+    // snippet as "parai ." — reattach punctuation that a tag was hiding behind.
+    .replace(/ ([,.;:!?])/g, "$1")
+    .trim();
+}
+
+// Renders backend HTML as a safe React tree. Falls back to plain text only when there
+// is nothing to parse OR decode — a `<`-less string can still be fully entity-escaped
+// markup, and short-circuiting on `<` alone rendered it verbatim.
 export function RichText({ html }: { html: string }): ReactNode {
-  if (!html.includes("<")) {
+  if (!html.includes("<") && !html.includes("&")) {
     return html;
   }
   return createElement(Fragment, null, ...richTextToNodes(html));
