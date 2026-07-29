@@ -108,7 +108,7 @@ export const lt: Dict = {
   hero: {
     badge: "Nuoma tarp patvirtintų naudotojų",
     title: "Aiškesnė daiktų nuoma nuo paieškos iki grąžinimo.",
-    body: "Išsinuomokite įrankius, techniką, automobilius ar laisvalaikio įrangą iš privačių ir verslo savininkų visoje Lietuvoje. Galutinė kaina, rezervacija ir perdavimas — programėlėje.",
+    body: "Naudokis.lt yra daiktų nuomos platforma — išsinuomokite įrankius, techniką, automobilius ar laisvalaikio įrangą iš privačių ir verslo savininkų visoje Lietuvoje. Galutinė kaina, rezervacija ir perdavimas — programėlėje.",
     ownerPrompt: "Turite nenaudojamą daiktą?",
     ownerCta: "Įkelkite skelbimą programėlėje",
     phoneAlt: "Naudokis programėlėje rodomi daiktų nuomos pasiūlymai",
