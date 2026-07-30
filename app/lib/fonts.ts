@@ -23,8 +23,22 @@ export const brandFont = Archivo({
 // full 100–800 variable font and the payload went 22.6 KB → 49.2 KB across the two
 // subsets, to save ~1 KB of stylesheet. Net loss — do not "simplify" it to match
 // brandFont above.
+//
+// `preload: false` because next/font emits one <link rel=preload> per subset and
+// the browser fetches them all at High priority the moment the HTML head parses.
+// Sora's two subsets are 22.6 KB of that window, and nothing they paint is in it:
+// prices sit in offer cards, below the fold on every route that has them. Measured
+// on the throttled-mobile profile, the render-blocking stylesheet was landing at
+// ~2.0 s because ~90 KB of High-priority font bytes were drawing from the same
+// 1.6 Mbps — FCP is gated on that stylesheet, so those bytes cost paint time
+// directly. Dropping the hint leaves the @font-face in the stylesheet: Sora is
+// still fetched, just discovered from CSS at normal priority when a price is
+// actually laid out, and `swap` (next/font's default) paints the fallback until it
+// lands. Archivo keeps its preloads — it sets the h1 and every nk- label, i.e. the
+// text FCP is measured on.
 export const priceFont = Sora({
   variable: "--font-sora",
   subsets: ["latin", "latin-ext"],
   weight: ["700"],
+  preload: false,
 });
