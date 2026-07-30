@@ -27,11 +27,29 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "naudokis");
+
 const PATTERNS = ["hero-pattern", "section-pattern", "footer-pattern"];
+
+// DO NOT downscale these masters. At 5–9% opacity a 320px raster upscaled 6× is
+// visually identical (measured: RMSE 0.9/255 against the master composited at 9%
+// over --nk-bg), and it is ~5 KB smaller — but intrinsic size is half of what
+// Chrome uses to rank LCP candidates, which for images is min(painted area,
+// intrinsic area). Shrinking hero-pattern.avif to 320px took its LCP size from
+// 823k to 72k px², which handed the desktop LCP crown to .nk-hero-phone and moved
+// the reported metric from 1.6 s to 3.3 s on the throttled profile — the page was
+// no faster or slower, the metric just started reporting a different element.
+// Bytes are worth cutting; changing which element the field data tracks is not a
+// side effect to take on accidentally.
 
 // effort 9 / 6 are the encoders' slow-but-smallest settings. This runs by hand,
 // perhaps twice a year, so there is no reason to trade bytes for encode time.
-const AVIF = { quality: 30, effort: 9 };
+//
+// 4:2:0 on the AVIF: at these opacities chroma resolution is unmeasurable, and the
+// colour planes are the only ones subsampling touches. The ALPHA plane is what
+// actually costs — it carries the zigzag shapes, libheif encodes it as its own
+// image, and it does not respond to `quality` — which is why the width cap above
+// does the heavy lifting and lowering quality further does not.
+const AVIF = { quality: 20, effort: 9, chromaSubsampling: "4:2:0" };
 const WEBP = { quality: 45, effort: 6 };
 
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
