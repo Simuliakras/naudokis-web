@@ -78,7 +78,20 @@ gtag('config', ${JSON.stringify(gaId)});`;
       <Script id="ga-init" strategy="afterInteractive">
         {bootstrap}
       </Script>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="afterInteractive" />
+      {/* lazyOnload, not afterInteractive: for an external src the afterInteractive
+          branch calls ReactDOM.preload(), which puts a <link rel=preload as=script>
+          for googletagmanager.com in the head. Chrome fetches that at High priority
+          during the first paint window — a cross-origin DNS + TLS handshake and
+          ~100 KB competing with the render-blocking stylesheet FCP waits on, all to
+          fetch a tag that does not execute until after hydration anyway. lazyOnload
+          emits no preload (verified in next/dist/client/script.js: only the
+          beforeInteractive and afterInteractive branches preload) and loads the tag
+          on browser idle after `load` instead. The queue order this file depends on
+          is unaffected — `ga-init` still pushes consent default → grant replay → js
+          → config into dataLayer before the tag exists, and gtag.js drains it in
+          push order whenever it arrives. The cost is that a visitor who leaves
+          before `load` fires is not counted. */}
+      <Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="lazyOnload" />
     </>
   );
 }
