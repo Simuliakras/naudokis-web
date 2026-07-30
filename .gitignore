@@ -17,6 +17,8 @@
 /.next/
 # the consent e2e project's own build dir (NEXT_DIST_DIR — see playwright.config.ts)
 /.next-consent/
+# any other NEXT_DIST_DIR build dir: a `next build` while `next start` holds .next
+/.next-*/
 /out/
 
 # production
