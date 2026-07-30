@@ -296,7 +296,11 @@ test("mobile homepage does not download the hidden desktop hero phone", async ({
   await page.setViewportSize({ width: 390, height: 844 });
   const heroRequests: string[] = [];
   page.on("request", (request) => {
-    if (decodeURIComponent(request.url()).includes("/naudokis/hero-phone.png")) heroRequests.push(request.url());
+    // Prefix, not the .png: the hero <picture> also offers pre-encoded
+    // hero-phone-<w>.avif candidates, and the blanking <source> has to withhold
+    // those from narrow viewports too. Matching the decoded URL keeps the
+    // next/image form (?url=%2Fnaudokis%2Fhero-phone.png) covered.
+    if (decodeURIComponent(request.url()).includes("/naudokis/hero-phone")) heroRequests.push(request.url());
   });
   await page.goto("/");
   await page.waitForLoadState("networkidle");

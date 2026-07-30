@@ -73,6 +73,19 @@ export function Hero({ locale }: { locale: Locale }) {
                   cannot parse `(width < …)` reads it as non-matching, which would
                   hand those clients the full-size PNG this line exists to withhold. */}
               <source media={LEGACY_VIEWPORT_QUERIES.heroPhone} srcSet="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" />
+              {/* Pre-encoded AVIF (yarn gen:hero-phone), which every current engine
+                  takes — the next/image <img> below is the fallback for the rest and
+                  the source of truth for the box. This is the page's most expensive
+                  resource: the optimizer's WebP is 123 KB and finishes ~3 s into a
+                  throttled desktop load, against 64 KB here. Pre-encoding rather than
+                  enabling AVIF in next.config.ts keeps that format's slow first-request
+                  encode away from listing pages, whose LCP is a backend photo the
+                  optimizer has never seen (the reason recorded on `images.formats`).
+                  Only reached above 1190px — the blanking <source> above wins below
+                  it — so `sizes` resolves to the same min(43vw, 36rem) slot the two
+                  candidates are cut for. */}
+              <source type="image/avif" sizes={IMAGE_SIZES.heroPhone}
+                srcSet="/naudokis/hero-phone-576.avif 576w, /naudokis/hero-phone-1152.avif 1152w" />
               <Image className="nk-hero-phone" src="/naudokis/hero-phone.png" alt={dict.hero.phoneAlt}
                 width={1436} height={1868} loading="eager" fetchPriority="high"
                 sizes={IMAGE_SIZES.heroPhone} />

@@ -19,6 +19,7 @@
     "gen:qr": "node scripts/generate-install-qr.mjs",
     "gen:favicon": "node scripts/generate-favicon.mjs",
     "gen:patterns": "node scripts/optimize-patterns.mjs",
+    "gen:hero-phone": "node scripts/optimize-hero-phone.mjs",
     "verify:app-links": "node scripts/verify-app-links.mjs",
     "verify:app-links:static": "node scripts/verify-app-links.mjs --static",
     "verify:breakpoints": "node scripts/verify-breakpoints.mjs",
