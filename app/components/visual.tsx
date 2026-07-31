@@ -4,7 +4,8 @@ import type React from "react";
 import {
   ArrowLeft, ArrowRight, ArrowUp, ArrowUpDown, Baby, BadgeCheck, Calendar, Camera, Car,
   ChartNoAxesColumn,
-  Check, ChevronDown, ChevronLeft, ChevronRight, Coins, Copy, CreditCard, Download, Dumbbell, Euro, Expand, Flag, Globe,
+  Check, ChevronDown, ChevronLeft, ChevronRight, Coins, Copy, CreditCard, Download, Dumbbell, Euro, Expand,
+  ExternalLink, Flag, Globe,
   Handshake, Heart, HeartPulse,
   Home, Image as ImageIcon, ImageOff, Inbox, Info, Laptop, LayoutGrid, LoaderCircle, Lock, type LucideIcon, Mail,
   MapPin, Menu, MessageCircle, MoreHorizontal, Package, PartyPopper, Phone, RefreshCcw, ScrollText, Search,
@@ -55,6 +56,7 @@ const ICONS = {
   Truck: lucide(Truck), LoaderCircle: lucide(LoaderCircle), ImageOff: lucide(ImageOff),
   CreditCard: lucide(CreditCard), ScrollText: lucide(ScrollText), Globe: lucide(Globe),
   Flag: lucide(Flag), Expand: lucide(Expand), Package: lucide(Package), Euro: lucide(Euro),
+  ExternalLink: lucide(ExternalLink),
   ChevronLeft: lucide(ChevronLeft), TriangleAlert: lucide(TriangleAlert),
   Lock: lucide(Lock), ChartNoAxesColumn: lucide(ChartNoAxesColumn),
 

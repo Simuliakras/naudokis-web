@@ -631,11 +631,8 @@ export const lt: Dict = {
     descLess: "Rodyti mažiau",
     specsHeading: "Specifikacijos",
     handoverHeading: "Daikto perdavimas",
-    mapTitle: (city) => `${city} žemėlapyje`,
-    mapLoad: "Rodyti „Google Maps“ žemėlapį",
-    mapNotice:
-      "Žemėlapis įkeliamas tik jums pasirinkus. Google gali gauti jūsų IP adresą ir įrenginio duomenis.",
-    mapPrivacy: "Privatumo informacija",
+    mapTitle: (city) => `Žemėlapis: apytikslė vieta – ${city}`,
+    mapOpenExternal: "Atidaryti žemėlapyje",
     pickupLabel: "Atsiėmimas",
     pickupFree: "Nemokama",
     deliveryLabel: "Pristatymas",
@@ -735,7 +732,6 @@ export const lt: Dict = {
       if (!opts.delivery) return `Atsiimkite nemokamai ${where}.`;
       return `Atsiimkite nemokamai arba susitarkite dėl pristatymo ${where}.`;
     },
-    deliveryZone: "≈20 km zona",
     deliveryZoneKm: (km) => `≈${km} km zona`,
     termRentSub: "Nuomos kaina",
     depositNone: "Be užstato",

@@ -10,6 +10,7 @@
 // listings.ts re-exports all of this, so existing `from "@/app/lib/listings"` imports
 // keep working; components that need only the view layer should import it from here.
 import type { Locale } from "./i18n/config";
+import { isDrawableRadiusKm, type Coordinates } from "./map-geometry";
 
 export type Offer = {
   id: string;
@@ -161,6 +162,59 @@ export function formatPrice(cents: number, locale: Locale): string {
 
 export function formatLocation(city?: string, subdivision?: string): string {
   return [city, subdivision].filter(Boolean).join(", ");
+}
+
+/* ---------------- Handover map ----------------
+   The <img> src for the listing's styled map, or null when there is no place to draw
+   at all — callers render the delivery-zone backdrop in that case.
+
+   Two levels of precision, in order. The listing's own masked handover coordinate is
+   the good one: the delivery radius is measured from it, so the circle drawn around
+   it is the real zone. Falling back to the city name keeps a map on listings that
+   carry no address, at the cost of a circle that is only roughly placed.
+
+   `coordinates` must already be masked — mapDelivery is the only thing that produces
+   them and it masks unconditionally. The route rejects finer values anyway.
+
+   Whether a given city can actually be placed is app/api/map's call, not this one's:
+   it holds the centroid table (server-side, so it stays out of the client bundle) and
+   404s a city it does not know. The <img> onError falls back to the backdrop, which is
+   the same path an unconfigured API key already takes. */
+export function listingMapSrc({
+  city,
+  coordinates,
+  radiusKm,
+  locale,
+}: {
+  city?: string;
+  coordinates?: Coordinates | null;
+  radiusKm: number | null;
+  locale: Locale;
+}): string | null {
+  const params = new URLSearchParams({ lang: locale });
+  if (coordinates) {
+    params.set("lat", String(coordinates.lat));
+    params.set("lon", String(coordinates.lon));
+  } else if (city) {
+    params.set("city", city);
+  } else {
+    return null;
+  }
+  // A fractional or out-of-range radius drops the circle and keeps the plain city
+  // view rather than rounding to a zone the listing never promised.
+  if (isDrawableRadiusKm(radiusKm)) {
+    params.set("radius", String(radiusKm));
+  }
+  return `/api/map?${params.toString()}`;
+}
+
+// Where "open in Google Maps" sends the visitor — the web counterpart of the app's
+// openMapsWithLocation(). Deliberately a place SEARCH on the city name rather than a
+// coordinate pin: the coordinate is a centroid we chose, and dropping a pin on it
+// would present it as the listing's actual location.
+export function externalMapsHref(city: string, subdivision?: string): string {
+  const query = encodeURIComponent(`${formatLocation(city, subdivision)}, Lietuva`);
+  return `https://www.google.com/maps/search/?api=1&query=${query}`;
 }
 
 // Stable "photo safeguard" ordering — surface photo-bearing listings first so a feed

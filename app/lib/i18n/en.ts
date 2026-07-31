@@ -577,11 +577,8 @@ export const en: Dict = {
     descLess: "Show less",
     specsHeading: "Specifications",
     handoverHeading: "Item handover",
-    mapTitle: (city) => `${city} on the map`,
-    mapLoad: "Load the Google Maps map",
-    mapNotice:
-      "The map loads only after you choose it. Google may receive your IP address and device data.",
-    mapPrivacy: "Privacy information",
+    mapTitle: (city) => `Map: approximate location – ${city}`,
+    mapOpenExternal: "Open in Maps",
     pickupLabel: "Pickup",
     pickupFree: "Free",
     deliveryLabel: "Delivery",
@@ -681,7 +678,6 @@ export const en: Dict = {
       if (!opts.delivery) return `Pick up for free${where}.`;
       return `Pick up for free or arrange delivery${where}.`;
     },
-    deliveryZone: "≈20 km zone",
     deliveryZoneKm: (km) => `≈${km} km zone`,
     termRentSub: "Rental price per day",
     depositNone: "No deposit",

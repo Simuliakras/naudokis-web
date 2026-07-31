@@ -16,7 +16,7 @@ describe("toGaEventName", () => {
   });
 
   // "Google Maps Loaded" would have recorded under Google's reserved namespace;
-  // the strip is why that call site is named "Maps Embed Loaded" instead.
+  // the strip is why the listing map's call site is named "Maps Opened External".
   it("strips the reserved google_/ga_/firebase_ prefixes, chained", () => {
     expect(toGaEventName("Google Maps Loaded")).toBe("maps_loaded");
     expect(toGaEventName("GA Firebase Google Event")).toBe("event");

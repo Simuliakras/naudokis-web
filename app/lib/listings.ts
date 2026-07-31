@@ -3,6 +3,7 @@ import { useQuery, useInfiniteQuery, keepPreviousData, skipToken } from "@tansta
 import type { Locale } from "./i18n/config";
 import { API_BASE, MarketplaceApiError, marketplaceFetch } from "./api";
 import { cdnImage } from "./image-hosts";
+import { maskCoordinates, type Coordinates } from "./map-geometry";
 import {
   cancellationTier,
   formatPrice,
@@ -87,10 +88,21 @@ export type ApiOwner = {
 
 // A delivery option on the listing. Only the fields the handover section reads are
 // modelled; `type` is "pickup" | "user_delivery" on the wire.
+//
+// The address blocks carry the owner's REAL coordinates — `address` on a pickup
+// method, `base_address` on user_delivery. They are modelled so the handover map can
+// be centred on the actual area instead of a city centroid, and they are masked to a
+// ~1km grid the moment they are read (see mapDelivery). Nothing may put the raw value
+// on a view model.
+type ApiAddress = {
+  coordinates?: { lat?: number; lon?: number } | null;
+};
 type ApiDeliveryMethod = {
   type: string;
   delivery_radius_km?: number;
   price_per_km_cents?: number; // user_delivery only; absent → price by arrangement
+  address?: ApiAddress | null; // pickup
+  base_address?: ApiAddress | null; // user_delivery
 };
 
 // Faithful (read-only) model of the backend `ListingDetail` contract — only the
@@ -234,6 +246,9 @@ export type ListingDelivery = {
   delivery: boolean;
   radiusKm: number | null;
   pricePerKm: string | null; // formatted ("1 €" / "€1"); null when the owner prices it by arrangement
+  // Handover point, ALWAYS masked to a ~1km grid (see mapCoordinates). Null when the
+  // listing carries no address; the map then falls back to the city centroid.
+  coordinates: Coordinates | null;
 };
 
 export type ListingOwner = {
@@ -709,6 +724,25 @@ async function fetchReviews(id: string, locale: Locale): Promise<ListingReview[]
   }
 }
 
+// The delivery radius is measured from the owner's base address, so that is the
+// point the map has to be centred on for the circle to mean anything. Falls back to
+// the pickup address when the listing only offers pickup.
+//
+// Masked on the way out, without exception: this is the ONLY place the raw
+// coordinate exists, and everything downstream (view model, hydrated query cache,
+// image URL) sees the ~1km grid value.
+function mapCoordinates(methods: ApiDeliveryMethod[]): Coordinates | null {
+  const address =
+    methods.find((m) => m.type === "user_delivery")?.base_address ??
+    methods.find((m) => m.type === "pickup")?.address;
+  const lat = address?.coordinates?.lat;
+  const lon = address?.coordinates?.lon;
+  if (typeof lat !== "number" || typeof lon !== "number" || !Number.isFinite(lat) || !Number.isFinite(lon)) {
+    return null;
+  }
+  return maskCoordinates({ lat, lon });
+}
+
 // Summarize the delivery methods array into the flags the handover section needs.
 function mapDelivery(methods: ApiDeliveryMethod[] | undefined, locale: Locale): ListingDelivery {
   const list = methods ?? [];
@@ -719,6 +753,7 @@ function mapDelivery(methods: ApiDeliveryMethod[] | undefined, locale: Locale): 
     delivery: !!userDelivery,
     radiusKm: userDelivery?.delivery_radius_km ?? null,
     pricePerKm: perKmCents ? formatPrice(perKmCents, locale) : null,
+    coordinates: mapCoordinates(list),
   };
 }
 

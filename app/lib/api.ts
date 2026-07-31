@@ -10,9 +10,10 @@ export const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? PRODUCTION_API_B
 // host is a one-line change here rather than a silently empty sitemap.
 export const USES_PRODUCTION_API = API_BASE === PRODUCTION_API_BASE;
 
-// Google Maps Embed API key (client-readable). When unset, the listing-detail
-// map falls back to the decorative delivery-zone graphic.
-export const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+// NOTE: the Google Maps key is deliberately NOT exported here any more. It used to
+// be NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, inlined into the HTML of every listing page.
+// The listing map is now rendered by app/api/map, which reads a server-only
+// GOOGLE_MAPS_API_KEY — see that file for why the browser never talks to Google.
 
 /* ---------------- The marketplace fetch boundary ----------------
    Every call to the backend goes through marketplaceFetch, so the timeout and the

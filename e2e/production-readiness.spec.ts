@@ -247,18 +247,42 @@ test("the published legal documents are reachable in both locales", async ({ req
   });
 });
 
-test("Google Maps is retained but loads only after an explicit choice", async ({ page }) => {
+// The listing map used to be a Google iframe behind a click-to-load consent panel.
+// It is now served by /api/map from our own origin, so the stronger invariant holds:
+// the browser never contacts Google at all. That is what this asserts — an <img>
+// pointed straight at maps.googleapis.com would still render a map and still look
+// right in a screenshot, and only this test would notice.
+test("the listing map never reaches Google from the browser", async ({ page }) => {
+  const googleRequests: string[] = [];
+  page.on("request", (request) => {
+    const host = new URL(request.url()).hostname;
+    if (/(^|\.)(google\.com|googleapis\.com|gstatic\.com)$/.test(host)) {
+      googleRequests.push(request.url());
+    }
+  });
+
   await page.goto("/");
   const listingHref = await page.locator('a.nk-stretch[href*="/skelbimai/"]').first().getAttribute("href");
   if (!listingHref) {
     throw new Error("No listing card link found on the homepage");
   }
   await page.goto(listingHref);
+
+  // The map is below the fold and lazy — scroll it into view so its request fires
+  // before we assert on what did and did not go out.
+  const map = page.locator(".nk-map");
+  await expect(map).toHaveCount(1);
+  await map.scrollIntoViewIfNeeded();
+  await page.waitForLoadState("networkidle");
+
+  expect(googleRequests, `unexpected third-party Google requests: ${googleRequests.join(", ")}`).toEqual([]);
   await expect(page.locator('iframe[src*="google.com/maps"]')).toHaveCount(0);
-  const loadMap = page.getByRole("button", { name: /Google Maps/ });
-  if (await loadMap.count()) {
-    await loadMap.click();
-    await expect(page.locator('iframe[src*="google.com/maps"]')).toHaveCount(1);
+
+  // Without a key the route 404s and the drawn backdrop stands in on its own, which
+  // is a valid state — but when an image IS rendered it must come from this origin.
+  const mapImage = map.locator("img.nk-map__img");
+  if (await mapImage.count()) {
+    expect(await mapImage.getAttribute("src")).toMatch(/^\/api\/map\?/);
   }
 });
 

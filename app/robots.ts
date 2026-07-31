@@ -8,7 +8,9 @@ export default function robots(): MetadataRoute.Robots {
     // low-stock landings, handoff/token pages, /invite) must NOT be disallowed:
     // a blocked URL is never fetched, so the very directive keeping it out of
     // the index would go unread.
-    //   /api/  — POST-only report/measurement endpoints, no crawlable content.
+    //   /api/  — report endpoints and the listing map's image proxy. No crawlable
+    //            content: the map is an illustration of a page that is itself
+    //            indexed, so there is nothing lost by keeping it out of Images.
     //   /go    — the no-store 302 install redirect, linked from the install CTA
     //            in the nav on every page. It resolves to an app store, not to a
     //            page of ours, so crawling it is pure budget waste. It stays

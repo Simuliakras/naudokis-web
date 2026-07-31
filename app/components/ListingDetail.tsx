@@ -6,12 +6,16 @@
 // gallery, sticky in-page sub-nav, booking panel, trust-rich host card.
 import { trackEvent } from "@/app/lib/analytics";
 import { IMAGE_SIZES } from "@/app/lib/breakpoints";
-import { GOOGLE_MAPS_API_KEY } from "@/app/lib/api";
 import { goHref } from "@/app/lib/attribution";
 import type { Availability } from "@/app/lib/availability";
 import type { IsoDate } from "@/app/lib/dates";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
-import { applicableDiscount, discountTierViews } from "@/app/lib/listing-view";
+import {
+  applicableDiscount,
+  discountTierViews,
+  externalMapsHref,
+  listingMapSrc,
+} from "@/app/lib/listing-view";
 import type {
   ListingDelivery,
   ListingDetail,
@@ -1581,17 +1585,18 @@ function SpecsSection({
   );
 }
 
-function DeliveryZoneGraphic({ radiusKm }: { radiusKm: number | null }) {
-  const { dict } = useI18n();
-  const t = dict.detail;
+// The drawn stand-in for the map: a suggestion of roads, the delivery radius and a
+// pin. It fills the handover map box and always renders — as the placeholder while
+// the real map loads, and as the whole picture when there isn't one (no API key, a
+// city with no centroid, or an upstream failure). Purely decorative, so it is hidden
+// from assistive tech; the map's own alt text carries the meaning.
+function DeliveryZoneBackdrop() {
   return (
     <div
+      aria-hidden="true"
       style={{
-        position: "relative",
-        borderRadius: 16,
-        overflow: "hidden",
-        minHeight: 200,
-        border: "1px solid var(--nk-border)",
+        position: "absolute",
+        inset: 0,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -1682,28 +1687,101 @@ function DeliveryZoneGraphic({ radiusKm }: { radiusKm: number | null }) {
       >
         <Icon name="MapPin" size={24} color="var(--nk-text)" stroke={2.2} />
       </span>
-      <span
-        style={{
-          position: "absolute",
-          left: 14,
-          bottom: 14,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "7px 13px",
-          borderRadius: 999,
-          background: "var(--nk-overlay)",
-          backdropFilter: "blur(10px)",
-          border: "1px solid var(--nk-border-soft)",
-          fontFamily: "var(--nk-font-display)",
-          fontWeight: 700,
-          fontSize: 13.5,
-          color: "var(--nk-text)",
-        }}
-      >
-        <Icon name="Car" size={14} color="var(--nk-text)" stroke={2} />{" "}
-        {radiusKm ? t.deliveryZoneKm(radiusKm) : t.deliveryZone}
-      </span>
+    </div>
+  );
+}
+
+/* ---------------- The styled map ----------------
+   Ported from the mobile app's delivery preview (src/components/delivery/). Same
+   Google styling, same purple radius circle, same approximate-location marker — see
+   app/lib/map-style.ts for the style rules and app/api/map for why the image comes
+   from our own origin rather than maps.googleapis.com.
+
+   Like the app's previews, this one is deliberately NOT interactive: it is a picture
+   of where the item is, and panning it would tell the visitor nothing more, since the
+   backend gives us city-level precision and nothing finer. "Open in Google Maps" is
+   the escape hatch, exactly as it is in the app's expanded modal. */
+function HandoverMap({
+  city,
+  subdivision,
+  delivery,
+}: {
+  city: string;
+  subdivision?: string;
+  delivery: ListingDelivery;
+}) {
+  const { locale, dict } = useI18n();
+  const t = dict.detail;
+  // The src that failed, not a boolean: navigating listing → listing keeps this
+  // component mounted, so a flag would carry one listing's dead map onto the next
+  // one's. Comparing against the current src resets itself, with no effect.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  // The circle is drawn only for listings that actually deliver. A pickup-only
+  // listing gets the plain city view and no zone chip — the graphic used to show a
+  // delivery zone on every listing, which advertised a service half of them
+  // don't offer.
+  const radiusKm = delivery.delivery ? delivery.radiusKm : null;
+  const src = listingMapSrc({ city, coordinates: delivery.coordinates, radiusKm, locale });
+  const showMap = src !== null && src !== failedSrc;
+
+  return (
+    <div className="nk-map">
+      <DeliveryZoneBackdrop />
+      {showMap && (
+        // Plain <img>, not next/image: the route already returns a small flat png8,
+        // and routing it through the optimizer would add a second server hop to
+        // re-encode it. Sized so the box never collapses before the bytes land.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          className="nk-map__img"
+          src={src}
+          alt={t.mapTitle(city)}
+          width={640}
+          height={320}
+          loading="lazy"
+          decoding="async"
+          onError={() => setFailedSrc(src)}
+        />
+      )}
+      {showMap && (
+        /* The app's ApproximateAreaMarker. It can be a plain centred element because
+           the request centres the map on the same coordinate and the image is
+           object-fit: cover — so 50%/50% is the coordinate at any zoom or box size.
+           Moving the map's centre would silently move this off the mark.
+
+           Decorative: the image's own alt already says "approximate location", and
+           labelling the marker too would announce it a second time. */
+        <span className="nk-map__marker" aria-hidden="true">
+          <span className="nk-map__dot" />
+        </span>
+      )}
+      <div className="nk-map__bar">
+        {delivery.delivery && (
+          <span className="nk-map__chip">
+            <Icon name="Car" size={14} color="var(--nk-text)" stroke={2} />
+            {/* No radius on the wire means the owner arranges it case by case —
+                say so, rather than quote a distance nobody committed to. */}
+            <span>{radiusKm ? t.deliveryZoneKm(radiusKm) : t.deliveryByArrangement}</span>
+          </span>
+        )}
+        {showMap && (
+          <a
+            className="nk-map__open"
+            href={externalMapsHref(city, subdivision)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              trackEvent("Maps Opened External", {
+                locale,
+                placement: "listing_handover",
+              });
+            }}
+          >
+            <Icon name="ExternalLink" size={14} color="var(--nk-text)" stroke={2} />
+            <span className="nk-map__openlabel">{t.mapOpenExternal}</span>
+          </a>
+        )}
+      </div>
     </div>
   );
 }
@@ -1780,25 +1858,9 @@ function HandoverSection({
   subdivision?: string;
   delivery: ListingDelivery;
 }) {
-  const { locale, dict } = useI18n();
+  const { dict } = useI18n();
   const t = dict.detail;
-  const [mapAllowed, setMapAllowed] = useState(false);
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      try {
-        setMapAllowed(localStorage.getItem("nk_google_maps_allowed") === "1");
-      } catch {
-        // Storage can be unavailable in strict/private contexts; explicit consent
-        // still works for the current render.
-      }
-    });
-    return () => cancelAnimationFrame(frame);
-  }, []);
   const pickupLocation = formatLocation(city, subdivision);
-  const mapSrc =
-    GOOGLE_MAPS_API_KEY && city
-      ? `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(`${city}, Lietuva`)}&zoom=11&language=${locale}`
-      : null;
   // A listing offers pickup, delivery, or both; show only the rows that apply,
   // falling back to a plain location row when the data lists neither. The subtitle
   // gets the same flags so its copy never promises an option the rows don't show.
@@ -1816,61 +1878,7 @@ function HandoverSection({
         className="nk-tworow"
         style={{ alignItems: "stretch", gap: "var(--nk-gap-xl)" }}
       >
-        {mapSrc && mapAllowed ? (
-          <div
-            style={{
-              position: "relative",
-              borderRadius: 16,
-              overflow: "hidden",
-              minHeight: 200,
-              border: "1px solid var(--nk-border)",
-            }}
-          >
-            <iframe
-              src={mapSrc}
-              title={t.mapTitle(city)}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
-                border: 0,
-              }}
-            />
-          </div>
-        ) : mapSrc ? (
-          <div className="nk-map-consent">
-            <DeliveryZoneGraphic radiusKm={delivery.radiusKm} />
-            <div className="nk-map-consent__panel">
-              <p>{t.mapNotice}</p>
-              <div className="nk-map-consent__actions">
-                <button
-                  type="button"
-                  className="nk-btn nk-btn--ghost"
-                  onClick={() => {
-                    setMapAllowed(true);
-                    try {
-                      localStorage.setItem("nk_google_maps_allowed", "1");
-                    } catch {}
-                    trackEvent("Maps Embed Loaded", {
-                      locale,
-                      placement: "listing_handover",
-                    });
-                  }}
-                >
-                  {t.mapLoad}
-                </button>
-                <a href={localePath(locale, "/privatumo-politika")}>
-                  {t.mapPrivacy}
-                </a>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <DeliveryZoneGraphic radiusKm={delivery.radiusKm} />
-        )}
+        <HandoverMap city={city} subdivision={subdivision} delivery={delivery} />
         <div
           style={{
             display: "flex",

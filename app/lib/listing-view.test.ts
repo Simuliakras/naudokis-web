@@ -4,6 +4,7 @@ import {
   applicableDiscount,
   cancellationTier,
   discountTierViews,
+  listingMapSrc,
   type Discount,
 } from "./listing-view";
 
@@ -90,5 +91,45 @@ describe("cancellationTier", () => {
     expect(cancellationTier(null)).toBe("moderate");
     expect(cancellationTier("")).toBe("moderate");
     expect(cancellationTier("firm")).toBe("moderate");
+  });
+});
+
+describe("listingMapSrc", () => {
+  const params = (src: string | null) => new URLSearchParams(src?.split("?")[1] ?? "");
+
+  it("prefers the listing's own handover coordinate over the city centroid", () => {
+    const src = listingMapSrc({ city: "Vilnius", coordinates: { lat: 54.69, lon: 25.25 }, radiusKm: 20, locale: "lt" });
+    expect(params(src).get("lat")).toBe("54.69");
+    expect(params(src).get("lon")).toBe("25.25");
+    expect(params(src).get("radius")).toBe("20");
+    expect(params(src).has("city")).toBe(false);
+  });
+
+  it("falls back to the city when the listing carries no coordinate", () => {
+    const src = listingMapSrc({ city: "Klaipėda", coordinates: null, radiusKm: null, locale: "en" });
+    expect(params(src).get("city")).toBe("Klaipėda");
+    expect(params(src).get("lang")).toBe("en");
+    expect(params(src).has("lat")).toBe(false);
+  });
+
+  it("returns null when there is no place to draw at all", () => {
+    expect(listingMapSrc({ city: undefined, coordinates: null, radiusKm: 10, locale: "lt" })).toBeNull();
+    expect(listingMapSrc({ city: "", coordinates: null, radiusKm: 10, locale: "lt" })).toBeNull();
+  });
+
+  it("leaves it to the route to reject a city it cannot place", () => {
+    // Whether a centroid exists is app/api/map's call — it holds the table so the
+    // browser does not have to. An unknown city 400s there and the <img> onError
+    // falls back to the drawn backdrop.
+    expect(listingMapSrc({ city: "Hamburg", coordinates: null, radiusKm: 10, locale: "lt" })).toBe(
+      "/api/map?lang=lt&city=Hamburg&radius=10",
+    );
+  });
+
+  it("drops a radius it cannot draw honestly instead of rounding it", () => {
+    const coordinates = { lat: 54.69, lon: 25.25 };
+    expect(params(listingMapSrc({ coordinates, radiusKm: 3.5, locale: "lt" })).has("radius")).toBe(false);
+    expect(params(listingMapSrc({ coordinates, radiusKm: 250, locale: "lt" })).has("radius")).toBe(false);
+    expect(params(listingMapSrc({ coordinates, radiusKm: 0, locale: "lt" })).has("radius")).toBe(false);
   });
 });

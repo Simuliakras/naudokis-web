@@ -332,10 +332,11 @@ export type Dict = {
     descLess: string;
     specsHeading: string;
     handoverHeading: string;
+    // Alt text for the handover map image. It carries the "approximate" caveat
+    // itself, because the map is city-level and never a pin on a doorstep — the
+    // marker drawn over it is decorative.
     mapTitle: (city: string) => string;
-    mapLoad: string;
-    mapNotice: string;
-    mapPrivacy: string;
+    mapOpenExternal: string; // hands off to Google Maps proper
     pickupLabel: string;
     pickupFree: string;
     deliveryLabel: string;
@@ -423,7 +424,6 @@ export type Dict = {
     hostResponseTime: (hours: number) => string; // response line, only when avg_response_time is on the wire
     // delivery block — copy must match the options the listing actually offers
     deliverySub: (city: string, opts: { pickup: boolean; delivery: boolean }) => string;
-    deliveryZone: string; // "≈20 km zona" fallback when radius unknown
     deliveryZoneKm: (km: number) => string; // "≈N km zona" graphic label
     // terms fact cards
     termRentSub: string;

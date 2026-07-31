@@ -29,8 +29,10 @@ const cspBase: Record<string, string> = {
   "media-src": "'self' data: blob:",
   "worker-src": "'self' blob:",
   "manifest-src": "'self'",
-  // Google Maps Embed API iframe on the listing-detail page.
-  "frame-src": "https://www.google.com",
+  // Nothing on the site embeds a nested browsing context any more. This used to
+  // grant https://www.google.com for the listing-detail Maps Embed iframe; that map
+  // is now a same-origin <img> served by /api/map, covered by img-src 'self'.
+  "frame-src": "'none'",
   // Referral/install attribution is via AppsFlyer OneLink URLs, which are
   // navigations / QR values (not fetch/XHR), so connect-src needs no OneLink host.
   // The google-analytics/analytics.google wildcards cover the regional collect
