@@ -125,7 +125,16 @@ export type Dict = {
   categories: {
     eyebrow: string;
     title: string;
+    // Elliptical "view all" label — it leans on the adjacent section title for
+    // its noun, so the link carries `allLabel` as its aria-label to keep the
+    // accessible name meaningful out of context.
+    //
+    // Every *Label / *A11y pair here must CONTAIN its visible label verbatim
+    // (WCAG 2.5.3 Label in Name): an aria-label replaces the accessible name
+    // outright, so "Visos" → "Peržiūrėti kategorijas" would leave a speech-input
+    // user saying a word that matches nothing on the page.
     all: string;
+    allLabel: string; // aria-label on the section-head "view all" link
     // One-line examples for the v2 tile ("Automobiliai, priekabos, paspirtukai"),
     // keyed by top-level category id like feed.categorySeoLabel — titles come
     // from the backend, but these curated lines are authored copy. Undefined for
@@ -155,7 +164,8 @@ export type Dict = {
   offers: {
     eyebrow: string;
     title: string;
-    all: string;
+    all: string; // elliptical, like categories.all — see `allLabel`
+    allLabel: string; // aria-label on the section-head "view all" link
     errorTitle: string;
     errorSubtitle: string;
     errorAction: string;
@@ -279,6 +289,7 @@ export type Dict = {
     lead: string;
     steps: [HomeStep, HomeStep, HomeStep, HomeStep];
     ctaLabel: string; // funnel exit into the full /kaip-tai-veikia walkthrough
+    ctaLabelA11y: string; // aria-label — must contain `ctaLabel`, see categories.all
   };
   cta: {
     eyebrow: string;

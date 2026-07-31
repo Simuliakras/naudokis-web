@@ -513,7 +513,11 @@ export function Categories({ data }: { data: Category[] }) {
         eyebrow={t.eyebrow}
         title={t.title}
         action={
-          <Link className="nk-cats-all" href={localePath(locale, "/nuoma")}>
+          <Link
+            className="nk-cats-all"
+            href={localePath(locale, "/nuoma")}
+            aria-label={t.allLabel}
+          >
             {t.all}{" "}
             <Icon
               name="ArrowRight"
@@ -582,7 +586,11 @@ export function Offers({ data, categories }: { data: Offer[]; categories: Catego
         eyebrow={t.eyebrow}
         title={t.title}
         action={
-          <Link className="nk-cats-all" href={localePath(locale, "/skelbimai")}>
+          <Link
+            className="nk-cats-all"
+            href={localePath(locale, "/skelbimai")}
+            aria-label={t.allLabel}
+          >
             {t.all}{" "}
             <Icon
               name="ArrowRight"
@@ -663,7 +671,11 @@ export function HowItWorks() {
         title={t.title}
         subtitle={t.lead}
         action={
-          <Link className="nk-cats-all" href={localePath(locale, "/kaip-tai-veikia")}>
+          <Link
+            className="nk-cats-all"
+            href={localePath(locale, "/kaip-tai-veikia")}
+            aria-label={t.ctaLabelA11y}
+          >
             {t.ctaLabel}{" "}
             <Icon name="ArrowRight" size={24} stroke={2.4} color="currentColor" />
           </Link>

@@ -125,7 +125,8 @@ export const lt: Dict = {
   categories: {
     eyebrow: "Atraskite",
     title: "Nuomos kategorijos",
-    all: "Visos kategorijos",
+    all: "Visos",
+    allLabel: "Visos kategorijos",
     examples: (id) => LT_CATEGORY_EXAMPLES[id],
     // Use the genitive category label (already inflected) so the copy reads as
     // correct Lithuanian — interpolating the nominative name produces broken
@@ -158,7 +159,8 @@ export const lt: Dict = {
     // "nearby" had no personalization, review or geo signal behind them.
     eyebrow: "Išsirinkite",
     title: "Daiktai nuomai",
-    all: "Visi daiktai",
+    all: "Visi",
+    allLabel: "Visi daiktai",
     errorTitle: "Nepavyko įkelti nuomos pasiūlymų",
     errorSubtitle:
       "Nuomos pasiūlymų šiuo metu nepavyko parodyti. Patikrinkite ryšį ir bandykite dar kartą.",
@@ -514,7 +516,8 @@ export const lt: Dict = {
         body: "Patvirtinkite grąžinimą, prireikus pridėkite įrodymus ir, užbaigę nuomą, palikite atsiliepimą.",
       },
     ],
-    ctaLabel: "Peržiūrėti visą procesą",
+    ctaLabel: "Plačiau",
+    ctaLabelA11y: "Plačiau apie visą nuomos procesą",
   },
   cta: {
     eyebrow: "Programėlė",

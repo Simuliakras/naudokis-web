@@ -84,7 +84,8 @@ export const en: Dict = {
   categories: {
     eyebrow: "Discover",
     title: "Rental categories",
-    all: "All categories",
+    all: "All",
+    allLabel: "All categories",
     examples: (id) => EN_CATEGORY_EXAMPLES[id],
     seoFallbackBody: (name) =>
       `Browse ${name.toLowerCase()} rentals across Lithuania. Compare prices, locations and owner profiles, then continue your reservation request in the app.`,
@@ -108,7 +109,8 @@ export const en: Dict = {
     // "nearby" had no personalization, review or geo signal behind them.
     eyebrow: "Choose",
     title: "Items to rent",
-    all: "All items",
+    all: "All",
+    allLabel: "All items",
     errorTitle: "We couldn’t load listings",
     errorSubtitle:
       "We couldn’t show rentals right now. Check your connection and try again.",
@@ -464,7 +466,8 @@ export const en: Dict = {
         body: "Confirm the return, attach evidence if needed, and leave a review once the rental is complete.",
       },
     ],
-    ctaLabel: "See the full process",
+    ctaLabel: "More",
+    ctaLabelA11y: "More about the full rental process",
   },
   cta: {
     eyebrow: "The app",

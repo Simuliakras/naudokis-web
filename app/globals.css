@@ -825,8 +825,8 @@ select {
 }
 /* The eyebrow's own line, shared with the section's "view all" action (SectionHead
    emits it only when both exist). The eyebrow holds its single line and the action
-   takes what is left — where the pair outgrows a phone ("Kaip tai veikia" +
-   "Peržiūrėti visą procesą" at 390px) the LABEL wraps, right-aligned, rather than
+   takes what is left — the home actions are single words ("Visos" / "Plačiau"), but
+   should a longer label ever land here the LABEL wraps, right-aligned, rather than
    the section's first words breaking in two. */
 .nk-head__eyerow {
   display: flex;
