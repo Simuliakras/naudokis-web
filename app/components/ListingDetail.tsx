@@ -27,10 +27,11 @@ import { formatLocation } from "@/app/lib/listings";
 import { prefersReducedMotion } from "@/app/lib/motion";
 import { RichText } from "@/app/lib/rich-text";
 import { listingLandingHref } from "@/app/lib/search";
+import { groupSpecLines, parseSpecValue, type SpecLine } from "@/app/lib/spec-value";
 import { useDismissableLayer } from "@/app/lib/use-dismissable-layer";
 import { useFocusTrap } from "@/app/lib/use-focus-trap";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { SectionEmpty } from "./cards";
 import { DateRangePicker, type DateRange } from "./DateRangePicker";
 import { RowHead } from "./headers";
@@ -1536,6 +1537,35 @@ function DescriptionSection({ description }: { description: string }) {
   );
 }
 
+// Shared by both spec lists so a label reads identically whether its value sits
+// beside it in the grid or above a broken-out block.
+const SPEC_LABEL: CSSProperties = {
+  fontFamily: "var(--nk-font-body)",
+  fontSize: 15.5,
+  color: "var(--nk-text-muted)",
+  minWidth: 0,
+};
+
+function SpecLines({ lines }: { lines: SpecLine[] }) {
+  return (
+    <>
+      {groupSpecLines(lines).map((g, i) =>
+        g.kind === "lead" ? (
+          <p key={i} className="nk-spec-lead">
+            {g.text}
+          </p>
+        ) : (
+          <ul key={i} className="nk-spec-list">
+            {g.items.map((item, j) => (
+              <li key={j}>{item}</li>
+            ))}
+          </ul>
+        ),
+      )}
+    </>
+  );
+}
+
 function SpecsSection({
   attributes,
 }: {
@@ -1543,44 +1573,81 @@ function SpecsSection({
 }) {
   const { dict } = useI18n();
   const t = dict.detail;
+  // Owner free-text attributes ("Pridedami priedai", "Komplektacija", …) arrive as
+  // raw multi-line, bulleted input. Squeezed into the grid's right-aligned value cell
+  // their newlines collapse into one unreadable run, so they break out below the grid
+  // as full-width blocks — and sorting them last keeps the scan grid unbroken.
+  const { inline, blocks } = useMemo(() => {
+    const inline: { id: string; label: string; text: string }[] = [];
+    const blocks: { id: string; label: string; lines: SpecLine[] }[] = [];
+    for (const a of attributes) {
+      const view = parseSpecValue(a.value);
+      // `empty` — blank, or bullet markers with no text between them. Drop the row
+      // rather than rule off a label with nothing beside it.
+      if (view.kind === "block") {
+        blocks.push({ id: a.id, label: a.label, lines: view.lines });
+      } else if (view.kind === "inline") {
+        inline.push({ id: a.id, label: a.label, text: view.text });
+      }
+    }
+    return { inline, blocks };
+  }, [attributes]);
+  if (!inline.length && !blocks.length) {
+    return null;
+  }
   return (
     <Section id="specifikacijos" title={t.specsHeading}>
-      <div className="nk-spec-grid">
-        {attributes.map((a) => (
-          <div
-            key={a.id}
-            className="nk-spec-row"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "var(--nk-gap-md)",
-              padding: "15px 0",
-            }}
-          >
-            <span
+      {inline.length > 0 && (
+        <dl className="nk-spec-grid">
+          {inline.map((a) => (
+            <div
+              key={a.id}
+              className="nk-spec-row"
               style={{
-                fontFamily: "var(--nk-font-body)",
-                fontSize: 15.5,
-                color: "var(--nk-text-muted)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "var(--nk-gap-md)",
+                padding: "15px 0",
               }}
             >
-              {a.label}
-            </span>
-            <span
-              style={{
-                fontFamily: "var(--nk-font-display)",
-                fontWeight: 700,
-                fontSize: 16,
-                color: "var(--nk-text)",
-                textAlign: "right",
-              }}
-            >
-              {a.value}
-            </span>
-          </div>
-        ))}
-      </div>
+              <dt style={SPEC_LABEL}>{a.label}</dt>
+              <dd
+                style={{
+                  margin: 0,
+                  minWidth: 0,
+                  fontFamily: "var(--nk-font-display)",
+                  fontWeight: 700,
+                  fontSize: 16,
+                  color: "var(--nk-text)",
+                  textAlign: "right",
+                  // Hyphens first: a long Lithuanian compound must break at a syllable,
+                  // never bare mid-word. `anywhere` is the last resort that keeps an
+                  // unbreakable run from widening the detail grid — body sets
+                  // `overflow-x: clip`, so overflow would be chopped, not scrollable.
+                  hyphens: "auto",
+                  WebkitHyphens: "auto",
+                  overflowWrap: "anywhere",
+                }}
+              >
+                {a.text}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
+      {blocks.length > 0 && (
+        <dl className="nk-spec-blocks">
+          {blocks.map((a) => (
+            <div key={a.id} className="nk-spec-block">
+              <dt style={SPEC_LABEL}>{a.label}</dt>
+              <dd className="nk-spec-body">
+                <SpecLines lines={a.lines} />
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
     </Section>
   );
 }

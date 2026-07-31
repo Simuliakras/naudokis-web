@@ -407,11 +407,16 @@
     justify-content: center;
   }
 }
+/* Both spec lists are <dl>s, and this project ships no Tailwind preflight — the only
+   global reset is box-sizing — so the UA's `dl { margin-block: 1em }` has to be
+   cleared here. Left in place it would open a gap between the two lists, exactly
+   where the border-top below assumes they touch. */
 .nk-spec-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 48px;
   row-gap: 0;
+  margin: 0;
 }
 .nk-spec-row {
   border-bottom: 1px solid var(--nk-divider);
@@ -427,6 +432,83 @@
   .nk-spec-grid > .nk-spec-row:nth-last-child(2):nth-child(odd) {
     border-bottom: none;
   }
+}
+/* Owner free-text specs (accessories lists, requirements) break OUT of the grid above
+   into their own full-width list. They are a second <dl> rather than a
+   `grid-column: 1 / -1` child because a full-width row would break the parity trick
+   the divider rules above depend on. Sorted last by SpecsSection, so the scannable
+   key/value grid is never interrupted. */
+.nk-spec-blocks {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+/* The grid's :last-child rule drops the hairline under its final row; restore it here
+   so the two lists still read as one continuous table. */
+.nk-spec-grid + .nk-spec-blocks {
+  border-top: 1px solid var(--nk-divider);
+}
+.nk-spec-block {
+  display: flex;
+  flex-direction: column;
+  /* Enough air that the muted spec label reads as the row's name rather than the
+     first line of the owner's own list, which opens on a bold lead-in. */
+  gap: 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--nk-divider);
+}
+.nk-spec-blocks > .nk-spec-block:last-child {
+  border-bottom: none;
+}
+/* Prose, not a value cell: left-aligned, regular weight, measure-capped — matching
+   .nk-detail .nk-prose rather than the bold right-aligned grid values. */
+.nk-spec-body {
+  margin: 0;
+  max-width: 62ch;
+  font-family: var(--nk-font-body);
+  font-size: 15.5px;
+  line-height: 26px;
+  color: var(--nk-text-2);
+  text-wrap: pretty;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  overflow-wrap: anywhere;
+}
+/* The owner's own group headings ("Komplektacijoje:", "Papildomai:"). */
+.nk-spec-lead {
+  margin: 0;
+  font-weight: 600;
+  color: var(--nk-text);
+}
+.nk-spec-lead + .nk-spec-list {
+  margin-top: 6px;
+}
+.nk-spec-list + .nk-spec-lead {
+  margin-top: 14px;
+}
+.nk-spec-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.nk-spec-list > li {
+  position: relative;
+  padding-left: 18px;
+}
+/* A neutral dot, never a checkmark: these lists mix genuinely-included items with
+   paid add-ons ("Dujų balionas – 3 € už nuomą"), and a ✓ would read as "free". */
+.nk-spec-list > li::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 10px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--nk-purple);
 }
 .nk-tworow {
   display: grid;
