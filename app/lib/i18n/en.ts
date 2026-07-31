@@ -67,7 +67,7 @@ export const en: Dict = {
   hero: {
     badge: "Renting between verified users",
     title: "Clearer item rental – from search to return.",
-    body: "Naudokis.lt is an item rental platform — rent tools, equipment, cars or leisure gear from private and business owners across Lithuania. Final price, reservation and handover — in the app.",
+    body: "Naudokis.lt is an item rental platform covering all of Lithuania, where you can rent tools, equipment, cars and leisure gear from private owners and businesses. You see the final price up front, while reservation and handover happen in the app.",
     ownerPrompt: "Have an item you are not using?",
     ownerCta: "List it in the app",
     phoneAlt: "Item rental listings in the Naudokis app",
