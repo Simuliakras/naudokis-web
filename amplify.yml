@@ -27,9 +27,11 @@ frontend:
         # So every variable read at REQUEST time has to be materialised into a
         # .env file that ships with the build, for the Next server to load on
         # boot. Do not delete this block: without it these are silently empty,
-        # and two of them fail quietly rather than loudly — TRUSTED_PROXY_HOPS
-        # disables per-client rate limiting, and HANDOFF_SIGNING_SECRET stops
-        # handoff tokens minting, neither of which surfaces as an error.
+        # and three of them fail quietly rather than loudly — TRUSTED_PROXY_HOPS
+        # disables per-client rate limiting, HANDOFF_SIGNING_SECRET stops handoff
+        # tokens minting, and GOOGLE_MAPS_API_KEY makes /api/map 404 so every
+        # listing silently falls back to the drawn delivery-zone backdrop. None
+        # of the three surfaces as an error.
         #
         # Consequence to accept: these values live in the build artifact, so
         # rotating one is a rebuild, not an env-var edit. (.env* is gitignored,
@@ -41,6 +43,7 @@ frontend:
           ANDROID_APP_LINK_PACKAGE_NAME=$ANDROID_APP_LINK_PACKAGE_NAME
           TRUSTED_PROXY_HOPS=$TRUSTED_PROXY_HOPS
           HANDOFF_SIGNING_SECRET=$HANDOFF_SIGNING_SECRET
+          GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY
           EOF
         # Log which runtime vars actually arrived. Prints the KEY and whether it is
         # set — never the value, since HANDOFF_SIGNING_SECRET is among them and
