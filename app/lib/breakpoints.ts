@@ -18,11 +18,6 @@ export const BREAKPOINTS = {
   md: "48rem",
   lg: "64rem",
   nav: "70rem",
-  // Component-scoped like `nav`: the width below which the consent bar can reach the
-  // corner the floating chrome parks in. 852px — derived, not chosen: the bar is
-  // min(100%, 45rem) centred and .nk-backtotop is a 46px button inset 20px, so they
-  // first touch at 720 + 2 × (20 + 46). Re-derive it if either number changes.
-  cookiebar: "53.25rem",
   // Component-scoped like `nav`: the width below which the nav's install CTA sheds
   // its full label for the short one. 1190px — equal to `hero` by coincidence, not by
   // derivation.

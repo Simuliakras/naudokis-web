@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
 
 // The analytics-consent surfaces: the site-wide banner (ConsentBanner), the footer
 // privacy panel (PrivacyChoices) and the gtag Consent Mode wiring (Analytics.tsx).
@@ -11,6 +11,11 @@ import { test, expect, type Page } from "@playwright/test";
 //
 // LT is the default locale and is served unprefixed, so the copy asserted below is
 // the Lithuanian dictionary's.
+//
+// The banner's two answers do NOT share a skin any more — the accept is
+// .nk-btn--primary by product decision. What is still asserted, and must stay
+// asserted, is that neither answer is harder to give: same type, same target size,
+// both on screen, neither preselected, and still exactly two buttons with no "X".
 
 const BANNER = ".nk-cookiebar";
 const banner = (page: Page) => page.locator(BANNER);
@@ -23,6 +28,33 @@ async function bannerSettled(page: Page) {
     return el !== null || document.cookie.includes("nk_ga_consent=");
   });
 }
+
+// The bar fades up over --nk-dur-med. Every geometry assertion below reads a bounding
+// box, and a box sampled mid-entrance sits 12px low — the direction that turns
+// "clears the reserve bar" into a false failure. Wait for the animation itself rather
+// than a timeout; the click-driven tests need nothing, since Playwright already waits
+// for box stability before it clicks.
+const bannerStill = (page: Page) =>
+  banner(page).evaluate(async (el) => {
+    await Promise.all(el.getAnimations().map((animation) => animation.finished));
+  });
+
+// boundingBox() is nullable for anything off-layout, and every geometry assertion in
+// this file is about an element that must be on screen. Throwing here names the
+// missing element; the alternative — `?.x` fallbacks — turns "it never rendered" into
+// a comparison against 0, which several of the assertions below would pass.
+async function boxOf(locator: Locator) {
+  const box = await locator.boundingBox();
+  if (!box) {
+    throw new Error(`expected an on-screen box for ${locator}`);
+  }
+  return box;
+}
+
+const overlaps = async (page: Page, a: string, b: string) => {
+  const [boxA, boxB] = await Promise.all([boxOf(page.locator(a)), boxOf(page.locator(b))]);
+  return !(boxA.y + boxA.height <= boxB.y || boxB.y + boxB.height <= boxA.y);
+};
 
 // Everything gtag was told, in push order. Consent Mode's contract is about that
 // order (default before update), so read the queue rather than any internal.
@@ -43,22 +75,29 @@ test.describe("analytics consent banner", () => {
     const accept = banner(page).getByRole("button", { name: "Leisti analitikos slapukus" });
     const decline = banner(page).getByRole("button", { name: "Tęsti be analitikos slapukų" });
 
-    // Equal prominence is the legal requirement, so it is asserted, not commented:
-    // same skin, same type, and neither preselected.
+    // The accept carries the primary skin by product decision (2026-08-01) — that
+    // difference is intended and pinned here so it cannot spread by accident. What
+    // stays equal is everything about REACHING either answer, which is what the rest
+    // of this block asserts: same type, same target height, neither preselected.
     await expect(accept).toBeVisible();
     await expect(decline).toBeVisible();
-    for (const button of [accept, decline]) {
-      await expect(button).toHaveClass(/nk-btn--outline/);
-    }
-    const [acceptStyle, declineStyle] = await Promise.all(
+    await expect(accept).toHaveClass(/nk-btn--primary/);
+    await expect(decline).toHaveClass(/nk-btn--outline/);
+
+    const [acceptType, declineType] = await Promise.all(
       [accept, decline].map((button) =>
         button.evaluate((el) => {
           const cs = getComputedStyle(el);
-          return { background: cs.background, border: cs.border, fontWeight: cs.fontWeight, fontSize: cs.fontSize };
+          return { fontWeight: cs.fontWeight, fontSize: cs.fontSize, fontFamily: cs.fontFamily };
         }),
       ),
     );
-    expect(declineStyle).toEqual(acceptStyle);
+    expect(declineType).toEqual(acceptType);
+
+    const [acceptBox, declineBox] = await Promise.all([boxOf(accept), boxOf(decline)]);
+    expect(acceptBox.height).toBe(declineBox.height);
+    // .nk-btn's min-height is var(--nk-tap); a skin change must never shrink a target.
+    expect(acceptBox.height).toBeGreaterThanOrEqual(44);
     await expect(accept).not.toBeFocused();
 
     // There is no "X": a stored choice is the only thing that dismisses this, or it
@@ -73,6 +112,40 @@ test.describe("analytics consent banner", () => {
     await page.goto("/kaip-tai-veikia");
     await bannerSettled(page);
     await expect(banner(page)).toHaveCount(0);
+  });
+
+  test("spans the viewport, and runs the actions inline only once there is room", async ({ page }) => {
+    const geometry = async () => {
+      await bannerSettled(page);
+      await expect(banner(page)).toBeVisible();
+      await bannerStill(page);
+      const [bar, copy, actions, clientWidth] = await Promise.all([
+        boxOf(banner(page)),
+        boxOf(banner(page).locator(".nk-cookiebar__copy")),
+        boxOf(banner(page).locator(".nk-consent-actions")),
+        page.evaluate(() => document.documentElement.clientWidth),
+      ]);
+      return { bar, copy, actions, clientWidth };
+    };
+
+    // Full-bleed at every width — not a centred card. Measured against clientWidth
+    // rather than the viewport size, since a classic scrollbar is outside the ICB the
+    // fixed bar is sized by.
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const wide = await geometry();
+    expect(wide.bar.x).toBe(0);
+    expect(wide.bar.width).toBe(wide.clientWidth);
+    // Above --breakpoint-nav the two sit side by side: same row, actions to the right.
+    expect(wide.actions.x).toBeGreaterThan(wide.copy.x);
+    expect(wide.actions.y).toBeLessThan(wide.copy.y + wide.copy.height);
+
+    // Below it the row collapses and the actions span under the copy.
+    await page.setViewportSize({ width: 1024, height: 900 });
+    const narrow = await geometry();
+    expect(narrow.bar.x).toBe(0);
+    expect(narrow.bar.width).toBe(narrow.clientWidth);
+    expect(narrow.actions.y).toBeGreaterThanOrEqual(narrow.copy.y + narrow.copy.height);
   });
 
   test("holds analytics_storage denied until accepted, then grants it", async ({ page }) => {
@@ -192,26 +265,24 @@ test.describe("footer privacy panel", () => {
 });
 
 test.describe("the banner shares the bottom edge without covering it", () => {
-  // The bar fades up over --nk-dur-med. Every assertion below reads a bounding box,
-  // and a box sampled mid-entrance sits 12px low — which is the direction that turns
-  // "clears the reserve bar" into a false failure. Wait for the animation itself
-  // rather than a timeout; the click-driven tests above need nothing, since Playwright
-  // already waits for box stability before it clicks.
-  const bannerStill = (page: Page) =>
-    banner(page).evaluate(async (el) => {
-      await Promise.all(el.getAnimations().map((animation) => animation.finished));
-    });
-
-  const overlaps = async (page: Page, a: string, b: string) => {
-    const [boxA, boxB] = await Promise.all([page.locator(a).boundingBox(), page.locator(b).boundingBox()]);
-    if (!boxA || !boxB) {
-      return null;
-    }
-    return !(boxA.y + boxA.height <= boxB.y || boxB.y + boxB.height <= boxA.y);
-  };
-
   test("clears the back-to-top button on a phone", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/kaip-tai-veikia");
+    await bannerSettled(page);
+    await expect(banner(page)).toBeVisible();
+    await bannerStill(page);
+
+    await page.evaluate(() => window.scrollTo({ top: 2000, behavior: "instant" }));
+    await expect(page.locator(".nk-backtotop")).toHaveClass(/is-on/);
+    expect(await overlaps(page, BANNER, ".nk-backtotop")).toBe(false);
+  });
+
+  // The desktop half of the same contract. The clearance used to be gated behind
+  // --breakpoint-cookiebar (852px), because a centred 45rem bar could not reach the
+  // corner above it. A full-bleed bar reaches that corner at EVERY width, so the gate
+  // was removed — and this is what proves it stayed removed.
+  test("clears the back-to-top button on a desktop viewport too", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/kaip-tai-veikia");
     await bannerSettled(page);
     await expect(banner(page)).toBeVisible();
@@ -244,14 +315,13 @@ test.describe("the banner shares the bottom edge without covering it", () => {
     // handler, not a <button>: the bridge must still work without JS.
     const reserve = bar.getByRole("link").first();
     await expect(reserve).toBeVisible();
-    const point = await reserve.boundingBox();
-    expect(point).not.toBeNull();
+    const box = await boxOf(reserve);
     const onTop = await page.evaluate(
       ({ x, y }) => {
         const el = document.elementFromPoint(x, y);
         return el ? el.closest(".nk-mbar") !== null : false;
       },
-      { x: (point?.x ?? 0) + (point?.width ?? 0) / 2, y: (point?.y ?? 0) + (point?.height ?? 0) / 2 },
+      { x: box.x + box.width / 2, y: box.y + box.height / 2 },
     );
     expect(onTop, "the reserve CTA is the top-most element at its own centre").toBe(true);
   });

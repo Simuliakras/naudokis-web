@@ -8,7 +8,6 @@ const expected = {
   md: "48rem",
   lg: "64rem",
   nav: "70rem",
-  cookiebar: "53.25rem",
   navcta: "74.375rem",
   hero: "74.375rem",
   xl: "80rem",

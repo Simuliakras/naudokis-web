@@ -12,13 +12,6 @@
      itself collapses. 1190px — equal to --breakpoint-hero by coincidence, not by
      derivation; the two move independently. */
   --breakpoint-navcta: 74.375rem;
-  /* Component-scoped like --breakpoint-nav: the width below which the consent bar
-     can reach the corner the floating chrome parks in, so below this the chrome has
-     to step over it and above it must not move at all. 852px — derived, not chosen:
-     the bar is min(100%, 45rem) centred, and .nk-backtotop is a 46px button inset
-     20px, so the two first touch at 720 + 2 × (20 + 46). Re-derive it if either
-     number changes. */
-  --breakpoint-cookiebar: 53.25rem;
   /* Component-scoped like --breakpoint-nav: the width below which the home hero
      drops its phone column and runs as a single copy column. 1190px. */
   --breakpoint-hero: 74.375rem;
@@ -205,7 +198,9 @@
      296px = 261px measured at 360×640 (the tallest the bar gets: the narrowest width
      that still uses the compact tier's 14px body, so four lines of Lithuanian above
      two stacked actions) + a 34px home-indicator inset, which the measurement cannot
-     see in a desktop browser. Erring high is the safe direction — both consumers
+     see in a desktop browser. Re-measured after the bar went full-bleed and still
+     261px — the inline padding moved to .nk-cookiebar__inner precisely so the narrow
+     tiers kept their geometry. Erring high is the safe direction — both consumers
      reserve space, so an over-estimate costs one frame of extra footer padding while
      an under-estimate puts the back-to-top button under the bar. */
   --nk-cookiebar-h: 296px;
@@ -5658,10 +5653,17 @@ footer .nk-link:hover {
 }
 
 /* ---- consent content (install prompt + cookie bar + footer privacy panel) ----
-   THE RULE THAT GOVERNS THIS WHOLE BLOCK: equal prominence is a legal requirement,
-   so nothing here may make either answer the visually dominant one. Concretely —
-   the first-ask surfaces give both actions one button skin (.nk-btn--outline), and
-   the privacy panel's cards never change appearance with their switch state. */
+   THE RULE THAT GOVERNS THIS WHOLE BLOCK: nothing here may make one answer easier
+   to give than the other. Concretely — the install prompt gives both actions one
+   button skin (.nk-btn--outline), and the privacy panel's cards never change
+   appearance with their switch state.
+
+   ONE deliberate exception, added 2026-08-01: the site-wide cookie bar's accept
+   carries .nk-btn--primary (product decision, see ConsentBanner.tsx). Everything
+   about REACHING either answer is still equal there — same size, same type, same
+   44px target, neither autofocused — and that equality is asserted in
+   e2e/consent-analytics.spec.ts. The exception is the bar's alone; do not carry it
+   into ConsentSheet or the panel. */
 
 /* One purpose = one card. Its chrome NEVER varies with the switch state — no
    [data-granted] rule may be added here, or a granted purpose starts looking more
@@ -5870,8 +5872,9 @@ footer .nk-link:hover {
   min-height: 0;
   display: inline;
 }
-/* Equal-width, equal-skin actions. They stack on narrow screens in source order,
-   which keeps neither choice "below the fold" of the panel. */
+/* Equal-width actions, equal-skin everywhere except the cookie bar's accept (see the
+   block header). They stack on narrow screens in source order, which keeps neither
+   choice "below the fold" of the panel. */
 .nk-consent-actions {
   display: flex;
   flex-wrap: wrap;
@@ -5962,17 +5965,17 @@ footer .nk-link:hover {
 
    Winning the z-index is only half of sharing the bottom edge: this bar must not
    COVER what it outranks. It publishes its height (--nk-cookiebar-h, set from a
-   ResizeObserver in ConsentBanner because the bar wraps from two lines to five
-   between 320 and 720px) and stacks on the reserve bar rather than over it — see
-   --nk-bars-h in :root and the .nk-mbar block in catalogue.css.
+   ResizeObserver in ConsentBanner because the bar ranges 136–261px across the width
+   ladder) and stacks on the reserve bar rather than over it — see --nk-bars-h in
+   :root and the .nk-mbar block in catalogue.css.
 
-   ONE COLUMN AT EVERY WIDTH, deliberately. Both action labels are long in both
-   locales ("Tęsti be analitikos slapukų", "Continue without analytics cookies"),
-   so the pair never fits beside the copy inside a 45rem bar — a wrapping flex row
-   only ever produced the same two rows by accident, with the actions left at their
-   content width and ~40% of the row empty beside them. As a grid row they span,
-   and the shared .nk-consent-actions rule then splits them evenly: equal
-   prominence, which is the legal requirement here, made literal in the layout.
+   FULL-BLEED, and the content rides .nk-container — so the bar reads as site
+   chrome on the nav's own grid rather than as a floating panel. The inner is ONE
+   COLUMN by default: both action labels are long in both locales ("Tęsti be
+   analitikos slapukų", "Continue without analytics cookies"), so the pair only
+   fits beside the copy once the viewport is genuinely wide. Above
+   --breakpoint-nav it becomes a two-column row (see the query below); under it
+   the actions span and the shared .nk-consent-actions basis splits them evenly.
 
    It DOES animate in, unlike most fixed chrome: the bar is out of flow, so the
    entrance costs no CLS, and it mounts post-hydration — appearing without motion
@@ -5981,22 +5984,25 @@ footer .nk-link:hover {
    kill switch below, which the blanket transition override cannot supply. */
 .nk-cookiebar {
   position: fixed;
+  /* inset-inline is what makes it full-bleed — no width declaration, or the two
+     over-constrain each other and a reader has to work out which one wins. */
   inset-inline: 0;
   bottom: 0;
   z-index: 70;
-  display: grid;
-  row-gap: var(--nk-gap-md);
-  margin-inline: auto;
-  /* NOT free to change: --breakpoint-cookiebar is derived from this width plus
-     .nk-backtotop's geometry, and lives in a four-copy registry. See :root. */
-  width: min(100%, 45rem);
-  /* through a var so the stacked case can zero it: lifted onto the reserve bar,
-     this bar no longer touches the viewport edge and the inset is dead padding */
-  padding: var(--nk-gap-lg) var(--nk-gap-xl)
-    calc(var(--nk-gap-lg) + var(--nk-cookiebar-safe, var(--nk-safe-bottom)));
+  /* Block only — the inline gutter belongs to the inner now, so the background can
+     run to both viewport edges. Component-local, and the ONLY thing the compact
+     tiers below restate: both halves of the frame step together, and the safe inset
+     stays spelled once. --nk-cookiebar-safe is what the stacked case zeroes — lifted
+     onto the reserve bar this bar no longer touches the viewport edge, so the inset
+     is dead padding there (see the .nk-mbar block in catalogue.css). */
+  --nk-cookiebar-pad: var(--nk-gap-lg);
+  padding-block: var(--nk-cookiebar-pad) calc(var(--nk-cookiebar-pad) + var(--nk-cookiebar-safe, var(--nk-safe-bottom)));
   /* Same lit-hairline recipe as the dialog panel, so the three consent surfaces read
      as one family (see .nk-dialog-panel for why it is a background layer and why no
-     background-color may be set — a colour would paint over the 1px ring).
+     background-color may be set — a colour would paint over the 1px ring). Only the
+     TOP edge survives full-bleed: the inline edges are off-screen and the radius has
+     no corners left to round, so this is a border-TOP rather than a border plus three
+     zeroing overrides.
 
      The base is --nk-float-bg + a blur, the same frosted glass .nk-backtotop uses:
      these two are the site's bottom-edge chrome and now read as one material. Not
@@ -6005,16 +6011,18 @@ footer .nk-link:hover {
      modal surface, and the 0.9 alpha keeps --nk-text-2 above 4.5:1 even over a
      white listing photo. --nk-shadow-up stays: it is the correct upward cast for
      the one bottom-fixed surface. */
-  border: 1px solid transparent;
+  border-top: 1px solid transparent;
   background:
     radial-gradient(120% 100% at 50% -30%, var(--nk-purple-soft), transparent 62%) padding-box,
     linear-gradient(var(--nk-float-bg), var(--nk-float-bg)) padding-box,
     var(--nk-lit-edge) border-box;
   backdrop-filter: blur(10px) saturate(1.05);
-  border-bottom: 0;
-  border-radius: var(--nk-r-modal) var(--nk-r-modal) 0 0;
   box-shadow: var(--nk-edge-top), var(--nk-shadow-up);
   animation: nk-cookiebar-in var(--nk-dur-med) var(--nk-ease) backwards;
+}
+.nk-cookiebar__inner {
+  display: grid;
+  row-gap: var(--nk-gap-md);
 }
 @keyframes nk-cookiebar-in {
   from {
@@ -6061,9 +6069,10 @@ footer .nk-link:hover {
   color: var(--nk-text);
   text-wrap: pretty;
 }
-/* The measure is capped, not the column: at the full 45rem the body ran to ~97
-   characters a line. The ragged right it leaves is answered by the action row
-   below, which does span. */
+/* The measure is capped, not the column — the bar is now as wide as the viewport,
+   and left uncapped the body would run past 120 characters a line on a desktop.
+   Below the nav tier the ragged right it leaves is answered by the action row,
+   which does span; above it the actions sit in the second column. */
 .nk-cookiebar__text {
   margin: 0;
   max-width: 66ch;
@@ -6076,46 +6085,74 @@ footer .nk-link:hover {
 .nk-cookiebar .nk-consent-actions {
   margin-top: 0;
 }
-/* Both buttons, always — anything here that could tell the two answers apart is a
-   compliance defect, not a style bug. The lit top edge is what lifts them off the
-   glass; the hover edge is the only state change and both carry it. */
-.nk-cookiebar .nk-consent-actions .nk-btn {
+/* --outline ONLY. These sit at (0,3,0) and would otherwise outrank the finish
+   layer's .nk-btn--primary / .nk-btn--primary.nk-btn--sm shadows at the bottom of
+   this file, flattening the accept back to a bordered button. The lit top edge is
+   what lifts the outline off the glass; the primary brings its own. */
+.nk-cookiebar .nk-consent-actions .nk-btn--outline {
   box-shadow: var(--nk-edge-top);
 }
-.nk-cookiebar .nk-consent-actions .nk-btn:hover {
+.nk-cookiebar .nk-consent-actions .nk-btn--outline:hover {
   border-color: var(--nk-purple-hover);
+}
+/* The two answers share a row once there is width for it. The pair needs ~500px
+   (.nk-btn is nowrap and the LT labels are the long ones) plus a --nk-gutter each
+   side, so --breakpoint-nav is the honest floor — and it is where the nav itself
+   stops collapsing, so the bar switches layout on the same tier as the chrome it
+   aligns with. flex: 0 0 auto overrides the SHARED .nk-consent-actions basis at
+   (0,3,0) without touching it: ConsentSheet and PrivacyChoices still need it. */
+@media (width >= theme(--breakpoint-nav)) {
+  .nk-cookiebar__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--nk-gap-xl);
+  }
+  .nk-cookiebar .nk-consent-actions {
+    flex-wrap: nowrap;
+  }
+  .nk-cookiebar .nk-consent-actions .nk-btn {
+    flex: 0 0 auto;
+  }
 }
 /* The bar overlays the END of the page, and the last thing on every page is the
    footer's legal row — which holds the "Privatumo nustatymai" trigger this very bar
    points at. Reserve its height inside the footer so that row can always be
    scrolled clear. On .nk-footer rather than <body>: the footer paints --nk-bg-deep
    and the body --nk-bg, so body padding would open a lighter strip under it.
-   --nk-cookiebar-h, not --nk-bars-h: that token is scoped to the widths where the
-   bar reaches the floating chrome's corner, but this bar spans the footer's middle
-   at EVERY width, so the reserve has to be unconditional. The measured height
-   already contains whatever safe inset the bar is absorbing. */
+   --nk-cookiebar-h, not --nk-bars-h: that token is deliberately the height ABOVE the
+   safe inset (floating chrome carries the inset in its own resting offset) and on a
+   listing page it also folds in the reserve bar, which brings its own spacer. What
+   the footer needs is exactly this bar's full on-screen height, safe inset included
+   — which is what the measurement already is. */
 body:has(.nk-cookiebar) .nk-footer {
   padding-bottom: var(--nk-cookiebar-h);
 }
-/* Floating chrome has to clear this bar — but only where the bar actually reaches
-   the corner that chrome parks in, or the button would jump for nothing on desktop.
-   --breakpoint-cookiebar is exactly that width; its derivation is in :root.
+/* Floating chrome has to clear this bar, at EVERY width — unconditional since the
+   bar went full-bleed. It used to be gated behind --breakpoint-cookiebar, the width
+   below which a centred 45rem bar could first reach .nk-backtotop's corner; a bar
+   that spans the viewport reaches that corner always, and the gate would have left
+   the button sitting on top of it above 852px. That token had no other consumer and
+   was removed from the four-copy registry with this change.
    The published height includes the safe inset this bar absorbs, and the chrome's
    resting offset carries that inset too — subtract it once. --nk-cookiebar-h has a
    declared default in :root, so the offset is sane before the first measurement. */
-@media (width < theme(--breakpoint-cookiebar)) {
-  body:has(.nk-cookiebar) {
-    --nk-bars-h: calc(var(--nk-cookiebar-h) - var(--nk-safe-bottom));
-  }
+body:has(.nk-cookiebar) {
+  --nk-bars-h: calc(var(--nk-cookiebar-h) - var(--nk-safe-bottom));
 }
 /* Compact layers follow usable height as well as width — the same query every other
    layer in this file uses — so a landscape phone is not handed a bar sized for a
-   portrait one. The actions need no rule: .nk-consent-actions' 180px flex basis
-   stacks them by itself once the row is this narrow. */
+   portrait one. The inline step lands on the INNER (at (0,2,0), so it beats
+   .nk-container's own gutter on specificity rather than on source order); the block
+   step stays on the bar, which owns the safe inset, and retunes --nk-cookiebar-pad
+   rather than the padding, so the inset keeps composing itself. The actions need no
+   rule: .nk-consent-actions' 180px flex basis stacks them by itself once this narrow. */
 @media (width < theme(--breakpoint-sm)), (height < 32.5rem) {
   .nk-cookiebar {
+    --nk-cookiebar-pad: var(--nk-gap-md);
+  }
+  .nk-cookiebar .nk-cookiebar__inner {
     row-gap: var(--nk-gap-sm);
-    padding: var(--nk-gap-md) 18px calc(var(--nk-gap-md) + var(--nk-cookiebar-safe, var(--nk-safe-bottom)));
+    padding-inline: 18px;
   }
 }
 /* smallest phones: the banner ate ~47% of a 320×568 viewport before it was first
@@ -6125,9 +6162,11 @@ body:has(.nk-cookiebar) .nk-footer {
    .nk-btn's own min-height is what holds them however far the padding steps down. */
 @media (width < theme(--breakpoint-xs)) {
   .nk-cookiebar {
+    --nk-cookiebar-pad: var(--nk-gap-sm);
+  }
+  .nk-cookiebar .nk-cookiebar__inner {
     row-gap: 10px;
-    padding: var(--nk-gap-sm) var(--nk-gap-md)
-      calc(var(--nk-gap-sm) + var(--nk-cookiebar-safe, var(--nk-safe-bottom)));
+    padding-inline: var(--nk-gap-md);
   }
   .nk-cookiebar__head {
     gap: 10px;
