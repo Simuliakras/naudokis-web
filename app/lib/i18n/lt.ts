@@ -1034,9 +1034,19 @@ export const lt: Dict = {
   // įkeliamas bet kuriuo atveju, o riboti, slapukų nenaudojantys matavimo signalai
   // teisėto intereso pagrindu veikia nepriklausomai nuo šio pasirinkimo (politikos
   // 10.3 sk.). „Leisti „Google Analytics““ ir „Tęsti be analitikos“ tai iškreiptų.
+  //
+  // Tiekėjo juostoje NEĮVARDIJAME (2026-08-02): tai pakopinis pranešimas — „Google
+  // Ireland Limited („Google Analytics 4“)“ įvardytas privatumo politikoje, į kurią
+  // veda čia pat esanti nuoroda (10.3 sk. ir gavėjų sąrašas), ir poraštės skiltyje
+  // „Privatumo nustatymai“. Juosta lieka teisinga ir pakeitus tiekėją.
+  //
+  // Trys sakiniai, ta pačia tvarka, ir kiekvienas atlieka savo darbą: (1) kada
+  // įrašomi slapukai, (2) KAM jie reikalingi, (3) kad atsisakymas nieko nekainuoja.
+  // Trečiojo nekeisti į „pasirinkimą galite pakeisti“ — atšaukimą dengia poraštė, o
+  // pažadas, kad svetainė veikia vienodai, yra apsauga nuo klaidinančio dizaino.
   consentBanner: {
     title: "Analitikos slapukai",
-    body: "„Google Analytics“ slapukus įrašome tik jums sutikus. Be sutikimo lieka tik riboti, slapukų nenaudojantys matavimo signalai. Svetainė veikia vienodai bet kuriuo atveju.",
+    body: "Analitikos slapukus įrašome tik jums sutikus — jie padeda matyti, kaip naudojama svetainė, ir ją tobulinti. Be sutikimo lieka tik riboti, slapukų nenaudojantys matavimo signalai. Svetainė veikia vienodai bet kuriuo atveju.",
     privacyLink: "Privatumo politika",
     accept: "Leisti analitikos slapukus",
     decline: "Tęsti be analitikos slapukų",

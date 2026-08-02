@@ -193,17 +193,19 @@
      rather than repeated as a var() fallback at each consumer — it used to be the
      same literal in three places across two stylesheets. Every consumer is gated
      behind body:has(.nk-cookiebar), so the value left standing once the bar unmounts
-     is never read. Re-derive it if the bar's type, padding or copy changes.
+     is never read. Re-derive it if the bar's type, padding or copy changes — the
+     consent spec asserts this default still covers the tallest measured bar, so that
+     instruction is enforced rather than merely written down.
 
-     296px = 261px measured at 360×640 (the tallest the bar gets: the narrowest width
-     that still uses the compact tier's 14px body, so four lines of Lithuanian above
-     two stacked actions) + a 34px home-indicator inset, which the measurement cannot
-     see in a desktop browser. Re-measured after the bar went full-bleed and still
-     261px — the inline padding moved to .nk-cookiebar__inner precisely so the narrow
-     tiers kept their geometry. Erring high is the safe direction — both consumers
-     reserve space, so an over-estimate costs one frame of extra footer padding while
-     an under-estimate puts the back-to-top button under the bar. */
-  --nk-cookiebar-h: 296px;
+     320px = 282px measured at 390×844 and 360×640 (the tallest the bar gets: five
+     lines of Lithuanian above two stacked actions, on the widths that still use the
+     compact tier's 14px body) + a 34px home-indicator inset, which the measurement
+     cannot see in a desktop browser, rounded up for headroom. Was 296px against a
+     261px bar until the banner copy gained its "why" clause on 2026-08-02. Erring
+     high is the safe direction — both consumers reserve space, so an over-estimate
+     costs one frame of extra footer padding while an under-estimate puts the
+     back-to-top button under the bar. */
+  --nk-cookiebar-h: 320px;
   /* How much bottom-fixed BAR is currently on screen ABOVE the safe inset. Floating
      chrome (.nk-backtotop, .nk-lg-fab-toc) adds this to its own resting offset, so
      one token composes every combination — reserve bar, consent bar, or both stacked
@@ -5965,7 +5967,7 @@ footer .nk-link:hover {
 
    Winning the z-index is only half of sharing the bottom edge: this bar must not
    COVER what it outranks. It publishes its height (--nk-cookiebar-h, set from a
-   ResizeObserver in ConsentBanner because the bar ranges 136–261px across the width
+   ResizeObserver in ConsentBanner because the bar ranges 136–282px across the width
    ladder) and stacks on the reserve bar rather than over it — see --nk-bars-h in
    :root and the .nk-mbar block in catalogue.css.
 
@@ -6157,8 +6159,10 @@ body:has(.nk-cookiebar) {
 }
 /* smallest phones: the banner ate ~47% of a 320×568 viewport before it was first
    tightened — frame, chip, type and gaps all step down again here, which is what
-   pays for the heading the bar gained. Measured 231px at 320×568 (~41%), against
-   ~40% for the headingless version. The 44px targets are not negotiable, and
+   pays for the heading the bar gained. Measured 249px at 320×568 (~44%); it was 231px
+   (~41%) until the copy gained its "why" clause on 2026-08-02, and this tier's type
+   step is what kept that from landing near the old ~47%. The 44px targets are not
+   negotiable, and
    .nk-btn's own min-height is what holds them however far the padding steps down. */
 @media (width < theme(--breakpoint-xs)) {
   .nk-cookiebar {

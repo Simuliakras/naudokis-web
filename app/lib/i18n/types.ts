@@ -678,11 +678,16 @@ export type Dict = {
     manageNote: string; // where to change it later — the footer panel, named
   };
   // Site-wide analytics consent banner (Google Analytics). Non-modal, shown once
-  // while no choice is stored; both actions must stay equally plain and equally
-  // weighted — no "accept all", no nudge (see components/ConsentBanner.tsx).
+  // while no choice is stored. The two LABELS must stay equally plain and name the
+  // same thing — no "accept all", no nudge (see components/ConsentBanner.tsx; the
+  // accept's primary SKIN is a separate, deliberate exception documented there).
   consentBanner: {
     title: string; // region aria-label
-    body: string; // names Google Analytics; cookies only after consent; optional
+    // Three sentences: when cookies are set, why they exist, and that refusing
+    // costs nothing. Vendor-neutral on purpose — the provider is named one layer
+    // down, in the linked policy and the footer panel. Height-critical: this string
+    // is what --nk-cookiebar-h is measured from (see :root in globals.css).
+    body: string;
     privacyLink: string;
     accept: string;
     decline: string;

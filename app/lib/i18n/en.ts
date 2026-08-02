@@ -968,9 +968,19 @@ export const en: Dict = {
   // either way, and the limited cookieless measurement signals run on legitimate
   // interest independently of this choice (policy §10.3). "Allow Google Analytics"
   // and "Continue without analytics" both misstated that.
+  //
+  // The VENDOR is deliberately unnamed here (2026-08-02): this is a layered notice
+  // — "Google Ireland Limited (Google Analytics 4)" is named in the privacy policy
+  // the adjacent link points at (§10.3 and the recipients list) and in the footer's
+  // Privacy choices panel. The bar therefore stays true if the provider changes.
+  //
+  // Three sentences, in this order, each doing one job: (1) when cookies are set,
+  // (2) WHY they exist, (3) that refusing costs nothing. Do not trade the third for
+  // "you can change this later" — withdrawal is the footer's job, and the promise
+  // that the site works the same is what keeps this off the dark-pattern list.
   consentBanner: {
     title: "Analytics cookies",
-    body: "We set Google Analytics cookies only if you agree. Without consent, only limited cookieless measurement signals remain. The site works the same either way.",
+    body: "We set analytics cookies only if you agree — they help us see how the site is used and improve it. Without consent, only limited cookieless measurement signals remain. The site works the same either way.",
     privacyLink: "Privacy Policy",
     accept: "Allow analytics cookies",
     decline: "Continue without analytics cookies",

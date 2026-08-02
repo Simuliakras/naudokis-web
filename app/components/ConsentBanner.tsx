@@ -54,9 +54,9 @@ export function ConsentBanner() {
 
   // Publish the bar's height so the floating chrome it would otherwise cover
   // (.nk-backtotop, the legal TOC FAB) can clear it — see --nk-bars-h in
-  // globals.css. Measured, not a constant: the bar ranges 136–261px between 1920
+  // globals.css. Measured, not a constant: the bar ranges 136–282px between 1920
   // and 360, as the actions leave the copy's row at --breakpoint-nav and the copy
-  // itself wraps from two lines to four. --nk-cookiebar-h's :root default is only
+  // itself wraps from three lines to five. --nk-cookiebar-h's :root default is only
   // the worst case, to keep every clearance sane on the frame before this
   // publishes the real one.
   // A callback ref rather than an effect, so the observer is attached the moment

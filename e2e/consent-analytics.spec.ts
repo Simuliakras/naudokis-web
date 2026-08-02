@@ -293,6 +293,44 @@ test.describe("the banner shares the bottom edge without covering it", () => {
     expect(await overlaps(page, BANNER, ".nk-backtotop")).toBe(false);
   });
 
+  // --nk-cookiebar-h's :root default is what every clearance uses on the frame before
+  // the ResizeObserver publishes a real height, so it has to be >= the tallest the bar
+  // ever gets. Nothing but a comment used to say so, and a 2026-08-02 copy change
+  // silently pushed the bar 21px past it. Measured on the two widths that produce the
+  // worst case: five lines of Lithuanian above two stacked actions.
+  for (const [width, height] of [
+    [390, 844],
+    [360, 640],
+  ]) {
+    test(`the :root height default still covers the bar at ${width}×${height}`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await page.goto("/");
+      await bannerSettled(page);
+      await expect(banner(page)).toBeVisible();
+      await bannerStill(page);
+
+      const { measured, fallback } = await page.evaluate(() => {
+        const root = document.documentElement;
+        // The observer writes the live height as an inline property, which shadows the
+        // :root default. Lift it to read what the first frame would have used.
+        const published = root.style.getPropertyValue("--nk-cookiebar-h");
+        root.style.removeProperty("--nk-cookiebar-h");
+        const declared = getComputedStyle(root).getPropertyValue("--nk-cookiebar-h").trim();
+        root.style.setProperty("--nk-cookiebar-h", published);
+        return {
+          measured: document.querySelector(".nk-cookiebar")?.getBoundingClientRect().height ?? 0,
+          fallback: Number.parseFloat(declared),
+        };
+      });
+
+      // A desktop browser cannot see the home-indicator inset the bar absorbs on a
+      // real handset, so the default has to clear the measurement by that much. Same
+      // 34px the derivation in :root spells out.
+      expect(measured).toBeGreaterThan(0);
+      expect(fallback, "re-derive --nk-cookiebar-h in globals.css :root").toBeGreaterThanOrEqual(measured + 34);
+    });
+  }
+
   // The regression this whole mechanism exists for: at z-index 70 over the z-60
   // reserve bar, the banner hid the Reserve CTA and its price outright — the site's
   // primary control, for every first-time mobile visitor.
