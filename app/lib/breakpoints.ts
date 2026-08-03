@@ -96,6 +96,11 @@ export function observeViewport(name: ViewportQueryName, listener: (matches: boo
 // against the viewport, so that (not 55rem, and not --breakpoint-md) is the
 // number these entries must switch on.
 const DETAIL_ONE_COLUMN = "(width < 62.5rem)";
+// In the one-column detail layout the image sits inside .nk-container, so its slot
+// is the viewport minus both fluid gutters — not 100vw. Below 333px each gutter is
+// clamped to 20px; above that it is 6vw. The accurate hint lets DPR2 phones select
+// the 640px candidate instead of downloading 750px for a ~363px painted image.
+const DETAIL_MOBILE_WIDTH = "calc(100vw - max(40px, 12vw))";
 
 // Same derivation for the install band: `.nk-appcta-wrap` IS the .nk-container, so
 // its `@container nk-app-cta (width < 60rem)` phone-hide fires at a ~1091px
@@ -129,14 +134,14 @@ export const IMAGE_SIZES = {
     `(width < ${BREAKPOINTS.xl}) calc(25vw - 30px)`,
     "min(20vw, 345px)",
   ].join(", "),
-  detailHero: `${DETAIL_ONE_COLUMN} 100vw, min(calc(100vw - 164px), 1340px)`,
-  detailPrimary: `${DETAIL_ONE_COLUMN} 100vw, min(60vw, 800px)`,
+  detailHero: `${DETAIL_ONE_COLUMN} ${DETAIL_MOBILE_WIDTH}, min(calc(100vw - 164px), 1340px)`,
+  detailPrimary: `${DETAIL_ONE_COLUMN} ${DETAIL_MOBILE_WIDTH}, min(60vw, 800px)`,
   detailThumb: `${DETAIL_ONE_COLUMN} 50vw, min(20vw, 268px)`,
   lightbox: `(width >= ${BREAKPOINTS.nav}) 1024px, 100vw`,
   // Deliberately identical to detailPrimary: the lightbox reuses the already-cached
   // bento rendition as an instant underlay, which only works if both resolve to the
   // same candidate. Keep them in lockstep.
-  lightboxUnderlay: `${DETAIL_ONE_COLUMN} 100vw, min(60vw, 800px)`,
+  lightboxUnderlay: `${DETAIL_ONE_COLUMN} ${DETAIL_MOBILE_WIDTH}, min(60vw, 800px)`,
   // Filmstrip thumb: 80px above the phone tier, 64px below. Declaring the real CSS
   // box lets srcset pick the DPR2 candidate; the old hardcoded "64px" already
   // disagreed with the phone box it shipped alongside.

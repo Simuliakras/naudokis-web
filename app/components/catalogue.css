@@ -1725,31 +1725,9 @@
     font-size: 14.5px;
   }
 }
-/* content reveal after skeleton — a subtle opacity + rise. Fill-mode is `backwards`
-   (NOT `both`/`forwards`): forwards would hold the final keyframe's transform as a
-   matrix(1,…) forever, which — even though it's the identity — makes the wrapper a
-   containing block for its position:fixed descendants (the Gallery lightbox lives
-   inside here), pinning the "fullscreen" overlay to the content box instead of the
-   viewport. `backwards` only fills the pre-start frame, so once the reveal ends the
-   transform reverts to none and no containing block persists. */
-.nk-fadecontent {
-  animation: nk-contentfade 0.45s var(--nk-ease) backwards;
-}
-@keyframes nk-contentfade {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .nk-fadecontent {
-    animation: none;
-  }
-}
+/* Listing content is already server-rendered and hydrated with cached data. Do not
+   fade the gallery/header in: the primary photo is the mobile LCP candidate and an
+   opacity animation delays its eligible paint by the full animation duration. */
 .nk-mbar {
   display: none;
   position: fixed;

@@ -205,13 +205,15 @@ export function ListingScreen({ id }: { id: string }) {
 
   return shell(
     <>
-      {/* Breadcrumb sits OUTSIDE .nk-fadecontent: it's persistent chrome shown
-          during load too, so it must not re-animate when the body lands — only
-          its leaf (category + title) extends past the static Home › Skelbimai prefix. */}
+      {/* Breadcrumb stays outside the listing-content wrapper because it is also
+          persistent chrome during loading; only its leaf extends past the static
+          Home › Skelbimai prefix. */}
       <Breadcrumb homeLabel={dict.common.breadcrumbHome} label={dict.common.breadcrumbLabel}
         items={detailCrumbs({ category, categoryId: listing.categoryId, title: listing.title, feedLabel: dict.feed.titleAll, locale })} />
-      {/* fade in over the skeleton; the fixed mobile bar stays outside the wrapper */}
-      <div className="nk-fadecontent">
+      {/* Unstyled grouping wrapper: it carried the content fade-in until that was
+          removed for LCP (see catalogue.css), and it still exists to keep the fixed
+          mobile bar — which must not be inside it — a sibling rather than a child. */}
+      <div>
         <ListingHeader listing={listing} shared={shared} shareFailed={shareFailed} onShare={share} onFav={lockFav} />
         <Gallery images={listing.images} redirectCtx={listingCtx} hasNoReviews={hasNoReviews} appPath={appPath} />
 

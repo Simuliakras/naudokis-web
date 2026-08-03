@@ -10,6 +10,7 @@ import { goHref } from "@/app/lib/attribution";
 import type { Availability } from "@/app/lib/availability";
 import type { IsoDate } from "@/app/lib/dates";
 import { localePath, type Locale } from "@/app/lib/i18n/config";
+import { formatDiscountPercent } from "@/app/lib/i18n/format";
 import {
   applicableDiscount,
   discountTierViews,
@@ -198,9 +199,10 @@ function GalleryTile({
 }) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const showPhoto = Boolean(src && failedSrc !== src);
-  // The big tile is the listing LCP. `preload` emits the <link rel=preload
-  // imagesrcset> that starts the fetch during head parsing; loading="eager" +
-  // fetchPriority alone only help once the element itself has been discovered.
+  // The big tile is the listing LCP. Next 16 recommends a high fetch priority for
+  // responsive images whose exact candidate depends on the viewport; the image is
+  // already discoverable in the initial server-rendered document, and this avoids a
+  // preload whose generated <link> did not carry the priority hint Lighthouse checks.
   // One quality for every tile: the hero must not be compressed HARDER than the
   // thumbnails, and a single value keeps the optimizer cache shared.
   const inner = (
@@ -210,7 +212,8 @@ function GalleryTile({
           src={src}
           alt={alt ?? ""}
           fill
-          preload={big}
+          fetchPriority={big ? "high" : undefined}
+          loading={big ? "eager" : undefined}
           quality={75}
           sizes={
             fullWidth
@@ -2104,7 +2107,7 @@ function TermsSection({
                         />
                       )}
                       <span className="nk-breaks__pct nk-tnum">
-                        −{tier.percent}%
+                        {formatDiscountPercent(tier.percent, locale)}
                       </span>
                     </span>
                     <span className="nk-breaks__prices">

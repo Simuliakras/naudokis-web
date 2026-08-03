@@ -1168,7 +1168,12 @@ select {
    class directly (.nk-offer / .nk-cat / .nk-feature). `backwards` fills only the
    before-phase and then releases the property back to the cascade; there is no visual
    discontinuity, because the `to` state is identical to the un-animated base style.
-   Same trap as .nk-fadecontent further down. */
+
+   A forward fill on a WRAPPER bites differently and just as badly: holding
+   `transform: none` at animation priority makes the element a containing block for
+   its position:fixed descendants, which pins a "fullscreen" overlay to the content
+   box. That is why the listing-detail content wrapper used `backwards` too, before
+   its animation was dropped altogether (see catalogue.css). */
 @media (prefers-reduced-motion: no-preference) {
   /* (scripting: enabled) is the complete no-JS guard — every browser new enough
      for animation-timeline understands it, and browsers that don't skip this
@@ -1296,33 +1301,9 @@ select {
   }
 }
 
-/* Phones: transform-only rise, and no delay on the first child. The device column is
-   display:none ≤560, which makes the <h1> the mobile LCP element — and Chrome does not
-   count an element painted at opacity:0 as painted. Fading it in would push LCP by the
-   animation delay on this site's highest-value surface; a translate alone is free,
-   because a translated-but-opaque element still counts as painted. */
-@media (prefers-reduced-motion: no-preference) and (width < theme(--breakpoint-md)) {
-  .nk-hero-intro > * {
-    animation: nk-hero-rise-m 0.42s var(--nk-ease) backwards;
-  }
-  .nk-hero-intro > :nth-child(2) {
-    animation-delay: 0.05s;
-  }
-  .nk-hero-intro > :nth-child(3) {
-    animation-delay: 0.1s;
-  }
-  .nk-hero-intro > :nth-child(4) {
-    animation-delay: 0.15s;
-  }
-}
-@keyframes nk-hero-rise-m {
-  from {
-    transform: translateY(10px);
-  }
-  to {
-    transform: none;
-  }
-}
+/* No phone entrance animation. The hero heading/body are the mobile LCP candidates;
+   even compositor-only transforms can postpone their stable LCP timestamp until an
+   animation finishes. Premium first paint wins over decorative motion here. */
 
 /* ---- film grain for large gradient surfaces (hero panel, CTA bands) ----
    Static data-URI noise — zero requests; never apply page-wide. */
