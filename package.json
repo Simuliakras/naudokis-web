@@ -23,6 +23,7 @@
     "verify:app-links": "node scripts/verify-app-links.mjs",
     "verify:app-links:static": "node scripts/verify-app-links.mjs --static",
     "verify:breakpoints": "node scripts/verify-breakpoints.mjs",
+    "verify:field-cwv": "node scripts/verify-field-cwv.mjs",
     "verify:release": "yarn verify:breakpoints && node scripts/verify-release.mjs"
   },
   "dependencies": {
