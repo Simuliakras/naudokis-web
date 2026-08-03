@@ -35,10 +35,16 @@ export const SITE_URL = SITE_ORIGIN;
 // never ranks. Shared so every noindex site stays in lockstep.
 export const NOINDEX_FOLLOW: Metadata["robots"] = { index: false, follow: true };
 
-// A landing with a city in it is worth indexing once it has real inventory behind
-// it, and the bar is a single listing: one genuine result is still a useful landing,
-// and at current inventory we favour letting every stocked combination be discovered
-// over withholding it for a larger choice set.
+// How many public listings a landing must have behind it to be indexed and to earn a
+// sitemap entry. ONE policy covers every tier — the bare feed, category and
+// subcategory pages, and every city combination. Authored taxonomy copy is useful
+// context, but it does not turn an empty result grid into a useful transactional
+// landing, so an empty page stays crawlable (`noindex,follow`, and reachable from
+// /nuoma) without ever being recommended for indexing.
+//
+// The bar is a single listing: one genuine result is still a useful landing, and at
+// current inventory we favour letting every stocked combination be discovered over
+// withholding it for a larger choice set.
 export const MIN_INDEXABLE_LISTINGS = 1;
 
 // Shared guard for `[lang]` routes: narrow the segment to a valid `Locale` or
@@ -102,27 +108,6 @@ export function resolveListingLanding({
       city,
     }),
   };
-}
-
-// How many public listings a landing must have behind it to be indexed and to earn a
-// sitemap entry. The two tiers are not the same kind of page:
-//
-// A bare category/subcategory landing is a fixed, authored destination. The taxonomy
-// ships each one a seo_title/seo_body intro, which the landing renders above the grid,
-// the whole set is ~140 URLs, and every one of them is linked from /nuoma. So it is
-// indexable from day one, empty grid included — it is a permanent page waiting for its
-// first listing, not a generated combination, and holding it back until inventory
-// arrives only means starting its crawl/age clock late.
-//
-// Anything with a city in it stays gated. That tier is combinatorial (~140 categories
-// × 8 cities) and nothing on the site links to most of it, so an empty one really is a
-// doorway URL. The bare feed keeps the same bar: an empty marketplace has no browse
-// page worth indexing.
-export function minIndexableListings(landing: Pick<ListingLanding, "category" | "city">): number {
-  if (landing.category && !landing.city) {
-    return 0;
-  }
-  return MIN_INDEXABLE_LISTINGS;
 }
 
 // Search-engine ownership proof, read from the environment so no verification
@@ -225,6 +210,23 @@ export function absoluteUrl(locale: Locale, path: string): string {
 
 const inLanguage = (locale: Locale) => (locale === "lt" ? "lt-LT" : "en-LT");
 
+// The operating entity. Deliberately `Organization` and NOT `LocalBusiness` (nor
+// any of its subtypes), which SEO checkers will keep flagging as "missing" on
+// this site — it is missing on purpose, so read this before adding it back.
+//
+// LocalBusiness describes premises customers physically visit: it drives the
+// local pack and map results, and consumers read it as "you can go here during
+// these hours". Naudokis has no such place. The address below is the MB's
+// REGISTERED OFFICE — that is the exact term the terms of use and privacy policy
+// use for it ("registruotos buveinės adresas") — with no staffed counter, no
+// opening hours and no Google Business Profile behind it. Typing this node
+// LocalBusiness would publish a storefront that does not exist.
+//
+// The honest local signals are the ones already here and next door: `areaServed`
+// (the country this actually operates in) and `spatialCoverage` on the city
+// landings, which says the PAGE covers a place without claiming the BUSINESS
+// sits in one. If a real pickup point ever opens, the upgrade is narrow: keep
+// this `@id`, change `@type`, and add openingHoursSpecification + geo + image.
 export function organizationJsonLd(): JsonLdNode {
   const node: JsonLdNode = {
     "@context": "https://schema.org",
@@ -330,14 +332,16 @@ export function breadcrumbJsonLd(locale: Locale, items: { name: string; path: st
 // taxonomy's authored SEO copy (seo_title / meta_description), so the structured
 // data matches the visible heading and the <head> snippet.
 export function collectionPageJsonLd({
-  locale, name, description, path,
+  locale, name, description, path, city,
 }: {
   locale: Locale;
   name: string;
   description: string;
   path: string;
+  // Set on the landings that carry a city ("/miestai/vilnius", "/nuoma/<cat>/<city>").
+  city?: string;
 }): JsonLdNode {
-  return {
+  const node: JsonLdNode = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name,
@@ -346,6 +350,19 @@ export function collectionPageJsonLd({
     inLanguage: inLanguage(locale),
     isPartOf: { "@id": webSiteId(locale) },
   };
+  // The place this page is ABOUT — not a place the business is in (see the note on
+  // organizationJsonLd for why there is no LocalBusiness node anywhere). This is the
+  // in-vocabulary way to say it: spatialCoverage is a CreativeWork property and
+  // CollectionPage is a CreativeWork, unlike the Product node, where hanging
+  // CreativeWork properties got two fields rejected in Search Console.
+  if (city) {
+    node.spatialCoverage = {
+      "@type": "City",
+      name: city,
+      containedInPlace: { "@type": "Country", name: "Lithuania" },
+    };
+  }
+  return node;
 }
 
 // The all-categories page as a CollectionPage whose mainEntity is an ItemList of

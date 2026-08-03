@@ -70,10 +70,9 @@ type LandingCandidate = {
 // the threshold?", which the first page of results answers. Without it, every
 // candidate walks the cursor to the 240 cap.
 //
-// A single failed probe drops one city URL (or one category's city expansion) for an
-// hour, which self-heals and costs little — a sitemap omission is not a deindex
-// signal, and the category tier does not go through this gate at all. A run where
-// *every* probe failed is a backend outage, not an empty catalogue — throw rather
+// A single failed probe drops one gated landing for an hour, which self-heals and
+// costs little — a sitemap omission is not a deindex signal. A run where *every*
+// probe failed is a backend outage, not an empty catalogue — throw rather
 // than publish a sitemap that claims the whole marketplace vanished.
 async function keepStocked(candidates: LandingCandidate[]): Promise<LandingCandidate[]> {
   const stocked: LandingCandidate[] = [];
@@ -104,27 +103,25 @@ async function keepStocked(candidates: LandingCandidate[]): Promise<LandingCandi
 }
 
 async function listingLandingPaths(): Promise<string[]> {
-  // Deliberately unguarded. Swallowing this to [] drops every category landing
-  // from the sitemap — silently, with a 200 — and takes the subcategory tier's
-  // only machine-readable discovery path with it. This is now the sitemap's
-  // single point of failure for the whole category tier: nothing downstream can
-  // drop a category landing, so an empty result here means the taxonomy fetch
-  // failed, never that the catalogue is empty. Throwing keeps the last good
-  // sitemap served from the ISR cache instead (see the Next ISR guide: throw so
-  // the cache is not updated).
+  // Deliberately unguarded. Swallowing this to [] drops every landing from the
+  // sitemap — silently, with a 200 — and takes the subcategory tier's only
+  // machine-readable discovery path with it. Throwing instead keeps the last good
+  // sitemap served from the ISR cache (see the Next ISR guide: throw so the cache is
+  // not updated), which is the right failure for a taxonomy outage.
+  //
+  // Note this is NOT the only way a category landing leaves the sitemap — keepStocked
+  // below drops empty ones by design. The distinction that matters here is between
+  // "the catalogue is empty" (a real answer, honour it) and "we could not ask" (an
+  // outage, do not publish an answer at all).
   const categories = await fetchAllCategories(defaultLocale);
   const parents = categories.filter((category) => !category.parentId);
   const parentById = new Map(parents.map((category) => [category.id, category]));
 
-  // The whole taxonomy, stocked or not: every category landing is indexable from
-  // day one (see minIndexableListings), so every one of them belongs here. An
-  // empty category omitted from the sitemap is a page Google has no reason to
-  // crawl until inventory arrives — exactly the wrong way round for a page whose
-  // value is being established before it fills.
-  //
-  // Subcategory landings are included for the additional reason that nothing on
-  // the site links to them: the public category grids intentionally show only the
-  // top level, so this file is their only discovery path.
+  // Every taxonomy landing is a candidate; the probe below decides which earn an
+  // entry. Empty ones stay reachable through /nuoma, so crawlers can still find them
+  // and observe their `noindex,follow` — the sitemap just does not recommend them.
+  // Subcategory landings matter most here: the public category grids show only the top
+  // level, so nothing else on the site links to them.
   const categoryCandidates: LandingCandidate[] = [
     ...parents.map((category) => ({ landing: { category: category.id }, categoryFilter: category.id })),
     ...categories.flatMap((subcategory) => {
@@ -138,34 +135,34 @@ async function listingLandingPaths(): Promise<string[]> {
     }),
   ];
 
-  // The bare city landings and the category counts are two independent questions,
-  // so they go through ONE keepStocked pass rather than two awaited in sequence:
-  // the probes then share a single concurrency budget instead of taking turns with
-  // it, which is the difference between one round of ~148 and two rounds back to
-  // back on every hourly rebuild. It also widens the all-failed guard back over the
-  // whole set — eight city probes failing is not the outage that check is for.
+  // The category and the bare-city counts are independent questions, so they go
+  // through ONE keepStocked pass rather than two awaited in sequence: the probes then
+  // share a single concurrency budget instead of taking turns with it, which is the
+  // difference between one round of ~148 and two rounds back to back on every hourly
+  // rebuild. It also widens the all-failed guard back over the whole set — eight city
+  // probes failing is not the outage that check is for.
   //
-  // City landings have to earn their entry with real inventory: one is one of
-  // ~1,100 machine-generated combinations, not an authored page. The CATEGORY
-  // counts are probed for a different purpose — deciding which categories are worth
-  // crossing with a city at all. A city filter can only narrow a result set, so a
-  // category with nothing in it nationally cannot reach the threshold in any single
-  // city; probing the full grid would spend ~1,100 requests per rebuild ruling out
-  // combinations arithmetic already rules out. That is also what reaches the deepest
-  // tier, /nuoma/{category}/{subcategory}/{city}, which nothing on the site links to.
+  // Each category count does double duty. It decides whether that landing earns its
+  // own entry, AND whether the category is worth crossing with a city at all: a city
+  // filter can only narrow a result set, so a category with nothing in it nationally
+  // cannot reach the threshold in any single city. Probing the full grid would spend
+  // ~1,100 requests per rebuild ruling out combinations arithmetic already rules out —
+  // including the deepest tier, /nuoma/{category}/{subcategory}/{city}, which nothing
+  // on the site links to.
   const cityCandidates: LandingCandidate[] = LT_CITIES.map((city) => ({ landing: { city } }));
   const stocked = await keepStocked([...categoryCandidates, ...cityCandidates]);
-  const withCity = stocked
-    .filter((candidate) => candidate.categoryFilter)
-    .flatMap((candidate) =>
-      LT_CITIES.map((city) => ({
-        landing: { ...candidate.landing, city },
-        categoryFilter: candidate.categoryFilter,
-      })),
-    );
+  // `categoryFilter` is what tells the two groups apart: only the category candidates
+  // carry one (see the type above).
+  const stockedCategories = stocked.filter((candidate) => candidate.categoryFilter);
   const stockedCities = stocked.filter((candidate) => !candidate.categoryFilter);
+  const withCity = stockedCategories.flatMap((candidate) =>
+    LT_CITIES.map((city) => ({
+      landing: { ...candidate.landing, city },
+      categoryFilter: candidate.categoryFilter,
+    })),
+  );
 
-  return [...categoryCandidates, ...stockedCities, ...await keepStocked(withCity)]
+  return [...stockedCategories, ...stockedCities, ...await keepStocked(withCity)]
     .map((candidate) => listingLandingPath(candidate.landing));
 }
 

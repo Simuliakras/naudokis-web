@@ -1,4 +1,4 @@
-import { requireLocale, organizationJsonLd, webSiteJsonLd, faqJsonLd, softwareApplicationJsonLd } from "@/app/lib/seo";
+import { requireLocale, faqJsonLd, softwareApplicationJsonLd } from "@/app/lib/seo";
 import { fetchListings } from "@/app/lib/listings";
 import { fetchCategories } from "@/app/lib/categories";
 import { captureException } from "@/app/lib/report-error";
@@ -52,9 +52,9 @@ export default async function Page({ params }: PageProps<"/[lang]">) {
   // (sections-home.tsx) so their markup stays out of the client bundle.
   return (
     <>
-      <JsonLd data={organizationJsonLd()} />
+      {/* Organization + WebSite are emitted by the root layout, on every page. Only
+          the nodes this page alone is entitled to make live here. */}
       <JsonLd data={softwareApplicationJsonLd()} />
-      <JsonLd data={webSiteJsonLd(locale)} />
       <JsonLd data={faqJsonLd(dict.faq.items)} />
       <Chrome>
         <div className="nk-page nk-home">

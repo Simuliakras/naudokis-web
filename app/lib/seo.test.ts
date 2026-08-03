@@ -9,9 +9,10 @@ import {
   absoluteUrl,
   pageMetadata,
   resolveListingLanding,
-  minIndexableListings,
   verificationMeta,
   organizationJsonLd,
+  webSiteJsonLd,
+  collectionPageJsonLd,
   listingJsonLd,
   itemListJsonLd,
 } from "./seo";
@@ -164,30 +165,10 @@ describe("resolveListingLanding", () => {
   });
 });
 
-// Which landings may be indexed (and so listed in the sitemap) with an empty grid.
-// The category tier is authored and finite; the city tiers are combinatorial.
-describe("minIndexableListings", () => {
-  const landing = (catParam: string, cityParam: string) =>
-    resolveListingLanding({
-      catParam,
-      cityParam,
-      categories: [category(), category({ id: "drills", title: "Grąžtai", parentId: "tools" })],
-    });
-
-  it("lets a category or subcategory landing be indexed with nothing behind it", () => {
-    expect(minIndexableListings(landing("tools", ""))).toBe(0);
-    expect(minIndexableListings(landing("drills", ""))).toBe(0);
-  });
-
-  it("still makes anything with a city earn its place", () => {
-    expect(minIndexableListings(landing("tools", "Vilnius"))).toBe(MIN_INDEXABLE_LISTINGS);
-    expect(minIndexableListings(landing("", "Vilnius"))).toBe(MIN_INDEXABLE_LISTINGS);
-  });
-
-  it("keeps the bare feed off the index while the marketplace is empty", () => {
-    expect(minIndexableListings(landing("", ""))).toBe(MIN_INDEXABLE_LISTINGS);
-  });
-});
+// The indexation floor is now one constant applied to every tier — there is no
+// per-landing policy function left to test. What the tiers actually do with it is
+// asserted where it is observable: sitemap.test.ts for the enumeration, and
+// e2e/seo.spec.ts for the emitted robots directive.
 
 describe("verificationMeta", () => {
   // stubEnv restores through afterEach even when an assertion throws mid-test —
@@ -274,6 +255,16 @@ describe("JSON-LD honesty guards", () => {
     expect(node.identifier).toBe("307423504");
   });
 
+  // The two site-level nodes are emitted together by the root layout, and half the
+  // site's structured data hangs off their @ids. A rename on one side alone leaves
+  // every `publisher` / `isPartOf` / `provider` reference dangling — invisible in
+  // the markup, so assert the join rather than either string.
+  it("joins the WebSite node to the Organization it names as publisher", () => {
+    const publisher = webSiteJsonLd("lt").publisher as { "@id": string };
+    expect(publisher["@id"]).toBe(organizationJsonLd()["@id"]);
+    expect(webSiteJsonLd("en").publisher).toEqual(publisher);
+  });
+
   // Search Console rejected `inLanguage`/`isPartOf` on the merchant listing: both
   // are CreativeWork properties and Product is not a CreativeWork. They belong on
   // the page entity, which is one.
@@ -286,6 +277,21 @@ describe("JSON-LD honesty guards", () => {
       "@id": `${SITE_URL}/skelbimai/graztas-vilnius-abc123`,
       inLanguage: "lt-LT",
       isPartOf: { "@id": webSiteId("lt") },
+    });
+  });
+});
+
+describe("collectionPageJsonLd", () => {
+  const base = { locale: "lt", name: "Įrankių nuoma", description: "…", path: "/nuoma/irankiai" } as const;
+
+  // A city landing is about a place; the business is not in one (there is
+  // deliberately no LocalBusiness node — see organizationJsonLd).
+  it("states the city a landing covers, and claims no place when there is none", () => {
+    expect(collectionPageJsonLd(base).spatialCoverage).toBeUndefined();
+    expect(collectionPageJsonLd({ ...base, city: "Vilnius" }).spatialCoverage).toEqual({
+      "@type": "City",
+      name: "Vilnius",
+      containedInPlace: { "@type": "Country", name: "Lithuania" },
     });
   });
 });

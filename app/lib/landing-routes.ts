@@ -228,6 +228,16 @@ export function listingFilterPath(filters: ListingLandingFilters = {}): string {
   return query ? `/skelbimai?${query}` : "/skelbimai";
 }
 
+// Page 2+ of a filtered feed. The pretty landings are prerendered and take no
+// searchParams, so they cannot represent a deep page — pointing a canonical at
+// "/nuoma/irankiai?page=2" would advertise page-1 content. Deep pages therefore live
+// on the query-param feed, which is dynamic. This is both the canonical /skelbimai
+// emits for them and the href FeedScreen's pager links to; the two must not diverge.
+export function paginatedFeedPath(filters: ListingLandingFilters, page: number): string {
+  const base = listingFilterPath(filters);
+  return `${base}${base.includes("?") ? "&" : "?"}page=${page}`;
+}
+
 // Builds the INTERNAL path — default-locale spelling throughout, which is what the
 // rest of the codebase passes around (breadcrumb crumbs, canonical inputs, sitemap
 // entries). `localePath` / `localizeRoute` translate it to the public per-locale URL

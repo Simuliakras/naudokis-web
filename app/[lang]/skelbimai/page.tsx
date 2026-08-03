@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { dehydrate, HydrationBoundary, type InfiniteData } from "@tanstack/react-query";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
-import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding, NOINDEX_FOLLOW, minIndexableListings } from "@/app/lib/seo";
+import { pageMetadata, requireLocale, breadcrumbJsonLd, itemListJsonLd, collectionPageJsonLd, resolveListingLanding, NOINDEX_FOLLOW, MIN_INDEXABLE_LISTINGS } from "@/app/lib/seo";
+import { paginatedFeedPath } from "@/app/lib/landing-routes";
 import { listingBreadcrumbTrail } from "@/app/lib/breadcrumbs";
 import { makeQueryClient } from "@/app/lib/query";
 import { fetchListingsCount, fetchListingsPage, listingsInfiniteKey, listingsNeededForPage, LISTINGS_FIRST_CURSOR, type ListingFilters, type ListingsPage } from "@/app/lib/listings";
@@ -61,8 +62,16 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
       ? t.landingDescription({ category: categoryLabel, city: landing.city })
       : t.metaDescription;
 
+  // Page 1 of a filtered feed canonicalizes to its pretty landing ("/nuoma/irankiai").
+  // Page 2+ self-canonicalizes here instead — see paginatedFeedPath for why the pretty
+  // landing cannot represent a deep page. Only cat/city/page reach this branch; every
+  // other param is non-canonical and takes the NOINDEX_FOLLOW path below.
   const md = pageMetadata({
-    locale, path: page > 1 ? `${landing.path}?page=${page}` : landing.path, title, description,
+    locale,
+    path: page > 1
+      ? paginatedFeedPath({ category: landing.category?.id, city: landing.city }, page)
+      : landing.path,
+    title, description,
     ogLocale: meta.ogLocale, ogImageAlt: title,
   });
   // Free-text searches, sort/delivery/price variants and invalid filter values
@@ -77,20 +86,21 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
   ) {
     md.robots = NOINDEX_FOLLOW;
   } else {
-    // Only count far enough to prove that this page exists and that it clears its
-    // tier's indexing threshold. Page 1 needs whatever minIndexableListings asks
-    // for — nothing at all for a ?cat= landing, which canonicalizes to a category
-    // landing that is now indexable empty; page N needs the first result that would
-    // land on that page.
-    const needed = page > 1 ? listingsNeededForPage(page) : minIndexableListings(landing);
-    if (needed > 0) {
-      const count = await fetchListingsCount({
-        category: landing.category?.id,
-        city: landing.city,
-      }, { stopAt: needed }).catch(() => 0);
-      if (count < needed) {
-        md.robots = NOINDEX_FOLLOW;
-      }
+    // Only count far enough to prove that this page exists and that it clears the
+    // shared indexation threshold. Empty category filters canonicalize to their
+    // pretty landing but remain noindex,follow; page N additionally needs the first
+    // result that would land on that page.
+    const needed = page > 1 ? listingsNeededForPage(page) : MIN_INDEXABLE_LISTINGS;
+    const counted = await fetchListingsCount(
+      { category: landing.category?.id, city: landing.city },
+      { stopAt: needed },
+    )
+      .then((count) => ({ ok: true as const, count }))
+      .catch(() => ({ ok: false as const, count: 0 }));
+    // Fail open on a transient catalogue error. Caching `noindex` for a healthy
+    // landing is more damaging than temporarily leaving a thin page indexable.
+    if (counted.ok && counted.count < needed) {
+      md.robots = NOINDEX_FOLLOW;
     }
   }
   return md;

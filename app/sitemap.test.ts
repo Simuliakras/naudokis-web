@@ -84,21 +84,21 @@ describe("sitemap landing enumeration", () => {
     expect(paths).toContain("/miestai/vilnius");
   });
 
-  // The category tier ships whole: an empty category is a real page waiting for
-  // inventory, and it is indexable, so withholding its sitemap entry would only
-  // delay the crawl. The city tiers below it still have to be stocked.
-  it("emits every category landing, stocked or not", async () => {
+  it("emits stocked category landings and omits empty taxonomy pages", async () => {
     const paths = await ltPaths();
-    expect(paths).toContain("/nuoma/vaikams");
+    expect(paths).not.toContain("/nuoma/vaikams");
+    expect(paths).toContain("/nuoma/irankiai-statyba");
     expect(paths).toContain("/nuoma/irankiai-statyba/elektriniai-irankiai");
   });
 
   it("omits unstocked landings once a city is in the URL", async () => {
     const paths = await ltPaths();
     expect(paths.some((path) => path.startsWith("/nuoma/vaikams/"))).toBe(false);
-    fetchListingsCount.mockImplementation(async ({ city }) => (city ? 0 : 5));
+    fetchListingsCount.mockImplementation(async ({ category: id, city }) =>
+      city ? 0 : id === undefined || STOCKED.has(id) ? 5 : 0,
+    );
     const unstockedCities = await ltPaths();
-    expect(unstockedCities).toContain("/nuoma/vaikams");
+    expect(unstockedCities).not.toContain("/nuoma/vaikams");
     expect(unstockedCities).not.toContain("/miestai/vilnius");
     expect(unstockedCities.some((path) => path.endsWith("/vilnius"))).toBe(false);
   });
@@ -138,9 +138,9 @@ describe("sitemap failure handling", () => {
       return id === undefined || STOCKED.has(id) ? 5 : 0;
     });
     const paths = await ltPaths();
-    // The landing itself is not gated on the probe any more — only its city
-    // expansion, which is what the failed count was being asked about.
-    expect(paths).toContain("/nuoma/irankiai-statyba/elektriniai-irankiai");
+    // A failed category probe omits that landing and prevents provably-unnecessary
+    // city expansion until the next sitemap regeneration.
+    expect(paths).not.toContain("/nuoma/irankiai-statyba/elektriniai-irankiai");
     expect(paths).not.toContain("/nuoma/irankiai-statyba/elektriniai-irankiai/vilnius");
     expect(paths).toContain("/nuoma/irankiai-statyba/kaunas");
   });

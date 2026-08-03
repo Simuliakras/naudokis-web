@@ -7,7 +7,8 @@ import { WebVitals } from "../components/WebVitals";
 import { defaultLocale, locales, isLocale, localeHome } from "@/app/lib/i18n/config";
 import { getDictionary } from "@/app/lib/i18n/dictionaries";
 import { APP_STORE_ID } from "@/app/lib/contact";
-import { SITE_URL, canonicalFor, verificationMeta } from "@/app/lib/seo";
+import { SITE_URL, canonicalFor, verificationMeta, organizationJsonLd, webSiteJsonLd } from "@/app/lib/seo";
+import { JsonLd } from "../components/JsonLd";
 import { brandFont, priceFont } from "@/app/lib/fonts";
 import { BRIDGE_BOOTSTRAP } from "@/app/lib/bridge-bootstrap";
 
@@ -113,6 +114,11 @@ const gaId = process.env.NEXT_PUBLIC_GA_ID;
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   const locale = isLocale(lang) ? lang : defaultLocale;
+  // `lang` carries the BARE locale, matching the `alternates.languages` hreflang keys
+  // above and the JSON-LD `inLanguage` ("en-LT" — this site's English is
+  // Lithuania-market, not British). The regional locales in i18n/format.ts are an Intl
+  // concern only: `lang` feeds language negotiation and `:lang()` selectors, neither of
+  // which wants a region here, and none of it reaches Intl.
   return (
     <html lang={locale} className={`${brandFont.variable} ${priceFont.variable}`} data-scroll-behavior="smooth">
       {/* suppressHydrationWarning: browser extensions (Grammarly, dark-reader, …)
@@ -130,6 +136,14 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
             or in production; it only appears when a browser extension mutates <body> and
             forces React to client-render this subtree. Leave this as a raw <script>. */}
         <script id="nk-bridge-bootstrap" dangerouslySetInnerHTML={{ __html: BRIDGE_BOOTSTRAP }} />
+        {/* The site-level entity graph, emitted on EVERY page rather than only the
+            home page. Pages all over the site reference these two nodes by @id —
+            the landings' `isPartOf`, the listing page's `mainEntityOfPage.isPartOf`,
+            the app node's `provider` — and those references have to resolve inside
+            the document that makes them. Page-specific nodes (SoftwareApplication,
+            FAQPage, Product, CollectionPage…) stay with their own routes. */}
+        <JsonLd data={organizationJsonLd()} />
+        <JsonLd data={webSiteJsonLd(locale)} />
         <I18nProvider locale={locale}>
           <ScrollToTop />
           {children}

@@ -12,13 +12,10 @@ const ORIGIN = "https://www.naudokis.lt";
 // to the origin, so the home page is "" — Next resolves "/" against metadataBase
 // to the bare origin.
 //
-// `alwaysIndexable` separates the two indexation regimes (minIndexableListings in
-// app/lib/seo.ts). Static pages and the category tier must rank unconditionally —
-// a category landing is indexable with an empty grid, so a thin backend is no
-// excuse for a noindex there. Anything with a city in it is gated on live
-// inventory, so asserting it is indexable would make this suite fail whenever the
-// backend happens to be thin; the rule under test there is "indexable or
-// noindex,follow, never noindex,nofollow".
+// `alwaysIndexable` separates permanent editorial/static pages from transactional
+// landings. Every category/city landing is gated on live inventory, so asserting it
+// is always indexable would make the suite fail whenever the catalogue is thin; the
+// rule under test there is "indexable or noindex,follow, never noindex,nofollow".
 const ROUTES = [
   { path: "/", canonical: "", alwaysIndexable: true },
   { path: "/en", canonical: "/en", alwaysIndexable: true },
@@ -34,9 +31,9 @@ const ROUTES = [
   { path: "/kaip-tai-veikia", canonical: "/kaip-tai-veikia", alwaysIndexable: true },
   { path: "/naudojimosi-salygos", canonical: "/naudojimosi-salygos", alwaysIndexable: true },
   // Slugs come from the taxonomy the routes are built from (app/lib/landing-routes.ts).
-  { path: "/nuoma/transportas", canonical: "/nuoma/transportas", alwaysIndexable: true },
+  { path: "/nuoma/transportas", canonical: "/nuoma/transportas", alwaysIndexable: false },
   { path: "/miestai/vilnius", canonical: "/miestai/vilnius", alwaysIndexable: false },
-  { path: "/en/rent/transport", canonical: "/en/rent/transport", alwaysIndexable: true },
+  { path: "/en/rent/transport", canonical: "/en/rent/transport", alwaysIndexable: false },
   { path: "/en/cities/vilnius", canonical: "/en/cities/vilnius", alwaysIndexable: false },
 ];
 
@@ -106,6 +103,20 @@ for (const route of ROUTES) {
     }
   });
 
+  // The brand entity is emitted by the root layout, not by individual pages,
+  // precisely so it is on all of them: nodes across the site point at these two
+  // @ids (isPartOf, publisher, provider) and a reference has to resolve inside
+  // the document that makes it. Regressing this by moving the graph back onto a
+  // single page leaves every other URL with no identity at all.
+  test(`${route.path} carries the site entity graph`, async ({ request }) => {
+    const types = jsonLdTypes(await htmlOf(await request.get(route.path)));
+    expect(types).toContain("Organization");
+    expect(types).toContain("WebSite");
+    // And exactly once — the home page used to render its own copy of both.
+    expect(types.filter((t) => t === "Organization")).toHaveLength(1);
+    expect(types.filter((t) => t === "WebSite")).toHaveLength(1);
+  });
+
   test(`${route.path} settles on exactly one H1`, async ({ page }) => {
     await page.goto(route.path);
     await expect(page.locator("h1")).toHaveCount(1);
@@ -139,9 +150,12 @@ for (const route of ROUTES) {
   });
 }
 
+// The app and the FAQ are claims only the home page is entitled to make, so unlike
+// the entity graph above they must NOT have spread to every route.
 test("home carries the entity graph that identifies the brand and the app", async ({ request }) => {
   const types = jsonLdTypes(await htmlOf(await request.get("/")));
   expect(types).toEqual(expect.arrayContaining(["Organization", "WebSite", "SoftwareApplication", "FAQPage"]));
+  expect(jsonLdTypes(await htmlOf(await request.get("/skelbimai")))).not.toContain("SoftwareApplication");
 });
 
 test("category and city landings describe themselves as collections", async ({ request }) => {
@@ -149,6 +163,26 @@ test("category and city landings describe themselves as collections", async ({ r
     const types = jsonLdTypes(await htmlOf(await request.get(path)));
     expect(types).toContain("BreadcrumbList");
     expect(types).toContain("CollectionPage");
+  }
+});
+
+// There is deliberately no LocalBusiness node anywhere on this site — the address
+// in the Organization node is a registered office, not premises anyone can visit
+// (see organizationJsonLd in app/lib/seo.ts). What a city landing DOES state is
+// the place it covers, which is a fact about the page, not about the company.
+test("city landings name the place they cover without claiming a storefront", async ({ request }) => {
+  const cityHtml = await htmlOf(await request.get("/miestai/vilnius"));
+  expect(nodeOfType(cityHtml, "CollectionPage")?.spatialCoverage).toMatchObject({
+    "@type": "City",
+    name: "Vilnius",
+  });
+
+  // A landing with no city in it makes no such claim.
+  const categoryHtml = await htmlOf(await request.get("/nuoma/transportas"));
+  expect(nodeOfType(categoryHtml, "CollectionPage")?.spatialCoverage).toBeUndefined();
+
+  for (const html of [cityHtml, categoryHtml]) {
+    expect(jsonLdTypes(html)).not.toContain("LocalBusiness");
   }
 });
 
@@ -209,6 +243,24 @@ test("the sitemap is one flat urlset with both locales of the home page", async 
   // The old split routes must be gone, not merely unreferenced.
   expect((await request.get("/pages/sitemap.xml")).status()).toBe(404);
   expect((await request.get("/listings/sitemap/0.xml")).status()).toBe(404);
+});
+
+test("an empty taxonomy landing is noindex,follow and absent from the sitemap", async ({ request }) => {
+  const [directory, sitemap] = await Promise.all([
+    htmlOf(await request.get("/nuoma")),
+    (await request.get("/sitemap.xml")).text(),
+  ]);
+  const taxonomyPaths = [...directory.matchAll(/href="(\/nuoma\/[^"?#]+)"/g)]
+    .map((match) => match[1])
+    .filter((path, index, all) => all.indexOf(path) === index);
+  const emptyPath = taxonomyPaths.find((path) => !sitemap.includes(`<loc>${ORIGIN}${path}</loc>`));
+
+  // Once every taxonomy page has inventory there is no empty example to assert;
+  // that is a healthy catalogue state, not a failed indexation policy.
+  test.skip(!emptyPath, "all taxonomy landings currently have inventory");
+  const html = await htmlOf(await request.get(emptyPath!));
+  expect(html).toContain('name="robots" content="noindex, follow"');
+  expect(sitemap).not.toContain(`<loc>${ORIGIN}${emptyPath}</loc>`);
 });
 
 test("legacy favicon and the web manifest both resolve", async ({ request }) => {
