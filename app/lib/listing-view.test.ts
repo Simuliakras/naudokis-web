@@ -75,7 +75,7 @@ describe("discountTierViews", () => {
       "lt",
     );
     expect(views.map((v) => v.minDays)).toEqual([3, 7]);
-    expect(views.map((v) => v.perDay)).toEqual(["13,50 €", "12 €"]);
+    expect(views.map((v) => v.perDay)).toEqual(["13,50\u00a0€", "12\u00a0€"]);
   });
 });
 

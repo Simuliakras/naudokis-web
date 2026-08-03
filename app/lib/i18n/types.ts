@@ -90,7 +90,7 @@ export type Dict = {
   meta: {
     title: string;
     description: string;
-    ogLocale: string; // e.g. "lt_LT" / "en_US"
+    ogLocale: string; // e.g. "lt_LT" / "en_GB"
     ogImageAlt: string;
   };
   nav: {

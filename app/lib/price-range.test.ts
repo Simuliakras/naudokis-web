@@ -156,10 +156,10 @@ describe("isDefaultRange", () => {
 describe("formatPriceValue", () => {
   it("keeps each locale's currency shape", () => {
     expect(formatPriceValue(10, "en")).toBe("€10");
-    expect(formatPriceValue(10, "lt")).toBe("10 €");
+    expect(formatPriceValue(10, "lt")).toBe("10\u00a0€");
   });
   it("marks the open ceiling with a trailing plus", () => {
     expect(formatPriceValue(PRICE_CEIL, "en", true)).toBe("€200+");
-    expect(formatPriceValue(PRICE_CEIL, "lt", true)).toBe("200 €+");
+    expect(formatPriceValue(PRICE_CEIL, "lt", true)).toBe("200\u00a0€+");
   });
 });

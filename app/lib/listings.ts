@@ -1,6 +1,7 @@
 // Listing data layer — browse listings + single-listing detail from the Naudokis backend.
 import { useQuery, useInfiniteQuery, keepPreviousData, skipToken } from "@tanstack/react-query";
 import type { Locale } from "./i18n/config";
+import { formatLocale, formatOneDecimal } from "./i18n/format";
 import { API_BASE, MarketplaceApiError, marketplaceFetch } from "./api";
 import { cdnImage } from "./image-hosts";
 import { maskCoordinates, type Coordinates } from "./map-geometry";
@@ -301,7 +302,7 @@ export type ListingDetail = {
    formatPrice ("15 €" / "€15") and formatLocation ("Vilnius, Žvėrynas") live in
    listing-view.ts and are re-exported above. */
 export function formatRating(average: number, locale: Locale): string {
-  return average.toFixed(1).replace(".", locale === "lt" ? "," : ".");
+  return formatOneDecimal(average, locale);
 }
 
 // The owner's active price breaks, in view-model form.
@@ -346,7 +347,7 @@ function formatReviewDate(iso: string, locale: Locale): string {
   if (Number.isNaN(ms)) {
     return "";
   }
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  const rtf = new Intl.RelativeTimeFormat(formatLocale(locale), { numeric: "auto" });
   const divisions: [number, Intl.RelativeTimeFormatUnit][] = [
     [60, "second"], [60, "minute"], [24, "hour"], [7, "day"], [4.34524, "week"], [12, "month"], [Number.POSITIVE_INFINITY, "year"],
   ];
@@ -803,7 +804,7 @@ function formatMemberSince(iso: string, locale: Locale): string {
   if (locale === "lt") {
     return `${date.getUTCFullYear()} m. ${LT_GENITIVE_MONTHS[date.getUTCMonth()]}`;
   }
-  return date.toLocaleDateString(locale, { year: "numeric", month: "long", timeZone: "UTC" });
+  return date.toLocaleDateString(formatLocale(locale), { year: "numeric", month: "long", timeZone: "UTC" });
 }
 
 // R2-032 stopgap: the backend composes value_label_en from the raw LT unit word

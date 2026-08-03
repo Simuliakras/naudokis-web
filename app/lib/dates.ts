@@ -14,8 +14,10 @@
 // IsoDate strings also compare lexicographically (`a < b` IS a date comparison),
 // which is why there is no compare helper — use the operators.
 //
-// Dependency-free on purpose: Intl does the locale work, so the calendar costs
+// Dependency-light on purpose: Intl does the locale work, so the calendar costs
 // nothing in package.json (the runtime dependency surface is kept tiny by design).
+import { dateFormat } from "./i18n/format";
+import type { Locale } from "./i18n/locales";
 
 // A calendar date with no time and no zone: "2026-07-14".
 export type IsoDate = string;
@@ -162,39 +164,43 @@ export function dayOfMonth(iso: IsoDate): string {
 /* ---------------- Localized formatting ----------------
    Month and weekday names come from Intl, not the dictionary — the same call the
    review-date and member-since formatters make. Nothing here is a translatable
-   string, so nothing here belongs in the Dict. */
+   string, so nothing here belongs in the Dict.
+
+   Every formatter comes from i18n/format.ts's shared cache rather than a fresh
+   `new Intl.DateTimeFormat` per call: the calendar formats one full date per day
+   cell for its aria-label, so constructing per call meant ~42 formatters a render. */
 
 // "2026 m. liepa" / "July 2026". Lithuanian's NOMINATIVE month is the correct form
 // for a heading standing on its own — unlike the genitive LT_GENITIVE_MONTHS in
 // listings.ts, which exists because "Narys nuo …" governs the case.
-export function formatMonthHeading(iso: IsoDate, locale: string): string {
-  return new Intl.DateTimeFormat(locale, { year: "numeric", month: "long", timeZone: "UTC" })
+export function formatMonthHeading(iso: IsoDate, locale: Locale): string {
+  return dateFormat(locale, { year: "numeric", month: "long", timeZone: "UTC" })
     .format(new Date(utcMidnight(iso)));
 }
 
 // Full date for screen readers: "2026 m. liepos 18 d., šeštadienis" / "Saturday, 18 July 2026".
-export function formatFullDate(iso: IsoDate, locale: string): string {
-  return new Intl.DateTimeFormat(locale, { dateStyle: "full", timeZone: "UTC" })
+export function formatFullDate(iso: IsoDate, locale: Locale): string {
+  return dateFormat(locale, { dateStyle: "full", timeZone: "UTC" })
     .format(new Date(utcMidnight(iso)));
 }
 
-// Compact date for the picker's two fields: "liepos 15 d." / "July 15" — LT's
+// Compact date for the picker's two fields: "liepos 15 d." / "15 July" — LT's
 // CLDR pattern carries the "d." day marker itself; never append another.
 //
 // `month: "long"`, not "short" — Lithuanian's abbreviated month IS numeric, so a
 // "short" format renders "07-15", which reads as an ambiguous number rather than a
 // date. The long month is also the correct genitive ("liepos 15"), and it still fits
 // the field at the 320px floor.
-export function formatShortDate(iso: IsoDate, locale: string): string {
-  return new Intl.DateTimeFormat(locale, { month: "long", day: "numeric", timeZone: "UTC" })
+export function formatShortDate(iso: IsoDate, locale: Locale): string {
+  return dateFormat(locale, { month: "long", day: "numeric", timeZone: "UTC" })
     .format(new Date(utcMidnight(iso)));
 }
 
 // Monday→Sunday weekday names for the grid header, derived from a known Monday
 // (2026-06-01) rather than a hardcoded array.
-export function weekdayNames(locale: string): { short: string; long: string }[] {
-  const shortFormat = new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" });
-  const longFormat = new Intl.DateTimeFormat(locale, { weekday: "long", timeZone: "UTC" });
+export function weekdayNames(locale: Locale): { short: string; long: string }[] {
+  const shortFormat = dateFormat(locale, { weekday: "short", timeZone: "UTC" });
+  const longFormat = dateFormat(locale, { weekday: "long", timeZone: "UTC" });
   return Array.from({ length: 7 }, (_, index) => {
     const day = new Date(utcMidnight(addDays("2026-06-01", index)));
     return { short: shortFormat.format(day), long: longFormat.format(day) };

@@ -10,6 +10,7 @@
 // listings.ts re-exports all of this, so existing `from "@/app/lib/listings"` imports
 // keep working; components that need only the view layer should import it from here.
 import type { Locale } from "./i18n/config";
+import { formatCurrencyFromCents } from "./i18n/format";
 import { isDrawableRadiusKm, type Coordinates } from "./map-geometry";
 
 export type Offer = {
@@ -152,12 +153,7 @@ export function cancellationTier(raw: string | null | undefined): CancellationTi
 }
 
 export function formatPrice(cents: number, locale: Locale): string {
-  const euros = cents / 100;
-  const n =
-    cents % 100 === 0
-      ? String(Math.round(euros))
-      : euros.toFixed(2).replace(".", locale === "lt" ? "," : ".");
-  return locale === "lt" ? `${n} €` : `€${n}`;
+  return formatCurrencyFromCents(cents, locale);
 }
 
 export function formatLocation(city?: string, subdivision?: string): string {

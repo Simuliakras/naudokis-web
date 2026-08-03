@@ -3,6 +3,13 @@
 // "listings" is the one count noun for results, and "reserve" (never "book")
 // is the one verb for the conversion action.
 import type { Dict } from "./types";
+import { formatCurrency, formatDiscountPercent, formatNumber, pluralCategory } from "./format";
+
+const enNumber = (value: number): string => formatNumber(value, "en");
+// A whole-euro amount with the symbol Intl places for English: "€10".
+const enPrice = (euros: number): string => formatCurrency(euros, "en");
+const enWord = (value: number, one: string, other: string): string =>
+  pluralCategory(value, "en") === "one" ? one : other;
 
 // One-line tile examples (Categories v2), keyed by top-level category id.
 // FINAL (2026-07 bilingual content pass):
@@ -355,7 +362,7 @@ export const en: Dict = {
       item: "Bosch rotary hammer",
       itemCat: "Tools",
       itemPrice: "€18/day",
-      dates: "March 12 – 15",
+      dates: "12–15 March",
       days: "3 days",
       renter: "Marius K.",
       renterInitial: "M",
@@ -434,7 +441,7 @@ export const en: Dict = {
       },
       payout: {
         title: "Rental completion",
-        meta: "March 12–15 · 3 days · Marius K.",
+        meta: "12–15 March · 3 days · Marius K.",
         amount: "+ €48.60",
         rateLabel: "Rate the renter",
       },
@@ -573,7 +580,7 @@ export const en: Dict = {
     shareCopied: "Link copied",
     shareFailed: "Couldn’t share the link. Try again.",
     verifiedOwnerPill: "Identity verified",
-    galleryMore: (n) => `+${n} photo${n === 1 ? "" : "s"}`,
+    galleryMore: (n) => `+${enNumber(n)} ${enWord(n, "photo", "photos")}`,
     descHeading: "Description",
     descOriginalNote: "Provided by the owner in their original language.",
     descMore: "Show more",
@@ -586,7 +593,7 @@ export const en: Dict = {
     pickupFree: "Free",
     deliveryLabel: "Delivery",
     deliveryByArrangement: "By arrangement",
-    deliveryRadius: (km) => `Up to ${km} km`,
+    deliveryRadius: (km) => `Up to ${enNumber(km)} km`,
     deliveryPerKm: (price) => `${price} / km`,
     termsHeading: "Rental terms",
     reviewsHeading: "Reviews",
@@ -595,7 +602,7 @@ export const en: Dict = {
     reviewsEmptyTitle: "No reviews for this item yet",
     reviewsEmptyBody:
       "No reviews yet. Review the owner profile and terms before sending a request.",
-    reviewsInApp: (n) => `All ${n} reviews in the app`,
+    reviewsInApp: (n) => `All ${enNumber(n)} ${enWord(n, "review", "reviews")} in the app`,
     perDay: "per day",
     reserve: "Send reservation request",
     reserveMobile: "Send request",
@@ -609,17 +616,17 @@ export const en: Dict = {
     newListingPill: "No reviews yet",
     noReviewsYet: "No reviews yet",
     noPhotos: "No photos",
-    galleryAll: (n) => `All ${n} photos`,
+    galleryAll: (n) => `All ${enNumber(n)} ${enWord(n, "photo", "photos")}`,
     galleryExpand: "Expand photo",
     galleryViewLabel: "Photo gallery",
     galleryClose: "Close gallery",
     galleryPrev: "Previous photo",
     galleryNext: "Next photo",
     galleryImageError: "Couldn’t load this photo",
-    galleryCounter: (index, total) => `Photo ${index} of ${total}`,
+    galleryCounter: (index, total) => `Photo ${enNumber(index)} of ${enNumber(total)}`,
     // DRAFT — marketing sign-off pending (booking-panel trust rows + CTA note)
     ratingLinkLabel: ({ rating, count }) =>
-      `Rated ${rating} out of 5, ${count} review${count === 1 ? "" : "s"} — go to reviews`,
+      `Rated ${rating} out of 5, ${enNumber(count)} ${enWord(count, "review", "reviews")} — go to reviews`,
     trustDepositRest: "deposit, refunded after the rental",
     reserveNote:
       "You won't be charged yet — the amount is only reserved until the owner confirms",
@@ -633,11 +640,11 @@ export const en: Dict = {
     datesApply: "Done",
     calPrevMonth: "Previous month",
     calNextMonth: "Next month",
-    calDays: (n) => `${n} day${n === 1 ? "" : "s"}`,
+    calDays: (n) => `${enNumber(n)} ${enWord(n, "day", "days")}`,
     calLimits: (min, max) =>
       max > 0
-        ? `Rent for ${min}–${max} days`
-        : `Minimum rental ${min} day${min === 1 ? "" : "s"}`,
+        ? `Rent for ${enNumber(min)}–${enNumber(max)} days`
+        : `Minimum rental ${enNumber(min)} ${enWord(min, "day", "days")}`,
     calBooked: "Booked",
     calToday: "today",
     calSelectStart: "Pick a start date",
@@ -653,10 +660,10 @@ export const en: Dict = {
         return "Booked";
       }
       if (reason === "tooShort") {
-        return `Minimum rental is ${n} day${n === 1 ? "" : "s"}`;
+        return `Minimum rental is ${enNumber(n)} ${enWord(n, "day", "days")}`;
       }
       if (reason === "tooLong") {
-        return `Maximum rental is ${n} day${n === 1 ? "" : "s"}`;
+        return `Maximum rental is ${enNumber(n)} ${enWord(n, "day", "days")}`;
       }
       return "There are booked days in between";
     },
@@ -674,22 +681,22 @@ export const en: Dict = {
     hostResponseTime: (hours) =>
       hours <= 1
         ? "Responds within an hour"
-        : `Responds within ~${Math.ceil(hours)} hours`,
+        : `Responds within ~${enNumber(Math.ceil(hours))} hours`,
     deliverySub: (city, opts) => {
       const where = city ? ` in ${city}` : "";
       if (opts.delivery && !opts.pickup) return `Arrange delivery${where}.`;
       if (!opts.delivery) return `Pick up for free${where}.`;
       return `Pick up for free or arrange delivery${where}.`;
     },
-    deliveryZoneKm: (km) => `≈${km} km zone`,
+    deliveryZoneKm: (km) => `≈${enNumber(km)} km zone`,
     termRentSub: "Rental price per day",
     depositNone: "No deposit",
     depositTitle: (amount) => `${amount}`,
     termDepositSub: "Refundable deposit",
     durationRange: (min, max) =>
       !max || max <= min
-        ? `From ${min} day${min === 1 ? "" : "s"}`
-        : `${min}–${max} days`,
+        ? `From ${enNumber(min)} ${enWord(min, "day", "days")}`
+        : `${enNumber(min)}–${enNumber(max)} days`,
     termDurationSub: "Rental period",
     termCancelLabel: "Cancellation terms",
     termCancelTitle: (tier) => {
@@ -709,21 +716,21 @@ export const en: Dict = {
       return "Free cancellation up to 5 days before the rental";
     },
     discountsLabel: "Longer-rental discounts",
-    discountFrom: (n) => `From ${n} day${n === 1 ? "" : "s"}`,
+    discountFrom: (n) => `From ${enNumber(n)} ${enWord(n, "day", "days")}`,
     perDayAbbr: "/ day",
     discountsHintIdle: "Applied automatically based on rental length",
     discountsHintBelow: ({ days, minDays }) =>
-      `${days} day${days === 1 ? "" : "s"} selected — discounts start at ${minDays} days`,
+      `${enNumber(days)} ${enWord(days, "day", "days")} selected — discounts start at ${enNumber(minDays)} days`,
     discountsHintActive: ({ days, percent }) =>
-      `Your ${days}-day rental gets −${percent}% off`,
+      `Your ${enNumber(days)}-day rental gets ${formatDiscountPercent(percent, "en")} off`,
     mobileBookingNote: "Final total in the app",
   },
   common: {
     favorite: "Save",
     delivery: "Delivery",
     perDay: "per day",
-    reviewCount: (n) => `${n} review${n === 1 ? "" : "s"}`,
-    photoCount: (n) => `${n} photo${n === 1 ? "" : "s"}`,
+    reviewCount: (n) => `${enNumber(n)} ${enWord(n, "review", "reviews")}`,
+    photoCount: (n) => `${enNumber(n)} ${enWord(n, "photo", "photos")}`,
     depositAmount: (amount) => `${amount} deposit`,
     ownerLabel: "Owner",
     imageUnavailable: "Image unavailable",
@@ -748,9 +755,9 @@ export const en: Dict = {
       `No categories or subcategories matched “${query}”. Try a broader search.`,
     emptyAction: "Show all categories",
     countLabel: (cats, subs) =>
-      `${cats} categor${cats === 1 ? "y" : "ies"} · ${subs} subcategor${subs === 1 ? "y" : "ies"}`,
-    subCount: (n) => `${n} subcategor${n === 1 ? "y" : "ies"}`,
-    moreCount: (n) => `${n} more subcategor${n === 1 ? "y" : "ies"}`,
+      `${enNumber(cats)} ${enWord(cats, "category", "categories")} · ${enNumber(subs)} ${enWord(subs, "subcategory", "subcategories")}`,
+    subCount: (n) => `${enNumber(n)} ${enWord(n, "subcategory", "subcategories")}`,
+    moreCount: (n) => `${enNumber(n)} more ${enWord(n, "subcategory", "subcategories")}`,
     showAll: "Show subcategories",
     showLess: "Show less",
     popularHeading: "Popular right now",
@@ -808,8 +815,8 @@ export const en: Dict = {
       "Compare prices, locations, handover options and owner profiles across Lithuania.",
     subtitleSearch: (q) => `Results for “${q}” across Lithuania.`,
     subtitleSearchGeneric: "Search results across Lithuania.",
-    resultCount: (n) => `${n} listing${n === 1 ? "" : "s"}`,
-    resultCountAtLeast: (n) => `${n}+ listings`,
+    resultCount: (n) => `${enNumber(n)} ${enWord(n, "listing", "listings")}`,
+    resultCountAtLeast: (n) => `${enNumber(n)}+ listings`,
     loadMore: "Show more listings",
     loadingMore: "Loading more…",
     clear: "Clear",
@@ -825,10 +832,12 @@ export const en: Dict = {
     cityLabel: "City",
     priceLabel: "Price",
     priceAny: "Any price",
+    // English puts the symbol before the amount, so a range carries it once, on the
+    // lower bound. enPrice owns the symbol — no "€" literal belongs in this file.
     priceBand: (min, max) => {
-      if (min === null) return `Up to €${max}`;
-      if (max === null) return `€${min}+`;
-      return `€${min}–${max}`;
+      if (min === null) return max === null ? "Any price" : `Up to ${enPrice(max)}`;
+      if (max === null) return `${enPrice(min)}+`;
+      return `${enPrice(min)}–${enNumber(max)}`;
     },
     priceRangeAria: "Price range",
     priceMinAria: "Minimum price",
@@ -843,8 +852,8 @@ export const en: Dict = {
     dateToday: "today",
     dateSelectStart: "Pick a start date",
     dateSelectEnd: "Pick an end date",
-    dateWindowHint: (max) => `Up to ${max} days`,
-    dateDays: (n) => `${n} day${n === 1 ? "" : "s"}`,
+    dateWindowHint: (max) => `Up to ${enNumber(max)} days`,
+    dateDays: (n) => `${enNumber(n)} ${enWord(n, "day", "days")}`,
     dateStartSelected: (date) => `Start: ${date}. Now pick an end date.`,
     dateRangeSelected: ({ start, end, days }) =>
       `Selected ${start}–${end}, ${days}.`,
@@ -853,27 +862,27 @@ export const en: Dict = {
         return "Date has passed";
       }
       if (reason === "tooLong") {
-        return `Longest window is ${n} day${n === 1 ? "" : "s"}`;
+        return `Longest window is ${enNumber(n)} ${enWord(n, "day", "days")}`;
       }
       return "Unavailable date";
     },
     deliveryToggle: "Delivery available",
     depositToggle: "No deposit",
-    depositUpTo: (max) => `Deposit up to €${max}`,
+    depositUpTo: (max) => `Deposit up to ${enPrice(max)}`,
     filtersButton: "Filters",
     filtersTitle: "Filters",
     filtersApply: (n, atLeast) =>
       n === null
         ? "Show results"
-        : `Show ${n}${atLeast ? "+" : ""} result${n === 1 ? "" : "s"}`,
+        : `Show ${enNumber(n)}${atLeast ? "+" : ""} ${enWord(n, "result", "results")}`,
     introMore: "Show more",
     introLess: "Show less",
     relatedLinksLabel: "Popular searches",
     paginationLabel: "Rental listing pages",
     previousPage: "Previous page",
     nextPage: "Next page",
-    pageStatus: (page, totalPages) => `Page ${page} of ${totalPages}`,
-    pageStatusShort: (page) => `Page ${page}`,
+    pageStatus: (page, totalPages) => `Page ${enNumber(page)} of ${enNumber(totalPages)}`,
+    pageStatusShort: (page) => `Page ${enNumber(page)}`,
     pageEmptyTitle: "This page no longer exists",
     pageEmptyBody:
       "The list of listings has changed, so this page is out of range. Head back to the start of the list.",

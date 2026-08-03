@@ -1,17 +1,27 @@
 // Lithuanian dictionary — launch-ready user-facing copy for the localized site.
 import { cityLocativeLt } from "../cities";
+import { formatCurrency, formatDiscountPercent, formatNumber, pluralCategory } from "./format";
 import type { Dict } from "./types";
 
-// The Lithuanian count-noun dance every "N <noun>" string in this file shares:
-// teens (11–19) and counts ending in 0 take the plural genitive ("dienų"), a final
-// 1 the singular ("diena"), everything else the plural ("dienos"). One word-picker
-// so the rule lives once; each noun passes its three forms in that order.
-const ltWord = (n: number, one: string, few: string, many: string): string => {
-  const dd = n % 100;
-  if ((dd >= 11 && dd <= 19) || n % 10 === 0) {
-    return many;
-  }
-  return n % 10 === 1 ? one : few;
+const ltNumber = (value: number): string => formatNumber(value, "lt");
+// A whole-euro amount with the symbol Intl places for Lithuanian: "10 €", with a
+// non-breaking space so the amount never wraps away from its symbol.
+const ltPrice = (euros: number): string => formatCurrency(euros, "lt");
+
+// Lithuanian uses all four cardinal categories in CLDR. Integer counts select
+// one/few/other; fractional values select many and govern the genitive singular.
+const ltWord = (
+  n: number,
+  one: string,
+  few: string,
+  many: string,
+  other: string,
+): string => {
+  const category = pluralCategory(n, "lt");
+  if (category === "one") return one;
+  if (category === "few") return few;
+  if (category === "many") return many;
+  return other;
 };
 
 // "N dienų" in the NOMINATIVE — 1 diena · 3 dienos · 10 dienų · 21 diena. Every
@@ -19,16 +29,16 @@ const ltWord = (n: number, one: string, few: string, many: string): string => {
 // nuoma — 3 dienos"), never in a construction that would govern the genitive, or
 // it will read as broken Lithuanian. Genitive contexts use ltDaysGen below.
 const ltDays = (n: number): string =>
-  `${n} ${ltWord(n, "diena", "dienos", "dienų")}`;
+  `${ltNumber(n)} ${ltWord(n, "diena", "dienos", "dienos", "dienų")}`;
 
 // "nuo N dienų" — the GENITIVE, for counts governed by a preposition (the
 // discount hint and the tier ladder's "Nuo" cells).
 const ltDaysGen = (n: number): string =>
-  `${n} ${ltWord(n, "dienos", "dienų", "dienų")}`;
+  `${ltNumber(n)} ${ltWord(n, "dienos", "dienų", "dienos", "dienų")}`;
 
 // "N atsiliepimų" — shared by common.reviewCount and detail.ratingLinkLabel.
 const ltReviews = (n: number): string =>
-  `${n} ${ltWord(n, "atsiliepimas", "atsiliepimai", "atsiliepimų")}`;
+  `${ltNumber(n)} ${ltWord(n, "atsiliepimas", "atsiliepimai", "atsiliepimo", "atsiliepimų")}`;
 
 // Genitive category labels for SEO landing titles/descriptions ("Įrankių ir statybos
 // įrangos nuoma Vilniuje"). Keyed by top-level category id; falls back to the plain
@@ -404,17 +414,17 @@ export const lt: Dict = {
     screen: {
       item: "Bosch perforatorius",
       itemCat: "Įrankiai",
-      itemPrice: "18 €/d.",
+      itemPrice: "18\u00a0€/d.",
       dates: "Kovo 12 – 15",
       days: "3 d.",
       renter: "Marius K.",
       renterInitial: "M",
       rentLabel: "Nuomos suma",
-      rentValue: "54 €",
+      rentValue: "54\u00a0€",
       feeLabel: "Platformos mokestis",
-      feeValue: "− 5,40 €",
+      feeValue: "− 5,40\u00a0€",
       payoutLabel: "Jūsų išmoka",
-      payoutValue: "48,60 €",
+      payoutValue: "48,60\u00a0€",
       photosLabel: "Nuotraukos",
       addPhoto: "Pridėti",
       conditionLabel: "Daikto būklė",
@@ -438,12 +448,12 @@ export const lt: Dict = {
         delivery: "Pristatymas",
         feesLabel: "Mokėjimo suvestinė",
         rentRow: "Nuoma × 3 d.",
-        deliveryValue: "5 €",
+        deliveryValue: "5\u00a0€",
         depositLabel: "Užstatas",
-        depositValue: "50 €",
+        depositValue: "50\u00a0€",
         totalLabel: "Iš viso",
-        totalValue: "109 €",
-        cta: "Rezervuoti mokėjimą · 109 €",
+        totalValue: "109\u00a0€",
+        cta: "Rezervuoti mokėjimą · 109\u00a0€",
       },
       pickup: {
         title: "Daikto perdavimas",
@@ -485,7 +495,7 @@ export const lt: Dict = {
       payout: {
         title: "Nuomos užbaigimas",
         meta: "Kovo 12–15 · 3 d. · Marius K.",
-        amount: "+ 48,60 €",
+        amount: "+ 48,60\u00a0€",
         rateLabel: "Įvertinkite nuomininką",
       },
     },
@@ -627,7 +637,7 @@ export const lt: Dict = {
     shareFailed: "Nepavyko bendrinti nuorodos. Bandykite dar kartą.",
     verifiedOwnerPill: "Tapatybė patvirtinta",
     galleryMore: (n) =>
-      `+${n} ${ltWord(n, "nuotrauka", "nuotraukos", "nuotraukų")}`,
+      `+${ltNumber(n)} ${ltWord(n, "nuotrauka", "nuotraukos", "nuotraukos", "nuotraukų")}`,
     descHeading: "Aprašymas",
     descOriginalNote: "Aprašymą savininkas pateikė originalo kalba.",
     descMore: "Rodyti daugiau",
@@ -640,7 +650,7 @@ export const lt: Dict = {
     pickupFree: "Nemokama",
     deliveryLabel: "Pristatymas",
     deliveryByArrangement: "Pagal susitarimą",
-    deliveryRadius: (km) => `Iki ${km} km`,
+    deliveryRadius: (km) => `Iki ${ltNumber(km)} km`,
     deliveryPerKm: (price) => `${price} / km`,
     termsHeading: "Nuomos sąlygos",
     reviewsHeading: "Atsiliepimai",
@@ -649,7 +659,7 @@ export const lt: Dict = {
     reviewsEmptyTitle: "Šis daiktas dar neturi atsiliepimų",
     reviewsEmptyBody:
       "Atsiliepimų dar nėra. Prieš pateikdami užklausą peržiūrėkite savininko profilį ir sąlygas.",
-    reviewsInApp: (n) => `Visi atsiliepimai programėlėje (${n})`,
+    reviewsInApp: (n) => `Visi atsiliepimai programėlėje (${ltNumber(n)})`,
     perDay: "/ diena",
     reserve: "Pateikti rezervacijos užklausą",
     reserveMobile: "Pateikti užklausą",
@@ -663,14 +673,14 @@ export const lt: Dict = {
     newListingPill: "Dar nėra atsiliepimų",
     noReviewsYet: "Dar nėra atsiliepimų",
     noPhotos: "Nuotraukų nėra",
-    galleryAll: (n) => `Visos ${n} nuotr.`,
+    galleryAll: (n) => `Visos ${ltNumber(n)} nuotr.`,
     galleryExpand: "Padidinti nuotrauką",
     galleryViewLabel: "Nuotraukų galerija",
     galleryClose: "Uždaryti galeriją",
     galleryPrev: "Ankstesnė nuotrauka",
     galleryNext: "Kita nuotrauka",
     galleryImageError: "Nepavyko įkelti nuotraukos",
-    galleryCounter: (index, total) => `${index} nuotrauka iš ${total}`,
+    galleryCounter: (index, total) => `${ltNumber(index)} nuotrauka iš ${ltNumber(total)}`,
     ratingLinkLabel: ({ rating, count }) =>
       `Įvertinimas ${rating} iš 5, ${ltReviews(count)} — rodyti atsiliepimus`,
     trustDepositRest: "užstatas (grąžinamas po nuomos)",
@@ -727,7 +737,7 @@ export const lt: Dict = {
     hostResponseTime: (hours) =>
       hours <= 1
         ? "Atsako per valandą"
-        : `Atsako per ~${Math.ceil(hours)} val.`,
+        : `Atsako per ~${ltNumber(Math.ceil(hours))} val.`,
     deliverySub: (city, opts) => {
       const where = city ? cityLocativeLt(city) : "savo mieste";
       if (opts.delivery && !opts.pickup)
@@ -735,13 +745,13 @@ export const lt: Dict = {
       if (!opts.delivery) return `Atsiimkite nemokamai ${where}.`;
       return `Atsiimkite nemokamai arba susitarkite dėl pristatymo ${where}.`;
     },
-    deliveryZoneKm: (km) => `≈${km} km zona`,
+    deliveryZoneKm: (km) => `≈${ltNumber(km)} km zona`,
     termRentSub: "Nuomos kaina",
     depositNone: "Be užstato",
     depositTitle: (amount) => `${amount}`,
     termDepositSub: "Užstatas (grąžinamas po tvarkingos nuomos)",
     durationRange: (min, max) =>
-      !max || max <= min ? `Nuo ${min} d.` : `${min}–${max} dienų`,
+      !max || max <= min ? `Nuo ${ltNumber(min)} d.` : `${ltNumber(min)}–${ltNumber(max)} dienų`,
     termDurationSub: "Nuomos trukmė",
     termCancelLabel: "Rezervacijos atšaukimo sąlygos",
     termCancelTitle: (tier) => {
@@ -767,7 +777,7 @@ export const lt: Dict = {
     discountsHintBelow: ({ days, minDays }) =>
       `Pasirinkta ${ltDays(days)} — nuolaida nuo ${ltDaysGen(minDays)}`,
     discountsHintActive: ({ days, percent }) =>
-      `Jūsų nuomai (${ltDays(days)}) taikoma −${percent}% nuolaida`,
+      `Jūsų nuomai (${ltDays(days)}) taikoma ${formatDiscountPercent(percent, "lt")} nuolaida`,
     mobileBookingNote: "Galutinė suma — programėlėje",
   },
   common: {
@@ -776,7 +786,7 @@ export const lt: Dict = {
     perDay: "/ d.",
     reviewCount: ltReviews,
     photoCount: (n) =>
-      `${n} ${ltWord(n, "nuotrauka", "nuotraukos", "nuotraukų")}`,
+      `${ltNumber(n)} ${ltWord(n, "nuotrauka", "nuotraukos", "nuotraukos", "nuotraukų")}`,
     depositAmount: (amount) => `${amount} užstatas`,
     ownerLabel: "Savininkas",
     imageUnavailable: "Nuotrauka nepasiekiama",
@@ -802,10 +812,10 @@ export const lt: Dict = {
     // Bare counts (no verb): the line renders on initial page load, where a
     // "found N" reads as a search result before any query was typed.
     countLabel: (cats, subs) =>
-      `${cats} ${ltWord(cats, "kategorija", "kategorijos", "kategorijų")} · ${subs} ${ltWord(subs, "pogrupis", "pogrupiai", "pogrupių")}`,
-    subCount: (n) => `${n} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupių")}`,
+      `${ltNumber(cats)} ${ltWord(cats, "kategorija", "kategorijos", "kategorijos", "kategorijų")} · ${ltNumber(subs)} ${ltWord(subs, "pogrupis", "pogrupiai", "pogrupio", "pogrupių")}`,
+    subCount: (n) => `${ltNumber(n)} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupio", "pogrupių")}`,
     moreCount: (n) =>
-      `Dar ${n} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupių")}`,
+      `Dar ${ltNumber(n)} ${ltWord(n, "pogrupis", "pogrupiai", "pogrupio", "pogrupių")}`,
     showAll: "Rodyti pogrupius",
     showLess: "Rodyti mažiau",
     popularHeading: "Populiaru dabar",
@@ -869,8 +879,8 @@ export const lt: Dict = {
     subtitleSearch: (q) => `Rezultatai pagal „${q}“ visoje Lietuvoje.`,
     subtitleSearchGeneric: "Paieškos rezultatai visoje Lietuvoje.",
     resultCount: (n) =>
-      `${n} ${ltWord(n, "pasiūlymas", "pasiūlymai", "pasiūlymų")}`,
-    resultCountAtLeast: (n) => `${n}+ pasiūlymų`,
+      `${ltNumber(n)} ${ltWord(n, "pasiūlymas", "pasiūlymai", "pasiūlymo", "pasiūlymų")}`,
+    resultCountAtLeast: (n) => `${ltNumber(n)}+ pasiūlymų`,
     loadMore: "Rodyti daugiau",
     loadingMore: "Įkeliama daugiau…",
     clear: "Išvalyti",
@@ -886,10 +896,13 @@ export const lt: Dict = {
     cityLabel: "Miestas",
     priceLabel: "Kaina",
     priceAny: "Bet kokia kaina",
+    // Lithuanian puts the symbol after the amount, so a range carries it once, on the
+    // upper bound. ltPrice owns the symbol and the non-breaking space in front of it —
+    // no "€" literal belongs in this file.
     priceBand: (min, max) => {
-      if (min === null) return `Iki ${max} €`;
-      if (max === null) return `Nuo ${min} €`;
-      return `${min}–${max} €`;
+      if (min === null) return max === null ? "Bet kokia kaina" : `Iki ${ltPrice(max)}`;
+      if (max === null) return `Nuo ${ltPrice(min)}`;
+      return `${ltNumber(min)}–${ltPrice(max)}`;
     },
     priceRangeAria: "Kainos intervalas",
     priceMinAria: "Mažiausia kaina",
@@ -920,13 +933,13 @@ export const lt: Dict = {
     },
     deliveryToggle: "Pristatymas",
     depositToggle: "Be užstato",
-    depositUpTo: (max) => `Užstatas iki ${max} €`,
+    depositUpTo: (max) => `Užstatas iki ${ltPrice(max)}`,
     filtersButton: "Filtrai",
     filtersTitle: "Filtrai",
     filtersApply: (n, atLeast) => {
       if (n === null) return "Rodyti rezultatus";
       // Accusative forms — "Rodyti" governs the object case.
-      return `Rodyti ${n}${atLeast ? "+" : ""} ${ltWord(n, "pasiūlymą", "pasiūlymus", "pasiūlymų")}`;
+      return `Rodyti ${ltNumber(n)}${atLeast ? "+" : ""} ${ltWord(n, "pasiūlymą", "pasiūlymus", "pasiūlymo", "pasiūlymų")}`;
     },
     introMore: "Rodyti daugiau",
     introLess: "Rodyti mažiau",
@@ -934,8 +947,8 @@ export const lt: Dict = {
     paginationLabel: "Nuomos pasiūlymų puslapiai",
     previousPage: "Ankstesnis puslapis",
     nextPage: "Kitas puslapis",
-    pageStatus: (page, totalPages) => `${page} puslapis iš ${totalPages}`,
-    pageStatusShort: (page) => `${page} puslapis`,
+    pageStatus: (page, totalPages) => `${ltNumber(page)} puslapis iš ${ltNumber(totalPages)}`,
+    pageStatusShort: (page) => `${ltNumber(page)} puslapis`,
     pageEmptyTitle: "Tokio puslapio nebėra",
     pageEmptyBody:
       "Skelbimų sąrašas pasikeitė, todėl šis puslapis nebeegzistuoja. Grįžkite į sąrašo pradžią.",
