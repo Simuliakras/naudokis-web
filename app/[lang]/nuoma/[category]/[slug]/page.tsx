@@ -1,19 +1,27 @@
 import type { Metadata } from "next";
 import { cityFromSlug, requireLocale } from "@/app/lib/seo";
 import {
+  categorySlugStaticParams,
   landingSlugIds,
   ListingLandingPage,
   listingLandingMetadata,
   resolveSubcategory,
 } from "@/app/lib/listing-landing-page";
-import type { LandingSearchParams } from "@/app/lib/landing-params";
 
 export const revalidate = 300;
 
 type CategorySlugPageProps = {
   params: Promise<{ lang: string; category: string; slug: string }>;
-  searchParams: Promise<LandingSearchParams>;
 };
+
+// Prebuild both finite middle-segment sets (subcategories and cities) so these pages
+// are served as ISR HTML instead of waiting on the API during the request that
+// establishes LCP. `params` is populated by the [lang] layout's generateStaticParams.
+export async function generateStaticParams({ params: { lang } }: {
+  params: Awaited<LayoutProps<"/[lang]">["params"]>;
+}) {
+  return categorySlugStaticParams(requireLocale(lang));
+}
 
 async function resolveFilters({ locale, category, slug }: { locale: ReturnType<typeof requireLocale>; category: string; slug: string }) {
   // The middle slot is a city if it names one, otherwise a subcategory — the same
@@ -35,19 +43,18 @@ async function resolveFilters({ locale, category, slug }: { locale: ReturnType<t
   };
 }
 
-export async function generateMetadata({ params, searchParams }: CategorySlugPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: CategorySlugPageProps): Promise<Metadata> {
   const { lang, category, slug } = await params;
   const locale = requireLocale(lang);
   const resolved = await resolveFilters({ locale, category, slug });
   return listingLandingMetadata({
     locale,
     filters: resolved.filters,
-    searchParams: await searchParams,
     categoriesOverride: resolved.categoriesOverride,
   });
 }
 
-export default async function Page({ params, searchParams }: CategorySlugPageProps) {
+export default async function Page({ params }: CategorySlugPageProps) {
   const { lang, category, slug } = await params;
   const locale = requireLocale(lang);
   const resolved = await resolveFilters({ locale, category, slug });
@@ -55,7 +62,6 @@ export default async function Page({ params, searchParams }: CategorySlugPagePro
     <ListingLandingPage
       locale={locale}
       filters={resolved.filters}
-      searchParams={await searchParams}
       extraCategory={resolved.extraCategory}
     />
   );

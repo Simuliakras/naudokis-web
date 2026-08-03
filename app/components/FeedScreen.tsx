@@ -69,10 +69,38 @@ function depositParamToken(raw: string | null): string {
   return serializeDepositParam(parseDepositParam(raw));
 }
 
-export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCategories = [] }: FeedScreenProps = {}) {
+// Stand-in for the static-landing branch, which has no URL params to read. A shared
+// frozen instance keeps the `searchParams` prop non-optional (so the reader below is
+// free of `?.` noise) and referentially stable across renders, which matters because
+// it is an effect dependency.
+const NO_SEARCH_PARAMS = new URLSearchParams();
+
+export function FeedScreen(props: FeedScreenProps = {}) {
+  // Static taxonomy landings already carry their complete filter state in props and
+  // must never touch useSearchParams(): that request-only hook opts the entire route
+  // out of prerendering. The generic /skelbimai feed keeps its URL-driven wrapper.
+  //
+  // The branch is fixed per route — a page either passes initialFilters or it does
+  // not — so this never swaps component identity mid-life.
+  return props.initialFilters
+    ? <FeedScreenContent {...props} searchParams={NO_SEARCH_PARAMS} />
+    : <UrlDrivenFeedScreen {...props} />;
+}
+
+function UrlDrivenFeedScreen(props: FeedScreenProps) {
+  const searchParams = useSearchParams();
+  return <FeedScreenContent {...props} searchParams={searchParams} />;
+}
+
+function FeedScreenContent({
+  initialFilters,
+  serverToday,
+  extraCategory,
+  extraCategories = [],
+  searchParams,
+}: FeedScreenProps & { searchParams: URLSearchParams }) {
   const { locale, dict } = useI18n();
   const t = dict.feed;
-  const sp = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
   const online = useOnlineStatus();
@@ -94,15 +122,15 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
         deposit: initialFilters.deposit ?? "",
       }
     : {
-        q: sp.get("q") ?? "",
-        cat: sp.get("cat") ?? "",
-        city: validCity(sp.get("city") ?? ""),
-        sort: parseSortKey(sp.get("sort")),
-        page: parsePageParam(sp.get("page")),
-        delivery: sp.get("delivery") === "1",
-        price: priceParamToken(sp.get("price")),
-        dates: datesParamToken(sp.get("dates")),
-        deposit: depositParamToken(sp.get("deposit")),
+        q: searchParams.get("q") ?? "",
+        cat: searchParams.get("cat") ?? "",
+        city: validCity(searchParams.get("city") ?? ""),
+        sort: parseSortKey(searchParams.get("sort")),
+        page: parsePageParam(searchParams.get("page")),
+        delivery: searchParams.get("delivery") === "1",
+        price: priceParamToken(searchParams.get("price")),
+        dates: datesParamToken(searchParams.get("dates")),
+        deposit: depositParamToken(searchParams.get("deposit")),
       };
 
   const filterBarRef = useRef<HTMLDivElement>(null);
@@ -192,7 +220,7 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
   // Remember the feed URL (incl. filters) so detail → search returns here intact.
   useEffect(() => {
     rememberFeedUrl(window.location.pathname + window.location.search);
-  }, [sp]);
+  }, [searchParams]);
 
   const topCats = useCategories(locale).data;
   // Merged lookup set (card eyebrows/icons, breadcrumbs, related subcategories).
@@ -430,8 +458,8 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
   const pageHref = (page: number) => {
     const next = new URLSearchParams();
     if (params.q) next.set("q", params.q);
-    if (!staticLanding && params.cat) next.set("cat", params.cat);
-    if (!staticLanding && params.city) next.set("city", params.city);
+    if (params.cat) next.set("cat", params.cat);
+    if (params.city) next.set("city", params.city);
     if (params.sort && params.sort !== "newest") next.set("sort", params.sort);
     if (params.delivery) next.set("delivery", "1");
     if (params.price) next.set("price", params.price);
@@ -439,7 +467,8 @@ export function FeedScreen({ initialFilters, serverToday, extraCategory, extraCa
     if (params.deposit) next.set("deposit", params.deposit);
     if (page > 1) next.set("page", String(page));
     const qs = next.toString();
-    return qs ? `${pathname}?${qs}` : pathname;
+    const basePath = staticLanding ? localePath(locale, "/skelbimai") : pathname;
+    return qs ? `${basePath}?${qs}` : basePath;
   };
   const renderEmpty = () => {
     // Beyond the last page (stale link, shrunken inventory): say exactly that.
