@@ -33,49 +33,35 @@ import {
 } from "@/app/lib/categories";
 import {
   categorySlugForId,
-  citySlugFor,
   resolveCategorySlug,
   resolveSubcategorySlug,
-  subcategorySlugForId,
 } from "@/app/lib/landing-routes";
-import { LT_CITIES } from "@/app/lib/cities";
 import { FeedScreen } from "@/app/components/FeedScreen";
 import { JsonLd } from "@/app/components/JsonLd";
 
 /* ---------------- Static params ----------------
-   The landing tiers are finite and known at build time, so they are prerendered
-   rather than rendered on demand. That is the whole point of these routes taking no
-   searchParams: without segment params Next renders them per request, which on
-   Amplify produced `no-store` HTML and put backend TTFB on the mobile LCP path.
+   Landings take no searchParams, so they CAN be prerendered — without segment params
+   Next renders them per request, which on Amplify produced `no-store` HTML and put
+   backend TTFB on the mobile LCP path.
+
+   Only the top tier is prebuilt, though. A prerendered landing costs ~712KB on disk
+   (HTML + RSC + segments), and the deeper tiers are combinatorial: prebuilding them
+   too produced a 412MB deploy artifact against Amplify's 220MB limit, which fails
+   AFTER a successful `next build`. So the linked hubs (/nuoma/[category] here,
+   /miestai/[city] alongside it) are prerendered and everything below them is
+   on-demand ISR. Check the artifact size before widening this.
 
    `fetchAllCategories` is deliberately unguarded, matching app/sitemap.ts: a silent
-   [] would quietly downgrade every landing back to on-demand rendering — the exact
+   [] would quietly downgrade these landings back to on-demand rendering — the exact
    regression this exists to prevent — so a taxonomy outage should fail the build
    loudly instead. */
 
-// The top-level category landings: /nuoma/[category].
+// The top-level category landings: /nuoma/[category]. ~24 per locale.
 export async function categoryStaticParams(locale: Locale): Promise<{ category: string }[]> {
   const categories = await fetchAllCategories(locale);
   return categories
     .filter((category) => !category.parentId)
     .map((category) => ({ category: categorySlugForId(category.id, locale) }));
-}
-
-// The middle segment of /nuoma/[category]/[slug] is either a subcategory or a city —
-// the same order i18n/routes.ts translates it in. Both sets are finite, so both are
-// prebuilt.
-export async function categorySlugStaticParams(
-  locale: Locale,
-): Promise<{ category: string; slug: string }[]> {
-  const categories = await fetchAllCategories(locale);
-  const parents = categories.filter((category) => !category.parentId);
-  return parents.flatMap((parent) => {
-    const category = categorySlugForId(parent.id, locale);
-    const subcategories = categories
-      .filter((candidate) => candidate.parentId === parent.id)
-      .map((candidate) => ({ category, slug: subcategorySlugForId(candidate.id, locale) }));
-    return [...subcategories, ...LT_CITIES.map((city) => ({ category, slug: citySlugFor(city) }))];
-  });
 }
 
 // Map the taxonomy slugs of a /nuoma URL to backend ids, for this locale.

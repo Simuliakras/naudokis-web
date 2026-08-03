@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { cityFromSlug, requireLocale } from "@/app/lib/seo";
 import {
-  categorySlugStaticParams,
   landingSlugIds,
   ListingLandingPage,
   listingLandingMetadata,
@@ -14,13 +13,25 @@ type CategorySlugPageProps = {
   params: Promise<{ lang: string; category: string; slug: string }>;
 };
 
-// Prebuild both finite middle-segment sets (subcategories and cities) so these pages
-// are served as ISR HTML instead of waiting on the API during the request that
-// establishes LCP. `params` is populated by the [lang] layout's generateStaticParams.
-export async function generateStaticParams({ params: { lang } }: {
-  params: Awaited<LayoutProps<"/[lang]">["params"]>;
-}) {
-  return categorySlugStaticParams(requireLocale(lang));
+// On-demand ISR, NOT prebuilt — deliberately, and measured.
+//
+// This tier is combinatorial: ~140 subcategories plus 24 categories × 8 cities, per
+// locale, is 900 pages. A prerendered landing costs ~712KB on disk (HTML + RSC +
+// segments), so prebuilding them all produced a 412MB deploy artifact against
+// Amplify's 220MB limit — `next build` succeeded and the DEPLOY step then failed.
+//
+// The empty array is load-bearing and not the same as omitting this export: Next
+// requires generateStaticParams to be present (returning []) for a route to
+// revalidate paths at runtime. See node_modules/next/dist/docs/01-app/03-api-reference/
+// 04-functions/generate-static-params.md ("You must return an empty array … in order
+// to revalidate (ISR) paths at runtime").
+//
+// With `revalidate = 300` above, only the first request in each window renders; the
+// rest are served from cache. The linked, high-traffic hubs one level up
+// (/nuoma/[category] and /miestai/[city]) ARE prebuilt, so the LCP-sensitive entry
+// points still never wait on the backend.
+export function generateStaticParams() {
+  return [];
 }
 
 async function resolveFilters({ locale, category, slug }: { locale: ReturnType<typeof requireLocale>; category: string; slug: string }) {
