@@ -53,10 +53,10 @@ export const SOCIAL_PROFILES = [
     icon: "Facebook",
   },
   {
-    id: "linkedin",
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/company/naudokis/",
-    icon: "Linkedin",
+    id: "instagram",
+    label: "Instagram",
+    href: "https://www.instagram.com/naudokis.lt/",
+    icon: "Instagram",
   },
 ] as const;
 

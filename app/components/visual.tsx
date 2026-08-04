@@ -23,8 +23,8 @@ import { DynamicQR } from "./DynamicQR";
 
    Generic glyphs come straight from lucide-react (Lucide is the design language).
    The handful Lucide can't supply stay as inline SVG: the Apple / Facebook /
-   Instagram / LinkedIn brand marks (Lucide ships no trademarked logos — its
-   `Apple` is a fruit), plus the solid Play triangle (Lucide's Play is an outline).
+   Instagram brand marks (Lucide ships no trademarked logos — its `Apple` is a
+   fruit), plus the solid Play triangle (Lucide's Play is an outline).
    `s` = stroke outline children, `f` = filled glyph path. */
 type IconDef = {
   s?: React.ReactNode;
@@ -65,7 +65,6 @@ const ICONS = {
   Apple:     glyph({ f: "M16.36 12.46c.02 2.45 2.15 3.27 2.18 3.28-.02.06-.34 1.16-1.12 2.3-.67.98-1.37 1.96-2.47 1.98-1.08.02-1.43-.64-2.66-.64s-1.62.62-2.64.66c-1.06.04-1.87-1.06-2.55-2.04-1.39-2-2.45-5.66-1.03-8.13.71-1.23 1.97-2 3.34-2.02 1.04-.02 2.02.7 2.66.7.63 0 1.83-.86 3.08-.74.53.02 2 .21 2.95 1.6-.08.05-1.76 1.03-1.74 3.07M14.4 5.8c.56-.68.94-1.62.83-2.56-.81.03-1.79.54-2.37 1.22-.52.6-.97 1.56-.85 2.48.9.07 1.82-.46 2.39-1.14" }),
   Facebook:  glyph({ f: "M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.52 1.49-3.91 3.78-3.91 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.89h2.78l-.44 2.9h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94" }),
   Instagram: glyph({ s: <><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></> }),
-  Linkedin:  glyph({ f: "M4.98 3.5A2.5 2.5 0 1 0 5 8.5a2.5 2.5 0 0 0-.02-5M3 9h4v12H3zM10 9h3.8v1.7h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.5 4.78 5.76V21h-4v-5.1c0-1.22-.02-2.78-1.7-2.78-1.7 0-1.96 1.32-1.96 2.69V21H10z" }),
 } satisfies Record<string, IconEntry>;
 
 export type IconName = keyof typeof ICONS;
