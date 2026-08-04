@@ -307,24 +307,13 @@ export function Illustration({
    Locked-mode trigger — any component can call openRedirect(...)
    to open the shared <AppRedirect/> modal (mounted via <Chrome/>).
    ============================================================ */
-// Optional listing context keeps the user's intent visible across the handoff
-// (compact item row in the modal). Real wire data only — title/thumb/price/category
-// come from the listing view models, never fabricated. `categoryId` is the raw
-// top-level id rather than a second label: it feeds [data-cat], so the modal tints
-// the eyebrow with the same --cat-accent the card the user came from was using.
-export type RedirectListingContext = {
-  title: string;
-  thumb?: string;
-  priceLabel?: string;
-  category?: string;
-  categoryId?: string;
-};
 export type RedirectPayload = {
   title: string;
   body: string;
-  listing?: RedirectListingContext;
   // Canonical native-app path, e.g. /listing/<id>. The bridge sends it through
-  // /go so AppsFlyer can resume the same intent after installation.
+  // /go so AppsFlyer can resume the same intent after installation. This is the
+  // only per-listing state the modal carries — it once also showed a preview row
+  // of the item, which was removed; the handoff target is what actually matters.
   appPath?: string;
 };
 export const NK_REDIRECT_EVENT = "nk:redirect";

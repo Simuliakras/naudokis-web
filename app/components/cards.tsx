@@ -50,25 +50,13 @@ export function OfferCard({
   const lockFav = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    // Same item row the listing-detail triggers build (see listingCtx in
-    // ListingScreen): favouriting from a card and from the detail page must open
-    // the same modal for the same listing, down to the category eyebrow's hue.
-    // Everything here is card props — nothing is derived or fabricated.
-    //
-    // `appPath` matters as much as the modal contents: without it /go has no
-    // ?target, so a favourite from the feed lands on a bare store page while the
-    // identical action on the detail page resumes at the listing. Same action,
-    // same handoff. Dates are detail-page-only, so there is no range to pass.
+    // `appPath` is what makes this the same action as the detail page's favourite:
+    // without it /go has no ?target, so a favourite from the feed lands on a bare
+    // store page while the identical tap on the detail page resumes at the listing.
+    // Dates are detail-page-only, so there is no range to pass.
     openRedirect({
       title: dict.bridge.favoriteTitle,
       body: dict.bridge.favoriteBody,
-      listing: {
-        title,
-        thumb: img,
-        priceLabel: price ? [price, unit].filter(Boolean).join(" ") : undefined,
-        category: categoryName,
-        categoryId: category,
-      },
       appPath: id ? listingAppPath(id) : undefined,
     });
   };
@@ -429,8 +417,11 @@ export function SectionEmpty({
   tone?: "purple" | "yellow" | "green";
 }) {
   const c = SECTION_EMPTY_TONES[tone];
+  // Centered, not top-aligned: the icon disk and the copy block are near-identical
+  // heights, so flex-start left them a few px out of true — and a wrapping subtitle
+  // made it worse. One shared centre line holds however the copy reflows.
   return (
-    <div style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", alignItems: "flex-start", gap: "var(--nk-gap-xl)" }}>
+    <div style={{ background: "var(--nk-surface)", border: "1px solid var(--nk-border)", borderRadius: "var(--nk-r-card)", padding: "var(--nk-card-pad)", display: "flex", alignItems: "center", gap: "var(--nk-gap-xl)" }}>
       <span style={{ width: 60, height: 60, borderRadius: 30, flex: "none", background: c.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Icon name={icon} size={27} color={c.fg} stroke={2} />
       </span>

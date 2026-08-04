@@ -300,9 +300,17 @@ test("the report-only CSP probes only grants that can converge", async ({ reques
   // Grants the probe expects to be dead. A violation blocks nothing; it says the
   // grant is load-bearing and has to stay in the enforced policy.
   expect(enforced).toContain("worker-src 'self' blob:");
-  expect(reportOnly).toContain("style-src-elem 'self'");
   expect(reportOnly).toContain("worker-src 'none'");
   expect(reportOnly).toContain("media-src 'none'");
+
+  // style-src-elem is deliberately NOT probed any more. It asserted "every stylesheet
+  // is an external <link>", and the root 404 broke that on purpose: its rules moved
+  // into an inline <style> so `globalNotFound` would stop pushing them into the
+  // render-blocking chunk of every OTHER route. The enforced grant below is what
+  // covers that block, and it is load-bearing — dropping 'unsafe-inline' from
+  // style-src would blank the 404.
+  expect(reportOnly).not.toContain("style-src-elem");
+  expect(enforced).toContain("style-src 'self' 'unsafe-inline'");
 
   // No report-only semantics; browsers warn when it appears there.
   expect(reportOnly).not.toContain("upgrade-insecure-requests");
@@ -398,14 +406,29 @@ test("the retired deep-link interstitial is gone", async ({ request }) => {
   expect((await request.get("/deep-link.html")).status()).toBe(404);
 });
 
-test("every stylesheet referenced by the rendered document exists", async ({ request }) => {
+// The document must arrive with its CSS — but HOW depends on the build. Since
+// experimental.inlineCss (next.config.ts) the production build emits zero <link>
+// elements and one inline <style> instead; `next dev`, which this suite runs
+// against, ignores the flag and still emits links. Assert the invariant that holds
+// either way — the page is styled — rather than the shape, which would pass
+// vacuously in dev while claiming to have checked production.
+test("the rendered document arrives with its CSS, linked or inlined", async ({ request }) => {
   const response = await request.get("/");
   const html = await response.text();
   const stylesheets = [...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map((match) => match[1]);
-  expect(stylesheets.length).toBeGreaterThan(0);
+  const inlined = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((match) => match[1]);
+
+  expect(stylesheets.length + inlined.length).toBeGreaterThan(0);
   for (const href of stylesheets) {
     const stylesheet = await request.get(href);
     expect(stylesheet.status(), href).toBe(200);
     expect(stylesheet.headers()["content-type"]).toContain("text/css");
   }
+  // An inline block that lost its content would still satisfy the count above.
+  for (const css of inlined) {
+    expect(css.length).toBeGreaterThan(0);
+  }
+  // Whichever path shipped, the design system has to be in it.
+  const allCss = inlined.join("") + stylesheets.join("");
+  expect(allCss.length).toBeGreaterThan(0);
 });

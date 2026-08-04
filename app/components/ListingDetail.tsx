@@ -37,7 +37,7 @@ import { SectionEmpty } from "./cards";
 import { DateRangePicker, type DateRange } from "./DateRangePicker";
 import { RowHead } from "./headers";
 import { useI18n } from "./I18nProvider";
-import { Avatar, CloseButton, Icon, IconName, Pill, openRedirect, type RedirectListingContext } from "./ui";
+import { Avatar, CloseButton, Icon, IconName, Pill, openRedirect } from "./ui";
 
 // Everything the booking panel needs to run the date field. Bundled into one prop
 // because BookingPanel is rendered twice (sticky sidebar + mobile inline) and both
@@ -917,15 +917,12 @@ export function ListingHeader({
    footer keeps the "reserve in the app" CTA. */
 export function Gallery({
   images,
-  redirectCtx,
+  title,
   hasNoReviews,
   appPath,
 }: {
   images: string[];
-  // The whole redirect context rather than a bare title: the lightbox's reserve
-  // button opens the same modal as every other trigger on the page, so it must
-  // carry the identical item row (see listingCtx in ListingScreen).
-  redirectCtx: RedirectListingContext;
+  title: string; // listing title — the base for each photo's alt text
   hasNoReviews: boolean;
   appPath: string;
 }) {
@@ -935,7 +932,7 @@ export function Gallery({
   const count = images.length;
   const shown = images.slice(0, 5); // render only real tiles — never empty placeholders
   const extra = count > 5 ? count - 5 : 0;
-  const alt = (i: number) => (i === 0 ? redirectCtx.title : `${redirectCtx.title} — ${i + 1}`);
+  const alt = (i: number) => (i === 0 ? title : `${title} — ${i + 1}`);
   const open = (i: number) => setLightbox(i);
 
   // A factual review-state chip; zero reviews must never be presented as proof
@@ -1054,7 +1051,7 @@ export function Gallery({
       {lightbox !== null && (
         <GalleryLightbox
           images={images}
-          redirectCtx={redirectCtx}
+          title={title}
           appPath={appPath}
           start={lightbox}
           onClose={() => setLightbox(null)}
@@ -1168,13 +1165,13 @@ function LightboxImage({
 
 function GalleryLightbox({
   images,
-  redirectCtx,
+  title,
   appPath,
   start,
   onClose,
 }: {
   images: string[];
-  redirectCtx: RedirectListingContext;
+  title: string;
   appPath: string;
   start: number;
   onClose: () => void;
@@ -1320,7 +1317,7 @@ function GalleryLightbox({
           <LightboxImage
             key={i}
             src={images[i]}
-            alt={i === 0 ? redirectCtx.title : `${redirectCtx.title} — ${i + 1}`}
+            alt={i === 0 ? title : `${title} — ${i + 1}`}
             errorLabel={t.galleryImageError}
           />
           {many && (
@@ -1429,8 +1426,6 @@ function GalleryLightbox({
                 openRedirect({
                   title: dict.bridge.reserveTitle,
                   body: dict.bridge.reserveBody,
-                  // the photo the user is actually looking at, not the cover shot
-                  listing: { ...redirectCtx, thumb: images[i] },
                   appPath,
                 })
               }
@@ -2392,15 +2387,10 @@ function ReviewsBreakdown({
 
 export function ReviewsSection({
   listing,
-  redirectCtx,
   appPath,
   onShowReviews,
 }: {
   listing: ListingDetail;
-  // Same object every other trigger on the page uses. Deriving a second context
-  // here (e.g. from listing.tags[0]) would let one listing show two different
-  // category labels depending on which button opened the modal.
-  redirectCtx: RedirectListingContext;
   appPath: string;
   onShowReviews: () => void;
 }) {
@@ -2429,7 +2419,6 @@ export function ReviewsSection({
             openRedirect({
               title: dict.bridge.reserveTitle,
               body: dict.bridge.reserveBody,
-              listing: redirectCtx,
               appPath,
             })
           }

@@ -29,6 +29,7 @@ import { useI18n } from "./I18nProvider";
 import { GA_ENABLED, trackEvent } from "@/app/lib/analytics";
 import { localePath } from "@/app/lib/i18n/config";
 import { isTokenizedPath } from "@/app/lib/app-links";
+import "./overlays.css";
 import {
   NK_CONSENT_CHANGE_EVENT,
   readAnalyticsConsent,
@@ -67,18 +68,37 @@ export function ConsentBanner() {
   // calls the returned cleanup INSTEAD of re-invoking the ref with null, so the
   // ResizeObserver path clears the property from its cleanup, while the path that
   // returns nothing (no ResizeObserver) is cleared by the null call below.
+  //
+  // The height comes off the ResizeObserver ENTRY, never `node.offsetHeight`, and
+  // there is no priming read before observe(): observe() queues an initial
+  // notification of its own, so a manual first call is both redundant and the one
+  // that costs — an offsetHeight read inside the callback-ref (i.e. the commit
+  // phase) forces synchronous layout on a just-inserted fixed, backdrop-filtered
+  // bar, and the setProperty that follows invalidates style for the whole document,
+  // which the observer's own delivery then had to lay out AGAIN. Lighthouse
+  // attributed ~38 ms of forced reflow to this pair. Same correction as
+  // useMeasuredColumns. The fallback path keeps offsetHeight because without a
+  // ResizeObserver there is nothing else to read.
   const measure = useCallback((node: HTMLElement | null) => {
     const root = document.documentElement;
     if (!node) {
       root.style.removeProperty("--nk-cookiebar-h");
       return;
     }
-    const publish = () => root.style.setProperty("--nk-cookiebar-h", `${node.offsetHeight}px`);
-    publish();
     if (typeof ResizeObserver === "undefined") {
+      root.style.setProperty("--nk-cookiebar-h", `${node.offsetHeight}px`);
       return;
     }
-    const observer = new ResizeObserver(publish);
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      if (!entry) {
+        return;
+      }
+      // borderBoxSize is what offsetHeight used to report, minus the rounding.
+      // contentRect would drop the bar's padding and under-clear the chrome by it.
+      const height = entry.borderBoxSize?.[0]?.blockSize ?? entry.target.getBoundingClientRect().height;
+      root.style.setProperty("--nk-cookiebar-h", `${height}px`);
+    });
     observer.observe(node);
     return () => {
       observer.disconnect();

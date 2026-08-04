@@ -146,25 +146,15 @@ export function ListingScreen({ id }: { id: string }) {
   // Transactional actions are Locked — they open the app-redirect modal. Favoriting
   // only persists in the app, so we do NOT fill the heart here (a "saved" state the
   // web can't keep would be a false success signal); the modal is the feedback.
-  // Every trigger carries the listing context so the modal can keep the user's
-  // intent (item + price) visible across the install handoff.
-  // Single source for the modal's item row: every trigger on this page — header,
-  // booking panel, gallery lightbox, reviews empty state — passes this same object,
-  // so the category label can never differ between two openings of one listing.
-  const listingCtx = {
-    title: listing.title,
-    thumb: listing.images[0],
-    priceLabel: `${listing.price} ${dict.detail.perDayAbbr}`,
-    category,
-    categoryId: listing.categoryId,
-  };
+  // Every trigger passes the same appPath, so whichever button opened the modal the
+  // install handoff resumes at this listing.
   // Carries the chosen dates into the app — but only once the app is known to read
   // them (APP_READS_DEEPLINK_DATES, currently false). /go already preserves the query
   // on the target, so no other plumbing changes. Note the dates survive the handoff
   // only for visitors who allowed attribution: /go fails closed and drops the target
   // otherwise, which is the deliberate consent trade-off, not a bug.
   const appPath = listingAppPath(listing.id, range);
-  const lockFav = () => openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody, listing: listingCtx, appPath });
+  const lockFav = () => openRedirect({ title: dict.bridge.favoriteTitle, body: dict.bridge.favoriteBody, appPath });
   // Sharing is a real web action (not app-locked): use the native share sheet
   // where available, otherwise copy the URL and flash a transient "copied" state.
   const share = async () => {
@@ -195,13 +185,13 @@ export function ListingScreen({ id }: { id: string }) {
       hasDates: Boolean(range),
       ...(range ? { days: rentalDays(range.start, range.end) } : {}),
     });
-    openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, listing: listingCtx, appPath });
+    openRedirect({ title: dict.bridge.reserveTitle, body: dict.bridge.reserveBody, appPath });
   };
   const contact = () => {
     trackEvent("Owner Contact Intent", { placement: "listing", category: listing.categoryId ?? "unknown" });
-    openRedirect({ title: dict.bridge.contactTitle, body: dict.bridge.contactBody, listing: listingCtx, appPath });
+    openRedirect({ title: dict.bridge.contactTitle, body: dict.bridge.contactBody, appPath });
   };
-  const showReviews = () => openRedirect({ title: dict.bridge.reviewsTitle, body: dict.bridge.reviewsBody, listing: listingCtx, appPath });
+  const showReviews = () => openRedirect({ title: dict.bridge.reviewsTitle, body: dict.bridge.reviewsBody, appPath });
 
   return shell(
     <>
@@ -215,7 +205,7 @@ export function ListingScreen({ id }: { id: string }) {
           mobile bar — which must not be inside it — a sibling rather than a child. */}
       <div>
         <ListingHeader listing={listing} shared={shared} shareFailed={shareFailed} onShare={share} onFav={lockFav} />
-        <Gallery images={listing.images} redirectCtx={listingCtx} hasNoReviews={hasNoReviews} appPath={appPath} />
+        <Gallery images={listing.images} title={listing.title} hasNoReviews={hasNoReviews} appPath={appPath} />
 
         {/* The sticky sidebar booking panel is hidden once the detail grid collapses
             to one column (@container nk-detail < 55rem, ~1000px viewport);
@@ -245,7 +235,7 @@ export function ListingScreen({ id }: { id: string }) {
 
         {/* Reviews break out to full width beneath the two-column area (the narrow
             column left a dead region under the sidebar once reviews grow). */}
-        <ReviewsSection listing={listing} redirectCtx={listingCtx} appPath={appPath} onShowReviews={showReviews} />
+        <ReviewsSection listing={listing} appPath={appPath} onShowReviews={showReviews} />
 
         {listing.categoryId && (
           <SimilarRail

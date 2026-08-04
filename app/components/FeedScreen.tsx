@@ -483,10 +483,14 @@ function FeedScreenContent({
       // echo at most ~40 chars of the query back — the headline must never carry
       // an unbounded string
       const qEcho = params.q.length > 42 ? `${params.q.slice(0, 42).trimEnd()}…` : params.q;
+      // Browsing the directory is the primary recovery — a query that found nothing
+      // is rarely fixed by clearing it in place. Same ranking as the city/category
+      // empties below, so the solid button always means "keep browsing".
       return <EmptyState illustration="search" title={empty.searchTitle(qEcho)} subtitle={empty.searchBody}
-        actionLabel={empty.searchAction} onAction={reset}
-        secondaryLabel={t.allCategories}
-        onSecondaryAction={() => router.push(localePath(locale, "/nuoma"))} />;
+        actionLabel={t.allCategories} actionPrimary
+        onAction={() => router.push(localePath(locale, "/nuoma"))}
+        secondaryLabel={empty.searchAction}
+        onSecondaryAction={reset} />;
     }
     if (params.city && !filtersActive) {
       // Empty city (or category+city) landing — a Google visitor set no filters,

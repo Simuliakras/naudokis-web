@@ -59,11 +59,14 @@ const cspBase: Record<string, string> = {
 // both the report log and Chrome's Issues panel. Restoring it needs a rendering
 // model change, not a policy change.
 const cspProbes: Record<string, string> = {
-  // All CSS ships as external <link rel="stylesheet"> — verified zero inline <style>
-  // in the rendered HTML. style-src-attr above keeps the design system's style=""
-  // attributes allowed, so this only catches a Next upgrade or a new dependency that
-  // starts emitting inline <style> elements.
-  "style-src-elem": "'self'",
+  // style-src-elem is NOT probed any more. It asserted "all CSS ships as external
+  // <link rel=stylesheet>", which stopped being true on 2026-08-03: the root 404
+  // carries its rules in an inline <style> (app/not-found.tsx) so that `globalNotFound`
+  // stops pushing them into the shared render-blocking chunk on every route. The
+  // enforced style-src 'unsafe-inline' above already covers it. Restoring the probe
+  // means hashing that one block — worth doing only if a second inline <style>
+  // never appears, since a per-page hash forfeits nothing here (the block is static)
+  // but has to be regenerated whenever the copy changes.
   // Nothing calls URL.createObjectURL, constructs a Worker, or registers a service
   // worker, and the site has no <video>/<audio>. Enabling a Sentry DSN would be
   // expected to trip worker-src: Replay compresses in a blob: worker.
@@ -134,6 +137,21 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     globalNotFound: true,
+    // Ships every stylesheet as an inline <style> instead of a <link>, removing the
+    // last two render-blocking requests from the critical path. Kept on measured
+    // evidence, not on the flag's promise — Next's own docs warn it costs more than
+    // it saves for a large non-atomic bundle, and this site is 200 KB of bespoke
+    // nk- CSS, not Tailwind utilities. Throttled A/B (1.6 Mbps / 150 ms RTT / 4x CPU,
+    // median of 5, two `next start` builds of the same tree):
+    //   first view          FCP 984 -> 516 ms
+    //   2nd page, cached CSS    668 -> 484 ms   (the case the docs say inlining loses)
+    //   home document       32.4 -> 68.9 KiB    (the CSS lands twice: SSR + RSC payload)
+    // The one scenario it loses — a full reload with the HTML itself cached, 420 ->
+    // 468 ms — cannot happen here: the ISR responses carry s-maxage only, a CDN
+    // directive, so a browser never reuses the document. Re-measure before assuming
+    // this still holds if globals.css grows much past its current ~87 KB.
+    // Rendering is unchanged: 24,944 computed values diffed across 4 widths, 0 deltas.
+    inlineCss: true,
   },
   // NOTE: typedRoutes is deliberately OFF. Public URLs are the proxy-rewritten
   // unprefixed forms (/kategorijos, /skelbimai/[id]) which don't exist in the

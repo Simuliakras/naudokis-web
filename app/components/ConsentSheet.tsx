@@ -14,6 +14,7 @@ import { Dialog } from "./ui";
 import { useI18n } from "./I18nProvider";
 import { trackEvent } from "@/app/lib/analytics";
 import { localePath } from "@/app/lib/i18n/config";
+import "./overlays.css";
 import {
   NK_CONSENT_ASK_EVENT,
   writeConsent,

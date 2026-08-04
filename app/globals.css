@@ -1113,16 +1113,6 @@ select {
     display: none;
   }
 }
-.nk-redirect-openfallback {
-  margin: -4px 0 0;
-  text-align: center;
-  font-size: 13.5px;
-  line-height: 20px;
-  color: var(--nk-text-muted);
-}
-.nk-redirect-openfallback:empty {
-  display: none;
-}
 
 @media (width < theme(--breakpoint-lg)) {
   .nk-logo span {
@@ -1464,11 +1454,6 @@ input:focus-visible,
     --nk-badge-cap: 36px;
     --nk-badge-gap: 12px;
   }
-}
-.nk-redirect-storestext a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
 }
 
 /* ---- visually-hidden (SR-only) — e.g. aria-live loading status ---- */
@@ -2121,14 +2106,12 @@ footer .nk-link:hover {
 .nk-offer__pricebar {
   gap: var(--nk-gap-sm);
 }
-/* Category eyebrow — house per-category accent, lightened for legibility on dark.
-   Shared with the app-redirect modal's listing row so the category the user just
-   tapped keeps its hue across the handoff; both carry [data-cat] for --cat-accent.
+/* Category eyebrow — house per-category accent, lightened for legibility on dark;
+   [data-cat] on the card supplies --cat-accent.
    NB: the font-size/weight/letter-spacing/color set here are all re-declared by the
    Quiet Luxe layer near the end of this file (42% mix, weight 600) — that is what
    actually paints. Only the layout half below (line-height, ellipsis) survives. */
-.nk-offer__eyebrow,
-.nk-redirect__eyebrow {
+.nk-offer__eyebrow {
   font-family: var(--nk-font-display);
   font-size: 11.5px;
   font-weight: 700;
@@ -2140,48 +2123,13 @@ footer .nk-link:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* The trail's last crumb — the current page, a pill rather than a link. The clamp
-   is load-bearing: with a pathological listing title this became a 2-line band that
-   simply repeated the H1 sitting right under it. */
-.nk-crumb-current {
-  padding: 6px 10px;
-  border-radius: 9px;
-  font-family: var(--nk-font-display);
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--nk-text);
-  background: var(--nk-surface);
-  max-width: min(48ch, 100%);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-/* Breadcrumb middle-collapse: at the xs floor a 4-level trail stacked one crumb
-   per line before the H1. Middles hide; the home segment shows an "…" stand-in. */
-.nk-crumbs__ell {
-  display: none;
-  align-items: center;
-  gap: 4px;
-  color: var(--nk-text-muted);
-  font-size: 15px;
-}
-@media (width < theme(--breakpoint-xs)) {
-  /* keep the LAST middle crumb (the category — the only local context the trail
-     adds); collapse the generic tiers before it */
-  .nk-crumbs__seg--mid:not(:nth-last-child(2)) {
-    display: none !important;
-  }
-  .nk-crumbs__ell {
-    display: inline-flex;
-  }
-}
 
 /* Card eyebrow drops the "…" — an ellipsis inside letterspaced caps read scrappy
    ("ELEKTRONIKA IR TE…"). The empty STRING, not `clip` and not a mask: like any
    text-overflow value it engages only when the text actually overflows, so a label
    that fits is painted whole, and it still cuts at a character boundary rather than
    through a glyph. Engines without string support fall back to the `ellipsis` in the
-   base rule above, which is where this started. Modal eyebrow keeps the ellipsis.
+   base rule above, which is where this started.
 
    NOT a mask-image fade (what this replaced): a mask is anchored to the BOX, so it
    faded the last 16px whether or not anything was clipped — a fitting label whose
@@ -3614,11 +3562,6 @@ footer .nk-link:hover {
   gap: 12px;
   min-inline-size: 0;
 }
-.nk-footer .nk-footer__meta .nk-privacy-trigger {
-  min-block-size: 36px;
-  inline-size: fit-content;
-  padding-block: 6px;
-}
 .nk-footer .nk-footer__sep {
   display: none;
 }
@@ -3848,9 +3791,10 @@ footer .nk-link:hover {
 /* ============================================================
    Listing bottom-sheet modal
 
-   THE LAYER STACK. Every z-index in this file, in order. Read it before adding a
-   layer — the ordering is not arbitrary, and each pair below can genuinely be open
-   at once:
+   THE LAYER STACK. Every z-index on the site, in order — kept whole here even
+   though the layers no longer all live in this file, because splitting the TABLE is
+   what makes the next layer get picked in isolation. Read it before adding one: the
+   ordering is not arbitrary, and each pair below can genuinely be open at once.
 
       40  .nk-filterbar (sticky)        100  .nk-modal-scrim   ← base bottom sheet
       49  .nk-nav-scrim                 120  .nk-filtersheet-scrim
@@ -3861,6 +3805,10 @@ footer .nk-link:hover {
       60  .nk-lg-fab-toc (legal.css)
       60  .nk-mbar (mobile bottom bar)
       70  .nk-cookiebar (analytics consent — above the bars, below every scrim)
+
+   .nk-redirect-scrim, .nk-dialog-scrim and .nk-cookiebar live in
+   components/overlays.css; the filter/calendar/lightbox scrims in
+   components/catalogue.css; everything else is still here.
 
    PAINT ORDER IS NOT ENOUGH FOR THE BOTTOM EDGE. Five of these are fixed to it and can
    be on screen together, so winning the z-index only means covering something the user
@@ -3970,29 +3918,6 @@ footer .nk-link:hover {
   }
 }
 
-/* ============================================================
-   Locked-mode app-redirect modal (desktop dialog / mobile sheet)
-   ============================================================ */
-.nk-redirect-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--nk-scrim);
-  backdrop-filter: blur(6px);
-  animation: nk-scrim-in 0.2s ease both;
-}
-.nk-redirect-scrim.is-closing {
-  animation: nk-scrim-out 0.2s ease both;
-}
-.nk-redirect-panel {
-  animation: nk-pop-in 0.28s var(--nk-ease-spring) both;
-}
-.nk-redirect-scrim.is-closing .nk-redirect-panel {
-  animation: nk-pop-out 0.2s var(--nk-ease) both;
-}
 @keyframes nk-scrim-in {
   from {
     opacity: 0;
@@ -4001,73 +3926,7 @@ footer .nk-link:hover {
     opacity: 1;
   }
 }
-@keyframes nk-scrim-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-@keyframes nk-pop-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes nk-pop-out {
-  from {
-    opacity: 1;
-    transform: none;
-  }
-  to {
-    opacity: 0;
-    transform: translateY(8px) scale(0.985);
-  }
-}
-/* the desktop dialog form must fit short viewports too (landscape phones are
-   ≥561px wide, so they get THIS form at ~390px tall) — cap it and scroll inside */
-.nk-redirect-panel {
-  position: relative;
-  width: min(560px, calc(100vw - 40px));
-  max-height: 92vh;
-  max-height: min(92dvh, 92svh);
-  overflow: auto;
-  background: radial-gradient(130% 78% at 50% -14%, var(--nk-purple-soft), transparent 60%), var(--nk-bg);
-  border: 1px solid color-mix(in srgb, var(--nk-border) 50%, transparent);
-  border-radius: 24px;
-  padding: 36px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  box-shadow: var(--nk-edge-top), var(--nk-shadow-modal);
-}
-/* lit gradient hairline — catches light at the crown, warms to a hint of brand
-   purple at the foot (same mask-composite recipe as .nk-gborder) */
-.nk-redirect-panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  pointer-events: none;
-  z-index: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.18),
-    rgba(255, 255, 255, 0.02) 42%,
-    color-mix(in srgb, var(--nk-purple) 34%, transparent)
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-}
+
 /* Shared overlay close button (see ui.tsx CloseButton) — one dismiss affordance
    across the redirect modal, filter sheet and legal drawer. */
 .nk-closebtn {
@@ -4099,100 +3958,8 @@ footer .nk-link:hover {
 .nk-sheet-grabzone {
   display: none;
 }
-/* Desktop hero: the QR is the working handoff path (the /go smart link only
-   resolves to a store on a phone), so it reads as the primary action — large,
-   with its own heading. Sits flush on the panel (no card chrome): the QR's own
-   white tile is already the visual anchor here, and a second nested card behind
-   it just doubled up on the listing-row card above. */
-.nk-redirect-qr {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-/* Clickable store badges — the desktop click path beside the QR. Just centres the
-   inner .nk-appbadges (which owns its own flex/gap via <AppBadges gap={12}/>). */
-.nk-redirect-stores {
-  display: flex;
-  justify-content: center;
-}
-/* mobile-only quiet store text row (the /go CTA already routes the right store) */
-.nk-redirect-storestext {
-  display: none;
-}
-.nk-redirect-qr .nk-qr-card {
-  flex: none;
-}
-/* "Also on" hairline divider separating the QR handoff from the store click-path
-   (desktop only; the label reuses dict.bridge.storesAlso) */
-.nk-redirect-divider {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.nk-redirect-divider::before,
-.nk-redirect-divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--nk-divider);
-}
-.nk-redirect-divider > span {
-  font-family: var(--nk-font-display);
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--nk-text-muted);
-}
-/* Redirect modal pins the shared close button to the top-right corner and dresses
-   it as a translucent glass circle — scoped here so the filter sheet / legal
-   drawer keep the default inline square. */
-.nk-redirect-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  border-radius: var(--nk-r-pill);
-  background: var(--nk-glass-strong);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-.nk-redirect-close:hover {
-  background: var(--nk-surface-hover-glass);
-  border-color: var(--nk-border-strong);
-}
-@media (width >= theme(--breakpoint-sm)) and (height >= 32.5rem) {
-  /* the /go smart link 302s back to the homepage on desktop UAs — never show a
-     decoy primary there; the QR card + badges are the real desktop paths */
-  .nk-redirect-smartlink {
-    display: none;
-  }
-}
+
 @media (width < theme(--breakpoint-sm)), (height < 32.5rem) {
-  .nk-redirect-scrim {
-    align-items: flex-end;
-  }
-  /* the sheet can scroll, where an inset hairline would drift with the content;
-     drop it and the desktop-only store divider */
-  .nk-redirect-panel::before {
-    content: none;
-  }
-  .nk-redirect-divider {
-    display: none;
-  }
-  .nk-redirect-panel {
-    width: min(35rem, 100%);
-    border-radius: 24px 24px 0 0;
-    /* svh, not vh: with the URL bar expanded 92vh overshoots the visible
-       viewport and the sheet top clips off-screen (RSP-425) */
-    max-height: 92vh;
-    max-height: 92svh;
-    overflow: auto;
-    padding-bottom: calc(36px + env(safe-area-inset-bottom));
-    animation: nk-sheet-in 0.3s var(--nk-ease-spring) both;
-  }
-  .nk-redirect-scrim.is-closing .nk-redirect-panel {
-    animation: nk-sheet-out 0.2s var(--nk-ease) both;
-  }
   .nk-sheet-grabzone {
     display: flex;
     justify-content: center;
@@ -4208,75 +3975,6 @@ footer .nk-link:hover {
     border-radius: 999px;
     background: var(--nk-border-strong);
   }
-  /* scanning a QR with the same phone you're holding is impossible — the /go
-     smart CTA is the mobile path, so drop the QR card and reclaim sheet height */
-  .nk-redirect-qr {
-    display: none;
-  }
-  /* one primary tap on mobile: badges collapse to the quiet text row */
-  .nk-redirect-stores {
-    display: none;
-  }
-  .nk-redirect-storestext {
-    display: block;
-  }
-}
-@keyframes nk-sheet-in {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: none;
-  }
-}
-@keyframes nk-sheet-out {
-  from {
-    transform: none;
-  }
-  to {
-    transform: translateY(100%);
-  }
-}
-/* repeat opens in a session skip the entrance (desktop pop + mobile sheet); the
-   two-class selector outranks the mobile single-class rule regardless of order */
-.nk-redirect-scrim .nk-redirect-panel--instant {
-  animation: none;
-}
-
-/* ============================================================
-   Breadcrumb
-   ============================================================ */
-.nk-crumb {
-  min-height: var(--nk-tap);
-  transition:
-    color 0.15s ease,
-    background 0.15s ease;
-}
-.nk-crumb:hover {
-  color: var(--nk-text);
-  background: var(--nk-surface);
-}
-.nk-crumbs {
-  min-width: 0;
-  container: nk-breadcrumb / inline-size;
-}
-/* Small phones: the current-page chip repeats the H1 directly below it — drop it
-   (and the chevron of the segment that precedes it) so the trail stays one row. */
-/* The current-page label is redundant once the breadcrumb itself becomes tight. */
-@container nk-breadcrumb (width < 42.5rem) {
-  .nk-crumbs [aria-current="page"] {
-    display: none;
-  }
-  .nk-crumbs .nk-crumbs__seg:has(+ [aria-current="page"]) .nk-crumbs__sep {
-    display: none;
-  }
-}
-.nk-crumbs > * {
-  min-width: 0;
-}
-.nk-crumbs [aria-current="page"] {
-  max-width: 100%;
-  overflow-wrap: anywhere;
 }
 
 /* ============================================================
@@ -5520,121 +5218,6 @@ footer .nk-link:hover {
   }
 }
 
-/* ============================================================
-   Dialog — the centred modal layer behind <Dialog/> (components/ui.tsx)
-   Distinct from .nk-modal-scrim, which is the bottom-sheet skin. Sits above the
-   redirect modal (z-index 200) because it can open ON TOP of it.
-   ============================================================ */
-.nk-dialog-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: 210;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: var(--nk-scrim);
-  backdrop-filter: blur(6px);
-  animation: nk-scrim-in 0.2s ease both;
-}
-.nk-dialog-panel {
-  position: relative;
-  /* 520, not 460: the consent panel's card anatomy (icon + title + switch on one
-     line) needs the extra room before the switch starts crowding the title. */
-  width: min(520px, 100%);
-  max-height: 92vh;
-  max-height: min(92dvh, 92svh);
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--nk-gap-sm);
-  padding: 28px;
-  /* The lit hairline is a BORDER-BOX BACKGROUND LAYER, not a ::before. This panel is
-     a scroll container, and an absolutely-positioned inset:0 pseudo scrolls away with
-     the content — the exact defect .nk-redirect-panel::before is switched off for in
-     the mobile sheet block below. A background layer is attached to the element's own
-     border box, so it stays at the panel edge while the cards scroll under it.
-     There must be NO background-color here: a colour paints the whole border box and
-     would hide the 1px ring.
-     The base is --nk-bg, not --nk-surface, so the --nk-surface cards inside are
-     visible against it — the same relationship .nk-redirect-panel already uses. */
-  border: 1px solid transparent;
-  background:
-    radial-gradient(130% 78% at 50% -14%, var(--nk-purple-soft), transparent 60%) padding-box,
-    linear-gradient(var(--nk-bg), var(--nk-bg)) padding-box,
-    var(--nk-lit-edge) border-box;
-  border-radius: var(--nk-r-modal);
-  /* --nk-shadow-modal is documented as the dialog tier in :root; this panel had been
-     left on --nk-shadow-3 (the popover / card-hover tier). Corrected. */
-  box-shadow: var(--nk-edge-top), var(--nk-shadow-modal);
-  /* `backwards`, never `both`: a forward fill pins the `to` keyframe at animation
-     priority forever, outranking any later :hover/state transform. (Zero visual
-     change here — nk-pop-in's `to` equals the base style.) */
-  animation: nk-pop-in 0.28s var(--nk-ease-spring) backwards;
-}
-.nk-dialog-panel:focus {
-  outline: none;
-}
-/* Sticky, not absolute: the panel is the scroll container, so an absolutely
-   positioned close scrolls out of reach the moment the content overflows — which the
-   consent panel's three cards do on a phone, leaving a sheet with no visible dismiss.
-   As a flex child it pins to the top of the scrollport instead. The negative bottom
-   margin cancels its own height so it still shares the title's band rather than
-   pushing it down (the title carries padding-right: 44px to clear it). */
-.nk-dialog-close {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  align-self: flex-end;
-  margin-bottom: calc(-1 * var(--nk-tap));
-}
-.nk-dialog-title {
-  margin: 0;
-  padding-right: 44px;
-  font-family: var(--nk-font-display);
-  font-weight: 700;
-  font-size: var(--nk-fs-row);
-  line-height: 1.25;
-  letter-spacing: -0.008em;
-  color: var(--nk-text);
-}
-/* The dialog's lede is chrome — it frames the controls below rather than being the
-   content, so it sits one tier quieter than the card bodies it introduces. */
-.nk-dialog-body {
-  margin: 0;
-  font-family: var(--nk-font-body);
-  font-size: 15px;
-  line-height: 23px;
-  color: var(--nk-text-muted);
-}
-/* Compact layers follow usable height as well as width, so landscape phones do
-   not receive a vertically centred panel with its actions below the fold. */
-@media (width < theme(--breakpoint-sm)), (height < 32.5rem) {
-  .nk-dialog-scrim {
-    align-items: flex-end;
-    padding: 0;
-  }
-  .nk-dialog-panel {
-    width: min(35rem, 100%);
-    border-radius: var(--nk-r-modal) var(--nk-r-modal) 0 0;
-    padding: 22px 18px calc(22px + var(--nk-safe-bottom));
-  }
-  /* The consent CARDS' compact form is NOT here — it lives in its own media block
-     after the consent content below. It has to: those base rules are declared later
-     in this file, so an override left here would tie on specificity and lose on
-     source order (the same trap documented for .nk-filterbar). */
-}
-@media (prefers-reduced-motion: reduce) {
-  .nk-dialog-scrim,
-  .nk-dialog-panel {
-    animation: none;
-  }
-  /* No transition overrides here: the global reduced-motion blanket near the top of
-     this file already collapses every transition-duration with !important, which no
-     normal rule can add to. The switch knob, the chevron and the disclosure collapse
-     are covered by it. */
-}
-
 /* ---- consent content (install prompt + cookie bar + footer privacy panel) ----
    THE RULE THAT GOVERNS THIS WHOLE BLOCK: nothing here may make one answer easier
    to give than the other. Concretely — the install prompt gives both actions one
@@ -5647,531 +5230,6 @@ footer .nk-link:hover {
    44px target, neither autofocused — and that equality is asserted in
    e2e/consent-analytics.spec.ts. The exception is the bar's alone; do not carry it
    into ConsentSheet or the panel. */
-
-/* One purpose = one card. Its chrome NEVER varies with the switch state — no
-   [data-granted] rule may be added here, or a granted purpose starts looking more
-   "correct" than a refused one. overflow stays visible so the 3px-offset focus ring
-   on the switch and the disclosure is not clipped at the card edge. */
-.nk-consent-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--nk-gap-xs);
-}
-.nk-consent-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--nk-gap-xs);
-  padding: 14px 16px;
-  background: var(--nk-surface);
-  border: 1px solid var(--nk-border);
-  border-radius: var(--nk-r-md);
-  box-shadow: var(--nk-edge-top);
-}
-/* Always-on row: quieter fill, so it reads as context rather than a fourth choice. */
-.nk-consent-card--static {
-  background: var(--nk-glass);
-  border-color: var(--nk-border-soft);
-  box-shadow: none;
-}
-.nk-consent-card__head {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--nk-gap-sm);
-}
-/* Neutral in every card — the icon identifies the purpose, it never signals on/off. */
-.nk-consent-card__icon {
-  flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--nk-r-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--nk-surface-2);
-  border: 1px solid var(--nk-border);
-  color: var(--nk-text-muted);
-}
-.nk-consent-card__text {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding-top: 2px; /* optical: 15.5px cap-height against the 34px icon chip */
-}
-.nk-consent-card__title {
-  font-family: var(--nk-font-display);
-  font-weight: 600;
-  font-size: 15.5px;
-  line-height: 20px;
-  letter-spacing: -0.006em;
-  color: var(--nk-text);
-  text-wrap: pretty;
-}
-.nk-consent-card__meta {
-  font-family: var(--nk-font-body);
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--nk-text-muted);
-}
-.nk-consent-card__body {
-  margin: 0;
-  font-family: var(--nk-font-body);
-  font-size: 14px;
-  line-height: 21px;
-  color: var(--nk-text-2);
-  text-wrap: pretty;
-}
-/* A statement, not a control: no cursor, no hover, no focus, no aria-disabled. The
-   two preference cookies really are always set, so this row states a fact. Neutral
-   fill on purpose — an accented chip here would read as "on = accent = the good
-   state" and colour-code the two switches below it by association. */
-.nk-consent-card__always {
-  flex: none;
-  align-self: center;
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 11px;
-  border-radius: var(--nk-r-pill);
-  background: var(--nk-surface-2);
-  border: 1px solid var(--nk-border);
-  font-family: var(--nk-font-display);
-  font-weight: 600;
-  font-size: 12.5px;
-  line-height: 1;
-  color: var(--nk-text-2);
-  white-space: nowrap;
-}
-
-/* Quiet text trigger, not a button skin — this reveals reference facts, it is not an
-   action. Negative margin lines the label up with the body above it while the 44px
-   hit area still extends past the glyph. */
-.nk-consent-card__disc {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: var(--nk-tap);
-  margin: -6px -8px -8px;
-  padding: 0 8px;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  font-family: var(--nk-font-display);
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--nk-text-muted);
-  transition: color 0.15s ease;
-}
-.nk-consent-card__disc:hover,
-.nk-consent-card__disc[aria-expanded="true"] {
-  color: var(--nk-text-2);
-}
-.nk-consent-card__disc svg.nk-ico {
-  transition: transform 0.2s var(--nk-ease);
-}
-.nk-consent-card__disc[aria-expanded="true"] svg.nk-ico {
-  transform: rotate(180deg);
-}
-/* grid-template-rows 0fr↔1fr, not max-height: the height is exact, so nothing snaps
-   at the end of the open. The region sits AFTER its trigger, so growth is always
-   below the line the user clicked and the panel's scroll position is unaffected —
-   there is deliberately no scrollIntoView anywhere in the expand path. `inert` in the
-   JSX is what actually removes the collapsed facts from the a11y tree; the 0fr row
-   only clips paint (same fix as .nk-faq). */
-.nk-consent-card__panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows var(--nk-dur-med) var(--nk-ease);
-}
-.nk-consent-card__panel[data-open="true"] {
-  grid-template-rows: 1fr;
-}
-.nk-consent-card__panel > div {
-  overflow: hidden;
-}
-/* Parallel facts, same shape in every card — including the always-on row, which is
-   what makes "always on" credible rather than a fig leaf. Text only: the overflow
-   clip above would cut a 3px-offset focus ring, so no links or buttons may go in
-   here — the policy link belongs to the panel, not to a card. */
-.nk-consent-facts {
-  margin: 8px 0 0;
-  padding: 10px 12px;
-  display: grid;
-  grid-template-columns: minmax(6.5rem, auto) 1fr;
-  gap: 6px 12px;
-  background: var(--nk-glass);
-  border: 1px solid var(--nk-border-soft);
-  border-radius: var(--nk-r-sm);
-}
-.nk-consent-facts > div {
-  display: contents;
-}
-.nk-consent-facts dt {
-  font-family: var(--nk-font-display);
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 18px;
-  color: var(--nk-text-muted);
-}
-.nk-consent-facts dd {
-  margin: 0;
-  font-family: var(--nk-font-body);
-  font-size: 13px;
-  line-height: 19px;
-  color: var(--nk-text-2);
-  text-wrap: pretty;
-}
-
-.nk-consent-privacy {
-  align-self: flex-start;
-  min-height: var(--nk-tap);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--nk-font-body);
-  font-size: 14px;
-  color: var(--nk-text-2);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: color 0.15s ease;
-}
-.nk-consent-privacy:hover {
-  color: var(--nk-text);
-}
-/* Only the privacy panel renders an arrow; these two rules are inert without it. */
-.nk-consent-privacy svg.nk-ico {
-  transition: transform 0.2s var(--nk-ease);
-}
-.nk-consent-privacy:hover svg.nk-ico {
-  transform: translateX(2px);
-}
-/* In the cookie bar the link sits inside running text, where a 44px inline-flex box
-   would stretch the line. It keeps the paragraph's own line box there. */
-.nk-cookiebar .nk-consent-privacy {
-  min-height: 0;
-  display: inline;
-}
-/* Equal-width actions, equal-skin everywhere except the cookie bar's accept (see the
-   block header). They stack on narrow screens in source order, which keeps neither
-   choice "below the fold" of the panel. */
-.nk-consent-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 4px;
-}
-.nk-consent-actions .nk-btn {
-  flex: 1 1 180px;
-  justify-content: center;
-}
-/* Where to change the choice later. Quiet by design: it is orientation, not a third
-   action, so it must not compete with the two equally-weighted buttons above it. */
-.nk-consent-manage {
-  margin: 0;
-  font-family: var(--nk-font-body);
-  font-size: 13px;
-  line-height: 19px;
-  color: var(--nk-text-muted);
-}
-
-/* Compact card form for the sheet layers (narrow OR short viewports — same query the
-   dialog's sheet form uses). This block MUST stay after the card/fact base rules
-   above: it ties with them on specificity, so it only wins on source order. Moving it
-   up beside the .nk-dialog-panel sheet rules silently disables every line in it. */
-@media (width < theme(--breakpoint-sm)), (height < 32.5rem) {
-  .nk-consent-card {
-    padding: 12px 13px;
-  }
-  .nk-consent-card__head {
-    gap: 10px;
-  }
-  .nk-consent-card__icon {
-    width: 30px;
-    height: 30px;
-  }
-  /* The switch keeps its full geometry at every width — the 44px target is the point.
-     A minmax() label column beside a two-line processor value wraps to four lines at
-     390px, so the fact sheet becomes a stacked label/value list instead. */
-  .nk-consent-facts {
-    grid-template-columns: 1fr;
-    gap: 2px 0;
-    padding: 10px;
-  }
-  .nk-consent-facts dt {
-    margin-top: 8px;
-  }
-  .nk-consent-facts > div:first-child dt {
-    margin-top: 0;
-  }
-}
-
-/* Privacy panel only. The panel scrolls, and nothing inside it may pull the scroll
-   position when a disclosure expands: growth is always below its trigger, so
-   anchoring is already correct — this is belt-and-braces against a future rule that
-   adds height above a card. */
-.nk-privacy-panel {
-  overflow-anchor: auto;
-}
-.nk-privacy-panel .nk-consent-privacy {
-  margin-top: var(--nk-gap-2xs);
-}
-
-/* Footer trigger — a quiet text link among the legal row, not a CTA. Matches the
-   footer nav links (.nk-footer__col a): plain purple text on hover/active. */
-.nk-privacy-trigger {
-  min-height: 24px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  font-family: var(--nk-font-body);
-  font-size: 14px;
-  color: var(--nk-text-muted);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-.nk-privacy-trigger:hover,
-.nk-privacy-trigger:active {
-  color: var(--nk-purple-hover);
-}
-
-/* ---- analytics consent banner (site-wide, non-modal) ----
-   Fixed to the bottom, above the mobile bottom bar (60) and below every scrim
-   (100+): the page stays fully usable behind it, and any sheet/dialog opens over
-   it. Listed in THE LAYER STACK comment above — keep the two agreeing.
-
-   Winning the z-index is only half of sharing the bottom edge: this bar must not
-   COVER what it outranks. It publishes its height (--nk-cookiebar-h, set from a
-   ResizeObserver in ConsentBanner because the bar ranges 136–282px across the width
-   ladder) and stacks on the reserve bar rather than over it — see --nk-bars-h in
-   :root and the .nk-mbar block in catalogue.css.
-
-   FULL-BLEED, and the content rides .nk-container — so the bar reads as site
-   chrome on the nav's own grid rather than as a floating panel. The inner is ONE
-   COLUMN by default: both action labels are long in both locales ("Tęsti be
-   analitikos slapukų", "Continue without analytics cookies"), so the pair only
-   fits beside the copy once the viewport is genuinely wide. Above
-   --breakpoint-nav it becomes a two-column row (see the query below); under it
-   the actions span and the shared .nk-consent-actions basis splits them evenly.
-
-   It DOES animate in, unlike most fixed chrome: the bar is out of flow, so the
-   entrance costs no CLS, and it mounts post-hydration — appearing without motion
-   under a reader who is already scrolling reads as a glitch. `backwards`, never
-   `both`/`forwards` (see the .nk-reveal note far above), plus the reduced-motion
-   kill switch below, which the blanket transition override cannot supply. */
-.nk-cookiebar {
-  position: fixed;
-  /* inset-inline is what makes it full-bleed — no width declaration, or the two
-     over-constrain each other and a reader has to work out which one wins. */
-  inset-inline: 0;
-  bottom: 0;
-  z-index: 70;
-  /* Block only — the inline gutter belongs to the inner now, so the background can
-     run to both viewport edges. Component-local, and the ONLY thing the compact
-     tiers below restate: both halves of the frame step together, and the safe inset
-     stays spelled once. --nk-cookiebar-safe is what the stacked case zeroes — lifted
-     onto the reserve bar this bar no longer touches the viewport edge, so the inset
-     is dead padding there (see the .nk-mbar block in catalogue.css). */
-  --nk-cookiebar-pad: var(--nk-gap-lg);
-  padding-block: var(--nk-cookiebar-pad) calc(var(--nk-cookiebar-pad) + var(--nk-cookiebar-safe, var(--nk-safe-bottom)));
-  /* Same lit-hairline recipe as the dialog panel, so the three consent surfaces read
-     as one family (see .nk-dialog-panel for why it is a background layer and why no
-     background-color may be set — a colour would paint over the 1px ring). Only the
-     TOP edge survives full-bleed: the inline edges are off-screen and the radius has
-     no corners left to round, so this is a border-TOP rather than a border plus three
-     zeroing overrides.
-
-     The base is --nk-float-bg + a blur, the same frosted glass .nk-backtotop uses:
-     these two are the site's bottom-edge chrome and now read as one material. Not
-     --nk-bg and not a flat --nk-surface-2 — unlike the dialogs this bar sits over
-     live page content with no scrim, so it has to read as raised rather than as a
-     modal surface, and the 0.9 alpha keeps --nk-text-2 above 4.5:1 even over a
-     white listing photo. --nk-shadow-up stays: it is the correct upward cast for
-     the one bottom-fixed surface. */
-  border-top: 1px solid transparent;
-  background:
-    radial-gradient(120% 100% at 50% -30%, var(--nk-purple-soft), transparent 62%) padding-box,
-    linear-gradient(var(--nk-float-bg), var(--nk-float-bg)) padding-box,
-    var(--nk-lit-edge) border-box;
-  backdrop-filter: blur(10px) saturate(1.05);
-  box-shadow: var(--nk-edge-top), var(--nk-shadow-up);
-  animation: nk-cookiebar-in var(--nk-dur-med) var(--nk-ease) backwards;
-}
-.nk-cookiebar__inner {
-  display: grid;
-  row-gap: var(--nk-gap-md);
-}
-@keyframes nk-cookiebar-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .nk-cookiebar {
-    animation: none;
-  }
-}
-.nk-cookiebar__copy {
-  display: grid;
-  row-gap: var(--nk-gap-2xs);
-}
-.nk-cookiebar__head {
-  display: flex;
-  align-items: center;
-  gap: var(--nk-gap-sm);
-}
-/* One tier down from .nk-consent-card__icon (34/18) — same chip, same neutral fill,
-   sized for a bar rather than a list row. Neutral for the same reason it is neutral
-   there: it identifies the purpose, it must never colour-code an answer. */
-.nk-cookiebar__icon {
-  flex: none;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--nk-r-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--nk-surface-2);
-  border: 1px solid var(--nk-border);
-  color: var(--nk-text-muted);
-}
-.nk-cookiebar__title {
-  margin: 0;
-  font-family: var(--nk-font-display);
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 21px;
-  letter-spacing: -0.008em;
-  color: var(--nk-text);
-  text-wrap: pretty;
-}
-/* The measure is capped, not the column — the bar is now as wide as the viewport,
-   and left uncapped the body would run past 120 characters a line on a desktop.
-   Below the nav tier the ragged right it leaves is answered by the action row,
-   which does span; above it the actions sit in the second column. */
-.nk-cookiebar__text {
-  margin: 0;
-  max-width: 66ch;
-  font-family: var(--nk-font-body);
-  font-size: 14px;
-  line-height: 21px;
-  color: var(--nk-text-2);
-  text-wrap: pretty;
-}
-.nk-cookiebar .nk-consent-actions {
-  margin-top: 0;
-}
-/* --outline ONLY. These sit at (0,3,0) and would otherwise outrank the finish
-   layer's .nk-btn--primary / .nk-btn--primary.nk-btn--sm shadows at the bottom of
-   this file, flattening the accept back to a bordered button. The lit top edge is
-   what lifts the outline off the glass; the primary brings its own. */
-.nk-cookiebar .nk-consent-actions .nk-btn--outline {
-  box-shadow: var(--nk-edge-top);
-}
-.nk-cookiebar .nk-consent-actions .nk-btn--outline:hover {
-  border-color: var(--nk-purple-hover);
-}
-/* The two answers share a row once there is width for it. The pair needs ~500px
-   (.nk-btn is nowrap and the LT labels are the long ones) plus a --nk-gutter each
-   side, so --breakpoint-nav is the honest floor — and it is where the nav itself
-   stops collapsing, so the bar switches layout on the same tier as the chrome it
-   aligns with. flex: 0 0 auto overrides the SHARED .nk-consent-actions basis at
-   (0,3,0) without touching it: ConsentSheet and PrivacyChoices still need it. */
-@media (width >= theme(--breakpoint-nav)) {
-  .nk-cookiebar__inner {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    column-gap: var(--nk-gap-xl);
-  }
-  .nk-cookiebar .nk-consent-actions {
-    flex-wrap: nowrap;
-  }
-  .nk-cookiebar .nk-consent-actions .nk-btn {
-    flex: 0 0 auto;
-  }
-}
-/* The bar overlays the END of the page, and the last thing on every page is the
-   footer's legal row — which holds the "Privatumo nustatymai" trigger this very bar
-   points at. Reserve its height inside the footer so that row can always be
-   scrolled clear. On .nk-footer rather than <body>: the footer paints --nk-bg-deep
-   and the body --nk-bg, so body padding would open a lighter strip under it.
-   --nk-cookiebar-h, not --nk-bars-h: that token is deliberately the height ABOVE the
-   safe inset (floating chrome carries the inset in its own resting offset) and on a
-   listing page it also folds in the reserve bar, which brings its own spacer. What
-   the footer needs is exactly this bar's full on-screen height, safe inset included
-   — which is what the measurement already is. */
-body:has(.nk-cookiebar) .nk-footer {
-  padding-bottom: var(--nk-cookiebar-h);
-}
-/* Floating chrome has to clear this bar, at EVERY width — unconditional since the
-   bar went full-bleed. It used to be gated behind --breakpoint-cookiebar, the width
-   below which a centred 45rem bar could first reach .nk-backtotop's corner; a bar
-   that spans the viewport reaches that corner always, and the gate would have left
-   the button sitting on top of it above 852px. That token had no other consumer and
-   was removed from the four-copy registry with this change.
-   The published height includes the safe inset this bar absorbs, and the chrome's
-   resting offset carries that inset too — subtract it once. --nk-cookiebar-h has a
-   declared default in :root, so the offset is sane before the first measurement. */
-body:has(.nk-cookiebar) {
-  --nk-bars-h: calc(var(--nk-cookiebar-h) - var(--nk-safe-bottom));
-}
-/* Compact layers follow usable height as well as width — the same query every other
-   layer in this file uses — so a landscape phone is not handed a bar sized for a
-   portrait one. The inline step lands on the INNER (at (0,2,0), so it beats
-   .nk-container's own gutter on specificity rather than on source order); the block
-   step stays on the bar, which owns the safe inset, and retunes --nk-cookiebar-pad
-   rather than the padding, so the inset keeps composing itself. The actions need no
-   rule: .nk-consent-actions' 180px flex basis stacks them by itself once this narrow. */
-@media (width < theme(--breakpoint-sm)), (height < 32.5rem) {
-  .nk-cookiebar {
-    --nk-cookiebar-pad: var(--nk-gap-md);
-  }
-  .nk-cookiebar .nk-cookiebar__inner {
-    row-gap: var(--nk-gap-sm);
-    padding-inline: 18px;
-  }
-}
-/* smallest phones: the banner ate ~47% of a 320×568 viewport before it was first
-   tightened — frame, chip, type and gaps all step down again here, which is what
-   pays for the heading the bar gained. Measured 249px at 320×568 (~44%); it was 231px
-   (~41%) until the copy gained its "why" clause on 2026-08-02, and this tier's type
-   step is what kept that from landing near the old ~47%. The 44px targets are not
-   negotiable, and
-   .nk-btn's own min-height is what holds them however far the padding steps down. */
-@media (width < theme(--breakpoint-xs)) {
-  .nk-cookiebar {
-    --nk-cookiebar-pad: var(--nk-gap-sm);
-  }
-  .nk-cookiebar .nk-cookiebar__inner {
-    row-gap: 10px;
-    padding-inline: var(--nk-gap-md);
-  }
-  .nk-cookiebar__head {
-    gap: 10px;
-  }
-  .nk-cookiebar__icon {
-    width: 24px;
-    height: 24px;
-  }
-  .nk-cookiebar__title {
-    font-size: 14.5px;
-    line-height: 19px;
-  }
-  .nk-cookiebar__text {
-    font-size: 13px;
-    line-height: 18px;
-  }
-  .nk-cookiebar .nk-consent-actions {
-    gap: var(--nk-gap-xs);
-  }
-}
 
 /* ============================================================================
    "Quiet Luxe" finish layer (2026-07 design handoff)
@@ -6202,8 +5260,7 @@ body:has(.nk-cookiebar) {
 .nk-offer h3 {
   letter-spacing: -0.01em;
 }
-.nk-offer__eyebrow,
-.nk-redirect__eyebrow {
+.nk-offer__eyebrow {
   font-size: 11.5px;
   letter-spacing: 0.14em;
   font-weight: 600;
@@ -6382,11 +5439,6 @@ svg.nk-ico {
     hyphens: auto;
     -webkit-hyphens: auto;
   }
-  /* redirect modal heading scales down on phones */
-  .nk-redirect-panel h2 {
-    font-size: 22px !important;
-    line-height: 27px !important;
-  }
 }
 
 /* ============================================================
@@ -6498,8 +5550,6 @@ svg.nk-ico {
     line-height: 19px !important;
     min-height: 38px !important;
   }
-  /* offer eyebrow only — .nk-redirect__eyebrow lives in the modal, which is not
-     inside an .nk-offer, so a nk-card container query can never reach it */
   .nk-offer__eyebrow {
     font-size: 11px !important;
     letter-spacing: 0.1em !important;

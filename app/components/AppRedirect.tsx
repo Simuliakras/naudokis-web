@@ -13,8 +13,9 @@ import { APP_STORE_URL, PLAY_STORE_URL } from "@/app/lib/contact";
 import { trackEvent } from "@/app/lib/analytics";
 import { WEB_ATTRIBUTION_KEYS, cleanAttributionValue, goHref } from "@/app/lib/attribution";
 import { useInstallCta } from "@/app/lib/use-install-cta";
+import "./overlays.css";
 
-// One buffer-frame past the .2s `nk-*-out` exit keyframes in globals.css, so the
+// One buffer-frame past the .2s `nk-*-out` exit keyframes in overlays.css, so the
 // dialog unmounts only after the animation has finished painting.
 const EXIT_MS = 220;
 
@@ -50,7 +51,6 @@ export function AppRedirect() {
   const { onAnchorClick } = useInstallCta();
   const [state, setState] = useState<{ open: boolean; closing: boolean; instant: boolean } & RedirectPayload>({ open: false, closing: false, instant: false, title: "", body: "" });
   const [showOpenFallback, setShowOpenFallback] = useState(false);
-  const [thumbFailed, setThumbFailed] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const grabRef = useRef<HTMLDivElement>(null); // sheet drag handle (mobile)
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -96,8 +96,7 @@ export function AppRedirect() {
       }
       window.__nkPendingRedirect = null;
       setShowOpenFallback(false);
-      setThumbFailed(false);
-      setState({ open: true, closing: false, instant: seen, title: d.title || dict.bridge.defaultTitle, body: d.body || dict.bridge.defaultBody, listing: d.listing, appPath: d.appPath });
+      setState({ open: true, closing: false, instant: seen, title: d.title || dict.bridge.defaultTitle, body: d.body || dict.bridge.defaultBody, appPath: d.appPath });
     };
     const onOpen = (e: Event) => {
       openPayload((e as CustomEvent<RedirectPayload>).detail ?? { title: "", body: "" });
@@ -161,27 +160,6 @@ export function AppRedirect() {
           <h2 id="nk-redirect-title" style={{ margin: 0, fontFamily: "var(--nk-font-display)", fontWeight: 700, fontSize: 28, lineHeight: "32px", letterSpacing: "-0.01em", color: "var(--nk-text)" }}>{state.title}</h2>
           <p id="nk-redirect-body" style={{ margin: 0, fontFamily: "var(--nk-font-body)", fontSize: 17, lineHeight: "26px", color: "var(--nk-text-2)" }}>{state.body}</p>
         </div>
-        {/* Intent preservation: the item the user was acting on stays visible
-            across the handoff (real listing data passed by the trigger). */}
-        {state.listing && (
-          /* data-cat drives --cat-accent for the eyebrow below — same per-category
-             hue the offer card used, so the item keeps its identity in the modal. */
-          <div data-cat={state.listing.categoryId} style={{ display: "flex", alignItems: "center", gap: 12, padding: 12, borderRadius: "var(--nk-r-md)", background: "var(--nk-surface-2)", border: "1px solid var(--nk-glass-card-border)", boxShadow: "var(--nk-edge-top)" }}>
-            {/* 4:3, the house listing-photo ratio (see .nk-offer__media) — a taller
-                box would crop the sides of the very photo the card showed uncropped */}
-            <span className="nk-imgph" style={{ width: 64, height: 48, borderRadius: 8, flex: "none", position: "relative", overflow: "hidden" }}>
-              {state.listing.thumb && !thumbFailed && <Image src={state.listing.thumb} alt="" fill sizes="64px" style={{ objectFit: "cover" }} onError={() => setThumbFailed(true)} />}
-              {(!state.listing.thumb || thumbFailed) && <Icon name="ImageOff" size={18} stroke={1.5} className="nk-imgicon" />}
-            </span>
-            <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-              {state.listing.category && (
-                <span className="nk-redirect__eyebrow">{state.listing.category}</span>
-              )}
-              <span style={{ fontFamily: "var(--nk-font-display)", fontWeight: 600, fontSize: 15, color: "var(--nk-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{state.listing.title}</span>
-              {state.listing.priceLabel && <span className="nk-tnum" style={{ fontFamily: "var(--nk-font-body)", fontSize: 13.5, color: "var(--nk-text-2)" }}>{state.listing.priceLabel}</span>}
-            </span>
-          </div>
-        )}
         {/* Desktop hero: the QR is the working handoff path there (/go only
             resolves to a store on a phone), so it gets the card + heading.
             Hidden below --breakpoint-sm. */}
