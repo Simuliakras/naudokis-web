@@ -460,11 +460,10 @@
 .nk-spec-blocks > .nk-spec-block:last-child {
   border-bottom: none;
 }
-/* Prose, not a value cell: left-aligned, regular weight, measure-capped — matching
-   .nk-detail .nk-prose rather than the bold right-aligned grid values. */
+/* Prose, not a value cell: left-aligned, regular weight — and full width, so the
+   item lists below can run two columns. The prose measure moved to .nk-spec-lead. */
 .nk-spec-body {
   margin: 0;
-  max-width: 62ch;
   font-family: var(--nk-font-body);
   font-size: 15.5px;
   line-height: 26px;
@@ -474,9 +473,12 @@
   -webkit-hyphens: auto;
   overflow-wrap: anywhere;
 }
-/* The owner's own group headings ("Komplektacijoje:", "Papildomai:"). */
+/* The owner's own group headings ("Komplektacijoje:", "Papildomai:"). The 62ch cap
+   here is what keeps a prose-only value (a long lead with no items) at a readable
+   measure now that .nk-spec-body itself is uncapped. */
 .nk-spec-lead {
   margin: 0;
+  max-width: 62ch;
   font-weight: 600;
   color: var(--nk-text);
 }
@@ -486,17 +488,32 @@
 .nk-spec-list + .nk-spec-lead {
   margin-top: 14px;
 }
+/* Items flow column-major (down, then across) into two balanced columns — multicol,
+   not a grid: `column-fill: balance` splits 4 → 2+2 and 5 → 3+2 with no item counts
+   in the markup, and the 48px gutter mirrors .nk-spec-grid's so both halves of the
+   section share one gutter line. Collapses to one column below --breakpoint-md in
+   the container block at the bottom of the file, the same trigger as the grid. */
 .nk-spec-list {
   margin: 0;
   padding: 0;
   list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  columns: 2;
+  column-gap: 48px;
 }
+/* Trailing margins, not `gap` (multicol ignores a flex stack) and not leading ones —
+   the top of column 2 must not depend on the engine truncating a margin at the
+   unforced break. The :last-child reset keeps the ul's height honest: multicol is
+   its own formatting context, so a dangling 6px would pad the box and stretch the
+   14px list→lead group gap. `break-inside` keeps a wrapped item whole rather than
+   split mid-sentence across the columns. */
 .nk-spec-list > li {
   position: relative;
   padding-left: 18px;
+  margin-bottom: 6px;
+  break-inside: avoid;
+}
+.nk-spec-list > li:last-child {
+  margin-bottom: 0;
 }
 /* A neutral dot, never a checkmark: these lists mix genuinely-included items with
    paid add-ons ("Dujų balionas – 3 € už nuomą"), and a ✓ would read as "free". */
@@ -508,7 +525,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--nk-purple);
+  background: var(--nk-text);
 }
 .nk-tworow {
   display: grid;
@@ -1894,6 +1911,9 @@
   .nk-spec-grid {
     grid-template-columns: 1fr;
     column-gap: 0;
+  }
+  .nk-spec-list {
+    column-count: 1;
   }
 }
 @container nk-detail (width < theme(--breakpoint-sm)) {
