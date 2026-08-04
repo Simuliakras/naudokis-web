@@ -844,13 +844,15 @@
   text-wrap: pretty;
 }
 
-/* The measure is capped, not the column — the bar is now as wide as the viewport,
-   and left uncapped the body would run past 120 characters a line on a desktop.
-   Below the nav tier the ragged right it leaves is answered by the action row,
-   which does span; above it the actions sit in the second column. */
+/* No measure cap — the copy fills its whole grid column, right up to the action
+   pair (user decision, 2026-08-04, asked twice): this is a disclosure to skim
+   past, not running text, so the column itself is the measure. It once carried
+   66ch, but ch here is Archivo's ~5.9px zero — that computed to 529px and left
+   the body wrapping to three short lines beside an empty column. If a cap ever
+   returns, state it in px and verify the rendered width; ch reads far wider
+   than it is in this font. */
 .nk-cookiebar__text {
   margin: 0;
-  max-width: 66ch;
   font-family: var(--nk-font-body);
   font-size: 14px;
   line-height: 21px;
